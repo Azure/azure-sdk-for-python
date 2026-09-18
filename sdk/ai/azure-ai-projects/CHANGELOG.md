@@ -1,5 +1,171 @@
 # Release History
 
+## 2.7.0 (2026-09-18)
+
+### Features Added
+
+* Added preview Voice Agent support, including voice agent definitions, realtime sessions and events, conversations, audio, and telephony models.
+* Added `.beta.agents.create_from_prompt()` to generate and create a Voice Agent from high-level inputs.
+* Added the `.beta.voice_agents.conversations` sub-client for managing voice conversations and retrieving their responses, conversation items, and audio.
+* Added `.beta.voice_agents.realtime.connect()` for sync and async realtime Voice Agent sessions with typed client and server events.
+* Added the `.beta.voice_agents.telephony` sub-client for managing calls, bindings, transfer targets, and durable outbound call jobs.
+* Added optional `harness` and `skills` properties to `PromptAgentDefinition`, with new GitHub Copilot harness, toolset, and skill-reference models.
+* Added invocation moderation through `RaiConfig.invocations_moderation` and `RaiInvocationModeration`.
+* Added `ToolboxesOperations.invoke_latest_toolbox_mcp()` and toolbox version metadata through `ToolboxObject.updated_at` and `ToolboxObject.versions`.
+* Added `DataGenerationJobOutputOptions.write_mode` for controlling dataset output writes and `TracesDataGenerationJobSource.trace_ids` for selecting explicit traces.
+* Made `TracesDataGenerationJobOptions.max_samples` optional.
+* Added read-only agent lifecycle properties `AgentDetails.configuration_state` and `AgentSessionResource.stopped_at`.
+
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* Removed the `max_samples` constructor argument and property from `DataGenerationJobOptions` and `SimulationSeedDataGenerationJobOptions`.
+* The `ToolboxObject` constructor now requires `updated_at` and `versions`.
+
+### Dependency update
+
+* Added the optional `voice` dependency group, which installs `websockets` for sync realtime Voice Agent sessions and `aiohttp` for async sessions.
+
+### Sample updates
+
+* Added `sample_voice_agent_basic.py` under `samples/agents/voice/`, demonstrating the Voice Agent management lifecycle.
+* Added `sample_voice_agent_generate.py`, demonstrating guided Voice Agent authoring with `.beta.agents.create_from_prompt()`.
+* Added `sample_voice_agent_live_text_conversation.py`, demonstrating a persisted, typed realtime Voice Agent conversation.
+* Added `sample_voice_agent_live_audio_conversation_async.py`, demonstrating a hands-free realtime audio conversation with barge-in.
+* Added `sample_voice_agent_live_function_tool.py`, demonstrating client-side function execution during a realtime Voice Agent session.
+* Added `sample_voice_agent_read_conversation.py`, demonstrating how to read a persisted Voice Agent conversation and transcript.
+* Added `sample_voice_agent_read_conversation_audio.py`, demonstrating how to retrieve merged conversation audio and individual audio segments.
+* Added `sample_voice_agent_versions.py`, demonstrating Voice Agent version and draft management.
+* Added `sample_voice_agent_with_tools.py`, demonstrating audio configuration, tools, and self-deployed models.
+* Updated `sample_synthetic_multiturn_evaluation.py` to set the service-required simulation seed `max_samples` field through the model's mapping interface because `SimulationSeedDataGenerationJobOptions` no longer exposes it as a constructor argument.
+
+## 2.6.1 (2026-09-14)
+
+### Sample updates
+
+* Added `sample_agent_insights_on_demand.py` and `sample_agent_insights_scheduled.py` under `samples/agent_insights/` to demonstrate on-demand analysis, insight lifecycle updates, and scheduled monitor setup with temporary external agents, fictional traces, and owned-resource cleanup.
+* Added `sample_agent_web_iq.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using the `WebIQPreviewTool`.
+
+### Bugs Fixed
+
+* Fixed Agent Insights run pollers to stop and raise an error when the service reports a cancelled run.
+* Fixed Agent Insights run pollers to preserve request headers, including the preview feature header, on polling requests.
+
+## 2.6.0 (2026-09-04)
+
+### Features Added
+
+* Added supporting AgentInsight* models and enums covering monitors, runs, generated insights, proposed fixes, highlighted and linked traces, costs, token usage, severity, status, and run triggers.
+* Added Microsoft 365 agent publishing.
+* Added optional Hosted Agent session defaults through `HostedAgentDefinition.session_configuration` and `SessionConfiguration`, including idle-timeout configuration.
+* Added content-safety moderation support for custom request, response, and streaming invocation body formats.
+* Added the optional `authorization` argument to `.beta.routines.create_or_update`, with `RoutineAuthorization` and `RoutineDispatchIdentity` for selecting the agent or routine creator identity.
+* Added `ShellToolboxTool` and supporting container environment and network policy models, with the new `ToolboxToolType.SHELL` enum member.
+* Added `WebIQPreviewTool` and `WebIQPreviewToolboxTool`, with new `ToolType.WEB_IQ_PREVIEW` and `ToolboxToolType.WEB_IQ_PREVIEW` enum members.
+* Added the optional `external_web_access` property to `WebSearchTool` and `WebSearchToolboxTool` for disabling live internet access.
+
+### Sample updates
+
+* Added `sample_toolbox_with_shell.py` under `samples/agents/tools/`, demonstrating a Prompt Agent invoking a `ShellToolboxTool`.
+* Added `sample_toolbox_with_shipping_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill through a Toolbox MCP endpoint.
+* Added `sample_toolbox_with_shell_and_skill.py` under `samples/agents/tools/`, demonstrating a Prompt Agent using a skill with a `ShellToolboxTool` through a Toolbox MCP endpoint.
+* Added `sample_synthetic_multiturn_evaluation.py` under `samples/evaluations/`, demonstrating simulation seed generation from an agent followed by multi-turn conversation simulation and evaluation.
+* Added `sample_responses_model_router.py` under `samples/responses/`, demonstrating a Responses API request to a model router deployment and selection of a model by the router.
+
+### Bugs Fixed
+
+* Fixed Responses API instrumentation for `with_raw_response` streaming calls ([GitHub issue 48646](https://github.com/Azure/azure-sdk-for-python/issues/48646)).
+
+## 2.5.0 (2026-08-20)
+
+### Dependency update
+
+* Dependency on `openai` has changed to `openai>=3.0.0`, which requires `httpx2` instead of `httpx`.
+* Support for Python 3.9 was dropped. The new minimum supported Python version is 3.10.
+
+### Features Added
+
+* Added stable Agent-to-Agent (A2A) tools `A2ATool` and `A2AToolboxTool`, with the new `A2AProtocolVersion` enum for selecting protocol version `1.0`.
+* Method `.beta.agents.begin_create_optimization_job` now returns a custom LRO poller named `AgentOptimizationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.datasets.begin_create_generation_job` now returns a custom LRO poller named `DatasetGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Method `.beta.evaluators.begin_create_generation_job` now returns a custom LRO poller named `EvaluatorGenerationLROPoller`. Its `details` property exposes the created job ID as `job_id`.
+* Added the optional read-only `state_source` property to `AgentDetails` and the new `AgentStateSource` enum.
+* Added programmatic tool calling through `ProgrammaticToolCallingParam` and `SpecificProgrammaticToolCallingParam`, with new `ToolType.PROGRAMMATIC_TOOL_CALLING` and `ToolChoiceParamType.PROGRAMMATIC_TOOL_CALLING` enum members.
+* Added the optional `allowed_callers` property to `ApplyPatchToolParam`, `CodeInterpreterTool`, `CodeInterpreterToolboxTool`, `CustomToolParam`, `FunctionShellToolParam`, `FunctionTool`, `FunctionToolParam`, `MCPTool`, and `MCPToolboxTool`. Added the new `CallableToolAllowedCaller` enum values `direct` and `programmatic`.
+* Expanded `Reasoning` with optional `mode` and `context` properties. Added `ReasoningModeEnum` for `standard` and `pro`; `effort` now uses the new `ReasoningEffort` enum, including the new `max` effort.
+
+### Breaking Changes
+
+All breaking changes are associated with beta features.
+
+* Methods `.beta.routines.list` and `.beta.routines.list_runs` replaced the `before` argument with `after` and now use the service-provided `next_link` for continuation.
+* Renamed class `TaskGenerationDataGenerationJobOptions` to `SimulationSeedDataGenerationJobOptions`. The corresponding `DataGenerationJobType.TASK_GENERATION` enum member was renamed to `DataGenerationJobType.SIMULATION_SEED`, and its wire value changed from `task_generation` to `simulation_seed`.
+* Renamed enum `OptimizationDatasetInputType` to `AgentOptimizationDatasetInputType`.
+* Renamed class `OptimizationAgentIdentifier` to `OptimizedAgentIdentifier`.
+* Renamed class `OptimizationCandidate` to `AgentOptimizationCandidate`.
+* Renamed class `OptimizationDatasetCriterion` to `AgentOptimizationDatasetCriterion`.
+* Renamed class `OptimizationDatasetInput` to `AgentOptimizationDatasetInput`.
+* Renamed class `OptimizationDatasetItem` to `AgentOptimizationDatasetItem`.
+* Renamed class `OptimizationEvaluatorRef` to `AgentOptimizationEvaluatorRef`.
+* Renamed class `OptimizationInlineDatasetInput` to `AgentOptimizationInlineDatasetInput`.
+* Renamed class `OptimizationJob` to `AgentOptimizationJob`.
+* Renamed class `OptimizationJobInputs` to `AgentOptimizationJobInputs`.
+* Renamed class `OptimizationJobListItem` to `AgentOptimizationJobListItem`.
+* Renamed class `OptimizationJobProgress` to `AgentOptimizationJobProgress`.
+* Renamed class `OptimizationJobResult` to `AgentOptimizationJobResult`.
+* Renamed class `OptimizationOptions` to `AgentOptimizationOptions`.
+* Renamed class `OptimizationReferenceDatasetInput` to `AgentOptimizationReferenceDatasetInput`.
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_async.py` under `samples/datasets/`, demonstrating asynchronous generation of a SimpleQnA dataset for fine-tuning.
+* Added `sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py` under `samples/datasets/`, demonstrating application-managed polling for a SimpleQnA fine-tuning data generation job.
+* Added logging samples under `samples/logs/`:
+  * `sample_log_all.py` demonstrating combined logging for Azure SDK and `.get_openai_client()` operations.
+  * `sample_log_from_openai_client.py` demonstrating logging for an OpenAI client created from `.get_openai_client()`.
+  * `sample_log_from_sdk.py` demonstrating logging for Azure AI Projects SDK client operations.
+  * `sample_log_to_console.py` demonstrating console logging configuration.
+  * `sample_log_with_logging_disabled.py` demonstrating redacted logging behavior when `logging_enable` is not enabled.
+* Renamed optimization polling samples `sample_optimization_job_basic_polling.py` and `sample_optimization_job_basic_polling_async.py` to `sample_optimization_job_advanced_app_polling.py` and `sample_optimization_job_advanced_app_polling_async.py`.
+
+## 2.4.0 (2026-07-24)
+
+### Features Added
+
+* New stable toolbox tool `ToolSearchToolboxTool` (discriminator `toolbox_search`) for storing a tool-search tool in a toolbox.
+This replaces `ToolboxSearchPreviewToolboxTool`, which is still present but will be removed in a future release of the package. Please migrate your code to use the stable tool.
+* New class `TaskGenerationDataGenerationJobOptions` (discriminator `task_generation`) with data generation job options for multi-turn evaluation scenarios.
+* Support for non-fatal input-quality advisories from rubric evaluator generation. See new class `RubricGenerationInputQualityWarning` and new enums `RubricGenerationInputQualityWarningCode`, `RubricGenerationInputQualityWarningSeverity`, and `RubricGenerationInputQualityWarningSource`.
+* New enum `GenerationWarningType`.
+* New enum `AgentIdentityStatus` and new optional `status` property on class `AgentIdentity`.
+* New read-only property `input_quality_warnings` on class `EvaluatorGenerationJob`.
+* New read-only properties `generation_job_id` and `warnings` on class `EvaluatorVersion`.
+* New optional property `max_stalls` on class `OptimizationOptions`.
+
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Method `.beta.evaluators.create_generation_job` renamed to `.beta.evaluators.begin_create_generation_job` and is now a long-running operation returning `LROPoller[EvaluatorVersion]` (previously returned `EvaluatorGenerationJob`).
+* Method `.beta.datasets.create_generation_job` renamed to `.beta.datasets.begin_create_generation_job` and is now a long-running operation returning `LROPoller[DataGenerationJobResult]`.
+* Method `.beta.agents.create_optimization_job` renamed to `.beta.agents.begin_create_optimization_job` and is now a long-running operation returning `LROPoller[OptimizationJobResult]`.
+
+### Sample updates
+
+* Added new optimization polling samples `sample_optimization_job_basic_polling.py` and `sample_optimization_job_basic_polling_async.py` under `samples/agents/optimization/`.
+* Added new evaluation samples `sample_endpoint_evaluator_with_api_key.py` and `sample_endpoint_evaluator_with_entra_id.py` under `samples/evaluations/`.
+* Added new Hosted Agent sample `sample_agent_user_identity_isolation.py` under `samples/hosted_agents/`, demonstrating per-user response-chain isolation with delegated end-user identities sent in the `x-ms-user-identity` header.
+* Added new Hosted Agent routine samples `sample_routines_with_github_issue_trigger.py` and `sample_routines_with_teams_message_trigger.py`, demonstrating GitHub issue and Microsoft Teams channel-message triggers for routines backed by a temporary Hosted Agent version.
+* Added new Hosted Agent sample `sample_toolbox_with_reminder_preview.py` under `samples/hosted_agents/`, demonstrating a Reminder Preview toolbox tool wired through a Foundry Toolbox MCP endpoint.
+* Updated Hosted Agent toolbox asset `samples/hosted_agents/assets/toolbox-agent/main.py` to use `FoundryToolbox` and `as_skills_provider()` for toolbox MCP skill discovery and wiring, replacing the earlier manual MCP session, auth, and HTTP client setup.
+* Renamed toolbox tool-search samples `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py` to `sample_toolboxes_with_search.py` and `sample_toolboxes_with_search_async.py`.
+* Renamed the Hosted Agent image-based creation samples from `sample_create_hosted_agent.py` and `sample_create_hosted_agent_async.py` to `sample_create_hosted_agent_from_image.py` and `sample_create_hosted_agent_from_image_async.py`.
+* Relocated Hosted Agent routine trigger samples `sample_routines_with_dispatch.py`, `sample_routines_with_schedule_trigger.py`, and `sample_routines_with_timer_trigger.py` from `samples/routines/` to `samples/hosted_agents/`.
+* Removed Hosted Agent endpoint samples `sample_agent_endpoint.py` and `sample_agent_endpoint_async.py`.
+* Removed routine sample `samples/routines/sample_routines_crud.py`.
+* Removed prompt-agent toolbox skill sample `samples/agents/tools/sample_agent_toolbox_skill.py` because skill-in-toolbox is not yet supported in Prompt Agents.
+* Updated Hosted Agent toolbox samples to create temporary Hosted Agent versions for execution flows, assign Azure AI User RBAC before invoking Toolbox MCP endpoints, restore the prior endpoint, and clean up temporary resources during teardown.
+
 ## 2.3.0 (2026-07-01)
 
 ### Features Added

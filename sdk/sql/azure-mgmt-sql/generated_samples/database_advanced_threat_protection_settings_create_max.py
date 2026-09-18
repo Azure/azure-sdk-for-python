@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/DatabaseAdvancedThreatProtectionSettingsCreateMax.json
+# x-ms-original-file: 2025-08-01-preview/DatabaseAdvancedThreatProtectionSettingsCreateMax.json
 if __name__ == "__main__":
     main()

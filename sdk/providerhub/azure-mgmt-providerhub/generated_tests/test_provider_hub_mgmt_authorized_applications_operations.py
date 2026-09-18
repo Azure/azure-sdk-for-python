@@ -39,7 +39,9 @@ class TestProviderHubMgmtAuthorizedApplicationsOperations(AzureMgmtRecordedTestC
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "dataAuthorizations": [{"role": "str", "resourceTypes": ["str"]}],
+                    "dataAuthorizations": [
+                        {"role": "str", "excludeApplicationIdFromManifest": bool, "resourceTypes": ["str"]}
+                    ],
                     "providerAuthorization": {"managedByRoleDefinitionId": "str", "roleDefinitionId": "str"},
                     "provisioningState": "str",
                 },

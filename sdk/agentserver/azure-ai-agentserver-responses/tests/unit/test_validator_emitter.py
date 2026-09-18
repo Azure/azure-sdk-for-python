@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 from types import ModuleType
+from typing import Literal, Optional
 
 from _scripts.validator_emitter import build_validator_module
 
@@ -42,7 +43,7 @@ def test_emitter_generates_class_without_schema_definition() -> None:
     assert "\nSCHEMAS =" not in code
 
 
-def test_emitter_uses_generated_enum_values_when_available() -> None:
+def test_emitter_uses_generated_literal_alias_values_when_available() -> None:
     schemas = {
         "OpenAI.ToolType": {
             "anyOf": [
@@ -52,7 +53,41 @@ def test_emitter_uses_generated_enum_values_when_available() -> None:
         }
     }
     code = build_validator_module(schemas, ["OpenAI.ToolType"])
-    assert "_enum_values('ToolType')" in code
+    assert "_schema_literal_values('ToolType')" in code
+
+
+def test_emitter_uses_request_field_literal_before_schema_alias() -> None:
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "properties": {"service_tier": {"$ref": "#/components/schemas/OpenAI.ServiceTier"}},
+        },
+        "OpenAI.ServiceTier": {
+            "type": "string",
+            "enum": ["auto", "default", "flex", "priority"],
+        },
+    }
+
+    code = build_validator_module(schemas, ["CreateResponse"])
+
+    assert "_LITERAL_ENUM_ALIASES" not in code
+    assert "_field_literal_values('CreateResponse', 'service_tier')" in code
+    assert code.index("_field_literal_values('CreateResponse', 'service_tier')") < code.index(
+        "_schema_literal_values('ServiceTier')"
+    )
+
+    class FakeCreateResponse:
+        __annotations__ = {"service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority"]]}
+
+    module = _load_module(code)
+    module._response_types = type("FakeTypes", (), {"CreateResponse": FakeCreateResponse})
+
+    assert module.validate_CreateResponse({"service_tier": "scale"}) == []
+    errors = module.validate_CreateResponse({"service_tier": "unknown"})
+    assert any(
+        e["path"] == "$.service_tier" and "Allowed: auto, default, flex, scale, priority" in e["message"]
+        for e in errors
+    )
 
 
 def test_emitter_deduplicates_string_union_error_message() -> None:
@@ -66,11 +101,15 @@ def test_emitter_deduplicates_string_union_error_message() -> None:
     }
 
     module = _load_module(build_validator_module(schemas, ["OpenAI.InputItemType"]))
+    module._response_types = type(
+        "FakeTypes",
+        (),
+        {"InputItemType": Literal["message", "item_reference"]},
+    )
     errors = module.validate_OpenAI_InputItemType(123)
     assert errors
     assert errors[0]["path"] == "$"
-    assert "InputItemType" in errors[0]["message"]
-    assert "got integer" in errors[0]["message"].lower()
+    assert "Allowed: message, item_reference" in errors[0]["message"]
     assert "string, string" not in errors[0]["message"]
 
 
@@ -142,6 +181,7 @@ def test_emitter_generates_union_kind_check_for_oneof_anyof() -> None:
     module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
     errors = module.validate_CreateResponse({"tool_choice": 123})
     assert any(e["path"] == "$.tool_choice" and "expected one of" in e["message"].lower() for e in errors)
+    assert "and True" not in build_validator_module(schemas, ["CreateResponse"])
 
 
 def test_emitter_validates_create_response_input_property() -> None:
@@ -177,6 +217,10 @@ def test_emitter_validates_create_response_input_property() -> None:
     assert module.validate_CreateResponse({"input": "hello"}) == []
     assert module.validate_CreateResponse({"input": [{"type": "message"}]}) == []
 
+    # Once a union branch matches the input kind, preserve its nested errors.
+    nested_errors = module.validate_CreateResponse({"input": [{}]})
+    assert any(error["path"] == "$.input[0].type" for error in nested_errors)
+
 
 def test_emitter_generates_discriminator_dispatch() -> None:
     schemas = {
@@ -202,6 +246,91 @@ def test_emitter_generates_discriminator_dispatch() -> None:
     module = _load_module(build_validator_module(schemas, ["Tool"]))
     errors = module.validate_Tool({"type": "function"})
     assert any(e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors)
+
+
+def test_emitter_validates_allof_wrapped_literal_alias() -> None:
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "properties": {"prompt_cache_options": {"$ref": "#/components/schemas/OpenAI.PromptCacheOptionsParam"}},
+        },
+        "OpenAI.PromptCacheOptionsParam": {
+            "type": "object",
+            "properties": {"mode": {"allOf": [{"$ref": "#/components/schemas/OpenAI.PromptCacheModeEnum"}]}},
+        },
+        "OpenAI.PromptCacheModeEnum": {
+            "type": "string",
+            "enum": ["implicit", "explicit"],
+        },
+    }
+
+    class FakePromptCacheOptionsParam:
+        __annotations__ = {"mode": Literal["implicit", "explicit"]}
+
+    module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
+    module._response_types = type(
+        "FakeTypes",
+        (),
+        {
+            "PromptCacheModeEnum": Literal["implicit", "explicit"],
+            "PromptCacheOptionsParam": FakePromptCacheOptionsParam,
+        },
+    )
+
+    assert module.validate_CreateResponse({"prompt_cache_options": {"mode": "explicit"}}) == []
+    errors = module.validate_CreateResponse({"prompt_cache_options": {"mode": "invalid"}})
+    assert any(e["path"] == "$.prompt_cache_options.mode" and "allowed" in e["message"].lower() for e in errors)
+
+
+def test_emitter_validates_allof_wrapped_discriminator() -> None:
+    schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "properties": {
+                "caller": {
+                    "type": "object",
+                    "allOf": [{"$ref": "#/components/schemas/OpenAI.ToolCallCallerParam"}],
+                }
+            },
+        },
+        "OpenAI.ToolCallCallerParam": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {"type": {"type": "string"}},
+            "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                    "direct": "#/components/schemas/OpenAI.DirectToolCallCallerParam",
+                    "program": "#/components/schemas/OpenAI.ProgramToolCallCallerParam",
+                },
+            },
+        },
+        "OpenAI.DirectToolCallCallerParam": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {"type": {"type": "string", "enum": ["direct"]}},
+            "allOf": [{"$ref": "#/components/schemas/OpenAI.ToolCallCallerParam"}],
+        },
+        "OpenAI.ProgramToolCallCallerParam": {
+            "type": "object",
+            "required": ["type", "caller_id"],
+            "properties": {
+                "type": {"type": "string", "enum": ["program"]},
+                "caller_id": {"type": "string"},
+            },
+            "allOf": [{"$ref": "#/components/schemas/OpenAI.ToolCallCallerParam"}],
+        },
+    }
+
+    module = _load_module(build_validator_module(schemas, ["CreateResponse"]))
+
+    assert module.validate_CreateResponse({"caller": {"type": "direct"}}) == []
+    missing_type = module.validate_CreateResponse({"caller": {}})
+    assert any(e["path"] == "$.caller.type" and "missing" in e["message"].lower() for e in missing_type)
+    missing_caller_id = module.validate_CreateResponse({"caller": {"type": "program"}})
+    assert any(e["path"] == "$.caller.caller_id" and "missing" in e["message"].lower() for e in missing_caller_id)
+    unknown_type = module.validate_CreateResponse({"caller": {"type": "unknown"}})
+    assert any(e["path"] == "$.caller.type" and "invalid discriminator" in e["message"].lower() for e in unknown_type)
 
 
 def test_emitter_generates_default_discriminator_fallback() -> None:

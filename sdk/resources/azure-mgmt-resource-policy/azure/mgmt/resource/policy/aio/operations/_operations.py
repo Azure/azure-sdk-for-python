@@ -31,7 +31,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -133,13 +133,12 @@ from ...operations._operations import (
 )
 from .._configuration import PolicyClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
 
-class PolicyAssignmentsOperations:
+class PolicyAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -268,7 +267,12 @@ class PolicyAssignmentsOperations:
 
     @overload
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: _types.PolicyAssignment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
@@ -287,7 +291,7 @@ class PolicyAssignmentsOperations:
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -328,7 +332,10 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace_async
     async def create_by_id(
-        self, policy_assignment_id: str, parameters: Union[_models.PolicyAssignment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: Union[_models.PolicyAssignment, _types.PolicyAssignment, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Creates or updates a policy assignment.
 
@@ -346,9 +353,10 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment. Is one of the following types:
-         PolicyAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or JSON or IO[bytes]
+        :param parameters: Parameters for policy assignment. Is either a PolicyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.types.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -455,7 +463,12 @@ class PolicyAssignmentsOperations:
 
     @overload
     async def update_by_id(
-        self, policy_assignment_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_assignment_id: str,
+        parameters: _types.PolicyAssignmentUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Updates a policy assignment.
 
@@ -474,7 +487,7 @@ class PolicyAssignmentsOperations:
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment patch request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -517,7 +530,7 @@ class PolicyAssignmentsOperations:
     async def update_by_id(
         self,
         policy_assignment_id: str,
-        parameters: Union[_models.PolicyAssignmentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignmentUpdate, _types.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """Updates a policy assignment.
@@ -536,10 +549,10 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment patch request. Is one of the following
-         types: PolicyAssignmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or JSON or
-         IO[bytes]
+        :param parameters: Parameters for policy assignment patch request. Is either a
+         PolicyAssignmentUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -794,7 +807,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -808,7 +821,7 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -850,7 +863,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: Union[_models.PolicyAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignment, _types.PolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -861,9 +874,10 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :param parameters: Parameters for the policy assignment. Is one of the following types:
-         PolicyAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or JSON or IO[bytes]
+        :param parameters: Parameters for the policy assignment. Is either a PolicyAssignment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment or
+         ~azure.mgmt.resource.policy.types.PolicyAssignment or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -967,7 +981,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyAssignmentUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -981,7 +995,7 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for policy assignment patch request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1023,7 +1037,7 @@ class PolicyAssignmentsOperations:
         self,
         scope: str,
         policy_assignment_name: str,
-        parameters: Union[_models.PolicyAssignmentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyAssignmentUpdate, _types.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
         """This operation updates a policy assignment with the given scope and name. Policy assignments
@@ -1034,10 +1048,10 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :param parameters: Parameters for policy assignment patch request. Is one of the following
-         types: PolicyAssignmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or JSON or
-         IO[bytes]
+        :param parameters: Parameters for policy assignment patch request. Is either a
+         PolicyAssignmentUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyAssignmentUpdate or IO[bytes]
         :return: PolicyAssignment. The PolicyAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1747,7 +1761,7 @@ class PolicyAssignmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataPolicyManifestsOperations:
+class DataPolicyManifestsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1947,7 +1961,7 @@ class DataPolicyManifestsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyDefinitionsOperations:
+class PolicyDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2056,7 +2070,12 @@ class PolicyDefinitionsOperations:
 
     @overload
     async def create_or_update(
-        self, policy_definition_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        policy_definition_name: str,
+        parameters: _types.PolicyDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given subscription with the given
         name.
@@ -2064,7 +2083,7 @@ class PolicyDefinitionsOperations:
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2099,16 +2118,20 @@ class PolicyDefinitionsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, JSON, IO[bytes]], **kwargs: Any
+        self,
+        policy_definition_name: str,
+        parameters: Union[_models.PolicyDefinition, _types.PolicyDefinition, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given subscription with the given
         name.
 
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or JSON or IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or
+         ~azure.mgmt.resource.policy.types.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition. The PolicyDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2632,7 +2655,7 @@ class PolicyDefinitionsOperations:
         self,
         management_group_id: str,
         policy_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2645,7 +2668,7 @@ class PolicyDefinitionsOperations:
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2686,7 +2709,7 @@ class PolicyDefinitionsOperations:
         self,
         management_group_id: str,
         policy_definition_name: str,
-        parameters: Union[_models.PolicyDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinition, _types.PolicyDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinition:
         """This operation creates or updates a policy definition in the given management group with the
@@ -2696,9 +2719,10 @@ class PolicyDefinitionsOperations:
         :type management_group_id: str
         :param policy_definition_name: The name of the policy definition to get. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or JSON or IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or
+         ~azure.mgmt.resource.policy.types.PolicyDefinition or IO[bytes]
         :return: PolicyDefinition. The PolicyDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2949,7 +2973,7 @@ class PolicyDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyDefinitionVersionsOperations:
+class PolicyDefinitionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3074,7 +3098,7 @@ class PolicyDefinitionVersionsOperations:
         self,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3089,7 +3113,7 @@ class PolicyDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3132,7 +3156,7 @@ class PolicyDefinitionVersionsOperations:
         self,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinitionVersion, _types.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinitionVersion:
         """This operation creates or updates a policy definition in the given subscription with the given
@@ -3144,10 +3168,10 @@ class PolicyDefinitionVersionsOperations:
          is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion or IO[bytes]
         :return: PolicyDefinitionVersion. The PolicyDefinitionVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3673,7 +3697,7 @@ class PolicyDefinitionVersionsOperations:
         management_group_name: str,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3691,7 +3715,7 @@ class PolicyDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3739,7 +3763,7 @@ class PolicyDefinitionVersionsOperations:
         management_group_name: str,
         policy_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyDefinitionVersion, _types.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyDefinitionVersion:
         """This operation creates or updates a policy definition version in the given management group
@@ -3754,10 +3778,10 @@ class PolicyDefinitionVersionsOperations:
          is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is one of the following types:
-         PolicyDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicyDefinitionVersion or IO[bytes]
         :return: PolicyDefinitionVersion. The PolicyDefinitionVersion is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4205,7 +4229,7 @@ class PolicyDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
 
-class PolicyEnrollmentsOperations:
+class PolicyEnrollmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4334,7 +4358,7 @@ class PolicyEnrollmentsOperations:
         self,
         scope: str,
         policy_enrollment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyEnrollment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4351,7 +4375,7 @@ class PolicyEnrollmentsOperations:
         :param policy_enrollment_name: The name of the policy enrollment. Required.
         :type policy_enrollment_name: str
         :param parameters: The policy enrollment resource to create or replace. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyEnrollment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4403,7 +4427,7 @@ class PolicyEnrollmentsOperations:
         self,
         scope: str,
         policy_enrollment_name: str,
-        parameters: Union[_models.PolicyEnrollment, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyEnrollment, _types.PolicyEnrollment, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyEnrollment:
         """Creates or updates a policy enrollment.
@@ -4417,9 +4441,10 @@ class PolicyEnrollmentsOperations:
         :type scope: str
         :param policy_enrollment_name: The name of the policy enrollment. Required.
         :type policy_enrollment_name: str
-        :param parameters: The policy enrollment resource to create or replace. Is one of the following
-         types: PolicyEnrollment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollment or JSON or IO[bytes]
+        :param parameters: The policy enrollment resource to create or replace. Is either a
+         PolicyEnrollment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollment or
+         ~azure.mgmt.resource.policy.types.PolicyEnrollment or IO[bytes]
         :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4523,7 +4548,7 @@ class PolicyEnrollmentsOperations:
         self,
         scope: str,
         policy_enrollment_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyEnrollmentUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4537,7 +4562,7 @@ class PolicyEnrollmentsOperations:
         :param policy_enrollment_name: The name of the policy enrollment. Required.
         :type policy_enrollment_name: str
         :param parameters: The properties to update in the policy enrollment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyEnrollmentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4586,7 +4611,7 @@ class PolicyEnrollmentsOperations:
         self,
         scope: str,
         policy_enrollment_name: str,
-        parameters: Union[_models.PolicyEnrollmentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyEnrollmentUpdate, _types.PolicyEnrollmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyEnrollment:
         """Updates a policy enrollment.
@@ -4597,10 +4622,10 @@ class PolicyEnrollmentsOperations:
         :type scope: str
         :param policy_enrollment_name: The name of the policy enrollment. Required.
         :type policy_enrollment_name: str
-        :param parameters: The properties to update in the policy enrollment. Is one of the following
-         types: PolicyEnrollmentUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollmentUpdate or JSON or
-         IO[bytes]
+        :param parameters: The properties to update in the policy enrollment. Is either a
+         PolicyEnrollmentUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyEnrollmentUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyEnrollmentUpdate or IO[bytes]
         :return: PolicyEnrollment. The PolicyEnrollment is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyEnrollment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5263,7 +5288,7 @@ class PolicyEnrollmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyExemptionsOperations:
+class PolicyExemptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5392,7 +5417,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyExemption,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5409,7 +5434,7 @@ class PolicyExemptionsOperations:
         :param policy_exemption_name: The name of the policy exemption to get. Required.
         :type policy_exemption_name: str
         :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyExemption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5461,7 +5486,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemption, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyExemption, _types.PolicyExemption, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyExemption:
         """Creates or updates a policy exemption.
@@ -5475,9 +5500,10 @@ class PolicyExemptionsOperations:
         :type scope: str
         :param policy_exemption_name: The name of the policy exemption to get. Required.
         :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Is one of the following types:
-         PolicyExemption, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption or JSON or IO[bytes]
+        :param parameters: Parameters for the policy exemption. Is either a PolicyExemption type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption or
+         ~azure.mgmt.resource.policy.types.PolicyExemption or IO[bytes]
         :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5581,7 +5607,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        parameters: JSON,
+        parameters: _types.PolicyExemptionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5595,7 +5621,7 @@ class PolicyExemptionsOperations:
         :param policy_exemption_name: The name of the policy exemption to get. Required.
         :type policy_exemption_name: str
         :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyExemptionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5644,7 +5670,7 @@ class PolicyExemptionsOperations:
         self,
         scope: str,
         policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemptionUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.PolicyExemptionUpdate, _types.PolicyExemptionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyExemption:
         """Updates a policy exemption.
@@ -5655,9 +5681,10 @@ class PolicyExemptionsOperations:
         :type scope: str
         :param policy_exemption_name: The name of the policy exemption to get. Required.
         :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Is one of the following
-         types: PolicyExemptionUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate or JSON or IO[bytes]
+        :param parameters: Parameters for policy exemption patch request. Is either a
+         PolicyExemptionUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate or
+         ~azure.mgmt.resource.policy.types.PolicyExemptionUpdate or IO[bytes]
         :return: PolicyExemption. The PolicyExemption is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6338,7 +6365,7 @@ class PolicyExemptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicySetDefinitionsOperations:
+class PolicySetDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6457,7 +6484,7 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6468,7 +6495,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6505,7 +6532,7 @@ class PolicySetDefinitionsOperations:
     async def create_or_update(
         self,
         policy_set_definition_name: str,
-        parameters: Union[_models.PolicySetDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinition, _types.PolicySetDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinition:
         """This operation creates or updates a policy set definition in the given subscription with the
@@ -6513,9 +6540,10 @@ class PolicySetDefinitionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or JSON or IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinition or IO[bytes]
         :return: PolicySetDefinition. The PolicySetDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7059,7 +7087,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         policy_set_definition_name: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7072,7 +7100,7 @@ class PolicySetDefinitionsOperations:
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7113,7 +7141,7 @@ class PolicySetDefinitionsOperations:
         self,
         management_group_id: str,
         policy_set_definition_name: str,
-        parameters: Union[_models.PolicySetDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinition, _types.PolicySetDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinition:
         """This operation creates or updates a policy set definition in the given management group with
@@ -7123,9 +7151,10 @@ class PolicySetDefinitionsOperations:
         :type management_group_id: str
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or JSON or IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinition or IO[bytes]
         :return: PolicySetDefinition. The PolicySetDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7388,7 +7417,7 @@ class PolicySetDefinitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicySetDefinitionVersionsOperations:
+class PolicySetDefinitionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7525,7 +7554,7 @@ class PolicySetDefinitionVersionsOperations:
         self,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7540,7 +7569,7 @@ class PolicySetDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy set definition properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7585,7 +7614,7 @@ class PolicySetDefinitionVersionsOperations:
         self,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinitionVersion, _types.PolicySetDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """This operation creates or updates a policy set definition version in the given subscription
@@ -7597,10 +7626,10 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy set definition properties. Is one of the following types:
-         PolicySetDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinitionVersion
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion or IO[bytes]
         :return: PolicySetDefinitionVersion. The PolicySetDefinitionVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
@@ -8162,7 +8191,7 @@ class PolicySetDefinitionVersionsOperations:
         management_group_name: str,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: JSON,
+        parameters: _types.PolicySetDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8180,7 +8209,7 @@ class PolicySetDefinitionVersionsOperations:
          Required.
         :type policy_definition_version: str
         :param parameters: The policy set definition version properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8230,7 +8259,7 @@ class PolicySetDefinitionVersionsOperations:
         management_group_name: str,
         policy_set_definition_name: str,
         policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, JSON, IO[bytes]],
+        parameters: Union[_models.PolicySetDefinitionVersion, _types.PolicySetDefinitionVersion, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """This operation creates or updates a policy set definition version in the given management group
@@ -8245,10 +8274,10 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
-        :param parameters: The policy set definition version properties. Is one of the following types:
-         PolicySetDefinitionVersion, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or JSON or
-         IO[bytes]
+        :param parameters: The policy set definition version properties. Is either a
+         PolicySetDefinitionVersion type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or
+         ~azure.mgmt.resource.policy.types.PolicySetDefinitionVersion or IO[bytes]
         :return: PolicySetDefinitionVersion. The PolicySetDefinitionVersion is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
@@ -8709,7 +8738,7 @@ class PolicySetDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
 
-class VariablesOperations:
+class VariablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8823,7 +8852,7 @@ class VariablesOperations:
 
     @overload
     async def create_or_update(
-        self, variable_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, variable_name: str, parameters: _types.Variable, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
 
@@ -8833,7 +8862,7 @@ class VariablesOperations:
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
         :param parameters: Parameters for the variable. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.Variable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8872,7 +8901,7 @@ class VariablesOperations:
         api_versions_list=["2025-12-01-preview", "2026-01-01-preview"],
     )
     async def create_or_update(
-        self, variable_name: str, parameters: Union[_models.Variable, JSON, IO[bytes]], **kwargs: Any
+        self, variable_name: str, parameters: Union[_models.Variable, _types.Variable, IO[bytes]], **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
 
@@ -8881,9 +8910,10 @@ class VariablesOperations:
 
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :param parameters: Parameters for the variable. Is one of the following types: Variable, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or JSON or IO[bytes]
+        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.Variable or
+         ~azure.mgmt.resource.policy.types.Variable or IO[bytes]
         :return: Variable. The Variable is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9228,7 +9258,7 @@ class VariablesOperations:
         self,
         management_group_id: str,
         variable_name: str,
-        parameters: JSON,
+        parameters: _types.Variable,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9243,7 +9273,7 @@ class VariablesOperations:
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
         :param parameters: Parameters for the variable. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.Variable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9293,7 +9323,7 @@ class VariablesOperations:
         self,
         management_group_id: str,
         variable_name: str,
-        parameters: Union[_models.Variable, JSON, IO[bytes]],
+        parameters: Union[_models.Variable, _types.Variable, IO[bytes]],
         **kwargs: Any
     ) -> _models.Variable:
         """Creates or updates a variable.
@@ -9305,9 +9335,10 @@ class VariablesOperations:
         :type management_group_id: str
         :param variable_name: The name of the variable to operate on. Required.
         :type variable_name: str
-        :param parameters: Parameters for the variable. Is one of the following types: Variable, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or JSON or IO[bytes]
+        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.Variable or
+         ~azure.mgmt.resource.policy.types.Variable or IO[bytes]
         :return: Variable. The Variable is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.Variable
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9545,7 +9576,7 @@ class VariablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VariableValuesOperations:
+class VariableValuesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9675,7 +9706,7 @@ class VariableValuesOperations:
         self,
         variable_name: str,
         variable_value_name: str,
-        parameters: JSON,
+        parameters: _types.VariableValue,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9690,7 +9721,7 @@ class VariableValuesOperations:
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
         :param parameters: Parameters for the variable value. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.VariableValue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9747,7 +9778,7 @@ class VariableValuesOperations:
         self,
         variable_name: str,
         variable_value_name: str,
-        parameters: Union[_models.VariableValue, JSON, IO[bytes]],
+        parameters: Union[_models.VariableValue, _types.VariableValue, IO[bytes]],
         **kwargs: Any
     ) -> _models.VariableValue:
         """Creates or updates a variable value.
@@ -9759,9 +9790,10 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is one of the following types:
-         VariableValue, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or JSON or IO[bytes]
+        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or
+         ~azure.mgmt.resource.policy.types.VariableValue or IO[bytes]
         :return: VariableValue. The VariableValue is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10132,7 +10164,7 @@ class VariableValuesOperations:
         management_group_id: str,
         variable_name: str,
         variable_value_name: str,
-        parameters: JSON,
+        parameters: _types.VariableValue,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10149,7 +10181,7 @@ class VariableValuesOperations:
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
         :param parameters: Parameters for the variable value. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.VariableValue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10210,7 +10242,7 @@ class VariableValuesOperations:
         management_group_id: str,
         variable_name: str,
         variable_value_name: str,
-        parameters: Union[_models.VariableValue, JSON, IO[bytes]],
+        parameters: Union[_models.VariableValue, _types.VariableValue, IO[bytes]],
         **kwargs: Any
     ) -> _models.VariableValue:
         """Creates or updates a variable value.
@@ -10224,9 +10256,10 @@ class VariableValuesOperations:
         :type variable_name: str
         :param variable_value_name: The name of the variable value to operate on. Required.
         :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is one of the following types:
-         VariableValue, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or JSON or IO[bytes]
+        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or
+         ~azure.mgmt.resource.policy.types.VariableValue or IO[bytes]
         :return: VariableValue. The VariableValue is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.VariableValue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10479,7 +10512,7 @@ class VariableValuesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PolicyTokensOperations:
+class PolicyTokensOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10516,14 +10549,14 @@ class PolicyTokensOperations:
 
     @overload
     async def acquire(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.PolicyTokenRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token.
 
         This operation acquires a policy token in the given subscription for the given request body.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyTokenRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10552,15 +10585,16 @@ class PolicyTokensOperations:
 
     @distributed_trace_async
     async def acquire(
-        self, parameters: Union[_models.PolicyTokenRequest, JSON, IO[bytes]], **kwargs: Any
+        self, parameters: Union[_models.PolicyTokenRequest, _types.PolicyTokenRequest, IO[bytes]], **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token.
 
         This operation acquires a policy token in the given subscription for the given request body.
 
-        :param parameters: The request body. Is one of the following types: PolicyTokenRequest, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or JSON or IO[bytes]
+        :param parameters: The request body. Is either a PolicyTokenRequest type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or
+         ~azure.mgmt.resource.policy.types.PolicyTokenRequest or IO[bytes]
         :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10659,7 +10693,12 @@ class PolicyTokensOperations:
 
     @overload
     async def acquire_at_management_group(
-        self, management_group_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        management_group_name: str,
+        parameters: _types.PolicyTokenRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token at management group level.
 
@@ -10670,7 +10709,7 @@ class PolicyTokensOperations:
          Required.
         :type management_group_name: str
         :param parameters: The policy token properties. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.policy.types.PolicyTokenRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10708,7 +10747,10 @@ class PolicyTokensOperations:
 
     @distributed_trace_async
     async def acquire_at_management_group(
-        self, management_group_name: str, parameters: Union[_models.PolicyTokenRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        management_group_name: str,
+        parameters: Union[_models.PolicyTokenRequest, _types.PolicyTokenRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PolicyTokenResponse:
         """Acquires a policy token at management group level.
 
@@ -10718,9 +10760,10 @@ class PolicyTokensOperations:
         :param management_group_name: The name of the management group. The name is case insensitive.
          Required.
         :type management_group_name: str
-        :param parameters: The policy token properties. Is one of the following types:
-         PolicyTokenRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or JSON or IO[bytes]
+        :param parameters: The policy token properties. Is either a PolicyTokenRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or
+         ~azure.mgmt.resource.policy.types.PolicyTokenRequest or IO[bytes]
         :return: PolicyTokenResponse. The PolicyTokenResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:

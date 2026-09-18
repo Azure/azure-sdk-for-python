@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/LongTermRetentionBackupUpdate.json
+# x-ms-original-file: 2025-08-01-preview/LongTermRetentionBackupUpdate.json
 if __name__ == "__main__":
     main()

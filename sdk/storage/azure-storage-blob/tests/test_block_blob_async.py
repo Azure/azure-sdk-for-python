@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
+import asyncio
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
+from unittest import mock
 
 import aiohttp
 import pytest
@@ -16,6 +18,8 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
+from test_block_blob import _assert_unique_ordered_block_ids
+from test_content_validation import _deterministic_urandom
 from test_helpers_async import (
     NonSeekableStream,
     ProgressTracker,
@@ -36,6 +40,11 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     StandardBlobTier,
 )
+from azure.storage.blob._shared.uploads_async import (
+    BlockBlobChunkUploader,
+    upload_data_chunks,
+    upload_substream_blocks,
+)
 from azure.storage.blob._shared.validation import calculate_content_md5
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
@@ -45,6 +54,17 @@ SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 # ------------------------------------------------------------------------------
+
+
+class _RecordingBlockBlobServiceAsync:
+    """Minimal fake async service that records the block IDs and data passed to stage_block."""
+
+    def __init__(self):
+        self.blocks = {}  # block_id -> staged bytes
+
+    async def stage_block(self, body, *, block_id, content_length, **kwargs):  # pylint: disable=unused-argument
+        content = body.read() if hasattr(body, "read") else body
+        self.blocks[block_id] = content
 
 
 class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
@@ -618,9 +638,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        await new_blob.upload_blob_from_url(
+        resp = await new_blob.upload_blob_from_url(
             source_blob_url, include_source_blob_properties=True, source_content_md5=source_md5
         )
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
         with pytest.raises(HttpResponseError):
             await new_blob.upload_blob_from_url(
                 source_blob_url, include_source_blob_properties=False, source_content_md5=bad_source_md5
@@ -803,9 +825,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob()
 
         # Act
-        await blob.stage_block(1, b"block", validate_content=True)
+        resp = await blob.stage_block(1, b"block", validate_content=True)
 
         # Assert
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1919,7 +1943,8 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        await blob.upload_blob(data, validate_content=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(data, validate_content=True)
 
         # Assert
 
@@ -2262,6 +2287,48 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         async for blob in cc.list_blobs():
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
+
+    def test_block_blob_upload_generates_unique_ordered_block_ids(self):
+        # Each staged block must get a unique block ID, and the block list must be
+        # committed in byte-offset order even when chunks finish out of order under concurrency.
+        data = b"".join(bytes([i]) * 8 for i in range(20))  # 20 distinct 8-byte chunks
+        service = _RecordingBlockBlobServiceAsync()
+
+        async def run():
+            return await upload_data_chunks(
+                service=service,
+                uploader_class=BlockBlobChunkUploader,
+                total_size=len(data),
+                chunk_size=8,
+                max_concurrency=4,
+                stream=BytesIO(data),
+                validate_content=False,
+                progress_hook=None,
+            )
+
+        block_ids = asyncio.run(run())
+        # Chunk path uses a 48-digit zero-padded UUID -> 64-char block IDs.
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 64)
+
+    def test_block_blob_substream_upload_generates_unique_ordered_block_ids(self):
+        data = b"".join(bytes([i]) * 8 for i in range(20))
+        service = _RecordingBlockBlobServiceAsync()
+
+        async def run():
+            return await upload_substream_blocks(
+                service=service,
+                uploader_class=BlockBlobChunkUploader,
+                total_size=len(data),
+                chunk_size=8,
+                max_concurrency=4,
+                stream=BytesIO(data),
+                validate_content=False,
+                progress_hook=None,
+            )
+
+        block_ids = asyncio.run(run())
+        # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
 
 # ------------------------------------------------------------------------------

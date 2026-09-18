@@ -137,6 +137,35 @@ class CapacityReservationInstanceViewTypes(str, Enum, metaclass=CaseInsensitiveE
     """INSTANCE_VIEW."""
 
 
+class CapacityReservationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which type of capacity reservation the virtual machine will consume capacity from if
+    eligible or whether it is explicitly opted out from being associated and consuming capacity
+    from any reserved capacity available in the subscription. Minimum api-version: 2026-04-01.
+    """
+
+    NOT_ELIGIBLE = "NotEligible"
+    """The virtual machine is not eligible to be implicitly associated with an open capacity
+    reservation and is not explicitly associated with any capacity reservation group, so it will
+    consume capacity from the publicly available capacity."""
+    TARGETED = "Targeted"
+    """The virtual machine will consume capacity from a specific matching capacity reservation when
+    associated with a capacity reservation group resource of type targeted, but can fall back to
+    consume capacity from the publicly available capacity if there is no capacity available in the
+    targeted reservation."""
+    OPEN = "Open"
+    """The virtual machine if eligible will implicitly associate and consume any available capacity
+    from a matching open capacity reservation created or shared in the subscription. **Note:** The
+    VM should not be explicitly associated with the open capacity reservation group resource
+    containing the matching reservation."""
+    DISABLED = "Disabled"
+    """The virtual machine has capacity reservation assignment disabled and will not be allowed to
+    implicitly or explicitly associate with any type of capacity reservation."""
+    BLOCK = "Block"
+    """The virtual machine consumes capacity from a specific matching capacity reservation when
+    associated with a capacity reservation group resource of type block, and will hit capacity
+    failures if there is no available capacity in the block reservation."""
+
+
 class ComponentNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The component name. Currently, the only allowable value is Microsoft-Windows-Shell-Setup."""
 
@@ -155,6 +184,15 @@ class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """ENCRYPTED_WITH_CMK."""
     NON_PERSISTED_TPM = "NonPersistedTPM"
     """NON_PERSISTED_TPM."""
+
+
+class ConfidentialVMVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the version of Confidential VM for the resource."""
+
+    V1 = "V1"
+    """V1 indicates the resource does not have an associated Virtual Machine Metadata."""
+    V2 = "V2"
+    """V2 indicates the resource has an associated Virtual Machine Metadata."""
 
 
 class ConsistencyModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +292,17 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESOURCE_DISK."""
     NVME_DISK = "NvmeDisk"
     """NVME_DISK."""
+
+
+class DiskApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the Disk API version used when applying additionalDiskProperties to managed disks.
+    The value must be in the format YYYY-MM-DD.
+    """
+
+    ENUM_2025_01_02 = "2025-01-02"
+    """The 2025-01-02 Disk RP API version."""
+    ENUM_2026_03_02 = "2026-03-02"
+    """The 2026-03-02 Disk RP API version."""
 
 
 class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -749,6 +798,19 @@ class ImageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEPRECATED."""
 
 
+class ImmutabilityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the immutability policy. 'Unlocked' allows the policy to be modified by privileged
+    users; 'Locked' prevents reduction of the immutability duration but allows extension of the
+    lock period.
+    """
+
+    UNLOCKED = "Unlocked"
+    """Privileged users can modify the snapshot's immutability policy, if it is unlocked type."""
+    LOCKED = "Locked"
+    """The snapshot immutability policy duration cannot be reduced but can be extended. The policy
+    cannot be removed until the lock period expires."""
+
+
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of InstanceViewTypes."""
 
@@ -867,6 +929,13 @@ class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMAGE_DEFAULT."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
     """AUTOMATIC_BY_PLATFORM."""
+
+
+class ListVersionsExpandOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the allowed values for the $expand query parameter on the ListVersions operation."""
+
+    PROPERTIES = "properties"
+    """Expand to include all properties in the response."""
 
 
 class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1137,6 +1206,18 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """REJECTED."""
 
 
+class ProcessorMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the processor frequency behavior for the virtual machine. See each member for the
+    behavior it controls.
+    """
+
+    DETERMINISTIC = "Deterministic"
+    """Ensures predictable and consistent processor frequency at the base/nominal level. Turbo/Boost
+    is disabled."""
+    OPPORTUNISTIC = "Opportunistic"
+    """Allows higher frequency bursts when thermal and power headroom permits."""
+
+
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protocol of WinRM listener. Possible values are: **http,** **https.**."""
 
@@ -1226,6 +1307,21 @@ class RebalanceStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RECREATE."""
 
 
+class ReleaseCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumerates the type of change introduced in the extension version."""
+
+    OTHER = "Other"
+    """Other type of change."""
+    BUG_FIX = "BugFix"
+    """Bug fix change."""
+    SECURITY_FIX = "SecurityFix"
+    """Security fix change."""
+    COMPATIBILITY_UPDATE = "CompatibilityUpdate"
+    """Compatibility update change."""
+    NEW_FEATURE = "NewFeature"
+    """New feature change."""
+
+
 class RepairAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of repair action (replace, restart, reimage) that will be used for repairing unhealthy
     virtual machines in the scale set. Default value is replace.
@@ -1272,19 +1368,53 @@ class ReplicationStatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UEFI_SETTINGS."""
 
 
+class ReservationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of a Future capacity reservation."""
+
+    PENDING = "Pending"
+    """The capacity reservation request has been submitted and is awaiting evaluation."""
+    DECLINED = "Declined"
+    """The capacity reservation request was rejected, and will not change again without user action."""
+    APPROVED = "Approved"
+    """The capacity reservation request has been approved by Azure and is awaiting fulfillment."""
+    FULFILLMENT_FAILED = "FulfillmentFailed"
+    """A failure occurred while attempting to fulfill the capacity reservation request."""
+    COMMITTED = "Committed"
+    """The capacity reservation is locked and cannot be updated or deleted prior to going live."""
+    LIVE = "Live"
+    """The capacity reservation is active and available for use, and cannot be modified or deleted
+    until the minimum commitment period has elapsed."""
+    PARTIALLY_FULFILLED = "PartiallyFulfilled"
+    """Azure was only able to deliver a portion of the requested capacity. The capacity reservation
+    cannot be modified or deleted until the minimum commitment period has elapsed. The portion of
+    fulfilled capacity can be viewed by inspecting the capacity reservation's instance view,
+    displayed as currentCapacity within the utilizationInfo."""
+
+
 class ReservationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the type of capacity reservation. Allowed values are 'Block' for block capacity
-    reservations and 'Targeted' for reservations that enable a VM to consume a specific capacity
-    reservation when a capacity reservation group is provided. The reservation type is immutable
-    and cannot be changed after it is assigned.
+    reservations that enable a VM to consume capacity only from this capacity block when it is
+    associated using a capacity reservation group, 'Targeted' for reservations that enable a VM to
+    consume capacity from an explicitly associated capacity reservation group and fall back to the
+    publicly available capacity if the reservation is full, and 'Open' for reservations that a VM
+    consumes when it is eligible from an implicitly associated capacity reservation group with the
+    matching VM size and zone without associating that capacity reservation group and fall back to
+    the publicly available capacity if the reservation is full. Future capacity reservations can be
+    created in 'Targeted' or 'Open' capacity reservation groups. The reservation type is immutable
+    and cannot be changed after the capacity reservation group is created.
     """
 
     TARGETED = "Targeted"
-    """To consume on demand allocated capacity reservation when a capacity reservation group is
-    provided."""
+    """Reservations that enable a VM to consume capacity from an explicitly associated capacity
+    reservation group and fall back to the publicly available capacity if the reservation is full."""
     BLOCK = "Block"
-    """To consume scheduled allocated block capacity reservation when a capacity reservation group is
-    provided."""
+    """Block capacity reservations that enable a VM to consume capacity only from this capacity block
+    when it is associated using a capacity reservation group."""
+    OPEN = "Open"
+    """Reservations that a VM consumes when it is eligible from an implicitly associated capacity
+    reservation group with the matching VM size and zone without associating that capacity
+    reservation group, and fall back to the publicly available capacity if the reservation is full.
+    Minimum api-version: 2026-04-01."""
 
 
 class ResilientVMDeletionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1399,12 +1529,27 @@ class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ROLLING_FORWARD = "RollingForward"
     """ROLLING_FORWARD."""
+    ROLLING_BACK = "RollingBack"
+    """ROLLING_BACK."""
     CANCELLED = "Cancelled"
     """CANCELLED."""
     COMPLETED = "Completed"
     """COMPLETED."""
     FAULTED = "Faulted"
     """FAULTED."""
+
+
+class RunProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the execution profile for the extension."""
+
+    OTHER = "Other"
+    """Other execution profile."""
+    RUN_ONCE = "RunOnce"
+    """Run once execution profile."""
+    LONG_RUNNING = "LongRunning"
+    """Long running execution profile."""
+    HYBRID = "Hybrid"
+    """Hybrid execution profile."""
 
 
 class ScriptShellTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1719,12 +1864,25 @@ class UpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ROLLING_FORWARD = "RollingForward"
     """ROLLING_FORWARD."""
+    ROLLING_BACK = "RollingBack"
+    """ROLLING_BACK."""
     CANCELLED = "Cancelled"
     """CANCELLED."""
     COMPLETED = "Completed"
     """COMPLETED."""
     FAULTED = "Faulted"
     """FAULTED."""
+
+
+class UrgencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines urgency levels for extension updates."""
+
+    REGULAR = "Regular"
+    """Regular urgency level."""
+    EXPEDITED = "Expedited"
+    """Expedited urgency level."""
+    EMERGENCY = "Emergency"
+    """Emergency urgency level."""
 
 
 class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1738,6 +1896,27 @@ class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SUCCEEDED."""
 
 
+class VirtualMachineDiskDelayAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines how to handle disks with slow I/O."""
+
+    NONE = "None"
+    """Defaults to behavior without availability policy specified, which is VM restart upon slow disk
+    I/O."""
+    AUTOMATIC_REATTACH = "AutomaticReattach"
+    """Upon a disk I/O failure or slow response, try detaching then reattaching the disk."""
+
+
+class VirtualMachineDiskNetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Policy for accessing the disk via network."""
+
+    ALLOW_ALL = "AllowAll"
+    """The disk can be exported or uploaded from any network."""
+    ALLOW_PRIVATE = "AllowPrivate"
+    """The disk can be exported or uploaded using a DiskAccess resource's private endpoints."""
+    DENY_ALL = "DenyAll"
+    """The disk cannot be exported."""
+
+
 class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the eviction policy for the Azure Spot VM/VMSS."""
 
@@ -1749,16 +1928,21 @@ class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnum
 
 class VirtualMachinePriorityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
-    set. 'Low' enum will be deprecated in the future, please use 'Spot' as the enum to deploy Azure
-    Spot VM/VMSS.
+    set.
     """
 
     REGULAR = "Regular"
-    """REGULAR."""
+    """Regular Priority for a standalone virtual machine or the virtual machines in the scale set.
+    This is the default priority and it will be used to deploy regular VM/VMSS."""
     LOW = "Low"
-    """LOW."""
+    """Low priority for a standalone virtual machine or the virtual machines in the scale set. Will be
+    Deprecated, use Spot instead."""
     SPOT = "Spot"
-    """SPOT."""
+    """Spot priority for a standalone virtual machine or the virtual machines in the scale set."""
+    SPOT_PLUS = "SpotPlus"
+    """SpotPlus priority for a standalone virtual machine or the virtual machines in the scale set.
+    This is an enum value that will be used to deploy Azure Spot Plus VM/VMSS, which is the next
+    generation of Azure Spot VM/VMSS with more reliability and longer running time."""
 
 
 class VirtualMachineScaleSetScaleInRules(str, Enum, metaclass=CaseInsensitiveEnumMeta):

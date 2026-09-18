@@ -61,7 +61,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -89,7 +89,95 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParentServiceGroupProperties(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.servicegroups.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.servicegroups.models.Origin
+    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
+     that are for internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.servicegroups.models.ActionType
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     \"Microsoft.Compute/virtualMachines/write\",
+     \"Microsoft.Compute/virtualMachines/capture/action\"."""
+    is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
+    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
+     \"false\" for Azure Resource Manager/control-plane operations."""
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Localized display information for this particular operation."""
+    origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
+     \"user,system\"."""
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
+     internal only APIs. \"Internal\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display: Optional["_models.OperationDisplay"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    provider: Optional[str] = rest_field(visibility=["read"])
+    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
+     Insights\" or \"Microsoft Compute\"."""
+    resource: Optional[str] = rest_field(visibility=["read"])
+    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
+     Machines\" or \"Job Schedule Collections\"."""
+    operation: Optional[str] = rest_field(visibility=["read"])
+    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
+     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The short, localized friendly description of the operation; suitable for tool tips and detailed
+     views."""
+
+
+class ParentServiceGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the parent serviceGroup.
 
     :ivar resource_id: The fully qualified ID of the parent serviceGroup.  For example,
@@ -166,7 +254,7 @@ class ProxyResource(Resource):
     """
 
 
-class ServiceGroup(ProxyResource):
+class ServiceGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The serviceGroup details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -217,26 +305,22 @@ class ServiceGroup(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceGroupCollectionResponse(_Model):
-    """Response holding an array of service groups and a nextLink that supports pagination.
+class ServiceGroupAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The attributes of the serviceGroup.
 
-    :ivar value: The ServiceGroup items on this page. Required.
-    :vartype value: list[~azure.mgmt.servicegroups.models.ServiceGroup]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
+    :ivar criticality: The criticality designation of the service group. Valid values range from 0
+     through 4.
+    :vartype criticality: int
     """
 
-    value: list["_models.ServiceGroup"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ServiceGroup items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
+    criticality: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The criticality designation of the service group. Valid values range from 0 through 4."""
 
     @overload
     def __init__(
         self,
         *,
-        value: list["_models.ServiceGroup"],
-        next_link: Optional[str] = None,
+        criticality: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -250,7 +334,7 @@ class ServiceGroupCollectionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceGroupProperties(_Model):
+class ServiceGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServiceGroup creation request body parameters.
 
     :ivar provisioning_state: The provisioning state of the serviceGroup. For example, Running.
@@ -258,6 +342,8 @@ class ServiceGroupProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.servicegroups.models.ProvisioningState
     :ivar display_name: The display name of the serviceGroup. For example, ServiceGroupTest1.
     :vartype display_name: str
+    :ivar attributes: The attributes of the serviceGroup.
+    :vartype attributes: ~azure.mgmt.servicegroups.models.ServiceGroupAttributes
     :ivar parent: The details of the parent serviceGroup.
     :vartype parent: ~azure.mgmt.servicegroups.models.ParentServiceGroupProperties
     """
@@ -271,6 +357,10 @@ class ServiceGroupProperties(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The display name of the serviceGroup. For example, ServiceGroupTest1."""
+    attributes: Optional["_models.ServiceGroupAttributes"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The attributes of the serviceGroup."""
     parent: Optional["_models.ParentServiceGroupProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -281,6 +371,7 @@ class ServiceGroupProperties(_Model):
         self,
         *,
         display_name: Optional[str] = None,
+        attributes: Optional["_models.ServiceGroupAttributes"] = None,
         parent: Optional["_models.ParentServiceGroupProperties"] = None,
     ) -> None: ...
 
@@ -295,7 +386,7 @@ class ServiceGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

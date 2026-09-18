@@ -26,7 +26,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.route_tables.get(
             resource_group_name=resource_group.name,
             route_table_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,13 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -169,6 +175,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -469,7 +476,11 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -510,6 +521,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -534,6 +546,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -595,6 +608,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -660,6 +674,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -750,6 +765,9 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -770,6 +788,9 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -827,6 +848,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                             "ddosSettings": {
                                                                                 "ddosCustomPolicy": {"id": "str"}
                                                                             },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -878,6 +900,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -925,6 +948,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -997,6 +1021,9 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1017,6 +1044,9 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1078,6 +1108,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             "id": "str"
                                                                                         }
                                                                                     },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1133,6 +1164,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1184,6 +1216,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1388,6 +1421,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1439,6 +1473,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1577,6 +1612,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -1780,7 +1816,11 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1823,6 +1863,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1847,6 +1888,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                     "id": "str"
                                                                                                 }
                                                                                             },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1908,6 +1950,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -1975,6 +2018,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -2223,6 +2267,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                 "ddosSettings": {
                                                                                     "ddosCustomPolicy": {"id": "str"}
                                                                                 },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2274,6 +2319,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2323,6 +2369,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2390,6 +2437,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 "id": "str"
                                                                                             }
                                                                                         },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2451,6 +2499,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2516,6 +2565,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2720,6 +2770,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2785,6 +2836,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2827,6 +2879,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2929,7 +2982,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2943,7 +2996,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             route_table_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -2956,7 +3009,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
             await self.client.route_tables.begin_delete(
                 resource_group_name=resource_group.name,
                 route_table_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2968,7 +3021,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_route_tables_list(self, resource_group):
         response = self.client.route_tables.list(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2978,7 +3031,7 @@ class TestNetworkManagementRouteTablesOperationsAsync(AzureMgmtRecordedTestCase)
     @recorded_by_proxy_async
     async def test_route_tables_list_all(self, resource_group):
         response = self.client.route_tables.list_all(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

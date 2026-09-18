@@ -11,10 +11,11 @@ Covers all 9 methods on WorkspaceClient.investigations:
   - list (Paged)
   - get_discovery_engine, get_discovery_engine_memory, update_discovery_engine
 """
+
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
-from azure.ai.discovery._workspace.azure.ai.discovery.models import (
+from azure.ai.discovery.models import (
     Investigation,
     DiscoveryEngine,
     DiscoveryEngineUpdate,
@@ -40,11 +41,16 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
 
     @recorded_by_proxy
     def test_list(self):
+        """Test listing investigations.
+
+        ``investigations.list`` returns a ``PagedInvestigation``
+        envelope. Iterate ``.value``.
+        """
         client = self.create_workspace_client()
-        investigations = list(client.investigations.list(project_name=self.project_name))
-        assert isinstance(investigations, list)
-        assert len(investigations) > 0
-        for inv in investigations:
+        page = client.investigations.list(project_name=self.project_name)
+        assert page.value is not None
+        assert len(page.value) > 0
+        for inv in page.value:
             assert inv.project_name == self.project_name
             assert inv.status is not None
             assert inv.created_at is not None
@@ -65,12 +71,18 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
 
     @recorded_by_proxy
     def test_update_discovery_engine(self):
-        """Test updating the discovery engine for an investigation."""
+        """Test updating the discovery engine for an investigation.
+
+        Note: ``DiscoveryEngineUpdate`` does not accept ``discovery_engine_status``
+        (that field is on ``DiscoveryEngine`` itself and is controlled via the
+        dedicated start/stop action operations). The update payload only allows
+        ``system_prompt`` and ``configuration``.
+        """
         client = self.create_workspace_client()
         engine = client.investigations.update_discovery_engine(
             project_name=self.project_name,
             investigation_name=self.investigation_name,
-            body=DiscoveryEngineUpdate(discovery_engine_status="Active"),
+            body=DiscoveryEngineUpdate(system_prompt="Updated system prompt for test"),
         )
         assert engine is not None
         assert hasattr(engine, "discovery_engine_status")
@@ -91,7 +103,7 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
         """Test starting the discovery engine for an investigation."""
         client = self.create_workspace_client()
         # Discovery Engine requires at least one task in the investigation before starting
-        from azure.ai.discovery._workspace.azure.ai.discovery.models import Task
+        from azure.ai.discovery.models import Task
 
         test_task = client.tasks.create(
             project_name=self.project_name,
@@ -143,10 +155,10 @@ class TestInvestigations(DiscoveryWorkspaceTestCase):
         assert investigation.display_name == "updated-new-test"
 
     @recorded_by_proxy
-    def test_create_or_update(self):
+    def test_update(self):
         """Test creating or updating (PATCH) an investigation."""
         client = self.create_workspace_client()
-        investigation = client.investigations.create_or_update(
+        investigation = client.investigations.update(
             project_name=self.project_name,
             investigation_name=self.investigation_name,
             resource=Investigation(description="Updated description", display_name="updated-test"),

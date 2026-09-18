@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Alias(_Model):
+class Alias(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias type.
 
     :ivar name: The alias name.
@@ -80,7 +80,7 @@ class Alias(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPath(_Model):
+class AliasPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the paths for alias.
 
     :ivar path: The path of an alias.
@@ -125,7 +125,7 @@ class AliasPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPathMetadata(_Model):
+class AliasPathMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alias path metadata.
 
     :ivar type: The type of the token that the alias path is referring to. Known values are:
@@ -166,7 +166,7 @@ class AliasPathMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AliasPattern(_Model):
+class AliasPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the pattern for an alias path.
 
     :ivar phrase: The alias pattern phrase.
@@ -206,7 +206,7 @@ class AliasPattern(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataEffect(_Model):
+class DataEffect(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data effect definition.
 
     :ivar name: The data effect name.
@@ -241,7 +241,9 @@ class DataEffect(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataManifestCustomResourceFunctionDefinition(_Model):  # pylint: disable=name-too-long
+class DataManifestCustomResourceFunctionDefinition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The custom resource function definition.
 
     :ivar name: The function name as it will appear in the policy rule. eg - 'vault'.
@@ -297,7 +299,7 @@ class DataManifestCustomResourceFunctionDefinition(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class DataManifestResourceFunctionsDefinition(_Model):
+class DataManifestResourceFunctionsDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource functions supported by a manifest.
 
     :ivar standard: The standard resource functions (subscription and/or resourceGroup).
@@ -378,7 +380,7 @@ class ProxyResource(Resource):
     """
 
 
-class DataPolicyManifest(ProxyResource):
+class DataPolicyManifest(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data policy manifest.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -419,7 +421,7 @@ class DataPolicyManifest(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataPolicyManifestProperties(_Model):
+class DataPolicyManifestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the data policy manifest.
 
     :ivar namespaces: The list of namespaces for the data policy manifest.
@@ -555,7 +557,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -600,7 +602,9 @@ class ExtensionResource(Resource):
     """
 
 
-class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=name-too-long
+class ExternalEvaluationEndpointInvocationResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The external evaluation endpoint invocation results.
 
     :ivar policy_info: The details of the policy requiring the external endpoint invocation.
@@ -698,7 +702,7 @@ class ExternalEvaluationEndpointInvocationResult(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ExternalEvaluationEndpointSettings(_Model):
+class ExternalEvaluationEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The settings of an external endpoint providing evaluation results.
 
     :ivar kind: The kind of the endpoint.
@@ -731,7 +735,7 @@ class ExternalEvaluationEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalEvaluationEnforcementSettings(_Model):
+class ExternalEvaluationEnforcementSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the source of external evaluation results required by the policy during
     enforcement evaluation.
 
@@ -792,7 +796,7 @@ class ExternalEvaluationEnforcementSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.  Policy assignments support a maximum of one identity.  That is
     either a system assigned identity or a single user assigned identity.
 
@@ -850,7 +854,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NonComplianceMessage(_Model):
+class NonComplianceMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A message that describes why a resource is non-compliant with the policy. This is shown in
     'deny' error messages and on resource's non-compliant compliance results.
 
@@ -893,7 +897,7 @@ class NonComplianceMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Override(_Model):
+class Override(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy property value override.
 
     :ivar kind: The override kind. Known values are: "policyEffect" and "definitionVersion".
@@ -935,7 +939,7 @@ class Override(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterDefinitionsValue(_Model):
+class ParameterDefinitionsValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a parameter that can be provided to the policy.
 
     :ivar type: The data type of the parameter. Known values are: "String", "Array", "Object",
@@ -1001,7 +1005,7 @@ class ParameterDefinitionsValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterDefinitionsValueMetadata(_Model):
+class ParameterDefinitionsValueMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """General metadata for the parameter.
 
     :ivar display_name: The display name for the parameter.
@@ -1056,7 +1060,7 @@ class ParameterDefinitionsValueMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ParameterValuesValue(_Model):
+class ParameterValuesValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The value of a parameter.
 
     :ivar value: The value of the parameter.
@@ -1084,7 +1088,7 @@ class ParameterValuesValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyAssignment(ExtensionResource):
+class PolicyAssignment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1174,7 +1178,7 @@ class PolicyAssignment(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class PolicyAssignmentProperties(_Model):
+class PolicyAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment properties.
 
     :ivar display_name: The display name of the policy assignment.
@@ -1319,7 +1323,7 @@ class PolicyAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyAssignmentUpdate(_Model):
+class PolicyAssignmentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment for Patch request.
 
     :ivar properties: The policy assignment properties for Patch request.
@@ -1380,7 +1384,7 @@ class PolicyAssignmentUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PolicyAssignmentUpdateProperties(_Model):
+class PolicyAssignmentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy assignment properties for Patch request.
 
     :ivar resource_selectors: The resource selector list to filter policies by resource properties.
@@ -1426,7 +1430,7 @@ class PolicyAssignmentUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinition(ProxyResource):
+class PolicyDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1498,7 +1502,7 @@ class PolicyDefinition(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyDefinitionGroup(_Model):
+class PolicyDefinitionGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition group.
 
     :ivar name: The name of the group. Required.
@@ -1551,7 +1555,7 @@ class PolicyDefinitionGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionProperties(_Model):
+class PolicyDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -1644,7 +1648,7 @@ class PolicyDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionReference(_Model):
+class PolicyDefinitionReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition reference.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
@@ -1716,7 +1720,7 @@ class PolicyDefinitionReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionVersion(ProxyResource):
+class PolicyDefinitionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ID of the policy definition version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1787,7 +1791,7 @@ class PolicyDefinitionVersion(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicyDefinitionVersionListResult(_Model):
+class PolicyDefinitionVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PolicyDefinitionVersion list operation.
 
     :ivar value: The PolicyDefinitionVersion items on this page. Required.
@@ -1822,7 +1826,7 @@ class PolicyDefinitionVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyDefinitionVersionProperties(_Model):
+class PolicyDefinitionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -1910,7 +1914,7 @@ class PolicyDefinitionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyEnrollment(ExtensionResource):
+class PolicyEnrollment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy enrollment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1985,7 +1989,7 @@ class PolicyEnrollment(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class PolicyEnrollmentProperties(_Model):
+class PolicyEnrollmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy enrollment properties.
 
     :ivar policy_assignment_id: The ID of the policy assignment that is being enrolled. Required.
@@ -2074,7 +2078,7 @@ class PolicyEnrollmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyEnrollmentUpdate(_Model):
+class PolicyEnrollmentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy enrollment for Patch request.
 
     :ivar properties: The policy enrollment properties for Patch request.
@@ -2124,7 +2128,7 @@ class PolicyEnrollmentUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PolicyEnrollmentUpdateProperties(_Model):
+class PolicyEnrollmentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy enrollment properties for Patch request.
 
     :ivar assignment_scope_validation: The option whether to validate the enrollment is at or under
@@ -2164,7 +2168,7 @@ class PolicyEnrollmentUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyExemption(ExtensionResource):
+class PolicyExemption(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy exemption.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2197,6 +2201,7 @@ class PolicyExemption(ExtensionResource):
         "metadata",
         "resource_selectors",
         "assignment_scope_validation",
+        "exemption_management_mode",
     ]
 
     @overload
@@ -2235,7 +2240,7 @@ class PolicyExemption(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class PolicyExemptionProperties(_Model):
+class PolicyExemptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy exemption properties.
 
     :ivar policy_assignment_id: The ID of the policy assignment that is being exempted. Required.
@@ -2262,6 +2267,10 @@ class PolicyExemptionProperties(_Model):
      assignment scope. Known values are: "Default" and "DoNotValidate".
     :vartype assignment_scope_validation: str or
      ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
+    :ivar exemption_management_mode: The mode indicating how the policy exemption is managed. Known
+     values are: "Admin" and "UserSelfServe".
+    :vartype exemption_management_mode: str or
+     ~azure.mgmt.resource.policy.models.ExemptionManagementMode
     """
 
     policy_assignment_id: str = rest_field(
@@ -2301,6 +2310,11 @@ class PolicyExemptionProperties(_Model):
     )
     """The option whether validate the exemption is at or under the assignment scope. Known values
      are: \"Default\" and \"DoNotValidate\"."""
+    exemption_management_mode: Optional[Union[str, "_models.ExemptionManagementMode"]] = rest_field(
+        name="exemptionManagementMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode indicating how the policy exemption is managed. Known values are: \"Admin\" and
+     \"UserSelfServe\"."""
 
     @overload
     def __init__(
@@ -2315,6 +2329,7 @@ class PolicyExemptionProperties(_Model):
         metadata: Optional[Any] = None,
         resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
         assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
+        exemption_management_mode: Optional[Union[str, "_models.ExemptionManagementMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -2328,7 +2343,7 @@ class PolicyExemptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyExemptionUpdate(_Model):
+class PolicyExemptionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy exemption for Patch request.
 
     :ivar properties: The policy exemption properties for Patch request.
@@ -2340,7 +2355,7 @@ class PolicyExemptionUpdate(_Model):
     )
     """The policy exemption properties for Patch request."""
 
-    __flattened_items = ["resource_selectors", "assignment_scope_validation"]
+    __flattened_items = ["resource_selectors", "assignment_scope_validation", "exemption_management_mode"]
 
     @overload
     def __init__(
@@ -2378,7 +2393,7 @@ class PolicyExemptionUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PolicyExemptionUpdateProperties(_Model):
+class PolicyExemptionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy exemption properties for Patch request.
 
     :ivar resource_selectors: The resource selector list to filter policies by resource properties.
@@ -2387,6 +2402,10 @@ class PolicyExemptionUpdateProperties(_Model):
      assignment scope. Known values are: "Default" and "DoNotValidate".
     :vartype assignment_scope_validation: str or
      ~azure.mgmt.resource.policy.models.AssignmentScopeValidation
+    :ivar exemption_management_mode: The mode indicating how the policy exemption is managed. Known
+     values are: "Admin" and "UserSelfServe".
+    :vartype exemption_management_mode: str or
+     ~azure.mgmt.resource.policy.models.ExemptionManagementMode
     """
 
     resource_selectors: Optional[list["_models.ResourceSelector"]] = rest_field(
@@ -2398,6 +2417,11 @@ class PolicyExemptionUpdateProperties(_Model):
     )
     """The option whether validate the exemption is at or under the assignment scope. Known values
      are: \"Default\" and \"DoNotValidate\"."""
+    exemption_management_mode: Optional[Union[str, "_models.ExemptionManagementMode"]] = rest_field(
+        name="exemptionManagementMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode indicating how the policy exemption is managed. Known values are: \"Admin\" and
+     \"UserSelfServe\"."""
 
     @overload
     def __init__(
@@ -2405,6 +2429,7 @@ class PolicyExemptionUpdateProperties(_Model):
         *,
         resource_selectors: Optional[list["_models.ResourceSelector"]] = None,
         assignment_scope_validation: Optional[Union[str, "_models.AssignmentScopeValidation"]] = None,
+        exemption_management_mode: Optional[Union[str, "_models.ExemptionManagementMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -2418,7 +2443,7 @@ class PolicyExemptionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyLogInfo(_Model):
+class PolicyLogInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy log info.
 
     :ivar policy_definition_id: The policy definition Id.
@@ -2525,7 +2550,7 @@ class PolicyLogInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinition(ProxyResource):
+class PolicySetDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2596,7 +2621,7 @@ class PolicySetDefinition(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicySetDefinitionProperties(_Model):
+class PolicySetDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition properties.
 
     :ivar policy_type: The type of policy set definition. Possible values are NotSpecified,
@@ -2683,7 +2708,7 @@ class PolicySetDefinitionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinitionVersion(ProxyResource):
+class PolicySetDefinitionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2753,7 +2778,7 @@ class PolicySetDefinitionVersion(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PolicySetDefinitionVersionListResult(_Model):
+class PolicySetDefinitionVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PolicySetDefinitionVersion list operation.
 
     :ivar value: The PolicySetDefinitionVersion items on this page. Required.
@@ -2788,7 +2813,7 @@ class PolicySetDefinitionVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicySetDefinitionVersionProperties(_Model):
+class PolicySetDefinitionVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy set definition properties.
 
     :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
@@ -2869,7 +2894,7 @@ class PolicySetDefinitionVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenEvaluatedRequestDetails(_Model):
+class PolicyTokenEvaluatedRequestDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token evaluated request details.
 
     :ivar uri: The request URI of the resource operation that is targeted by the issued token.
@@ -2931,7 +2956,7 @@ class PolicyTokenEvaluatedRequestDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenOperation(_Model):
+class PolicyTokenOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource operation to acquire a token for.
 
     :ivar uri: The request URI of the resource operation. Required.
@@ -2969,7 +2994,7 @@ class PolicyTokenOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenRequest(_Model):
+class PolicyTokenRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token request properties.
 
     :ivar operation: The resource operation to acquire a token for. Required.
@@ -3004,7 +3029,7 @@ class PolicyTokenRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyTokenResponse(_Model):
+class PolicyTokenResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The policy token response properties.
 
     :ivar result: The result of the completed token acquisition operation. Possible values are
@@ -3091,7 +3116,7 @@ class PolicyTokenResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyVariableColumn(_Model):
+class PolicyVariableColumn(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The variable column.
 
     :ivar column_name: The name of this policy variable column. Required.
@@ -3119,7 +3144,7 @@ class PolicyVariableColumn(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyVariableProperties(_Model):
+class PolicyVariableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The variable properties.
 
     :ivar columns: Variable column definitions. Required.
@@ -3149,7 +3174,7 @@ class PolicyVariableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyVariableValueColumnValue(_Model):
+class PolicyVariableValueColumnValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name value tuple for this variable value column.
 
     :ivar column_name: Column name for the variable value. Required.
@@ -3184,7 +3209,7 @@ class PolicyVariableValueColumnValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyVariableValueProperties(_Model):
+class PolicyVariableValueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The variable value properties.
 
     :ivar values_property: Variable value column value array. Required.
@@ -3215,7 +3240,7 @@ class PolicyVariableValueProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSelector(_Model):
+class ResourceSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource selector to filter policies by resource properties.
 
     :ivar name: The name of the resource selector.
@@ -3250,7 +3275,7 @@ class ResourceSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTypeAliases(_Model):
+class ResourceTypeAliases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource type aliases definition.
 
     :ivar resource_type: The resource type name.
@@ -3285,7 +3310,7 @@ class ResourceTypeAliases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Selector(_Model):
+class Selector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The selector expression.
 
     :ivar kind: The selector kind. Known values are: "resourceLocation", "resourceType",
@@ -3329,7 +3354,7 @@ class Selector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelfServeExemptionSettings(_Model):
+class SelfServeExemptionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The self-serve exemption settings for a policy assignment.
 
     :ivar enabled: Indicates whether self-serve exemption is enabled.
@@ -3365,7 +3390,7 @@ class SelfServeExemptionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3447,7 +3472,7 @@ class UserAssignedIdentitiesValue(_Model):
     """The client id of user assigned identity."""
 
 
-class Variable(ProxyResource):
+class Variable(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The variable.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3508,7 +3533,7 @@ class Variable(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VariableValue(ProxyResource):
+class VariableValue(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The variable value.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -

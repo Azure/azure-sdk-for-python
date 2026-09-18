@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AssociatedIdentity(_Model):
+class AssociatedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity details to be used for an operation.
 
     :ivar operation_identity_type: Identity type that should be used for an operation. Known values
@@ -57,7 +57,7 @@ class AssociatedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureMonitorAlertSettings(_Model):
+class AzureMonitorAlertSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for Azure Monitor based alerts.
 
     :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
@@ -102,7 +102,7 @@ class AzureMonitorAlertSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapabilitiesProperties(_Model):
+class CapabilitiesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capabilities information.
 
     :ivar dns_zones:
@@ -131,7 +131,7 @@ class CapabilitiesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCapabilitiesBase(_Model):
+class ResourceCapabilitiesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for request and response capabilities information for Microsoft.RecoveryServices.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
@@ -159,7 +159,7 @@ class ResourceCapabilitiesBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapabilitiesResponse(ResourceCapabilitiesBase):
+class CapabilitiesResponse(ResourceCapabilitiesBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capabilities response for Microsoft.RecoveryServices.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
@@ -192,7 +192,7 @@ class CapabilitiesResponse(ResourceCapabilitiesBase):
         super().__init__(*args, **kwargs)
 
 
-class CapabilitiesResponseProperties(_Model):
+class CapabilitiesResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capabilities properties in response.
 
     :ivar dns_zones:
@@ -221,7 +221,7 @@ class CapabilitiesResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateRequest(_Model):
+class CertificateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the certificate to be uploaded to the vault.
 
     :ivar properties: Raw certificate data.
@@ -251,7 +251,7 @@ class CertificateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityParameters(_Model):
+class CheckNameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource Name availability input parameters - Resource type and resource name.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults.
@@ -284,7 +284,7 @@ class CheckNameAvailabilityParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResult(_Model):
+class CheckNameAvailabilityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for check name availability API. Resource provider will set availability as true |
     false.
 
@@ -322,7 +322,7 @@ class CheckNameAvailabilityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassicAlertSettings(_Model):
+class ClassicAlertSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for classic alerts.
 
     :ivar alerts_for_critical_operations: Known values are: "Enabled" and "Disabled".
@@ -360,7 +360,7 @@ class ClassicAlertSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryDisplay(_Model):
+class ClientDiscoveryDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Localized display information of an operation.
 
     :ivar provider: Name of the provider for display purposes.
@@ -403,7 +403,7 @@ class ClientDiscoveryDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForLogSpecification(_Model):
+class ClientDiscoveryForLogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox log specification in json client discovery.
 
     :ivar name: Name of the log.
@@ -445,7 +445,7 @@ class ClientDiscoveryForLogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForProperties(_Model):
+class ClientDiscoveryForProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox properties in json client discovery.
 
     :ivar service_specification: Operation properties.
@@ -476,7 +476,7 @@ class ClientDiscoveryForProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryForServiceSpecification(_Model):
+class ClientDiscoveryForServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class to represent shoebox service specification in json client discovery.
 
     :ivar log_specifications: List of log specifications of this operation.
@@ -507,7 +507,7 @@ class ClientDiscoveryForServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientDiscoveryValueForSingleApi(_Model):
+class ClientDiscoveryValueForSingleApi(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available operation details.
 
     :ivar name: Name of the Operation.
@@ -556,7 +556,7 @@ class ClientDiscoveryValueForSingleApi(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from Azure Backup.
 
     :ivar error: The resource management error response.
@@ -584,7 +584,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CmkKekIdentity(_Model):
+class CmkKekIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the identity used for CMK.
 
     :ivar use_system_assigned_identity: Indicate that system assigned identity should be used.
@@ -625,7 +625,7 @@ class CmkKekIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CmkKeyVaultProperties(_Model):
+class CmkKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Key Vault which hosts CMK.
 
     :ivar key_uri: The key uri of the Customer Managed Key.
@@ -653,7 +653,7 @@ class CmkKeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CostManagementSettings(_Model):
+class CostManagementSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cost Management Settings of the vault.
 
     :ivar granularity_level: Settings for granularity level. Known values are: "VaultLevel",
@@ -685,7 +685,7 @@ class CostManagementSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CrossSubscriptionRestoreSettings(_Model):
+class CrossSubscriptionRestoreSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for Cross Subscription Restore Settings.
 
     :ivar cross_subscription_restore_state: Known values are: "Enabled", "Disabled", and
@@ -762,7 +762,7 @@ class ProxyResource(Resource):
     """
 
 
-class DeletedVault(ProxyResource):
+class DeletedVault(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeletedVault information as returned by the resource provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -824,7 +824,7 @@ class DeletedVaultProperties(_Model):
     """Time in UTC at which the DeletedVault will be purged."""
 
 
-class DeletedVaultUndeleteInput(_Model):
+class DeletedVaultUndeleteInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for DeletedVault undelete.
 
     :ivar properties: Undelete input properties. Required.
@@ -854,7 +854,7 @@ class DeletedVaultUndeleteInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedVaultUndeleteInputProperties(_Model):
+class DeletedVaultUndeleteInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for DeletedVault undelete properties.
 
     :ivar recovery_resource_group_id: Recovery resource group Id. Required.
@@ -884,7 +884,7 @@ class DeletedVaultUndeleteInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DNSZone(_Model):
+class DNSZone(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DNSZone information.
 
     :ivar sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
@@ -917,7 +917,7 @@ class DNSZone(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DNSZoneResponse(DNSZone):
+class DNSZoneResponse(DNSZone):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DNSZone information for Microsoft.RecoveryServices.
 
     :ivar sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
@@ -1025,7 +1025,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1053,7 +1053,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityData(_Model):
+class IdentityData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
@@ -1108,7 +1108,7 @@ class IdentityData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImmutabilityConfiguration(_Model):
+class ImmutabilityConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Immutability configuration of vault.
 
     :ivar type: Immutability type. 'AsPerPolicy' inherits duration from backup policy; 'TimeBased'
@@ -1148,7 +1148,7 @@ class ImmutabilityConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImmutabilitySettings(_Model):
+class ImmutabilitySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Immutability Settings of vault.
 
     :ivar state: Known values are: "Disabled", "Unlocked", and "Locked".
@@ -1187,7 +1187,7 @@ class ImmutabilitySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobsSummary(_Model):
+class JobsSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary of the replication job data for this vault.
 
     :ivar failed_jobs: Count of failed jobs.
@@ -1231,7 +1231,7 @@ class JobsSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringSettings(_Model):
+class MonitoringSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monitoring Settings of the vault.
 
     :ivar azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
@@ -1269,7 +1269,7 @@ class MonitoringSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitoringSummary(_Model):
+class MonitoringSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Summary of the replication monitoring data for this vault.
 
     :ivar un_healthy_vm_count: Count of unhealthy VMs.
@@ -1334,7 +1334,7 @@ class MonitoringSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameInfo(_Model):
+class NameInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name of usage.
 
     :ivar value: Value of usage.
@@ -1369,7 +1369,7 @@ class NameInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResource(_Model):
+class OperationResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Resource.
 
     :ivar end_time: End time of the operation.
@@ -1430,7 +1430,7 @@ class OperationResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchTrackedResource(Resource):
+class PatchTrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked resource with location.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1479,7 +1479,7 @@ class PatchTrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PatchVault(PatchTrackedResource):
+class PatchVault(PatchTrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patch Resource information, as returned by the resource provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1550,7 +1550,7 @@ class PrivateEndpoint(_Model):
     """Gets or sets id."""
 
 
-class PrivateEndpointConnection(_Model):
+class PrivateEndpointConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private Endpoint Connection Response Properties.
 
     :ivar provisioning_state: Gets or sets provisioning state of the private endpoint connection.
@@ -1632,7 +1632,7 @@ class PrivateEndpointConnectionVaultProperties(_Model):
     """The location of the private Endpoint connection."""
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of the private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1735,7 +1735,7 @@ class PrivateLinkServiceConnectionState(_Model):
     """Gets or sets actions required."""
 
 
-class RawCertificateData(_Model):
+class RawCertificateData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Raw certificate data.
 
     :ivar auth_type: Specifies the authentication type. Known values are: "Invalid", "ACS", "AAD",
@@ -1774,7 +1774,40 @@ class RawCertificateData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationUsage(_Model):
+class RegionOfChoiceSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Region of choice settings at vault level. This setting allows customers to configure backups
+    for datasources from different region.
+
+    :ivar status: The status of region of choice settings - Enabled or Disabled. Known values are:
+     "Invalid", "Enabled", and "Disabled".
+    :vartype status: str or ~azure.mgmt.recoveryservices.models.State
+    """
+
+    status: Optional[Union[str, "_models.State"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of region of choice settings - Enabled or Disabled. Known values are: \"Invalid\",
+     \"Enabled\", and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.State"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReplicationUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication usages of a vault.
 
     :ivar monitoring_summary: Summary of the replication monitoring data for this vault.
@@ -1840,7 +1873,7 @@ class ReplicationUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCapabilities(ResourceCapabilitiesBase):
+class ResourceCapabilities(ResourceCapabilitiesBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input to get capabilities information for Microsoft.RecoveryServices.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
@@ -1873,7 +1906,7 @@ class ResourceCapabilities(ResourceCapabilitiesBase):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCertificateDetails(_Model):
+class ResourceCertificateDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate details representing the Vault credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1957,7 +1990,9 @@ class ResourceCertificateDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceCertificateAndAadDetails(ResourceCertificateDetails, discriminator="AzureActiveDirectory"):
+class ResourceCertificateAndAadDetails(
+    ResourceCertificateDetails, discriminator="AzureActiveDirectory"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate details representing the Vault credentials for AAD.
 
     :ivar certificate: The base64 encoded certificate raw data string.
@@ -2056,7 +2091,9 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails, discriminator
         self.auth_type = "AzureActiveDirectory"  # type: ignore
 
 
-class ResourceCertificateAndAcsDetails(ResourceCertificateDetails, discriminator="AccessControlService"):
+class ResourceCertificateAndAcsDetails(
+    ResourceCertificateDetails, discriminator="AccessControlService"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate details representing the Vault credentials for ACS.
 
     :ivar certificate: The base64 encoded certificate raw data string.
@@ -2131,7 +2168,7 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails, discriminator
         self.auth_type = "AccessControlService"  # type: ignore
 
 
-class RestoreSettings(_Model):
+class RestoreSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore Settings  of the vault.
 
     :ivar cross_subscription_restore_settings: Settings for CrossSubscriptionRestore.
@@ -2162,7 +2199,7 @@ class RestoreSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySettings(_Model):
+class SecuritySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Settings of the vault.
 
     :ivar immutability_settings: Immutability Settings of a vault.
@@ -2214,7 +2251,7 @@ class SecuritySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies the unique system identifier for each Azure resource.
 
     :ivar name: Name of SKU is RS0 (Recovery Services 0th version) and the tier is standard tier.
@@ -2267,7 +2304,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftDeleteSettings(_Model):
+class SoftDeleteSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Soft delete Settings of vault.
 
     :ivar soft_delete_state: Known values are: "Invalid", "Enabled", "Disabled", and "AlwaysON".
@@ -2313,7 +2350,7 @@ class SoftDeleteSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceScanConfiguration(_Model):
+class SourceScanConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source scan configuration of vault.
 
     :ivar state: Known values are: "Invalid", "Enabled", and "Disabled".
@@ -2350,7 +2387,7 @@ class SourceScanConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2417,7 +2454,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2525,7 +2562,7 @@ class UserIdentity(_Model):
     """The client ID of the user-assigned identity."""
 
 
-class Vault(TrackedResource):
+class Vault(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource information, as returned by the resource provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2587,7 +2624,7 @@ class Vault(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class VaultCertificateResponse(_Model):
+class VaultCertificateResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate corresponding to a vault that can be used by clients to register themselves with
     the vault.
 
@@ -2631,7 +2668,7 @@ class VaultCertificateResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultExtendedInfo(_Model):
+class VaultExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault extended information.
 
     :ivar integrity_key: Integrity key.
@@ -2680,7 +2717,7 @@ class VaultExtendedInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultExtendedInfoResource(ProxyResource):
+class VaultExtendedInfoResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault extended information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2746,7 +2783,7 @@ class VaultExtendedInfoResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VaultProperties(_Model):
+class VaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the vault.
 
     :ivar provisioning_state: Provisioning State.
@@ -2799,6 +2836,8 @@ class VaultProperties(_Model):
     :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
      be performed.
     :vartype resource_guard_operation_requests: list[str]
+    :ivar region_of_choice_settings: Region of choice settings for this vault.
+    :vartype region_of_choice_settings: ~azure.mgmt.recoveryservices.models.RegionOfChoiceSettings
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -2872,6 +2911,10 @@ class VaultProperties(_Model):
         name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
     )
     """ResourceGuardOperationRequests on which LAC check will be performed."""
+    region_of_choice_settings: Optional["_models.RegionOfChoiceSettings"] = rest_field(
+        name="regionOfChoiceSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Region of choice settings for this vault."""
 
     @overload
     def __init__(
@@ -2887,6 +2930,7 @@ class VaultProperties(_Model):
         redundancy_settings: Optional["_models.VaultPropertiesRedundancySettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
+        region_of_choice_settings: Optional["_models.RegionOfChoiceSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2900,7 +2944,7 @@ class VaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultPropertiesEncryption(_Model):
+class VaultPropertiesEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer Managed Key details of the resource.
 
     :ivar key_vault_properties: The properties of the Key Vault which hosts CMK.
@@ -2975,7 +3019,7 @@ class VaultPropertiesMoveDetails(_Model):
     """Target Resource of the Resource Move Operation."""
 
 
-class VaultPropertiesRedundancySettings(_Model):
+class VaultPropertiesRedundancySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The redundancy Settings of a Vault.
 
     :ivar standard_tier_storage_redundancy: The storage redundancy setting of a vault. Known values
@@ -3017,7 +3061,7 @@ class VaultPropertiesRedundancySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultUsage(_Model):
+class VaultUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usages of a vault.
 
     :ivar unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",

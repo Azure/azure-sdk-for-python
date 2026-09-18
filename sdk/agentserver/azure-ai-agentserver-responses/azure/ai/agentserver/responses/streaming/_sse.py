@@ -8,10 +8,15 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
 import json
 from contextvars import ContextVar
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta
-from typing import Any, AsyncIterator, Mapping
+from typing import Any, AsyncIterator, Mapping, cast
 
-from ..models._generated import ResponseStreamEvent
+from anyio import CancelScope
+
+from .._egress import strip_internal_metadata
+from ..models import _generated as _generated_models
+
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
@@ -116,6 +121,7 @@ def _ensure_sequence_number(event: Any, payload: dict[str, Any]) -> None:
         candidate = _next_sequence_number()
 
     payload["sequence_number"] = candidate
+    payload.pop("_saved_at", None)
 
 
 def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
@@ -137,26 +143,40 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def encode_sse_event(event: ResponseStreamEvent) -> str:
+def encode_sse_event(event: _generated_models.ResponseStreamEvent) -> str:
     """Encode a response stream event into SSE wire format.
+
+    The serialised payload is passed through :func:`strip_internal_metadata`
+    so framework-internal metadata never reaches a client (live and replay
+    both route here).
 
     :param event: Generated response stream event model.
     :type event: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
     :returns: Encoded SSE payload string.
     :rtype: str
     """
-    if hasattr(event, "as_dict"):
-        wire = event.as_dict()
+    event_any = cast(Any, event)
+    if isinstance(event, Mapping):
+        wire = dict(event)
         event_type = str(wire.get("type", ""))
         _ensure_sequence_number(event, wire)
+        strip_internal_metadata(wire)
         return _build_sse_frame(event_type, wire)
-    # Fallback for non-model event objects (e.g. plain dataclass-like)
+    if hasattr(event_any, "as_dict"):
+        wire = event_any.as_dict()
+        event_type = str(wire.get("type", ""))
+        _ensure_sequence_number(event, wire)
+        strip_internal_metadata(wire)
+        return _build_sse_frame(event_type, wire)
+    # Fallback for non-model event objects (e.g. plain dataclass-like).
+    # Deep-copy so stripping cannot mutate a shared/persisted source dict.
     event_type, payload = _coerce_payload(event)
     _ensure_sequence_number(event, payload)
-    return _build_sse_frame(event_type, {"type": event_type, **payload})
+    frame_payload = strip_internal_metadata(deepcopy({"type": event_type, **payload}))
+    return _build_sse_frame(event_type, frame_payload)
 
 
-def encode_sse_any_event(event: ResponseStreamEvent) -> str:
+def encode_sse_any_event(event: _generated_models.ResponseStreamEvent) -> str:
     """Encode a ``ResponseStreamEvent`` model instance to SSE format.
 
     Delegates to :func:`encode_sse_event`.
@@ -240,7 +260,8 @@ async def with_keep_alive(
     finally:
         # Stop the pump and any pending get, and await them so the source's finally
         # (finalize, request-context reset) runs before returning.
-        pending = [task for task in (pump_task, get_task) if task is not None]
-        for task in pending:
-            task.cancel()
-        await asyncio.gather(*pending, return_exceptions=True)
+        with CancelScope(shield=True):
+            pending = [task for task in (pump_task, get_task) if task is not None]
+            for task in pending:
+                task.cancel()
+            await asyncio.gather(*pending, return_exceptions=True)

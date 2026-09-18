@@ -32,13 +32,13 @@ def main():
 
     response = client.chat_model_deployments.begin_update(
         resource_group_name="rgdiscovery",
-        workspace_name="438970fd7f0137032c",
-        chat_model_deployment_name="fd0837f1d866060b11",
-        properties={"properties": {}, "tags": {"key6223": "tvufnjfnrdadechkcyoboyrcme"}},
+        workspace_name="308882f04c9bcf36d5",
+        chat_model_deployment_name="985d52cec9acb72ebe",
+        properties={"properties": {"capacity": 15}, "tags": {"key5692": "gayu"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/ChatModelDeployments_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ChatModelDeployments_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

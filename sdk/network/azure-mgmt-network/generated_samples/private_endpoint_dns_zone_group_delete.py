@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-01/PrivateEndpointDnsZoneGroupDelete.json
+# x-ms-original-file: 2026-01-01/PrivateEndpointDnsZoneGroupDelete.json
 if __name__ == "__main__":
     main()

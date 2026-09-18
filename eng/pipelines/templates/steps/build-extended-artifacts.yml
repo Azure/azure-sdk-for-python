@@ -82,6 +82,12 @@ steps:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
+    - script: >-
+        python eng/scripts/save_package_api_hash.py
+        --artifact-staging-directory "$(Build.ArtifactStagingDirectory)"
+        --repo-root "$(Build.SourcesDirectory)"
+      displayName: 'Update package properties with API hashes'
+
   - ${{ parameters.BeforePublishSteps }}
 
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:

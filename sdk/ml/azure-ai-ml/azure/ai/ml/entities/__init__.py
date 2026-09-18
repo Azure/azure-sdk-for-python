@@ -252,6 +252,8 @@ from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 
+module_logger = logging.getLogger(__name__)
+
 __all__ = [
     "Resource",
     "Job",
@@ -567,7 +569,7 @@ def __getattr__(name: str):
 
     if requested:
         if not getattr(__getattr__, "warning_issued", False):
-            logging.warning(
+            module_logger.warning(
                 " %s will be removed from the azure.ai.ml.entities namespace in a future release."
                 " Please import from the azure.ai.ml.sweep namespace instead.",
                 name,

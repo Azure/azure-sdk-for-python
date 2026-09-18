@@ -15,6 +15,4 @@ CHECKERS = [
     ChangedFunctionReturnTypeChecker(),
 ]
 
-POST_PROCESSING_CHECKERS = [
-    # Add any post-processing checkers here
-]
+POST_PROCESSING_CHECKERS = []

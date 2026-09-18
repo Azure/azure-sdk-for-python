@@ -1,27 +1,67 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""ResponseContext for user-defined response execution."""
+"""ResponseContext for user-defined response execution.
+
+(Spec 024 Phase 5) Flat handler-facing surface — the pre-Phase-5
+``ResilienceContext`` indirection is collapsed; recovery + steering
+fields live directly on :class:`ResponseContext`. The cancellation
+surface mirrors the task primitive's composing-cause shape (separate
+``cancel`` + ``shutdown`` events, independent cause booleans).
+"""
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any, NoReturn, Sequence, cast
 
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
-from .models._generated import (
-    CreateResponse,
-    Item,
-    ItemMessage,
-    ItemReferenceParam,
-    MessageContentInputTextContent,
-    OutputItem,
-)
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
+from .models import _generated as _generated_models
+from .models._generated import _unions as _generated_unions
+
 if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks import TaskContext as _CoreTaskContext
+
     from .store._base import ResponseProviderProtocol
+
+
+# (Spec 024 Phase 5 — Proposal #11) ``_ExitForRecoverySentinel`` is the
+# framework's internal sentinel that leaves a response ``in_progress`` for
+# next-lifetime recovery. The public handler idiom is
+# ``await context.exit_for_recovery()`` which raises
+# :class:`ResponseExitForRecovery`; the orchestrator translates that to this
+# core sentinel at the resilient task boundary.
+# Falls back to ``Any`` when the core module is unavailable at import
+# time (e.g. for type-stub generation).
+try:
+    from azure.ai.agentserver.core.tasks._context import _ExitForRecovery as _ExitForRecoverySentinel
+except ImportError:  # pragma: no cover - defensive
+    _ExitForRecoverySentinel = Any  # type: ignore[assignment,misc]
+
+ExitForRecoverySignal = _ExitForRecoverySentinel
+"""Sentinel type the framework uses internally to leave a response
+``in_progress`` for next-lifetime recovery. Handlers do not use this directly —
+they call ``await context.exit_for_recovery()`` (see
+:class:`ResponseExitForRecovery`)."""
+
+
+class ResponseExitForRecovery(BaseException):
+    """Control-flow signal raised by :meth:`ResponseContext.exit_for_recovery`.
+
+    Subclasses :class:`BaseException` (NOT :class:`Exception`) — like
+    :class:`asyncio.CancelledError` / :class:`GeneratorExit` — so a handler's
+    broad ``except Exception`` cannot accidentally swallow the recovery signal.
+    ``try/finally`` cleanup still runs. The framework catches it at the resilient
+    task boundary and leaves the response ``in_progress`` for the next-lifetime
+    recovery scanner.
+
+    Handlers never construct or catch this directly; they simply
+    ``await context.exit_for_recovery()`` (which raises it), in any handler
+    shape — coroutine, async generator, or sync.
+    """
 
 
 class PlatformContext:
@@ -54,23 +94,170 @@ class PlatformContext:
         ``None`` when the header was not sent (protocol ``1.0.0`` or local dev)."""
 
 
+_HistoryIdsKey = tuple[int, str | None, str | None, int, tuple[str | None, str | None] | None]
+
+
+def _history_ids_key(
+    provider: "ResponseProviderProtocol",
+    previous_response_id: str | None,
+    conversation_id: str | None,
+    limit: int,
+    context: PlatformContext | None,
+) -> _HistoryIdsKey:
+    identity = None if context is None else (context.user_id_key, context.call_id)
+    return id(provider), previous_response_id, conversation_id, limit, identity
+
+
+def _snapshot_platform_context(context: PlatformContext | None) -> PlatformContext | None:
+    return None if context is None else PlatformContext(user_id_key=context.user_id_key, call_id=context.call_id)
+
+
+class _HistoryIdsEntry:
+    def __init__(self, provider: "ResponseProviderProtocol", ids: list[str] | None = None) -> None:
+        # Retain the provider so its identity cannot be recycled within a request.
+        self.provider = provider
+        self.ids: tuple[str, ...] | None = None if ids is None else tuple(ids)
+        self.lock = asyncio.Lock()
+
+
+class _HistoryIdsResolver:
+    """Request-owned, exact-query cache; locks coalesce successful concurrent reads."""
+
+    def __init__(self) -> None:
+        self._entries: dict[_HistoryIdsKey, _HistoryIdsEntry] = {}
+
+    def seed(
+        self,
+        provider: "ResponseProviderProtocol",
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        limit: int,
+        context: PlatformContext | None,
+        ids: list[str],
+    ) -> None:
+        key = _history_ids_key(provider, previous_response_id, conversation_id, limit, context)
+        self._entries[key] = _HistoryIdsEntry(provider, ids)
+
+    async def resolve(
+        self,
+        provider: "ResponseProviderProtocol",
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        limit: int,
+        context: PlatformContext | None,
+    ) -> list[str]:
+        key = _history_ids_key(provider, previous_response_id, conversation_id, limit, context)
+        entry = self._entries.get(key)
+        if entry is None:
+            entry = _HistoryIdsEntry(provider)
+            self._entries[key] = entry
+        async with entry.lock:
+            if entry.ids is None:
+                ids = await provider.get_history_item_ids(previous_response_id, conversation_id, limit, context=context)
+                entry.ids = tuple(ids)
+            # Neither callers nor providers may mutate the cached snapshot.
+            return list(entry.ids)
+
+
+async def _resolve_history_item_ids(
+    provider: "ResponseProviderProtocol",
+    previous_response_id: str | None,
+    conversation_id: str | None,
+    limit: int,
+    *,
+    context: PlatformContext | None,
+    request_context: "ResponseContext | None",
+) -> list[str]:
+    """Resolve history item IDs with request-scoped single-flight semantics.
+
+    :param provider: The response storage provider used to fetch history item IDs.
+    :type provider: ~azure.ai.agentserver.responses.store._base.ResponseProviderProtocol
+    :param previous_response_id: The previous response ID anchoring the history chain.
+    :type previous_response_id: str or None
+    :param conversation_id: The conversation ID scoping the history lookup.
+    :type conversation_id: str or None
+    :param limit: The maximum number of history item IDs to fetch.
+    :type limit: int
+    :keyword context: Platform context forwarded to the provider.
+    :paramtype context: ~azure.ai.agentserver.responses._response_context.PlatformContext or None
+    :keyword request_context: Request context whose resolver coalesces duplicate reads;
+        ``None`` bypasses request-scoped caching.
+    :paramtype request_context: ~azure.ai.agentserver.responses._response_context.ResponseContext or None
+    :return: The resolved history item IDs.
+    :rtype: list[str]
+    """
+    # Snapshot identity before waiting on a lookup so key and outbound identity
+    # stay equivalent even if the caller later mutates its PlatformContext.
+    platform_context = _snapshot_platform_context(context)
+    if request_context is None:
+        return await provider.get_history_item_ids(
+            previous_response_id, conversation_id, limit, context=platform_context
+        )
+    return await request_context._history_ids.resolve(  # pylint: disable=protected-access
+        provider, previous_response_id, conversation_id, limit, platform_context
+    )
+
+
 class ResponseContext:  # pylint: disable=too-many-instance-attributes
     """Runtime context exposed to response handlers and used by hosting orchestration.
 
-    - response identifier
-    - shutdown signal flag
-    - async input/history resolution
+    Public surface (post-spec-024 Phase 5):
+
+    Identity / request shape:
+        - :attr:`response_id` — stable id for this response.
+        - :attr:`mode_flags` — bg/stream/store flags.
+        - :attr:`request` — parsed CreateResponse.
+        - :attr:`created_at` — UTC timestamp.
+        - :attr:`client_headers` / :attr:`query_parameters` — request metadata.
+        - :attr:`platform_context` — tenant partition identity (user id / call id).
+        - :attr:`conversation_id` / :attr:`previous_response_id`.
+        - :attr:`conversation_chain_id` — derived chain identifier.
+
+    Recovery + steering classifiers (Proposal #6/#10/#13):
+        - :attr:`is_recovery` — True on a crash-recovered re-entry.
+        - :attr:`is_steered_turn` — True on a steering-drain re-entry.
+        - :attr:`pending_input_count` — queued steering inputs (live count).
+
+    Cancellation surface (Proposal #11):
+        - :attr:`cancel` — asyncio.Event set when any cancel cause fires.
+        - :attr:`shutdown` — asyncio.Event set when the server is shutting down.
+        - :attr:`client_cancelled` — bool, True for explicit /cancel
+          endpoint OR non-background POST disconnect.
+        - :meth:`exit_for_recovery` — opt-in graceful-shutdown primitive
+          (call as a bare ``await context.exit_for_recovery()`` — it raises
+          internally; works in any handler shape).
+
+    Async helpers:
+        - :meth:`get_input_items` / :meth:`get_input_text` / :meth:`get_history`.
     """
 
-    def __init__(
+    # Class-level type annotations for the public surface (Spec 024
+    # Phase 5 — Proposal #10/#11/#13). Listed here so `get_type_hints`
+    # and IDEs surface the precise types without scanning ``__init__``.
+    response_id: str
+    mode_flags: ResponseModeFlags
+    request: "_generated_models.CreateResponse | None"
+    created_at: datetime
+    client_headers: dict[str, str]
+    query_parameters: dict[str, str]
+    platform_context: PlatformContext
+    conversation_id: "str | None"
+    is_recovery: bool
+    is_steered_turn: bool
+    pending_input_count: int
+    shutdown: asyncio.Event
+    client_cancelled: bool
+    persisted_response: _generated_models.ResponseObject | None
+
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         *,
         response_id: str,
         mode_flags: ResponseModeFlags,
-        request: CreateResponse | None = None,
+        request: _generated_models.CreateResponse | None = None,
         created_at: datetime | None = None,
         provider: "ResponseProviderProtocol | None" = None,
-        input_items: list[InputParam] | list[OutputItem] | None = None,
+        input_items: list[_generated_unions.InputParam] | list[_generated_models.OutputItem] | None = None,
         previous_response_id: str | None = None,
         conversation_id: str | None = None,
         history_limit: int = 100,
@@ -78,17 +265,17 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         query_parameters: dict[str, str] | None = None,
         platform_context: PlatformContext | None = None,
         prefetched_history_ids: list[str] | None = None,
+        steerable: bool = False,
+        agent_name: str = "",
+        session_id: str = "",
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
         self.request = request
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
-        self.is_shutdown_requested: bool = False
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
-        self.platform_context: PlatformContext = (
-            platform_context if platform_context is not None else PlatformContext()
-        )
+        self.platform_context: PlatformContext = platform_context if platform_context is not None else PlatformContext()
         self._provider: "ResponseProviderProtocol | None" = provider
         _items: list[Any]
         if input_items is not None:
@@ -99,12 +286,146 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._previous_response_id: str | None = previous_response_id
         self.conversation_id: str | None = conversation_id
         self._history_limit: int = history_limit
-        self._input_items_resolved_cache: Sequence[Item] | None = None
-        self._input_items_unresolved_cache: Sequence[Item] | None = None
-        self._history_cache: Sequence[OutputItem] | None = None
+        self._input_items_resolved_cache: Sequence[_generated_models.Item] | None = None
+        self._input_items_resolved_lock = asyncio.Lock()
+        self._input_items_unresolved_cache: Sequence[_generated_models.Item] | None = None
+        self._history_cache: Sequence[_generated_models.OutputItem] | None = None
+        self._history_cache_key: _HistoryIdsKey | None = None
+        self._history_lock = asyncio.Lock()
+        self._history_ids = _HistoryIdsResolver()
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
+        if provider is not None and prefetched_history_ids is not None:
+            self._history_ids.seed(
+                provider,
+                previous_response_id,
+                conversation_id,
+                history_limit,
+                self.platform_context,
+                prefetched_history_ids,
+            )
+        # Stash the deployment's ``steerable_conversations`` option so
+        # ``conversation_chain_id`` resolves the correct chain partition: for
+        # non-steerable chains each fork is its own identity (full response_id),
+        # while steerable chains share the partition key of the sequential chain.
+        self._steerable: bool = steerable
+        # Agent + public session identity used to scope
+        # ``conversation_chain_id``. Hosted task orchestration may use a
+        # separate private session-incarnation scope for its physical task id.
+        self._agent_name: str = agent_name
+        self._session_id: str = session_id
 
-    async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
+        # (Spec 024 Phase 5 — Proposal #6/#10/#13) Flattened recovery +
+        # steering classifiers. Defaults represent a fresh non-recovered
+        # handler invocation; the orchestrator overrides them when
+        # constructing the context for a recovery / steering-drain entry.
+        self.is_recovery: bool = False
+        self.is_steered_turn: bool = False
+        self.pending_input_count: int = 0
+        # (Spec 025 §A.3) Entry-only cached snapshot of the persisted response,
+        # populated by the orchestrator on the recovery path so a recovered
+        # handler can seed its stream from already-persisted items. ``None`` on
+        # fresh entries; never refreshed mid-execution.
+        self.persisted_response: _generated_models.ResponseObject | None = None
+        # Composing cancellation surface. ``_cancellation_signal`` is
+        # the per-request cancel Event delivered to the handler as the
+        # 3rd positional argument; it fires on /cancel API calls, client
+        # disconnect on non-bg create, or steering pressure. It is
+        # framework-internal — handlers should observe their 3rd
+        # positional ``cancellation_signal`` parameter, not the private
+        # attribute. ``shutdown`` is a DISTINCT Event — server shutdown
+        # does NOT fire the cancel signal; handlers that care about
+        # both must observe each independently.
+        # ``client_cancelled`` is a cause flag stamped by the /cancel
+        # endpoint and the disconnect monitor.
+        self._cancellation_signal: asyncio.Event = asyncio.Event()
+        self.shutdown: asyncio.Event = asyncio.Event()
+        self.client_cancelled: bool = False
+
+        # Private link to the underlying TaskContext (set by the
+        # orchestrator on resilient paths) — enables exit_for_recovery to
+        # delegate to the framework's recovery sentinel.
+        self._task_context: "_CoreTaskContext[Any] | None" = None
+
+    @property
+    def conversation_chain_id(self) -> str:
+        """Stable identifier for the multi-turn conversation chain.
+
+        Returns an opaque, agent/session-scoped hex id that is the **same for
+        every turn** of a conversation chain. It is derived from the partition
+        key embedded in the chain's response IDs (chained response IDs all carry
+        the same embedded key), so it stays stable across turns and across crash
+        recovery without any history walk. The resilient task backing the
+        conversation follows the same chain partition, but hosted deployments
+        may apply a private session-incarnation scope and therefore use a
+        different physical task id. Treat this value as the stable
+        handler-facing chain identity, not as the task-store record id.
+
+        Priority for the underlying chain partition:
+
+        1. ``conversation_id`` if supplied on the request.
+        2. ``previous_response_id`` (steerable chains) — the shared partition key
+           of the sequential chain.
+        3. ``response_id`` — for the first turn, or as the per-fork identity when
+           ``steerable_conversations`` is disabled.
+
+        Handlers use this id as a key into application-side conversation state
+        (e.g., an upstream SDK session id, per-conversation rate limits, or a
+        conversation index): store it in a resilient side store and look it up on
+        recovery to re-attach to the prior session.
+
+        Known limitation: the identity is derived from framework-generated IDs. A
+        client that supplies its own ``response_id`` (via ``x-agent-response-id``
+        or an explicit request field) carrying a mismatched embedded partition can
+        shift the chain identity for later turns.
+
+        :rtype: str
+        """
+        # Local import to avoid a top-level cycle with hosting.
+        from .hosting._chain_id import derive_conversation_chain_id  # pylint: disable=import-outside-toplevel
+
+        return derive_conversation_chain_id(
+            conversation_id=self.conversation_id,
+            previous_response_id=self._previous_response_id,
+            response_id=self.response_id,
+            agent_name=self._agent_name,
+            session_id=self._session_id,
+            steerable=self._steerable,
+        )
+
+    async def exit_for_recovery(self) -> "NoReturn":
+        """Defer this response to next-lifetime recovery — one idiom, any shape.
+
+        Call it as a bare statement, in coroutine, async-generator, or sync
+        handlers alike::
+
+            if context.shutdown.is_set():
+                await context.exit_for_recovery()
+
+        It **raises** :class:`ResponseExitForRecovery` internally — it NEVER
+        returns. The framework catches the signal at the resilient task boundary
+        and leaves the response ``in_progress`` so the handler is re-invoked on
+        the next process start (for ``resilient_background=True`` responses).
+
+        (Streaming handlers that simply ``return`` without emitting a terminal
+        while ``context.shutdown`` is set also recover via the implicit
+        fallback; ``await context.exit_for_recovery()`` is the explicit,
+        recommended form.)
+
+        :raises RuntimeError: When called outside a resilient task body (e.g. on a
+            ``store=false`` request where there is no task to defer).
+        :raises ResponseExitForRecovery: Always, on success — the control-flow
+            signal the framework catches.
+        :rtype: NoReturn
+        """
+        if self._task_context is None:
+            raise RuntimeError(
+                "context.exit_for_recovery() can only be called inside a resilient "
+                "response handler (store=true). For store=false responses there is "
+                "no task to defer for recovery."
+            )
+        raise ResponseExitForRecovery()
+
+    async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[_generated_models.Item]:
         """Return the caller's input items as :class:`Item` subtypes.
 
         Inline items are returned as-is — the same :class:`Item` subtypes from
@@ -113,6 +434,8 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         :class:`ItemReferenceParam` entries are batch-resolved via the
         provider and converted back to :class:`Item` subtypes.
         Unresolvable references (provider returns ``None``) are silently dropped.
+        Concurrent readers in this request share successful reference resolution.
+        A failed or cancelled resolution is not cached and can be retried.
 
         :keyword resolve_references: When ``True`` (default),
             :class:`ItemReferenceParam` items are resolved via the provider and
@@ -144,21 +467,22 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         items = await self.get_input_items(resolve_references=resolve_references)
         texts: list[str] = []
         for item in items:
-            if isinstance(item, ItemMessage):
-                for part in getattr(item, "content", None) or []:
-                    if isinstance(part, MessageContentInputTextContent):
-                        text = getattr(part, "text", None)
+            if isinstance(item, dict) and item.get("type") == "message":
+                for part in cast("list[Any]", item.get("content") or []):
+                    if isinstance(part, dict) and part.get("type") == "input_text":
+                        text = part.get("text")
                         if text is not None:
                             texts.append(text)
         return "\n".join(texts)
 
-    async def _get_input_items_for_persistence(self) -> Sequence[OutputItem]:
+    async def _get_input_items_for_persistence(self) -> Sequence[_generated_models.OutputItem]:
         """Return input items as :class:`OutputItem` for storage persistence.
 
         The orchestrator needs :class:`OutputItem` instances when creating the
         stored response.  This method resolves references (so stored items are
         always concrete), converts each :class:`Item` to :class:`OutputItem`,
-        and caches the result.
+        without caching the converted output snapshot. Resolved input items
+        themselves are cached by :meth:`get_input_items`.
 
         :returns: A tuple of output items suitable for persistence.
         :rtype: Sequence[OutputItem]
@@ -170,7 +494,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     # Private resolution helpers (cached independently per mode)
     # ------------------------------------------------------------------
 
-    async def _get_input_items_resolved(self) -> Sequence[Item]:
+    async def _get_input_items_resolved(self) -> Sequence[_generated_models.Item]:
         """Resolve and cache input items with references resolved.
 
         :returns: A tuple of resolved input items.
@@ -179,19 +503,32 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         if self._input_items_resolved_cache is not None:
             return self._input_items_resolved_cache
 
+        async with self._input_items_resolved_lock:
+            if self._input_items_resolved_cache is None:
+                self._input_items_resolved_cache = await self._resolve_input_items()
+            return self._input_items_resolved_cache
+
+    async def _resolve_input_items(self) -> Sequence[_generated_models.Item]:
+        """Materialize this request's input; only publish a fully successful result.
+
+        :return: The resolved input items with references materialized.
+        :rtype: ~typing.Sequence[~azure.ai.agentserver.responses.models._generated.Item]
+        """
         expanded = self._expand_input()
         if not expanded:
-            self._input_items_resolved_cache = ()
-            return self._input_items_resolved_cache
+            return ()
 
         # Collect ItemReferenceParam positions and IDs for batch resolution.
         reference_ids: list[str] = []
         reference_positions: list[int] = []
-        results: list[Item | None] = []
+        results: list[_generated_models.Item | None] = []
 
         for item in expanded:
-            if isinstance(item, ItemReferenceParam):
-                reference_ids.append(item.id)
+            if isinstance(item, dict) and item.get("type") == "item_reference":
+                item_id = item.get("id")
+                if not isinstance(item_id, str):
+                    continue
+                reference_ids.append(item_id)
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:
@@ -207,10 +544,9 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
                         results[pos] = converted
 
         # Remove unresolved (None) placeholders.
-        self._input_items_resolved_cache = tuple(item for item in results if item is not None)
-        return self._input_items_resolved_cache
+        return tuple(item for item in results if item is not None)
 
-    async def _get_input_items_unresolved(self) -> Sequence[Item]:
+    async def _get_input_items_unresolved(self) -> Sequence[_generated_models.Item]:
         """Return input items without resolving references.
 
         :returns: A tuple of unresolved input items.
@@ -223,7 +559,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache = tuple(expanded)
         return self._input_items_unresolved_cache
 
-    def _expand_input(self) -> list[Item]:
+    def _expand_input(self) -> list[_generated_models.Item]:
         """Normalize raw input into typed Item instances.
 
         :returns: A list of typed Item instances.
@@ -233,42 +569,49 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             return get_input_expanded(self.request)
         return list(self._input_items)  # type: ignore[arg-type]
 
-    async def get_history(self) -> Sequence[OutputItem]:
+    async def get_history(self) -> Sequence[_generated_models.OutputItem]:
         """Resolve and cache conversation history items via the provider.
 
         When prefetched history IDs are available (from eager validation),
         the provider's ``get_history_item_ids`` call is skipped and only
         ``get_items`` is invoked to materialise the items.
+        Concurrent calls share that materialization. ID lookups are also
+        shared with persistence for the same provider, query, and identity;
+        arbitrary ``get_items`` requests are not cached here.
 
         :returns: A tuple of conversation history items.
         :rtype: Sequence[OutputItem]
         """
-        if self._history_cache is not None:
-            return self._history_cache
+        async with self._history_lock:
+            if self._provider is None or (not self._previous_response_id and not self.conversation_id):
+                self._history_cache = ()
+                self._history_cache_key = None
+                return self._history_cache
 
-        if self._provider is None:
-            self._history_cache = ()
-            return self._history_cache
+            provider = self._provider
+            previous_response_id, conversation_id = self._previous_response_id, self.conversation_id
+            limit = self._history_limit
+            platform_context = _snapshot_platform_context(self.platform_context)
+            key = _history_ids_key(provider, previous_response_id, conversation_id, limit, platform_context)
+            if self._history_cache is not None and self._history_cache_key == key:
+                return self._history_cache
 
-        # No conversation context — nothing to look up.
-        if not self._previous_response_id and not self.conversation_id:
-            self._history_cache = ()
-            return self._history_cache
-
-        # Use eagerly-prefetched IDs when available; otherwise call provider.
-        if self._prefetched_history_ids is not None:
-            item_ids = self._prefetched_history_ids
-        else:
-            item_ids = await self._provider.get_history_item_ids(
-                self._previous_response_id,
-                self.conversation_id,
-                self._history_limit,
-                context=self.platform_context,
+            item_ids = await _resolve_history_item_ids(
+                provider,
+                previous_response_id,
+                conversation_id,
+                limit,
+                context=platform_context,
+                request_context=self,
             )
-        if not item_ids:
-            self._history_cache = ()
+            items = await provider.get_items(item_ids, context=platform_context) if item_ids else []
+            self._history_cache = tuple(item for item in items if item is not None)
+            self._history_cache_key = key
             return self._history_cache
 
-        items = await self._provider.get_items(item_ids, context=self.platform_context)
-        self._history_cache = tuple(item for item in items if item is not None)
-        return self._history_cache
+    def _reset_history_cache(self) -> None:
+        """Discard request-only history snapshots when entering a recovered lifetime."""
+        self._history_ids = _HistoryIdsResolver()
+        self._history_cache = None
+        self._history_cache_key = None
+        self._prefetched_history_ids = None

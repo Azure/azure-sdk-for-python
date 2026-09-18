@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/GalleryApplication_Create.json
+# x-ms-original-file: 2025-12-03/galleryExamples/GalleryApplication_Create.json
 if __name__ == "__main__":
     main()

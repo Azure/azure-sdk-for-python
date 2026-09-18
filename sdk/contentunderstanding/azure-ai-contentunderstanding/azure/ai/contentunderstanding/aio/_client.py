@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, TYPE_CHECKING, Union
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +18,11 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContentUnderstandingClientConfiguration
 from ._operations import _ContentUnderstandingClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -32,24 +37,20 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2025-11-01"
-     and None. Default value is "2025-11-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/contentunderstanding"
-        self._config = ContentUnderstandingClientConfiguration(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
+        self._config = ContentUnderstandingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -65,16 +66,10 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                (
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
-                    if self._config.redirect_policy
-                    else None
-                ),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=_endpoint, policies=_policies, **kwargs
-        )
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -102,14 +97,10 @@ class ContentUnderstandingClient(_ContentUnderstandingClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:

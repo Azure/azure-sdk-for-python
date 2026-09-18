@@ -26,7 +26,7 @@ class TestComputeManagementSoftDeletedResourceOperations(AzureMgmtRecordedTestCa
             gallery_name="str",
             artifact_type="str",
             artifact_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -57,12 +57,18 @@ class AzureNetAppFilesStore(StorageStore, discriminator="AzureNetAppFiles"):
 
     :ivar kind: Azure NetApp Files. Required. The Azure NetApp Files kind.
     :vartype kind: str or ~azure.mgmt.discovery.models.AZURE_NET_APP_FILES
+    :ivar mount_protocol: The protocol to use for mounting the storage store. "NFS"
+    :vartype mount_protocol: str or ~azure.mgmt.discovery.models.NetAppMountProtocol
     :ivar net_app_volume_id: The associated Azure NetApp Files volume ID. Required.
     :vartype net_app_volume_id: str
     """
 
     kind: Literal[StorageStoreType.AZURE_NET_APP_FILES] = rest_discriminator(name="kind", visibility=["read", "create"])  # type: ignore
     """Azure NetApp Files. Required. The Azure NetApp Files kind."""
+    mount_protocol: Optional[Union[str, "_models.NetAppMountProtocol"]] = rest_field(
+        name="mountProtocol", visibility=["read", "create", "update"]
+    )
+    """The protocol to use for mounting the storage store. \"NFS\""""
     net_app_volume_id: str = rest_field(name="netAppVolumeId", visibility=["read", "create"])
     """The associated Azure NetApp Files volume ID. Required."""
 
@@ -71,6 +77,7 @@ class AzureNetAppFilesStore(StorageStore, discriminator="AzureNetAppFiles"):
         self,
         *,
         net_app_volume_id: str,
+        mount_protocol: Optional[Union[str, "_models.NetAppMountProtocol"]] = None,
     ) -> None: ...
 
     @overload
@@ -90,12 +97,20 @@ class AzureStorageBlobStore(StorageStore, discriminator="AzureStorageBlob"):
 
     :ivar kind: Azure Storage Blob. Required. The Azure storage blob kind.
     :vartype kind: str or ~azure.mgmt.discovery.models.AZURE_STORAGE_BLOB
+    :ivar mount_protocol: The protocol to use for mounting the storage store. Known values are:
+     "NFS" and "BlobfuseCaching".
+    :vartype mount_protocol: str or ~azure.mgmt.discovery.models.BlobStorageMountProtocol
     :ivar storage_account_id: The associated Azure Storage Account ID. Required.
     :vartype storage_account_id: str
     """
 
     kind: Literal[StorageStoreType.AZURE_STORAGE_BLOB] = rest_discriminator(name="kind", visibility=["read", "create"])  # type: ignore
     """Azure Storage Blob. Required. The Azure storage blob kind."""
+    mount_protocol: Optional[Union[str, "_models.BlobStorageMountProtocol"]] = rest_field(
+        name="mountProtocol", visibility=["read", "create", "update"]
+    )
+    """The protocol to use for mounting the storage store. Known values are: \"NFS\" and
+     \"BlobfuseCaching\"."""
     storage_account_id: str = rest_field(name="storageAccountId", visibility=["read", "create"])
     """The associated Azure Storage Account ID. Required."""
 
@@ -104,6 +119,7 @@ class AzureStorageBlobStore(StorageStore, discriminator="AzureStorageBlob"):
         self,
         *,
         storage_account_id: str,
+        mount_protocol: Optional[Union[str, "_models.BlobStorageMountProtocol"]] = None,
     ) -> None: ...
 
     @overload
@@ -554,6 +570,12 @@ class ChatModelDeploymentProperties(_Model):
     :ivar model_name: Canonical provider model name available in the selected region. Verify
      supported values per region using the Model Catalog API. Required.
     :vartype model_name: str
+    :ivar model_version: Provider-published version of the selected model.
+    :vartype model_version: str
+    :ivar sku_name: SKU tier used by this chat model deployment.
+    :vartype sku_name: str
+    :ivar capacity: Provisioned SKU capacity units for this chat model deployment.
+    :vartype capacity: int
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -567,6 +589,12 @@ class ChatModelDeploymentProperties(_Model):
     model_name: str = rest_field(name="modelName", visibility=["read", "create"])
     """Canonical provider model name available in the selected region. Verify supported values per
      region using the Model Catalog API. Required."""
+    model_version: Optional[str] = rest_field(name="modelVersion", visibility=["read", "create"])
+    """Provider-published version of the selected model."""
+    sku_name: Optional[str] = rest_field(name="skuName", visibility=["read", "create"])
+    """SKU tier used by this chat model deployment."""
+    capacity: Optional[int] = rest_field(visibility=["read", "create", "update"])
+    """Provisioned SKU capacity units for this chat model deployment."""
 
     @overload
     def __init__(
@@ -574,6 +602,9 @@ class ChatModelDeploymentProperties(_Model):
         *,
         model_format: str,
         model_name: str,
+        model_version: Optional[str] = None,
+        sku_name: Optional[str] = None,
+        capacity: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -831,6 +862,15 @@ class NodePoolProperties(_Model):
     :ivar scale_set_priority: The Virtual Machine Scale Set priority. If not specified, the default
      is 'Regular'. Known values are: "Regular" and "Spot".
     :vartype scale_set_priority: str or ~azure.mgmt.discovery.models.ScaleSetPriority
+    :ivar os_disk_size_gb: The size of the OS disk in GB. If not specified, the default is 120 GB.
+    :vartype os_disk_size_gb: int
+    :ivar image_cache_lower_threshold: The percent of disk usage before which image garbage
+     collection is never run. This cannot be set higher than imageCacheUpperThreshold. The default
+     is 40%.
+    :vartype image_cache_lower_threshold: int
+    :ivar image_cache_upper_threshold: The percent of disk usage after which image garbage
+     collection is guaranteed to run. The default is 60%.
+    :vartype image_cache_upper_threshold: int
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -856,6 +896,18 @@ class NodePoolProperties(_Model):
     )
     """The Virtual Machine Scale Set priority. If not specified, the default is 'Regular'. Known
      values are: \"Regular\" and \"Spot\"."""
+    os_disk_size_gb: Optional[int] = rest_field(name="osDiskSizeGb", visibility=["read", "create"])
+    """The size of the OS disk in GB. If not specified, the default is 120 GB."""
+    image_cache_lower_threshold: Optional[int] = rest_field(
+        name="imageCacheLowerThreshold", visibility=["read", "create"]
+    )
+    """The percent of disk usage before which image garbage collection is never run. This cannot be
+     set higher than imageCacheUpperThreshold. The default is 40%."""
+    image_cache_upper_threshold: Optional[int] = rest_field(
+        name="imageCacheUpperThreshold", visibility=["read", "create"]
+    )
+    """The percent of disk usage after which image garbage collection is guaranteed to run. The
+     default is 60%."""
 
     @overload
     def __init__(
@@ -866,6 +918,9 @@ class NodePoolProperties(_Model):
         max_node_count: int,
         min_node_count: Optional[int] = None,
         scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = None,
+        os_disk_size_gb: Optional[int] = None,
+        image_cache_lower_threshold: Optional[int] = None,
+        image_cache_upper_threshold: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -1471,12 +1526,18 @@ class Supercomputer(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.discovery.models.SupercomputerProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.discovery.models.SystemAssignedServiceIdentity
     """
 
     properties: Optional["_models.SupercomputerProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
@@ -1485,6 +1546,7 @@ class Supercomputer(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SupercomputerProperties"] = None,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -1640,6 +1702,50 @@ class SupercomputerProperties(_Model):
         customer_managed_keys: Optional[Union[str, "_models.CustomerManagedKeys"]] = None,
         disk_encryption_set_id: Optional[str] = None,
         log_analytics_cluster_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemAssignedServiceIdentity(_Model):
+    """Managed service identity (either system assigned, or none).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None" and "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.discovery.models.SystemAssignedServiceIdentityType
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.SystemAssignedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
+     and \"SystemAssigned\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.SystemAssignedServiceIdentityType"],
     ) -> None: ...
 
     @overload

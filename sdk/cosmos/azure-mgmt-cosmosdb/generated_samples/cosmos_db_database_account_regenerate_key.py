@@ -33,10 +33,10 @@ def main():
     client.database_accounts.begin_regenerate_key(
         resource_group_name="rg1",
         account_name="ddb1",
-        key_to_regenerate={"keyKind": "primary"},
+        key_to_regenerate={"keyKind": "primary", "skipAccountKeysLastUsageCheck": False},
     ).result()
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountRegenerateKey.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBDatabaseAccountRegenerateKey.json
 if __name__ == "__main__":
     main()

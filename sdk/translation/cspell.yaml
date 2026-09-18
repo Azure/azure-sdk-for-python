@@ -1,15 +1,29 @@
-# This file configures spell checking for sdk/translation packages.
-# For more information, see: https://aka.ms/ci-fix#spell-check
-version: "0.2"
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
 import:
   - ../../.vscode/cspell.json
+words:
+  - akhtabar
+  - ctxt
+  - deserializers
+  - essai
+  - Esto
+  - hudha
+  - mosca
+  - mros
+  - myfoldername
+  - Nify
+  - NOACTION
+  - prueba
+  - wday
+  - wordomatic
 ignorePaths:
-  - azure-ai-translation-document/samples/assets/**
-  - azure-ai-translation-document/doc/**
-  - azure-ai-translation-document/tests/glossaries-valid.csv
-  - azure-ai-translation-text/azure/ai/translation/text/_serialization.py
-  - azure-ai-translation-text/azure/ai/translation/text/_utils/**
-  - azure-ai-translation-text/tests/test_break_sentence*.py
-  - azure-ai-translation-text/tests/test_translation*.py
-  - azure-ai-translation-text/tests/test_transliteration*.py
-  - test-resources.json
+  - sdk/translation/**/test-resources.json
+  - sdk/translation/azure-ai-translation-document/doc/**
+  - sdk/translation/azure-ai-translation-document/samples/assets/**
+  - sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv
+  - sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py
+  - sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_utils/**
+  - sdk/translation/azure-ai-translation-text/tests/test_break_sentence*.py
+  - sdk/translation/azure-ai-translation-text/tests/test_translation*.py
+  - sdk/translation/azure-ai-translation-text/tests/test_transliteration*.py

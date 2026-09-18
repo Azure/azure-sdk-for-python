@@ -48,8 +48,7 @@ class _RefreshTimer:
 
         calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self._attempts, max_attempts))
 
-        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
-            calculated_milliseconds = max_backoff_milliseconds
+        calculated_milliseconds = min(calculated_milliseconds, max_backoff_milliseconds)
 
         return min_backoff_milliseconds + (
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec

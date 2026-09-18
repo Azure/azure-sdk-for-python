@@ -89,7 +89,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :keyword local: (Optional) Flag to indicate whether to interact with endpoints in local Docker environment.
             Default: False
-        :type local: bool
+        :paramtype local: bool
         :return: A list of endpoints
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.OnlineEndpoint]
         """

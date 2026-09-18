@@ -28,7 +28,7 @@ class TestAgentOpenApiAsync(TestBase):
     # To run this test:
     # pytest tests/agents/tools/test_agent_openapi_async.py::TestAgentOpenApiAsync::test_agent_openapi_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_openapi_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")
@@ -104,6 +104,6 @@ class TestAgentOpenApiAsync(TestBase):
     # pytest tests/agents/tools/test_agent_openapi_async.py::TestAgentOpenApiAsync::test_agent_openapi_with_auth_async -s
     @servicePreparer()
     @pytest.mark.skip(reason="Add test here once we have a Foundry Project with a connection with auth credentials")
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_openapi_with_auth_async(self, **kwargs):
         pass

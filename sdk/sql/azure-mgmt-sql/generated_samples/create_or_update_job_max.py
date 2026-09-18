@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/CreateOrUpdateJobMax.json
+# x-ms-original-file: 2025-08-01-preview/CreateOrUpdateJobMax.json
 if __name__ == "__main__":
     main()

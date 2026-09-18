@@ -32,11 +32,11 @@ def main():
 
     response = client.supercomputers.get(
         resource_group_name="rgdiscovery",
-        supercomputer_name="b6807d2513b2fdb240",
+        supercomputer_name="871f8fdcf046bf0e2f",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Supercomputers_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Supercomputers_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

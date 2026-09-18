@@ -27,61 +27,61 @@ from .materialization_store import MaterializationStore
 class FeatureStore(Workspace):
     """Feature Store
 
-    :param name: The name of the feature store.
-    :type name: str
-    :param compute_runtime: The compute runtime of the feature store. Defaults to None.
-    :type compute_runtime: Optional[~azure.ai.ml.entities.ComputeRuntime]
-    :param offline_store: The offline store for feature store.
+    :keyword name: The name of the feature store.
+    :paramtype name: str
+    :keyword compute_runtime: The compute runtime of the feature store. Defaults to None.
+    :paramtype compute_runtime: Optional[~azure.ai.ml.entities.ComputeRuntime]
+    :keyword offline_store: The offline store for feature store.
         materialization_identity is required when offline_store is passed. Defaults to None.
-    :type offline_store: Optional[~azure.ai.ml.entities.MaterializationStore]
-    :param online_store: The online store for feature store.
+    :paramtype offline_store: Optional[~azure.ai.ml.entities.MaterializationStore]
+    :keyword online_store: The online store for feature store.
         materialization_identity is required when online_store is passed.  Defaults to None.
-    :type online_store: Optional[~azure.ai.ml.entities.MaterializationStore]
-    :param materialization_identity: The identity used for materialization. Defaults to None.
-    :type materialization_identity: Optional[~azure.ai.ml.entities.ManagedIdentityConfiguration]
-    :param description: The description of the feature store. Defaults to None.
-    :type description: Optional[str]
-    :param tags: Tags of the feature store.
-    :type tags: dict
-    :param display_name: The display name for the feature store. This is non-unique within the resource group.
+    :paramtype online_store: Optional[~azure.ai.ml.entities.MaterializationStore]
+    :keyword materialization_identity: The identity used for materialization. Defaults to None.
+    :paramtype materialization_identity: Optional[~azure.ai.ml.entities.ManagedIdentityConfiguration]
+    :keyword description: The description of the feature store. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: Tags of the feature store.
+    :paramtype tags: dict
+    :keyword display_name: The display name for the feature store. This is non-unique within the resource group.
         Defaults to None.
-    :type display_name: Optional[str]
-    :param location: The location to create the feature store in.
+    :paramtype display_name: Optional[str]
+    :keyword location: The location to create the feature store in.
         If not specified, the same location as the resource group will be used. Defaults to None.
-    :type location: Optional[str]
-    :param resource_group: The name of the resource group to create the feature store in. Defaults to None.
-    :type resource_group: Optional[str]
-    :param hbi_workspace: Boolean for whether the customer data is of high business impact (HBI),
+    :paramtype location: Optional[str]
+    :keyword resource_group: The name of the resource group to create the feature store in. Defaults to None.
+    :paramtype resource_group: Optional[str]
+    :keyword hbi_workspace: Boolean for whether the customer data is of high business impact (HBI),
         containing sensitive business information. Defaults to False.
         For more information, see
         https://learn.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
-    :type hbi_workspace: Optional[bool]
-    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+    :paramtype hbi_workspace: Optional[bool]
+    :keyword storage_account: The resource ID of an existing storage account to use instead of creating a new one.
         Defaults to None.
-    :type storage_account: Optional[str]
-    :param container_registry: The resource ID of an existing container registry
+    :paramtype storage_account: Optional[str]
+    :keyword container_registry: The resource ID of an existing container registry
         to use instead of creating a new one. Defaults to None.
-    :type container_registry: Optional[str]
-    :param key_vault: The resource ID of an existing key vault to use instead of creating a new one. Defaults to None.
-    :type key_vault: Optional[str]
-    :param application_insights: The resource ID of an existing application insights
+    :paramtype container_registry: Optional[str]
+    :keyword key_vault: The resource ID of an existing key vault to use instead of creating a new one. Defaults to None.
+    :paramtype key_vault: Optional[str]
+    :keyword application_insights: The resource ID of an existing application insights
         to use instead of creating a new one. Defaults to None.
-    :type application_insights: Optional[str]
-    :param customer_managed_key: The key vault details for encrypting data with customer-managed keys.
+    :paramtype application_insights: Optional[str]
+    :keyword customer_managed_key: The key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default. Defaults to None.
-    :type customer_managed_key: Optional[CustomerManagedKey]
-    :param image_build_compute: The name of the compute target to use for building environment
+    :paramtype customer_managed_key: Optional[CustomerManagedKey]
+    :keyword image_build_compute: The name of the compute target to use for building environment
         Docker images with the container registry is behind a VNet. Defaults to None.
-    :type image_build_compute: Optional[str]
-    :param public_network_access: Whether to allow public endpoint connectivity
+    :paramtype image_build_compute: Optional[str]
+    :keyword public_network_access: Whether to allow public endpoint connectivity
         when a workspace is private link enabled. Defaults to None.
-    :type public_network_access: Optional[str]
-    :param identity: The workspace's Managed Identity (user assigned, or system assigned). Defaults to None.
-    :type identity: Optional[IdentityConfiguration]
-    :param primary_user_assigned_identity: The workspace's primary user assigned identity. Defaults to None.
-    :type primary_user_assigned_identity: Optional[str]
-    :param managed_network: The workspace's Managed Network configuration. Defaults to None.
-    :type managed_network: Optional[ManagedNetwork]
+    :paramtype public_network_access: Optional[str]
+    :keyword identity: The workspace's Managed Identity (user assigned, or system assigned). Defaults to None.
+    :paramtype identity: Optional[IdentityConfiguration]
+    :keyword primary_user_assigned_identity: The workspace's primary user assigned identity. Defaults to None.
+    :paramtype primary_user_assigned_identity: Optional[str]
+    :keyword managed_network: The workspace's Managed Network configuration. Defaults to None.
+    :paramtype managed_network: Optional[ManagedNetwork]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

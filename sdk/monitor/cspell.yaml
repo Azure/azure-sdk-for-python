@@ -1,0 +1,51 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - asgi
+  - authr
+  - azconfig
+  - azmonitordce
+  - azmonitordcr
+  - azmonitorlogsws
+  - blrp
+  - configurators
+  - ctxt
+  - dbapi
+  - dcrrole
+  - euap
+  - Exceps
+  - grpc
+  - ikey
+  - iowait
+  - milli
+  - msecs
+  - mycontainer
+  - nbconvert
+  - nbformat
+  - opentelemetry
+  - otel
+  - OTELRESOURCE
+  - OTLP
+  - pclp
+  - pcsp
+  - percentilesw
+  - pergb
+  - pkgutils
+  - plotly
+  - processiobytessec
+  - processiorate
+  - psutil
+  - psycopg
+  - resourceid
+  - rollupby
+  - scputimes
+  - semconv
+  - softirq
+  - speced
+  - uninstrument
+  - uninstrumented
+  - updown
+  - uvicorn
+  - wday

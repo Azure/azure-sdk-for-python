@@ -77,6 +77,12 @@ class TestProviderHubMgmtOperations(AzureMgmtRecordedTestCase):
                                     "provider": "str",
                                     "resource": "str",
                                 },
+                                "qpsPloc": {
+                                    "description": "str",
+                                    "operation": "str",
+                                    "provider": "str",
+                                    "resource": "str",
+                                },
                                 "ru": {"description": "str", "operation": "str", "provider": "str", "resource": "str"},
                                 "sv": {"description": "str", "operation": "str", "provider": "str", "resource": "str"},
                                 "zhHans": {
@@ -96,6 +102,7 @@ class TestProviderHubMgmtOperations(AzureMgmtRecordedTestCase):
                             "actionType": "str",
                             "isDataAction": bool,
                             "origin": "str",
+                            "properties": {},
                         }
                     ]
                 },

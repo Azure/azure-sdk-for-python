@@ -16,6 +16,7 @@ from azure.ai.ml._schema.core.fields import (
     FileRefField,
     NestedField,
     StringTransformedEnum,
+    TypeSensitiveUnionField,
     UnionField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
@@ -23,7 +24,8 @@ from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, Ou
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file, merge_dict
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, AzureMLResourceType
+from azure.ai.ml.exceptions import ValidationException
 
 _SCHEDULED_JOB_UPDATES_KEY = "scheduled_job_updates"
 
@@ -56,15 +58,32 @@ class CreateJobFileRefField(FileRefField):
         )
 
 
+class CreateJobReferenceField(UnionField):
+    """A schedule job reference that selects remote or local validation based on its prefix."""
+
+    def __init__(self, **kwargs):
+        super().__init__(
+            [
+                ArmStr(azureml_type=AzureMLResourceType.JOB),
+                CreateJobFileRefField(),
+            ],
+            **kwargs,
+        )
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if not isinstance(value, str):
+            return super()._deserialize(value, attr, data, **kwargs)
+
+        field = self._union_fields[0] if value.startswith(ARM_ID_PREFIX) else self._union_fields[1]
+        try:
+            return field.deserialize(value, attr, data, **kwargs)
+        except ValidationException as error:
+            raise ValidationError(error.message) from error
+
+
 class BaseCreateJobSchema(BaseJobSchema):
     compute = ComputeField()
-    job = UnionField(
-        [
-            ArmStr(azureml_type=AzureMLResourceType.JOB),
-            CreateJobFileRefField,
-        ],
-        required=True,
-    )
+    job = CreateJobReferenceField(required=True)
 
     # pylint: disable-next=docstring-missing-param
     def _get_job_instance_for_remote_job(self, id: Optional[str], data: Optional[dict], **kwargs) -> "Job":
@@ -142,3 +161,30 @@ class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
     conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     environment = EnvironmentField(allow_none=True)
+
+
+class ScheduleCreateJobField(TypeSensitiveUnionField):
+    """A schedule job definition that validates only the matching job type."""
+
+    def __init__(self, **kwargs):
+        super().__init__(
+            {
+                JobType.PIPELINE: [NestedField(PipelineCreateJobSchema)],
+                JobType.COMMAND: [NestedField(CommandCreateJobSchema)],
+                JobType.SPARK: [NestedField(SparkCreateJobSchema)],
+            },
+            plain_union_fields=[CreateJobReferenceField()],
+            allow_load_from_file=False,
+            **kwargs,
+        )
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if isinstance(value, str):
+            return self._union_fields[0].deserialize(value, attr, data, **kwargs)
+        if isinstance(value, dict) and value.get(self.type_field_name) in self.allowed_types:
+            field_index = self.allowed_types.index(value[self.type_field_name]) + 1
+            return self._union_fields[field_index].deserialize(value, attr, data, **kwargs)
+        return super()._deserialize(value, attr, data, **kwargs)
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        return self._union_fields[0]._serialize(value, attr, obj, **kwargs)

@@ -12,7 +12,11 @@ from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 
 class Image(object):
-    """Python object representation of devcontainer image property."""
+    """Python object representation of devcontainer image property.
+
+    :param image: The container image reference.
+    :type image: str
+    """
 
     def __init__(self, image: str):
         self._image = image
@@ -22,7 +26,17 @@ class Image(object):
 
 
 class Build(object):
-    """Python object representation of devcontainer build.dockerfile property."""
+    """Python object representation of devcontainer build.dockerfile property.
+
+    :param dockerfile_path: The path to the Dockerfile.
+    :type dockerfile_path: str
+    :param build_context: The build context path, defaults to None.
+    :type build_context: Optional[str]
+    :param args: The build arguments, defaults to None.
+    :type args: Optional[dict]
+    :param target: The target build stage, defaults to None.
+    :type target: Optional[str]
+    """
 
     def __init__(
         self,
@@ -52,7 +66,11 @@ class Build(object):
 
 
 class ContainerEnv(object):
-    """Python object representation of devcontainer containerEnv property."""
+    """Python object representation of devcontainer containerEnv property.
+
+    :param environment_variables: The environment variables to set in the container.
+    :type environment_variables: dict
+    """
 
     def __init__(self, environment_variables: dict):
         self._environment_variables = environment_variables
@@ -62,7 +80,11 @@ class ContainerEnv(object):
 
 
 class Mounts(object):
-    """Python object representation of devcontainer mounts property."""
+    """Python object representation of devcontainer mounts property.
+
+    :param mounts: The list of mount specifications.
+    :type mounts: list
+    """
 
     def __init__(self, mounts: list):
         self._mounts = mounts
@@ -72,7 +94,11 @@ class Mounts(object):
 
 
 class Name(object):
-    """Python object representation of devcontainer name property."""
+    """Python object representation of devcontainer name property.
+
+    :param name: The devcontainer name.
+    :type name: str
+    """
 
     def __init__(self, name: str):
         self._name = name
@@ -82,7 +108,11 @@ class Name(object):
 
 
 class ForwardPorts(object):
-    """Python object representation of devcontainer name property."""
+    """Python object representation of devcontainer forwardPorts property.
+
+    :param port: The port to forward.
+    :type port: int
+    """
 
     def __init__(self, port: int):
         self._port = port
@@ -92,7 +122,11 @@ class ForwardPorts(object):
 
 
 class AppPort(object):
-    """Python object representation of devcontainer name property."""
+    """Python object representation of devcontainer appPort property.
+
+    :param port: The application port.
+    :type port: int
+    """
 
     def __init__(self, port: int):
         self._port = port
@@ -102,7 +136,13 @@ class AppPort(object):
 
 
 class RunArgs(object):
-    """Python object representation of devcontainer runArgs property."""
+    """Python object representation of devcontainer runArgs property.
+
+    :param name: The container name to set via --name, defaults to None.
+    :type name: Optional[str]
+    :param labels: The list of run arguments, defaults to None.
+    :type labels: Optional[list]
+    """
 
     def __init__(self, name: Optional[str] = None, labels: Optional[list] = None):
         labels = labels or []

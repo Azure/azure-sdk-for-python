@@ -69,13 +69,10 @@ _SHARED_DIR = _HERE.parent.parent / "_shared"
 
 
 def _load_shared_validator():
-    spec = importlib.util.spec_from_file_location(
-        "_skill_schema_validator", _SHARED_DIR / "schema_validator.py"
-    )
+    spec = importlib.util.spec_from_file_location("_skill_schema_validator", _SHARED_DIR / "schema_validator.py")
     if not spec or not spec.loader:  # pragma: no cover - defensive
         raise SystemExit(
-            "could not locate _shared/schema_validator.py (expected at "
-            f"{_SHARED_DIR / 'schema_validator.py'})"
+            "could not locate _shared/schema_validator.py (expected at " f"{_SHARED_DIR / 'schema_validator.py'})"
         )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -218,12 +215,7 @@ def summarize(results: List[Tuple[str, Dict[str, Any]]]) -> str:
             fill_rate = (len(filled) / denom) if denom else 0.0
             # Only consider confidence from rows where the value was actually
             # extracted; reporting confidence for empty fields is misleading.
-            confidences = [
-                r[2]
-                for r in rows
-                if r[1] not in (None, "", [], {})
-                and isinstance(r[2], (int, float))
-            ]
+            confidences = [r[2] for r in rows if r[1] not in (None, "", [], {}) and isinstance(r[2], (int, float))]
             avg_conf = (sum(confidences) / len(confidences)) if confidences else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<40} {fill_rate * 100:>5.1f}%      {conf_str}")
@@ -260,10 +252,7 @@ def _build_client():
 
     endpoint = os.environ.get("CONTENTUNDERSTANDING_ENDPOINT")
     if not endpoint:
-        raise SystemExit(
-            "CONTENTUNDERSTANDING_ENDPOINT is not set. "
-            "Configure your .env file (see cu-sdk-setup)."
-        )
+        raise SystemExit("CONTENTUNDERSTANDING_ENDPOINT is not set. " "Configure your .env file (see cu-sdk-setup).")
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
     return ContentUnderstandingClient(endpoint=endpoint, credential=credential)
@@ -310,9 +299,7 @@ def analyze_file(client, analyzer_id: str, file_path: Path) -> Tuple[Dict[str, A
     shape it doesn't recognise) — the raw JSON is always written.
     """
     with file_path.open("rb") as fh:
-        poller = client.begin_analyze_binary(
-            analyzer_id=analyzer_id, binary_input=fh.read()
-        )
+        poller = client.begin_analyze_binary(analyzer_id=analyzer_id, binary_input=fh.read())
     result = poller.result()
     llm_text: Optional[str] = None
     try:
@@ -362,9 +349,7 @@ def run(
 
     inputs = list(_iter_inputs(input_path))
     if not inputs:
-        print(
-            f"no supported documents found under {input_path}", file=sys.stderr
-        )
+        print(f"no supported documents found under {input_path}", file=sys.stderr)
         return 2
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -397,9 +382,7 @@ def run(
                     fail += 1
                     continue
 
-                out_path.write_text(
-                    json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8"
-                )
+                out_path.write_text(json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8")
                 if llm_text is not None:
                     llm_path = out_path.with_suffix(".llm.md")
                     llm_path.write_text(llm_text, encoding="utf-8")

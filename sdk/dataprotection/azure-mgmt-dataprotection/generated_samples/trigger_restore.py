@@ -38,7 +38,7 @@ def main():
         parameters={
             "identityDetails": {
                 "useSystemAssignedIdentity": False,
-                "userAssignedIdentityArmUrl": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourcegroups/rg-name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUami",
+                "userAssignedIdentityArmUrl": "/subscriptions/f75d8d8b-6735-4697-82e1-1a7a3ff0d5d4/resourceGroups/rg-name/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testUami",
             },
             "objectType": "AzureBackupRecoveryPointBasedRestoreRequest",
             "recoveryPointId": "hardcodedRP",
@@ -79,6 +79,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/BackupInstanceOperations/TriggerRestore.json
+# x-ms-original-file: 2026-06-01/BackupInstanceOperations/TriggerRestore.json
 if __name__ == "__main__":
     main()

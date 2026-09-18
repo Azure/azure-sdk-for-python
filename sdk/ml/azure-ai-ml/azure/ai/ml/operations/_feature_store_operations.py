@@ -211,7 +211,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             Defaults to True.
         :paramtype grant_materialization_permissions: bool
         :keyword update_dependent_resources: Whether or not to update dependent resources. Defaults to False.
-        :type update_dependent_resources: bool
+        :paramtype update_dependent_resources: bool
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """

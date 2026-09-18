@@ -32,11 +32,11 @@ def main():
 
     client.node_pools.begin_delete(
         resource_group_name="rgdiscovery",
-        supercomputer_name="6ddaf20b09c36fc7ef",
-        node_pool_name="6dcea29fcbc2279a3b",
+        supercomputer_name="5024d5e8fe2b743588",
+        node_pool_name="d79a36a71cc10c19ce",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/NodePools_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NodePools_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

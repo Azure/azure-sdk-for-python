@@ -1,0 +1,44 @@
+{
+  "properties": {
+    "computeId": "cpu-cluster",
+    "description": "smoke pipeline job built from registry components",
+    "displayName": "smoke pipeline job",
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "pipeline_input_string": {
+        "jobInputType": "literal",
+        "value": "hello smoke"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Pipeline",
+    "jobs": {
+      "node_a": {
+        "_source": "REMOTE.REGISTRY",
+        "componentId": "azureml://registries/smoke-registry/components/smoke_component_a/versions/1",
+        "computeId": "cpu-cluster",
+        "name": "node_a",
+        "type": "command"
+      },
+      "node_b": {
+        "_source": "REMOTE.REGISTRY",
+        "componentId": "azureml://registries/smoke-registry/components/smoke_component_b/versions/2",
+        "computeId": "gpu-cluster",
+        "name": "node_b",
+        "type": "command"
+      }
+    },
+    "outputs": {},
+    "properties": {},
+    "settings": {
+      "_source": "YAML.JOB",
+      "continue_on_step_failure": true,
+      "default_compute": "cpu-cluster",
+      "force_rerun": false
+    },
+    "tags": {
+      "owner": "smoke",
+      "tag1": "value1"
+    }
+  }
+}

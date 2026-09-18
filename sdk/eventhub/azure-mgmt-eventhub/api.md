@@ -4132,23 +4132,6 @@ namespace azure.mgmt.eventhub.operations
 
 namespace azure.mgmt.eventhub.types
 
-    class azure.mgmt.eventhub.types.AccessKeys(TypedDict, total=False):
-        key "aliasPrimaryConnectionString": str
-        key "aliasSecondaryConnectionString": str
-        key "keyName": str
-        key "primaryConnectionString": str
-        key "primaryKey": str
-        key "secondaryConnectionString": str
-        key "secondaryKey": str
-        alias_primary_connection_string: str
-        alias_secondary_connection_string: str
-        key_name: str
-        primary_connection_string: str
-        primary_key: str
-        secondary_connection_string: str
-        secondary_key: str
-
-
     class azure.mgmt.eventhub.types.ApplicationGroup(ProxyResource):
         key "id": str
         key "location": str
@@ -4235,15 +4218,6 @@ namespace azure.mgmt.eventhub.types
         rights: list[Union[str, AccessRights]]
 
 
-    class azure.mgmt.eventhub.types.AvailableCluster(TypedDict, total=False):
-        key "location": str
-        location: str
-
-
-    class azure.mgmt.eventhub.types.AvailableClustersList(TypedDict, total=False):
-        value: list[AvailableCluster]
-
-
     class azure.mgmt.eventhub.types.CaptureDescription(TypedDict, total=False):
         key "destination": ForwardRef('Destination', module='types')
         key "enabled": bool
@@ -4269,15 +4243,6 @@ namespace azure.mgmt.eventhub.types
     class azure.mgmt.eventhub.types.CheckNameAvailabilityParameter(TypedDict, total=False):
         key "name": Required[str]
         name: str
-
-
-    class azure.mgmt.eventhub.types.CheckNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": Union[str, UnavailableReason]
-        message: str
-        name_available: bool
-        reason: Union[str, UnavailableReason]
 
 
     class azure.mgmt.eventhub.types.Cluster(ProxyResource):
@@ -4408,15 +4373,6 @@ namespace azure.mgmt.eventhub.types
         type: str
 
 
-    class azure.mgmt.eventhub.types.EHNamespaceIdContainer(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.eventhub.types.EHNamespaceIdListResult(TypedDict, total=False):
-        value: list[EHNamespaceIdContainer]
-
-
     class azure.mgmt.eventhub.types.EHNamespaceProperties(TypedDict, total=False):
         key "alternateName": str
         key "clusterArmId": str
@@ -4467,30 +4423,6 @@ namespace azure.mgmt.eventhub.types
         key_source: Literal[KeyVault]
         key_vault_properties: list[KeyVaultProperties]
         require_infrastructure_encryption: bool
-
-
-    class azure.mgmt.eventhub.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.eventhub.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.eventhub.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
 
 
     class azure.mgmt.eventhub.types.Eventhub(ProxyResource):
@@ -4618,13 +4550,6 @@ namespace azure.mgmt.eventhub.types
         type: str
 
 
-    class azure.mgmt.eventhub.types.NetworkRuleSetListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[NetworkRuleSet]]
-        next_link: str
-        value: list[NetworkRuleSet]
-
-
     class azure.mgmt.eventhub.types.NetworkRuleSetProperties(TypedDict, total=False):
         key "defaultAction": Union[str, DefaultAction]
         key "publicNetworkAccess": Union[str, PublicNetworkAccessFlag]
@@ -4636,123 +4561,6 @@ namespace azure.mgmt.eventhub.types
         trusted_service_access_enabled: bool
         virtualNetworkRules: list[NWRuleSetVirtualNetworkRules]
         virtual_network_rules: list[NWRuleSetVirtualNetworkRules]
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeter(TypedDict, total=False):
-        key "id": str
-        key "location": str
-        key "perimeterGuid": str
-        id: str
-        location: str
-        perimeter_guid: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfiguration(ProxyResource):
-        key "id": str
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('NetworkSecurityPerimeterConfigurationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: NetworkSecurityPerimeterConfigurationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationList(TypedDict, total=False):
-        value: list[NetworkSecurityPerimeterConfiguration]
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationProperties(TypedDict, total=False):
-        key "isBackingResource": bool
-        key "networkSecurityPerimeter": ForwardRef('NetworkSecurityPerimeter', module='types')
-        key "parentAssociationName": str
-        key "profile": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesProfile', module='types')
-        key "provisioningState": Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        key "resourceAssociation": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation', module='types')
-        key "sourceResourceId": str
-        applicableFeatures: list[str]
-        applicable_features: list[str]
-        is_backing_resource: bool
-        network_security_perimeter: NetworkSecurityPerimeter
-        parent_association_name: str
-        profile: NetworkSecurityPerimeterConfigurationPropertiesProfile
-        provisioningIssues: list[ProvisioningIssue]
-        provisioning_issues: list[ProvisioningIssue]
-        provisioning_state: Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        resource_association: NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation
-        source_resource_id: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationPropertiesProfile(TypedDict, total=False):
-        key "accessRulesVersion": str
-        key "name": str
-        accessRules: list[NspAccessRule]
-        access_rules: list[NspAccessRule]
-        access_rules_version: str
-        name: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(TypedDict, total=False):
-        key "accessMode": Union[str, ResourceAssociationAccessMode]
-        key "name": str
-        access_mode: Union[str, ResourceAssociationAccessMode]
-        name: str
-
-
-    class azure.mgmt.eventhub.types.NspAccessRule(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('NspAccessRuleProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: NspAccessRuleProperties
-        type: str
-
-
-    class azure.mgmt.eventhub.types.NspAccessRuleProperties(TypedDict, total=False):
-        key "direction": Union[str, NspAccessRuleDirection]
-        addressPrefixes: list[str]
-        address_prefixes: list[str]
-        direction: Union[str, NspAccessRuleDirection]
-        fullyQualifiedDomainNames: list[str]
-        fully_qualified_domain_names: list[str]
-        networkSecurityPerimeters: list[NetworkSecurityPerimeter]
-        network_security_perimeters: list[NetworkSecurityPerimeter]
-        subscriptions: list[NspAccessRulePropertiesSubscriptionsItem]
-
-
-    class azure.mgmt.eventhub.types.NspAccessRulePropertiesSubscriptionsItem(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.eventhub.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": Any
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: Any
-
-
-    class azure.mgmt.eventhub.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
 
 
     class azure.mgmt.eventhub.types.PlatformCapabilities(TypedDict, total=False):
@@ -4787,47 +4595,6 @@ namespace azure.mgmt.eventhub.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: ConnectionState
         provisioning_state: Union[str, EndPointProvisioningState]
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResource(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        type: str
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResourcesListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PrivateLinkResource]]
-        next_link: str
-        value: list[PrivateLinkResource]
-
-
-    class azure.mgmt.eventhub.types.ProvisioningIssue(TypedDict, total=False):
-        key "name": str
-        key "properties": ForwardRef('ProvisioningIssueProperties', module='types')
-        name: str
-        properties: ProvisioningIssueProperties
-
-
-    class azure.mgmt.eventhub.types.ProvisioningIssueProperties(TypedDict, total=False):
-        key "description": str
-        key "issueType": str
-        description: str
-        issue_type: str
 
 
     class azure.mgmt.eventhub.types.ProxyResource(Resource):

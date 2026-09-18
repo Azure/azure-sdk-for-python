@@ -38,6 +38,7 @@ class TestDiscoveryMgmtSupercomputersOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
                 "name": "str",
                 "properties": {
                     "identities": {
@@ -81,6 +82,7 @@ class TestDiscoveryMgmtSupercomputersOperations(AzureMgmtRecordedTestCase):
             properties={
                 "location": "str",
                 "id": "str",
+                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
                 "name": "str",
                 "properties": {
                     "identities": {

@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Sql Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-sql"
 package_pprint_name = "SQL Management"
 package_doc_id = "sql"
-is_stable = true
+is_stable = false
 sample_link = ""
 title = "SqlManagementClient"
 package_nspkg = "azure-mgmt-nspkg"

@@ -32,7 +32,7 @@ USAGE:
     2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
     Before using prebuilt analyzers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_update_defaults.py for setup instructions.
+    resource. See sample_update_defaults_async.py for setup instructions.
 """
 
 import asyncio
@@ -58,9 +58,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_and_delete_result]
         # You can replace this URL with your own invoice file URL
         document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"

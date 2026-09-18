@@ -84,8 +84,12 @@ def in_public() -> int:
 
 
 def in_analyze_weekly() -> int:
-    # Returns 4 if the build originates from the tests-weekly analyze job
+    # Returns 4 if the build originates from the analyze-weekly job
     # 0 otherwise
+    # The analyze-weekly stage sets AZURE_SDK_ANALYZE_WEEKLY=1 (see python-analyze-weekly.yml).
+    if os.getenv("AZURE_SDK_ANALYZE_WEEKLY", "") == "1":
+        return 4
+    # Fallback for pipelines still keyed on the 'tests-weekly' definition name (e.g. identity).
     if (
         "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
         and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
@@ -102,7 +106,10 @@ DEFAULT_ENVIRONMENT_VARIABLES = {
     "VIRTUALENV_WHEEL": "0.45.1",
     "VIRTUALENV_PIP": "24.0",
     "VIRTUALENV_SETUPTOOLS": "75.3.2",
-    "PIP_EXTRA_INDEX_URL": "https://pypi.python.org/simple",
+    # Intentionally no PIP_EXTRA_INDEX_URL default. azpysdk.main already points PIP_INDEX_URL and
+    # UV_DEFAULT_INDEX at CFS_INDEX_URL when they are unset, and PipAuthenticate@1 supplies an
+    # authenticated value in CI. Adding an extra index here would duplicate that feed and would
+    # leak it into `--pypi` runs, which are meant to resolve from PyPI only.
     # I haven't spent much time looking to see if a variable exists when invoking uv run. there might be one already that we can depend
     # on for get_pip_command adjustment.
     "IN_UV": "1",

@@ -38,6 +38,8 @@ except ImportError:
 import pytest
 
 from requests import Request, Response
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
+from rest_client import MockRestClient
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
@@ -46,9 +48,7 @@ from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
-from rest_client import MockRestClient
 
 
 class SimpleResource:
@@ -288,12 +288,11 @@ def test_post(pipeline_client_builder, deserialization_cb, http_request, http_re
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = pipeline_client_builder(send)
 
@@ -310,12 +309,11 @@ def test_post(pipeline_client_builder, deserialization_cb, http_request, http_re
         if request.url == "http://example.org/location":
             response = TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
             return response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = pipeline_client_builder(send)
 
@@ -348,7 +346,7 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request,
                 http_response,
@@ -356,8 +354,7 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
                 200,
                 body={"status": "Succeeded", "resourceLocation": "http://example.org/resource_location"},
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = pipeline_client_builder(send)
 
@@ -811,12 +808,11 @@ class TestBasePolling(object):
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"location_result": True}
                 ).http_response
-            elif request.url == "http://example.org/async_monitor":
+            if request.url == "http://example.org/async_monitor":
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"status": "Succeeded"}
                 ).http_response
-            else:
-                pytest.fail("No other query allowed")
+            pytest.fail("No other query allowed")
 
         client = pipeline_client_builder(send)
 
@@ -849,12 +845,11 @@ class TestBasePolling(object):
 
             if request.url == "http://example.org/location":
                 return TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
-            elif request.url == "http://example.org/async_monitor":
+            if request.url == "http://example.org/async_monitor":
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"status": "Succeeded"}
                 ).http_response
-            else:
-                pytest.fail("No other query allowed")
+            pytest.fail("No other query allowed")
 
         client = pipeline_client_builder(send)
 
@@ -904,11 +899,8 @@ def test_post_check_patch(http_request):
 
 def test_continuation_token_with_non_json_serializable_data(port, deserialization_cb):
     """Test that continuation token gracefully handles non-JSON-serializable data like XML."""
-    import base64
-    import json
     import xml.etree.ElementTree as ET
 
-    from azure.core.polling.base_polling import LROBasePolling
     from azure.core.rest import HttpRequest
 
     client = MockRestClient(port)
@@ -947,10 +939,6 @@ def test_continuation_token_with_non_json_serializable_data(port, deserializatio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_continuation_token_excludes_request_headers(port, http_request, deserialization_cb):
     """Test that continuation token does not include sensitive request headers for security."""
-    import base64
-    import json
-
-    from azure.core.polling.base_polling import LROBasePolling
 
     client = MockRestClient(port)
     request = http_request(

@@ -38,9 +38,7 @@ DESCRIPTION:
     - Enable source and confidence tracking: Set estimateFieldSourceAndConfidence to true at the
       analyzer level (in ContentAnalyzerConfig) or estimateSourceAndConfidence to true at the field
       level to get source location (page number, bounding box) and confidence scores for extracted
-      field values. This is required for fields with method = extract and is useful for validation,
-      quality assurance, debugging, and highlighting source text in user interfaces. Field-level
-      settings override analyzer-level settings.
+      field values. Field-level settings override analyzer-level settings.
 
 USAGE:
     python sample_create_analyzer_async.py
@@ -50,7 +48,7 @@ USAGE:
     2) CONTENTUNDERSTANDING_KEY - your Content Understanding API key (optional if using DefaultAzureCredential).
 
     Before using custom analyzers, you MUST configure model deployments for your Microsoft Foundry
-    resource. See sample_update_defaults.py for setup instructions.
+    resource. See sample_update_defaults_async.py for setup instructions.
 """
 
 import asyncio
@@ -78,9 +76,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START create_analyzer]
         # Generate a unique analyzer ID
         analyzer_id = f"my_custom_analyzer_{int(time.time())}"
@@ -138,7 +134,7 @@ async def main() -> None:
             config=config,
             field_schema=field_schema,
             models={
-                "completion": "gpt-4.1",
+                "completion": "gpt-5.2",
                 "embedding": "text-embedding-3-large",
             },  # Required when using field_schema
         )

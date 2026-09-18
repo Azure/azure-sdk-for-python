@@ -15,10 +15,10 @@ from azure.ai.ml._utils._experimental import experimental
 class AzureAISearchConfig:
     """Config class for creating an Azure AI Search index.
 
-    :param index_name: The name of the Azure AI Search index.
-    :type index_name: Optional[str]
-    :param connection_id: The Azure AI Search connection ID.
-    :type connection_id: Optional[str]
+    :keyword index_name: The name of the Azure AI Search index.
+    :paramtype index_name: Optional[str]
+    :keyword connection_id: The Azure AI Search connection ID.
+    :paramtype connection_id: Optional[str]
     """
 
     def __init__(

@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-31/CloudHsmCluster_Create_Backup_MaximumSet_Gen_ValidateBackupProperties.json
+# x-ms-original-file: 2025-12-01-preview/CloudHsmCluster_Create_Backup_MaximumSet_Gen_ValidateBackupProperties.json
 if __name__ == "__main__":
     main()

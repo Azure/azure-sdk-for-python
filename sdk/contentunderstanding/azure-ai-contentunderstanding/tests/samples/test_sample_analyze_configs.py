@@ -30,7 +30,10 @@ USAGE:
 import os
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 
 
 class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
@@ -72,7 +75,9 @@ class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
 
         # Analyze with prebuilt-documentSearch which has formulas, layout, and OCR enabled
         poller = client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes, content_type="application/pdf"
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=file_bytes,
+            content_type="application/pdf",
         )
 
         result = poller.result()

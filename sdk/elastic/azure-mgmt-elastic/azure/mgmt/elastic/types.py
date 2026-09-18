@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,14 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
         ConfigurationType,
         CreatedByType,
-        ElasticDeploymentStatus,
         HostingType,
         LiftrResourceCategories,
         ManagedIdentityTypes,
@@ -23,26 +22,9 @@ if TYPE_CHECKING:
         OperationName,
         ProjectType,
         ProvisioningState,
-        SendingLogs,
         Status,
         TagAction,
-        Type,
     )
-
-
-class BillingInfoResponse(TypedDict, total=False):
-    """Marketplace Subscription and Organization details to which resource gets billed into.
-
-    :ivar marketplace_saas_info: Marketplace Subscription details.
-    :vartype marketplace_saas_info: "MarketplaceSaaSInfo"
-    :ivar partner_billing_entity: Partner Billing Entity details: Organization Info.
-    :vartype partner_billing_entity: "PartnerBillingEntity"
-    """
-
-    marketplaceSaasInfo: "MarketplaceSaaSInfo"
-    """Marketplace Subscription details."""
-    partnerBillingEntity: "PartnerBillingEntity"
-    """Partner Billing Entity details: Organization Info."""
 
 
 class CompanyInfo(TypedDict, total=False):
@@ -70,89 +52,6 @@ class CompanyInfo(TypedDict, total=False):
     """State of the company location."""
     country: str
     """Country of the company location."""
-
-
-class ConnectedPartnerResourceProperties(TypedDict, total=False):
-    """Connected Partner Resource Properties.
-
-    :ivar partner_deployment_name: Elastic resource name.
-    :vartype partner_deployment_name: str
-    :ivar partner_deployment_uri: URL of the resource in Elastic cloud.
-    :vartype partner_deployment_uri: str
-    :ivar azure_resource_id: The azure resource Id of the resource.
-    :vartype azure_resource_id: str
-    :ivar location: The location of the resource.
-    :vartype location: str
-    :ivar type: The hosting type of the resource.
-    :vartype type: str
-    """
-
-    partnerDeploymentName: str
-    """Elastic resource name."""
-    partnerDeploymentUri: str
-    """URL of the resource in Elastic cloud."""
-    azureResourceId: str
-    """The azure resource Id of the resource."""
-    location: str
-    """The location of the resource."""
-    type: str
-    """The hosting type of the resource."""
-
-
-class ConnectedPartnerResourcesListFormat(TypedDict, total=False):
-    """Connected Partner Resources List Format.
-
-    :ivar properties: Connected Partner Resource Properties.
-    :vartype properties: "ConnectedPartnerResourceProperties"
-    """
-
-    properties: "ConnectedPartnerResourceProperties"
-    """Connected Partner Resource Properties."""
-
-
-class DeploymentInfoResponse(TypedDict, total=False):
-    """The properties of deployment in Elastic cloud corresponding to the Elastic monitor resource.
-
-    :ivar status: The Elastic deployment status. Known values are: "Healthy" and "Unhealthy".
-    :vartype status: Union[str, "ElasticDeploymentStatus"]
-    :ivar version: Version of the elasticsearch in Elastic cloud deployment.
-    :vartype version: str
-    :ivar memory_capacity: RAM capacity of the elasticsearch in Elastic cloud deployment.
-    :vartype memory_capacity: str
-    :ivar disk_capacity: Disk capacity of the elasticsearch in Elastic cloud deployment.
-    :vartype disk_capacity: str
-    :ivar elasticsearch_end_point: Elasticsearch endpoint in Elastic cloud deployment. This is
-     either the aliased_endpoint if available, or the service_url otherwise.
-    :vartype elasticsearch_end_point: str
-    :ivar deployment_url: Deployment URL of the elasticsearch in Elastic cloud deployment.
-    :vartype deployment_url: str
-    :ivar marketplace_saas_info: Marketplace SaaS Info of the resource.
-    :vartype marketplace_saas_info: "MarketplaceSaaSInfo"
-    :ivar project_type: Project Type - Applicable for Serverless only.
-    :vartype project_type: str
-    :ivar configuration_type: ConfigurationType Type - Applicable for Serverless only.
-    :vartype configuration_type: str
-    """
-
-    status: Union[str, "ElasticDeploymentStatus"]
-    """The Elastic deployment status. Known values are: \"Healthy\" and \"Unhealthy\"."""
-    version: str
-    """Version of the elasticsearch in Elastic cloud deployment."""
-    memoryCapacity: str
-    """RAM capacity of the elasticsearch in Elastic cloud deployment."""
-    diskCapacity: str
-    """Disk capacity of the elasticsearch in Elastic cloud deployment."""
-    elasticsearchEndPoint: str
-    """Elasticsearch endpoint in Elastic cloud deployment. This is either the aliased_endpoint if
-     available, or the service_url otherwise."""
-    deploymentUrl: str
-    """Deployment URL of the elasticsearch in Elastic cloud deployment."""
-    marketplaceSaasInfo: "MarketplaceSaaSInfo"
-    """Marketplace SaaS Info of the resource."""
-    projectType: str
-    """Project Type - Applicable for Serverless only."""
-    configurationType: str
-    """ConfigurationType Type - Applicable for Serverless only."""
 
 
 class ElasticCloudDeployment(TypedDict, total=False):
@@ -324,48 +223,6 @@ class ElasticMonitorUpgrade(TypedDict, total=False):
     """Version to which the elastic monitor should be upgraded to."""
 
 
-class ElasticOrganizationToAzureSubscriptionMappingResponse(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The Azure Subscription ID to which the Organization of the logged in user belongs and gets
-    billed into.
-
-    :ivar properties: The properties of Azure Subscription ID to which the Organization of the
-     logged in user belongs and gets billed into.
-    :vartype properties: "ElasticOrganizationToAzureSubscriptionMappingResponseProperties"
-    """
-
-    properties: "ElasticOrganizationToAzureSubscriptionMappingResponseProperties"
-    """The properties of Azure Subscription ID to which the Organization of the logged in user belongs
-     and gets billed into."""
-
-
-class ElasticOrganizationToAzureSubscriptionMappingResponseProperties(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """The properties of Azure Subscription ID to which the Organization of the logged in user belongs
-    and gets billed into.
-
-    :ivar billed_azure_subscription_id: The Azure Subscription ID to which the Organization belongs
-     and gets billed into. This is empty for a new user OR a user without an Elastic Organization.
-    :vartype billed_azure_subscription_id: str
-    :ivar marketplace_saas_info: Marketplace SaaS Info of the resource.
-    :vartype marketplace_saas_info: "MarketplaceSaaSInfo"
-    :ivar elastic_organization_id: The Elastic Organization Id.
-    :vartype elastic_organization_id: str
-    :ivar elastic_organization_name: The Elastic Organization Name.
-    :vartype elastic_organization_name: str
-    """
-
-    billedAzureSubscriptionId: str
-    """The Azure Subscription ID to which the Organization belongs and gets billed into. This is empty
-     for a new user OR a user without an Elastic Organization."""
-    marketplaceSaasInfo: "MarketplaceSaaSInfo"
-    """Marketplace SaaS Info of the resource."""
-    elasticOrganizationId: str
-    """The Elastic Organization Id."""
-    elasticOrganizationName: str
-    """The Elastic Organization Name."""
-
-
 class ElasticProperties(TypedDict, total=False):
     """Elastic Resource Properties.
 
@@ -379,188 +236,6 @@ class ElasticProperties(TypedDict, total=False):
     """Details of the user's elastic account."""
     elasticCloudDeployment: "ElasticCloudDeployment"
     """Details of the elastic cloud deployment."""
-
-
-class ElasticTrafficFilter(TypedDict, total=False):
-    """Elastic traffic filter object.
-
-    :ivar id: Id of the elastic filter.
-    :vartype id: str
-    :ivar name: Name of the elastic filter.
-    :vartype name: str
-    :ivar description: Description of the elastic filter.
-    :vartype description: str
-    :ivar region: Region of the elastic filter.
-    :vartype region: str
-    :ivar type: Type of the elastic filter. Known values are: "ip" and "azure_private_endpoint".
-    :vartype type: Union[str, "Type"]
-    :ivar include_by_default: IncludeByDefault for the elastic filter.
-    :vartype include_by_default: bool
-    :ivar rules: Rules in the elastic filter.
-    :vartype rules: list["ElasticTrafficFilterRule"]
-    """
-
-    id: str
-    """Id of the elastic filter."""
-    name: str
-    """Name of the elastic filter."""
-    description: str
-    """Description of the elastic filter."""
-    region: str
-    """Region of the elastic filter."""
-    type: Union[str, "Type"]
-    """Type of the elastic filter. Known values are: \"ip\" and \"azure_private_endpoint\"."""
-    includeByDefault: bool
-    """IncludeByDefault for the elastic filter."""
-    rules: list["ElasticTrafficFilterRule"]
-    """Rules in the elastic filter."""
-
-
-class ElasticTrafficFilterResponse(TypedDict, total=False):
-    """List of elastic traffic filters in the account.
-
-    :ivar rulesets: List of elastic traffic filters in the account.
-    :vartype rulesets: list["ElasticTrafficFilter"]
-    """
-
-    rulesets: list["ElasticTrafficFilter"]
-    """List of elastic traffic filters in the account."""
-
-
-class ElasticTrafficFilterRule(TypedDict, total=False):
-    """Elastic traffic filter rule object.
-
-    :ivar source: IP of the elastic filter rule.
-    :vartype source: str
-    :ivar description: Description of the elastic filter rule.
-    :vartype description: str
-    :ivar azure_endpoint_guid: Guid of Private Endpoint in the elastic filter rule.
-    :vartype azure_endpoint_guid: str
-    :ivar azure_endpoint_name: Name of the Private Endpoint in the elastic filter rule.
-    :vartype azure_endpoint_name: str
-    :ivar id: Id of the elastic filter rule.
-    :vartype id: str
-    """
-
-    source: str
-    """IP of the elastic filter rule."""
-    description: str
-    """Description of the elastic filter rule."""
-    azureEndpointGuid: str
-    """Guid of Private Endpoint in the elastic filter rule."""
-    azureEndpointName: str
-    """Name of the Private Endpoint in the elastic filter rule."""
-    id: str
-    """Id of the elastic filter rule."""
-
-
-class ElasticVersionListFormat(TypedDict, total=False):
-    """Elastic Version List Format.
-
-    :ivar properties: Elastic Version Properties.
-    :vartype properties: "ElasticVersionListProperties"
-    """
-
-    properties: "ElasticVersionListProperties"
-    """Elastic Version Properties."""
-
-
-class ElasticVersionListProperties(TypedDict, total=False):
-    """Elastic Version Properties.
-
-    :ivar version: Available elastic version of the given region.
-    :vartype version: str
-    """
-
-    version: str
-    """Available elastic version of the given region."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
-class ErrorResponseBody(TypedDict, total=False):
-    """Error response body.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message.
-    :vartype message: str
-    :ivar target: Error target.
-    :vartype target: str
-    :ivar details: Error details.
-    :vartype details: list["ErrorResponseBody"]
-    """
-
-    code: str
-    """Error code."""
-    message: str
-    """Error message."""
-    target: str
-    """Error target."""
-    details: list["ErrorResponseBody"]
-    """Error details."""
-
-
-class ExternalUserCreationResponse(TypedDict, total=False):
-    """The properties of the response we got from elastic while creating external user.
-
-    :ivar created: Shows if user is created or updated.
-    :vartype created: bool
-    """
-
-    created: bool
-    """Shows if user is created or updated."""
 
 
 class ExternalUserInfo(TypedDict, total=False):
@@ -658,79 +333,6 @@ class LogRules(TypedDict, total=False):
      SendActivityLogs flag is enabled. If empty, all resources will be captured. If only Exclude
      action is specified, the rules will apply to the list of all available resources. If Include
      actions are specified, the rules will only include resources with the associated tags."""
-
-
-class MarketplaceSaaSInfo(TypedDict, total=False):
-    """Marketplace SAAS Info of the resource.
-
-    :ivar marketplace_subscription: Marketplace Subscription.
-    :vartype marketplace_subscription: "MarketplaceSaaSInfoMarketplaceSubscription"
-    :ivar marketplace_name: Marketplace Subscription Details: SAAS Name.
-    :vartype marketplace_name: str
-    :ivar marketplace_resource_id: Marketplace Subscription Details: Resource URI.
-    :vartype marketplace_resource_id: str
-    :ivar marketplace_status: Marketplace Subscription Details: SaaS Subscription Status.
-    :vartype marketplace_status: str
-    :ivar billed_azure_subscription_id: The Azure Subscription ID to which the Marketplace
-     Subscription belongs and gets billed into.
-    :vartype billed_azure_subscription_id: str
-    :ivar subscribed: Flag specifying if the Marketplace status is subscribed or not.
-    :vartype subscribed: bool
-    """
-
-    marketplaceSubscription: "MarketplaceSaaSInfoMarketplaceSubscription"
-    """Marketplace Subscription."""
-    marketplaceName: str
-    """Marketplace Subscription Details: SAAS Name."""
-    marketplaceResourceId: str
-    """Marketplace Subscription Details: Resource URI."""
-    marketplaceStatus: str
-    """Marketplace Subscription Details: SaaS Subscription Status."""
-    billedAzureSubscriptionId: str
-    """The Azure Subscription ID to which the Marketplace Subscription belongs and gets billed into."""
-    subscribed: bool
-    """Flag specifying if the Marketplace status is subscribed or not."""
-
-
-class MarketplaceSaaSInfoMarketplaceSubscription(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Marketplace Subscription.
-
-    :ivar id: Marketplace Subscription Id. This is a GUID-formatted string.
-    :vartype id: str
-    :ivar publisher_id: Publisher Id of the Marketplace offer.
-    :vartype publisher_id: str
-    :ivar offer_id: Offer Id of the Marketplace offer,.
-    :vartype offer_id: str
-    """
-
-    id: str
-    """Marketplace Subscription Id. This is a GUID-formatted string."""
-    publisherId: str
-    """Publisher Id of the Marketplace offer."""
-    offerId: str
-    """Offer Id of the Marketplace offer,."""
-
-
-class MonitoredResource(TypedDict, total=False):
-    """The properties of a resource currently being monitored by the Elastic monitor resource.
-
-    :ivar id: The ARM id of the resource.
-    :vartype id: str
-    :ivar sending_logs: Flag indicating the status of the resource for sending logs operation to
-     Elastic. Known values are: "True" and "False".
-    :vartype sending_logs: Union[str, "SendingLogs"]
-    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
-     sending).
-    :vartype reason_for_logs_status: str
-    """
-
-    id: str
-    """The ARM id of the resource."""
-    sendingLogs: Union[str, "SendingLogs"]
-    """Flag indicating the status of the resource for sending logs operation to Elastic. Known values
-     are: \"True\" and \"False\"."""
-    reasonForLogsStatus: str
-    """Reason for why the resource is sending logs (or why it is not sending)."""
 
 
 class MonitoredSubscription(TypedDict, total=False):
@@ -965,93 +567,6 @@ class OpenAIIntegrationRPModel(ProxyResource):
     """Open AI Integration details."""
 
 
-class OpenAIIntegrationStatusResponse(TypedDict, total=False):
-    """Status of the OpenAI Integration.
-
-    :ivar properties: Status of the OpenAI Integration.
-    :vartype properties: "OpenAIIntegrationStatusResponseProperties"
-    """
-
-    properties: "OpenAIIntegrationStatusResponseProperties"
-    """Status of the OpenAI Integration."""
-
-
-class OpenAIIntegrationStatusResponseProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Status of the OpenAI Integration.
-
-    :ivar status: Status of the OpenAI Integration.
-    :vartype status: str
-    """
-
-    status: str
-    """Status of the OpenAI Integration."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Represents the display information for an operation.
-
-    :ivar provider: The service provider of the operation.
-    :vartype provider: str
-    :ivar resource: The resource type of the operation.
-    :vartype resource: str
-    :ivar operation: The name of the operation.
-    :vartype operation: str
-    :ivar description: A description of the operation.
-    :vartype description: str
-    """
-
-    provider: str
-    """The service provider of the operation."""
-    resource: str
-    """The resource type of the operation."""
-    operation: str
-    """The name of the operation."""
-    description: str
-    """A description of the operation."""
-
-
-class OperationResult(TypedDict, total=False):
-    """A Microsoft.Elastic REST API operation.
-
-    :ivar name: Operation name, i.e., {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar is_data_action: Indicates whether the operation is a data action.
-    :vartype is_data_action: bool
-    :ivar display: The object that represents the operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: Origin of the operation.
-    :vartype origin: str
-    """
-
-    name: str
-    """Operation name, i.e., {provider}/{resource}/{operation}."""
-    isDataAction: bool
-    """Indicates whether the operation is a data action."""
-    display: "OperationDisplay"
-    """The object that represents the operation."""
-    origin: str
-    """Origin of the operation."""
-
-
-class PartnerBillingEntity(TypedDict, total=False):
-    """Partner Billing details associated with the resource.
-
-    :ivar id: The Elastic Organization Id.
-    :vartype id: str
-    :ivar name: The Elastic Organization Name.
-    :vartype name: str
-    :ivar partner_entity_uri: Link to the elastic organization page.
-    :vartype partner_entity_uri: str
-    """
-
-    id: str
-    """The Elastic Organization Id."""
-    name: str
-    """The Elastic Organization Name."""
-    partnerEntityUri: str
-    """Link to the elastic organization page."""
-
-
 class PlanDetails(TypedDict, total=False):
     """Plan details of the monitor resource.
 
@@ -1096,17 +611,6 @@ class ProjectDetails(TypedDict, total=False):
     configurationType: Union[str, "ConfigurationType"]
     """Configuration type of the Elasticsearch project. Known values are: \"GeneralPurpose\",
      \"Vector\", \"TimeSeries\", and \"NotApplicable\"."""
-
-
-class ResourceProviderDefaultErrorResponse(TypedDict, total=False):
-    """RP default error response.
-
-    :ivar error: Response body of Error.
-    :vartype error: "ErrorResponseBody"
-    """
-
-    error: "ErrorResponseBody"
-    """Response body of Error."""
 
 
 class ResourceSku(TypedDict, total=False):
@@ -1212,45 +716,6 @@ class SystemData(TypedDict, total=False):
     """The timestamp of resource last modification (UTC)."""
 
 
-class UpgradableVersionsList(TypedDict, total=False):
-    """Stack Versions that this version can upgrade to.
-
-    :ivar current_version: Current version of the elastic monitor.
-    :vartype current_version: str
-    :ivar upgradable_versions: Stack Versions that this version can upgrade to.
-    :vartype upgradable_versions: list[str]
-    """
-
-    currentVersion: str
-    """Current version of the elastic monitor."""
-    upgradableVersions: list[str]
-    """Stack Versions that this version can upgrade to."""
-
-
-class UserApiKeyResponse(TypedDict, total=False):
-    """The User Api Key created for the Organization associated with the User Email Id that was passed
-    in the request.
-
-    :ivar properties:
-    :vartype properties: "UserApiKeyResponseProperties"
-    """
-
-    properties: "UserApiKeyResponseProperties"
-
-
-class UserApiKeyResponseProperties(TypedDict, total=False):
-    """UserApiKeyResponseProperties.
-
-    :ivar api_key: The User Api Key Generated based on GenerateApiKey flag. This is applicable for
-     non-Portal clients only.
-    :vartype api_key: str
-    """
-
-    apiKey: str
-    """The User Api Key Generated based on GenerateApiKey flag. This is applicable for non-Portal
-     clients only."""
-
-
 class UserEmailId(TypedDict, total=False):
     """Email Id of the User Organization, of which the API Key must be returned.
 
@@ -1303,29 +768,3 @@ class VMCollectionUpdate(TypedDict, total=False):
     """ARM id of the VM resource."""
     operationName: Union[str, "OperationName"]
     """Operation to be performed for given VM. Known values are: \"Add\" and \"Delete\"."""
-
-
-class VMIngestionDetailsResponse(TypedDict, total=False):
-    """The vm ingestion details to install an agent.
-
-    :ivar cloud_id: The cloudId of given Elastic monitor resource.
-    :vartype cloud_id: str
-    :ivar ingestion_key: Ingestion details to install agent on given VM.
-    :vartype ingestion_key: str
-    """
-
-    cloudId: str
-    """The cloudId of given Elastic monitor resource."""
-    ingestionKey: str
-    """Ingestion details to install agent on given VM."""
-
-
-class VMResources(TypedDict, total=False):
-    """The vm resource properties that is currently being monitored by the Elastic monitor resource.
-
-    :ivar vm_resource_id: The ARM id of the VM resource.
-    :vartype vm_resource_id: str
-    """
-
-    vmResourceId: str
-    """The ARM id of the VM resource."""

@@ -27,6 +27,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from azure.core import MatchConditions
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
 from azure.core.tracing.common import with_current_context
 
@@ -41,6 +42,7 @@ from ._encryption import (
     get_adjusted_download_range_and_offset,
     is_encryption_v2,
     parse_encryption_data,
+    _GCMRegionNonceValidator,
 )
 
 if TYPE_CHECKING:
@@ -69,7 +71,13 @@ def process_range_and_offset(
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
+def process_content(
+    data: Any,
+    start_offset: int,
+    end_offset: int,
+    encryption: Dict[str, Any],
+    expected_encryption_data: Optional["_EncryptionData"],
+) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
 
@@ -85,6 +93,8 @@ def process_content(data: Any, start_offset: int, end_offset: int, encryption: D
                 start_offset,
                 end_offset,
                 data.response.headers,
+                expected_encryption_data,
+                encryption.get("gcm_nonce_validator"),
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
@@ -241,7 +251,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     process_storage_error(error)
 
                 try:
-                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = process_content(
+                        response, offset[0], offset[1], self.encryption_options, self.encryption_data
+                    )
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
@@ -252,8 +264,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
-            if self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = response.properties.etag
+            self.request_options["etag"] = response.properties.etag
+            self.request_options["match_condition"] = MatchConditions.IfNotModified
 
         return chunk_data, content_length
 
@@ -388,6 +400,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             self._get_encryption_data_request()
+            if is_encryption_v2(self._encryption_data):
+                self._encryption_options["gcm_nonce_validator"] = _GCMRegionNonceValidator()
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -529,7 +543,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self._current_content = b""
                 else:
                     self._current_content = process_content(
-                        response, self._initial_offset[0], self._initial_offset[1], self._encryption_options
+                        response,
+                        self._initial_offset[0],
+                        self._initial_offset[1],
+                        self._encryption_options,
+                        self._encryption_data,
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
@@ -553,8 +571,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 pass
 
         self._is_structured_message = response.response.headers.get("x-ms-structured-body") is not None
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
-            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        if not self._download_complete:
+            self._request_options["etag"] = response.properties.etag
+            self._request_options["match_condition"] = MatchConditions.IfNotModified
 
         return response
 

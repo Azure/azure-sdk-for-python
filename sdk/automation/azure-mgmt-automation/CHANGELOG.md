@@ -1,5 +1,230 @@
 # Release History
 
+## 2.0.0 (2026-07-29)
+
+### Features Added
+
+  - Client `AutomationClient` added parameter `api_version` in method `__init__`
+  - Client `AutomationClient` added method `convert_graph_runbook_content`
+  - Client `AutomationClient` added method `send_request`
+  - Client `AutomationClient` added operation group `deleted_automation_accounts`
+  - Client `AutomationClient` added operation group `hybrid_runbook_workers`
+  - Client `AutomationClient` added operation group `package`
+  - Client `AutomationClient` added operation group `private_endpoint_connections`
+  - Client `AutomationClient` added operation group `private_link_resources`
+  - Client `AutomationClient` added operation group `python3_package`
+  - Client `AutomationClient` added operation group `runtime_environments`
+  - Model `AutomationAccount` added property `identity`
+  - Model `AutomationAccount` added property `system_data`
+  - Model `AutomationAccountCreateOrUpdateParameters` added property `identity`
+  - Model `AutomationAccountUpdateParameters` added property `identity`
+  - Model `Certificate` added property `system_data`
+  - Model `Connection` added property `system_data`
+  - Model `ConnectionType` added property `system_data`
+  - Model `Credential` added property `system_data`
+  - Model `DscConfiguration` added property `system_data`
+  - Model `DscNode` added property `system_data`
+  - Model `DscNodeConfiguration` added property `system_data`
+  - Model `HybridRunbookWorker` added property `id`
+  - Model `HybridRunbookWorker` added property `location`
+  - Model `HybridRunbookWorker` added property `system_data`
+  - Model `HybridRunbookWorker` added property `tags`
+  - Model `HybridRunbookWorker` added property `type`
+  - Model `HybridRunbookWorkerGroup` added property `location`
+  - Model `HybridRunbookWorkerGroup` added property `system_data`
+  - Model `HybridRunbookWorkerGroup` added property `tags`
+  - Model `HybridRunbookWorkerGroup` added property `type`
+  - Model `Job` added property `system_data`
+  - Model `JobCollectionItem` added property `system_data`
+  - Model `JobSchedule` added property `system_data`
+  - Model `Module` added property `system_data`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `properties`
+  - Model `OperationDisplay` added property `description`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `Runbook` added property `system_data`
+  - Enum `RunbookTypeEnum` added member `POWER_SHELL72`
+  - Enum `RunbookTypeEnum` added member `PYTHON`
+  - Model `Schedule` added property `system_data`
+  - Model `SoftwareUpdateConfiguration` added property `system_data`
+  - Model `SourceControl` added property `system_data`
+  - Model `TestJobCreateParameters` added property `runtime_environment`
+  - Model `TrackedResource` added property `system_data`
+  - Model `Variable` added property `system_data`
+  - Model `Watcher` added property `system_data`
+  - Model `Webhook` added property `system_data`
+  - Added model `AutomationErrorResponse`
+  - Added enum `CreatedByType`
+  - Added model `DeletedAutomationAccount`
+  - Added model `DeletedAutomationAccountListResult`
+  - Added model `DeletedAutomationAccountProperties`
+  - Added model `DeletedRunbook`
+  - Added model `DeletedRunbookProperties`
+  - Added model `Dimension`
+  - Added enum `EncryptionKeySourceType`
+  - Added model `EncryptionProperties`
+  - Added model `EncryptionPropertiesIdentity`
+  - Added model `ErrorAdditionalInfo`
+  - Added enum `GraphRunbookType`
+  - Added model `GraphicalRunbookContent`
+  - Added model `HybridRunbookWorkerCreateOrUpdateParameters`
+  - Added model `HybridRunbookWorkerCreateParameters`
+  - Added model `HybridRunbookWorkerGroupCreateOrUpdateParameters`
+  - Added model `HybridRunbookWorkerGroupCreateOrUpdateProperties`
+  - Added model `HybridRunbookWorkerMoveParameters`
+  - Added model `Identity`
+  - Added model `JobRuntimeEnvironment`
+  - Added model `KeyVaultProperties`
+  - Added model `LogSpecification`
+  - Added model `MetricSpecification`
+  - Added model `OperationPropertiesFormat`
+  - Added model `OperationPropertiesFormatServiceSpecification`
+  - Added model `Package`
+  - Added model `PackageCreateOrUpdateParameters`
+  - Added model `PackageCreateOrUpdateProperties`
+  - Added model `PackageErrorInfo`
+  - Added model `PackageProperties`
+  - Added enum `PackageProvisioningState`
+  - Added model `PackageUpdateParameters`
+  - Added model `PackageUpdateProperties`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateEndpointProperty`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionStateProperty`
+  - Added model `RawGraphicalRunbookContent`
+  - Added enum `ResourceIdentityType`
+  - Added model `RuntimeEnvironment`
+  - Added model `RuntimeEnvironmentProperties`
+  - Added model `RuntimeEnvironmentUpdateParameters`
+  - Added model `RuntimeEnvironmentUpdateProperties`
+  - Added model `RuntimeProperties`
+  - Added model `SUCScheduleProperties`
+  - Added model `SoftwareUpdateConfigurationRunTaskProperties`
+  - Added model `SoftwareUpdateConfigurationRunTasks`
+  - Added model `SystemData`
+  - Added model `UserAssignedIdentitiesProperties`
+  - Added enum `WorkerType`
+  - Operation group `AutomationAccountOperations` added method `list_deleted_runbooks`
+  - Operation group `HybridRunbookWorkerGroupOperations` added method `create`
+  - Added operation group `DeletedAutomationAccountsOperations`
+  - Added operation group `HybridRunbookWorkersOperations`
+  - Added operation group `PackageOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+  - Added operation group `Python3PackageOperations`
+  - Added operation group `RuntimeEnvironmentsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted operation group `AutomationClient.dsc_compilation_job`/`AutomationClient.dsc_compilation_job_stream` and their corresponding operation groups `DscCompilationJobOperations`/`DscCompilationJobStreamOperations`; corresponding models `DscCompilationJob`/`DscCompilationJobCreateParameters` were also deleted
+  - Model `Activity` moved instance variable `creation_time`, `definition`, `description`, `last_modified_time`, `output_types` and `parameter_sets` under property `properties` whose type is `ActivityProperties`
+  - Model `AgentRegistration` renamed its instance variable `keys` to `keys_property`
+  - Model `AutomationAccount` moved instance variable `creation_time`, `description`, `last_modified_by`, `last_modified_time`, `sku` and `state` under property `properties` whose type is `AutomationAccountProperties`
+  - Model `AutomationAccountCreateOrUpdateParameters` moved instance variable `sku` under property `properties` whose type is `AutomationAccountCreateOrUpdateProperties`
+  - Model `AutomationAccountUpdateParameters` moved instance variable `sku` under property `properties` whose type is `AutomationAccountUpdateProperties`
+  - Model `Certificate` moved instance variable `creation_time`, `description`, `expiry_time`, `is_exportable`, `last_modified_time` and `thumbprint` under property `properties` whose type is `CertificateProperties`
+  - Model `CertificateCreateOrUpdateParameters` moved instance variable `base64_value`, `description`, `is_exportable` and `thumbprint` under property `properties` whose type is `CertificateCreateOrUpdateProperties`
+  - Model `CertificateUpdateParameters` moved instance variable `description` under property `properties` whose type is `CertificateUpdateProperties`
+  - Model `Connection` moved instance variable `connection_type`, `creation_time`, `description`, `field_definition_values` and `last_modified_time` under property `properties` whose type is `ConnectionProperties`
+  - Model `ConnectionCreateOrUpdateParameters` moved instance variable `connection_type`, `description` and `field_definition_values` under property `properties` whose type is `ConnectionCreateOrUpdateProperties`
+  - Model `ConnectionType` moved instance variable `creation_time`, `description`, `field_definitions`, `is_global` and `last_modified_time` under property `properties` whose type is `ConnectionTypeProperties`
+  - Model `ConnectionTypeCreateOrUpdateParameters` moved instance variable `field_definitions` and `is_global` under property `properties` whose type is `ConnectionTypeCreateOrUpdateProperties`
+  - Model `ConnectionUpdateParameters` moved instance variable `description` and `field_definition_values` under property `properties` whose type is `ConnectionUpdateProperties`
+  - Model `Credential` moved instance variable `creation_time`, `description`, `last_modified_time` and `user_name` under property `properties` whose type is `CredentialProperties`
+  - Model `CredentialCreateOrUpdateParameters` moved instance variable `description`, `password` and `user_name` under property `properties` whose type is `CredentialCreateOrUpdateProperties`
+  - Model `CredentialUpdateParameters` moved instance variable `description`, `password` and `user_name` under property `properties` whose type is `CredentialUpdateProperties`
+  - Model `DscConfiguration` moved instance variable `creation_time`, `description`, `job_count`, `last_modified_time`, `log_verbose`, `node_configuration_count`, `parameters`, `provisioning_state`, `source` and `state` under property `properties` whose type is `DscConfigurationProperties`
+  - Model `DscConfigurationCreateOrUpdateParameters` moved instance variable `description`, `log_progress`, `log_verbose`, `parameters` and `source` under property `properties` whose type is `DscConfigurationCreateOrUpdateProperties`
+  - Model `DscConfigurationUpdateParameters` moved instance variable `description`, `log_progress`, `log_verbose`, `parameters` and `source` under property `properties` whose type is `DscConfigurationCreateOrUpdateProperties`
+  - Model `DscNode` moved instance variable `account_id`, `etag`, `extension_handler`, `ip`, `last_seen`, `name_properties_node_configuration_name`, `node_id`, `registration_time`, `status` and `total_count` under property `properties` whose type is `DscNodeProperties`
+  - Model `DscNodeConfiguration` moved instance variable `configuration`, `creation_time`, `increment_node_configuration_build`, `last_modified_time`, `node_count` and `source` under property `properties` whose type is `DscNodeConfigurationProperties`
+  - Model `DscNodeConfigurationCreateOrUpdateParameters` moved instance variable `configuration`, `increment_node_configuration_build` and `source` under property `properties` whose type is `DscNodeConfigurationCreateOrUpdateParametersProperties`
+  - Model `DscNodeUpdateParametersProperties` moved instance variable `name` under property `node_configuration` whose type is `DscNodeConfigurationAssociationProperty`
+  - Model `ErrorResponse` moved instance variable `code` and `message` under property `error` whose type is `ErrorDetail`
+  - Model `HybridRunbookWorker` moved instance variable `ip` and `last_seen_date_time` under property `properties` whose type is `HybridRunbookWorkerProperties`
+  - Model `HybridRunbookWorker` renamed its instance variable `registration_time` to `registered_date_time` under property `properties` whose type is `HybridRunbookWorkerProperties`
+  - Model `HybridRunbookWorkerGroup` moved instance variable `credential` and `group_type` under property `properties` whose type is `HybridRunbookWorkerGroupProperties`
+  - Model `HybridRunbookWorkerGroup` deleted or renamed its instance variable `hybrid_runbook_workers`
+  - Model `Job` moved instance variable `creation_time`, `end_time`, `exception`, `job_id`, `last_modified_time`, `last_status_modified_time`, `parameters`, `provisioning_state`, `run_on`, `runbook`, `start_time`, `started_by`, `status` and `status_details` under property `properties` whose type is `JobProperties`
+  - Model `JobCollectionItem` moved instance variable `creation_time`, `end_time`, `job_id`, `last_modified_time`, `provisioning_state`, `run_on`, `runbook`, `start_time` and `status` under property `properties` whose type is `JobCollectionItemProperties`
+  - Model `JobCreateParameters` moved instance variable `parameters`, `run_on` and `runbook` under property `properties` whose type is `JobCreateProperties`
+  - Model `JobSchedule` moved instance variable `job_schedule_id`, `parameters`, `run_on`, `runbook` and `schedule` under property `properties` whose type is `JobScheduleProperties`
+  - Model `JobScheduleCreateParameters` moved instance variable `parameters`, `run_on`, `runbook` and `schedule` under property `properties` whose type is `JobScheduleCreateProperties`
+  - Model `JobStream` moved instance variable `job_stream_id`, `stream_text`, `stream_type`, `summary`, `time` and `value` under property `properties` whose type is `JobStreamProperties`
+  - Model `KeyListResult` renamed its instance variable `keys` to `keys_property`
+  - Model `Module` moved instance variable `activity_count`, `content_link`, `creation_time`, `description`, `error`, `is_composite`, `is_global`, `last_modified_time`, `provisioning_state`, `size_in_bytes` and `version` under property `properties` whose type is `ModuleProperties`
+  - Model `ModuleCreateOrUpdateParameters` moved instance variable `content_link` under property `properties` whose type is `ModuleCreateOrUpdateProperties`
+  - Renamed enum value `ModuleProvisioningState.CANCELLED` to `ModuleProvisioningState.CANCELED`
+  - Model `ModuleUpdateParameters` moved instance variable `content_link` under property `properties` whose type is `ModuleUpdateProperties`
+  - Model `PythonPackageCreateParameters` moved instance variable `content_link` under property `properties` whose type is `PythonPackageCreateProperties`
+  - Model `Runbook` moved instance variable `creation_time`, `description`, `draft`, `job_count`, `last_modified_by`, `last_modified_time`, `log_activity_trace`, `log_progress`, `log_verbose`, `output_types`, `parameters`, `provisioning_state`, `publish_content_link`, `runbook_type` and `state` under property `properties` whose type is `RunbookProperties`
+  - Model `RunbookCreateOrUpdateParameters` moved instance variable `description`, `draft`, `log_activity_trace`, `log_progress`, `log_verbose`, `publish_content_link` and `runbook_type` under property `properties` whose type is `RunbookCreateOrUpdateProperties`
+  - Model `RunbookUpdateParameters` moved instance variable `description`, `log_activity_trace`, `log_progress` and `log_verbose` under property `properties` whose type is `RunbookUpdateProperties`
+  - Model `Schedule` moved instance variable `advanced_schedule`, `creation_time`, `description`, `expiry_time`, `expiry_time_offset_minutes`, `frequency`, `interval`, `is_enabled`, `last_modified_time`, `next_run`, `next_run_offset_minutes`, `start_time`, `start_time_offset_minutes` and `time_zone` under property `properties` whose type is `ScheduleProperties`
+  - Model `ScheduleCreateOrUpdateParameters` moved instance variable `advanced_schedule`, `description`, `expiry_time`, `frequency`, `interval`, `start_time` and `time_zone` under property `properties` whose type is `ScheduleCreateOrUpdateProperties`
+  - Model `ScheduleUpdateParameters` moved instance variable `description` and `is_enabled` under property `properties` whose type is `ScheduleUpdateProperties`
+  - Model `SoftwareUpdateConfiguration` moved instance variable `created_by`, `creation_time`, `error`, `last_modified_by`, `last_modified_time`, `provisioning_state`, `schedule_info`, `tasks` and `update_configuration` under property `properties` whose type is `SoftwareUpdateConfigurationProperties`
+  - Model `SoftwareUpdateConfigurationCollectionItem` moved instance variable `creation_time`, `frequency`, `last_modified_time`, `next_run`, `provisioning_state`, `start_time` and `update_configuration` under property `properties` whose type is `SoftwareUpdateConfigurationCollectionItemProperties`
+  - Model `SoftwareUpdateConfigurationMachineRun` moved instance variable `configured_duration`, `correlation_id`, `created_by`, `creation_time`, `end_time`, `error`, `job`, `last_modified_by`, `last_modified_time`, `os_type`, `software_update_configuration`, `source_computer_id`, `start_time`, `status`, `target_computer` and `target_computer_type` under property `properties` whose type is `UpdateConfigurationMachineRunProperties`
+  - Model `SoftwareUpdateConfigurationRun` moved instance variable `computer_count`, `configured_duration`, `created_by`, `creation_time`, `end_time`, `failed_count`, `last_modified_by`, `last_modified_time`, `os_type`, `software_update_configuration`, `start_time`, `status` and `tasks` under property `properties` whose type is `SoftwareUpdateConfigurationRunProperties`
+  - Model `SourceControl` moved instance variable `auto_sync`, `branch`, `creation_time`, `description`, `folder_path`, `last_modified_time`, `publish_runbook`, `repo_url` and `source_type` under property `properties` whose type is `SourceControlProperties`
+  - Model `SourceControlCreateOrUpdateParameters` moved instance variable `auto_sync`, `branch`, `description`, `folder_path`, `publish_runbook`, `repo_url`, `security_token` and `source_type` under property `properties` whose type is `SourceControlCreateOrUpdateProperties`
+  - Model `SourceControlSyncJob` moved instance variable `creation_time`, `end_time`, `provisioning_state`, `source_control_sync_job_id`, `start_time` and `sync_type` under property `properties` whose type is `SourceControlSyncJobProperties`
+  - Model `SourceControlSyncJobById` moved instance variable `creation_time`, `end_time`, `exception`, `provisioning_state`, `source_control_sync_job_id`, `start_time` and `sync_type` under property `properties` whose type is `SourceControlSyncJobByIdProperties`
+  - Model `SourceControlSyncJobCreateParameters` moved instance variable `commit_id` under property `properties` whose type is `SourceControlSyncJobCreateProperties`
+  - Model `SourceControlSyncJobStream` moved instance variable `source_control_sync_job_stream_id`, `stream_type`, `summary` and `time` under property `properties` whose type is `SourceControlSyncJobStreamProperties`
+  - Model `SourceControlSyncJobStreamById` moved instance variable `source_control_sync_job_stream_id`, `stream_text`, `stream_type`, `summary`, `time` and `value` under property `properties` whose type is `SourceControlSyncJobStreamByIdProperties`
+  - Model `SourceControlUpdateParameters` moved instance variable `auto_sync`, `branch`, `description`, `folder_path`, `publish_runbook` and `security_token` under property `properties` whose type is `SourceControlUpdateProperties`
+  - Model `Variable` moved instance variable `creation_time`, `description`, `is_encrypted`, `last_modified_time` and `value` under property `properties` whose type is `VariableProperties`
+  - Model `VariableCreateOrUpdateParameters` moved instance variable `description`, `is_encrypted` and `value` under property `properties` whose type is `VariableCreateOrUpdateProperties`
+  - Model `VariableUpdateParameters` moved instance variable `description` and `value` under property `properties` whose type is `VariableUpdateProperties`
+  - Model `Watcher` moved instance variable `creation_time`, `description`, `execution_frequency_in_seconds`, `last_modified_by`, `last_modified_time`, `script_name`, `script_parameters`, `script_run_on` and `status` under property `properties` whose type is `WatcherProperties`
+  - Model `WatcherUpdateParameters` moved instance variable `execution_frequency_in_seconds` under property `properties` whose type is `WatcherUpdateProperties`
+  - Model `Webhook` moved instance variable `creation_time`, `description`, `expiry_time`, `is_enabled`, `last_invoked_time`, `last_modified_by`, `last_modified_time`, `parameters`, `run_on`, `runbook` and `uri` under property `properties` whose type is `WebhookProperties`
+  - Model `WebhookCreateOrUpdateParameters` moved instance variable `expiry_time`, `is_enabled`, `parameters`, `run_on`, `runbook` and `uri` under property `properties` whose type is `WebhookCreateOrUpdateProperties`
+  - Model `WebhookUpdateParameters` moved instance variable `description`, `is_enabled`, `parameters` and `run_on` under property `properties` whose type is `WebhookUpdateProperties`
+  - Method `DscConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
+  - Method `DscNodeConfigurationOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
+  - Method `DscNodeOperations.list_by_automation_account` changed its parameter `inlinecount` from `positional_or_keyword` to `keyword_only`
+  - Method `HybridRunbookWorkerGroupOperations.update` renamed its parameter `parameters` to `hybrid_runbook_worker_group_updation_parameters`
+  - Method `JobOperations.create` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.get` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.get_output` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.get_runbook_content` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.list_by_automation_account` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.resume` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.stop` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobOperations.suspend` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobStreamOperations.get` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `JobStreamOperations.list_by_job` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `RunbookDraftOperations.begin_replace_content` changed type of its parameter `runbook_content` from `IO[bytes]` to `str`
+  - Method `SoftwareUpdateConfigurationMachineRunsOperations.get_by_id` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationMachineRunsOperations.list` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationRunsOperations.get_by_id` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationRunsOperations.list` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationsOperations.create` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationsOperations.delete` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationsOperations.get_by_name` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `SoftwareUpdateConfigurationsOperations.list` changed its parameter `client_request_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ConnectionOperations.delete` changed return type from `Optional[Connection]` to `None`
+  - Method `DscConfigurationOperations.get_content` changed return type from `Iterator[bytes]` to `str`
+  - Method `DscNodeOperations.delete` changed return type from `DscNode` to `None`
+  - Method `JobOperations.get_output` changed return type from `Iterator[bytes]` to `str`
+  - Method `JobOperations.get_runbook_content` changed return type from `Iterator[bytes]` to `str`
+  - Method `NodeReportsOperations.get_content` changed return type from `JSON` to `str`
+  - Method `RunbookDraftOperations.begin_replace_content` changed return type from `LROPoller[Iterator[bytes]]` to `LROPoller[None]`
+  - Method `RunbookDraftOperations.get_content` changed return type from `Iterator[bytes]` to `str`
+  - Method `RunbookOperations.get_content` changed return type from `Iterator[bytes]` to `str`
+
+### Other Changes
+
+  - Deleted model `ActivityListResult`/`AutomationAccountListResult`/`CertificateListResult`/`CollectionItemUpdateConfiguration`/`ConnectionListResult`/`ConnectionTypeListResult`/`CredentialListResult`/`DscCompilationJobListResult`/`DscConfigurationListResult`/`DscNodeConfigurationListResult`/`DscNodeListResult`/`DscNodeReportListResult`/`HybridRunbookWorkerGroupUpdateParameters`/`HybridRunbookWorkerGroupsListResult`/`JobListResultV2`/`JobScheduleListResult`/`JobStreamListResult`/`ModuleListResult`/`OperationListResult`/`RunbookCreateOrUpdateDraftParameters`/`RunbookCreateOrUpdateDraftProperties`/`RunbookListResult`/`ScheduleListResult`/`SoftareUpdateConfigurationRunTaskProperties`/`SoftareUpdateConfigurationRunTasks`/`SourceControlListResult`/`SourceControlSyncJobListResult`/`SourceControlSyncJobStreamsListBySyncJob`/`StatisticsListResult`/`TypeFieldListResult`/`UsageListResult`/`VariableListResult`/`WatcherListResult`/`WebhookListResult` which actually were not used by SDK users
+
 ## 1.1.0b5 (2026-05-27)
 
 ### Features Added

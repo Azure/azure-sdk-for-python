@@ -37,3 +37,5 @@ extends:
       safeName: azuremgmtvmwarecloudsimple
     - name: azure-mgmt-avs
       safeName: azuremgmtavs
+    - name: azure-mgmt-compute-bulkaction
+      safeName: azuremgmtcomputebulkaction

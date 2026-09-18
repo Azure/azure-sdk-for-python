@@ -6,15 +6,21 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationPrimaryMetrics
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageClassification as RestImageClassification
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, TaskType
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import ImageClassification as RestImageClassification
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_hybrid_rest_model,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.automl.image.automl_image_classification_base import AutoMLImageClassificationBase
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
@@ -25,8 +31,8 @@ from azure.ai.ml.entities._util import load_from_dict
 class ImageClassificationJob(AutoMLImageClassificationBase):
     """Configuration for AutoML multi-class Image Classification job.
 
-    :param primary_metric: The primary metric to use for optimization.
-    :type primary_metric: Optional[str, ~azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
+    :keyword primary_metric: The primary metric to use for optimization.
+    :paramtype primary_metric: Optional[Union[str, ~azure.ai.ml.automl.ClassificationPrimaryMetrics]]
     :param kwargs: Job-specific arguments.
     :type kwargs: Dict[str, Any]
 
@@ -103,6 +109,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
+            is_archived=False,
             description=self.description,
             experiment_name=self.experiment_name,
             tags=self.tags,
@@ -111,10 +118,12 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
             environment_id=self.environment_id,
             environment_variables=self.environment_variables,
             services=self.services,
-            outputs=to_rest_data_outputs(self.outputs),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             resources=self.resources,
             task_details=image_classification_task,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=to_hybrid_rest_model(
+                self.identity._to_job_rest_object() if self.identity else None, RestIdentityConfiguration
+            ),
             queue_settings=self.queue_settings,
         )
 

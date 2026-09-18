@@ -64,7 +64,7 @@ def _has_claims(challenge: str) -> bool:
 
 
 def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
-    """Parse challenge from a challenge response, cache it, and return it.
+    """Parse challenge from a challenge response and return it.
 
     :param request: The pipeline request that prompted the challenge response.
     :type request: ~azure.core.pipeline.PipelineRequest
@@ -80,7 +80,6 @@ def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) ->
         challenger.http_response.headers.get("WWW-Authenticate"),
         response_headers=challenger.http_response.headers,
     )
-    ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
     return challenge
 
 
@@ -233,6 +232,8 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                     "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
                     "See https://aka.ms/azsdk/blog/vault-uri for more information."
                 )
+
+        ChallengeCache.set_challenge_for_url(request.http_request.url, challenge)
 
         # If we stashed the original request in on_request, use it now to send along the original body content
         request_copy = request.context.get(_REQUEST_COPY_KEY)

@@ -30,10 +30,10 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install --pre azure-ai-translation-document
+pip install azure-ai-translation-document
 ```
 
-> Note: This version of the client library defaults to the v2024-05-01 version of the service
+> Note: This version of the client library defaults to the `2026-03-01` version of the service.
 
 #### Create a Translator resource
 
@@ -179,7 +179,8 @@ poller = document_translation_client.begin_translation("<sas_url_to_source>", "<
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -302,7 +303,8 @@ Begin translating with documents in multiple source containers to multiple targe
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]

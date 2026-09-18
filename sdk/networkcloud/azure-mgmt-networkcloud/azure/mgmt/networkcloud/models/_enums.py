@@ -225,7 +225,7 @@ class BareMetalMachineKeySetUserSetupStatus(str, Enum, metaclass=CaseInsensitive
     """The user is not valid and has no access."""
 
 
-class BareMetalMachineMetricsConfigurationStatusLogLevel(  # pylint: disable=name-too-long
+class BareMetalMachineMonitoringConfigurationStatusLogLevel(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
     """The log level for the monitoring configuration status of the bare metal machine."""
@@ -236,7 +236,7 @@ class BareMetalMachineMetricsConfigurationStatusLogLevel(  # pylint: disable=nam
     """Logs are emitted at the Nexus log level."""
 
 
-class BareMetalMachineMetricsConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
+class BareMetalMachineMonitoringConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
     """The metrics level for the monitoring configuration status of the bare metal machine."""
@@ -1305,7 +1305,7 @@ class StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMet
     """The Provisioning status."""
 
 
-class StorageApplianceMetricsConfigurationStatusLogLevel(  # pylint: disable=name-too-long
+class StorageApplianceMonitoringConfigurationStatusLogLevel(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
     """The log level for the monitoring configuration status of the storage appliance."""
@@ -1316,7 +1316,7 @@ class StorageApplianceMetricsConfigurationStatusLogLevel(  # pylint: disable=nam
     """Logs are emitted at the Nexus log level."""
 
 
-class StorageApplianceMetricsConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
+class StorageApplianceMonitoringConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
     """The metrics level for the monitoring configuration status of the storage appliance."""

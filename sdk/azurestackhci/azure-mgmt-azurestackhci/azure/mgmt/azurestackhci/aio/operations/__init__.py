@@ -12,10 +12,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import KubernetesVersionsOperations  # type: ignore
-from ._operations import PlatformUpdatesOperations  # type: ignore
-from ._operations import OsImagesOperations  # type: ignore
-from ._operations import UpdateContentsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._operations import ArcSettingsOperations  # type: ignore
 from ._operations import OffersOperations  # type: ignore
@@ -24,18 +20,12 @@ from ._operations import DeploymentSettingsOperations  # type: ignore
 from ._operations import EdgeDeviceJobsOperations  # type: ignore
 from ._operations import EdgeDevicesOperations  # type: ignore
 from ._operations import ExtensionsOperations  # type: ignore
-from ._operations import PublishersOperations  # type: ignore
 from ._operations import SecuritySettingsOperations  # type: ignore
 from ._operations import SkusOperations  # type: ignore
 from ._operations import UpdateRunsOperations  # type: ignore
 from ._operations import UpdatesOperations  # type: ignore
 from ._operations import UpdateSummariesOperationGroupOperations  # type: ignore
 from ._operations import ValidatedSolutionRecipesOperations  # type: ignore
-from ._operations import EdgeMachinesOperations  # type: ignore
-from ._operations import EdgeMachineJobsOperations  # type: ignore
-from ._operations import OwnershipVouchersOperations  # type: ignore
-from ._operations import ClusterJobsOperations  # type: ignore
-from ._operations import DevicePoolsOperations  # type: ignore
 from ._operations import UpdateSummariesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -43,10 +33,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "KubernetesVersionsOperations",
-    "PlatformUpdatesOperations",
-    "OsImagesOperations",
-    "UpdateContentsOperations",
     "Operations",
     "ArcSettingsOperations",
     "OffersOperations",
@@ -55,18 +41,12 @@ __all__ = [
     "EdgeDeviceJobsOperations",
     "EdgeDevicesOperations",
     "ExtensionsOperations",
-    "PublishersOperations",
     "SecuritySettingsOperations",
     "SkusOperations",
     "UpdateRunsOperations",
     "UpdatesOperations",
     "UpdateSummariesOperationGroupOperations",
     "ValidatedSolutionRecipesOperations",
-    "EdgeMachinesOperations",
-    "EdgeMachineJobsOperations",
-    "OwnershipVouchersOperations",
-    "ClusterJobsOperations",
-    "DevicePoolsOperations",
     "UpdateSummariesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

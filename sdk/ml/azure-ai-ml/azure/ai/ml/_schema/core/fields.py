@@ -90,6 +90,11 @@ class LocalPathField(fields.Str):
     """A field that validates that the input is a local path.
 
     Can only be used as fields of PathAwareSchema.
+
+    :param allow_dir: Whether to allow the path to be a directory. Defaults to True.
+    :type allow_dir: bool
+    :param allow_file: Whether to allow the path to be a file. Defaults to True.
+    :type allow_file: bool
     """
 
     default_error_messages = {
@@ -415,7 +420,11 @@ class RefField(Field):
 
 
 class NestedField(Nested):
-    """anticipates the default coming in next marshmallow version, unknown=True."""
+    """anticipates the default coming in next marshmallow version, unknown=True.
+
+    :param args: Positional arguments forwarded to the base Nested field.
+    :type args: typing.Any
+    """
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("unknown") is None:
@@ -429,7 +438,13 @@ class NestedField(Nested):
 # inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
 # inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
-    """A field that can be one of multiple types."""
+    """A field that can be one of multiple types.
+
+    :param union_fields: The list of candidate fields a value may match.
+    :type union_fields: List[marshmallow.fields.Field]
+    :param is_strict: Whether to combine fields with oneOf instead of anyOf. Defaults to False.
+    :type is_strict: bool
+    """
 
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
@@ -524,6 +539,15 @@ class TypeSensitiveUnionField(UnionField):
     If value doesn't have type, will skip error messages from fields with type field If value has type & its type
     doesn't match any allowed types, raise "Value {} not in set {}" If value has type & its type matches at least 1
     allowed value, it will raise the first matched error.
+
+    :param type_sensitive_fields_dict: A dict of type name to list of type sensitive fields.
+    :type type_sensitive_fields_dict: typing.Dict[str, List[marshmallow.fields.Field]]
+    :keyword plain_union_fields: List of fields used if the value doesn't have a type field. Defaults to None.
+    :paramtype plain_union_fields: Optional[List[marshmallow.fields.Field]]
+    :keyword allow_load_from_file: Whether to allow load from file. Defaults to True.
+    :paramtype allow_load_from_file: bool
+    :keyword type_field_name: Field name of the type field. Defaults to "type".
+    :paramtype type_field_name: str
     """
 
     def __init__(
@@ -535,13 +559,7 @@ class TypeSensitiveUnionField(UnionField):
         type_field_name="type",
         **kwargs,
     ):
-        """param type_sensitive_fields_dict: a dict of type name to list of
-        type sensitive fields param plain_union_fields: list of fields that
-        will be used if value doesn't have type field type plain_union_fields:
-        List[fields.Field] param allow_load_from_file: whether to allow load
-        from file, default to True type allow_load_from_file: bool param
-        type_field_name: field name of type field, default value is "type" type
-        type_field_name: str."""
+        """Initialize a TypeSensitiveUnionField."""
         self._type_sensitive_fields_dict = {}
         self._allow_load_from_yaml = allow_load_from_file
 
@@ -775,6 +793,9 @@ def PrimitiveValueField(**kwargs):
 class VersionField(Field):
     """A string represents a version, e.g.: 1, 1.0, 1.0.0.
     Will always convert to string to ensure that "1.0" won't be converted to 1.
+
+    :param args: Positional arguments forwarded to the base Field.
+    :type args: typing.Any
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -800,6 +821,13 @@ class VersionField(Field):
 class NumberVersionField(VersionField):
     """A string represents a version, e.g.: 1, 1.0, 1.0.0.
     Will always convert to string to ensure that "1.0" won't be converted to 1.
+
+    :param args: Positional arguments forwarded to the base VersionField.
+    :type args: typing.Any
+    :keyword upper_bound: The exclusive upper bound for the version. Defaults to None.
+    :paramtype upper_bound: Optional[str]
+    :keyword lower_bound: The inclusive lower bound for the version. Defaults to None.
+    :paramtype lower_bound: Optional[str]
     """
 
     default_error_messages = {
@@ -839,7 +867,15 @@ class DumpableIntegerField(fields.Integer):
 
 
 class DumpableFloatField(fields.Float):
-    """A float field that cannot serialize other type of values to float if self.strict."""
+    """A float field that cannot serialize other type of values to float if self.strict.
+
+    :keyword strict: Whether to disallow serializing non-float values. Defaults to False.
+    :paramtype strict: bool
+    :keyword allow_nan: Whether to allow NaN, Infinity and -Infinity values. Defaults to False.
+    :paramtype allow_nan: bool
+    :keyword as_string: Whether to serialize the value to a string. Defaults to False.
+    :paramtype as_string: bool
+    """
 
     def __init__(
         self,

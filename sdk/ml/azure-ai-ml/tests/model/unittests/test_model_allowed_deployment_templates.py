@@ -9,11 +9,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    ModelVersionData,
-    ModelVersionDetails,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
@@ -104,12 +100,12 @@ class TestModelAllowedDeploymentTemplates:
 
         rest_object = model._to_rest_object()
 
-        # Should use ModelVersionData path
-        assert isinstance(rest_object, ModelVersionData)
-        assert isinstance(rest_object.properties, ModelVersionDetails)
-        assert rest_object.properties.allowed_deployment_templates is not None
-        assert len(rest_object.properties.allowed_deployment_templates) == 1
-        assert rest_object.properties.allowed_deployment_templates[0].asset_id == allowed[0].asset_id
+        # Deployment-template fields are carried as camelCase wire keys on the arm ModelVersion.
+        assert isinstance(rest_object, ModelVersion)
+        assert isinstance(rest_object.properties, ModelVersionProperties)
+        assert rest_object.properties["allowedDeploymentTemplates"] is not None
+        assert len(rest_object.properties["allowedDeploymentTemplates"]) == 1
+        assert rest_object.properties["allowedDeploymentTemplates"][0]["assetId"] == allowed[0].asset_id
 
     def test_model_to_rest_object_with_both(self) -> None:
         """Test _to_rest_object with both default and allowed templates."""
@@ -128,11 +124,11 @@ class TestModelAllowedDeploymentTemplates:
 
         rest_object = model._to_rest_object()
 
-        assert isinstance(rest_object, ModelVersionData)
-        assert rest_object.properties.default_deployment_template is not None
-        assert rest_object.properties.default_deployment_template.asset_id == default.asset_id
-        assert rest_object.properties.allowed_deployment_templates is not None
-        assert len(rest_object.properties.allowed_deployment_templates) == 2
+        assert isinstance(rest_object, ModelVersion)
+        assert rest_object.properties["defaultDeploymentTemplate"] is not None
+        assert rest_object.properties["defaultDeploymentTemplate"]["assetId"] == default.asset_id
+        assert rest_object.properties["allowedDeploymentTemplates"] is not None
+        assert len(rest_object.properties["allowedDeploymentTemplates"]) == 2
 
     def test_model_to_rest_object_without_templates(self) -> None:
         """Test _to_rest_object without any deployment templates uses ModelVersion path."""
@@ -150,7 +146,7 @@ class TestModelAllowedDeploymentTemplates:
 
     def test_model_from_rest_object_with_allowed_deployment_templates_dict(self) -> None:
         """Test _from_rest_object with allowed_deployment_templates as list of dicts."""
-        rest_properties = Mock(spec=ModelVersionDetails)
+        rest_properties = Mock()
         rest_properties.description = "Test model"
         rest_properties.tags = {}
         rest_properties.properties = {}
@@ -167,7 +163,7 @@ class TestModelAllowedDeploymentTemplates:
             {"asset_id": "azureml://registries/reg1/deploymenttemplates/dt2/versions/1"},
         ]
 
-        rest_object = Mock(spec=ModelVersionData)
+        rest_object = Mock()
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
 
@@ -194,7 +190,7 @@ class TestModelAllowedDeploymentTemplates:
 
     def test_model_from_rest_object_with_allowed_deployment_templates_objects(self) -> None:
         """Test _from_rest_object with allowed_deployment_templates as list of objects."""
-        rest_properties = Mock(spec=ModelVersionDetails)
+        rest_properties = Mock()
         rest_properties.description = "Test model"
         rest_properties.tags = {}
         rest_properties.properties = {}
@@ -213,7 +209,7 @@ class TestModelAllowedDeploymentTemplates:
         template_obj2.asset_id = "azureml://registries/reg1/deploymenttemplates/dt2/versions/1"
         rest_properties.allowed_deployment_templates = [template_obj1, template_obj2]
 
-        rest_object = Mock(spec=ModelVersionData)
+        rest_object = Mock()
         rest_object.id = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/test-model/versions/1"
         rest_object.properties = rest_properties
 
@@ -311,12 +307,13 @@ allowed_deployment_templates:
         rest_object = original._to_rest_object()
 
         # Verify REST object shape
-        assert isinstance(rest_object, ModelVersionData)
-        assert rest_object.properties.default_deployment_template.asset_id == default.asset_id
-        assert len(rest_object.properties.allowed_deployment_templates) == 2
+        assert isinstance(rest_object, ModelVersion)
+        assert rest_object.properties["defaultDeploymentTemplate"]["assetId"] == default.asset_id
+        assert len(rest_object.properties["allowedDeploymentTemplates"]) == 2
 
         # Now simulate deserialization from the REST object
         # We can't do a full round-trip via _from_rest_object because it expects ARM IDs,
-        # but we can verify the REST serialization is correct
-        assert rest_object.properties.allowed_deployment_templates[0].asset_id == allowed[0].asset_id
-        assert rest_object.properties.allowed_deployment_templates[1].asset_id == allowed[1].asset_id
+        # but we can verify the REST serialization is correct. arm ModelVersionProperties has no typed
+        # ``allowed_deployment_templates`` field; the templates are carried as camelCase wire keys.
+        assert rest_object.properties["allowedDeploymentTemplates"][0]["assetId"] == allowed[0].asset_id
+        assert rest_object.properties["allowedDeploymentTemplates"][1]["assetId"] == allowed[1].asset_id

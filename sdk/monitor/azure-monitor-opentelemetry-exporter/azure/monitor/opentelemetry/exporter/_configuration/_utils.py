@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from typing import Dict, Optional, Any
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 import json
 import logging
 
@@ -12,8 +13,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
 )
 
-
 logger = logging.getLogger(__name__)
+
+T = TypeVar("T")
 
 
 class _ConfigurationProfile:
@@ -117,6 +119,8 @@ def make_onesettings_request(
     headers = headers or {}
 
     try:
+        # requests honors standard proxy environment variables (HTTP_PROXY/HTTPS_PROXY/NO_PROXY)
+        # automatically, so no explicit proxy configuration is needed here.
         result = requests.get(url, params=query_dict, headers=headers, timeout=10)
         # Do NOT call raise_for_status(): HTTP error codes (4xx/5xx) are handled by the parser so
         # the real status_code is preserved. This lets callers distinguish retryable errors
@@ -205,43 +209,117 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     return OneSettingsResponse(etag, refresh_interval_s, settings, status_code)
 
 
+@dataclass(frozen=True)
+class _OverrideRule:
+    """Parsed OneSettings override rule."""
+
+    conditions: Dict[str, Any]
+    value: Optional[str] = None
+
+    @classmethod
+    def from_dict(cls, data: Any) -> Optional["_OverrideRule"]:
+        """Parse an override rule and separate its result value from profile conditions.
+
+        :param data: Raw override rule data.
+        :type data: Any
+        :return: The parsed override rule, or None if the data is invalid.
+        :rtype: Optional[_OverrideRule]
+        """
+        if not isinstance(data, dict):
+            return None
+
+        conditions = {key: value for key, value in data.items() if key != "value"}
+        if not conditions:
+            return None
+
+        value = data.get("value")
+        if "value" in data and not isinstance(value, str):
+            return None
+
+        return cls(conditions=conditions, value=value)
+
+
+@dataclass(frozen=True)
+class _FeatureConfig:
+    """Parsed OneSettings feature configuration."""
+
+    default: str
+    overrides: List[_OverrideRule]
+
+    @classmethod
+    def parse(cls, data: Any) -> Optional["_FeatureConfig"]:
+        """Parse a feature configuration from its JSON string.
+
+        :param data: JSON-encoded or in-memory feature configuration.
+        :type data: Any
+        :return: The parsed feature configuration, or None if the data is invalid.
+        :rtype: Optional[_FeatureConfig]
+        """
+        if isinstance(data, str):
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError:
+                logger.debug("Failed to decode OneSettings feature configuration: %s", data)
+                return None
+
+        # Accept dictionaries for compatibility with callers that construct settings in memory.
+        if not isinstance(data, dict) or not isinstance(data.get("default"), str):
+            return None
+
+        raw_overrides = data.get("override", [])
+        if not isinstance(raw_overrides, list):
+            raw_overrides = []
+
+        overrides = []
+        for raw_override in raw_overrides:
+            override = _OverrideRule.from_dict(raw_override)
+            if override is not None:
+                overrides.append(override)
+
+        return cls(default=data["default"], overrides=overrides)
+
+
 # mypy: disable-error-code="no-any-return"
-def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[bool]:
-    """Evaluate whether a feature should be enabled based on configuration profile and settings.
+def evaluate_feature(
+    feature_key: str,
+    settings: Dict[str, str],
+    value_type: Optional[Callable[[str], T]] = None,
+) -> Any:
+    """Evaluate a setting based on the configuration profile and override rules.
 
     This function compares the current _ConfigurationProfile against feature-specific
-    override conditions to determine if a feature should be enabled or disabled.
+    override conditions and returns either the matching override value or the default.
+    The legacy enabled/disabled format is converted to booleans.
 
     :param feature_key: The name of the feature to evaluate
     :type feature_key: str
-    :param settings: Dictionary containing feature configurations with override conditions
-    :type settings: Dict[str, Any]
-    :return: True if the feature should be enabled, False if disabled, None if inputs are invalid
-    :rtype: Optional[bool]
+    :param settings: Dictionary containing JSON-encoded feature configurations
+    :type settings: Dict[str, str]
+    :param value_type: Optional converter applied to the default or matching override value
+    :type value_type: Optional[Callable[[str], T]]
+    :return: The evaluated setting value, or None if inputs are invalid
+    :rtype: Any
 
-    Example settings structure:
-    {
-        "FEATURE_LIVE_METRICS": {
-            "default": "disabled",  # Feature is disabled by default
+    Example cached settings:
+    settings = {
+        "FEATURE_LIVE_METRICS": json.dumps({
+            "default": "disabled",
             "override": [
-                {"os": "windows"},  # Enable on Windows (any version)
-                # Enable on Linux at exact version 1.0.0b21 with the distro component
+                {"os": "windows"},
                 {"os": "linux", "ver": "1.0.0b21", "component": "dst"},
-                {"ikey": "12345678-1234-1234-1234-123456789abc"},  # Enable for a specific instrumentation key
-                {"component": "dst"}  # Enable if component is distro
+                {"ikey": "12345678-1234-1234-1234-123456789abc"},
+                {"component": "dst"}
             ]
-        },
-        "FEATURE_SDK_STATS": {
-            "default": "enabled",  # Feature is enabled by default
+        }),
+        "EXPORT_INTERVAL_SECONDS": json.dumps({
+            "default": "60",
             "override": [
-                {"os": "linux"},  # Disable on Linux
-                # Disable on Linux at exact version 1.0.0b20 with the exporter component
-                {"os": "linux", "ver": "1.0.0b20", "component": "ext"}
+                {"rp": ["aks"], "region": ["eastus"], "value": "300"}
             ]
-        }
+        })
     }
 
-    Available condition fields (each override rule is a single-value exact match per field):
+    Available condition fields (each field accepts one value or a list of values):
     - os: Operating system ("windows", "linux", "darwin", "unknown")
     - ver: Exact version string match (e.g. "1.0.0b21"); when present, "component" is also required
     - rp: Resource provider ("appsvc", "fn", "aks", "unknown")
@@ -253,39 +331,67 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
     Override logic:
     - Each item in the override list is an independent rule
     - ALL conditions within a single rule must match for that rule to apply
-    - If ANY rule matches completely, the feature state is flipped from default
+    - If ANY rule matches completely, its "value" is returned
+    - Legacy rules without "value" flip enabled/disabled defaults
     - If NO rules match, the default state is returned
     """
     # Validate inputs - return None for invalid inputs
-    if not feature_key or not isinstance(settings, dict):
+    if not feature_key or not isinstance(settings, dict) or feature_key not in settings:
         return None
 
-    if feature_key not in settings:
+    # Feature setting values are JSON strings containing their default and override rules.
+    feature_config = _FeatureConfig.parse(settings[feature_key])
+    if feature_config is None:
         return None
 
-    feature_config = settings[feature_key]
-    if not isinstance(feature_config, dict):
-        return None
+    default_value = _normalize_setting_value(feature_config.default, value_type)
 
-    default_state = feature_config.get("default", "disabled").lower() == "enabled"
-    override_list = feature_config.get("override", [])
+    # Check override conditions - if ANY override rule matches completely, apply its value.
+    for override_rule in feature_config.overrides:
+        if _matches_override_rule(override_rule.conditions):
+            # Example: {"rp": ["aks"], "region": ["eastus"], "value": "300"}
+            if override_rule.value is not None:
+                override_value = _normalize_setting_value(override_rule.value, value_type)
+                return default_value if override_value is None else override_value
+            # For boolean settings, a matching legacy rule without a value uses the
+            # complement of the default.
+            if isinstance(default_value, bool):
+                return not default_value
+            break
 
-    # If no override conditions, return default state
-    if not override_list or not isinstance(override_list, list):
-        return default_state
+    # No override rules matched - return the default value.
+    return default_value
 
-    # Check override conditions - if ANY override rule matches completely, apply override
-    for override_rule in override_list:
-        if isinstance(override_rule, dict) and _matches_override_rule(override_rule):
-            # At least one override rule matched - return opposite of default
-            return not default_state
 
-    # No override rules matched - return default state
-    return default_state
+def _normalize_setting_value(value: Any, value_type: Optional[Callable[[str], T]] = None) -> Any:
+    """Convert a setting with the requested type or normalize legacy feature-state strings.
+
+    :param value: Raw setting value.
+    :type value: Any
+    :param value_type: Optional converter to apply to the string value.
+    :type value_type: Optional[Callable[[str], T]]
+    :return: The converted or normalized value, or None if conversion fails.
+    :rtype: Any
+    """
+    if value_type is not None:
+        if not isinstance(value, str):
+            return None
+        try:
+            return value_type(value)
+        except (TypeError, ValueError):
+            logger.debug("Failed to convert OneSettings value %r using %s", value, value_type)
+            return None
+
+    if isinstance(value, str):
+        if value.lower() == "enabled":
+            return True
+        if value.lower() == "disabled":
+            return False
+    return value
 
 
 # mypy: disable-error-code="no-any-return"
-def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
+def _matches_override_rule(conditions: Dict[str, Any]) -> bool:
     """Check if all conditions in an override rule match the current configuration profile.
 
     All conditions within a single override rule must match for the rule to apply.
@@ -295,21 +401,20 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     "ver" without "component" is treated as non-matching. Because "component" is a regular
     condition, it is still matched against the current profile like any other field.
 
-    :param override_rule: Dictionary of conditions that must all be true
-    :type override_rule: Dict[str, Any]
+    :param conditions: Dictionary of conditions that must all be true
+    :type conditions: Dict[str, Any]
     :return: True if all conditions in the rule match, False otherwise
     :rtype: bool
     """
-    # Validate input
-    if not override_rule:
+    if not isinstance(conditions, dict) or not conditions:
         return False
 
     # A "ver" condition requires a "component" condition to be present in the same rule.
-    if "ver" in override_rule and "component" not in override_rule:
+    if "ver" in conditions and "component" not in conditions:
         return False
 
     # All conditions in this rule must match
-    for condition_key, condition_value in override_rule.items():
+    for condition_key, condition_value in conditions.items():
         if not _matches_condition(condition_key, condition_value):
             # If any condition doesn't match, this rule doesn't apply
             return False
@@ -334,6 +439,11 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
     # Validate condition_key
     if not condition_key or condition_value is None:
         return False
+
+    if isinstance(condition_value, list):
+        return bool(condition_value) and any(
+            _matches_condition(condition_key, candidate) for candidate in condition_value
+        )
 
     if condition_key == "os":
         # OS condition - exact match (case-insensitive)

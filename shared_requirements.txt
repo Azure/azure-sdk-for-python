@@ -94,6 +94,9 @@ agent-framework-azure-ai
 langgraph
 azure-ai-agentserver-core
 azure-ai-agentserver-responses
+microsoft-agents-hosting-core
+microsoft-agents-authentication-msal
+microsoft-agents-activity
 langchain-azure-ai
 opentelemetry-exporter-otlp-proto-grpc
 agent-framework-core

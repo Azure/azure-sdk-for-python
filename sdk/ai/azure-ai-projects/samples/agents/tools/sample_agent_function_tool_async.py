@@ -11,7 +11,7 @@ DESCRIPTION:
     back to get a final response.
 
 USAGE:
-    python sample_agent_responses_function_tool_async.py
+    python sample_agent_function_tool_async.py
 
     Before running the sample:
 

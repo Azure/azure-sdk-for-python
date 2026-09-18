@@ -1,9 +1,14 @@
 ---
 name: cu-sdk-author-analyzer
-description: Iteratively author and test a custom Azure AI Content Understanding analyzer for a folder of **document** files (PDFs, page images) of a single type. Walks layout extraction → schema authoring → validation → batch test → agent review → refine cycle using the typed ContentUnderstandingClient. Document modality only — audio, video, and image analyzers are planned for a later update. Use when the user wants to author a custom analyzer for invoices, contracts, forms, or any other single-type document set.
+description: EXPERIMENTAL. Iteratively author and test a custom Azure AI Content Understanding analyzer for a folder of **document** files (PDFs, page images) of a single type. Walks layout extraction → schema authoring → validation → batch test → agent review → refine cycle using the typed ContentUnderstandingClient. Use when the user wants to author a custom analyzer for invoices, contracts, forms, or any other single-type document set.
 ---
 
 # Author a Custom Analyzer (single document type)
+
+> **[EXPERIMENTAL - REQUIRED FIRST MESSAGE]:** Before asking questions, probing the
+> environment, or running commands, tell the user: "This analyzer-authoring skill
+> is experimental and may change. Review generated schemas and test results before
+> relying on them."
 
 Author a custom Content Understanding analyzer for one document type
 end-to-end: extract layout, draft a field schema, validate locally, create the
@@ -31,8 +36,7 @@ package — the same client `samples/sample_create_analyzer.py` and
 > **[ASK USER] Modality check (first thing to confirm):**
 >
 > "Are you working with **document** files — PDFs or images of pages? This
-> skill currently supports document modalities only. Audio, video, and
-> image analyzers are planned for a future update."
+> skill supports document modalities only."
 >
 > - If the user says **document** → continue with this skill.
 > - If the user says **audio**, **video**, or **image** → stop this skill and
@@ -194,7 +198,7 @@ The local validator (Step 3) rejects any value not on that list.
     "returnDetails": true
   },
   "models": {
-    "completion": "gpt-4.1",
+    "completion": "gpt-5.2",
     "embedding": "text-embedding-3-large"
   },
   "fieldSchema": {

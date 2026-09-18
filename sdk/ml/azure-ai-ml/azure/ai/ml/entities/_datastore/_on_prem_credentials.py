@@ -3,11 +3,17 @@
 # ---------------------------------------------------------
 
 from base64 import b64encode
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview import models as model_preview
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+
+
+# ``KerberosKeytabCredentials``/``KerberosPasswordCredentials`` (and their secrets) are absent from the
+# arm_ml_service (2025-12) model set, so these entities serialize JSON-direct to the 2023-04 camelCase
+# wire contract. The wire ``credentialsType``/``secretsType`` discriminator values are preserved.
+_KERBEROS_KEYTAB = "KerberosKeytab"
+_KERBEROS_PASSWORD = "KerberosPassword"
 
 
 # TODO: Move classes in this file to azure.ai.ml.entities._credentials
@@ -37,29 +43,30 @@ class KerberosKeytabCredentials(BaseKerberosCredentials):
             kerberos_principal=kerberos_principal,
             **kwargs,
         )
-        self.type = model_preview.CredentialsType.KERBEROS_KEYTAB
+        self.type = _KERBEROS_KEYTAB
         self.kerberos_keytab = kerberos_keytab
 
-    def _to_rest_object(self) -> model_preview.KerberosKeytabCredentials:
+    def _to_rest_object(self) -> Dict[str, Any]:
         use_this_keytab = None
         if self.kerberos_keytab:
             with open(self.kerberos_keytab, "rb") as f:
                 use_this_keytab = b64encode(f.read()).decode("utf-8")
-        secrets = model_preview.KerberosKeytabSecrets(kerberos_keytab=use_this_keytab)
-        return model_preview.KerberosKeytabCredentials(
-            kerberos_kdc_address=self.kerberos_kdc_address,
-            kerberos_principal=self.kerberos_principal,
-            kerberos_realm=self.kerberos_realm,
-            secrets=secrets,
-        )
+        return {
+            "credentialsType": _KERBEROS_KEYTAB,
+            "kerberosKdcAddress": self.kerberos_kdc_address,
+            "kerberosPrincipal": self.kerberos_principal,
+            "kerberosRealm": self.kerberos_realm,
+            "secrets": {"secretsType": _KERBEROS_KEYTAB, "kerberosKeytab": use_this_keytab},
+        }
 
     @classmethod
-    def _from_rest_object(cls, obj: model_preview.KerberosKeytabCredentials) -> "KerberosKeytabCredentials":
+    def _from_rest_object(cls, obj: Any) -> "KerberosKeytabCredentials":
+        secrets = obj.get("secrets") if obj is not None else None
         return cls(
-            kerberos_kdc_address=obj.kerberos_kdc_address,
-            kerberos_principal=obj.kerberos_principal,
-            kerberos_realm=obj.kerberos_realm,
-            kerberos_keytab=obj.secrets.kerberos_keytab if obj.secrets else None,
+            kerberos_kdc_address=obj.get("kerberosKdcAddress"),
+            kerberos_principal=obj.get("kerberosPrincipal"),
+            kerberos_realm=obj.get("kerberosRealm"),
+            kerberos_keytab=secrets.get("kerberosKeytab") if secrets else None,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -93,25 +100,26 @@ class KerberosPasswordCredentials(BaseKerberosCredentials):
             kerberos_principal=kerberos_principal,
             **kwargs,
         )
-        self.type = model_preview.CredentialsType.KERBEROS_PASSWORD
+        self.type = _KERBEROS_PASSWORD
         self.kerberos_password = kerberos_password
 
-    def _to_rest_object(self) -> model_preview.KerberosPasswordCredentials:
-        secrets = model_preview.KerberosPasswordSecrets(kerberos_password=self.kerberos_password)
-        return model_preview.KerberosPasswordCredentials(
-            kerberos_kdc_address=self.kerberos_kdc_address,
-            kerberos_principal=self.kerberos_principal,
-            kerberos_realm=self.kerberos_realm,
-            secrets=secrets,
-        )
+    def _to_rest_object(self) -> Dict[str, Any]:
+        return {
+            "credentialsType": _KERBEROS_PASSWORD,
+            "kerberosKdcAddress": self.kerberos_kdc_address,
+            "kerberosPrincipal": self.kerberos_principal,
+            "kerberosRealm": self.kerberos_realm,
+            "secrets": {"secretsType": _KERBEROS_PASSWORD, "kerberosPassword": self.kerberos_password},
+        }
 
     @classmethod
-    def _from_rest_object(cls, obj: model_preview.KerberosPasswordCredentials) -> "KerberosPasswordCredentials":
+    def _from_rest_object(cls, obj: Any) -> "KerberosPasswordCredentials":
+        secrets = obj.get("secrets") if obj is not None else None
         return cls(
-            kerberos_kdc_address=obj.kerberos_kdc_address,
-            kerberos_principal=obj.kerberos_principal,
-            kerberos_realm=obj.kerberos_realm,
-            kerberos_password=obj.secrets.kerberos_password if obj.secrets else None,
+            kerberos_kdc_address=obj.get("kerberosKdcAddress"),
+            kerberos_principal=obj.get("kerberosPrincipal"),
+            kerberos_realm=obj.get("kerberosRealm"),
+            kerberos_password=secrets.get("kerberosPassword") if secrets else None,
         )
 
     def __eq__(self, other: object) -> bool:

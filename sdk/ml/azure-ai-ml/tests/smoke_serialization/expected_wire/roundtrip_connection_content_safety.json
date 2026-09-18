@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "authType": "ApiKey",
+    "category": "CognitiveService",
+    "credentials": {
+      "key": "smoke-contentsafety-api-key"
+    },
+    "isSharedToAll": true,
+    "metadata": {
+      "Kind": "Content Safety"
+    },
+    "target": "https://smoke-contentsafety.cognitiveservices.azure.com/"
+  }
+}

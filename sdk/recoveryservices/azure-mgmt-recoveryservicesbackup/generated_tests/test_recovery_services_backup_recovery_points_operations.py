@@ -46,19 +46,3 @@ class TestRecoveryServicesBackupRecoveryPointsOperations(AzureMgmtRecordedTestCa
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_recovery_points_update(self, resource_group):
-        response = self.client.recovery_points.update(
-            resource_group_name=resource_group.name,
-            vault_name="str",
-            fabric_name="str",
-            container_name="str",
-            protected_item_name="str",
-            recovery_point_id="str",
-            parameters={"properties": {"recoveryPointProperties": {"expiryTime": "2020-02-20 00:00:00"}}},
-        )
-
-        # please add some check logic here by yourself
-        # ...

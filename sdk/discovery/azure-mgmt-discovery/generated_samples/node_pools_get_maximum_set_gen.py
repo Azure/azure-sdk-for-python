@@ -32,12 +32,12 @@ def main():
 
     response = client.node_pools.get(
         resource_group_name="rgdiscovery",
-        supercomputer_name="3d4fce3989a31db9c7",
-        node_pool_name="80084da43e5c8bc50e",
+        supercomputer_name="68ccaea8f927d3c9d7",
+        node_pool_name="f86825f20c4fb1d2fc",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/NodePools_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/NodePools_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

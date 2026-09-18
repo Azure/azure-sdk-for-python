@@ -83,5 +83,3 @@ extends:
                   - template: /eng/pipelines/templates/steps/esrp-publish.yml
                     parameters:
                       targetFolder: $(Pipeline.Workspace)/esrp-release/
-                      owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-                      approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}

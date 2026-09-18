@@ -19,7 +19,7 @@ from azure.ai.projects.models import (
 class TestAgentCodeInterpreter(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_code_interpreter_simple_math(self, **kwargs):
         """
         Test agent with Code Interpreter for simple Python code execution.
@@ -98,7 +98,7 @@ class TestAgentCodeInterpreter(TestBase):
     @pytest.mark.skip(
         reason="Skipped due to known server bug. Enable once https://msdata.visualstudio.com/Vienna/_workitems/edit/4841313 is resolved"
     )
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_code_interpreter_file_generation(self, **kwargs):
         """
         Test agent with Code Interpreter for file upload, processing, and download.
