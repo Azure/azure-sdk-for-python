@@ -21,4 +21,4 @@ extends:
         # test-resources.json provisions the Foundry account/project but not a model deployment
         # (see tests/README.md); set this pipeline variable to a realtime-capable deployment name
         # (e.g. "gpt-realtime") created in that project.
-        FOUNDRY_VOICE_MODEL_NAME: $(FoundryVoiceModelName)
+        FOUNDRY_VOICE_AGENT_MODEL: $(FoundryVoiceAgentModel)

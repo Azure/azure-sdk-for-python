@@ -162,7 +162,7 @@ class TestVoiceAgentConversations(TestBase):
         conversations = project_client.beta.voice_agents.conversations
 
         if is_live():
-            model = kwargs.get("foundry_voice_model_name")
+            model = kwargs.get("foundry_voice_agent_model")
             assert model is not None
             conversation_id = _create_live_conversation(project_client, model)
             add_general_regex_sanitizer(

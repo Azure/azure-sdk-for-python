@@ -112,7 +112,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         ``session.created`` handshake event.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("lifecycle")
@@ -143,7 +143,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         size/non-emptiness are checked, matching the ``azure-ai-voicelive`` live test convention.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("text-turn")
@@ -207,7 +207,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         adapts into an automated assertion-based form.
         """
         print("\n")
-        model = kwargs.get("foundry_voice_model_name")
+        model = kwargs.get("foundry_voice_agent_model")
         assert model is not None
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("tool-call")

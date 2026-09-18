@@ -24,7 +24,7 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name.
        Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
        set, defaults to "MyVoiceAgent".
@@ -47,7 +47,7 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "MyVoiceAgent"
 
 with (

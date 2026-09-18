@@ -36,7 +36,7 @@ USAGE:
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
        https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name.
        Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
        sample. Defaults to "sample-realtime-audio-conversation-agent-async".
@@ -416,7 +416,7 @@ async def _read_conversation(client: AIProjectClient, agent_name: str, conversat
 
 async def audio_conversation() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+    model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-realtime-audio-conversation-agent-async"
 
     async with (

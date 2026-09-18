@@ -24,7 +24,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
+    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model deployment name.
        Defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
        created and deleted by this script. Defaults to
@@ -158,7 +158,7 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
 
 def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+    model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
     agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-voice-agent-function-tool"
 
     get_weather_tool = VoiceAgentFunctionTool(

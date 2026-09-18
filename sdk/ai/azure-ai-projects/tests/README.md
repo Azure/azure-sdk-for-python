@@ -38,7 +38,7 @@ This provisions a Cognitive Services `AIServices` account with a default project
 test principal the built-in *Foundry User* role, then prints `FOUNDRY_PROJECT_ENDPOINT` and
 `FOUNDRY_PROJECT_API_KEY` values to add to your `.env` file. A realtime-capable voice model (for
 example `gpt-realtime`) still needs to be deployed to the project manually -- its deployment name
-goes in `FOUNDRY_VOICE_MODEL_NAME` -- since model deployment isn't automated by this template.
+goes in `FOUNDRY_VOICE_AGENT_MODEL` -- since model deployment isn't automated by this template.
 
 ## Live-test CI pipeline
 
