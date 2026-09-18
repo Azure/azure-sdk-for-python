@@ -52,6 +52,7 @@ class TestPlaywrightMgmtPlaywrightWorkspacesOperations(AzureMgmtRecordedTestCase
                     "regionalAffinity": "str",
                     "reporting": "str",
                     "storageUri": "str",
+                    "subnetId": "str",
                     "workspaceId": "str",
                 },
                 "systemData": {
