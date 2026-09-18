@@ -141,6 +141,13 @@ steps:
     displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
+  - task: PythonScript@0
+    displayName: Clean Up Test Isolates
+    condition: and(always(), ${{ parameters.RunCoverage }})
+    continueOnError: true
+    inputs:
+      scriptPath: eng/scripts/cleanup_isolate_dirs.py
+
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Test Samples (AzurePowerShell@5)
