@@ -926,7 +926,7 @@ class SendMessageError(AzureError):
 
 
 class InvocationError(AzureError):
-    """Exception raised when an invocation fails or is cancelled
+    """Exception raised when an invocation fails or times out.
 
     :ivar message: The error message. Required.
     :vartype message: str

@@ -83,6 +83,8 @@ client.send_to_group(group_name, "hello world", WebPubSubDataType.TEXT);
 
 Invocations are not automatically retried, including when sending fails. The `message_retry_total` setting does not apply to `invoke_event`.
 
+Prefer leaving `invocation_id` unset so the client generates it. If you supply custom IDs, use a new UUID for every invocation, including after a timeout or cancellation. Reusing an ID can cause a late response or cancellation request to affect a later invocation with the same ID.
+
 ```python
 from azure.messaging.webpubsubclient import WebPubSubClient
 from azure.messaging.webpubsubclient.models import WebPubSubDataType
@@ -95,7 +97,7 @@ with client:
 
 You can pass a `timeout` (in seconds) to limit how long the client waits for the response. An `InvocationError` is raised if the timeout elapses.
 
-If the response wait times out, or the async invocation task is cancelled after sending, the client attempts to send a `cancelInvocation` request to stop upstream work. Task cancellation still raises `asyncio.CancelledError`.
+If the response wait times out, or the async invocation task is cancelled while waiting for a response, the client attempts to send a `cancelInvocation` request to stop upstream work. Cancellation is best-effort and does not guarantee that upstream work stops.
 
 ```python
 from azure.messaging.webpubsubclient import WebPubSubClient
