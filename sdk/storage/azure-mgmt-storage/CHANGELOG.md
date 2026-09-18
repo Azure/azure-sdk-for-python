@@ -1,6 +1,6 @@
 # Release History
 
-## 25.2.0 (2026-09-16)
+## 25.2.0 (2026-09-18)
 
 ### Features Added
 
