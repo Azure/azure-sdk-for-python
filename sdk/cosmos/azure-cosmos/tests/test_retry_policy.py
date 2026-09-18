@@ -13,7 +13,6 @@ import test_config
 from azure.cosmos import _retry_utility, PartitionKey, documents
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, ResourceType
 from _fault_injection_transport import FaultInjectionTransport
-import os
 from azure.core.exceptions import ServiceResponseError, ServiceRequestError
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
 from azure.cosmos._constants import _Constants
@@ -489,10 +488,13 @@ class TestRetryPolicy(unittest.TestCase):
 
 
     def test_health_check_retry_policy(self):
-        os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'] = '5'
-        os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '2'
-        max_retries = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'])
-        retry_after_ms = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'])
+        max_retries = 5
+        retry_after_ms = 2
+        previous_env = test_config.set_environment_variables(
+            AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES=str(max_retries),
+            AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS=str(retry_after_ms),
+        )
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
         self.original_execute_function = _retry_utility.ExecuteFunction
         mock_execute = self.MockExecuteFunctionHealthCheck(self.original_execute_function)
         _retry_utility.ExecuteFunction = mock_execute
@@ -508,8 +510,6 @@ class TestRetryPolicy(unittest.TestCase):
             policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
         finally:
-            del os.environ["AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"]
-            del os.environ["AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS"]
             _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_health_check_retry_policy_defaults(self):

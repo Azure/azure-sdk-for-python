@@ -54,6 +54,17 @@ def unwrap_operation(value: Any) -> Any:
     return getattr(value, "_operation", value)
 
 
+# Hand-written sub-client classes that don't follow the generated *Operations naming
+# convention but are still part of the public surface and should be discovered/counted the
+# same way, e.g. `beta.voice_agents.realtime` (`BetaRealtime`/`AsyncBetaRealtime`).
+_HANDWRITTEN_SUBCLIENT_CLASS_NAMES = {"BetaRealtime", "AsyncBetaRealtime"}
+
+
+def _is_operation_group(value: Any) -> bool:
+    class_name = type(value).__name__
+    return class_name.endswith("Operations") or class_name in _HANDWRITTEN_SUBCLIENT_CLASS_NAMES
+
+
 def operation_instances(
     container: Any,
     *,
@@ -66,7 +77,7 @@ def operation_instances(
         if name.startswith("_") or name in excluded:
             continue
         operation = unwrap_operation(value)
-        if type(operation).__name__.endswith("Operations"):
+        if _is_operation_group(operation):
             operation_name = f"{prefix}.{name}" if prefix else name
             nested_operations = operation_instances(operation, prefix=operation_name)
             if public_methods(operation) or not nested_operations:
@@ -75,12 +86,18 @@ def operation_instances(
     return operations
 
 
+# Filenames that are fully code-generated from TypeSpec; any other source file backing a
+# method (including hand-written modules that aren't named `_patch*.py`, e.g. `_realtime.py`)
+# counts as handwritten.
+_GENERATED_SOURCE_FILENAMES = {"_operations.py", "_client.py"}
+
+
 def is_handwritten_method(cls: type[Any], name: str) -> bool:
     owner = next((base for base in cls.__mro__ if name in vars(base)), None)
     if owner is None:
         raise RuntimeError(f"Unable to find the class that defines {cls.__name__}.{name}")
     source_path = inspect.getsourcefile(owner)
-    return source_path is not None and "_patch" in Path(source_path).name
+    return source_path is not None and Path(source_path).name not in _GENERATED_SOURCE_FILENAMES
 
 
 def public_methods(instance: Any) -> dict[str, bool]:

@@ -2,7 +2,6 @@
 namespace azure.mgmt.relay
 
     class azure.mgmt.relay.RelayAPIMgmtClient: implements ContextManager 
-        clusters: ClustersOperations
         hybrid_connections: HybridConnectionsOperations
         namespaces: NamespacesOperations
         operations: Operations
@@ -36,7 +35,6 @@ namespace azure.mgmt.relay
 namespace azure.mgmt.relay.aio
 
     class azure.mgmt.relay.aio.RelayAPIMgmtClient: implements AsyncContextManager 
-        clusters: ClustersOperations
         hybrid_connections: HybridConnectionsOperations
         namespaces: NamespacesOperations
         operations: Operations
@@ -68,133 +66,6 @@ namespace azure.mgmt.relay.aio
 
 
 namespace azure.mgmt.relay.aio.operations
-
-    class azure.mgmt.relay.aio.operations.ClustersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: RelayCluster, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RelayCluster]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: RelayCluster, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RelayCluster]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[RelayCluster]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-07-01-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        async def list_available_cluster_region(self, **kwargs: Any) -> AvailableRelayClustersList: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RelayCluster]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[RelayCluster]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        async def list_namespaces(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayNamespaceIdListResult: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        async def list_skus(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayClusterSkuListResult: ...
-
-        @overload
-        async def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: RelayClusterUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @overload
-        async def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: RelayClusterUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @overload
-        async def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
 
     class azure.mgmt.relay.aio.operations.HybridConnectionsOperations:
 
@@ -1032,24 +903,6 @@ namespace azure.mgmt.relay.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.relay.models.AvailableRelayClusterRegion(_Model):
-        location: Optional[str]
-
-
-    class azure.mgmt.relay.models.AvailableRelayClustersList(_Model):
-        value: list[AvailableRelayClusterRegion]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                value: list[AvailableRelayClusterRegion]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.relay.models.CheckNameAvailability(_Model):
         name: str
 
@@ -1448,154 +1301,6 @@ namespace azure.mgmt.relay.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.relay.models.RelayCluster(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: Optional[RelayClusterProperties]
-        sku: RelayClusterSku
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: Optional[RelayClusterProperties] = ..., 
-                sku: RelayClusterSku, 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayClusterProperties(_Model):
-        metric_id: Optional[str]
-        provisioning_state: Optional[Union[str, RelayClusterProvisioningState]]
-        status: Optional[str]
-        supports_scaling: Optional[bool]
-        zone_redundant: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                zone_redundant: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CREATING = "Creating"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SCALING = "Scaling"
-        SUCCEEDED = "Succeeded"
-
-
-    class azure.mgmt.relay.models.RelayClusterSku(_Model):
-        capacity: Optional[int]
-        name: Union[str, RelayClusterSkuName]
-        tier: Optional[Union[str, RelayClusterSkuTier]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                capacity: Optional[int] = ..., 
-                name: Union[str, RelayClusterSkuName], 
-                tier: Optional[Union[str, RelayClusterSkuTier]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuCapacity(_Model):
-        allowed_values: Optional[list[int]]
-        default: Optional[int]
-        maximum: Optional[int]
-        minimum: Optional[int]
-        scale_type: Optional[Union[str, RelayClusterSkuScaleType]]
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuDetails(_Model):
-        name: Optional[Union[str, RelayClusterSkuName]]
-        tier: Optional[Union[str, RelayClusterSkuTier]]
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuInfo(_Model):
-        capacity: Optional[RelayClusterSkuCapacity]
-        resource_type: Optional[str]
-        sku: Optional[RelayClusterSkuDetails]
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuListResult(_Model):
-        value: list[RelayClusterSkuInfo]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                value: list[RelayClusterSkuInfo]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEDICATED = "Dedicated"
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AUTOMATIC = "Automatic"
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEDICATED = "Dedicated"
-
-
-    class azure.mgmt.relay.models.RelayClusterSkuUpdate(_Model):
-        capacity: Optional[int]
-        name: Optional[Union[str, RelayClusterSkuName]]
-        tier: Optional[Union[str, RelayClusterSkuTier]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                capacity: Optional[int] = ..., 
-                name: Optional[Union[str, RelayClusterSkuName]] = ..., 
-                tier: Optional[Union[str, RelayClusterSkuTier]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayClusterUpdate(_Model):
-        sku: Optional[RelayClusterSkuUpdate]
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                sku: Optional[RelayClusterSkuUpdate] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.relay.models.RelayNamespace(TrackedResource):
         id: str
         location: str
@@ -1628,20 +1333,6 @@ namespace azure.mgmt.relay.models
             ) -> None: ...
 
 
-    class azure.mgmt.relay.models.RelayNamespaceIdListResult(_Model):
-        value: list[RelayNamespaceReference]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                value: list[RelayNamespaceReference]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.relay.models.RelayNamespaceProperties(_Model):
         created_at: Optional[datetime]
         metric_id: Optional[str]
@@ -1664,10 +1355,6 @@ namespace azure.mgmt.relay.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.relay.models.RelayNamespaceReference(_Model):
-        id: Optional[str]
 
 
     class azure.mgmt.relay.models.RelayUpdateParameters(ResourceNamespacePatch):
@@ -1864,133 +1551,6 @@ namespace azure.mgmt.relay.models
 
 
 namespace azure.mgmt.relay.operations
-
-    class azure.mgmt.relay.operations.ClustersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: RelayCluster, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RelayCluster]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: RelayCluster, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RelayCluster]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[RelayCluster]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-07-01-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_available_cluster_region(self, **kwargs: Any) -> AvailableRelayClustersList: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[RelayCluster]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[RelayCluster]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_namespaces(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayNamespaceIdListResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list_skus(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                **kwargs: Any
-            ) -> RelayClusterSkuListResult: ...
-
-        @overload
-        def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: RelayClusterUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @overload
-        def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: RelayClusterUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
-        @overload
-        def update(
-                self, 
-                resource_group_name: str, 
-                cluster_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RelayCluster: ...
-
 
     class azure.mgmt.relay.operations.HybridConnectionsOperations:
 
@@ -2890,61 +2450,6 @@ namespace azure.mgmt.relay.types
         key "keyType": Required[Union[str, KeyType]]
         key: str
         keyType: Union[str, KeyType]
-
-
-    class azure.mgmt.relay.types.RelayCluster(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": ForwardRef('RelayClusterProperties', module='types')
-        key "sku": Required[RelayClusterSku]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: RelayClusterProperties
-        sku: RelayClusterSku
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.relay.types.RelayClusterProperties(TypedDict, total=False):
-        key "metricId": str
-        key "provisioningState": Union[str, RelayClusterProvisioningState]
-        key "status": str
-        key "supportsScaling": bool
-        key "zoneRedundant": bool
-        metricId: str
-        provisioningState: Union[str, RelayClusterProvisioningState]
-        status: str
-        supportsScaling: bool
-        zoneRedundant: bool
-
-
-    class azure.mgmt.relay.types.RelayClusterSku(TypedDict, total=False):
-        key "capacity": int
-        key "name": Required[Union[str, RelayClusterSkuName]]
-        key "tier": Union[str, RelayClusterSkuTier]
-        capacity: int
-        name: Union[str, RelayClusterSkuName]
-        tier: Union[str, RelayClusterSkuTier]
-
-
-    class azure.mgmt.relay.types.RelayClusterSkuUpdate(TypedDict, total=False):
-        key "capacity": int
-        key "name": Union[str, RelayClusterSkuName]
-        key "tier": Union[str, RelayClusterSkuTier]
-        capacity: int
-        name: Union[str, RelayClusterSkuName]
-        tier: Union[str, RelayClusterSkuTier]
-
-
-    class azure.mgmt.relay.types.RelayClusterUpdate(TypedDict, total=False):
-        key "sku": ForwardRef('RelayClusterSkuUpdate', module='types')
-        sku: RelayClusterSkuUpdate
-        tags: dict[str, str]
 
 
     class azure.mgmt.relay.types.RelayNamespace(TrackedResource):

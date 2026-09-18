@@ -13,7 +13,7 @@ import json
 from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core import AsyncPipelineClient, MatchConditions, MatchConditions
+from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -23,6 +23,7 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
+    ResourceModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -173,29 +174,19 @@ from ...operations._operations import (
     build_beta_voice_agents_conversations_list_response_items_request,
     build_beta_voice_agents_conversations_list_responses_request,
     build_beta_voice_agents_telephony_cancel_call_job_request,
-    build_beta_voice_agents_telephony_cancel_campaign_request,
     build_beta_voice_agents_telephony_create_binding_request,
     build_beta_voice_agents_telephony_create_call_job_request,
-    build_beta_voice_agents_telephony_create_campaign_request,
     build_beta_voice_agents_telephony_delete_binding_request,
     build_beta_voice_agents_telephony_end_call_request,
     build_beta_voice_agents_telephony_get_binding_request,
     build_beta_voice_agents_telephony_get_call_job_request,
     build_beta_voice_agents_telephony_get_call_request,
-    build_beta_voice_agents_telephony_get_campaign_recipient_import_request,
-    build_beta_voice_agents_telephony_get_campaign_request,
-    build_beta_voice_agents_telephony_get_operation_request,
     build_beta_voice_agents_telephony_get_transfer_targets_request,
-    build_beta_voice_agents_telephony_import_campaign_recipients_request,
     build_beta_voice_agents_telephony_list_bindings_request,
     build_beta_voice_agents_telephony_list_calls_request,
-    build_beta_voice_agents_telephony_pause_campaign_request,
-    build_beta_voice_agents_telephony_publish_campaign_request,
     build_beta_voice_agents_telephony_replace_transfer_targets_request,
-    build_beta_voice_agents_telephony_resume_campaign_request,
     build_beta_voice_agents_telephony_transfer_call_request,
     build_beta_voice_agents_telephony_update_binding_request,
-    build_beta_voice_agents_telephony_validate_campaign_request,
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
@@ -18039,7 +18030,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         return deserialized  # type: ignore
 
 
-class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
+class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18398,7 +18389,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: _models.UpdateTelephonyBindingRequest,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18414,8 +18405,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
@@ -18433,7 +18423,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: JSON,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18449,8 +18439,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
@@ -18468,7 +18457,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: IO[bytes],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.TelephonyBinding:
@@ -18484,8 +18473,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
@@ -18503,7 +18491,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[_models.UpdateTelephonyBindingRequest, JSON, IO[bytes]],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         **kwargs: Any
     ) -> _models.TelephonyBinding:
         """Update an agent telephony binding.
@@ -18519,8 +18507,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: ~azure.ai.projects.models.UpdateTelephonyBindingRequest or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -18532,6 +18519,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18599,13 +18592,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def delete_binding(
-        self,
-        agent_name: str,
-        binding_id: str,
-        *,
-        etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
-        **kwargs: Any
+        self, agent_name: str, binding_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
     ) -> None:
         """Delete an agent telephony binding.
 
@@ -18617,8 +18604,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type binding_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
@@ -18630,6 +18616,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -18676,8 +18668,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         *,
         provider: Optional[Union[str, _models.TelephonyProvider]] = None,
         status: Optional[Union[str, _models.TelephonyCallStatus]] = None,
-        started_after: Optional[datetime.datetime] = None,
-        started_before: Optional[datetime.datetime] = None,
+        started_after_time: Optional[datetime.datetime] = None,
+        started_before_time: Optional[datetime.datetime] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -18695,12 +18687,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
          and "failed". Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.TelephonyCallStatus
-        :keyword started_after: Includes calls that started at or after this Unix timestamp in seconds.
-         Default value is None.
-        :paramtype started_after: ~datetime.datetime
-        :keyword started_before: Includes calls that started at or before this Unix timestamp in
+        :keyword started_after_time: Includes calls that started at or after this Unix timestamp in
          seconds. Default value is None.
-        :paramtype started_before: ~datetime.datetime
+        :paramtype started_after_time: ~datetime.datetime
+        :keyword started_before_time: Includes calls that started at or before this Unix timestamp in
+         seconds. Default value is None.
+        :paramtype started_before_time: ~datetime.datetime
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -18738,8 +18730,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
                 agent_name=agent_name,
                 provider=provider,
                 status=status,
-                started_after=started_after,
-                started_before=started_before,
+                started_after_time=started_after_time,
+                started_before_time=started_before_time,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -19165,7 +19157,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
@@ -19178,8 +19170,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
@@ -19200,7 +19191,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: JSON,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19214,8 +19205,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -19233,7 +19223,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: IO[bytes],
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19247,8 +19237,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -19266,7 +19255,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
+        match_condition: MatchConditions,
         transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19280,8 +19269,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type body: JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword transfer_targets: The complete set of destinations to which the voice agent may
          transfer calls. An empty array clears all targets when replacing the configuration. Required.
@@ -19297,6 +19285,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19628,13 +19622,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
     @distributed_trace_async
     async def cancel_call_job(
-        self,
-        agent_name: str,
-        call_job_id: str,
-        *,
-        etag: str,
-        match_condition: MatchConditions = MatchConditions.IfNotModified,
-        **kwargs: Any
+        self, agent_name: str, call_job_id: str, *, etag: str, match_condition: MatchConditions, **kwargs: Any
     ) -> _models.TelephonyCallJob:
         """Cancel an outbound telephony call job.
 
@@ -19646,8 +19634,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type call_job_id: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is
-         MatchConditions.IfNotModified.
+        :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -19659,6 +19646,12 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -19719,1239 +19712,5 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_campaign(
-        self,
-        agent_name: str,
-        body: _models.CreateTelephonyCampaignRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.TelephonyCampaign:
-        """Create an outbound telephony campaign.
-
-        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
-        can be published.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateTelephonyCampaignRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_campaign(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.TelephonyCampaign:
-        """Create an outbound telephony campaign.
-
-        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
-        can be published.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_campaign(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.TelephonyCampaign:
-        """Create an outbound telephony campaign.
-
-        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
-        can be published.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_campaign(
-        self, agent_name: str, body: Union[_models.CreateTelephonyCampaignRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.TelephonyCampaign:
-        """Create an outbound telephony campaign.
-
-        Creates a draft outbound campaign. Recipients are imported and validated before the campaign
-        can be published.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param body: Is one of the following types: CreateTelephonyCampaignRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.ai.projects.models.CreateTelephonyCampaignRequest or JSON or IO[bytes]
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_voice_agents_telephony_create_campaign_request(
-            agent_name=agent_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_campaign(self, agent_name: str, campaign_id: str, **kwargs: Any) -> _models.TelephonyCampaign:
-        """Get an outbound telephony campaign.
-
-        Retrieves an outbound campaign, including configuration, execution state, and aggregate
-        call-job counts.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_get_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _import_campaign_recipients_initial(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: Union[_models.ImportTelephonyCampaignRecipientsRequest, JSON, IO[bytes]],
-        *,
-        idempotency_key: str,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_voice_agents_telephony_import_campaign_recipients_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            idempotency_key=idempotency_key,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_import_campaign_recipients(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: _models.ImportTelephonyCampaignRecipientsRequest,
-        *,
-        idempotency_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Import outbound telephony campaign recipients.
-
-        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
-        file.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.ImportTelephonyCampaignRecipientsRequest
-        :keyword idempotency_key: Required.
-        :paramtype idempotency_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_import_campaign_recipients(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: JSON,
-        *,
-        idempotency_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Import outbound telephony campaign recipients.
-
-        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
-        file.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword idempotency_key: Required.
-        :paramtype idempotency_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_import_campaign_recipients(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: IO[bytes],
-        *,
-        idempotency_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Import outbound telephony campaign recipients.
-
-        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
-        file.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword idempotency_key: Required.
-        :paramtype idempotency_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_import_campaign_recipients(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: Union[_models.ImportTelephonyCampaignRecipientsRequest, JSON, IO[bytes]],
-        *,
-        idempotency_key: str,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Import outbound telephony campaign recipients.
-
-        Starts an asynchronous import of campaign recipients from a Dataset CSV, JSON array, or JSONL
-        file.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Is one of the following types: ImportTelephonyCampaignRecipientsRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.ImportTelephonyCampaignRecipientsRequest or JSON or
-         IO[bytes]
-        :keyword idempotency_key: Required.
-        :paramtype idempotency_key: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._import_campaign_recipients_initial(
-                agent_name=agent_name,
-                campaign_id=campaign_id,
-                body=body,
-                idempotency_key=idempotency_key,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Retry-After"] = self._deserialize(
-                "duration-seconds-int", response.headers.get("Retry-After")
-            )
-
-            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.TelephonyOperationResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace_async
-    async def get_campaign_recipient_import(
-        self, agent_name: str, campaign_id: str, import_id: str, **kwargs: Any
-    ) -> _models.TelephonyCampaignRecipientImport:
-        """Get an outbound telephony campaign recipient import.
-
-        Retrieves the durable status and counters for a campaign recipient import.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param import_id: Required.
-        :type import_id: str
-        :return: TelephonyCampaignRecipientImport. The TelephonyCampaignRecipientImport is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaignRecipientImport
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyCampaignRecipientImport] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_get_campaign_recipient_import_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            import_id=import_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaignRecipientImport, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _validate_campaign_initial(
-        self, agent_name: str, campaign_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_validate_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_validate_campaign(
-        self, agent_name: str, campaign_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Validate an outbound telephony campaign.
-
-        Starts asynchronous validation of the current campaign draft and imported recipient snapshot.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._validate_campaign_initial(
-                agent_name=agent_name,
-                campaign_id=campaign_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Retry-After"] = self._deserialize(
-                "duration-seconds-int", response.headers.get("Retry-After")
-            )
-
-            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.TelephonyOperationResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    async def _publish_campaign_initial(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: Union[_models.PublishTelephonyCampaignRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_voice_agents_telephony_publish_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Retry-After"] = self._deserialize("duration-seconds-int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_publish_campaign(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: _models.PublishTelephonyCampaignRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Publish an outbound telephony campaign.
-
-        Permanently locks the validated campaign draft and starts asynchronous call-job
-        materialization.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.PublishTelephonyCampaignRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_publish_campaign(
-        self, agent_name: str, campaign_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Publish an outbound telephony campaign.
-
-        Permanently locks the validated campaign draft and starts asynchronous call-job
-        materialization.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_publish_campaign(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Publish an outbound telephony campaign.
-
-        Permanently locks the validated campaign draft and starts asynchronous call-job
-        materialization.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_publish_campaign(
-        self,
-        agent_name: str,
-        campaign_id: str,
-        body: Union[_models.PublishTelephonyCampaignRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TelephonyOperationResource]:
-        """Publish an outbound telephony campaign.
-
-        Permanently locks the validated campaign draft and starts asynchronous call-job
-        materialization.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :param body: Is one of the following types: PublishTelephonyCampaignRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.ai.projects.models.PublishTelephonyCampaignRequest or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns TelephonyOperationResource. The
-         TelephonyOperationResource is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.TelephonyOperationResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TelephonyOperationResource] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._publish_campaign_initial(
-                agent_name=agent_name,
-                campaign_id=campaign_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Retry-After"] = self._deserialize(
-                "duration-seconds-int", response.headers.get("Retry-After")
-            )
-
-            deserialized = _deserialize(_models.TelephonyOperationResource, response.json().get("resource", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.TelephonyOperationResource].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.TelephonyOperationResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace_async
-    async def pause_campaign(self, agent_name: str, campaign_id: str, **kwargs: Any) -> _models.TelephonyCampaign:
-        """Pause an outbound telephony campaign.
-
-        Pauses dispatch of call jobs owned by a published campaign.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_pause_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def resume_campaign(self, agent_name: str, campaign_id: str, **kwargs: Any) -> _models.TelephonyCampaign:
-        """Resume an outbound telephony campaign.
-
-        Resumes dispatch of call jobs owned by a paused campaign.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_resume_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def cancel_campaign(self, agent_name: str, campaign_id: str, **kwargs: Any) -> _models.TelephonyCampaign:
-        """Cancel an outbound telephony campaign.
-
-        Cancels a campaign and prevents any further call-job dispatch.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param campaign_id: Required.
-        :type campaign_id: str
-        :return: TelephonyCampaign. The TelephonyCampaign is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyCampaign
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyCampaign] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_cancel_campaign_request(
-            agent_name=agent_name,
-            campaign_id=campaign_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyCampaign, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_operation(self, agent_name: str, operation_id: str, **kwargs: Any) -> _models.TelephonyOperation:
-        """Get an outbound telephony operation.
-
-        Retrieves an asynchronous outbound campaign operation.
-
-        :param agent_name: Required.
-        :type agent_name: str
-        :param operation_id: Required.
-        :type operation_id: str
-        :return: TelephonyOperation. The TelephonyOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.TelephonyOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TelephonyOperation] = kwargs.pop("cls", None)
-
-        _request = build_beta_voice_agents_telephony_get_operation_request(
-            agent_name=agent_name,
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.TelephonyOperation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
