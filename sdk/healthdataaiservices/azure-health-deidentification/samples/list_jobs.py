@@ -17,9 +17,9 @@ USAGE:
 """
 
 
+import os
 from azure.health.deidentification import DeidentificationClient
 from azure.identity import DefaultAzureCredential
-import os
 
 
 def list_jobs():
