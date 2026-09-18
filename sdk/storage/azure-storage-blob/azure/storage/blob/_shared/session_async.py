@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 UTC = timezone.utc
 
+
 class AsyncSessionProvider(Protocol):
     """Creates, caches, and invalidates per-container sessions."""
 
@@ -220,7 +221,9 @@ class AsyncContainerSessionProvider:
 
     async def _create_session(self, container_name: str) -> Tuple[str, str, datetime]:
         container_client = self._client.get_container_client(container_name)
-        response: CreateSessionResponse = await container_client._client.container.create_session(  # pylint: disable=protected-access
-            create_session_configuration=CreateSessionConfiguration(authentication_type="HMAC")
+        response: CreateSessionResponse = (
+            await container_client._client.container.create_session(  # pylint: disable=protected-access
+                create_session_configuration=CreateSessionConfiguration(authentication_type="HMAC")
+            )
         )
         return _extract_session(response)

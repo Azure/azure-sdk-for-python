@@ -168,12 +168,14 @@ class AsyncStorageAccountHostsMixin(object):
                     session_provider=session_provider,
                 )
             )
-        policies.extend([
-            config.logging_policy,
-            AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ])
+        policies.extend(
+            [
+                config.logging_policy,
+                AsyncStorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
