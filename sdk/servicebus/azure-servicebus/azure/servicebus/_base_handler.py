@@ -384,6 +384,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ) -> Any:
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        suppress_next_session_timeout_message = kwargs.pop(
+            "suppress_next_session_timeout_message", False
+        )
         # Opt-in per call site so long-poll operations stay bounded only by the caller.
         apply_try_timeout = kwargs.pop("apply_try_timeout", False)
         try_timeout = self._config.try_timeout if apply_try_timeout else None
@@ -420,7 +423,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         # Keep the original message: it identifies which phase timed out.
                         # The session hint only applies to NEXT_AVAILABLE_SESSION receivers.
                         description = str(last_exception)
-                        if getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION:
+                        if (
+                            getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+                            and not suppress_next_session_timeout_message
+                        ):
                             description += (
                                 " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
                                 " on the ServiceBusReceiver to control the timeout."
@@ -434,6 +440,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     retried_times=retried_times,
                     last_exception=last_exception,
                     abs_timeout_time=abs_timeout_time,
+                    suppress_next_session_timeout_message=(
+                        suppress_next_session_timeout_message
+                    ),
                 )
 
     def _backoff(
@@ -442,6 +451,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         last_exception: Exception,
         abs_timeout_time: Optional[float] = None,
         entity_name: Optional[str] = None,
+        suppress_next_session_timeout_message: bool = False,
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
@@ -468,7 +478,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             if isinstance(last_exception, OperationTimeoutError):
                 # Keep the original message: it identifies which phase timed out.
                 description = str(last_exception)
-                if getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION:
+                if (
+                    getattr(self, "_session_id", None) == NEXT_AVAILABLE_SESSION
+                    and not suppress_next_session_timeout_message
+                ):
                     description += (
                         " If trying to receive from NEXT_AVAILABLE_SESSION, use max_wait_time"
                         " on the ServiceBusReceiver to control the timeout."
@@ -570,8 +583,65 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _open(self, timeout: Optional[float] = None):
         raise ValueError("Subclass should override the method.")
 
-    def _open_with_retry(self):
-        return self._do_retryable_operation(self._open, operation_requires_timeout=True, apply_try_timeout=True)
+    def _open_with_timeout(self, timeout: float):
+        del timeout
+        return self._open()
+
+    def _open_with_retry(
+        self,
+        timeout: Optional[float] = None,
+        *,
+        suppress_next_session_timeout_message: bool = False,
+    ):
+        def open_with_timeout(timeout: Optional[float] = None):
+            if timeout is not None and timeout <= 0:
+                raise OperationTimeoutError()
+            if timeout is None:
+                return self._open()
+            return self._open_with_timeout(timeout)
+
+        return self._do_retryable_operation(
+            open_with_timeout,
+            timeout=timeout,
+            operation_requires_timeout=True,
+            apply_try_timeout=True,
+            suppress_next_session_timeout_message=(
+                suppress_next_session_timeout_message
+            ),
+        )
+
+    def _open_mgmt_link_with_retry(
+        self,
+        timeout: Optional[float] = None,
+        *,
+        suppress_next_session_timeout_message: bool = False,
+    ):
+        def open_mgmt_link(timeout: Optional[float] = None):
+            if timeout is not None and timeout <= 0:
+                raise OperationTimeoutError()
+            start_time = time.monotonic()
+            if timeout is None:
+                self._open()
+            else:
+                self._open_with_timeout(timeout)
+                timeout -= time.monotonic() - start_time
+                if timeout <= 0:
+                    raise OperationTimeoutError()
+            return self._amqp_transport.mgmt_client_setup(
+                self._handler,
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=timeout,
+            )
+
+        return self._do_retryable_operation(
+            open_mgmt_link,
+            timeout=timeout,
+            operation_requires_timeout=True,
+            apply_try_timeout=True,
+            suppress_next_session_timeout_message=(
+                suppress_next_session_timeout_message
+            ),
+        )
 
     def _close_handler(self):
         if self._handler:
