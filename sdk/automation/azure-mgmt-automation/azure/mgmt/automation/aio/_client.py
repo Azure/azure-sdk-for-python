@@ -79,7 +79,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AutomationClient(_AutomationClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class AutomationClient(
+    _AutomationClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Automation Client.
 
     :ivar operations: Operations operations
