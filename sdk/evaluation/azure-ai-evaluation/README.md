@@ -58,7 +58,7 @@ from azure.ai.evaluation import evaluate, RelevanceEvaluator, ViolenceEvaluator,
 
 # NLP bleu score evaluator
 bleu_score_evaluator = BleuScoreEvaluator()
-result = bleu_score(
+result = bleu_score_evaluator(
     response="Tokyo is the capital of Japan.",
     ground_truth="The capital of Japan is Tokyo."
 )
@@ -66,7 +66,7 @@ result = bleu_score(
 # AI assisted quality evaluator
 model_config = {
     "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-    "api_key": os.environ.get("AZURE_OPENAI_API_KEY"),
+    "api_key": os.environ.get("AZURE_OPENAI_KEY"),
     "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
 }
 
@@ -116,13 +116,13 @@ class BlocklistEvaluator:
         self._blocklist = blocklist
 
     def __call__(self, *, response: str, **kwargs):
-        score = any([word in answer for word in self._blocklist])
+        score = any([word in response for word in self._blocklist])
         return {"score": score}
 
 blocklist_evaluator = BlocklistEvaluator(blocklist=["bad, worst, terrible"])
 
 result = response_length("The capital of Japan is Tokyo.")
-result = blocklist_evaluator(answer="The capital of Japan is Tokyo.")
+result = blocklist_evaluator(response="The capital of Japan is Tokyo.")
 
 ```
 
@@ -144,12 +144,12 @@ result = evaluate(
     evaluator_config={
         "relevance": {
             "column_mapping": {
-                "query": "${data.queries}"
-                "ground_truth": "${data.ground_truth}"
+                "query": "${data.queries}",
+                "ground_truth": "${data.ground_truth}",
                 "response": "${outputs.response}"
             } 
         }
-    }
+    },
     # Optionally provide your AI Foundry project information to track your evaluation results in your Azure AI Foundry project
     azure_ai_project = azure_ai_project,
     # Optionally provide an output path to dump a json of metric summary, row level data and metric and AI Foundry URL
@@ -171,8 +171,8 @@ result = evaluate(
     evaluator_config={
         "default": {
             "column_mapping": {
-                "query": "${data.queries}"
-                "context": "${outputs.context}"
+                "query": "${data.queries}",
+                "context": "${outputs.context}",
                 "response": "${outputs.response}"
             } 
         }
@@ -186,7 +186,7 @@ For more details refer to [Evaluate on a target][evaluate_target]
 ### Simulator
 
 
-Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes their AI application. The intergration between your AI application and the simulator happens at the callback method. Here's how a sample callback would look like:
+Simulators allow users to generate synthetic data using their application. Simulator expects the user to have a callback method that invokes their AI application. The integration between your AI application and the simulator happens at the callback method. Here's how a sample callback would look like:
 
 
 ```python
@@ -216,9 +216,9 @@ The simulator initialization and invocation looks like this:
 ```python
 from azure.ai.evaluation.simulator import Simulator
 model_config = {
-    "azure_endpoint": os.environ.get("AZURE_ENDPOINT"),
-    "azure_deployment": os.environ.get("AZURE_DEPLOYMENT_NAME"),
-    "api_version": os.environ.get("AZURE_API_VERSION"),
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+    "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
 }
 custom_simulator = Simulator(model_config=model_config)
 outputs = asyncio.run(custom_simulator(
@@ -323,7 +323,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [evaluation_pypi]: https://pypi.org/project/azure-ai-evaluation/
 [evaluation_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
 [evaluation_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios
-[product_documentation]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
+[product_documentation]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/evaluate-sdk
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
@@ -335,24 +335,24 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[evaluate_target]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#evaluate-on-a-target
-[evaluate_dataset]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#evaluate-on-test-dataset-using-evaluate
+[evaluate_target]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/evaluate-sdk#local-evaluation-on-a-target
+[evaluate_dataset]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/evaluate-sdk#local-evaluation-on-test-datasets-using-evaluate
 [evaluators]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
 [evaluate_api]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview#azure-ai-evaluation-evaluate
 [evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Targets/Evaluate_App_Endpoint
 [evaluation_tsg]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/evaluation/azure-ai-evaluation/TROUBLESHOOTING.md
-[ai_studio]: https://learn.microsoft.com/azure/ai-studio/what-is-ai-studio
-[ai_project]: https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio
+[ai_studio]: https://learn.microsoft.com/azure/foundry/what-is-foundry
+[ai_project]: https://learn.microsoft.com/azure/foundry/how-to/create-projects
 [azure_openai]: https://learn.microsoft.com/azure/ai-services/openai/
 [evaluate_models]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Targets/Evaluate_Base_Model_Endpoint
 [custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Metrics/Custom_Evaluators
 [evaluate_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate
-[evaluation_metrics]: https://learn.microsoft.com/azure/ai-studio/concepts/evaluation-metrics-built-in
-[performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
-[risk_and_safety_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators
-[composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
-[adversarial_simulation_docs]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#generate-adversarial-simulations-for-safety-evaluation
-[adversarial_simulation_scenarios]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios
+[evaluation_metrics]: https://learn.microsoft.com/azure/foundry/concepts/built-in-evaluators
+[performance_and_quality_evaluators]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/evaluate-sdk#built-in-evaluators
+[risk_and_safety_evaluators]: https://learn.microsoft.com/azure/foundry-classic/concepts/evaluation-evaluators/risk-safety-evaluators
+[composite_evaluators]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/evaluate-sdk#composite-evaluators
+[adversarial_simulation_docs]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/simulator-interaction-data#generate-adversarial-simulations-for-safety-evaluation
+[adversarial_simulation_scenarios]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios
 [adversarial_simulation]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Simulators/Simulate_Adversarial_Data
 [simulate_with_conversation_starter]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Simulators/Simulate_Context-Relevant_Data/Simulate_From_Conversation_Starter
-[adversarial_jailbreak]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#simulating-jailbreak-attacks
+[adversarial_jailbreak]: https://learn.microsoft.com/azure/foundry-classic/how-to/develop/simulator-interaction-data#simulate-jailbreak-attacks
