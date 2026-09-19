@@ -62,6 +62,7 @@ resource foundryUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022
   }
 }
 
-// Outputs become environment variables injected into the test run.
+// Outputs become environment variables injected into the test run. The live tests authenticate
+// with Azure AD (see tests/test_base.py's use of devtools_testutils.get_credential), so no API
+// key is exported here.
 output FOUNDRY_PROJECT_ENDPOINT string = '${foundryAccount.properties.endpoints['AI Foundry API']}api/projects/${foundryProjectName}'
-output FOUNDRY_PROJECT_API_KEY string = foundryAccount.listKeys().key1

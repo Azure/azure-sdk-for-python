@@ -1,5 +1,12 @@
 trigger: none
 
+variables:
+  # Non-secret setting with a checked-in default (matching the samples' default), so this
+  # pipeline is runnable without any out-of-band Azure DevOps variable configuration. Override
+  # by defining a pipeline variable of the same name if a different managed model is needed.
+  - name: FoundryVoiceAgentModel
+    value: gpt-realtime
+
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
@@ -26,6 +33,6 @@ extends:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'true'
         # The live tests use a service-hosted realtime model (VoiceModelType.MANAGED), which
-        # requires no project deployment. Set this pipeline variable to a managed model
-        # identifier (e.g. "gpt-realtime"); see tests/README.md.
+        # requires no project deployment. Defaults to "gpt-realtime" via the FoundryVoiceAgentModel
+        # pipeline variable above; see tests/README.md.
         FOUNDRY_VOICE_AGENT_MODEL: $(FoundryVoiceAgentModel)

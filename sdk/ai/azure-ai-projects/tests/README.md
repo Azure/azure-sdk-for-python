@@ -35,9 +35,10 @@ e.g.:
 ```
 
 This provisions a Cognitive Services `AIServices` account with a default project and grants the
-test principal the built-in *Foundry User* role, then prints `FOUNDRY_PROJECT_ENDPOINT` and
-`FOUNDRY_PROJECT_API_KEY` values to add to your `.env` file. The live tests use a service-hosted
-realtime model (`VoiceModelType.MANAGED`), so no project deployment is needed -- set
+test principal the built-in *Foundry User* role, then prints a `FOUNDRY_PROJECT_ENDPOINT` value to
+add to your `.env` file (the live tests authenticate with Azure AD via `DefaultAzureCredential`,
+so no API key is needed). The live tests use a service-hosted realtime model
+(`VoiceModelType.MANAGED`), so no project deployment is needed -- set
 `FOUNDRY_VOICE_AGENT_MODEL` to a managed model identifier such as `gpt-realtime` (see
 `azure.ai.projects.models.VoiceModelType` for the managed-vs-self-deployed distinction).
 

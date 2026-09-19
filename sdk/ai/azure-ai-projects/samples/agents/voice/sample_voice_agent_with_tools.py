@@ -27,7 +27,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The realtime model (managed) or the
-       Foundry deployment name (BYOM). Defaults to "gpt-realtime".
+       Foundry deployment name (BYOM). Defaults to "gpt-realtime". (FOUNDRY_VOICE_MODEL
+       is a deprecated alias for this variable, still read as a fallback for compatibility
+       with earlier samples.)
     3) FOUNDRY_VOICE_MODEL_TYPE - Optional. "managed" (default) for a
        service-hosted model, or "self_deployed" to bring your own deployment.
     4) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
@@ -61,7 +63,10 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
+# FOUNDRY_VOICE_MODEL is a deprecated alias for FOUNDRY_VOICE_AGENT_MODEL, read as a fallback so
+# an existing self_deployed (BYOM) configuration doesn't silently start targeting "gpt-realtime"
+# instead of the user's actual deployment name.
+model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
 # "managed" runs a service-hosted model; "self_deployed" (BYOM) uses your own
 # Foundry deployment named by `model`. The service derives whether the model is
 # realtime or cascaded; you don't set that here.
