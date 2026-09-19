@@ -13,6 +13,13 @@ extends:
       ServiceDirectory: ai
       BuildTargetingString: 'azure-ai-projects'
       JobName: VoiceAgentsRealtime
+      # test-resources.bicep's Foundry account has no explicit location, so it falls back to the
+      # resource group's location; without an explicit Location here, that defaults to whatever
+      # the pipeline's hosting environment resolves to (observed to be "westus" in a live CI run),
+      # which does not support "gpt-realtime" in managed mode ("bad_request: Model 'gpt-realtime'
+      # is not supported in managed mode in this region"). Pin to a region confirmed (by manual
+      # testing) to support it.
+      Location: westus2
       TestResourceDirectories:
         - ai/azure-ai-projects/
       # Scope this pipeline to only the Voice Agents realtime tests marked live_test_only (see

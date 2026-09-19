@@ -103,8 +103,13 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("lifecycle")
 
+        # Track whether the agent was actually created so a failure in _create_basic_agent (e.g.
+        # the model isn't supported in this project's region) isn't masked by a follow-on
+        # ResourceNotFoundError from deleting an agent that was never created.
+        agent_created = False
         try:
             await self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
             async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 event = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
@@ -113,7 +118,8 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
             # The `async with` block above closes the connection; a second `recv()` after close
             # would raise, so we don't attempt one -- clean exit from the block is the assertion.
         finally:
-            await project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
             await project_client.close()
 
     # To run only this test:
@@ -135,8 +141,10 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("text-turn")
 
+        agent_created = False
         try:
             await self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
             async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
@@ -179,7 +187,8 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
                 assert audio_bytes > 0, "Expected non-empty streamed audio"
                 assert transcript_done_count == 1, "Expected exactly one audio-transcript-done event"
         finally:
-            await project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
             await project_client.close()
 
     # To run only this test:
@@ -200,6 +209,7 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
         assert model is not None
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("tool-call")
+        agent_created = False
 
         get_weather_tool = VoiceAgentFunctionTool(
             name="get_weather",
@@ -228,6 +238,7 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
                     tools=[get_weather_tool],
                 ),
             )
+            agent_created = True
 
             async with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = await asyncio.wait_for(conn.recv(), timeout=_EVENT_TIMEOUT)
@@ -294,5 +305,6 @@ class TestVoiceAgentRealtimeLivetestAsync(TestBase):
                 assert tool_call_count >= 1, "Expected the agent to invoke the get_weather tool at least once"
                 assert final_text is not None and len(final_text.strip()) > 0
         finally:
-            await project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                await project_client.agents.delete(agent_name=agent_name)
             await project_client.close()

@@ -31,7 +31,7 @@ Most tests target a manually-configured Foundry project. The Voice Agents realti
 e.g.:
 
 ```powershell
-../../../eng/common/TestResources/New-TestResources.ps1 -ServiceDirectory ai
+../../../eng/common/TestResources/New-TestResources.ps1 -ServiceDirectory ai -Location westus2
 ```
 
 This provisions a Cognitive Services `AIServices` account with a default project and grants the
@@ -41,6 +41,9 @@ so no API key is needed). The live tests use a service-hosted realtime model
 (`VoiceModelType.MANAGED`), so no project deployment is needed -- set
 `FOUNDRY_VOICE_AGENT_MODEL` to a managed model identifier such as `gpt-realtime` (see
 `azure.ai.projects.models.VoiceModelType` for the managed-vs-self-deployed distinction).
+`-Location westus2` is required -- without it, the account is created in the resource group's
+default location, which may not support the managed model in managed mode (observed as a
+`bad_request: Model 'gpt-realtime' is not supported in managed mode in this region` error).
 
 ## Live-test CI pipeline
 

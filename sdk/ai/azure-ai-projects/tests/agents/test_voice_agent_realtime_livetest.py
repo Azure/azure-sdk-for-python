@@ -117,8 +117,13 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("lifecycle")
 
+        # Track whether the agent was actually created so a failure in _create_basic_agent (e.g.
+        # the model isn't supported in this project's region) isn't masked by a follow-on
+        # ResourceNotFoundError from deleting an agent that was never created.
+        agent_created = False
         try:
             self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
             with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 event = conn.recv(timeout=_EVENT_TIMEOUT)
@@ -127,7 +132,8 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
             # The `with` block above closes the connection; a second `recv()` after close
             # would raise, so we don't attempt one -- clean exit from the block is the assertion.
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                project_client.agents.delete(agent_name=agent_name)
 
     # To run only this test:
     # pytest tests\agents\test_voice_agent_realtime_livetest.py::TestVoiceAgentRealtimeLivetest::test_realtime_text_turn_produces_audio_and_transcript -s
@@ -148,8 +154,10 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("text-turn")
 
+        agent_created = False
         try:
             self._create_basic_agent(project_client, agent_name, model)
+            agent_created = True
 
             with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = conn.recv(timeout=_EVENT_TIMEOUT)
@@ -191,7 +199,8 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
                 assert audio_bytes > 0, "Expected non-empty streamed audio"
                 assert transcript_done_count == 1, "Expected exactly one audio-transcript-done event"
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                project_client.agents.delete(agent_name=agent_name)
 
     # To run only this test:
     # pytest tests\agents\test_voice_agent_realtime_livetest.py::TestVoiceAgentRealtimeLivetest::test_realtime_function_tool_call -s
@@ -211,6 +220,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
         assert model is not None
         project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
         agent_name = self._make_agent_name("tool-call")
+        agent_created = False
 
         get_weather_tool = VoiceAgentFunctionTool(
             name="get_weather",
@@ -239,6 +249,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
                     tools=[get_weather_tool],
                 ),
             )
+            agent_created = True
 
             with project_client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
                 session_created = conn.recv(timeout=_EVENT_TIMEOUT)
@@ -304,4 +315,5 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
                 assert tool_call_count >= 1, "Expected the agent to invoke the get_weather tool at least once"
                 assert final_text is not None and len(final_text.strip()) > 0
         finally:
-            project_client.agents.delete(agent_name=agent_name)
+            if agent_created:
+                project_client.agents.delete(agent_name=agent_name)
