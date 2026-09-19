@@ -13,7 +13,7 @@ Step 3 proves the access-condition path the Python helper builds from
 binding's ``custom_headers`` and the service enforces it. (Insert-only
 via ``If-None-Match: *`` is deliberately *not* asserted as a 412: Cosmos
 upsert lets the is-upsert flag win and replaces, returning 200 on both
-the legacy and the rust path -- so it is parity, not a precondition.)
+the legacy and the Rust path -- so it is parity, not a precondition.)
 
 Not a pytest test: needs a real account (or the local emulator) and
 prints visible output so a human can confirm the round trip.
@@ -56,7 +56,7 @@ PARTITION_KEY = PartitionKeyInput("components", ("smokeA",))
 
 def _ensure_db_and_container() -> None:
     """Create the db + container via the legacy backend if missing, so the
-    rust path is never asked to resolve a container that does not exist."""
+    Rust path is never asked to resolve a container that does not exist."""
     client = CosmosClient(ENDPOINT, KEY)
     db = client.create_database_if_not_exists(DB)
     db.create_container_if_not_exists(id=COLL, partition_key=PartitionKey(path="/pk"))
@@ -144,14 +144,14 @@ def main() -> int:
         return 1
 
     # ---- 3) version-guarded replace with a STALE etag -> 412 -----------
-    # Step 2 replaced the document, so the etag captured at insert time is
+    # Step 2 replaced the item, so the etag captured at insert time is
     # now stale. A guarded replace (If-Match: <stale-etag>, built by the
     # Python helper from match_condition=IfNotModified) must fail with 412.
     # This is the upsert precondition Cosmos actually honours, and it
     # proves the access-condition header reaches the wire through the
     # binding's custom_headers. (Insert-only via If-None-Match: * is NOT
     # tested as a 412: Cosmos upsert lets the is-upsert flag win and
-    # replaces, returning 200 on both the legacy and the rust path -- so
+    # replaces, returning 200 on both the legacy and the Rust path -- so
     # it is parity, not a precondition.)
     print("[3] guarded replace with stale If-Match (expect 412) ...", flush=True)
     try:

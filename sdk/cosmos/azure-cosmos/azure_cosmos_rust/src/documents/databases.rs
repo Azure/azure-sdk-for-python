@@ -43,11 +43,6 @@ pub(crate) fn create_database_async<'py>(
 /// creates it only if this read comes back not-found. The Rust driver has a
 /// create-database call and a read-database call, but no combined get-or-create,
 /// so Python does the combining and needs both halves available here.
-///
-/// Without this the read half had no Rust call to make, and a customer on the
-/// Rust backend would have had both of those methods drop to the legacy Python
-/// transport -- different retry behavior and different diagnostics from every
-/// other call on the same client.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_database<'py>(

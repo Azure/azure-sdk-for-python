@@ -56,9 +56,21 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         return item
 
     async def test_container_read_all_items_none_options_async(self):
+        """read_all_items accepts None for every optional argument.
+
+        None means "not supplied". Customers commonly build one call site that
+        passes every option through from their own config, leaving most of
+        them None, so each must behave as if it had been omitted: no header,
+        no error, and the container enumerates normally.
+
+        The options covered are max_item_count, session_token,
+        initial_headers, max_integrated_cache_staleness_in_ms, priority and
+        throughput_bucket.
+
+        This runs against a real account on the Rust driver, so it also proves
+        the whole-container read still works on the fast path.
+        """
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_read_all_items_none_options_async
-        # End-to-end on the real Rust driver, with every optional knob passed as None:
-        # this whole-container read must still enumerate normally on the Rust fast path.
         await self._create_sample_item()
         pager = self.container.read_all_items(
             max_item_count=None,

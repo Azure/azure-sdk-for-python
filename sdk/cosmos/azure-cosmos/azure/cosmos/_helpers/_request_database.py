@@ -9,10 +9,9 @@ Covers create, read and delete of a database, plus the checks that decide
 whether a given call can run on the Rust path at all. A database is
 account-scoped, so these requests carry no partition key and no container link.
 
-The eligibility predicates are here rather than beside the caller because they
-encode the same knowledge the builders do: exactly which per-call arguments and
-headers the Rust path can honour for these operations, and therefore when a call
-must fail rather than silently dropping a setting or falling back to legacy.
+The eligibility predicates screen known unsupported settings before dispatch.
+They do not prove service acceptance or exhaustively validate arbitrary internal
+option mappings. The caller's migration policy decides how to handle ineligibility.
 """
 from __future__ import annotations
 
@@ -246,7 +245,7 @@ def is_read_database_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Return whether Rust can honor every per-call option on a database read.
+    """Screen database-read options for known Rust representation limits.
 
     The single definition of "representable" for a database read, shared by
     ``DatabaseProxy.read`` and the existence check in
@@ -278,7 +277,7 @@ def is_read_database_rust_eligible(
     :type request_options: Mapping[str, Any]
     :param operation_kwargs: The kwargs left over after ``build_options``.
     :type operation_kwargs: Mapping[str, Any]
-    :returns: ``True`` when the Rust path preserves every option the caller set.
+    :returns: ``True`` when the known timeout, kwarg, and header checks pass.
     :rtype: bool
     """
     timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)

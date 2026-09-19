@@ -9,7 +9,7 @@ A real container is wired to a fake connection so each test can see what
 the read sends on. They check two things:
 
 1. When no Rust backend is set, the read goes to the existing client with
-   the right document, partition key, and options -- and any options the
+   the right item, partition key, and options -- and any options the
    caller passed are kept, not thrown away.
 2. When a Rust backend is set, the read goes to it and the existing client
    is not called.
@@ -63,7 +63,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
     """When no Rust backend is set, the read still behaves exactly as before."""
 
     def test_string_item_resolves_to_document_link(self):
-        """A read by id string targets that document."""
+        """A read by id string targets that item."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
         proxy.read_item("read_item", "a")
@@ -75,7 +75,10 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
         )
 
     def test_dict_item_resolves_to_its_self_link(self):
-        """A read by item dict targets the document the dict points to."""
+        """A read by item dict targets the item the dict points to.
+
+        Customers often pass back an item they already read rather than
+        pulling the id out of it, so both shapes must reach the same row."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         item = {"id": "read_item", "pk": "a", "_self": "dbs/db/colls/c/docs/rid-abc"}
 
@@ -111,7 +114,8 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
 
     def test_cache_hit_path_stamps_rid_into_options(self):
         """When the container is already cached, its resource id is added
-        to the options."""
+        to the options, so the service can reject the read if the container
+        was dropped and recreated under the same name."""
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")
 
         proxy.read_item("read_item", "a")
@@ -185,7 +189,7 @@ class TestContainerReadItemBackendRouting(unittest.TestCase):
     client is not used."""
 
     def test_read_routes_to_backend_with_item_id(self):
-        """A read goes to the Rust backend with the document id, and the
+        """A read goes to the Rust backend with the item id, and the
         existing client is not called; the backend's result is returned."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()

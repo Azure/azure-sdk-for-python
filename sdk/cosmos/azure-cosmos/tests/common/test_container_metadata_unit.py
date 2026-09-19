@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Typed metadata, pure extraction, and public response-state ownership."""
+"""Offline checks of Python metadata handling and response-header publication.
+
+Native entry points are replaced. Point-operation cases assert one item
+binding invocation and no separate Python metadata invocation; this is not
+a count of HTTP requests or driver-internal metadata/cache activity.
+Error cases inspect translated details and preservation of prior headers.
+"""
 from common.typed_requests import legacy_partition_key_from_request
 
 import asyncio
@@ -44,6 +50,21 @@ from azure.cosmos.partition_key import _Empty, _Undefined
     ],
 )
 def test_invalid_native_metadata_is_a_protocol_error(raw):
+    """Anything that is not well-formed metadata is refused outright.
+
+    Twelve shapes are covered: nothing at all, an empty set of values, a
+    response-shaped set of values that belongs to a different call, an empty or
+    non-text container id, paths given as a list rather than a fixed sequence, a
+    path that is a number, an empty path, a missing kind, an unrecognized kind,
+    and a system-key flag that is not a true or false value.
+
+    Every one raises rather than being partly accepted. Metadata decides where
+    an item is stored, so a half-understood answer would route items to the
+    wrong place and only surface much later as missing data.
+
+    Note that no paths at all is refused here in combination with a kind, while
+    genuinely absent metadata is handled separately below.
+    """
     with pytest.raises(BackendProtocolError):
         build_container_metadata(raw)
 
@@ -51,6 +72,17 @@ def test_invalid_native_metadata_is_a_protocol_error(raw):
 @pytest.mark.parametrize("kind", ["Hash", "MultiHash", "Range"])
 @pytest.mark.parametrize("system_key", [None, False, True])
 def test_metadata_preserves_kind_and_system_key_knowledge(kind, system_key):
+    """All three partition key kinds and all three states of the system-key flag survive
+    unchanged, and the result cannot be edited afterwards.
+
+    The flag has three meaningful states -- true, false, and unknown -- and they
+    are not interchangeable. Collapsing unknown into false would make the client
+    act on a guess about how the container was defined.
+
+    The result refuses to be modified. Metadata describes how the container
+    really is; code that could edit its own copy would be able to convince the
+    rest of the client of something untrue.
+    """
     result = build_container_metadata(("rid", ("/pk",), kind, system_key))
     assert result == ContainerMetadata("rid", ("/pk",), kind, system_key)
     with pytest.raises(FrozenInstanceError):
@@ -69,6 +101,18 @@ def test_metadata_preserves_kind_and_system_key_knowledge(kind, system_key):
     ],
 )
 def test_extraction_uses_kind_not_path_count(kind, paths, body, expected):
+    """The partition key value is shaped by the container's kind, not by how many paths
+    it happens to have.
+
+    A hierarchical container returns a list even when it has only one path,
+    while a single-path container returns a bare value. Deciding by counting
+    paths instead would get that one-path hierarchical case wrong, and the
+    service would not find items written under the other shape.
+
+    A nested path reaches into the item to find its value. A hierarchical
+    container missing one of its values yields ``None`` in that position rather
+    than a shorter list, which would silently shift the remaining values.
+    """
     assert (
         extract_partition_key_value(ContainerMetadata("rid", paths, kind), body)
         == expected
@@ -79,17 +123,48 @@ def test_extraction_uses_kind_not_path_count(kind, paths, body, expected):
     "flag,expected", [(True, _Empty), (False, _Undefined), (None, _Undefined)]
 )
 def test_missing_partition_key_preserves_existing_system_key_behavior(flag, expected):
+    """An item with no partition key value is reported differently depending on whether
+    the container uses a system key.
+
+    With a system key the result is "empty"; without one, or when it is not
+    known, the result is "undefined". These are two different things on the
+    wire, and the service stores items under different keys for each.
+
+    Unknown deliberately behaves like false, matching what earlier versions did,
+    so containers whose definition the client cannot confirm keep working the
+    way they always have.
+    """
     metadata = ContainerMetadata("rid", ("/pk",), "Hash", flag)
     assert isinstance(extract_partition_key_value(metadata, {"id": "item"}), expected)
 
 
 def test_absent_definition_is_explicit():
+    """A container with no partition key definition yields "empty", even when the item
+    has a value that would otherwise have matched.
+
+    With no paths defined there is nothing to extract, so a field in the item
+    that merely looks like a partition key is ignored rather than guessed at.
+    Guessing would send the item somewhere the container does not expect.
+    """
     metadata = build_container_metadata(("rid", (), None, None))
     assert isinstance(extract_partition_key_value(metadata, {"pk": "ignored"}), _Empty)
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
 def metadata_case(request, monkeypatch):
+    """Build a real Rust backend whose driver is replaced by a stand-in, sync and async.
+
+    Everything above the driver is the shipping code; only the driver's own
+    entry points are swapped. That way the engine selection, error translation,
+    and header handling under test are the real ones.
+
+    The client's record of the last response headers is seeded with values from
+    an earlier call. Both stand-in entry points assert, as they are called, that
+    this record has not been replaced yet -- so a test can prove headers are
+    published only once a real item response arrives, not before.
+
+    Either step can be armed to fail: the metadata lookup or the write itself.
+    """
     asynchronous = request.param
     module = async_rust if asynchronous else sync_rust
     state = ClientLastResponseHeaders(
@@ -177,6 +252,20 @@ def metadata_case(request, monkeypatch):
 
 
 def test_metadata_success_does_not_parse_json_or_a_response(metadata_case, monkeypatch):
+    """Fetching metadata is not an item read, and does not go through response
+    handling at all.
+
+    Response parsing, response building, and text decoding are each replaced
+    with something that fails if called. The lookup still succeeds, proving it
+    takes the driver's answer directly rather than pretending it was an ordinary
+    reply.
+
+    That matters for cost as much as correctness: treating metadata as a
+    response would run it through parsing on a path used by every operation.
+
+    The client's record of the last response headers is also untouched, because
+    this was not a call the customer made.
+    """
     def forbidden(*_args, **_kwargs):
         raise AssertionError("Metadata is not a document response")
 
@@ -194,6 +283,17 @@ def test_metadata_success_does_not_parse_json_or_a_response(metadata_case, monke
 def test_each_call_observes_current_driver_metadata_without_a_python_cache(
     metadata_case,
 ):
+    """Each lookup asks the driver again rather than remembering an earlier answer.
+
+    The driver's answer is changed between two lookups, as if the container had
+    been deleted and recreated, and the second lookup sees the new value. Both
+    calls reached the driver.
+
+    Keeping a copy in Python would be the bug: the driver already caches this
+    and knows when it is stale. A second cache above it could go on addressing a
+    container that no longer exists, sending items to an id the service has
+    since reused.
+    """
     assert metadata_case.get().rid == "rid"
     metadata_case.raw = ("recreated-rid", ("/tenant",), "Hash", None)
     assert metadata_case.get().rid == "recreated-rid"
@@ -203,6 +303,11 @@ def test_each_call_observes_current_driver_metadata_without_a_python_cache(
 def test_point_operation_uses_one_item_call_and_only_publishes_item_headers(
     metadata_case,
 ):
+    """One mocked item-binding call publishes its response headers.
+
+    Python does not invoke the separate metadata entry point. The native
+    driver's internal resolution and network requests are outside this test.
+    """
     metadata_case.create()
     assert metadata_case.getter.call_count == 0
     assert metadata_case.item_call.call_count == 1
@@ -221,6 +326,18 @@ def test_point_operation_uses_one_item_call_and_only_publishes_item_headers(
     ],
 )
 def test_explicit_key_overrides_extraction(metadata_case, key, header):
+    """A partition key the customer supplied is used as given, and still no metadata is
+    fetched.
+
+    Four values are covered and each has its own wire form: an ordinary value,
+    ``None``, "undefined", and "empty". They are genuinely different -- ``None``
+    is a real partition key value, while undefined and empty mean the item has
+    none, in the two different ways a container can express that.
+
+    Collapsing any of them together would write items under a different key than
+    the customer asked for, and later reads with the same key would not find
+    them.
+    """
     metadata_case.create(request_options={"partitionKey": key})
     assert legacy_partition_key_from_request(metadata_case.prepared) == header
     assert metadata_case.getter.call_count == 0
@@ -240,6 +357,10 @@ def test_explicit_key_overrides_extraction(metadata_case, key, header):
 def test_all_point_operations_enter_only_the_item_binding(
     metadata_case, op, monkeypatch
 ):
+    """Each listed point operation uses its item-binding entry, not Python metadata.
+
+    One fake binding call is not proof of one HTTP request.
+    """
     case = metadata_case
     method = op + ("_async" if case.asynchronous else "")
     monkeypatch.setattr(case.module._rust_module, method, case.item_call, raising=False)
@@ -259,6 +380,11 @@ def test_all_point_operations_enter_only_the_item_binding(
 
 @pytest.mark.parametrize("status", [400, 404, 429])
 def test_metadata_errors_keep_details_without_publishing_headers(metadata_case, status):
+    """Selected metadata error fields survive translation without publishing headers.
+
+    These synthetic failures check status, substatus, message, exception type,
+    retry-after, diagnostics, and prior response state, not every error detail.
+    """
     raw = (
         status,
         1002,
@@ -288,6 +414,16 @@ def test_metadata_errors_keep_details_without_publishing_headers(metadata_case, 
 
 @pytest.mark.parametrize("phase", ["metadata", "write"])
 def test_transport_failure_does_not_clear_previous_headers(metadata_case, phase):
+    """A transport failure at either step leaves the previous headers intact.
+
+    The failure is injected once while resolving the container and once during
+    the write itself, and it surfaces as a transport error both times.
+
+    In neither case is the client's record of the last response headers cleared
+    or replaced. A customer inspecting those headers after a failure should find
+    the last call that actually returned something, not an empty set standing in
+    for a request that never completed.
+    """
     error = metadata_case.module._DRIVER_TRANSPORT_ERROR("transport failed")
     if phase == "metadata":
         metadata_case.metadata_error = error
@@ -299,6 +435,20 @@ def test_transport_failure_does_not_clear_previous_headers(metadata_case, phase)
 
 
 def test_metadata_cancellation_preserves_headers_and_drains_work(metadata_case):
+    """Cancelling a write in flight unwinds the driver call and leaves the headers
+    alone.
+
+    The write is made to hang, then cancelled. Three things must hold: the
+    cancellation reaches the caller rather than being turned into something else,
+    the hanging call is actually unwound rather than left running, and the
+    client's record of the last response headers is untouched.
+
+    The middle one is the easiest to get wrong. A call abandoned but still alive
+    would hold the driver's resources for the life of the process, and might
+    write its headers long after the customer gave up.
+
+    Async only -- there is nothing to cancel on the sync client.
+    """
     if not metadata_case.asynchronous:
         pytest.skip("Async cancellation contract")
 

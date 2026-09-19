@@ -27,16 +27,15 @@ const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
 // wire::item_feed's retained plan cursor rather than these execute_operation calls.
 // Query and read-all operations share the same feed-shaped response boundary.
 // The flow is: the Python wrapper hands us a
-// PreparedRequest, we work out scope (single logical partition vs full
+// PreparedRequest, we work out scope (partition-key-derived range vs full
 // container), ask the driver for one page, and turn the driver's reply back
 // into the exact shape the Python feed parser expects.
 // ---------------------------------------------------------------------------
 
 /// The scope of the query, worked out from `PreparedRequest.partition_key`.
-/// This is how we know whether the customer asked for one partition or the whole
-/// container.
+/// A supplied key is converted to a feed range using the container definition.
 pub(super) enum QueryTarget {
-    /// Search one logical partition (the customer passed a `partition_key`).
+    /// Search the range derived from the supplied partition-key components.
     Partition(PartitionKey),
     /// Search the full container (the customer used cross-partition query, or
     /// this is a whole-container `read_all_items`).
@@ -62,8 +61,8 @@ impl From<QueryTarget> for ReadAllItemsExecution {
 /// driver for this client, splits the container link into database + container
 /// names, works out the query scope, then runs the driver work below and converts
 /// the reply into the tuple the Python parser reads. Matches `execute_item_operation_sync`
-/// but builds a `CosmosOperation::query_items` targeting either a logical partition
-/// (`["pk"]`) or the full container (`[]`).
+/// but builds a `CosmosOperation::query_items` targeting a partition-key-derived
+/// range or the full container.
 pub(crate) fn run_query_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -135,9 +134,7 @@ pub(crate) fn run_query_operation_async<'py>(
 }
 
 /// Entry point the binding calls to run one `read_all_items` page and wait for it.
-/// The partition-key header controls scope:
-///   * `[]` => full-container query equivalent to legacy Python
-///   * non-empty array => logical-partition read (`read_all_items`)
+/// Typed `PartitionKeyInput` selects a full-container query or partition read-feed.
 pub(crate) fn run_read_all_items_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -244,9 +241,9 @@ async fn run_query_future(
     driver.execute_operation(op, options).await
 }
 
-/// Driver work for `read_all_items`. A logical partition uses read-feed. A
-/// full-container read uses the same internal query as legacy Python so the
-/// driver's query planner provides fan-out, continuation, and split handling.
+/// Driver work for this one-shot `read_all_items` path. A supplied partition key
+/// selects read-feed; whole-container scope selects `SELECT * FROM root r`.
+/// Public retained-feed iteration uses `item_feed.rs`, not this one-page helper.
 async fn run_read_all_items_future(
     driver: Arc<CosmosDriver>,
     database_name: String,
@@ -258,8 +255,7 @@ async fn run_read_all_items_future(
         .resolve_container(&database_name, &container_name, Default::default())
         .await?;
     let mut op = match ReadAllItemsExecution::from(query_target) {
-        // The public Python API currently produces full-container scope. Keep the
-        // partition arm so this binding remains ready for a partition-scoped API.
+        // Keep partition read-feed distinct from the whole-container query.
         ReadAllItemsExecution::ReadFeed(partition_key) => {
             CosmosOperation::read_all_items(container, partition_key)
         }

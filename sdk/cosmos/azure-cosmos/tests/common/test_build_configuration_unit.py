@@ -3,7 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline checks for the Rust wheel prototype's packaging configuration."""
+"""Offline checks that the files describing how this package is built still say what the
+release process needs them to say.
+
+Nothing here builds anything. These tests read the build configuration files and check
+the values that, if changed by accident, would produce a package that looks fine and is
+wrong: built for the wrong Python, missing an architecture, or built against a driver
+from somebody's laptop instead of a fixed revision.
+
+Those mistakes are expensive because they are usually found after publishing. Reading the
+files takes no time and catches them in every run.
+"""
 
 from pathlib import Path
 import runpy
@@ -19,11 +29,23 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _read_toml(path):
+    """Read one configuration file and return its contents."""
     with path.open("rb") as stream:
         return tomllib.load(stream)
 
 
 def test_python_metadata_stays_aligned(monkeypatch):
+    """The two places that describe this package agree with each other and with the version file.
+
+    The package is described both in the modern configuration file and in the older build
+    script, which is still there for tooling that expects it. Six things have to match,
+    including the version, which comes from a third place again.
+
+    The older script is run with the function that would actually build replaced, so what
+    it was about to be told can be read back. Two descriptions that drift apart produce a
+    package whose declared dependencies or supported Python versions depend on which tool
+    did the building.
+    """
     project = _read_toml(PACKAGE_ROOT / "pyproject.toml")["project"]
     version = runpy.run_path(str(PACKAGE_ROOT / "azure" / "cosmos" / "_version.py"))["VERSION"]
     monkeypatch.chdir(PACKAGE_ROOT)
@@ -40,6 +62,11 @@ def test_python_metadata_stays_aligned(monkeypatch):
 
 
 def test_prototype_wheel_targets():
+    """Check declared wheel targets, builder version, and locked-build settings.
+
+    These assertions do not build wheels, prove binary reproducibility, or
+    establish that the resulting packages run on every listed platform.
+    """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     wheels = config["tool"]["cibuildwheel"]
     assert wheels["build"] == ["cp310-*"]
@@ -56,6 +83,22 @@ def test_prototype_wheel_targets():
 
 
 def test_driver_source_and_features_are_preserved():
+    """The driver is taken from a fixed published revision, never from a local folder.
+
+    The check for no local path is the important one. Pointing at a folder on disk is the
+    normal thing to do while working on both projects at once, and it is easy to commit by
+    accident. When that happens the build either fails on a machine that lacks the folder
+    or, worse, succeeds using whatever uncommitted state that folder happened to contain.
+
+    The revision must be a full forty-character identifier, not a branch name, so it
+    cannot move underneath the build. The recorded dependency list is checked to point at
+    the same revision, since those two disagreeing means the build uses one and the
+    recorded state describes the other.
+
+    The optional features are listed explicitly because they change what the driver can
+    do. Two are on for normal use; a separate one is on only for the driver's own tests,
+    which is what keeps a built-in test service out of what customers receive.
+    """
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")
     binding = _read_toml(PACKAGE_ROOT / "azure_cosmos_rust" / "Cargo.toml")
     driver = workspace["workspace"]["dependencies"]["azure_data_cosmos_driver"]
@@ -81,6 +124,16 @@ def test_driver_source_and_features_are_preserved():
 
 
 def test_windows_cross_build_has_target_and_import_library_inputs():
+    """Building for Windows on ARM needs two settings, and both are still there.
+
+    This build happens on an Intel machine producing a package for a different processor,
+    so the compiler has to be told what it is aiming at and where to find the matching
+    Python library. Without them the build either fails outright or quietly produces
+    something for the wrong processor.
+
+    The whole list is compared rather than just these entries, so an added override that
+    happens to match first cannot go unnoticed.
+    """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     overrides = config["tool"]["cibuildwheel"]["overrides"]
     assert overrides == [{
@@ -93,6 +146,11 @@ def test_windows_cross_build_has_target_and_import_library_inputs():
 
 
 def test_source_archive_declares_its_build_bootstrap_inputs():
+    """Check declared source-archive inputs and the named scripts on disk.
+
+    No archive is built or installed, so this does not verify actual archive
+    contents or a successful source installation.
+    """
     config = _read_toml(PACKAGE_ROOT / "pyproject.toml")
     source_inputs = {
         entry["path"] for entry in config["tool"]["maturin"]["include"]

@@ -7,7 +7,7 @@
 
 Async twin of ``tests/read_database/sync/legacy/test_cosmos_responses.py``. Same
 purpose: an existing test from the main suite, re-run with the client forced onto
-the rust engine so it keeps covering rust regardless of which engine is the
+the Rust engine so it keeps covering Rust regardless of which engine is the
 default, and checking that a customer can still read response headers -- request
 charge and activity id -- off the result of ``await db.read()``.
 """
@@ -35,6 +35,12 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         self.addAsyncCleanup(self.client.close)
 
     async def test_database_read_headers_async(self):
+        """Reading a database returns populated response headers.
+
+        ``read`` is the plainest operation there is, and its headers still
+        carry the request unit charge. A read path that rebuilds the response
+        from the body alone would lose them.
+        """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_database_read_headers_async
         database_id = "responses_test" + str(uuid.uuid4())
         self.addAsyncCleanup(self.client.delete_database, database_id)

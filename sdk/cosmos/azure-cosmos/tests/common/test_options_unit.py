@@ -21,7 +21,7 @@ The translation table lives in this one helper, ``_helpers/_request_settings.py`
   returns a fresh options dict.
 
 These two pieces are the seam between the customer-facing names and the
-shape that goes on the wire. If they ever drift, the rust path can quietly
+shape that goes on the wire. If they ever drift, the Rust path can quietly
 emit different request headers than the core-python path, and customer
 options get silently dropped on one of the two backends. This file
 covers that exact contract:

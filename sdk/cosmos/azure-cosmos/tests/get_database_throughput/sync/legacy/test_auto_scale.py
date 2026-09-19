@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 autoscale-database check, re-run on the rust engine.
+"""The existing legacy autoscale-database check, re-run on the Rust engine.
 
 Why this file exists: a database's throughput can be a fixed number of RU/s, or
 it can be an autoscale setting -- a ceiling the service is allowed to scale up
@@ -9,10 +9,10 @@ the same field as a fixed RU/s number: reading them back returns
 ``auto_scale_max_throughput`` and ``auto_scale_increment_percent`` while
 ``offer_throughput`` stays empty. The test in ``test_crud_database.py`` only
 covers the fixed-number shape, so without this file the autoscale shape of the
-read would be untested on rust, and rust could report a fixed number where the
+read would be untested on Rust, and Rust could report a fixed number where the
 customer configured a ceiling.
 
-What it does: the real v4 test copied from ``tests/test_auto_scale.py``,
+What it does: the real legacy test copied from ``tests/test_auto_scale.py``,
 changed in one place -- the client is built with ``_backend="rust"``. It
 creates a database with a 5000 RU/s ceiling growing in 2% steps, reads the
 setting back and checks both values, then does the same through
@@ -20,7 +20,7 @@ setting back and checks both values, then does the same through
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/sync/test_get_database_throughput_parity.py``) run
-the same call on both engines and diff the numbers. This file runs on rust only.
+the same call on both engines and diff the numbers. This file runs on Rust only.
 
 Self-contained: it creates and deletes its own databases.
 
@@ -54,6 +54,18 @@ class TestAutoScale(unittest.TestCase):
         self.key_client.close()
 
     def test_autoscale_create_database(self):
+        """``get_throughput`` reports back the autoscale settings a database was created with.
+
+        Two databases, one at a 5000 request unit ceiling with a 2 percent
+        increment, one created through ``create_database_if_not_exists`` at
+        9000 and 11 percent.
+
+        Kept here for the read: autoscale is a pair of numbers that must travel
+        together, and the increment percent is the one more easily dropped
+        because it is rarely looked at. Two different pairs mean a result
+        carrying defaults, or values left over from the first database, cannot
+        pass.
+        """
         # Source: tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_database
         database_id = "db_auto_scale_" + str(uuid.uuid4())
         try:

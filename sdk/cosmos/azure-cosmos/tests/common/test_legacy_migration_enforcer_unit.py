@@ -7,7 +7,7 @@
 
 The legacy-folder parity workflow copies each in-scope v4 test into a
 ``tests/<op>/<surface>/legacy/`` folder and changes exactly one thing:
-the copy constructs its client with ``_backend="rust"``. The rust column
+the copy constructs its client with ``_backend="rust"``. The Rust column
 of every parity audit comes from running those copies. Two ways that can
 rot silently:
 
@@ -27,7 +27,7 @@ with ``ast`` and checks five invariants:
 3. Every ``# Source:`` reference resolves -- the cited file, class, and
    method still exist -- unless the source is marked ``(new)`` for a test
    with no v4 ancestor.
-4. Every legacy test file pins the rust backend with the literal
+4. Every legacy test file pins the Rust backend with the literal
    ``_backend="rust"``.
 5. No test in a legacy folder is skipped without a structured reason, so
    every skip names a category a reviewer can act on.
@@ -54,7 +54,7 @@ _PIN_LITERALS = ('_backend="rust"', "_backend='rust'")
 #: of gap parked it. Extend this list when a new category is needed.
 _STRUCTURED_SKIP_TAGS = (
     "internals-only",   # the v4 test pokes at SDK internals (not a customer contract)
-    "driver-gap",       # blocked on a known rust driver / binding gap
+    "driver-gap",       # blocked on a known Rust driver / binding gap
     "sync-only",        # the operation's async surface has no equivalent test
     "async-only",       # the operation's sync surface has no equivalent test
     "accepted-vnext-change",  # an explicitly documented major-version contract change

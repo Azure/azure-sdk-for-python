@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async database-throughput change, re-run on the rust engine.
+"""The existing legacy async database-throughput change, re-run on the Rust engine.
 
 Why this file exists: the async client reaches the service through its own
 proxy classes, its own helper module and its own backend object. A throughput
@@ -9,7 +9,7 @@ change is also a read-modify-write -- query the offer, edit the number, send
 the document back -- and the async path decides on its own which of those two
 steps a caller's timeout applies to, so it has to be exercised directly.
 
-What it does: the real v4 test copied from
+What it does: the real legacy test copied from
 ``tests/test_crud_database_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. It creates a database at 1000 RU/s, reads it
 back, changes it to 2000 and checks the returned object reports 2000.
@@ -17,7 +17,7 @@ back, changes it to 2000 and checks the returned object reports 2000.
 This is NOT the side-by-side comparison. The comparison tests
 (``replace_database_throughput/aio/test_replace_database_throughput_parity_async.py``)
 run the same change on both engines and diff the results. This file runs on
-rust only.
+Rust only.
 
 Self-contained: it creates and deletes its own database.
 
@@ -57,6 +57,16 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_database_level_offer_throughput_async(self):
+        """Throughput on a database can be raised after creation and reports the new value.
+
+        Created at 1000 request units, then moved to 2000 through
+        ``replace_throughput``.
+
+        Kept here for the change itself. The replacement must return the
+        updated figure rather than echoing the value the database was created
+        with, which is the easiest way for a change that never took effect to
+        look successful.
+        """
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_level_offer_throughput_async
         # Create a database with throughput
         offer_throughput = 1000

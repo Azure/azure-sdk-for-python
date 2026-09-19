@@ -33,7 +33,7 @@ def container_for(request):
 
 
 def test_create_then_replace(container_for):
-    """create an item, replace its body — parity on both backends."""
+    """create an item, replace its body -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
     def _do(client):

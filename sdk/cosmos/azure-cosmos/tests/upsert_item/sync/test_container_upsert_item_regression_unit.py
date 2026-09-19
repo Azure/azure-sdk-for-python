@@ -6,28 +6,28 @@
 """Regression tests for the ``Container.upsert_item`` slim-down.
 
 ``Container.upsert_item`` used to build the request options, populate
-the container-properties cache, stamp the container rid, and call
+the container-properties cache, write the container rid, and call
 ``client_connection.UpsertItem`` all in one method body. The migration
 moved the last three steps into ``ItemHelper`` (the same path
 ``create_item`` / ``read_item`` / ``delete_item`` already use) so both
 backends share the prep code.
 
-These tests pin the **core-python fall-through path**: with no rust
+These tests pin the **legacy fall-through path**: with no Rust
 backend wired (``_backend = LEGACY_BACKEND``), the helper builds the
-options, stamps the rid, and calls ``client_connection.UpsertItem`` --
-exactly the path the default (v4) client takes. The rust backend now
+options, writes the rid, and calls ``client_connection.UpsertItem`` --
+exactly the path the default (legacy) client takes. The Rust backend now
 has its own ``upsert_item`` entry point; that dispatch path is covered
 separately by ``test_backend_dispatches_upsert_unit.py``. What this
 file pins:
 
 * the cache-hit rid still reaches the options dict (drop-and-recreate
   guard),
-* ``disableAutomaticIdGeneration`` is always set (an upsert never mints
+* ``disableAutomaticIdGeneration`` is always set (an upsert never generates
   an id),
 * ``etag`` / ``match_condition`` still become the ``accessCondition``
   the legacy ``UpsertItem`` honours (insert-only / version-guarded
   replace) -- the create-vs-upsert difference,
-* the body is forwarded unchanged (no id minting),
+* the body is forwarded unchanged (no id generation),
 * per-call options (``excluded_locations`` / ``timeout``) still reach
   the cache-refresh read, under the proxy's ``container_cache_lock``.
 
@@ -64,7 +64,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache  # legacy alias used by the proxy
 
-    # No rust backend wired -- absence of ``_backend`` makes the
+    # No Rust backend wired -- absence of ``_backend`` makes the
     # dispatch fall through to ``client_connection.UpsertItem``.
     cc._backend = LEGACY_BACKEND
     cc.UpsertItem = MagicMock(return_value={"id": "x", "_rid": rid})
@@ -106,7 +106,7 @@ class TestContainerUpsertItemPreservesLegacyBehaviour(unittest.TestCase):
 
     def test_options_always_disable_id_generation(self):
         """Every upsert sets ``disableAutomaticIdGeneration`` -- the legacy
-        flag that stops the connection minting an id."""
+        flag that stops the connection generating an id."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
         proxy.upsert_item({"id": "x", "pk": "a"})

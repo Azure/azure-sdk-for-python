@@ -34,18 +34,16 @@
 //! `rust driver -> PyTokenCredential (binding) -> the bridge (Python) -> the
 //! async credential's coroutine`.
 //!
-//! The rust driver invokes `get_token` from its async pipeline, which the binding
-//! always drives under `py.allow_threads(|| rt.block_on(..))` -- so the GIL is
-//! released there and this impl can re-acquire it with `Python::with_gil` without
-//! deadlocking. The call is synchronous (no `.await`), so the future async_trait
-//! builds holds nothing across an await point and is trivially `Send`, satisfying
-//! the trait's `Send + Sync` bound.
+//! The driver's async token method calls a synchronous helper here. On a cache
+//! miss, that helper acquires the Python global interpreter lock (GIL) and calls
+//! `get_token` on the thread polling it. Sync operation runners release the GIL
+//! while waiting; async runners spawn driver work and bridge its result to Python.
+//! Neither path makes the credential callback itself asynchronous.
 //!
-//! Only *synchronous* Python credentials are supported: an async credential's
-//! `get_token` returns a coroutine, and there is no event loop to drive it on the
-//! rust driver's worker thread. The Python factory (`_resolve_credential`) rejects
-//! async credentials up front (wrapping them in the bridge first), so this impl
-//! only ever sees a synchronous one.
+//! This adapter expects a token object, not a coroutine, from `get_token`.
+//! Python's credential preparation supplies the bridge for async credentials;
+//! this adapter does not drive a Python event loop or ensure a credential is
+//! safe to use across threads or loops.
 
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
@@ -66,16 +64,14 @@ pub(crate) struct PyTokenCredential {
     // A strong reference that keeps the Python credential alive for as long as
     // the rust driver (and thus this credential) lives. `Py<PyAny>` is Send + Sync.
     credential: Py<PyAny>,
-    // Small in-process cache to avoid repeatedly crossing into Python for every
-    // authorization call when the token is still fresh.
+    // One cached token per adapter, not keyed by scopes or request options.
     cached_token: RwLock<Option<AccessToken>>,
 }
 
 impl PyTokenCredential {
     /// Take ownership of a strong reference to the customer's Python credential.
-    /// The binding calls this once, at client construction, and hands the result
-    /// to the rust driver as its `TokenCredential`. Holding the reference here is
-    /// what keeps the Python object alive for the whole life of the driver.
+    /// Driver acquisition creates this adapter when building a token-authenticated
+    /// driver. Clients reusing a cached driver also reuse its adapter.
     pub(crate) fn new(credential: Py<PyAny>) -> Self {
         Self {
             credential,
@@ -83,14 +79,11 @@ impl PyTokenCredential {
         }
     }
 
-    /// The actual callback into Python. Takes the GIL, calls the Python
-    /// credential's `get_token(*scopes)`, and maps the returned object (an
-    /// AccessToken with `.token` / `.expires_on`) into the rust driver's typed
-    /// `AccessToken`. This is the one place the binding crosses from Rust back
-    /// into Python for auth; every failure becomes a `Credential`-kind error so
-    /// the rust driver reports a clean authentication failure instead of an
-    /// opaque one. Without it the driver would receive no token and could not
-    /// sign the request.
+    /// With the GIL already held, call Python's `get_token(*scopes)` and convert
+    /// its `.token` and `.expires_on` fields into an `AccessToken`.
+    /// Reject empty tokens and unrepresentable expiry timestamps, mapping these
+    /// and Python extraction/call errors to credential errors. A newly fetched
+    /// token is not checked for expiry against the current time here.
     fn fetch_token(&self, py: Python<'_>, scopes: &[&str]) -> azure_core::Result<AccessToken> {
         let credential = self.credential.bind(py);
         let scopes_arg = PyTuple::new_bound(py, scopes);
@@ -123,10 +116,8 @@ impl PyTokenCredential {
     }
 
     /// Return the cached token only if it still has more than 5 minutes of life
-    /// left. The 5-minute margin refreshes early so a request is never signed
-    /// with a token that expires mid-flight. Without this check every request
-    /// would cross back into Python for a fresh token, adding a GIL round-trip
-    /// to the hot path for no benefit while the current token is still good.
+    /// left. This margin limits cache reuse; it does not guarantee that a token
+    /// remains valid for the duration of a request.
     fn cached_fresh_token(&self) -> Option<AccessToken> {
         let cached = self.cached_token.read();
         cached
@@ -137,9 +128,9 @@ impl PyTokenCredential {
 
     /// The synchronous entry the rust driver's `get_token` calls into: serve the
     /// cached token if it is still fresh, otherwise fetch a new one from Python
-    /// and cache it. Kept synchronous on purpose -- the driver already released
-    /// the GIL before calling, so this re-takes it with `Python::with_gil` and
-    /// runs the Python `get_token` without an event loop and without deadlocking.
+    /// and cache it. The callback acquires the GIL and can block the calling
+    /// thread. Fetching occurs outside the cache write lock, so concurrent misses
+    /// can fetch more than once.
     fn get_token_sync(&self, scopes: &[&str]) -> azure_core::Result<AccessToken> {
         if let Some(token) = self.cached_fresh_token() {
             return Ok(token);
@@ -166,20 +157,9 @@ impl std::fmt::Debug for PyTokenCredential {
 /// Python credential`.
 #[async_trait::async_trait]
 impl TokenCredential for PyTokenCredential {
-    // KNOWN LIMITATION -- CAE / claims challenges are not propagated (by design,
-    // upstream-bounded). `_options` carries the driver's `TokenRequestOptions`,
-    // but two facts make forwarding it a no-op today:
-    //   1. The rust driver never sends any: `authorization_policy.rs` calls
-    //      `credential.get_token(&[COSMOS_AAD_SCOPE], None)` -- always `None`,
-    //      with no 401-challenge / Continuous-Access-Evaluation handling.
-    //   2. azure_core's `TokenRequestOptions` models no claims/tenant_id field
-    //      (only a `ClientMethodOptions` Context), so there is nothing to lift
-    //      into Python's `get_token(claims=..., tenant_id=...)` even if we tried.
-    // Net: on a CAE/conditional-access 401, the rust driver re-fetches the same
-    // token without claims and the challenge cannot be satisfied. This is a real
-    // gap for AAD tenants that enforce CAE, but it lives in the rust driver +
-    // azure_core, not in this binding -- forwarding `_options` here changes nothing.
-    // Revisit once the rust driver passes challenge claims through `get_token`.
+    // Only scopes are forwarded to Python. Request options are ignored; this
+    // adapter has no claims-challenge handling or response-driven cache
+    // invalidation. This method alone does not establish how a 401 is retried.
     async fn get_token(
         &self,
         scopes: &[&str],

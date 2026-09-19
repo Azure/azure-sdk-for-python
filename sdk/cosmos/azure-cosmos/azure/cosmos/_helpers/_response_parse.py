@@ -82,8 +82,8 @@ def process_backend_response(
     """Translate a ``BackendResponse`` into a ``CosmosDict``.
 
     :param response: The ``BackendResponse``. The bytes are assumed to
-        be valid UTF-8 JSON (or empty); a non-JSON 2xx body raises
-        ``json.JSONDecodeError`` (matching the legacy behaviour).
+        contain JSON (or be empty). Invalid JSON/encoding errors propagate
+        from ``json.loads``.
     :type response: BackendResponse
     :param client_connection: When supplied, its
         ``last_response_headers`` attribute is updated with the parsed
@@ -92,14 +92,15 @@ def process_backend_response(
     :param response_state: Narrow client-owned header state for connection-free
         callers. The connection argument remains for unmigrated families.
     :type response_state: Optional[ClientLastResponseHeaders]
-    :param response_hook: Optional callable invoked exactly once on
-        success with ``(headers, parsed_body)``. Not invoked on failure.
+    :param response_hook: Optional callable invoked once after parsing and
+        result construction with ``(headers, parsed_body)``. Its exceptions
+        propagate. This function does not copy its arguments for isolation.
     :type response_hook: Optional[Callable[[Mapping[str, Any], Any], None]]
     :returns: A ``CosmosDict`` whose content is the parsed JSON (or
-        ``{}`` for no-body 2xx) and whose ``response_headers``
-        attribute is a ``CaseInsensitiveDict``.
+        ``{}`` for an accepted empty response) with response headers available
+        through ``get_response_headers()``.
     :rtype: CosmosDict
-    :raises CosmosHttpResponseError: For any non-2xx response. The
+    :raises CosmosHttpResponseError: For statuses outside 2xx other than 304. The
         typed subclass is chosen by ``map_backend_response_to_exception``.
     """
     headers = _take_response_headers(response)
@@ -134,12 +135,8 @@ def parse_backend_response(response: BackendResponse) -> CosmosDict:
 
 def parse_response_body(response: BackendResponse) -> Any:
     """Decode the success body or raise its mapped service/JSON error."""
-    # 304 Not Modified is the conditional-GET success signal on
-    # read_item (see module docstring). It is < 400 but not in the
-    # 2xx range, so is_success_status rejects it; handle it as a
-    # non-error empty body before that check. The service guarantees
-    # an empty body for 304, so falling into the no-body branch below
-    # is safe.
+    # Accept conditional-read 304 separately from 2xx. An empty body becomes
+    # {}; a nonempty body still goes through JSON decoding below.
     is_not_modified = response.status_code == 304
 
     if not is_not_modified and not is_success_status(response.status_code):
@@ -148,8 +145,7 @@ def parse_response_body(response: BackendResponse) -> Any:
 
     if not response.body:
         # ``no_response=True`` returns an empty CosmosDict, not None.
-        # 304 lands here too: empty body, headers carry the current
-        # etag (equal to the customer's ``If-None-Match``).
+        # This also handles an empty 304 body without synthesizing an ETag.
         parsed: Any = {}
     else:
         parsed = json.loads(response.body)
@@ -160,22 +156,11 @@ def parse_response_body(response: BackendResponse) -> Any:
 def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
     """Return the response headers as a ``CaseInsensitiveDict``.
 
-    The Rust backend already hands back a freshly-built
-    ``CaseInsensitiveDict`` (``build_backend_response`` ->
-    ``normalize_response_headers``) that belongs to this single-use
-    ``BackendResponse`` and is shared with nothing else. In that common
-    hot-path case we reuse it directly instead of copying it into a
-    *second* dict: the response is built and consumed in one place (the
-    backend ``execute`` -> ``process_backend_response`` hand-off in
-    ``item_helper``, sync and async), so the later in-place
-    request-charge fix cannot leak anywhere observable. Skipping the
-    second construction removes a full per-response header copy from
-    every point operation -- on the hottest path in the SDK.
-
-    Only when the headers arrive in some other shape -- a plain mapping
-    or ``None`` from a test fixture or a future backend -- do we build a
-    fresh ``CaseInsensitiveDict`` so the parser's mutation cannot leak
-    back into a caller-owned dict.
+    Reuse an existing ``CaseInsensitiveDict``; otherwise create one.
+    Reuse is an ownership convention, not an enforced snapshot: normalization
+    mutates the reused mapping, and ``process_backend_response`` can publish
+    that same mapping to client state and a hook. Use ``build_response_headers``
+    when a separate header mapping is required.
     """
     headers = response.headers
     if headers is None:
@@ -199,7 +184,7 @@ def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:
 
 
 def apply_response_diagnostics(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
-    """Expose the SDK's additive diagnostic summary on every Rust response path."""
+    """Add a supplied diagnostic value to this header mapping; skip None."""
     if diagnostics is None:
         return
     if isinstance(diagnostics, str):

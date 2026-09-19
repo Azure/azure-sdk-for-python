@@ -26,7 +26,7 @@ and sums their achieved req/s into a per-N throughput curve.
      spread (min..max) printed.
 
   5. Backend match check (enforced, exits non-zero). Every row's runtime_backend must
-     match its config_backend label, and the azure-sdk-for-rust driver commit is
+     match its config_backend label, and the azure-sdk-for-Rust driver commit is
      printed; a mixed-build curve is called out, not silently pooled.
 
 USAGE:
@@ -182,7 +182,7 @@ def main():
     if not gate_fail:
         print("  OK -- every row's runtime_backend matches its config_backend label.")
 
-    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to Rust rows) ----
     commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
     for _l in commit_lines:

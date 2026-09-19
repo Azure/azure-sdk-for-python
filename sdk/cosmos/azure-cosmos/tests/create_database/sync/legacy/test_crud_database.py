@@ -32,6 +32,16 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         cls.key_client.close()
 
     def test_database_level_offer_throughput(self):
+        """Throughput set at the database level can be read back and then changed.
+
+        Creates a database with 1000 request units, confirms ``read_offer``
+        reports that figure, then raises it to 2000 through
+        ``replace_throughput`` and confirms the new value comes back.
+
+        Three separate operations have to agree about the same number. The
+        replace is the interesting one: it must return the updated figure
+        rather than echoing the value it was created with.
+        """
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_level_offer_throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())

@@ -43,7 +43,9 @@ class ContainerMetadata:
 
 @dataclass(frozen=True)
 class PreparedRequest:
-    """A single Cosmos operation, fully prepared and ready to send.
+    """Wire-shaped input for a single-response operation.
+
+    Backend/native validation, metadata lookup, and routing may still be needed.
 
     The Rust backend receives this object. The current core-Python backend
     receives a separate legacy callable built from the original Python
@@ -74,8 +76,8 @@ class PreparedRequest:
     #: Typed settings; headers contain only caller/default header overrides.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: Target item id. Operations that send no body, and those aimed at one
-    #: item, require it. Create and upsert also carry the id already read out
+    #: Target identifier consumed by the operation's adapter, such as an item
+    #: id or a database name. Create and upsert also carry the id already read out
     #: of the body when it is a non-empty string, which saves the binding
     #: parsing the JSON a second time. Callers that have not been updated may
     #: leave it unset, in which case the binding reads the body itself.
@@ -88,7 +90,7 @@ class PreparedRequest:
 
 @dataclass(frozen=True)
 class PreparedFaultInjectionRule:
-    """Validated internal fault rule carried across the Python/Rust boundary."""
+    """Internal fault-rule values; validation is performed by the config builder."""
 
     id: str
     operation_type: str
@@ -107,27 +109,18 @@ class PreparedClientConfig:
     """Client-construction settings carried to the rust driver at
     ``acquire_driver_handle`` time -- the startup-time analog of :class:`PreparedRequest`.
 
-    Only settings the rust driver can honor today are carried here; more fields
-    are added as the driver gains support, and a backend reads exactly the
-    fields it knows. Stored as immutable values so the backend cannot mutate
-    what the client passed.
+    ``build_client_config`` validates and normalizes these frozen values.
+    Routing and operation defaults are distinct from the proxy and transport
+    timeout settings, which configure a shared process-wide runtime. Some
+    mappings are approximate; field comments describe the relevant limits.
 
-    Every field maps to a driver-side setting the binding applies when it builds
-    the per-account rust driver: ``preferred_locations`` reorders endpoints, while
-    the rest land on a driver-level ``OperationOptions`` (the driver's "account"
-    layer that every request inherits) -- ``excluded_locations`` to
-    ``excluded_regions``, the throttling fields to ``ThrottlingRetryOptions``,
-    the hedging fields to an ``AvailabilityStrategy``, and ``consistency_level``
-    to the ``ReadConsistencyStrategy``.
-
-    The binding keys its rust-driver cache by ``(endpoint, credential, config)``,
-    so this config is part of what selects a rust driver: a client whose settings
-    match an existing live client's shares that rust driver, and a client whose
-    settings differ gets its own rust driver that honors them (nothing is silently
-    dropped). Building a separate rust driver per differing config is the default;
-    opting into strict isolation (see
+    Config participates in native driver identity together with endpoint and
+    credential. A differing identity can select a separate driver, subject to
+    process-wide policy checks and successful native initialization. Opting
+    into strict isolation (see
     :class:`~azure.cosmos._backend._driver_registry.StrictDriverIsolationError`)
-    instead raises when a later client's config differs from the first live client's.
+    instead rejects a new credential/config identity when other identities are
+    already registered for that endpoint; matching any existing identity is allowed.
     """
 
     #: Ordered preferred region names exactly as the customer passed them
@@ -165,10 +158,9 @@ class PreparedClientConfig:
     hedging_threshold_ms: Optional[int] = None
 
     #: User-agent suffix label (the ``user_agent_suffix`` kwarg, e.g.
-    #: ``"checkout-westus2"``) the driver stamps on the User-Agent of every
-    #: request it issues, so account metrics and support tickets can tell one
-    #: service's traffic apart from another's. ``None`` -- and an empty string,
-    #: which ``build_client_config`` normalizes to ``None`` -- carries nothing, so
+    #: ``"checkout-westus2"``) forwarded for native User-Agent construction.
+    #: It does not itself enable a service metric dimension. ``None`` -- and an
+    #: empty string, which ``build_client_config`` normalizes to ``None`` -- carries nothing, so
     #: the driver keeps its default SDK User-Agent. The driver's suffix type is
     #: stricter than the legacy path: at most 25 header-safe characters
     #: (alphanumeric, ``-``, ``_``, ``.``, ``~``). A value that violates that is
@@ -210,11 +202,10 @@ class PreparedClientConfig:
 
 @dataclass(frozen=True)
 class BackendResponse:
-    """Normalised shape every backend produces, regardless of which
-    backend's HTTP stack sent the request.
+    """Single-response record consumed by the prepared-request parsers.
 
-    Code above the backend never branches on which backend handled the
-    call; it just reads these fields.
+    Rust dispatch produces this record. Legacy callable dispatch can return
+    its public result directly without constructing one.
     """
 
     #: HTTP status code.
@@ -263,9 +254,10 @@ class QueryScope:
 
 @dataclass(frozen=True)
 class PreparedQuery:
-    """A paged query or read-feed request, fully prepared.
+    """Input for one paged query or read-feed dispatch.
 
     The backend returns results a page at a time (see ``execute_pages``).
+    Native validation, planning, and metadata discovery may still be required.
     Non-streaming ranked plans may buffer their candidate window before emitting.
     """
 
@@ -303,8 +295,8 @@ class PreparedQuery:
     #: Typed settings, preserved by the binding page adapter.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: The cursor the pager owns. ``None`` means this operation does not keep
-    #: a cursor between pages.
+    #: The cursor the pager owns. ``None`` selects stateless dispatch for
+    #: this request; the operation may also support a cursor-based path.
     cursor: Optional[ItemFeedCursor] = None
     #: Normalized change-feed mode, start marker and scope; never SQL.
     change_feed: Optional[Mapping[str, Any]] = None
@@ -323,7 +315,7 @@ class PreparedQuery:
 
 @dataclass(frozen=True)
 class QueryPage:
-    """One raw page of a query (or read-many) result.
+    """One raw page of a query or read-feed result.
 
     The caller parses ``body`` using the same response parser as other Cosmos
     operations. Keeping the raw body here preserves existing error mapping and

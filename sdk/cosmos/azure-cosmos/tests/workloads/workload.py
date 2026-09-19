@@ -102,19 +102,12 @@ def _start_reporter():
 
 
 def _wrap_backend_for_counting(client, is_async, client_logger):
-    """Record which backend the client actually built, instead of trusting COSMOS_BACKEND.
+    """Check the backend's name against configuration and record its class.
 
-    A row tagged "rust" that actually ran core-python would mislabel every number,
-    so derive the truth from the live client:
-
-      1. Read the concrete backend object the client built. Fail loudly if it
-         does not match the COSMOS_BACKEND
-         label, and record its class name as ``runtime_backend`` on every row.
-      2. Wrap its ``execute`` to count how many operations the Rust driver actually
-         handled (returned a non-None response). The item helpers fall back to
-         core-python when ``execute`` returns None, so this count is per-row proof
-         the Rust path did the work. The temporary legacy backend is not wrapped,
-         so its count stays 0.
+    Wrap non-core execute calls to increment a process-wide Python counter
+    after each normal return. The wrapper does not inspect the response;
+    a normal return is not itself proof of native or successful service work.
+    Exceptions do not increment this counter.
     """
 
     backend = client._backend

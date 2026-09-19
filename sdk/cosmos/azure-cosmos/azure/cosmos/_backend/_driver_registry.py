@@ -53,16 +53,16 @@ class ProxyPolicyConflictError(ValueError):
     whichever client triggers the first operation -- and frozen for the life of the
     process (``runtime.rs`` ``OnceLock``). So every Rust-backed client in the process
     that sets ``proxy_allowed`` must agree on one value. The binding does enforce this,
-    but only lazily at the first operation and with a race-determined winner under
-    concurrent construction; this guard makes the conflict deterministic and fail-fast
+    but only lazily at native initialization. This guard checks current reservations
     at construction, in both default and strict mode (the driver-isolation registry
     cannot catch it because it treats ``proxy_allowed`` as just another per-account
     config field). Clients that leave ``proxy_allowed`` unset (``None``) never set or
     conflict with the policy, matching the binding's ``proxy_allowed_conflicts``.
 
-    To avoid this error, establish the policy deterministically: construct one client
-    with the desired ``proxy_allowed`` before any others (and before any concurrent
-    client construction), and set the same value -- or leave it unset -- on the rest.
+    Concurrent constructors can still race to reserve the first value. Reservations
+    can be released before initialization; ``freeze_runtime_policy`` records the
+    effective native settings once available. Constructing an explicit-value
+    client does not alone initialize the runtime with that value.
     """
 
 
@@ -70,11 +70,10 @@ class TransportTimeoutPolicyConflictError(ValueError):
     """Raised when Rust clients request different process-wide transport timeouts."""
 
 
-# Process-global ``proxy_allowed`` policy. Unlike the per-account ``_REGISTRY`` above,
-# this is a single value for the whole process because the Rust runtime it configures is
-# a process singleton. ``_PROXY_POLICY_SET`` distinguishes "no explicit value seen yet"
-# from "explicitly set to None" (the binding treats ``proxy_allowed=None`` as "no
-# opinion", so a None-setting client never establishes the policy). Guarded by _LOCK.
+# Process-wide policy, reserved by explicit settings or frozen from native state.
+# _PROXY_POLICY_SET distinguishes no reservation from a recorded value (including
+# None returned by the native runtime). A None-setting client adds no reservation.
+# Guarded by _LOCK.
 _PROXY_POLICY: Optional[bool] = None
 _PROXY_POLICY_SET: bool = False
 _CONNECTION_TIMEOUT_POLICY: Optional[float] = None
@@ -83,11 +82,9 @@ _READ_TIMEOUT_POLICY: Optional[float] = None
 _READ_TIMEOUT_POLICY_SET: bool = False
 
 
-# Canonical endpoint -> the live drivers for that account. Each key is a
-# ``(credential_key, config)`` pair -- one driver (a rust driver the binding would
-# build and cache) -- mapped to the number of live clients holding it. An account drops
-# out only when its last driver's last client is released. Guarded by _LOCK. This is the
-# python wrapper's own count, separate from the binding's per-driver refcount.
+# Canonical endpoint -> counts for registered (credential_key, config) identities.
+# Counts include temporary initialization reservations and do not prove a native
+# driver exists. Empty identities/accounts are removed on release. Guarded by _LOCK.
 _LOCK = threading.RLock()
 _REGISTRY: Dict[str, Dict[Tuple[Any, Optional[PreparedClientConfig]], int]] = {}
 _FROZEN_RUNTIME_POLICY: Optional[tuple[Optional[bool], Optional[float], Optional[float]]] = None
@@ -193,8 +190,9 @@ def make_credential_key(master_key: Optional[str], token_credential: Optional[An
     object identity (``id``), which equals the raw pointer the binding uses as its key
     (``as_ptr``); the client holds a strong reference for its whole life, so that
     identity is stable while it is registered. A master key is reduced to a
-    non-reversible hash, so this module never keeps the plaintext secret --
-    equal keys hash equal, different keys do not. Both ``None`` keys as ``None``.
+    SHA-256 digest, so registry keys do not retain the plaintext secret.
+    Equal master keys produce equal digests; this is not a collision-free
+    identity guarantee. Both ``None`` keys as ``None``.
     """
     if token_credential is not None:
         return id(token_credential)
@@ -208,24 +206,23 @@ def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
 
     The Rust runtime's proxy setting is process-global (one ``OnceLock``-backed runtime
     per process), so every Rust-backed client that sets ``proxy_allowed`` must agree on
-    one value. This makes that agreement deterministic at construction instead of leaving
-    it to the binding's lazy, race-determined check at the first operation.
+    one value. The lock serializes reservations, but concurrent callers can
+    race to establish the first explicit value.
 
     Rules (matching the binding's ``proxy_allowed_conflicts``):
 
     * A client that does not set ``proxy_allowed`` (``None``) is always compatible and
       never establishes the policy -- it accepts whatever value wins.
-    * The first client with an explicit value establishes the process policy.
+    * The first explicit value reserves the policy if no value is recorded.
     * A later client with a *different* explicit value raises
       ``ProxyPolicyConflictError``. An equal value is accepted (idempotent).
 
     Called from ``_shared`` at client construction, before ``_register_client_identity``,
     so a proxy conflict fails before the client records any driver registration to
-    release. The Rust ``OnceLock`` conflict check remains the fallback -- this guard
-    only turns the late, nondeterministic failure into an early, deterministic one. It
-    does not eliminate the case where a ``None``-setting client operates first and
-    lazily fixes the runtime to its default before an explicit-value client is built;
-    that requires the practice of constructing the proxy-setting client first.
+    release. Reservations remain provisional until native initialization.
+    An untuned client can initialize the runtime with defaults; the binding
+    still checks effective settings when an explicit-value client acquires a
+    driver. Construction order alone is not initialization order.
     """
     if config is None or config.proxy_allowed is None:
         return
@@ -312,15 +309,13 @@ def _register_client_identity(
 
     The client's driver identity is its ``(credential_key, config)`` pair -- the
     same key (with the endpoint) the binding keys its rust-driver cache by. A
-    client that matches an driver already live for the account shares it: its count
-    goes up and strict mode never fires. A client whose pair matches no live driver
-    would make the binding build a new one:
+    client matching an existing registration increments its count without a
+    strict-isolation error. A new pair is handled as follows:
 
     * strict -- raise ``StrictDriverIsolationError`` without recording, so the
       failed client never enters a count (it is not built, so it must not be
       released later) and the existing counts stay correct.
-    * default -- record the new driver and return; the binding gives it its own
-      isolated driver, so nothing is dropped.
+    * default -- register the new identity; native acquisition occurs separately.
 
     The first client to an account always records, whatever its strict flag.
     ``PreparedClientConfig`` compares by value and ``None`` (an untuned client)
@@ -367,14 +362,12 @@ def _release_client_identity(
     config: Optional[PreparedClientConfig] = None,
     credential_key: Any = None,
 ) -> None:
-    """Drop one live client from its driver on ``endpoint``; forget the driver when
-    its last client is released, and the account when its last driver is gone. Called
-    by the python wrapper when a client is closed -- deterministically at ``close()``,
-    not whenever the garbage collector runs.
+    """Drop one registration; remove identity/account entries when counts reach zero.
 
-    Releasing with the same ``config`` and ``credential_key`` the client registered
-    keeps the counts accurate, so a later strict check sees only the drivers still
-    live. An unknown endpoint or driver, or an extra release, is a harmless no-op.
+    Called by explicit cleanup, finalizers, and temporary initialization
+    reservations. Match each successful registration with one release.
+    Unknown identities are a no-op, but a duplicate release of an identity
+    still shared by other clients would decrement their count.
     """
     key = _canonicalize_endpoint(endpoint)
     driver = (credential_key, config)

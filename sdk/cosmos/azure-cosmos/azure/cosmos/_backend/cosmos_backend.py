@@ -181,14 +181,14 @@ class CosmosBackend(abc.ABC):
         """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
         The default here raises; :class:`~azure.cosmos._backend.rust.RustBackend`
-        overrides it (using ``STATELESS_QUERY_TO_BINDING_METHOD``) to dispatch
-        ``query_items`` / ``read_all_items`` / ``list_databases``. A backend
+        overrides it using the stateless or retained-cursor dispatch table. A backend
         that does not implement this -- ``LegacyBackend`` never reaches it, since
         :meth:`run_page_operation` invokes the legacy call directly -- keeps
         this raising default.
 
         ``deadline`` supplies the existing monotonic budget to supported native
-        cursor execution. Stateless feeds retain their driver request timeouts.
+        cursor execution and ``list_databases``. Other stateless feeds use
+        their prepared settings rather than this deadline argument.
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 

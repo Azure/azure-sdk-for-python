@@ -24,16 +24,11 @@ def _get_git_sha() -> str:
 
 
 def _get_driver_sha() -> str:
-    """Exact azure-sdk-for-rust *driver* commit the binding was built against.
+    """Read the current short HEAD of the configured or sibling Rust checkout.
 
-    The persisted ``commit_sha`` is the azure-sdk-for-python (harness + binding)
-    HEAD. That is NOT the same thing as the Rust driver: the driver crate
-    (``azure_data_cosmos_driver``) is a path dependency on a SIBLING clone of
-    azure-sdk-for-rust (see ``azure_cosmos_rust/Cargo.toml``), which we build
-    from ``main`` and do not own. Without recording that clone's commit, a row
-    cannot prove WHICH driver produced it. Resolve the sibling clone and read
-    its HEAD; ``PERF_DRIVER_COMMIT`` overrides (e.g. when the clone lives
-    elsewhere). Returns 'unknown' if the clone or git is unavailable.
+    This does not inspect the loaded extension's build provenance or uncommitted
+    changes. get_perf_config may override the field using PERF_DRIVER_COMMIT.
+    Return 'unknown' if the Git lookup fails.
     """
     driver_dir = os.environ.get("AZURE_SDK_FOR_RUST_DIR")
     if not driver_dir:
@@ -81,7 +76,7 @@ def get_perf_config() -> dict:
         ),
         "workload_id": os.environ.get("PERF_WORKLOAD_ID", str(uuid.uuid4())),
         "commit_sha": os.environ.get("PERF_COMMIT_SHA", _get_git_sha()),
-        # The azure-sdk-for-rust driver commit the binding was built against,
-        # persisted on every row so a verdict can prove exactly which driver ran.
+        # Declared driver provenance: an override or the checkout's current HEAD,
+        # not a revision extracted from the loaded extension.
         "driver_commit": os.environ.get("PERF_DRIVER_COMMIT", _get_driver_sha()),
     }

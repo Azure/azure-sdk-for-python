@@ -34,7 +34,7 @@ KEY = os.environ.get(
 
 
 # Constants kept identical to the source so the wire value is the same
-# as what core-python sent.
+# as what the legacy path sent.
 request_throughput_bucket_number = 3
 
 
@@ -64,7 +64,11 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_container_read_item_throughput_bucket_async(self):
-        """Verify the async read_item forwards the per-request throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header."""
+        """Pass a throughput bucket and a header-checking async raw-response hook.
+
+        The hook checks the header if invoked. The copied test does not count hook
+        calls, inspect transmitted bytes, or measure throughput isolation.
+        """
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_read_item_throughput_bucket_async
         created_document = await self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}

@@ -142,7 +142,7 @@ def test_container_read_still_sends_the_intended_collection_rid(monkeypatch: pyt
     assert seen["options"][Constants.ContainerRID] == "collRid"
 
 
-# --- rust route -----------------------------------------------------------
+# --- Rust route -----------------------------------------------------------
 
 
 def test_sync_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -1,6 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Wire-value assertions for migrated tests; never used by production preparation."""
+"""Helpers that read a prepared request back as the flat values older tests expect.
+
+Older tests were written when everything travelled as a single bag of headers and a
+single bag of options. The current code keeps most of that information in named fields
+instead. Rather than rewrite every one of those tests, these helpers read a prepared
+request and rebuild the flat view it would have had.
+
+This direction is deliberate: it reads a real request and reports what it contains. It
+never feeds anything back into production code, so a test cannot accidentally check a
+shape that only these helpers can produce.
+"""
 from dataclasses import replace
 import json
 
@@ -11,6 +21,13 @@ from azure.cosmos._helpers._request_settings import build_request_headers_and_se
 
 
 def wire_headers(request):
+    """Return every header a request would send, including those held as named fields.
+
+    A prepared request keeps some values in named fields even though they leave as
+    headers. This adds them back under their header names, so a test can check the full
+    set the service would receive. Anything that is not a prepared request already keeps
+    all of its headers together, so it is returned unchanged.
+    """
     if not isinstance(request, (PreparedRequest, PreparedQuery)):
         return request.headers
     result = dict(request.headers)
@@ -26,6 +43,12 @@ def wire_headers(request):
 
 
 def settings_options(request):
+    """Return the settings that are not headers, under the option names older tests use.
+
+    These four values never travelled as headers even in the old code; they were options
+    the client acted on itself. Only values that were actually chosen appear, so a test
+    can tell "left alone" apart from "set to something".
+    """
     if not isinstance(request, (PreparedRequest, PreparedQuery)):
         return request.request_options
     settings = request.settings
@@ -46,7 +69,12 @@ def settings_options(request):
 
 
 def legacy_settings(options):
-    """Translate old fixture inputs, not a runtime compatibility escape hatch."""
+    """Build settings from old-style fixture inputs, for tests only.
+
+    Two of the old fixture spellings no longer match what the code accepts, so they are
+    translated here. This exists to keep old test inputs working; it is not a way for
+    real callers to keep using the old names.
+    """
     options = dict(options)
     if "timeout_seconds" in options:
         options["timeout"] = options.pop("timeout_seconds")
@@ -63,17 +91,33 @@ def legacy_settings(options):
 
 
 def legacy_preparation(options):
+    """Put a bag of old-style options through the real split and read the result back out.
+
+    This is the round trip: options go in, the production code sorts them into headers
+    and named settings, and the two helpers above flatten them again. A test that gets
+    back what it put in has proved the split loses nothing.
+    """
     headers, settings = build_request_headers_and_settings(options)
     request = PreparedRequest("test", "", b"", PartitionKeyInput("cross_partition"), headers=headers, settings=settings)
     return wire_headers(request), settings_options(request)
 
 
 def flatten_options_to_headers(options):
+    """Run the round trip above and return only the headers, for tests that ignore the rest."""
     return legacy_preparation(options)[0]
 
 
 def key_from_legacy_header(header, *, extract=True, feed_range=False):
-    """Translate old test fixture literals; never used in production dispatch."""
+    """Build a partition key from the text an old test wrote, for tests only.
+
+    Old tests express a key as the header string it used to become. This reads that back
+    into the record the code now uses, including the cases where the text alone is
+    ambiguous: no header at all means take the key from the item for a point operation
+    but search everywhere for a feed, and an empty list means different things in the two
+    settings, which is why the caller says which one it is.
+
+    Production code never reads a key back from text.
+    """
     if header is None:
         return PartitionKeyInput("extract" if extract else "cross_partition")
     if header == "":
@@ -89,7 +133,16 @@ def key_from_legacy_header(header, *, extract=True, feed_range=False):
 
 
 def legacy_partition_key_from_request(request):
-    """Project a typed key only for legacy wire-value assertions."""
+    """Write a request's partition key back out as the text an old test expects.
+
+    The reverse of the helper above, and the one place the four situations become the
+    same kind of text again: take the key from the item is written as no header at all,
+    both the no-key-at-all cases as an empty list, and an empty list as a list holding an
+    empty list. Real values are written compactly, exactly as the old code wrote them.
+
+    Two of those situations share one spelling, which is why the record exists and why
+    this direction is only safe in a test that already knows which it meant.
+    """
     key = getattr(request, "partition_key", None)
     if not isinstance(key, PartitionKeyInput):
         return request.partition_key_header

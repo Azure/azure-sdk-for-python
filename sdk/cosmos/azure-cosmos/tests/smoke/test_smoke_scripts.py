@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Run the per-operation rust smoke scripts as one pytest.
+"""Run the per-operation Rust smoke scripts as one pytest.
 
 Each smoke_test_rust_<op>.py is a standalone script with a main() that returns
 0 (round trip OK), 1 (wrong outcome), or 2 (binding not built). This wraps all
 of them: exit 2 becomes a skip, 1 becomes a failure. Run with -m cosmosRustSmoke,
-or it rides the emulator lane. Skips without the rust binding or an account.
+or it rides the emulator lane. Skips without the Rust binding or an account.
 """
 from __future__ import annotations
 

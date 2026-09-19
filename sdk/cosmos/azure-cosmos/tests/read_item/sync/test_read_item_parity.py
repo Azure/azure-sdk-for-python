@@ -339,8 +339,9 @@ def test_timeout(container_for):
 def test_availability_strategy(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
-    No ``availability_strategy`` / hedging knob on the rust driver
-    surface yet. Skipped on the parity run.
+    Hedging means sending the same read to a second region when the first
+    region is slow to answer. The rust driver has no hedging option yet, so
+    there is nothing to compare against. Skipped on the parity run.
     """
     _run_read(container_for, summary="baseline + availability_strategy=True",
               availability_strategy=True).assert_functional_parity()
@@ -374,9 +375,9 @@ def test_response_hook_fires_once(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
     Mirrors the create_item / delete_item suites' response-hook test. The harness
-    deterministically runs core-python first, then rust, so an
-    invocation-order counter attributes hook fires to the right backend
-    without any synchronisation.
+    always runs the legacy backend first and the rust backend second, so a
+    call counter attributes each hook fire to the right backend without any
+    synchronisation.
     """
     fired = {"core-python": 0, "rust": 0}
     order = ["core-python", "rust"]
@@ -500,16 +501,16 @@ def test_conditional_etag_if_not_modified_match_returns_200_body(container_for):
 
 
 def test_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
-    """stale ``etag`` + ``IfNotModified`` on a read — pin what actually
+    """stale ``etag`` + ``IfNotModified`` on a read: pin what actually
     happens on the wire, not the intuitive expectation.
 
     The intuitive expectation is that ``IfNotModified`` on a read sends
     ``If-Match: <etag>`` and returns ``412 CosmosAccessConditionFailedError``
     on a mismatch. In practice, against a live Cosmos account, both the
-    rust driver and core-python return ``200 + the current body`` instead
-    of ``412`` — the service does not enforce ``If-Match`` on a
+    rust driver and the legacy path return ``200 + the current body`` instead
+    of ``412``, because the service does not enforce ``If-Match`` on a
     ``GET /docs/<id>``. (Delete is different: there ``IfNotModified`` IS
-    enforced and returns 412 — see
+    enforced and returns 412. See
     ``test_delete_item_parity::test_L5_stale_etag_if_not_modified_raises_412``.)
 
     This test pins only what we can observe: both backends must behave the

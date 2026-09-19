@@ -110,6 +110,16 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         )
 
     def test_access_condition_becomes_a_typed_setting_on_the_rust_path(self):
+        """Both kinds of write condition become named fields rather than staying loose text.
+
+        A caller supplies the condition as a small mapping saying which kind and which
+        version. Each kind lands in its own field: one means "only if it still matches",
+        the other "only if it does not". They are opposites, so a path that mixed them up
+        would write exactly when it should not.
+
+        The test above checks the old path still receives the mapping unchanged; this one
+        checks the Rust path turns it into fields. Both have to hold during the migration.
+        """
         from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 
         self.assertEqual(

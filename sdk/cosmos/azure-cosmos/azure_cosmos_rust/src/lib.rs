@@ -5,21 +5,20 @@
 //!
 //! Compiled into one cdylib that Maturin renames to
 //! `_rust.{pyd,so}` and drops into `azure/cosmos/`. The
-//! driver crate is statically linked into the same binary so the
-//! wheel ships exactly one Rust file.
+//! driver crate is statically linked into that extension. Native assets such as
+//! QueryPlanInterop are packaged separately.
 //!
-//! Operations take the driver handle returned by `acquire_driver_handle` plus a
-//! `PreparedRequest`, and return the 5-tuple
+//! Most operation entry points take a driver handle plus a `PreparedRequest`
+//! and return the 5-tuple
 //! `(status, sub_status, headers, body, diagnostics)`, which Python builds
-//! back into its `BackendResponse` dataclass. Each one resolves the container,
-//! builds a typed driver operation, and runs it on the shared Tokio runtime
-//! with the GIL released.
+//! back into its `BackendResponse` dataclass. Metadata has a separate tuple
+//! contract, and local feed-range subset checks do not call the driver.
 //!
 //! Every operation below has an `_async` twin that returns a Python awaitable
 //! instead of a ready result. The driver lifecycle, diagnostics, and settings
-//! entry points are sync only, because they read process-local state rather
-//! than the network; most of them take no arguments at all. The detail for each
-//! entry point lives on the function itself, not here.
+//! entry points are sync only. Acquisition can initialize runtimes and wait for
+//! driver construction; it is not merely a process-state lookup. See each
+//! function for its execution and return-value contract.
 //!
 //! Driver lifecycle (`runtime.rs`):
 //!   `acquire_driver_handle`, `release_driver_handle`, `runtime_configuration`,
@@ -51,14 +50,13 @@
 //! Diagnostics and settings (`wire/`):
 //!   `operation_count`, `attempt_count`, `retry_count`,
 //!   `request_settings_schema`
-//! `x-ms-activity-id` and `x-ms-session-token` are forwarded to the
-//! driver's typed operation fields. `responsePayloadOnWriteDisabled`
-//! is pulled out into the typed `OperationOptions::content_response_on_write`
-//! field. Every other per-request header (intended-collection-rid,
-//! indexing directive, pre/post triggers, priority, throughput bucket,
-//! plus any already-`x-ms-...`-named entry) is pushed through the
-//! driver's `OperationOptions::with_custom_headers`, which forwards them unchanged, so
-//! it lands on the wire.
+//!
+//! `wire/settings.rs` validates the request protocol and combines typed settings
+//! with prepared headers. Activity/session values become typed operation fields;
+//! no-response, timeout, excluded regions, and hedging become operation options.
+//! Other settings become custom headers. Header names are lowercased and typed
+//! settings can replace prepared values; operation-specific code may also
+//! consume headers, such as PATCH's If-Match precondition.
 
 mod credential;
 mod documents;
@@ -116,8 +114,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::delete_container);
     add_pyfn!(m, documents::replace_container);
     add_pyfn!(m, documents::get_container_metadata);
-    // Async siblings: each returns a Python awaitable that completes on the
-    // driver's runtime, so the async backend holds no worker thread per call.
+    // Async siblings return Python awaitables. Driver-backed paths spawn work
+    // rather than reserving a Python worker thread for the full operation.
     add_pyfn!(m, documents::create_item_async);
     add_pyfn!(m, documents::upsert_item_async);
     add_pyfn!(m, documents::replace_item_async);
@@ -143,16 +141,12 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::delete_container_async);
     add_pyfn!(m, documents::replace_container_async);
     add_pyfn!(m, documents::get_container_metadata_async);
-    // Proof of which backend actually ran: a counter incremented inside the binding on
-    // every operation, so the perf harness can prove the Rust path actually ran
-    // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
+    // Counts instrumented runner entries, not successful operations or network
+    // requests. Not every entry point increments it; metadata lookup does not.
     add_pyfn!(m, wire::operation_count);
-    // Per-attempt wire-diagnostics counters: total attempts and driver-issued
-    // retries/failovers/hedges combined from each response's DiagnosticsContext.
-    // Read by the perf harness as `_rust.attempt_count()` / `_rust.retry_count()`
-    // to distinguish operations requested from wire round trips actually made
-    // (e.g. PATCH ~= 2 attempts/op via client-side Read-Modify-Write; a nonzero
-    // retry count means the retry machinery fired even with 0 terminal errors).
+    // Sum diagnostics passed to record_diagnostics. Attempt totals include the
+    // driver's compaction totals; retry counts inspect retained non-initial
+    // records. Neither accessor proves complete coverage of a workload.
     add_pyfn!(m, wire::attempt_count);
     add_pyfn!(m, wire::retry_count);
     // Typed transport error the Python backend maps to azure-core's

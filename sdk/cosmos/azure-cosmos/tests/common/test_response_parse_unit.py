@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_response_parse.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_response_parse.py`` -- no network, no Cosmos emulator.
 
 ``process_backend_response`` is the mirror image of the request-prep
 helpers: where prep turns a customer call into a request-byte request, parse
@@ -13,17 +13,17 @@ exception) that the customer sees.
 Every successful 2xx call has to do four things, and they're spread
 across the four "D-tasks" fixed by these tests:
 
-* **D1 build CosmosDict** — JSON-decode the body bytes and wrap them
+* **D1 build CosmosDict** -- JSON-decode the body bytes and wrap them
   in a ``CosmosDict`` (which subclasses ``dict`` so customer code
   can index it like a normal dict).
-* **D2 stash last_response_headers** — write the response headers to
+* **D2 stash last_response_headers** -- write the response headers to
   ``client_connection.last_response_headers`` so existing customer
   code that reads ``client.client_connection.last_response_headers``
   after a call keeps working.
-* **D3 no-body 204 path** — ``no_response=True`` calls return 204
+* **D3 no-body 204 path** -- ``no_response=True`` calls return 204
   with an empty body. ``json.loads(b"")`` would raise; the parser
   must explicitly return an empty ``CosmosDict`` instead.
-* **D4 response_hook** — fire the optional ``response_hook(headers,
+* **D4 response_hook** -- fire the optional ``response_hook(headers,
   parsed)`` exactly once on success, never on failure.
 
 On the failure path (any non-2xx), the parser must raise the right
@@ -33,8 +33,8 @@ customer's ``except`` block can still read them), and **never**
 invoke the response hook.
 
 The function is pure modulo the one documented side effect (writing
-to ``client_connection.last_response_headers``). Both branches —
-with and without that side effect — are covered.
+to ``client_connection.last_response_headers``). Both branches --
+with and without that side effect -- are covered.
 """
 import json
 import unittest
@@ -72,6 +72,7 @@ class _FakeClientConnection:
     """
 
     def __init__(self):
+        """Start with no headers recorded, so a test can tell whether any were written."""
         self.last_response_headers = None
 
 
@@ -90,7 +91,7 @@ class TestSuccessWithBody(unittest.TestCase):
     """
 
     def test_returns_cosmos_dict_with_parsed_body(self):
-        """2xx + JSON body → ``CosmosDict`` whose dict content is the parsed body."""
+        """2xx + JSON body -> ``CosmosDict`` whose dict content is the parsed body."""
         body = b'{"id":"order-42","total":99.5}'
         result = process_backend_response(
             _make_response(status_code=201, body=body),
@@ -187,18 +188,18 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
     must explicitly bypass the parse and return an empty
     ``CosmosDict``. The hook still fires (callers using the hook for
     telemetry expect the invocation count to match the request
-    count). 2xx with a *malformed* body is a different case — that
+    count). 2xx with a *malformed* body is a different case -- that
     one does raise, matching legacy behaviour.
     """
 
     def test_204_with_empty_body_returns_empty_cosmos_dict(self):
-        """204 + empty body → empty ``CosmosDict`` (never raises ``JSONDecodeError``, never returns ``None``)."""
+        """204 + empty body -> empty ``CosmosDict`` (never raises ``JSONDecodeError``, never returns ``None``)."""
         result = process_backend_response(_make_response(status_code=204, body=b""))
         self.assertIsInstance(result, CosmosDict)
         self.assertEqual(dict(result), {})
 
     def test_200_with_empty_body_also_returns_empty_dict(self):
-        """200 + empty body is treated the same as 204 — empty ``CosmosDict``, no parse attempted."""
+        """200 + empty body is treated the same as 204 -- empty ``CosmosDict``, no parse attempted."""
         result = process_backend_response(_make_response(status_code=200, body=b""))
         self.assertEqual(dict(result), {})
 
@@ -212,7 +213,7 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
         self.assertEqual(captured, [{}])
 
     def test_2xx_with_malformed_body_raises_jsondecodeerror(self):
-        """2xx + non-JSON body → raises ``JSONDecodeError`` (legacy parity); the hook is not invoked."""
+        """2xx + non-JSON body -> raises ``JSONDecodeError`` (legacy parity); the hook is not invoked."""
         captured = []
         with self.assertRaises(json.JSONDecodeError):
             process_backend_response(
@@ -230,7 +231,7 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
 class TestFailurePath(unittest.TestCase):
     """Non-2xx raises the right typed exception; hook is not called; headers are still stashed.
 
-    The status-code → exception-class mapping itself is exhaustively
+    The status-code -> exception-class mapping itself is exhaustively
     covered in ``test_exceptions_unit.py``; these tests cover only
     the wiring through ``process_backend_response`` (the right
     subclass is raised, the response adapter carries the metadata,
@@ -239,7 +240,7 @@ class TestFailurePath(unittest.TestCase):
     """
 
     def test_409_raises_resource_exists_error(self):
-        """409 → ``CosmosResourceExistsError`` propagated by the parser."""
+        """409 -> ``CosmosResourceExistsError`` propagated by the parser."""
         with self.assertRaises(CosmosResourceExistsError):
             process_backend_response(
                 _make_response(
@@ -249,12 +250,12 @@ class TestFailurePath(unittest.TestCase):
             )
 
     def test_404_raises_resource_not_found(self):
-        """404 → ``CosmosResourceNotFoundError`` propagated by the parser."""
+        """404 -> ``CosmosResourceNotFoundError`` propagated by the parser."""
         with self.assertRaises(CosmosResourceNotFoundError):
             process_backend_response(_make_response(status_code=404))
 
     def test_500_raises_base_cosmos_http_response_error(self):
-        """500 (unmapped status) → base ``CosmosHttpResponseError`` propagated by the parser."""
+        """500 (unmapped status) -> base ``CosmosHttpResponseError`` propagated by the parser."""
         with self.assertRaises(CosmosHttpResponseError):
             process_backend_response(_make_response(status_code=500))
 
@@ -386,7 +387,7 @@ class TestHeaderNormalization(unittest.TestCase):
     """
 
     def test_plain_dict_input_becomes_case_insensitive_in_output(self):
-        """A plain-dict (mixed-case) input → output supports case-insensitive header lookups."""
+        """A plain-dict (mixed-case) input -> output supports case-insensitive header lookups."""
         backend_response = BackendResponse(
             status_code=201,
             headers=CaseInsensitiveDict({"X-MS-Request-Charge": "1.0"}),
@@ -396,7 +397,7 @@ class TestHeaderNormalization(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.0")
 
     def test_none_headers_input_does_not_crash(self):
-        """A ``headers=None`` response (test fixture) → empty headers map, no crash."""
+        """A ``headers=None`` response (test fixture) -> empty headers map, no crash."""
         backend_response = BackendResponse(status_code=201, headers=None, body=b"{}")
         result = process_backend_response(backend_response)
         self.assertEqual(dict(result.get_response_headers()), {})
@@ -412,14 +413,14 @@ class TestHeaderNormalization(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.43")
 
     def test_string_request_charge_is_left_alone(self):
-        """A string RU charge from the core-python path is preserved verbatim — no round-trip drift."""
+        """A string RU charge from the core-python path is preserved verbatim -- no round-trip drift."""
         backend_response = BackendResponse(
             status_code=201,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "2.50"}),
             body=b"{}",
         )
         result = process_backend_response(backend_response)
-        # Kept exactly as the request-byte string — including any trailing zero.
+        # Kept exactly as the request-byte string -- including any trailing zero.
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "2.50")
 
     def test_case_insensitive_input_reused_in_place_not_recopied(self):
@@ -430,7 +431,7 @@ class TestHeaderNormalization(unittest.TestCase):
         ``CaseInsensitiveDict`` belonging to a single-use
         ``BackendResponse``, so the parser must not pay a second
         per-response header construction on top of it. This is pinned via
-        ``last_response_headers`` — the exact object the parser settled on
+        ``last_response_headers`` -- the exact object the parser settled on
         (``get_response_headers`` deliberately returns a *copy*). If a
         future change re-introduces the defensive re-copy in
         ``_take_response_headers``, this identity check fails.

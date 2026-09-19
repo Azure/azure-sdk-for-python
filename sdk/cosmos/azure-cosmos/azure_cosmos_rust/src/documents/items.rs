@@ -88,12 +88,9 @@ pub(crate) fn create_item<'py>(
 /// customers could not do "insert-or-overwrite" in a single call on the rust
 /// backend.
 ///
-/// The operation kind makes the driver pipeline set
-/// `x-ms-documentdb-is-upsert: true` and POST to the collection feed, so an
-/// existing `(partition_key, id)` is replaced (HTTP 200) and a new id inserts
-/// (HTTP 201). `If-Match` / `If-None-Match`, built by the Python helper from
-/// `etag` + `match_condition` (insert-only or version-guarded replace), flow
-/// through `custom_headers`.
+/// This selects the driver's upsert operation rather than implementing an
+/// existence check in the binding. Prepared `If-Match` / `If-None-Match`
+/// headers remain in `custom_headers`; their enforcement is not done here.
 #[pyfunction]
 pub(crate) fn upsert_item<'py>(
     py: Python<'py>,
@@ -185,8 +182,8 @@ pub(crate) fn delete_item<'py>(
 }
 
 /// read_item: sends no body; id from `PreparedRequest.item_id`. A conditional read
-/// comes back as HTTP 304, which the Python parser treats as success. Without it
-/// the single most common operation -- the point read -- would not work on the
+/// can return HTTP 304, which the Python parser treats as non-error. Without it
+/// a point read would not work on the
 /// rust backend.
 ///
 /// On success returns HTTP 200 with the item JSON. Conditional reads
@@ -232,10 +229,10 @@ pub(crate) fn read_item<'py>(
 ///
 /// The body is the `PatchInstructions` payload (`{"operations": [...]}`) rather
 /// than an item, and the URL id comes from `PreparedRequest.item_id`. The driver
-/// reads the item, applies the operations, and writes it back with an
-/// `If-Match`-guarded replace. The Python helper routes only the supported
-/// subset here; a `filter_predicate`, or an `etag` / `match_condition`
-/// precondition, takes the legacy path instead.
+/// chooses the execution plan for Auto; this entry point does not guarantee a
+/// particular number of wire requests. `patch_precondition` accepts If-Match
+/// as a typed precondition and rejects If-None-Match and a body `condition`.
+/// These native rejections raise errors; they do not replay through legacy.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn patch_item<'py>(

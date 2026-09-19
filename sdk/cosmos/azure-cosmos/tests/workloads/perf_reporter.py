@@ -42,10 +42,10 @@ def _get_cpu_percent(process) -> float:
 
 
 def _get_cpu_times(process) -> tuple:
-    """Return cumulative (user, system) CPU seconds for the process.
+    """Read cumulative process user/system CPU times, or zeros on error.
 
-    cpu_times is a counter, so the difference between two reads is the exact CPU
-    time spent in that window. Returns (0.0, 0.0) on any error.
+    Differences are measurements at the underlying counter's resolution, not
+    exact attribution to a particular operation or backend.
     """
     try:
         t = process.cpu_times()
@@ -55,12 +55,10 @@ def _get_cpu_times(process) -> tuple:
 
 
 def _get_gc_stats() -> tuple:
-    """Return cumulative (collections, collected, uncollectable) across all GC
-    generations.
+    """Read cumulative Python GC counters, or zeros on error.
 
-    Differencing these counters across a window gives how many GC passes ran and
-    how many objects they reclaimed. A tail that moves with GC activity points to
-    Python garbage rather than the SDK. Returns (0, 0, 0) on any error.
+    Correlation with latency is a diagnostic clue, not proof of causation or
+    that the SDK is uninvolved.
     """
     try:
         stats = gc.get_stats()
@@ -81,10 +79,9 @@ def _get_memory_bytes(process) -> int:
 
 
 def _get_thread_count(process) -> int:
-    """Return the process's current OS thread count.
+    """Read the process's OS thread count, or zero on error.
 
-    On Rust this counts the driver's runtime and connection threads. Recorded so an
-    RSS step can be tied to threads actually in use. Returns 0 on any error.
+    This includes all process threads, not only driver-owned threads.
     """
     try:
         return process.num_threads()
@@ -110,12 +107,11 @@ def _get_system_memory() -> tuple:
 
 
 class PerfReporter:
-    """Background reporter that upserts PerfResult documents to Cosmos DB.
+    """Drain shared stats and write result documents from a daemon thread.
 
-    Uses a daemon thread with a sync CosmosClient. The reporter drains
-    Stats at the configured interval and upserts one PerfResult document
-    per operation. All errors are caught and logged — the workload is
-    never affected.
+    Reporting failures are logged where caught, but drained data is not
+    guaranteed durable. Locks, sampling, encoding, and writes can affect the
+    workload; isolation and zero measurement overhead are not guaranteed.
     """
 
     def __init__(self, stats: Stats, config: dict):
@@ -240,10 +236,8 @@ class PerfReporter:
         else:
             credential = DefaultAzureCredential()
 
-        # Force the results client to use core-python so it keeps working when
-        # the workload runs with COSMOS_BACKEND=rust. Otherwise the reporter
-        # would follow that variable and write its results over the rust path,
-        # which cannot read the account yet.
+        # Keep reporting on core-python, independent of the workload's backend
+        # choice, and avoid adding result writes to the native binding counters.
         self._client = CosmosClient(endpoint, credential, _backend=BACKEND_NAME_CORE_PYTHON)
         db = self._client.get_database_client(self._config["results_database"])
         self._container = db.get_container_client(self._config["results_container"])
@@ -311,18 +305,15 @@ class PerfReporter:
         # Seconds since the (post-warmup) reporter start, so a query can drop
         # warmup windows instead of letting cold start decide the result.
         elapsed_seconds = round(now_monotonic - self._start_monotonic, 3)
-        # CPU-seconds the process spent in this window, from the cpu_times() counter
-        # delta (user + system). The user/system split is kept because Rust's native
-        # networking tends to land in system time. Compare as CPU-seconds per 1k ops
-        # on a single-op run (an all-six run shares CPU across ops).
+        # Process CPU-time delta, including reporter and other concurrent work.
+        # Per-operation attribution requires a suitable isolated workload.
         cur_cpu_user, cur_cpu_system = _get_cpu_times(self._process)
         cpu_user_seconds = round(max(0.0, cur_cpu_user - self._last_cpu_user), 4)
         cpu_system_seconds = round(max(0.0, cur_cpu_system - self._last_cpu_system), 4)
         cpu_seconds = round(cpu_user_seconds + cpu_system_seconds, 4)
         self._last_cpu_user, self._last_cpu_system = cur_cpu_user, cur_cpu_system
-        # GC activity in this window: how many GC passes ran and how many objects
-        # they reclaimed. Correlate with p99_9_ms to see whether a tail spike is
-        # GC-driven; expect it lower on Rust, which allocates fewer Python objects.
+        # Process-wide GC activity. Correlation with a latency tail does not
+        # establish causation or predict how the backends compare.
         cur_gc_collections, cur_gc_collected, cur_gc_uncollectable = _get_gc_stats()
         gc_collections = max(0, cur_gc_collections - self._last_gc_collections)
         gc_collected = max(0, cur_gc_collected - self._last_gc_collected)
@@ -331,13 +322,11 @@ class PerfReporter:
         self._last_gc_collected = cur_gc_collected
         self._last_gc_uncollectable = cur_gc_uncollectable
         # Worst event-loop scheduling delay this window (ms); 0 on the sync path or
-        # when the monitor is off. A large value means the loop is the bottleneck.
+        # when the monitor is off. A large value does not identify the cause.
         loop_lag_max_ms = round(self._stats.drain_loop_lag(), 3)
-        # Per-window backend-counter deltas. rust_execute_calls: ops the Rust path
-        # handled this window; binding_calls: ops the Rust binding counted (-1 when
-        # the extension has no counter, so 0 is not read as proof it was skipped).
-        # Both are 0 for a core-python run. The post-run gate checks these against
-        # `count` to confirm a row tagged "rust" really ran on Rust.
+        # Process-wide counter deltas: normal Python execute returns and
+        # instrumented binding entries (-1 when unavailable). Window boundaries
+        # and unrelated calls limit attribution to the measured operations.
         cur_execute_calls = backend_counters.execute_count()
         rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
         self._last_execute_calls = cur_execute_calls
@@ -347,12 +336,9 @@ class PerfReporter:
         else:
             binding_calls = max(0, cur_binding_raw - self._last_binding_calls)
             self._last_binding_calls = cur_binding_raw
-        # Per-window wire-attempt deltas from the binding's diagnostics counters
-        # (-1 when the extension has no counter, so 0 is not read as "no retries").
-        # attempt_calls: total wire round trips this window (~= count for clean
-        # reads/creates, ~= 2*count for PATCH's Read-Modify-Write); retry_calls:
-        # driver-issued retries/failovers/hedges (nonzero even at 0 terminal errors
-        # when a write retried then succeeded). Both 0 for a core-python run.
+        # Diagnostics-counter deltas (-1 when unavailable). Only recorded
+        # contexts contribute; retry counting also depends on retained records.
+        # They do not establish fixed per-operation round-trip counts.
         cur_attempt_raw = backend_counters.binding_attempt_count()
         if cur_attempt_raw is None:
             attempt_calls = -1
@@ -414,20 +400,17 @@ class PerfReporter:
                 "cold_first_n_ms": [
                     round(v, 3) for v in cold_first_map.get(s["operation"], [])[:50]
                 ],
-                # Mean RU charge per successful op, from the x-ms-request-charge
-                # response header. Used to check both backends do the same work.
+                # Mean of captured request-charge samples. Matching means alone
+                # do not establish identical backend work or complete accounting.
                 "mean_ru": round(s.get("mean_ru", 0.0), 3),
                 # Raw RU total and sample count, so a cross-window average can be
                 # count-weighted (SUM(ru_sum)/SUM(ru_count)) rather than an average
                 # of per-window means.
                 "ru_sum": round(s.get("ru_sum", 0.0), 4),
                 "ru_count": s.get("ru_count", 0),
-                # Service-reported processing time (x-ms-request-duration-ms) for
-                # this window. server_hist_b64 pools across windows like hist_b64;
-                # the scalar tails let a quick read compare the SERVER tail against
-                # the CLIENT tail (p99_9_ms). A client tail not matched by a server
-                # tail is client-side (transport/binding) overhead, not the service.
-                # server_count < count means the header was missing on some calls.
+                # Header-derived duration samples, pooled separately from client
+                # durations. Independent tails cannot isolate per-call overhead.
+                # A sample-count mismatch requires checking header/callback coverage.
                 "server_count": s.get("server_count", 0),
                 "server_p50_ms": round(s.get("server_p50_ms", 0.0), 3),
                 "server_p99_ms": round(s.get("server_p99_ms", 0.0), 3),
@@ -439,20 +422,16 @@ class PerfReporter:
                 "cpu_seconds": cpu_seconds,
                 "cpu_user_seconds": cpu_user_seconds,
                 "cpu_system_seconds": cpu_system_seconds,
-                # GC activity this window: passes run, objects reclaimed, objects it
-                # could not reclaim. A p99_9_ms that tracks gc_collections is a
-                # Python-garbage tail, not the SDK; expect these lower on Rust.
+                # Process-wide GC counts; correlation with latency is not causation.
                 "gc_collections": gc_collections,
                 "gc_collected": gc_collected,
                 "gc_uncollectable": gc_uncollectable,
                 # Worst event-loop scheduling delay this window (ms); 0 on the sync
-                # path or when the monitor is off. Large means the loop is the
-                # bottleneck, not the SDK.
+                # path or when the monitor is off; this does not identify a cause.
                 "loop_lag_max_ms": loop_lag_max_ms,
                 "memory_bytes": mem,
-                # OS thread count at this sample (on Rust, the driver's runtime and
-                # connection threads). Correlate with memory_bytes to tell a one-time
-                # warmup RSS step from a leak.
+                # All process OS threads, not a driver-owned-thread census.
+                # Compare with RSS as a clue, not proof of a leak or its absence.
                 "thread_count": threads,
                 "system_cpu_percent": round(sys_cpu, 1),
                 "system_total_memory_bytes": sys_total,
@@ -463,11 +442,8 @@ class PerfReporter:
                 "runtime_backend": runtime_backend,
                 "rust_execute_calls": rust_execute_calls,
                 "binding_calls": binding_calls,
-                # Wire round trips this window (attempt_calls) and how many were
-                # driver-issued retries/failovers/hedges (retry_calls). attempt_calls
-                # ~= count for clean reads/creates and ~= 2*count for PATCH's
-                # Read-Modify-Write; retry_calls > 0 means the retry path fired even
-                # if terminal errors were 0. -1 on a build without the counters.
+                # Recorded native diagnostics counts, with the coverage limits
+                # described above. -1 means unavailable, not zero attempts/retries.
                 "attempt_calls": attempt_calls,
                 "retry_calls": retry_calls,
                 "config_concurrency": concurrency,

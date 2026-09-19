@@ -197,7 +197,8 @@ struct CursorState {
     continuation_unsupported: bool,
 }
 
-/// Owned by one Python page iterator; dropping it releases the retained plan.
+/// Retained state for a Python page iterator. In-flight fetches clone the state
+/// Arc, so dropping the Python cursor need not immediately release its plan.
 #[pyclass]
 #[derive(Default)]
 pub(crate) struct ItemFeedCursor {

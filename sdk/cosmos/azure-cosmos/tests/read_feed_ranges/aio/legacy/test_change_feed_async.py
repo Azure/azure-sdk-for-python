@@ -49,6 +49,18 @@ class TestChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_get_feed_ranges(self):
+        """A container on a single physical partition reports exactly one feed range.
+
+        Feed ranges are how a caller splits a change feed or a query across
+        workers, so the count has to reflect the container's real layout.
+
+        One is the correct answer for a small container. Returning none would
+        leave a caller with nothing to iterate, and returning more than one
+        would have workers processing ranges that do not exist.
+
+        Note the method name carries no ``_async`` suffix even though this is
+        the async copy; it matches the name in the legacy source file.
+        """
         # Source: tests/test_change_feed_async.py::TestChangeFeedAsync.test_get_feed_ranges
         result = [feed_range async for feed_range in self.container.read_feed_ranges()]
         assert len(result) == 1

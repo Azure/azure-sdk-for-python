@@ -3,7 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Public query contracts through the real sync/async backend adapters."""
+"""Query contract: continuation tokens, scope, and per-page budgets, with no service calls.
+
+``query_items`` returns a lazy pager. Nothing is sent until it is iterated,
+and each page is fetched through the compiled driver behind a fake binding.
+
+The recurring themes:
+
+* **Laziness and per-iterator state.** Building a pager, or calling
+  ``by_page`` on it, must allocate nothing. Two page iterators from the same
+  pager are independent and each gets its own cursor, released when it runs
+  out.
+* **Continuation tokens are bound to a query.** A token records the endpoint,
+  container, query text, parameters, and scope. Resuming with a token issued
+  for a *different* query or partition must fail rather than silently return
+  someone else's rows. Tokens are also prefixed by kind -- ``q1.`` for public
+  query tokens, ``c1.`` for raw driver ones -- so the wrong kind is rejected.
+* **Not every query can be resumed.** ``DISTINCT`` and similar queries
+  enumerate fine but cannot produce a token, and asking for one says so
+  instead of handing back something unusable.
+* **One budget per public page**, including driver start-up and any empty
+  pages consumed along the way.
+* **Failures do not replay.** After an error the pager stays failed, keeps the
+  last token it actually delivered, and never re-sends the page.
+
+Results are not always objects: ``SELECT VALUE`` can yield numbers, nulls,
+lists and strings, so the tests check scalars survive the trip.
+"""
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
@@ -29,6 +55,25 @@ from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyVa
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
 def query(request, monkeypatch):
+    """Drive the Rust query path against a fake driver, once sync and once async.
+
+    Serves pages from ``context.pages``: one object row, an empty page, a page
+    of bare scalars, then ``None`` to signal the end. Each real page reports a
+    charge of 2 plus a custom header, so tests can check charges add up and
+    unknown headers survive.
+
+    Paging is driven by the continuation header, so resuming really does jump
+    the fake feed to the recorded position rather than just replaying.
+
+    Settings a test can set: ``delay`` (time per page), ``status`` (to force a
+    service error), ``failure`` (to raise from the fetch), and ``resumable``
+    (to model a query that cannot produce continuation tokens).
+
+    Everything above the binding is real -- proxy, backend, pager -- and the
+    clock is faked so budgets can be spent without waiting. ``collect`` drains
+    a pager and ``next_page`` takes one page, both hiding the sync/async
+    difference.
+    """
     async_mode = request.param
     clock = SimpleNamespace(now=100.0)
     clock.monotonic = lambda: clock.now
@@ -131,6 +176,21 @@ def query(request, monkeypatch):
 
 
 def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
+    """Each page iterator allocates its own cursor on first use and frees it at the end.
+
+    Two page iterators are taken from one pager. Before anything is iterated
+    neither has a cursor, and neither the driver handle nor a cursor has been
+    created -- building a pager costs nothing.
+
+    Taking a page from each creates exactly two cursors, one per iterator. If
+    they shared one, two loops over the same pager would consume each other's
+    pages. Each iterator then keeps its own cursor across later pages.
+
+    When the first iterator is exhausted its cursor is released while the
+    second's is untouched, and no third cursor is ever created. Releasing at
+    the end is what stops long-lived applications from accumulating driver
+    state for every query they run.
+    """
     pager = query.proxy.query_items("SELECT * FROM c")
     first, second = pager.by_page(), pager.by_page()
     assert first.state.cursor is second.state.cursor is None
@@ -155,6 +215,19 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
 
 @pytest.mark.parametrize("interval", [None, ("00", "FF")])
 def test_typed_scope_keeps_the_previous_bookmark_identity(query, interval):
+    """The identity behind a continuation token is computed exactly as it always was.
+
+    A token is only accepted if the query it is replayed against hashes to the
+    same identity. That hash is rebuilt here by hand from the endpoint,
+    container link, query text, parameters and scope, and must match what the
+    pager computed -- with and without a feed range.
+
+    This is a compatibility check. The scope is now held in typed form
+    internally, but if the hash input changed shape, every continuation token
+    a customer had already saved would stop working.
+
+    Computing the identity must also not create a cursor.
+    """
     kwargs = (
         {}
         if interval is None
@@ -187,6 +260,17 @@ def test_typed_scope_keeps_the_previous_bookmark_identity(query, interval):
 
 
 def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
+    """A full enumeration returns scalars untouched and never touches the legacy path.
+
+    Nothing is fetched until iteration starts. Draining the pager then returns
+    an object followed by bare scalars -- ``7``, ``None``, a list and a string
+    -- because ``SELECT VALUE`` can project any JSON value. A ``None`` row in
+    particular must survive rather than being read as "no more rows".
+
+    All four fetches share one cursor. Neither the legacy query method, the
+    container metadata read, nor the driver's one-shot query entry points are
+    used: a plain query pages through the cursor and nothing else.
+    """
     pager = query.proxy.query_items("SELECT VALUE c.value FROM c", max_item_count=1)
     assert query.calls == []
     query.binding.ItemFeedCursor.assert_not_called()
@@ -206,6 +290,20 @@ def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
 
 
 def test_bookmarks_resume_independently_and_bind_query_and_scope(query):
+    """A token resumes a matching query only, and each pager keeps its own position.
+
+    After one page, the token is a public ``q1.`` one. A second pager resumes
+    from it and continues correctly even though the connection's shared
+    response headers were meanwhile set to an unrelated token, and even though
+    the resumed call uses a different page size. The original pager then
+    returns the same next page from its own state.
+
+    The two use different cursors; the original keeps the one it started with.
+
+    Resuming is then refused for a different query text, a different partition
+    key, and different parameters. All three would otherwise return rows from
+    a position that has no meaning for the new query.
+    """
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
     assert query.next_page(pages)[0]["id"] == "a"
     bookmark = pages.continuation_token
@@ -228,6 +326,16 @@ def test_bookmarks_resume_independently_and_bind_query_and_scope(query):
 
 
 def test_nonresumable_queries_enumerate_but_bookmark_access_raises(query):
+    """A query that cannot be resumed still enumerates fully; only the token is refused.
+
+    Queries like ``DISTINCT`` hold state the service cannot hand back in a
+    token. Paging works normally all the way to the end, but asking for the
+    continuation token raises ``NotImplementedError``.
+
+    Refusing is the honest answer: returning a token that silently produced
+    wrong or duplicate rows on resume would be far worse than an error at the
+    point the customer asks for it.
+    """
     query.resumable = False
     pages = query.proxy.query_items("SELECT DISTINCT VALUE c.value FROM c").by_page()
     assert query.next_page(pages)[0]["id"] == "a"
@@ -254,6 +362,19 @@ def test_nonresumable_queries_enumerate_but_bookmark_access_raises(query):
     ],
 )
 def test_partition_scope_normalization(query, key, expected):
+    """Every shape of partition key turns into the right wire value, and stays out of the body.
+
+    Covers no key at all, a plain string, ``False`` and ``0`` (which must not
+    be mistaken for "unset"), explicit null, the "no partition key" marker,
+    and hierarchical keys including ones with null or missing components.
+
+    Each becomes its JSON wire form: ``false`` and ``0`` stay themselves,
+    null becomes ``[null]``, and the absent-key marker becomes ``[{}]`` --
+    two distinct encodings that must not collapse into one.
+
+    The key is also never written into the request body. It belongs in the
+    routing header only, and a stray copy in the body would change the query.
+    """
     query.collect(query.proxy.query_items("SELECT * FROM c", partition_key=key))
     prepared = query.calls[0][0]
     actual = legacy_partition_key_from_request(prepared) if prepared.partition_key.kind == "components" else None
@@ -266,6 +387,16 @@ def test_partition_scope_normalization(query, key, expected):
     (NullPartitionKeyValue, "[null]"), (["tenant", None], '["tenant",null]'),
 ])
 def test_existing_query_bookmark_identity_is_unchanged(query, key, wire):
+    """Partition keys hash into the token identity exactly as they did before.
+
+    The companion to the scope-identity test, focused on partition keys that
+    are easy to get wrong: ``False``, explicit null, the absent-key marker,
+    and a hierarchical key with a null component.
+
+    For each, the identity hash is rebuilt from the original scope shape and
+    must match. If any of these started hashing differently, saved
+    continuation tokens for those partitions would stop being accepted.
+    """
     import hashlib
     from azure.cosmos._helpers._query_items import QueryConfig
 
@@ -281,6 +412,20 @@ def test_existing_query_bookmark_identity_is_unchanged(query, key, wire):
 
 
 def test_query_body_scope_options_and_client_defaults_are_preserved(query):
+    """A fully loaded query is snapshotted at the call and every option lands in the right place.
+
+    The parameters list, feed range and headers are all mutated *after* the
+    pager is built but before it is iterated. The request still carries the
+    original values, so they were copied at the call rather than read later --
+    otherwise a caller reusing a parameters list across queries would corrupt
+    requests already in flight.
+
+    Each option then has to land in its own place: metrics and advice as their
+    own headers, index metrics omitted entirely when false rather than sent as
+    "False", the client's priority and throughput defaults applied since the
+    call did not override them, and availability strategy and excluded
+    locations as request settings rather than headers.
+    """
     params = [{"name": "@v", "value": [1, 2]}]
     feed = {"Range": {"min": "", "max": "AA"}}
     headers = {"x-custom-request": "before"}
@@ -354,6 +499,27 @@ def test_query_body_scope_options_and_client_defaults_are_preserved(query):
     ],
 )
 def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, error):
+    """Bad or unsupported arguments fail at the call, before anything is sent.
+
+    ``ValueError`` covers right-typed but unusable values: an empty or missing
+    query, a parameter name without ``@``, values that are not representable
+    in JSON, an empty partition key, a partition key and feed range given
+    together (they are two ways to say the same thing), a sub-second timeout,
+    and a page size of zero or a bool.
+
+    ``TypeError`` covers wrong types, such as a string where a bool is
+    expected.
+
+    ``NotImplementedError`` covers things the Rust path does not support yet
+    -- full text score scope, continuation token limits, ``read_timeout``,
+    pinned partition key ranges, overriding the authorization or EPK headers,
+    and any unrecognised keyword. Accepting and ignoring these would let a
+    customer believe a setting took effect.
+
+    Continuation tokens are checked by kind: a legacy token, a raw driver
+    ``c1.`` token, a malformed ``q1.`` one, and a change feed ``cf1.`` token
+    are each rejected rather than misread.
+    """
     values = {"query": "SELECT * FROM c", **kwargs}
     with pytest.raises(error):
         query.proxy.query_items(**values)
@@ -362,6 +528,18 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, e
 
 
 def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
+    """An empty page consumes budget and charge, and the hook cannot corrupt what follows.
+
+    The first page is empty, so it is skipped internally -- but it still cost
+    time and money. The second fetch gets the remaining 0.7 seconds rather
+    than a fresh second, and the hook reports a total charge of 4 covering
+    both fetches.
+
+    The hook is falsey and must still be called, once, for the one page the
+    caller actually sees. Its attempts to rewrite the continuation header and
+    clear the rows have no effect: the item is returned and the token is a
+    proper ``q1.`` one. An unrecognised header survives untouched.
+    """
     query.pages = [[], [{"id": "a"}], None]
     query.delay = 0.3
     calls = []
@@ -385,6 +563,16 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
 
 
 def test_errors_do_not_replay_and_keep_last_delivered_bookmark(query):
+    """After a failed page the token still points at the last page actually delivered.
+
+    One page succeeds, then the next fetch raises. The token is unchanged from
+    before the failure, so a customer saving it resumes from the last page
+    they really received -- advancing it would skip the failed page's rows for
+    good.
+
+    The pager then refuses further use instead of retrying, the fetch count
+    confirms no replay, and the failure never falls back to the legacy path.
+    """
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
     query.next_page(pages)
     previous = pages.continuation_token
@@ -399,6 +587,16 @@ def test_errors_do_not_replay_and_keep_last_delivered_bookmark(query):
 
 
 def test_timeout_and_service_error_surface(query):
+    """Timeouts and service errors reach the caller as themselves.
+
+    A page slower than the timeout raises ``CosmosClientTimeoutError``. A page
+    the service rejects with 429 raises ``CosmosHttpResponseError`` carrying
+    that status.
+
+    Keeping them distinct matters: 429 means throttled and is worth retrying
+    with backoff, while a timeout means the caller's own budget ran out. A
+    customer cannot choose the right response if both arrive as the same type.
+    """
     query.delay = 2
     with pytest.raises(CosmosClientTimeoutError):
         query.collect(query.proxy.query_items("SELECT * FROM c", timeout=1))
@@ -409,6 +607,16 @@ def test_timeout_and_service_error_surface(query):
 
 
 def test_hook_failure_does_not_advance_public_bookmark(query):
+    """A hook that raises on the first page leaves the pager with no token at all.
+
+    The hook fails before any page has been delivered, so there is nothing to
+    resume from and the token stays unset rather than pointing at a page the
+    caller never received.
+
+    The pager then refuses further use. Together with the error test above,
+    this fixes the rule in both directions: the token always names the last
+    page that genuinely reached the caller.
+    """
     def hook(headers, body):
         raise ValueError("hook failed")
 
@@ -421,6 +629,18 @@ def test_hook_failure_does_not_advance_public_bookmark(query):
 
 
 def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(query):
+    """On the core-python backend queries run the legacy path and refuse Rust tokens.
+
+    With the legacy backend selected, the query returns the legacy iterable
+    and the driver is never used. Options the Rust path rejects, such as
+    ``read_timeout``, are simply supported here.
+
+    A ``q1.`` token issued by the Rust path is refused as incompatible -- both
+    through the public call and through the query iterable directly, since
+    customers can construct one themselves. The two backends encode position
+    differently, so reading the wrong kind could restart the query or skip
+    rows.
+    """
     query.proxy._item_context = None
     query.connection._backend = SimpleNamespace(name="core-python")
     query.proxy._get_properties_with_options = MagicMock(
@@ -448,6 +668,15 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(query)
 
 
 def test_query_advice_and_index_headers_are_decoded_before_hooks(query, monkeypatch):
+    """Index and query advice headers are decoded before anyone sees them.
+
+    Both arrive from the service in an encoded form. By the time the response
+    hook runs they have been decoded, so a customer reading them gets usable
+    text rather than a raw blob they would have to decode themselves.
+
+    The decoded values are also what gets recorded as the last response
+    headers on the client, so the two views agree.
+    """
     from azure.cosmos._helpers import _query_items
 
     monkeypatch.setattr(
@@ -488,6 +717,13 @@ def test_query_advice_and_index_headers_are_decoded_before_hooks(query, monkeypa
 
 
 def test_driver_initialization_consumes_public_page_budget(query, monkeypatch):
+    """Starting the driver counts against the first page's timeout.
+
+    Start-up takes 2 seconds against a 1 second budget, so the call times out
+    before a page is fetched. Start-up is one-off work that lands on the first
+    page, and leaving it outside the budget would let that page overrun its
+    timeout by however long the driver took to come up.
+    """
     def ensure():
         query.clock.now += 2
         return "handle"
@@ -507,6 +743,20 @@ def test_driver_initialization_consumes_public_page_budget(query, monkeypatch):
 
 
 def test_async_query_cancellation_invalidates_cursor_without_replay(query):
+    """Concurrent use is refused, and cancelling a page leaves the pager unusable.
+
+    While one page fetch is in flight, asking the same iterator for another
+    page raises about concurrent use rather than corrupting the shared cursor.
+    A page iterator is not safe to drive from two places at once, and saying
+    so is better than interleaving two fetches on one cursor.
+
+    Cancelling the in-flight page then propagates ``CancelledError``, and
+    afterwards the pager refuses further use, reports no token, and has
+    released its cursor. A cancelled page was never delivered, so resuming
+    would be resuming from an unknown position.
+
+    Sync mode returns early: there is no cancellation to test there.
+    """
     if not query.async_mode:
         return
 
@@ -537,6 +787,15 @@ def test_async_query_cancellation_invalidates_cursor_without_replay(query):
 
 
 def test_service_error_carries_last_delivered_public_bookmark(query):
+    """A service error carries the token for the last page that was delivered.
+
+    After one good page the service returns 429. The raised error carries the
+    token from that first page, and the pager still reports it.
+
+    Putting the token on the error is what lets a customer catch a throttling
+    failure and resume from exactly where they left off, instead of starting
+    the query again and paying for the pages they already read.
+    """
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
     query.next_page(pages)
     bookmark = pages.continuation_token
@@ -548,6 +807,13 @@ def test_service_error_carries_last_delivered_public_bookmark(query):
 
 
 def test_enabled_request_hedging_uses_client_threshold(query, monkeypatch):
+    """Turning on the availability strategy picks up the client's hedging threshold.
+
+    ``availability_strategy=True`` is a request to hedge, not a full
+    configuration. The threshold comes from the client, so the request settings
+    read ``enabled:250`` rather than just "enabled" -- the driver needs to know
+    how long to wait before sending the second copy of the request.
+    """
     from azure.cosmos._backend.contracts import PreparedClientConfig
 
     with monkeypatch.context() as patch:
@@ -563,6 +829,17 @@ def test_enabled_request_hedging_uses_client_threshold(query, monkeypatch):
 
 
 def test_invalid_header_name_and_non_document_envelope_fail_explicitly(query):
+    """A non-string header name and a malformed response envelope both fail with a clear message.
+
+    A header name that is not a string is rejected at the call. Header names
+    have to be strings to be written to the wire, and catching it here beats a
+    confusing failure deeper in the driver.
+
+    A response whose ``Documents`` field is an object rather than an array
+    raises an error naming both the operation and the field. Rows are iterated
+    from that field, so an unexpected shape would otherwise fail somewhere far
+    from the cause -- or worse, iterate an object's keys as if they were rows.
+    """
     with pytest.raises(TypeError, match="names must be strings"):
         query.proxy.query_items("SELECT * FROM c", initial_headers={1: "value"})
     method = (

@@ -1,17 +1,14 @@
 //! Reads the CPU recorded inside a compiled library file.
 //!
-//! Every compiled library starts with a header that names the CPU it was built
-//! for. The three operating systems use three different header formats: PE on
-//! Windows, ELF on Linux, Mach-O on macOS. This file reads all three and
-//! reports the CPU as one value the build script can compare against the CPU
-//! Cargo was told to target.
+//! Read architecture metadata from the supported PE (Windows), ELF (Linux), and
+//! Mach-O (macOS) formats and compare it with Cargo's target. A universal Mach-O
+//! file can contain multiple architectures. ELF pointer width is checked too.
 //!
 //! It is used by `build.rs` at build time and compiled again into the crate's
 //! test build so the readers themselves can be tested.
 //!
-//! Without it the build would have to trust that whoever supplied the
-//! QueryPlanInterop files picked the right ones by hand, and a wrong pick would
-//! only surface as a customer whose queries never use local planning.
+//! These header checks catch incompatible staged binaries without loading them.
+//! Passing them does not verify dependencies or successful local query planning.
 
 use std::fs;
 use std::path::Path;
@@ -224,13 +221,9 @@ fn read_u32(bytes: &[u8], offset: usize, endianness: Endianness) -> Result<u32, 
 mod tests {
     //! Checks the header readers against hand-built byte sequences.
     //!
-    //! Real libraries for other CPUs and other operating systems are not
-    //! available on the machine running the build, so each test writes the few
-    //! header bytes that name a CPU and nothing else. That is enough, because
-    //! those bytes are all the readers look at.
-    //!
-    //! Without these, the only way to find out that a reader was wrong would be
-    //! a release that shipped a library no customer's machine could load.
+    //! Synthetic headers exercise architecture detection without requiring
+    //! runnable libraries for each target. These tests do not load a library,
+    //! check its dependencies, or establish that a packaged wheel can use it.
 
     use super::*;
 

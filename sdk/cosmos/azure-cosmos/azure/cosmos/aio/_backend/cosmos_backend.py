@@ -189,15 +189,15 @@ class AsyncCosmosBackend(abc.ABC):
     ) -> AsyncIterator[QueryPage]:
         """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
-        The default here raises; ``AsyncRustBackend`` overrides it (using
-        ``STATELESS_QUERY_TO_BINDING_METHOD``) as an async iterator of ``QueryPage`` that
-        dispatches ``query_items`` / ``read_all_items`` / ``list_databases``. A
+        The default here raises; ``AsyncRustBackend`` overrides it using the
+        stateless or retained-cursor dispatch table. A
         backend that does not implement this -- ``AsyncLegacyBackend`` never
         reaches it, since :meth:`run_page_operation` invokes the legacy call
         directly -- keeps this raising default.
 
         ``deadline`` supplies the existing monotonic budget to supported native
-        cursor execution. Stateless feeds retain their driver request timeouts.
+        cursor execution and ``list_databases``. Other stateless feeds use
+        their prepared settings rather than this deadline argument.
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 

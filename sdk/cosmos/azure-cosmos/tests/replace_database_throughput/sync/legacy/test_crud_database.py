@@ -1,16 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 database-throughput change, re-run on the rust engine.
+"""The existing legacy database-throughput change, re-run on the Rust engine.
 
 Why this file exists: changing a database's shared RU/s is not a single write.
 The SDK first queries for the database's offer, edits the RU/s number on the
-document it got back, and sends the whole document back. If rust queried for
+document it got back, and sends the whole document back. If Rust queried for
 the wrong offer, or sent back a document missing a field the service requires,
 the change would fail or land on the wrong database -- and a customer's bill
 follows that number. The same call is also what the deprecated ``read_offer``
 name reads back, so this test covers both halves of the read-modify-write.
 
-What it does: the real v4 test copied from ``tests/test_crud_database.py``,
+What it does: the real legacy test copied from ``tests/test_crud_database.py``,
 changed in one place -- the client is built with ``_backend="rust"``. It
 creates a database at 1000 RU/s, reads it back, changes it to 2000, and checks
 the returned object reports 2000.
@@ -18,7 +18,7 @@ the returned object reports 2000.
 This is NOT the side-by-side comparison. The comparison tests
 (``replace_database_throughput/sync/test_replace_database_throughput_parity.py``)
 run the same change on both engines and diff the results. This file runs on
-rust only.
+Rust only.
 
 Self-contained: it creates and deletes its own database.
 
@@ -58,6 +58,16 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.key_client.close()
 
     def test_database_level_offer_throughput(self):
+        """Throughput on a database can be raised after creation and reports the new value.
+
+        Created at 1000 request units, then moved to 2000 through
+        ``replace_throughput``.
+
+        Kept here for the change itself. The replacement must return the
+        updated figure rather than echoing the value the database was created
+        with, which is the easiest way for a change that never took effect to
+        look successful.
+        """
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_level_offer_throughput
         # Create a database with throughput
         offer_throughput = 1000

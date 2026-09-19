@@ -48,7 +48,7 @@ class _CapturingBackend(AsyncCosmosBackend):
     calls (so ``.execute_mock.assert_not_awaited()`` still works) and returns
     ``response``. Inheriting from ``AsyncCosmosBackend`` gives
     ``run_operation`` its genuine default implementation, so ``rust_eligible``
-    is honoured exactly as it is for the real rust backend."""
+    is honoured exactly as it is for the real Rust backend."""
 
     name = "rust"
 
@@ -64,7 +64,7 @@ class _CapturingBackend(AsyncCosmosBackend):
 
 def _async_dispatch_backend(response):
     """A real ``AsyncCosmosBackend`` whose ``execute`` returns ``response``
-    (the rust dispatch path -- the helper parses it instead of falling
+    (the Rust dispatch path -- the helper parses it instead of falling
     through to ``PatchItem``)."""
     return _CapturingBackend(response)
 
@@ -78,13 +78,13 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncPatchItem(unittest.TestCase):
-    """The core-python and rust-dispatch paths for async patch."""
+    """The core-python and Rust-dispatch paths for async patch."""
 
     def test_async_dispatch_falls_through_to_patch_item(self):
         """The explicit core-Python backend awaits ``PatchItem`` and returns
         its value; the resolved ``document_link`` and the ``operations`` are
         forwarded unchanged and id generation is disabled (a patch never
-        mints)."""
+        generates an id)."""
         cc = _connection_with_cache()
 
         async def _run():
@@ -105,7 +105,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
     def test_async_backend_dispatch_parses_response_and_skips_legacy(self):
-        """When the backend returns a ``BackendResponse`` (rust path), the
+        """When the backend returns a ``BackendResponse`` (Rust path), the
         helper parses it into a ``CosmosDict`` and never awaits the legacy
         ``PatchItem``."""
         cc = _connection_with_cache()
@@ -153,6 +153,15 @@ class TestAsyncPatchItem(unittest.TestCase):
         cc.PatchItem.assert_not_awaited()
 
     def test_async_version_guard_uses_rust_without_legacy(self):
+        """A guarded async patch travels as a typed setting, not a raw header, and skips the legacy call.
+
+        ``etag`` plus ``IfNotModified`` reaches the backend as
+        ``settings.item.if_match``. It must *not* also appear in the raw
+        header map: the binding renders the header itself, so setting both
+        would risk sending it twice or disagreeing with itself.
+
+        The legacy ``PatchItem`` must never be awaited on this path.
+        """
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
             BackendResponse(status_code=200, sub_status=0, headers=None, body=b"{}")
@@ -178,7 +187,7 @@ class TestAsyncPatchItem(unittest.TestCase):
 
     def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
-        awaited and the refreshed rid is stamped into the options."""
+        awaited and the refreshed rid is written into the options."""
         cc = MagicMock()
         cache = {}
 

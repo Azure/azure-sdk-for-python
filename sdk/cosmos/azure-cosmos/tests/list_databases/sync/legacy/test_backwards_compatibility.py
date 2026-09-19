@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Selected v4 session-token compatibility test pinned to the Rust backend."""
+"""Selected legacy session-token compatibility test pinned to the Rust backend."""
 
 import unittest
 import uuid
@@ -32,6 +32,21 @@ class TestBackwardsCompatibility(unittest.TestCase):
         cls.data_client.close()
 
     def test_session_token_compatibility(self):
+        """Passing ``session_token`` to operations that ignore it must not break them.
+
+        Sweeps ``session_token`` through roughly a dozen database and container
+        operations: create, create-if-not-exists, list, query, read, replace
+        and delete.
+
+        Session tokens only mean something for item operations. None of these
+        do anything with the value. The point is that older code which passed
+        it everywhere keeps working: the argument has to be accepted and
+        ignored, not rejected and not forwarded somewhere it would cause a
+        failure.
+
+        The same legacy test is also copied into ``query_databases``, which
+        pins the query call in this sweep.
+        """
         # Source: tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_session_token_compatibility
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
         # Database

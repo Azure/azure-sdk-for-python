@@ -59,7 +59,11 @@ def legacy_deadline_kwargs(kwargs: Any, deadline: Optional[float]) -> dict[str, 
 
 
 async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Optional[float]) -> _T:
-    """Bound async work and drain its cancellation before returning a timeout."""
+    """Wait within the remaining budget, then cancel and await unfinished work.
+
+    Cancellation is cooperative: draining can exceed the deadline if the
+    operation delays or suppresses cancellation.
+    """
     timeout = remaining_timeout(deadline)
     if timeout is None:
         return await operation()
@@ -97,7 +101,7 @@ def deadline_lock(lock: Any, deadline: Optional[float]) -> Iterator[None]:
 
 @asynccontextmanager
 async def async_deadline_lock(lock: Any, deadline: Optional[float]) -> AsyncIterator[None]:
-    """Cancel a timed-out lock waiter; do not leave metadata work running."""
+    """Apply the remaining budget to lock acquisition, not the yielded body."""
     if deadline is None:
         async with lock:
             yield

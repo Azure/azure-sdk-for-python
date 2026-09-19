@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async autoscale-database check, re-run on the rust engine.
+"""The existing legacy async autoscale-database check, re-run on the Rust engine.
 
 Why this file exists: it covers the one combination the other three legacy
 files leave out -- reading an autoscale setting (a ceiling plus a growth step,
@@ -9,7 +9,7 @@ back in different fields from a fixed number, and the async client is a
 separate code path from the sync one, so neither the sync autoscale test nor
 the async fixed-number test covers this case.
 
-What it does: the real v4 test copied from ``tests/test_auto_scale_async.py``,
+What it does: the real legacy test copied from ``tests/test_auto_scale_async.py``,
 changed in one place -- the client is built with ``_backend="rust"``. It
 creates a database with a 5000 RU/s ceiling and a 0% step, reads the setting
 back and checks both values, then does the same through
@@ -17,7 +17,7 @@ back and checks both values, then does the same through
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/aio/test_get_database_throughput_parity_async.py``)
-run the same call on both engines and diff the numbers. This file runs on rust
+run the same call on both engines and diff the numbers. This file runs on Rust
 only.
 
 Self-contained: it creates and deletes its own databases.
@@ -53,6 +53,18 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_autoscale_create_database_async(self):
+        """``get_throughput`` reports back the autoscale settings a database was created with.
+
+        Two databases, one at a 5000 request unit ceiling with a 2 percent
+        increment, one created through ``create_database_if_not_exists`` at
+        9000 and 11 percent.
+
+        Kept here for the read: autoscale is a pair of numbers that must travel
+        together, and the increment percent is the one more easily dropped
+        because it is rarely looked at. Two different pairs mean a result
+        carrying defaults, or values left over from the first database, cannot
+        pass.
+        """
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_database_async
         database_id = None
         try:

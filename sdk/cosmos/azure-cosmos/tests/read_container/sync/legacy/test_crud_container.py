@@ -1,15 +1,15 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 container-read checks, re-run on the rust engine.
+"""The existing legacy container-read checks, re-run on the Rust engine.
 
 Why this file exists: ``ContainerProxy.read`` returns the container's stored
 settings -- its id, its partition key, its indexing policy, and on request its
 storage usage. Customers read those settings to decide how to query the
-container and how much it costs them. If rust returned a different partition
+container and how much it costs them. If Rust returned a different partition
 key path or dropped the indexing policy, application code that branches on
 those fields would take the wrong branch.
 
-What it does: original v4 tests copied from ``tests/test_crud_container.py``,
+What it does: original legacy tests copied from ``tests/test_crud_container.py``,
 changed in one place -- the client is built with ``_backend="rust"``.
 ``test_collection_crud`` creates a container, reads it back and checks the
 indexing mode and partition key survived the round trip.
@@ -20,7 +20,7 @@ counter and a zero-fallback assertion.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``read_container/sync/test_read_container_parity.py``) run the same call on
-both engines and diff the results. This file runs on rust only and reuses
+both engines and diff the results. This file runs on Rust only and reuses
 assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -89,6 +89,20 @@ class TestCRUDContainerOperations(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def test_collection_crud(self):
+        """Reading a container returns its real settings, and reading a deleted one fails cleanly.
+
+        The full legacy lifecycle test, kept here for the read half. After
+        creating a container, reading it must report the indexing mode and the
+        partition key definition that were actually asked for.
+
+        The ending matters most: once the container is deleted, reading it
+        raises with a 404 rather than returning stale properties from a cache.
+        A read layer that keeps serving a container that no longer exists is a
+        correctness bug a customer would hit immediately.
+
+        The same legacy test is also copied into ``list_containers`` and
+        ``query_containers``, each pinning the part of it they own.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_collection_crud
         created_db = self.databaseForTest
         collections = list(created_db.list_containers())
@@ -129,6 +143,21 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
 
     def test_partitioned_collection(self):
+        """Reading a partitioned container returns its partition key, statistics and throughput.
+
+        Creates a container with an explicit hash partition key on ``/id`` and
+        10100 request units, then reads it back asking for both the partition
+        key range statistics and the quota information.
+
+        Four things have to survive that round trip: the partition key path,
+        its kind, the statistics block in the body, and the
+        ``x-ms-resource-usage`` header holding the quota numbers. The header is
+        the easy one to lose, since it travels beside the body rather than in
+        it.
+
+        Throughput is checked separately through ``get_throughput``, which must
+        report the same value the container was created with.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_partitioned_collection
         created_db = self.databaseForTest
 

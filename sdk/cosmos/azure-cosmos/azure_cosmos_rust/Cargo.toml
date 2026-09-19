@@ -20,7 +20,7 @@ crate-type = ["cdylib"]
 [dependencies]
 # PyO3 makes Rust functions Python-callable.
 #
-# `extension-module` : build a Python extension (no link to libpython).
+# `extension-module` : use Python-extension linking behavior.
 # `abi3-py310`      : use the stable ABI from Python 3.10 onward.
 # `generate-import-lib`: support Windows ARM64 builds on an x64 machine.
 pyo3 = { version = "0.22", features = [
@@ -31,33 +31,26 @@ pyo3 = { version = "0.22", features = [
 
 # The workspace pins the driver source so CI needs no neighboring checkout.
 #
-# The `__internal_native_query_plan` feature turns on the driver's local
-# query-plan builder. A query plan is the recipe for how to run a query
-# (which partitions to hit, how to merge results, how to do ORDER BY and
-# aggregates). With it on, the driver builds that plan in-process and only
-# calls the Gateway if the local builder is unavailable; with it off, every
-# query fetches the plan from the Gateway over the network. This is what lets
-# query_items run on the rust engine without that extra round-trip.
-# read_feed_ranges does not use it (listing key-space slices needs no query
-# plan). The `__internal_` prefix marks it as an unstable, not-yet-public
-# driver feature.
+# Enable the driver's internal native query-planning integration. A query plan
+# describes execution across partitions and result combination. This feature
+# alone does not guarantee local planning: the native library must be available,
+# and the query's execution path and plan cache affect whether planning is needed.
+# Keep this feature aligned with the wheel's QueryPlanInterop packaging.
 azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection"] }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 
-# Non-poisoning RwLock for the per-(endpoint, credential) driver cache. Unlike
-# std::sync::RwLock, a panic while a guard is held (e.g. a CosmosDriver::Drop that
-# panics) does NOT poison the lock, so one failed teardown can't turn every later
-# cache access into a process-killing panic. It also has no LockResult to unwrap,
-# which removes the `.unwrap()` panic sites at every lock acquisition.
+# Non-poisoning RwLock for the driver cache (endpoint, credential fingerprint,
+# config fingerprint) and token cache. Lock acquisition returns a guard rather
+# than a LockResult; this does not make arbitrary panics or interrupted mutations safe.
 parking_lot = "0.12"
 
 # Bridges a Rust future to a Python asyncio awaitable, so the async path can hand
 # the event loop something to `await` instead of parking one worker thread per
 # in-flight call. Version tracks pyo3 (0.22). Used by the async entry points in
-# `documents.rs` / `wire.rs`.
+# `documents/` / `wire/`.
 pyo3-async-runtimes = { version = "0.22", features = ["tokio-runtime"] }
 
 # `async-trait` is required to implement the driver/azure_core `TokenCredential`
@@ -67,9 +60,8 @@ async-trait = { workspace = true }
 # Parsing the account endpoint when constructing AccountReference.
 url = { workspace = true }
 
-# Parsing the partition-key header and reading the body id. `serde` (derive)
-# backs the one-field struct that reads only `id` from a write body instead of
-# parsing the whole document.
+# JSON request/response conversion. The body-id helper retains only `id`, but
+# still scans the JSON body rather than stopping at that field.
 serde = { workspace = true }
 serde_json = { workspace = true }
 

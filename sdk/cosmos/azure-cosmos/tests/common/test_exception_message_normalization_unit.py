@@ -206,11 +206,9 @@ def test_message_mentioning_code_without_the_echo_shape_is_untouched():
 # ---------------------------------------------------------------------------
 
 def test_message_without_a_service_tail_is_left_alone():
-    """Client-side errors never carry a diagnostics tail.
+    """The supplied marker-free error strings retain their expected text.
 
-    ``ValueError``\\ s raised before any network call (the
-    ``etag``-without-``match_condition`` gate, for instance) must compare on
-    their full text.
+    Marker matching is textual, not determined by the exception's origin.
     """
     plain = _FakeError("'etag' specified without 'match_condition'.")
     assert _normalize_exception_message(plain) == "'etag' specified without 'match_condition'."

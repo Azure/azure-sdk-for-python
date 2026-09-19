@@ -1,31 +1,14 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Shared check that every Rust result row names one known driver build.
+"""Check consistency and presence of declared driver-commit labels on Rust rows.
 
-Every headline number must be tied to ONE known azure-sdk-for-rust driver build.
-A rust result set is trustworthy only if every rust row carries the same,
-non-empty ``driver_commit``:
+Missing/placeholder labels and multiple distinct labels fail strict mode.
+Rows are classified using their backend labels, not measured execution.
+Non-placeholder strings are accepted without verifying a Git revision or
+the extension's build provenance, so a passing gate is not build attestation.
 
-  * a MISSING commit means the build was never stamped (we cannot say which
-    driver produced the number), and
-  * MORE THAN ONE commit means the run mixed driver builds, so the comparison is
-    not like-for-like.
-
-Either case invalidates a cross-build comparison, so in strict mode (the default)
-the gate FAILS -- the caller exits non-zero -- instead of only printing a warning
-as the tools used to. core-python rows legitimately have no rust driver, so the
-gate is scoped to rust rows only (``config_backend``/``runtime_backend`` contains
-'rust'; 'AsyncRustBackend' matches).
-
-"Missing" covers placeholders as well as blanks. ``perf_config`` stamps the
-literal string ``"unknown"`` when it cannot read a git SHA, so treating that as a
-real commit would let a completely unstamped run report "single rust driver build
-across all rows (OK)" -- the exact claim the gate exists to refuse. Any value in
-``UNSTAMPED_COMMIT_VALUES`` therefore counts as no commit at all.
-
-Reading a historical run that predates driver stamping is still possible: pass
-``--allow-missing-driver-commit`` (or set ``PERF_ALLOW_MISSING_DRIVER_COMMIT=1``) to
-downgrade the gate back to a warning.
+--allow-missing-driver-commit or PERF_ALLOW_MISSING_DRIVER_COMMIT downgrades
+label problems to warnings for historical or intentionally unstamped runs.
 """
 import os
 
@@ -38,7 +21,7 @@ UNSTAMPED_COMMIT_VALUES = frozenset({"", "unknown", "none", "null", "n/a", "na",
 
 
 def is_rust(row):
-    """True when a results row was produced by the Rust backend."""
+    """Classify a row as Rust from its configured/runtime backend labels."""
     b = row.get("config_backend") or row.get("runtime_backend") or ""
     return "rust" in str(b).lower()
 
@@ -48,16 +31,15 @@ def _clean(v):
 
 
 def is_stamped_commit(value):
-    """True when ``value`` actually names a driver build.
+    """Check that a value is nonblank and not a known placeholder.
 
-    A blank field and a placeholder such as ``"unknown"`` mean the same thing --
-    nobody recorded which driver produced the number -- so both are unstamped.
+    This does not verify that it names a commit or the loaded driver build.
     """
     return _clean(value).lower() not in UNSTAMPED_COMMIT_VALUES
 
 
 def collect(rows):
-    """Return (sorted_commits, missing_count, rust_row_count) over rust rows."""
+    """Return (sorted_commits, missing_count, rust_row_count) over Rust rows."""
     commits, missing, n = set(), 0, 0
     for r in rows:
         if not is_rust(r):
@@ -74,9 +56,9 @@ def collect(rows):
 def decide(commits, missing, rust_rows, strict=True):
     """Pure decision + human-readable lines from pre-aggregated commit facts.
 
-    ``commits`` is the sorted list of distinct non-empty rust driver commits,
-    ``missing`` the count of rust rows with no commit, ``rust_rows`` the total
-    rust-row count. Returns (ok, lines). In non-strict mode problems are reported
+    ``commits`` is the sorted list of distinct non-empty Rust driver commits,
+    ``missing`` the count of Rust rows with no commit, ``rust_rows`` the total
+    Rust-row count. Returns (ok, lines). In non-strict mode problems are reported
     but ok stays True.
     """
     lines = [HEADER]

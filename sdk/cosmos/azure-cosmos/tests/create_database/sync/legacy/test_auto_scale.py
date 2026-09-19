@@ -32,6 +32,18 @@ class TestAutoScale(unittest.TestCase):
         cls.key_client.close()
 
     def test_autoscale_create_database(self):
+        """Autoscale throughput settings survive both ways of creating a database.
+
+        Creates one database with a 5000 request unit ceiling and a 2 percent
+        increment, and a second through ``create_database_if_not_exists`` with
+        9000 and 11 percent.
+
+        Both values are read back through ``get_throughput``. Autoscale is
+        described by a pair of numbers that have to travel together, and the
+        increment percent is the one more easily dropped because it is rarely
+        looked at. Using two different pairs means a result carrying defaults,
+        or values left over from the first database, cannot pass.
+        """
         # Source: tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_database
         database_id = "db_auto_scale_" + str(uuid.uuid4())
         try:

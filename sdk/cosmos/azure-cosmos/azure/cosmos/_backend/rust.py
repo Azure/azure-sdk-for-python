@@ -13,10 +13,10 @@ key made from ``(endpoint, credential, config)`` that names *which* rust driver 
 client uses. The compiled ``_rust`` file contains both the binding and the rust
 driver code.
 
-This is one of only two modules allowed to import ``azure.cosmos._rust``
-(a unit test enforces that). The binding is not present until it
-has been built, so the import is guarded; until then, operations raise
-``NotImplementedError`` pointing at the build step.
+This module and its async counterpart load ``azure.cosmos._rust`` for dispatch.
+The import is guarded so the Python package can load without a built extension.
+Missing-extension errors are raised by the selected operation's lookup/preflight;
+legacy migration routing, where allowed, is decided separately.
 """
 from __future__ import annotations
 from dataclasses import replace
@@ -58,7 +58,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 # Paged feeds that take no SQL, so their binding request carries an empty body.
-# Every other paged op is a query and must supply one.
+# Change feed carries mode/start/scope data; the remaining page operations carry SQL.
 _PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 # Imported once when this module loads; not changed afterwards.
@@ -107,9 +107,9 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
     """Adapt the page contract to the binding's current request object.
 
     ``query_items`` and ``query_containers`` carry their SQL and parameters as a
-    JSON body; the parameterless feeds send none. The typed paging fields become
-    the ``x-ms-continuation`` / ``x-ms-max-item-count`` headers the binding
-    forwards to the driver.
+    JSON body; parameterless feeds send none, and change feed carries its
+    mode/start/scope mapping. Continuation and page size replace the corresponding
+    typed query settings and remove matching lowercase header keys when supplied.
     """
     if prepared.op == OP_QUERY_CHANGE_FEED:
         body = json.dumps(prepared.change_feed, separators=(",", ":")).encode("utf-8")
@@ -159,8 +159,8 @@ class RustBackend(RustBackendShared, CosmosBackend):
     several clients with the same settings share a single rust driver; ``close``
     drops this client's reference. Active operations can keep the driver alive
     after the last client closes.
-    Operations route by kind; when the compiled binding is missing, every
-    operation raises ``NotImplementedError``.
+    Missing compiled exports fail at lookup or preflight. Page paths use
+    ``PageNotSupportedByBackendError`` rather than ``NotImplementedError``.
 
     :class:`~azure.cosmos._backend._shared.RustBackendShared` stores common client
     state and registrations. This class builds the driver, sends synchronous
@@ -191,11 +191,10 @@ class RustBackend(RustBackendShared, CosmosBackend):
         On the first operation the binding's ``acquire_driver_handle`` either builds a new
         rust driver for this ``(endpoint, credential, config)`` or, if one already
         exists, bumps its reference count and returns the same handle. Without this,
-        every operation would re-init (churning rust drivers) or two threads racing
-        the first call would each build one. A fast no-lock check for the
-        already-built case, plus a lock with a second check inside, makes the
-        build/ask happen exactly once. Raises ``NotImplementedError`` when the
-        compiled binding is absent, and ``RuntimeError`` once the client is closed.
+        each operation would acquire another native reference. The double-check
+        under the lock shares a successfully stored handle; an acquisition
+        that raises can be attempted again by a later call. The slow path
+        rejects a closed client but does not drain operations racing with close.
         """
         # If the handle is already built, return it without locking.
         if _REQUEST_CONTRACT_ERROR is not None:
@@ -274,21 +273,17 @@ class RustBackend(RustBackendShared, CosmosBackend):
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
-        # Log which backend and op ran, so a migration can confirm from logs that
-        # traffic stays on the Rust path. The handle is omitted (it carries a
-        # credential hash).
+        # Record the selected dispatch before calling it; this is not proof of
+        # native execution or service I/O. Omit the credential-bearing handle.
         _LOGGER.debug(
             "cosmos backend=%s op=%s dispatch=%s",
             BACKEND_NAME_RUST,
             prepared.op,
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
-        # A driver failure that produced no HTTP response at all (a
-        # transport error, a check that failed before sending, or a
-        # timeout before the request went out) is raised as the binding's
-        # DriverTransportError. Translate it to azure-core's
-        # ServiceResponseError so customer error handling and transport
-        # retry policies behave the same as on the legacy path.
+        # Translate the binding's response-less error to ServiceResponseError.
+        # No returned response does not prove that nothing was sent or applied.
+        # This translation does not invoke legacy transport retry policies.
         try:
             raw_response = (
                 binding_function(driver_handle, prepared)
@@ -352,8 +347,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
     def execute_pages(
         self, prepared: PreparedQuery, *, deadline: Optional[float] = None
     ) -> Iterator[QueryPage]:
-        """Yield the one page returned by a ``query_items`` / ``read_all_items``
-        / ``list_databases`` binding call."""
+        """Yield one page from the selected stateless or retained-cursor dispatch."""
         self.validate_page_request(prepared)
         method = get_page_binding_method(
             prepared.op, uses_cursor=prepared.cursor is not None

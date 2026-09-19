@@ -9,7 +9,7 @@ A real container is wired to a fake connection so each test can see what
 the patch sends on. They check two things:
 
 1. When no Rust backend is set, the patch goes to the existing client with
-   the right document, the operations unchanged, the filter, the partition
+   the right item, the operations unchanged, the filter, the partition
    key, and the options.
 2. Routing: plain and If-Match patches use Rust. Unsupported filters raise
    without legacy replay.
@@ -71,7 +71,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
     """When no Rust backend is set, the patch still behaves exactly as before."""
 
     def test_string_item_resolves_to_document_link(self):
-        """A patch by id string targets that document."""
+        """A patch by id string targets that item."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
         proxy.patch_item("patch_item", "a", _OPERATIONS)
@@ -83,7 +83,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         )
 
     def test_dict_item_resolves_to_its_self_link(self):
-        """A patch by item dict targets the document the dict points to."""
+        """A patch by item dict targets the item the dict points to."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         item = {"id": "patch_item", "pk": "a", "_self": "dbs/db/colls/c/docs/rid-abc"}
 
@@ -220,7 +220,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
     and when the existing client is used instead."""
 
     def test_plain_patch_routes_to_backend_with_item_id_and_operations_body(self):
-        """A plain patch goes to the Rust backend with the document id and
+        """A plain patch goes to the Rust backend with the item id and
         the operations as its body; the existing client is not called.
 
         The operations are sent with the driver's wording, so ``incr``
@@ -265,6 +265,13 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         cc.PatchItem.assert_not_called()
 
     def test_version_guarded_patch_uses_rust_without_legacy(self):
+        """With a Rust backend wired, a guarded patch goes to it and never falls through.
+
+        The rest of this file pins the legacy fall-through. This test is the
+        counterpart: once a backend is present, the same guarded call must be
+        executed by that backend, carry ``if-match`` on the wire, and leave
+        ``client_connection.PatchItem`` untouched.
+        """
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend

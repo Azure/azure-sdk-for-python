@@ -8,9 +8,9 @@
 These pin the query paging behavior: ``query_items`` and ``read_all_items`` fetch one page
 at a time through the backend's paged handoff (``execute_pages``), not the
 single-reply path; and the Python-side eligibility gates decide when a page may go
-to the rust backend versus the legacy HTTP path. The old Python SQL-regex scan is
+to the Rust backend versus the legacy HTTP path. The old Python SQL-regex scan is
 gone -- cross-partition shapes (COUNT, ORDER BY, ...) are no longer blocked here;
-the driver's own reply is authoritative. Options the rust page path cannot
+the driver's own reply is authoritative. Options the Rust page path cannot
 represent still fall back to legacy except for database listing and querying,
 which reject unsupported calls without replay. All fakes, no network.
 """
@@ -253,6 +253,27 @@ async def _listing_rows(iterable, is_async):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("timeout", [None, 1, 3.5, 10])
 async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing_client, database_feed, timeout):
+    """Listing databases is lazy, calls the hook once per page, and resumes from a token.
+
+    Runs for all four ways of asking -- ``list_databases`` and
+    ``query_databases`` given its query positionally, as ``None``, or as a
+    dict -- and for several timeouts.
+
+    Building the iterable sends nothing. Taking a page then returns both
+    databases and calls the hook **once for the page**, not once per database,
+    with that page's activity id, charge and diagnostics.
+
+    The second page carries the continuation token back to the backend. The
+    first hook's headers are compared against a copy taken earlier to prove
+    page two did not overwrite page one's record.
+
+    Resuming a fresh iterator from the saved token returns the same page two,
+    which is what makes a stored token useful.
+
+    When a timeout is given, every page is sent a positive remaining budget no
+    greater than it; when it is not, no timeout header is sent at all rather
+    than some invented default. The legacy transport is never touched.
+    """
     _, conn, backend, is_async = listing_client
     hooks = []
     iterable = database_feed(
@@ -309,6 +330,15 @@ async def test_database_feed_public_hook_is_lazy_per_page_and_replayable(listing
 
 @pytest.mark.asyncio
 async def test_database_feed_hook_cannot_mutate_paging_headers(listing_client, database_feed):
+    """A hook that wipes its headers cannot break paging or the recorded response.
+
+    The hook clears the dict it is handed. The continuation token still works
+    and the client's last response headers still hold the real activity id, so
+    the hook was given its own copy rather than the live paging state.
+
+    Without that, a customer writing a hook that edits headers for logging
+    could stop their own enumeration partway through.
+    """
     _, conn, backend, is_async = listing_client
 
     def hook(headers):
@@ -324,6 +354,20 @@ async def test_database_feed_hook_cannot_mutate_paging_headers(listing_client, d
 @pytest.mark.asyncio
 @pytest.mark.parametrize("has_continuation", [False, True])
 async def test_database_feed_hook_includes_empty_successful_pages(listing_client, database_feed, has_continuation):
+    """An empty page still reaches the hook, and only a token means there is more to come.
+
+    The first page comes back successful but empty, in two variants: with and
+    without a continuation token.
+
+    Either way the hook sees that page. A page that cost a request and
+    returned nothing is still worth reporting, since it carries a charge and
+    an activity id.
+
+    What differs is what happens next. With a token, paging continues and
+    picks up the later database; without one, enumeration stops and returns
+    nothing. Emptiness alone must not be read as the end of the feed -- a real
+    account can return an empty page in the middle of a listing.
+    """
     _, _, backend, is_async = listing_client
     hooks = []
     backend._response = BackendResponse(
@@ -354,6 +398,16 @@ async def test_database_feed_hook_includes_empty_successful_pages(listing_client
 @pytest.mark.asyncio
 @pytest.mark.parametrize("later_page", [False, True])
 async def test_database_feed_hook_not_called_on_failed_page(listing_client, database_feed, later_page):
+    """A page that fails does not reach the hook, whether it is the first page or a later one.
+
+    The backend returns 403. The error surfaces with its status, and the hook
+    has been called only for whatever pages genuinely succeeded before it --
+    none in the first case, one in the second.
+
+    The hook reports delivered pages, so calling it for a failure would
+    corrupt a customer's own charge accounting with a page they never got.
+    The failure is also not retried through the legacy transport.
+    """
     _, conn, backend, is_async = listing_client
     hooks = []
     pager = database_feed(response_hook=hooks.append).by_page()
@@ -376,6 +430,16 @@ async def test_database_feed_hook_not_called_on_failed_page(listing_client, data
 @pytest.mark.asyncio
 @pytest.mark.parametrize("error_type", [ValueError, PageNotSupportedByBackendError, asyncio.CancelledError])
 async def test_database_feed_hook_errors_propagate_without_replay(listing_client, database_feed, error_type):
+    """A failing hook is never treated as a reason to retry on the legacy path.
+
+    Three kinds of failure: an ordinary ``ValueError``, a backend capability
+    error, and a cancellation. Each reaches the caller as the exact object
+    raised.
+
+    The page ran once, the legacy transport was not used, and the
+    compatibility fallback counter did not move. Even a capability-shaped
+    exception raised by customer code is propagated, not used to replay a page.
+    """
     _, conn, backend, is_async = listing_client
     error = error_type("hook failure")
     hook = MagicMock(side_effect=error)
@@ -396,6 +460,19 @@ async def test_database_feed_hook_errors_propagate_without_replay(listing_client
 def test_database_feed_rejects_irrelevant_arguments_before_iteration(
     listing_client, database_feed, option, value, use_legacy_backend
 ):
+    """Options that mean nothing for a database feed are rejected at the call, on both backends.
+
+    ``session_token``, ``populate_query_metrics`` and
+    ``availability_strategy`` do not apply to listing or querying databases.
+    Each is refused with a ``TypeError`` naming the option, for every value
+    tried -- including ``None``, since even passing it explicitly is a sign
+    the caller expects it to do something.
+
+    The rejection happens while building the iterable, before any pager
+    exists, and behaves the same whether the client is on Rust or core-python.
+    Accepting and ignoring them would leave a customer believing they had set
+    a session token on a call that never sends one.
+    """
     _, conn, backend, is_async = listing_client
     if use_legacy_backend:
         conn._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
@@ -414,6 +491,13 @@ def test_database_feed_rejects_irrelevant_arguments_before_iteration(
 
 @pytest.mark.parametrize("args", [(2,), (2, False)])
 def test_list_databases_settings_are_keyword_only(listing_client, args):
+    """``list_databases`` takes no positional arguments.
+
+    A positional page size, alone or with a second value, is a ``TypeError``
+    rather than being bound to whichever parameter happens to come first. That
+    keeps the signature free to change without silently changing what existing
+    callers mean.
+    """
     client, _, backend, _ = listing_client
     with pytest.raises(TypeError):
         client.list_databases(*args)
@@ -426,6 +510,15 @@ def test_list_databases_settings_are_keyword_only(listing_client, args):
 async def test_database_feed_capability_errors_never_replay(
     listing_client, database_feed, later_page, error_type
 ):
+    """A backend that cannot serve a database page reports it; it does not fall back to legacy.
+
+    The injected capability error reaches the caller unchanged, on the first
+    page or a later one. This test does not establish item-query routing rules.
+
+    The fallback counter does not move and the legacy transport is untouched.
+    Replaying a partly consumed feed on another backend would re-send pages
+    the caller already has, with tokens the other backend cannot read.
+    """
     _, conn, backend, is_async = listing_client
     hooks = []
     pager = database_feed(response_hook=hooks.append).by_page()
@@ -446,6 +539,15 @@ async def test_database_feed_capability_errors_never_replay(
 
 @pytest.mark.parametrize("read_timeout", [0, 0.5, 30, False, "invalid"])
 def test_database_feed_rejects_per_call_read_timeout(listing_client, database_feed, read_timeout):
+    """``read_timeout`` cannot be set per call on a database feed.
+
+    Every value is refused with a ``TypeError`` naming the option, including
+    ``0`` and ``False``, which a looser check based on truthiness would let
+    through. The read timeout is a client-level transport setting, so
+    accepting it here would imply a per-call control that does not exist.
+
+    Nothing is constructed or sent.
+    """
     _, conn, backend, _ = listing_client
     conn.QueryDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
     conn.ReadDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
@@ -460,6 +562,14 @@ def test_database_feed_rejects_per_call_read_timeout(listing_client, database_fe
 
 @pytest.mark.asyncio
 async def test_database_feed_accepts_unset_read_timeout(listing_client, database_feed):
+    """Passing ``read_timeout=None`` is allowed, because it asks for nothing.
+
+    The counterpart to the rejection test. ``None`` means "not supplied", so
+    it is accepted and paging works normally with the other settings intact.
+
+    This matters for callers that pass every option through from their own
+    config, most of them unset; they should not have to strip the Nones out.
+    """
     _, _, backend, is_async = listing_client
     pager = database_feed(read_timeout=None, max_item_count=1).by_page()
     await _next_listing_page(pager, is_async)
@@ -478,6 +588,20 @@ async def test_database_feed_accepts_unset_read_timeout(listing_client, database
     ],
 )
 def test_database_feed_gate_only_accepts_representable_timeouts(is_query, timeout, supported):
+    """The routing gate only sends a page to Rust when the timeout can be represented.
+
+    Accepted: no timeout at all, and ordinary positive numbers.
+
+    Rejected: sub-second values, zero and negatives, ``True``/``False`` (bools
+    are integers in Python and would otherwise pass as 1 and 0), a numeric
+    string, ``nan`` and both infinities, and integers at or beyond the 64-bit
+    range -- including one far too large for any native integer.
+
+    A timeout the driver cannot express is not a small problem: it could be
+    truncated or wrapped into a completely different deadline. Declining to
+    route keeps those calls on the legacy path instead. Checked for both
+    listing and querying databases.
+    """
     arguments = {
         "options": {"timeout": timeout},
         "kwargs": {"timeout": timeout},
@@ -503,6 +627,18 @@ def test_database_feed_gate_only_accepts_representable_timeouts(is_query, timeou
     ],
 )
 def test_database_feed_timeout_must_match_the_forwarded_option(options, kwargs, supported):
+    """A page only routes to Rust when the timeout in the options is the one being forwarded.
+
+    Routing is allowed when the options carry the timeout and the keyword
+    arguments do not contradict it. It is refused when the timeout appears
+    only in the keyword arguments, when the two disagree, and when the keyword
+    arguments explicitly unset it.
+
+    The gate inspects the options, but the driver is handed the keyword
+    arguments. If they can differ, the value checked is not the value used --
+    so the honest response is to decline rather than send a request under a
+    deadline nobody verified.
+    """
     assert can_use_rust_backend_for_list_databases_page(
         options=options, kwargs=kwargs, is_query_plan=False,
         resource_type=http_constants.ResourceType.Database,
@@ -511,6 +647,13 @@ def test_database_feed_timeout_must_match_the_forwarded_option(options, kwargs, 
 
 @pytest.mark.parametrize("is_query", [False, True], ids=["list", "query"])
 def test_container_feeds_support_page_timeouts(is_query):
+    """Container listing and querying accept a page timeout too.
+
+    The same check as for databases, one resource level down, for both listing
+    and querying containers. Container feeds are a separate routing gate, so
+    without this a timeout could be supported for databases and quietly
+    unsupported for containers.
+    """
     arguments = {
         "path": "/dbs/db1/colls/",
         "options": {"timeout": 10},
@@ -548,6 +691,20 @@ def _configure_legacy_database_feed(conn, is_async):
 async def test_database_feed_timeout_resets_per_page_and_replay(
     listing_client, database_feed, monkeypatch, use_legacy
 ):
+    """``timeout`` bounds each page, so time spent in the caller's own code never counts.
+
+    The clock jumps 100 seconds three times: after building the iterable,
+    between two pages, and before resuming from a token. With a 3.5 second
+    timeout, none of that causes a failure.
+
+    This is the difference between a per-page budget and a whole-enumeration
+    one. A customer looping over databases and doing real work for each must
+    not have iteration die because their processing took longer than the
+    timeout. Building the iterable does not start any clock either.
+
+    Every page is sent the full 3.5 seconds, and the behaviour is the same on
+    Rust and core-python -- each staying on its own transport.
+    """
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
@@ -580,6 +737,17 @@ async def test_database_feed_timeout_resets_per_page_and_replay(
 async def test_database_feed_retains_existing_operation_scope_checks(
     listing_client, database_feed, monkeypatch, use_legacy, fetch_first
 ):
+    """Asking for an operation-wide timeout brings back the stricter, older behaviour.
+
+    Per-page budgets are the default, but a caller can request that the
+    timeout cover the whole operation. With that set, the clock passing the
+    deadline ends the enumeration with a timeout error -- whether or not a
+    page was fetched first.
+
+    Both backends behave the same and neither crosses to the other's
+    transport. The fallback counter does not move: a timeout is the caller's
+    deadline expiring, not a sign the backend was incapable.
+    """
     _, conn, backend, is_async = listing_client
     if use_legacy:
         _configure_legacy_database_feed(conn, is_async)
@@ -608,6 +776,18 @@ async def test_database_feed_retains_existing_operation_scope_checks(
 
 @pytest.mark.asyncio
 async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_client, database_feed, monkeypatch):
+    """An empty page that overruns the budget ends the call instead of quietly paging on.
+
+    The backend returns an empty page with a continuation token, taking 4
+    seconds against a 3.5 second budget.
+
+    Empty pages are consumed internally, so the loop would naturally fetch the
+    next one. It must check the budget first: a run of slow empty pages would
+    otherwise keep a timed-out enumeration going indefinitely, invisible to
+    the caller because no rows are being produced.
+
+    Exactly one page is fetched, and the fallback counter does not move.
+    """
     _, conn, backend, is_async = listing_client
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
@@ -635,6 +815,16 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget(listing_c
 
 @pytest.mark.asyncio
 async def test_database_feed_driver_timeout_propagates_without_replay(listing_client, database_feed, monkeypatch):
+    """A timeout raised by the driver reaches the caller and is not retried on legacy.
+
+    The driver itself raises ``CosmosClientTimeoutError``. It surfaces as-is,
+    the hook is never called since no page was delivered, the page ran once,
+    and the fallback counter does not move.
+
+    A timeout means the deadline passed, not that the backend was incapable.
+    Retrying on the legacy path would ignore the deadline the caller set and
+    double the work.
+    """
     _, conn, backend, is_async = listing_client
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
@@ -672,6 +862,19 @@ async def test_database_feed_driver_timeout_propagates_without_replay(listing_cl
 async def test_database_feed_unsupported_public_options_never_fall_back(
     listing_client, database_feed, kwargs
 ):
+    """Options the Rust database feed cannot honour fail loudly instead of falling back.
+
+    Covers a sub-second timeout, a connection timeout, overriding the user
+    agent or API version header, the raw request and response hooks, and an
+    unrecognised keyword.
+
+    These database feeds reject the unsupported option with a
+    ``NotImplementedError`` naming the legacy Python path. The hook is never
+    called, neither transport is used, and the fallback counter does not move.
+
+    ``list_databases`` rejects a bad timeout even earlier, while building the
+    iterable, since it has no query to defer.
+    """
     _, conn, backend, is_async = listing_client
     hook = MagicMock()
     fallback_before = rust_compatibility_fallback_count()
@@ -693,6 +896,15 @@ async def test_database_feed_unsupported_public_options_never_fall_back(
 
 @pytest.mark.asyncio
 async def test_query_databases_old_sql_mode_does_not_fall_back(listing_client):
+    """An unsupported internal query mode fails validation rather than rerouting.
+
+    With the connection switched to the old SQL query compatibility mode, the
+    existing format validator rejects the call before anything is dispatched.
+
+    Nothing is sent on either transport and the fallback counter does not
+    move: a rejected format is a programming error, not a sign the Rust
+    backend was incapable of the work.
+    """
     client, conn, backend, is_async = listing_client
     conn._query_compatibility_mode = conn._QueryCompatibilityMode.SqlQuery
     fallback_before = rust_compatibility_fallback_count()
@@ -706,6 +918,13 @@ async def test_query_databases_old_sql_mode_does_not_fall_back(listing_client):
 
 @pytest.mark.parametrize("value", [None, False, True])
 def test_query_databases_rejects_old_positional_query_metrics(value):
+    """The old positional call shape is no longer accepted.
+
+    ``query_databases`` once took several positional arguments ending in a
+    query-metrics flag. Passing them now raises ``TypeError`` instead of being
+    silently reinterpreted under the current signature, which would bind those
+    values to entirely different parameters.
+    """
     client = object.__new__(CosmosClient)
     client.client_connection = MagicMock()
     with pytest.raises(TypeError):
@@ -724,6 +943,14 @@ def test_query_databases_rejects_old_positional_query_metrics(value):
     ],
 )
 def test_query_databases_requires_query_and_keyword_only_settings(client_type, args):
+    """The query is required, and everything after it must be passed by name.
+
+    No arguments at all fails, and so does any call that passes parameters,
+    the cross-partition flag, or a page size positionally after the query.
+
+    Checked on both the sync and async clients so the two signatures cannot
+    drift apart. Nothing is dispatched and the hook is never called.
+    """
     client = object.__new__(client_type)
     client.client_connection = MagicMock()
     hook = MagicMock()
@@ -737,6 +964,16 @@ def test_query_databases_requires_query_and_keyword_only_settings(client_type, a
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 @pytest.mark.parametrize("query_by_keyword", [False, True])
 def test_query_databases_accepts_positional_or_named_query_with_keyword_settings(client_type, query_by_keyword):
+    """The query may be given positionally or by name, and both build the same request.
+
+    The positive counterpart to the signature tests. Either way the query and
+    its parameters are packed into one payload and the page size is translated
+    to its wire name.
+
+    The cross-partition flag is absent from the options. Database queries are
+    never partitioned, so sending it would be meaningless -- and it is
+    rejected outright if a caller passes it.
+    """
     client = object.__new__(client_type)
     client.client_connection = MagicMock()
     query = "SELECT * FROM root r WHERE r.id = @id"
@@ -759,6 +996,16 @@ def test_query_databases_accepts_positional_or_named_query_with_keyword_settings
 def test_query_databases_rejects_cross_partition_option_before_iteration(
     listing_client, value, query, use_legacy_backend
 ):
+    """``enable_cross_partition_query`` is refused for database queries on both backends.
+
+    Databases are not partitioned, so the option has no meaning here. It is
+    rejected with a ``TypeError`` naming it, for every value including
+    ``None`` and ``False``, with or without a query, on Rust and core-python
+    alike.
+
+    Rejecting even ``False`` is deliberate: passing it at all means the caller
+    thinks the setting applies. Nothing is constructed or sent.
+    """
     client, conn, backend, is_async = listing_client
     if use_legacy_backend:
         conn._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
@@ -793,6 +1040,23 @@ def test_query_databases_rejects_cross_partition_option_before_iteration(
 async def test_all_rust_feed_operations_expose_diagnostics(
     monkeypatch, is_async, resource_type, path, body_key, query, op
 ):
+    """Every Rust feed operation reports diagnostics everywhere, and prepares no legacy headers.
+
+    Runs all six paged operations -- listing and querying databases,
+    containers and items -- sync and async, and checks each is tagged with its
+    own operation identity.
+
+    The diagnostics string has to reach all four places a customer might look:
+    the connection's last response headers, the caller's headers dict, the
+    internal capture, and the response hook. Reaching only some would make
+    diagnostics appear or vanish depending on how the call was made.
+
+    The legacy header machinery -- header building, session tokens,
+    authorization, request id generation -- is replaced with something that
+    fails if touched. The Rust path builds its own requests, and quietly
+    running the legacy preparation as well would mean signing and tagging
+    every request twice.
+    """
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
     diagnostics = f"activity={op} requests=1"
@@ -1047,6 +1311,14 @@ def test_rust_feed_prep_has_one_paging_authority():
 
 @pytest.mark.parametrize("count", ["", "not-an-integer", "2.5"])
 def test_rust_feed_rejects_invalid_raw_page_size(count):
+    """A page size supplied as a raw header must be a whole number.
+
+    Callers can set paging headers directly. An empty string, a word, and
+    ``"2.5"`` are each rejected with a message naming the header.
+
+    The value becomes a native integer, so a non-integer would otherwise fail
+    somewhere deep in the driver with no hint of which header caused it.
+    """
     with pytest.raises(ValueError, match="x-ms-max-item-count must be an integer"):
         build_list_databases_prepared_query(
             options={"initialHeaders": {"X-MS-MAX-ITEM-COUNT": count}}, req_headers={},
@@ -1055,6 +1327,25 @@ def test_rust_feed_rejects_invalid_raw_page_size(count):
 
 @pytest.mark.parametrize("typed", [False, True])
 def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
+    """Header names match regardless of case, and typed settings outrank raw headers.
+
+    The caller supplies upper-case headers over lower-case defaults. Matching
+    is case-insensitive, so the caller's value wins each time rather than both
+    surviving as two spellings of one header.
+
+    Paging headers are consumed rather than forwarded: continuation and page
+    size become typed fields and disappear from the wire headers. When typed
+    values are also given they take precedence -- including ``maxItemCount=0``,
+    which a truthiness check would wrongly discard in favour of the header.
+
+    The typed throughput bucket likewise beats the raw header. Options that
+    belong to other resource kinds, such as a container id or an item session
+    token, are ignored here, while a genuine raw session token and activity id
+    pass through.
+
+    Neither the caller's options nor the defaults dict is modified, so a
+    caller reusing either across calls is safe.
+    """
     options = {
         "initialHeaders": {
             "X-MS-CONTINUATION": "caller-token", "X-MS-MAX-ITEM-COUNT": "7",
@@ -1087,6 +1378,21 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("route", ["legacy", "capability-fallback", "ineligible", "query-plan"])
 async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_async, route):
+    """Whenever a query does end up on the legacy path, it is prepared exactly as before.
+
+    Four ways to get there: a legacy backend, a backend that rejects the page
+    shape, an option the Rust path cannot represent, and a query plan call.
+
+    In every case the legacy request is built once -- not zero times, which
+    would send an unsigned request, and not twice, which would mean the work
+    was done eagerly and then repeated. The caller's own header survives and
+    an activity id is attached.
+
+    Session token handling runs for real queries but is skipped for query plan
+    calls, which do not carry one. Preparing legacy headers is only skipped
+    when the Rust path actually serves the request, so falling back must not
+    leave a request half-prepared.
+    """
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
     backend = backend_type(BackendResponse(status_code=200, body=b'{"Documents":[]}'))
@@ -1143,7 +1449,7 @@ def test_list_databases_gate_rejects_non_read_feed_shapes(options, is_query_plan
 def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepresentable_options():
     """Sync query eligibility gate. Cross-partition queries (including COUNT and
     ORDER BY) are now eligible because the old Python SQL-regex scan was removed --
-    the driver's reply decides whether it can run them. But options the rust page
+    the driver's reply decides whether it can run them. But options the Rust page
     path cannot represent (``enableCrossPartitionQuery=False``, a ``feed_range``, a
     MultiHash partition key, ``read_timeout``, ``availability_strategy``, full-text
     score scope, query advice) still block it and keep the query on the legacy path.
@@ -1281,7 +1587,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
 
 
 def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
-    """Sync query page. A rust-served page builds the right ``PreparedQuery`` (op,
+    """Sync query page. A Rust-served page builds the right ``PreparedQuery`` (op,
     container link, partition-key header, continuation, max item count, forwarded
     excluded-locations and timeout), returns the parsed Documents, decodes the
     index-utilization header, and updates both ``response_headers`` and the response
@@ -1435,7 +1741,7 @@ def test_async_query_backend_page_builds_prepared_request_and_updates_headers():
 
 def test_async_query_backend_eligibility_honors_unsupported_request_options():
     """Async query eligibility gate: an unrepresentable option (``populateQueryAdvice``)
-    blocks the rust page path on the async connection too.
+    blocks the Rust page path on the async connection too.
     """
     eligibility = can_use_rust_backend_for_query_page
 
@@ -1451,9 +1757,10 @@ def test_async_query_backend_eligibility_honors_unsupported_request_options():
 
 def test_sync_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
     """Sync read_all_items eligibility gate. A plain document read-feed is eligible,
-    but unsupported knobs each fall back to legacy: query metrics,
-    ``availability_strategy``, ``read_timeout``, change-feed state, a ``feed_range``,
-    a specific partition-key-range id, query-plan calls, and non-document resources.
+    but unsupported options each fall back to legacy: a custom user agent header,
+    query metrics, ``availability_strategy``, ``read_timeout``, change-feed state,
+    a ``feed_range``, a specific partition-key-range id, query-plan calls, and
+    resources that are not documents.
     """
     eligibility = can_use_rust_backend_for_read_all_items_page
 
@@ -2081,6 +2388,19 @@ def test_list_databases_backend_rejects_unrepresentable_options(monkeypatch, opt
     ],
 )
 def test_list_databases_rejection_categories_are_explicit(monkeypatch, is_async, options, kwargs):
+    """Each kind of unsupported listing call gets one clear, actionable error.
+
+    Five categories: a sub-second timeout, a connection timeout, an unknown
+    keyword, change feed state, and an API version override.
+
+    All raise ``NotImplementedError`` naming ``list_databases``, and the
+    message tells the customer what to do -- configure it when constructing
+    the client -- and states plainly that the call will not be sent through
+    the legacy Python path.
+
+    That second half matters because database listing is the one feed that
+    never falls back. Nothing is prepared and the legacy transport is unused.
+    """
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
     conn._backend = backend_type(BackendResponse(status_code=200))
@@ -2107,6 +2427,13 @@ def test_list_databases_rejection_categories_are_explicit(monkeypatch, is_async,
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 @pytest.mark.parametrize("read_timeout", [0, 0.5, 30, False, "invalid"])
 def test_public_list_databases_rejects_per_call_read_timeout(client_type, read_timeout):
+    """``read_timeout`` cannot be set per call on the public ``list_databases``.
+
+    The same rule as the internal feed, checked on the public surface of both
+    the sync and async clients so they cannot drift apart. Every value is
+    refused by name, including ``0`` and ``False``, which a truthiness check
+    would let slip through. Nothing is dispatched.
+    """
     client = object.__new__(client_type)
     client.client_connection = MagicMock()
     hook = MagicMock()
@@ -2117,6 +2444,12 @@ def test_public_list_databases_rejects_per_call_read_timeout(client_type, read_t
 
 
 def test_public_list_databases_accepts_unset_read_timeout(listing_client):
+    """``read_timeout=None`` is accepted and leaves the other settings intact.
+
+    ``None`` means "not supplied", so it is allowed. The page size still
+    reaches the pager's options, and building the iterable sends nothing --
+    the call is lazy either way.
+    """
     client, _, backend, _ = listing_client
     result = client.list_databases(max_item_count=1, read_timeout=None)
     assert result.by_page().state.config.options["maxItemCount"] == 1
@@ -2125,6 +2458,18 @@ def test_public_list_databases_accepts_unset_read_timeout(listing_client):
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
 def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
+    """A capability error part way through a listing is reported, never replayed on legacy.
+
+    The backend fails either on the first page or on the second, after one
+    database has already been handed to the caller.
+
+    Either way the error surfaces and the legacy transport is never used. The
+    mid-enumeration case is the dangerous one: replaying there would re-fetch
+    databases the caller already has, and the continuation token confirms the
+    second attempt really was a continuation rather than a fresh start.
+
+    The fallback counter does not move, since nothing was rerouted.
+    """
     class FailingBackend(_SequencedSyncBackend):
 
         def execute_pages(self, prepared, *, deadline=None):
@@ -2157,6 +2502,16 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
 def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch, fail_on_page):
+    """The async listing behaves exactly like the sync one when a page is unsupported.
+
+    Same scenario through the async client: fail on the first page or after
+    one database has been delivered. The error surfaces, the legacy transport
+    stays unused, the retry carries the continuation token, and the fallback
+    counter does not move.
+
+    Kept as a separate test because async paging is driven by different
+    machinery, and a fallback could easily be reintroduced on one side only.
+    """
     class FailingBackend(_SequencedAsyncBackend):
 
         async def execute_pages(self, prepared, *, deadline=None):
@@ -2402,7 +2757,7 @@ def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed(mo
 
 def test_sync_read_all_backend_page_empty_container(monkeypatch):
     """Sync read_all_items on an empty (or fully-drained) container. Cross-partition
-    read_all is routed through the rust query-page path (``SELECT * FROM root r``) and
+    read_all is routed through the Rust query-page path (``SELECT * FROM root r``) and
     still finalizes normally: empty ``Documents`` array, header and session
     propagation, and the response hook fired exactly once.
     """
@@ -2750,7 +3105,7 @@ def test_async_read_all_legacy_fallback_updates_session(monkeypatch):
     """Async twin of the legacy-fallback session-update test. The async legacy
     read-feed branch already called ``_UpdateSessionIfRequired`` before this
     migration; this pins it so a future refactor cannot silently drop the session
-    update on the async fall-back path, keeping sync, async, and both rust paths
+    update on the async fall-back path, keeping sync, async, and both Rust paths
     consistent about advancing the session token.
     """
     async def _run() -> None:

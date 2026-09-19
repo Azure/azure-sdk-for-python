@@ -13,7 +13,7 @@ the divergence is *surfaced* (a WARNING is logged naming both values) rather tha
 silently swallowed, and that the first caller's values actually win.
 
 Pure unit tests: the constructor starts no thread until the bridge is used, so no
-event loop, network, emulator, or rust binding is required.
+event loop, network, emulator, or Rust binding is required.
 """
 from __future__ import annotations
 

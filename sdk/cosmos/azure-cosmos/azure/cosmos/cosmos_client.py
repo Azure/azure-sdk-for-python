@@ -329,9 +329,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
-        # Item operations get the backend directly through _item_context. Every
-        # other kind of operation still reaches it through this connection, so
-        # the backend is attached here too.
+        # Retained item/feed paths use _item_context directly. Attach the backend
+        # here for coordinators that still depend on the legacy connection.
         self.client_connection._backend = self._backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:

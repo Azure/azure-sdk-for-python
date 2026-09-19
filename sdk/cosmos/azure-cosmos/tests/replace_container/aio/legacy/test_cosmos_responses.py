@@ -14,6 +14,12 @@ class TestCosmosResponsesAsync(AsyncReplacementCase):
         return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
 
     async def test_replace_container_headers_async(self):
+        """``replace_container`` with ``return_properties`` returns populated headers.
+
+        The same return-shape rule as create, on the replace path: the second
+        half of the returned pair carries the response headers a customer reads
+        the request unit charge from, and it must not be empty.
+        """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_replace_container_headers_async
         first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))

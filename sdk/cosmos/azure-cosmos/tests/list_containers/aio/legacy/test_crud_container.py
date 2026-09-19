@@ -1,24 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async container-listing checks, re-run on the rust engine.
+"""Copied legacy container lifecycle assertions with _backend="rust".
 
-The async twin of ``list_containers/sync/legacy/test_crud_container.py``. See
-that file for why this operation matters and why reading only
-``DatabaseProxy.list_containers`` makes it look unmigrated when it is not.
+This aio copy retains the source assertions and owns its setup database.
+Method-level Source comments identify the originals. Cleanup is registered
+for the owned resources, but service failures can still prevent deletion.
 
-What differs from the sync copy: the pager is drained with an async
-comprehension rather than ``list()``, which matters here because the HTTP call
-happens on drain, not when the method returns.
+The listing assertion checks a count increase after creation; the filtered
+query assertion checks that results are nonempty. Neither is exhaustive
+paging coverage or proof of each internal routing step. Lazy results are
+consumed before assertions.
 
-The file name deliberately drops the ``_async`` suffix the source carries. The
-parity reporter pairs a legacy copy to its original on the file name with any
-trailing ``_async`` stripped, and decides sync-vs-async from the ``/aio/`` path
-segment. The class and method names keep their ``_async`` suffix, matching the
-source exactly.
-
-Run with::
-
-    pytest --noconftest tests/list_containers/aio/legacy/test_crud_container.py -v
+Separate parity tests compare backends. This file runs its copied
+assertions with a Rust-selected client only.
 """
 import os
 import unittest
@@ -63,6 +57,20 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert inst.status_code == status_code
 
     async def test_collection_crud_async(self):
+        """Container listing stays accurate across a create and a delete.
+
+        The full legacy lifecycle test, kept here for the listing half. It
+        counts containers, creates one, counts again and expects exactly one
+        more, then deletes it and confirms the container is really gone by
+        reading it and getting a 404.
+
+        The count comparison is the point: a listing that caches, pages badly,
+        or silently truncates would still return a plausible-looking list, and
+        only counting before and against after catches it.
+
+        The same legacy test is also copied into ``query_containers`` and
+        ``read_container``, each pinning the part of it they own.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_collection_crud_async
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]

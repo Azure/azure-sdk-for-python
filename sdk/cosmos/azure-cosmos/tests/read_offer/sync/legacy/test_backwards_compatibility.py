@@ -1,25 +1,25 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 ``test_offer_methods`` check, re-run on the rust engine.
+"""The existing legacy ``test_offer_methods`` check, re-run on the Rust engine.
 
 Why this file exists: ``get_throughput`` hands the customer an object whose
 type name changed over time. The class was renamed from ``Offer`` to
 ``ThroughputProperties``, but the old ``Offer`` name was kept as an alias so
 customer code written years ago (``isinstance(result, Offer)``) still works.
 Old code depending on that alias must not break when a resource is read
-through the new rust engine.
+through the new Rust engine.
 
-What it does: it is the real v4 test copied verbatim from
+What it does: it is the real legacy test copied verbatim from
 ``tests/test_backwards_compatibility.py``, changed in exactly one place --
 the client is built with ``_backend="rust"`` -- so the same assertions now
-run against the rust path. It checks that ``get_throughput`` still returns an
+run against the Rust path. It checks that ``get_throughput`` still returns an
 object that is BOTH named ``ThroughputProperties`` AND an instance of
-``Offer``. Without this copy, a rust return-type regression (a customer
+``Offer``. Without this copy, a Rust return-type regression (a customer
 unpacking the wrong object) would slip through.
 
 This is NOT the side-by-side parity comparison. The parity tests
 (``read_offer/sync/test_read_offer_parity.py``) run the same call on both
-engines and diff the numbers. This file runs on rust only; the core-python
+engines and diff the numbers. This file runs on Rust only; the core-python
 side of the contract is already guaranteed by the original test in
 ``tests/``. Together: parity catches value drift (wrong RU/s), this catches
 contract drift (wrong return type) by reusing a check the team already
@@ -72,6 +72,19 @@ class TestBackwardsCompatibility(unittest.TestCase):
             pass
 
     def test_offer_methods(self):
+        """``get_throughput`` returns an object that answers to both its old and new type names.
+
+        The class was renamed from ``Offer`` to ``ThroughputProperties``, and
+        the old name was kept as an alias so existing code does not break.
+
+        Checked for a database and a container: the result must report as
+        ``ThroughputProperties`` and still pass an ``isinstance`` check against
+        ``Offer``.
+
+        Customer code written years ago may still test for ``Offer``. Returning
+        a plain new type would compile and run, then silently take the wrong
+        branch in that code.
+        """
         # Source: tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_offer_methods
         database_offer = self.databaseForTest.get_throughput()
         container_offer = self.containerForTest.get_throughput()

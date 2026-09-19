@@ -32,7 +32,7 @@ operations do not share:
 
 What this file pins for async ``patch_item``:
 
-* **Baseline.** A single ``set`` against an existing document.
+* **Baseline.** A single ``set`` against an existing item.
 * **patch operators.** ``set``, ``add``, ``replace``, ``remove``,
   ``incr``, a nested path, and a multi-operation program applied atomically.
 * **header-bearing kwargs**, one per test: ``pre_trigger_include``,
@@ -117,8 +117,8 @@ def container_with_trigger(container_for):
     Trigger tests are only meaningful against a trigger that actually exists.
     Naming a non-existent trigger merely proves both backends can produce *an*
     error, which passes even when the feature is entirely broken. This trigger
-    stamps a field onto the document the service is about to write, so its
-    effect is visible in the stored document and the test can prove the trigger
+    writes a field onto the item the service is about to write, so its
+    effect is visible in the stored item and the test can prove the trigger
     ran rather than that it was merely accepted.
     """
     container_for.scripts.create_trigger({
@@ -143,9 +143,9 @@ def container_with_trigger(container_for):
 # Each backend seeds and patches its OWN row (a fresh id under the same
 # partition key) so the two runs never race and neither observes the other's
 # writes. The reported parity contract is the *patch half*; the seed write only
-# exists to give each backend a document to modify.
+# exists to give each backend an item to modify.
 
-# The seed document carries one field per operator exercised below, so a single
+# The seed item carries one field per operator exercised below, so a single
 # shape works for every test in the file and the patch programs stay readable.
 _SEED_TEMPLATE = {
     "pk": "customerA",
@@ -157,7 +157,7 @@ _SEED_TEMPLATE = {
 
 
 def _seed_document(item_id: str) -> dict:
-    """Build the document a test patches, with a caller-chosen id."""
+    """Build the item a test patches, with a caller-chosen id."""
     seeded = dict(_SEED_TEMPLATE)
     seeded["id"] = item_id
     return seeded
@@ -217,13 +217,13 @@ async def test_async_baseline_set(container_for):
 #
 # The patch body is a program, so each operator is its own wire shape. A binding
 # that mishandled one operator while forwarding the rest would look healthy on
-# the baseline and corrupt customer documents in production, which is why these
+# the baseline and corrupt customer items in production, which is why these
 # are pinned individually rather than as one combined program.
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
 async def test_async_op_add_new_field(container_for):
-    """``add`` introduces a field the seed document does not have."""
+    """``add`` introduces a field the seed item does not have."""
     cmp = await _run_patch(container_for, [{"op": "add", "path": "/added", "value": "x"}],
                            summary="add new field")
     cmp.assert_functional_parity()
@@ -317,8 +317,8 @@ async def test_async_multiple_operations_applied_in_order(container_for):
 async def test_async_pre_trigger_include(container_with_trigger):
     """Baseline call plus ``pre_trigger_include`` naming a trigger that exists.
 
-    Asserts more than header forwarding: the trigger stamps a field onto the
-    document, so a passing run proves the trigger actually executed rather than
+    Asserts more than header forwarding: the trigger writes a field onto the
+    item, so a passing run proves the trigger actually executed rather than
     that the request was merely accepted.
     """
     cmp = await _run_patch(container_with_trigger, [{"op": "set", "path": "/n", "value": 2}],
@@ -398,7 +398,7 @@ async def test_async_throughput_bucket(container_for):
                          "bandwidth on an opt-out that silently does nothing.")
 @pytest.mark.asyncio
 async def test_async_no_response(container_for):
-    """``no_response=True`` -- the service must not echo the document back.
+    """``no_response=True`` -- the service must not echo the item back.
 
     Changes the shape of the return value rather than just a header, so it is
     the kwarg most likely to expose a helper divergence between sync and async.
@@ -445,7 +445,7 @@ async def test_async_timeout(container_for):
 async def test_async_filter_predicate_matching(container_for):
     """a ``filter_predicate`` whose condition holds lets the patch through.
 
-    This is a conditional update expressed as SQL against the stored document,
+    This is a conditional update expressed as SQL against the stored item,
     independent of the etag mechanism. The seed sets ``n = 1``, so the predicate
     matches and the patch must apply on both backends.
     """
@@ -537,7 +537,7 @@ async def test_async_stale_etag_raises_precondition_failed(container_for):
     """a stale ``etag`` with ``IfNotModified`` must fail the patch on both.
 
     This is the optimistic-concurrency contract customers rely on for
-    read-modify-write loops. The document is deliberately modified after its
+    read-modify-write loops. The item is deliberately modified after its
     etag is captured, so the etag presented to ``patch_item`` no longer matches
     the stored one and the service must reject the write rather than silently
     overwrite a concurrent update.
@@ -633,7 +633,7 @@ async def test_async_etag_without_match_condition_raises_value_error(container_f
 async def test_async_invalid_patch_path_raises(container_for):
     """a patch against a path that cannot be resolved must fail on both.
 
-    ``replace`` requires an existing path, so replacing a field the document
+    ``replace`` requires an existing path, so replacing a field the item
     does not have is a service-side error. Both backends must surface it as the
     same typed exception rather than one succeeding silently.
     """

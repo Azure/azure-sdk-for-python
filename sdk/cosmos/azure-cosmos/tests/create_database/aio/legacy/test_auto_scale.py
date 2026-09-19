@@ -31,6 +31,18 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_autoscale_create_database_async(self):
+        """Autoscale throughput settings survive both ways of creating a database.
+
+        Creates one database with a 5000 request unit ceiling and a 2 percent
+        increment, and a second through ``create_database_if_not_exists`` with
+        9000 and 11 percent.
+
+        Both values are read back through ``get_throughput``. Autoscale is
+        described by a pair of numbers that have to travel together, and the
+        increment percent is the one more easily dropped because it is rarely
+        looked at. Using two different pairs means a result carrying defaults,
+        or values left over from the first database, cannot pass.
+        """
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_database_async
         database_id = None
         try:

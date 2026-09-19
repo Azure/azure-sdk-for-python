@@ -2,21 +2,22 @@
 // Licensed under the MIT License.
 
 //! Shared request and response translation between Python and the Rust driver.
-//! Operation-specific execution lives in `databases`, `items`, `query`,
-//! `feed_range`, and `offers`; this module owns the behavior all five families need:
+//! Operation-specific execution lives in the sibling operation modules; shared
+//! helpers cover the following boundaries:
 //!
 //!   * Request (down): look up the rust driver by handle, parse the container
-//!     link and partition key, sort the customer's headers into the fields the
-//!     driver takes as typed options vs. a plain header pass-through, build the
-//!     operation options, then run the operation on the shared Tokio runtime.
+//!     link and partition key where needed, combine typed settings with prepared
+//!     headers, and build driver operation options. Driver-backed runners execute
+//!     on the binding's shared Tokio runtime.
 //!   * Reply (up): turn the driver's response -- or an error that still carries a
 //!     wire response, like a 404/409 -- into the 5-tuple `BackendResponse` the
-//!     Python parser reads; copy every response header into a Python dict keyed by
-//!     the real `x-ms-...` wire names; and map a response-less failure to a typed
-//!     error the Python layer converts to `ServiceResponseError`.
+//!     Python parser reads. Header conversion uses the driver's `to_raw_headers`,
+//!     not an unmodified HTTP header collection. Response-less driver errors can
+//!     become the typed error Python converts to `ServiceResponseError`; local
+//!     validation and binding timeouts have separate error paths.
 //!
-//! Keeping this behavior here prevents operation families from implementing
-//! header mapping, error mapping, and response conversion differently.
+//! These helpers centralize common conversions; operation-specific handling such
+//! as metadata tuples and retained-cursor continuation headers remains separate.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
 //! `documents/`, `runtime.rs`, and the Python `_backend` / `_helpers`
@@ -25,7 +26,7 @@
 //!   * binding = this compiled `_rust` extension.
 //!   * rust driver = the `CosmosDriver` driver. It owns connection pooling,
 //!     request signing, and choosing which region to talk to.
-//!   * shared Tokio runtime = the one process-wide Tokio thread pool that
+//!   * shared Tokio runtime = the binding-owned process-wide executor that
 //!     runs the driver's work.
 //!   * driver handle = the string naming which rust driver a client uses.
 //!   * legacy = the Python implementation that predates the rust driver. It
@@ -75,7 +76,9 @@ pub(crate) use request::{
 // Shared singleton-operation runner (sync + async)
 // ---------------------------------------------------------------------------
 
-/// Abort a spawned operation when its Python awaitable is dropped before completion.
+/// Request task cancellation when the owning Rust bridge future drops this guard.
+/// Aborting is not proof of immediate completion, connection release, or rollback
+/// of requests already sent to the service.
 struct AbortOnDrop(tokio::task::AbortHandle);
 
 impl Drop for AbortOnDrop {
@@ -84,8 +87,9 @@ impl Drop for AbortOnDrop {
     }
 }
 
-/// Look up the cached driver for a client handle, or raise if `acquire_driver_handle`
-/// has not run yet (or the client was already closed).
+/// Clone the cached driver's Arc, or raise if the handle is absent.
+/// A shared handle can remain cached after one client closes; the Python wrapper
+/// is responsible for rejecting operations on that closed client.
 fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
     drivers()
         .read()
@@ -148,12 +152,8 @@ mod tests {
         PartitionKeyDefinition, PartitionKeyKind, PartitionKeyVersion,
     };
 
-    // The three tests below exercise `feed_range.rs`'s
-    // `maybe_handle_feed_range_partition_key_special_case`, which is not
-    // part of the feed_range module's public API. They live here (in the
-    // parent module's test block) so they can reach the function through
-    // the private `#[cfg(test)]` import above without widening its visibility
-    // in feed_range.rs.
+    // Exercise the sibling feed-range helper from this parent module's tests
+    // without exposing it outside the binding.
 
     #[test]
     fn feed_range_special_case_empty_sentinel_matches_legacy_v2_hashing() {
@@ -219,9 +219,9 @@ mod tests {
 
     // AbortOnDrop cancellation safety ------------------------------------
     //
-    // Proves that dropping the guard aborts a spawned task: the join returns
-    // `is_cancelled()` and the task's body never reaches the line after the
-    // sleep, so the flag stays false.
+    // For this yielding/sleeping task, dropping the guard produces a cancelled
+    // join result and leaves the completion flag unset. This does not exercise
+    // Python cancellation, blocking callbacks, network cleanup, or service work.
 
     #[tokio::test]
     async fn abort_on_drop_aborts_in_flight_task() {
@@ -234,7 +234,7 @@ mod tests {
         let completed_clone = Arc::clone(&completed);
 
         let join = tokio::spawn(async move {
-            // Yield to ensure the task is scheduled before we drop the guard.
+            // Supply a cancellation point if the task is polled before abort.
             tokio::task::yield_now().await;
             tokio::time::sleep(std::time::Duration::from_secs(60)).await;
             completed_clone.store(true, Ordering::SeqCst);
@@ -245,7 +245,7 @@ mod tests {
         // Give the task a chance to start and reach its first yield point.
         tokio::task::yield_now().await;
 
-        // Dropping the guard aborts the task.
+        // Request cancellation, then await the join result below.
         drop(guard);
 
         let result = join.await;

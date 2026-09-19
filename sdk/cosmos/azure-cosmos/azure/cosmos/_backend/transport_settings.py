@@ -30,8 +30,9 @@ is built once by whichever client operates first and then frozen. Reporting the
 legacy default as though the customer had chosen it would pin the whole process to
 it, so a perfectly ordinary program -- one untuned client plus one client that asks
 for a shorter connect timeout -- would fail to construct its second client. ``None``
-means "no opinion": the driver keeps its own default and never conflicts with a
-client that does express one.
+means "no explicit request" and does not itself conflict. An untuned client
+that initializes the native runtime can still freeze defaults that conflict
+with a later client's explicit values.
 """
 from __future__ import annotations
 
@@ -126,10 +127,9 @@ def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, A
     :class:`ConnectionPolicy`, since the public clients construct a default policy
     for every client whether or not the customer asked for one.
 
-    Returning ``None`` for an untouched timeout is the whole point: these two values
-    configure the process-wide Rust driver runtime, so any value reported here is
-    pinned for every later client in the process. Only a value the customer actually
-    asked for should carry that weight.
+    These values participate in provisional process-policy reservations at
+    client construction. Native runtime initialization freezes the effective
+    settings; extracting a timeout here does not itself make it permanent.
     """
     stock_policy = ConnectionPolicy()
     policy = kwargs.get("connection_policy") or stock_policy

@@ -6,13 +6,13 @@
 """Integration test for async-credential bridge sharing.
 
 When several ``CosmosClient`` instances are built from the same async credential
-on the rust path, they share one ``AsyncTokenCredentialBridge`` -- and so one
-background loop thread and one driver -- instead of one per client. Each client
-must still sign and read, and the loop thread must be gone once the last client
-closes.
+on the Rust path, this test checks bridge identity, successful reads, and the
+number of named bridge threads. It does not inspect native driver identity or
+count token callbacks. After close, it polls for the thread count to return to
+its baseline; this is not a guarantee of immediate shutdown for all credentials.
 
 Runs on the emulator or a real Entra tenant (COSMOS_AAD_*), and only when the
-rust binding is present. Uses ``asyncio.run`` directly (no pytest-asyncio).
+Rust binding is present. Uses ``asyncio.run`` directly (no pytest-asyncio).
 """
 from __future__ import annotations
 
@@ -70,8 +70,8 @@ def test_shared_async_credential_uses_one_bridge_and_thread():
                 "got {} distinct bridges".format(len(bridges))
             )
 
-            # Run a real operation through every client so the shared bridge signs
-            # for all of them against the live account.
+            # Read through every client. Cached tokens can serve later requests,
+            # so successful reads do not imply one credential callback per client.
             db = await clients[0].create_database_if_not_exists("parity_db")
             cname = "auth_aio_share_" + uuid.uuid4().hex[:8]
             cont = await db.create_container(id=cname, partition_key=PartitionKey(path="/pk"))
@@ -90,9 +90,8 @@ def test_shared_async_credential_uses_one_bridge_and_thread():
             finally:
                 await db.delete_container(cname)
 
-        # Every client is now closed; the last close stopped the shared loop
-        # thread. The daemon thread exits just after join, so wait briefly before
-        # checking it is gone.
+        # Client contexts have exited. Poll for the named-thread count to return
+        # to baseline rather than assuming close completed the thread's shutdown.
         for _ in range(100):
             if _bridge_thread_count() == before:
                 break

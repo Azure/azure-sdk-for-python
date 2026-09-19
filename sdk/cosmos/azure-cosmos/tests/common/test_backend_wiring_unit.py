@@ -3,19 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Tests for choosing and wiring the backend (no network).
+"""Tests of backend selection, Python-to-binding dispatch, and lifecycle rules.
 
-Each test uses plain Python objects and runs in about a second. They cover
-three things:
-
-1. Import guard: the compiled Rust module and the backend classes may only
-   be imported by a short, named list of files. One test scans every source
-   file and fails if anything else imports them.
-2. Choosing a backend: the factory picks the backend from the constructor
-   argument, then an environment variable, then a default. An unknown value
-   fails right away at construction.
-3. Routing: a container call goes to the Rust backend when one is set, and
-   to the existing client otherwise.
+Most cases replace the native extension or connection with test doubles.
+Their calls and counters establish Python wiring, not real HTTP activity,
+native resource cleanup, or complete service behavior. Selected native
+signature checks require the compiled extension and skip when unavailable.
 """
 from __future__ import annotations
 import ast
@@ -46,6 +39,7 @@ from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import (
     BackendResponse,
     PreparedClientConfig,
+    PreparedFaultInjectionRule,
     PreparedQuery,
     PreparedRequest,
 )
@@ -132,6 +126,22 @@ from azure.cosmos.partition_key import NonePartitionKeyValue
     ),
 )
 def test_native_registry_binding_uses_driver_handle_parameter(method):
+    """Every native entry point takes its driver as a first argument with one agreed name.
+
+    Each of these is called from Python by name, and the names live in two places that
+    are edited separately. If one side were renamed alone, the call would fail only when
+    that operation was actually used -- which for the less common ones could be long
+    after the change.
+
+    The argument must also be positional as well as named, since callers use both forms.
+    The two older names are checked to be gone: leaving one behind would let old code
+    keep working while new code uses the new name, and the disagreement would go
+    unnoticed until the old name was finally removed.
+
+    The list is built from the same mapping the real code uses, so an operation added
+    later is covered without anyone remembering to add it here. The whole test is skipped
+    where the native part is not built.
+    """
     binding = pytest.importorskip("azure.cosmos._rust")
     signature = inspect.signature(getattr(binding, method))
     parameter = next(iter(signature.parameters.values()))
@@ -142,6 +152,19 @@ def test_native_registry_binding_uses_driver_handle_parameter(method):
 
 
 def test_native_close_accepts_driver_handle_keyword():
+    """Releasing a driver takes the agreed name, ignores one it never registered, and
+    refuses the old name.
+
+    The test above only reads signatures. This one actually calls, because a signature can
+    say one thing while the code behind it expects another.
+
+    Releasing something unknown must quietly do nothing. Release runs during cleanup,
+    often after an error, and raising there would replace whatever went wrong originally
+    with a complaint about tidying up.
+
+    The old name must be refused outright rather than accepted and ignored, which would
+    silently leak the driver it was meant to release.
+    """
     binding = pytest.importorskip("azure.cosmos._rust")
     assert binding.release_driver_handle(driver_handle="unregistered-test-driver") is None
     with pytest.raises(TypeError):
@@ -160,13 +183,10 @@ def _isolate_driver_registry():
 
 
 def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monkeypatch):
-    """The driver is told where the wheel put QueryPlanInterop.
+    """An existing package .libs directory is selected for native-library lookup.
 
-    QueryPlanInterop is the compiled library that lets the driver work out a
-    cross-partition query's plan locally instead of asking the Gateway for it.
-    Wheels put it in ``azure/cosmos/.libs``, and the driver has no way to guess
-    that. Without this call the customer's queries stay correct but pay an extra
-    round trip each time, with nothing to explain why.
+    This checks environment configuration, not loading the library or the
+    number of query-plan requests made by the driver.
     """
     package_directory = tmp_path / "azure" / "cosmos"
     sidecar_directory = package_directory / ".libs"
@@ -183,11 +203,7 @@ def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monke
 
 
 def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path, monkeypatch):
-    """A source checkout has no ``.libs`` directory, and that has to be fine.
-
-    Anyone running from a clone instead of a wheel would otherwise get an import
-    error on a directory that was never supposed to exist for them.
-    """
+    """A missing package .libs directory leaves the lookup override unset."""
     rust_module = MagicMock()
     rust_module.__file__ = str(tmp_path / "azure" / "cosmos" / "_rust.pyd")
     monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
@@ -465,8 +481,7 @@ def test_factory_invalid_env_var_fails_loud(monkeypatch):
 
 
 def test_factory_rust_without_master_key_fails_loud(monkeypatch):
-    """Rust needs a master-key credential; anything else fails clearly at
-    construction rather than later on the first request."""
+    """A missing credential raises; this case does not reject token credentials."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     with pytest.raises(ValueError, match="master-key credential"):
         make_backend(BACKEND_NAME_RUST, url="https://x.documents.azure.com", credential=None)
@@ -497,9 +512,9 @@ def test_async_factory_invalid_value_fails_loud(monkeypatch):
 # What the Rust backend does with a request
 # ---------------------------------------------------------------------------
 #
-# With nothing to send, it returns None so the caller uses the existing
-# client. With a real request it calls into the compiled module and wraps the
-# result. When the compiled module is missing, it raises a clear error. The
+# A missing prepared request is rejected rather than used as a fallback signal.
+# With a request, dispatch calls the binding and converts the result.
+# When the compiled module is missing, it raises an error. The
 # tests fake the compiled module so they run without a real account. The async
 # backend behaves the same way.
 
@@ -639,9 +654,9 @@ def test_paged_operations_are_not_single_response_operations():
 
 
 def test_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
-    """When the driver rejects a query feature it cannot run, the rust backend's
-    ``execute_pages`` turns that into ``QueryNotSupportedByBackendError`` so the caller
-    can fall back to the legacy path instead of surfacing a raw driver error.
+    """Translate the fake binding's query rejection to QueryNotSupportedByBackendError.
+
+    The test checks error translation, not automatic replay through legacy.
     """
     class _UnsupportedQueryFeatureError(RuntimeError):
         """Represent a query feature rejected by the Rust driver."""
@@ -843,10 +858,11 @@ def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
 
 
 def test_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
-    """Each executed op emits a debug line naming the backend and op, so a
-    migration can confirm from logs alone that traffic stays on the Rust path
-    instead of silently falling back to core-python. The handle (which carries a
-    credential fingerprint) must not appear in the line."""
+    """Dispatch logs name the backend and operation without exposing the handle.
+
+    A fake binding serves the call. The log is a selection/dispatch record,
+    not proof of native or service execution.
+    """
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-secret-fp"
     fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
@@ -947,8 +963,10 @@ def test_async_rust_backend_rejects_no_prepared_request():
 
 
 def test_async_rust_backend_dispatches_to_binding(monkeypatch):
-    """Async version: the backend awaits the binding's async ``create_item_async``
-    and wraps the result the same way -- no worker thread per call."""
+    """Await the fake async create entry point and convert its response tuple.
+
+    This checks dispatch, not thread counts or native executor behavior.
+    """
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.create_item_async = AsyncMock(return_value=(201, 0, {"etag": "v1"}, b'{"id":"x"}'))
@@ -1080,9 +1098,7 @@ def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
 
 
 def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
-    """Async twin: the async rust backend also maps a driver query rejection to
-    ``QueryNotSupportedByBackendError`` for legacy fallback.
-    """
+    """Translate an async fake-binding query rejection without testing legacy replay."""
     class _UnsupportedQueryFeatureError(RuntimeError):
         """Represent an async query feature rejected by the Rust driver."""
 
@@ -1430,16 +1446,11 @@ def test_async_backend_close_during_init_closes_built_driver_handle(monkeypatch)
 
 
 def test_async_backend_propagates_cancellation_into_binding(monkeypatch):
-    """Cancelling an awaited ``execute()`` cancels the underlying binding awaitable
-    rather than swallowing the cancellation or shielding the call.
+    """Cancelling execute propagates into the fake binding coroutine.
 
-    This is the Python half of cancellation propagation: the Rust async path
-    (``wire.rs``) aborts the spawned Tokio driver task when the awaitable it
-    returned is dropped on cancellation, so a client-side timeout actually stops
-    the in-flight operation instead of detaching it to run to completion. That
-    abort only fires if the Python layer lets the cancellation reach the awaitable
-    -- which this test pins down so a future change (e.g. wrapping dispatch in
-    ``asyncio.shield``) can't silently defeat it."""
+    The coroutine records CancelledError and the caller receives cancellation.
+    No Tokio task, connection cleanup, or service-side cancellation is tested.
+    """
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     dispatch_cancelled = []
@@ -1595,14 +1606,13 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
 # choice was represented purely by ``None``. The explicit
 # ``LegacyBackend`` now exists again (see ``azure.cosmos._backend.legacy``): the
 # item helper coerces a ``None`` selection to it so "use the existing client" runs
-# through the same ``run_operation`` interface as rust. Its own behavior is
+# through the same ``run_operation`` interface as Rust. Its own behavior is
 # covered in test_legacy_backend_unit.py; the item-helper legacy path is covered
 # by the fall-through tests in test_item_helper_unit.py.
 
 
 def test_dataclasses_are_frozen():
-    """The request and response objects are frozen, so a backend can't change
-    them by accident."""
+    """Assignments to the tested request/response dataclass fields raise."""
     p = PreparedRequest(
         op="create_item",
         container_link="dbs/d/colls/c",
@@ -1624,12 +1634,10 @@ def test_dataclasses_are_frozen():
 #
 # The factory folds the settings the Rust driver can honor into a
 # PreparedClientConfig, and the backend hands it to acquire_driver_handle as the third
-# argument. With nothing to carry the config stays None, so the binding call is
-# identical to the original two-argument form.
+# argument. With nothing to carry, that third argument is None.
 
 def test_build_client_config_returns_none_when_nothing_to_carry():
-    """No preferred_locations (absent or empty) -> no config object, so the
-    binding call stays the plain two-argument form."""
+    """Absent or empty preferred locations alone produce no client config."""
     assert build_client_config(None) is None
     assert build_client_config([]) is None
     assert build_client_config(()) is None
@@ -1644,7 +1652,7 @@ def test_build_client_config_carries_preferred_locations():
 
 
 def test_prepared_client_config_is_frozen():
-    """The config is frozen so a backend cannot change what the client passed."""
+    """Assigning a prepared configuration field raises FrozenInstanceError."""
     config = PreparedClientConfig(preferred_locations=("West US",))
     with pytest.raises(Exception):  # FrozenInstanceError
         setattr(config, "preferred_locations", ("East US",))
@@ -1685,6 +1693,9 @@ def test_prepared_client_config_repr_distinguishes_every_field():
         "proxy_allowed": True,
         "connection_timeout_seconds": 1.5,
         "read_timeout_seconds": 30.0,
+        "fault_injection_rules": (
+            PreparedFaultInjectionRule(id="repr-check", operation_type="CreateItem", status_code=502),
+        ),
     }
 
     field_names = {f.name for f in dataclasses.fields(PreparedClientConfig)}
@@ -1779,14 +1790,10 @@ def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch)
 
 
 def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
-    """An untuned client must pin nothing process-wide.
+    """The untuned Python client carries no explicit native configuration.
 
-    The Rust connection and read timeouts configure the process-global driver
-    runtime, so anything carried here is frozen for every later client. A customer
-    who named no timeout has expressed no opinion, and the legacy defaults are not
-    their opinion -- carrying them would make the very next client that asks for a
-    real timeout fail to construct. With nothing carried, and nothing else tuned,
-    the whole config collapses to None.
+    This does not initialize the native runtime. An untuned client that later
+    initializes it can still freeze native defaults.
     """
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
@@ -1871,10 +1878,15 @@ class _ProxyGlobalRuntimeFakeModule:
     """
 
     def __init__(self):
+        """Start with no proxy choice recorded and no drivers handed out yet."""
         self._initialized_proxy_allowed = None
         self._next_driver_handle = 0
 
     def acquire_driver_handle(self, *args):
+        """Model a proxy-policy conflict and return a distinct synthetic handle.
+
+        This test double is not a full native runtime or driver cache.
+        """
         config = args[2] if len(args) >= 3 else None
         requested = getattr(config, "proxy_allowed", None) if config is not None else None
         if self._initialized_proxy_allowed is None:
@@ -1887,6 +1899,7 @@ class _ProxyGlobalRuntimeFakeModule:
         return "handle-{}".format(self._next_driver_handle)
 
     def release_driver_handle(self, _driver_handle):
+        """Accept a release and do nothing, so closing a client is never what fails a test."""
         return None
 
 
@@ -1958,8 +1971,7 @@ def test_async_rust_backend_conflicting_proxy_allowed_raises_at_construction(mon
 #
 # These ride the same PreparedClientConfig the binding reads at acquire_driver_handle time.
 # Each is carried only when the customer actually expressed it, so an untuned
-# client still produces no config (None) and the binding call stays the plain
-# two-argument form.
+# client still produces no config; the binding receives None as its third argument.
 
 
 def test_build_client_config_carries_excluded_locations():
@@ -2028,6 +2040,23 @@ def test_build_client_config_hedging_none_carries_nothing():
     ({"availability_strategy": {"threshold_ms": 25}}, 25),
 ])
 def test_public_constructor_preserves_hedging_choice(module, extra_options, options, threshold, monkeypatch):
+    """The hedging choice survives the trip through the real client constructor, on both
+    clients and alongside other settings.
+
+    The tests just above check the setting is built correctly in isolation. This one
+    checks it actually arrives, because the constructor is where a setting gets dropped
+    by being read under the wrong name or overwritten by a later step.
+
+    Sending a second copy of a request early is a cost-for-latency trade, so both
+    directions matter: losing the choice makes requests slower than the customer asked
+    for, and inventing one makes them pay for requests they never asked to send. Asking
+    for nothing, asking for it off, and asking for it off by name must all end with
+    nothing pinned rather than an explicit off.
+
+    The second set of settings is there to check the two do not interfere -- a
+    constructor that builds the configuration afresh for one of them would drop the
+    other. No driver is acquired, so this never reaches the network.
+    """
     monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
     client = module.CosmosClient(
         "https://hedging.invalid", "ZmFrZQ==", _backend="rust", **extra_options, **options
@@ -2142,17 +2171,14 @@ def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
 
 
 def test_build_client_config_carries_user_agent_suffix():
-    """A non-empty user_agent_suffix is carried for the driver to stamp on every
-    request's User-Agent, so a customer can tell which service made a call."""
+    """The prepared config retains the supplied suffix; no HTTP header is inspected."""
     config = build_client_config(None, user_agent_suffix="checkout-westus2")
     assert isinstance(config, PreparedClientConfig)
     assert config.user_agent_suffix == "checkout-westus2"
 
 
 def test_build_client_config_only_user_agent_suffix_still_builds_config():
-    """A client that tunes nothing but the user-agent suffix must still produce a
-    config (not None), so the label actually reaches the driver -- carrying it is
-    the whole point of closing the 'suffix silently goes nowhere' gap."""
+    """A suffix alone produces a config rather than None."""
     config = build_client_config(None, user_agent_suffix="order-service")
     assert config == PreparedClientConfig(user_agent_suffix="order-service")
 
@@ -2166,23 +2192,20 @@ def test_build_client_config_empty_user_agent_suffix_is_none():
 
 @pytest.mark.parametrize("level", ["Eventual", "Session", "Strong"])
 def test_build_client_config_carries_supported_consistency_level(level):
-    """Each supported consistency level is carried so the chosen level actually
-    reaches the driver (the bug was that it silently went nowhere on Rust)."""
+    """Each listed consistency name is retained in the prepared config."""
     config = build_client_config(None, consistency_level=level)
     assert config == PreparedClientConfig(consistency_level=level)
 
 
 def test_build_client_config_only_consistency_still_builds_config():
-    """A client that tunes nothing but the consistency level must still produce a
-    config (not None), so the chosen level reaches the driver."""
+    """A consistency setting alone produces a config rather than None."""
     config = build_client_config(None, consistency_level="Session")
     assert isinstance(config, PreparedClientConfig)
     assert config.consistency_level == "Session"
 
 
 def test_build_client_config_no_consistency_carries_nothing():
-    """An absent (or empty) consistency level carries nothing, leaving the driver
-    at the account default -- an untuned client is unchanged."""
+    """An absent or empty consistency value leaves the config field unset."""
     assert build_client_config(None, consistency_level=None) is None
     assert build_client_config(None, consistency_level="") is None
 
@@ -2225,10 +2248,11 @@ def test_register_proxy_policy_accepts_repeated_equal_value(value):
 
 @pytest.mark.parametrize("explicit", [True, False])
 def test_register_proxy_policy_unset_client_never_sets_or_conflicts(explicit):
-    """A client that leaves proxy_allowed unset (None) accepts whatever value wins and
-    never establishes the policy itself -- mirroring the binding's proxy_allowed_conflicts
-    (None never conflicts and None never pins). So None-before-explicit and
-    explicit-before-None both pass, and the explicit value is the one that sticks."""
+    """Unset proxy values do not reserve or conflict in the Python registry.
+
+    No native runtime is initialized here. Native initialization with defaults
+    is different from leaving a provisional Python reservation unset.
+    """
     # None first: it must not establish a policy, so a later explicit value is accepted.
     register_proxy_policy(build_client_config(None, proxy_allowed=None))
     register_proxy_policy(build_client_config(None, proxy_allowed=explicit))
@@ -2250,7 +2274,7 @@ def test_register_proxy_policy_tolerates_none_config():
 
 
 def test_register_transport_timeout_policy_accepts_equal_values():
-    """Prove shared engines accept matching timeout settings."""
+    """The Python policy registry accepts matching explicit timeout values."""
     config = build_client_config(
         None,
         connection_timeout_seconds=5,
@@ -2268,7 +2292,7 @@ def test_register_transport_timeout_policy_accepts_equal_values():
     ],
 )
 def test_register_transport_timeout_policy_rejects_conflicts(first, second):
-    """Prove shared engines reject conflicting timeout settings."""
+    """The Python policy registry rejects differing explicit timeout values."""
     register_transport_timeout_policy(
         build_client_config(
             None,
@@ -2288,8 +2312,7 @@ def test_register_transport_timeout_policy_rejects_conflicts(first, second):
 
 @pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])
 def test_build_client_config_rejects_unsupported_consistency_level(level):
-    """Bounded Staleness / Consistent Prefix have no driver equivalent yet, so
-    they are rejected rather than silently dropped."""
+    """This Python Rust-backend configuration rejects the two listed levels."""
     with pytest.raises(ValueError, match="not yet supported on the Rust backend"):
         build_client_config(None, consistency_level=level)
 
@@ -2390,6 +2413,11 @@ class _SyncTokenCredential:
     """A minimal stand-in for a synchronous azure-identity credential."""
 
     def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Return a fixed token with an expiry far in the future.
+
+        Not awaited, which is what makes this the synchronous shape. The expiry is set
+        far out so nothing here ever decides the token needs renewing.
+        """
         return ("token-value", 9999999999)
 
 
@@ -2398,6 +2426,11 @@ class _AsyncTokenCredential:
     synchronous bridge."""
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """The same fixed token, but awaited.
+
+        Being awaited is the whole difference from the class above, and it is what the
+        code under test looks for when deciding this one needs a bridge.
+        """
         return ("token-value", 9999999999)
 
 
@@ -2408,6 +2441,11 @@ class _AsyncTokenInfoCredential:
     ``get_token_info``."""
 
     async def get_token_info(self, *scopes, **kwargs):  # noqa: D401
+        """The newer way to ask for a token, and the only one this credential offers.
+
+        Deliberately without the older method, so code that only knows to look for that
+        one would find nothing here and treat this as not a credential at all.
+        """
         return ("token-value", 9999999999)
 
 
@@ -2416,12 +2454,16 @@ class _AsyncContextManagerCredential:
     token method is async. Detected as async via the context-manager check."""
 
     async def __aenter__(self):
+        """Enter as a context manager, which is the mark the code reads to tell this is
+        asynchronous."""
         return self
 
     async def __aexit__(self, *exc):
+        """Leave without doing anything; there is nothing real to shut down here."""
         return None
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """The same fixed token, awaited like the real one from the identity library."""
         return ("token-value", 9999999999)
 
 
@@ -2488,8 +2530,11 @@ def test_resolve_credential_async_context_manager_credential_wrapped():
 
 
 def test_async_credential_bridge_close_is_idempotent():
-    """Closing the bridge stops its loop thread and is safe to call more than
-    once (and before it ever started a loop)."""
+    """A directly constructed, unshared bridge tolerates repeated close calls.
+
+    Close before first use is also exercised. This does not test duplicate
+    releases of an acquired bridge that still has other holders.
+    """
     bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential())
     # Close before first use: no loop thread was started, still a no-op.
     bridge._close_cosmos_async_bridge()
@@ -2503,9 +2548,20 @@ class _HangingAsyncCredential:
     """An async credential whose get_token never returns until it is cancelled."""
 
     def __init__(self):
+        """Set up the signal a test waits on to know the token request has really begun."""
         self.started = threading.Event()
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Announce that the request started, then wait forever.
+
+        This stands for a credential that has stopped responding -- an identity service
+        that is unreachable, say. Waiting forever rather than failing is the awkward
+        case, because there is nothing to notice unless something else puts a limit on
+        the wait.
+
+        The signal matters: without it a test could close the bridge before the request
+        had begun and pass without exercising anything.
+        """
         self.started.set()
         # Block until the bridge's loop is torn down and cancels this task.
         await asyncio.Event().wait()
@@ -2589,6 +2645,11 @@ class _SlowAsyncCredential:
     calls overlap with a close."""
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        """Wait a moment, then return the fixed token.
+
+        The pause is what makes overlap possible: it leaves a window in which several
+        callers are waiting at once and a close can arrive in the middle of them.
+        """
         await asyncio.sleep(0.01)
         return ("token-value", 9999999999)
 
@@ -2621,7 +2682,7 @@ def test_async_credential_bridge_dedups_same_credential_with_refcount():
 
 
 def test_async_credential_bridge_distinct_credentials_get_distinct_bridges():
-    """Different credential objects must not share a bridge (or a driver)."""
+    """Two credential objects produce distinct Python bridges; no drivers are built."""
     c1 = _AsyncTokenCredential()
     c2 = _AsyncTokenCredential()
     _, b1 = resolve_credential(c1)
@@ -2708,7 +2769,7 @@ def test_resolve_credential_permission_feed_rejected_with_specific_message():
 
 
 def test_resolve_credential_none_rejected():
-    """No credential is rejected: the rust backend requires a master key or a token
+    """No credential is rejected: the Rust backend requires a master key or a token
     credential."""
     with pytest.raises(ValueError, match="master-key credential"):
         resolve_credential(None)
@@ -2744,8 +2805,10 @@ def test_async_make_backend_carries_sync_token_credential(monkeypatch):
 
 
 def test_make_backend_wraps_async_token_credential(monkeypatch):
-    """An async credential lands on the sync backend wrapped in a bridge, with no
-    master key -- so an async credential now builds a working Rust client."""
+    """The factory stores a bridge and no master key for an async credential.
+
+    Constructing the backend does not prove that the credential can authenticate.
+    """
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     cred = _AsyncTokenCredential()
     backend = make_backend(
@@ -2883,15 +2946,11 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
     asyncio.run(_run())
 
 
-# The next tests cover read_feed_ranges end to end from the container method (sync
-# and async): it uses the Rust backend when the client has one and the caller passed
-# no extra kwargs; it falls back to the legacy routing-map path when any kwarg is
-# present; and a malformed Rust payload is rejected loudly instead of returning empty
-# data. Without them, read_feed_ranges could quietly take the wrong path, or hand back
-# silently-wrong ranges, and a customer's later calls (e.g. get_latest_session_token)
-# would break with no failing test to warn us.
+# Exercise read_feed_ranges through the public methods with fake bindings,
+# including force_refresh and malformed payloads. Backend eligibility depends
+# on the particular option, not merely whether any keyword was supplied.
 def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
-    """read_feed_ranges uses Rust backend when available and no legacy kwargs are passed."""
+    """The force_refresh call reaches the fake Rust binding, not the legacy map."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
     fake_module.read_feed_ranges.return_value = (
@@ -3097,7 +3156,7 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypa
 
 
 def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
-    """A malformed rust feed-range payload (missing the ``Range`` envelope) raises
+    """A malformed Rust feed-range payload (missing the ``Range`` envelope) raises
     rather than handing back a broken feed range."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3110,7 +3169,7 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(
 
 
 def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
-    """The empty-partition-key sentinel (``NonePartitionKeyValue``) routes to the rust
+    """The empty-partition-key sentinel (``NonePartitionKeyValue``) routes to the Rust
     backend with a cross-partition header (``"[]"``) and returns the full-range feed
     range the driver reports."""
     fake_module = MagicMock()
@@ -3140,7 +3199,7 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
 
 
 def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
-    """An explicit empty partition-key sequence (``[]``) also routes to the rust
+    """An explicit empty partition-key sequence (``[]``) also routes to the Rust
     backend and returns the driver's feed range."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3208,7 +3267,7 @@ def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(mo
 
 
 def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
-    """Async twin: a malformed async rust feed-range payload raises."""
+    """Async twin: a malformed async Rust feed-range payload raises."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
     fake_module.feed_range_from_partition_key_async = AsyncMock(
@@ -3232,7 +3291,7 @@ def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_pa
 
 
 def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
-    """Async twin: the empty-partition-key sentinel routes to the async rust backend
+    """Async twin: the empty-partition-key sentinel routes to the async Rust backend
     with a cross-partition header."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3271,7 +3330,7 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
 
 
 def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
-    """Async twin: an explicit empty partition-key sequence routes to the async rust
+    """Async twin: an explicit empty partition-key sequence routes to the async Rust
     backend."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3316,10 +3375,9 @@ def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_
 # ---------------------------------------------------------------------------
 #
 # get_selected_backend reads the ``_backend`` attribute off the connection. It reads
-# the instance ``__dict__`` directly so a connection with the attribute unset
-# yields ``None`` (the legacy-path signal) instead of a truthy auto-created
-# attribute; a connection without ``__dict__`` (``__slots__``) is read via
-# getattr.
+# the instance ``__dict__`` directly rather than creating a mock attribute.
+# An unset backend violates the concrete-backend invariant and raises.
+# A connection without ``__dict__`` (``__slots__``) is read via getattr.
 
 
 class _PlainConnection:
@@ -3361,11 +3419,11 @@ def test_pick_backend_uses_getattr_fallback_for_slots_connection():
 #
 # The first call builds the handle; a lock makes sure that a burst of first
 # calls builds it only once, instead of each building and discarding one.
-# Without the lock these tests would see eight builds.
+# The measured acquisition count checks this run, not every possible schedule.
 
 
 def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads(monkeypatch):
-    """Eight threads starting at once build the handle only once."""
+    """Eight submitted calls produce one fake handle acquisition in this run."""
     count_lock = threading.Lock()
     calls = {"n": 0}
 
@@ -3598,8 +3656,10 @@ def _rust_backend(url, config=None, strict=False):
 
 
 def test_second_client_different_config_default_isolates_silently(recwarn):
-    """Default mode: a second client with a different config is built fine (its own
-    isolated engine) and emits no warning -- the silent-isolation behavior."""
+    """Default-mode backend construction accepts the two configs without warnings.
+
+    No handle is acquired, so native driver isolation is not measured.
+    """
     url = "https://m16-different.documents.azure.com"
     first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
     second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
@@ -3625,8 +3685,7 @@ def test_second_client_different_config_strict_raises():
 
 
 def test_strict_same_config_does_not_raise():
-    """Strict mode: a second client with the *same* config shares the engine and
-    does not raise (separate-but-equal configs compare equal by value)."""
+    """Equal configs allow two strict-mode Python registrations at one endpoint."""
     url = "https://m16-strict-same.documents.azure.com"
     first = _rust_backend(
         url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
@@ -3721,9 +3780,8 @@ def test_registry_strict_raise_does_not_increment_count():
 
 
 # ---------------------------------------------------------------------------
-# Engine-identity guard: the registry mirrors the binding's (endpoint, credential,
-# config) cache key, so the strict check tracks the *set of live engines* per account
-# -- not just the first client's config. These cover the three axes that set fixed:
+# Python reservation guard: track endpoint, credential, and config registrations,
+# not a census of initialized native engines. These cover:
 # stale baseline, the credential axis, and endpoint canonicalization.
 # ---------------------------------------------------------------------------
 
@@ -3809,8 +3867,11 @@ def test_canonicalization_keeps_distinct_accounts_separate():
 
 
 def test_make_credential_key_does_not_expose_master_key():
-    """Secret hygiene: the master-key identity is a non-reversible fingerprint, not the
-    plaintext, yet equal keys fingerprint equal and different keys do not."""
+    """Check sample credential-key stability, inequality, and plaintext omission.
+
+    These assertions do not establish cryptographic irreversibility or
+    collision freedom for arbitrary inputs.
+    """
     secret = "super-secret-master-key=="
     key = make_credential_key(secret, None)
     assert secret not in str(key)
@@ -3857,8 +3918,10 @@ def test_async_second_client_different_config_strict_raises():
 
 
 def test_async_second_client_different_config_default_isolates(recwarn):
-    """Default (async): a second client with a different config gets its own isolated
-    engine and emits no warning -- there is no 'first client wins' sharing."""
+    """Async backend construction accepts distinct configs without warning.
+
+    This checks Python registration, not native driver construction.
+    """
     url = "https://m16-async-default-different.documents.azure.com"
     first = AsyncRustBackend(
         endpoint=url,
@@ -4068,13 +4131,10 @@ def test_make_backend_strict_isolation_from_env(monkeypatch):
 # Response-less driver errors map to azure-core ServiceResponseError (A2)
 # ---------------------------------------------------------------------------
 #
-# When a driver op fails *without* a wire response (transport failure,
-# client-side validation, a pre-HTTP timeout), the binding raises a typed
-# DriverTransportError (a RuntimeError subclass). The backends translate it into
-# azure-core's ServiceResponseError so customer
-# `except (ServiceRequestError, ServiceResponseError)` handlers and the SDK's
-# transport-retry policies behave the same as on the legacy azure-core path,
-# instead of seeing a bare RuntimeError.
+# These fake DriverTransportError failures are translated to ServiceResponseError
+# for customer exception handling. A response-less failure need not precede HTTP
+# or service work. Translation alone does not run legacy transport-retry policies;
+# other response-less binding errors may follow different mappings.
 
 
 def _transport_test_request():
@@ -4220,13 +4280,10 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
 
 
 def test_untuned_client_does_not_pin_process_wide_transport_timeouts():
-    """An untuned client must not block a later client that names a timeout.
+    """Unset and explicit timeout reservations coexist before native initialization.
 
-    The Rust connection and read timeouts configure the process-global driver
-    runtime, so the first client to express one fixes it for the process. Before
-    this was fixed the public clients handed the legacy defaults to every client as
-    though the customer had chosen them, so the ordinary pairing of one untuned
-    client with one deliberately tuned client failed to construct.
+    Only Python policy registration is exercised. Initializing the native runtime
+    with default values can still constrain later explicit settings.
     """
     register_transport_timeout_policy(build_client_config(None))
     register_transport_timeout_policy(
@@ -4241,7 +4298,7 @@ def test_untuned_client_does_not_pin_process_wide_transport_timeouts():
 
 
 def test_untuned_and_tuned_rust_clients_can_both_be_constructed(monkeypatch):
-    """The same coexistence, proven through the public sync client."""
+    """Public client construction permits coexistence before native initialization."""
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
@@ -4281,7 +4338,7 @@ def test_sync_backend_refuses_to_reopen_after_close(monkeypatch):
 
     close() clears the handle, so without a closed flag the next operation saw a
     client that looked brand new and quietly took a second reference on the shared
-    rust driver -- an operation on a closed client appeared to succeed. The async
+    Rust driver -- an operation on a closed client appeared to succeed. The async
     backend already refused; this is the sync half of that rule.
     """
     backend, fake_module = _make_closed_rust_backend(
@@ -4323,14 +4380,10 @@ class _FakeAsyncCredential:
     ],
 )
 def test_failed_construction_releases_the_async_credential_bridge(bad_kwargs):
-    """A construction that fails after the credential is sorted must not leak.
+    """Invalid constructor options leave no bridge registration for this credential.
 
-    Wrapping an async credential starts a background event-loop thread and takes a
-    hold on the shared bridge, and only a successfully built backend ever releases
-    it. Every argument checked after that point -- the consistency level, the
-    timeout bounds, the locations shape -- could therefore turn a plain ValueError
-    at CosmosClient(...) into a thread that runs for the life of the process and
-    pins the customer's credential object alive with it.
+    Wrapping/acquiring a bridge is lazy and need not start its loop thread.
+    This assertion inspects the registry, not native or thread cleanup.
     """
     from azure.cosmos._backend import _async_credential_bridge as bridge_module
 

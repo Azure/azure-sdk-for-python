@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Selected async v4 database-query tests pinned to the Rust backend.
+"""Selected async legacy database-query tests pinned to the Rust backend.
 
 Original: tests/test_crud_database_async.py
 Copy:     tests/query_databases/aio/legacy/test_crud_database_async.py

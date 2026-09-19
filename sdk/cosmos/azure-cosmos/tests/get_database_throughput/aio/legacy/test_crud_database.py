@@ -1,17 +1,17 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async database-throughput check, re-run on the rust engine.
+"""The existing legacy async database-throughput check, re-run on the Rust engine.
 
 Why this file exists: the async client is a separate code path from the sync
 client all the way down -- separate proxy classes, separate helper module,
 separate backend object. A throughput read that works on the sync path proves
 nothing about the async path. Customers running async apps read a database's
-shared RU/s the same way, and rust must report the same number there.
+shared RU/s the same way, and Rust must report the same number there.
 
 Note the async surface has no ``read_offer``: the older alias exists only on
 the sync ``DatabaseProxy``, so this test calls ``get_throughput`` directly.
 
-What it does: the real v4 test copied from
+What it does: the real legacy test copied from
 ``tests/test_crud_database_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. It creates a database with 1000 RU/s, reads it
 back and checks it says 1000, replaces it with 2000, and checks the replace
@@ -19,7 +19,7 @@ result says 2000.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/aio/test_get_database_throughput_parity_async.py``)
-run the same call on both engines and diff the numbers. This file runs on rust
+run the same call on both engines and diff the numbers. This file runs on Rust
 only.
 
 Self-contained: it creates and deletes its own database. The class name and
@@ -62,6 +62,15 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_database_level_offer_throughput_async(self):
+        """Throughput set on a database can be read back, then read back again after a change.
+
+        Creates a database at 1000 request units, confirms ``read_offer``
+        reports it, raises it to 2000 and confirms the new figure comes back.
+
+        Kept here for the reading half. Three operations have to agree about
+        one number, and the read after the change is the one that catches a
+        cached offer still reporting the original value.
+        """
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_level_offer_throughput_async
         # Create a database with throughput
         offer_throughput = 1000

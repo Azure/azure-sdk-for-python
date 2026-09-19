@@ -1,24 +1,10 @@
-# Known-expected failures for the full v4 suite on COSMOS_BACKEND=rust.
-# The broad gate is "no UNEXPLAINED failures": every red must match a known
-# unsupported feature below. Anything not matching is a real regression.
-# Keep this list current as gaps close — a line that no longer fails should
-# be removed so its category re-reds.
-
-# --- resource-token / permission-feed auth: ValueError at construction (no driver branch)
-resource_token
-permission_feed
-
-# --- partitionless containers: partition_key_header "[]" is rejected
-partitionless
-
-# --- python-only knobs (no rust equivalent)
-availability_strategy
-hedging
-per_attempt
-read_timeout
-connection_timeout
-
-# --- not-yet-migrated operations
-query
-feed
-
+# Exact known-failure node IDs for the complete tests/ run with Rust selected.
+# Add only a reviewed tests/...py::Class::test_method[parameters] ID, preceded
+# by a comment naming the verified limitation and its tracking decision.
+# IDs are case-sensitive; wildcards and feature-name substring matching are
+# not supported. A matching ID is an exemption, not evidence of parity.
+#
+# The previous broad feature names (including query and feed) were removed
+# because they could conceal failures in already migrated behavior. No exact
+# replacements have been justified by a reviewed full-suite run yet, so this
+# list currently exempts nothing. Remove each exemption when its gap closes.

@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline tests for client-owned cleanup and the existing error policy.
+"""Offline checks of client cleanup dispatch, ordering, and error handling.
 
-The Python backend is real; legacy connections and native release calls are
-replaced so no service request is made. Explicit close and context-manager exit
-must reach that backend directly. Repeated async closes share the same cleanup,
-and a cancelled wait or unavailable worker must not lose Rust resources.
-Backend cleanup failures remain logged; Python transport failures still raise.
+Connections, native release calls, and credential-release hooks are mocked.
+Assertions cover which cleanup calls occur, how concurrent callers wait,
+and which failures are logged or propagated. They do not establish that
+real native resources or credential threads have finished shutting down.
 """
 
 from __future__ import annotations
@@ -35,10 +34,10 @@ ASYNC_URL = "https://close-async.documents.azure.com"
 
 
 def _make_sync_client(monkeypatch):
-    """Build a sync rust-backed client that touches no network.
+    """Build a sync Rust-backed client that touches no network.
 
     The client connection is replaced wholesale, so nothing here opens a socket.
-    The rust backend is real but stays handle-less: the binding handle is created
+    The Rust backend is real but stays handle-less: the binding handle is created
     lazily on first use, and these tests never issue an operation.
     """
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
@@ -51,7 +50,7 @@ def _make_sync_client(monkeypatch):
 
 
 def _make_async_client(monkeypatch):
-    """Build an async rust-backed client that touches no network.
+    """Build an async Rust-backed client that touches no network.
 
     Async entry and teardown await four connection calls between them, so those four
     attributes have to be awaitable; a plain ``MagicMock`` returns a value that
@@ -105,11 +104,7 @@ def test_sync_close_releases_the_rust_backend(monkeypatch):
 
 
 def test_sync_context_manager_exit_releases_the_rust_backend(monkeypatch):
-    """Leaving a ``with`` block must release the driver the same way ``close()`` does.
-
-    ``close()`` delegates to ``__exit__``, but customers reach teardown through both
-    doors, so both are pinned rather than assuming the delegation stays.
-    """
+    """Context-manager exit invokes the backend-close recorder once."""
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
 
@@ -120,12 +115,9 @@ def test_sync_context_manager_exit_releases_the_rust_backend(monkeypatch):
 
 
 def test_sync_close_is_safe_to_call_twice(monkeypatch):
-    """Closing an already-closed client must not raise.
+    """Two public close calls invoke the replacement backend-close hook twice.
 
-    ``close()`` is public and documented as safe to repeat, and a client used as a
-    context manager after an explicit close reaches teardown twice on its own. The
-    backend tolerates this by taking its handle under a lock, so only the first call
-    reaches the binding.
+    The real backend's handle-release guard is not exercised by this recorder.
     """
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
@@ -137,11 +129,9 @@ def test_sync_close_is_safe_to_call_twice(monkeypatch):
 
 
 def test_sync_backend_close_failure_still_releases_the_routing_cache(monkeypatch):
-    """A backend that fails to close must not strand the shared cache refcount.
+    """A failing backend close still reaches the mocked routing-cache release.
 
-    The partition-key-range cache is shared process-wide and released by refcount, so
-    a skipped release keeps it alive for the life of the process. Teardown therefore
-    isolates each step; this proves the isolation is real and not incidental ordering.
+    The assertion checks that release was called, not the cache's refcount.
     """
     client = _make_sync_client(monkeypatch)
 
@@ -159,7 +149,7 @@ def test_sync_transport_close_failure_still_releases_the_rust_backend(monkeypatc
     """A failing pipeline must not cancel the driver release that follows it.
 
     Transport shutdown runs before the backend release, so without the ``finally``
-    the rust driver would leak precisely when teardown is already going wrong.
+    the Rust driver would leak precisely when teardown is already going wrong.
     """
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
@@ -186,11 +176,7 @@ async def test_async_close_releases_the_rust_backend(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_async_context_manager_exit_releases_the_rust_backend(monkeypatch):
-    """Leaving an ``async with`` block must release the driver.
-
-    Async teardown is the more common shape for this client, since the recommended
-    usage in the samples is ``async with CosmosClient(...)``.
-    """
+    """Async context-manager exit awaits the backend-close recorder."""
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
 
@@ -238,6 +224,16 @@ async def test_async_close_is_safe_to_call_twice(monkeypatch):
 
 
 def test_sync_close_uses_the_backend_owned_by_the_client(monkeypatch):
+    """Closing finds the backend on the client itself, not through the legacy connection.
+
+    The reference held by the legacy connection is removed first, and closing
+    still releases the backend exactly once. The client is what the customer
+    holds and what owns the backend, so that is where cleanup must look.
+
+    Reaching through the legacy connection would work today and break the moment
+    that object is simplified or replaced -- and it would break by silently
+    skipping cleanup, leaving the driver running, rather than by raising.
+    """
     client = _make_sync_client(monkeypatch)
     calls = _record_backend_closes(monkeypatch, client)
     del client.client_connection._backend
@@ -249,6 +245,13 @@ def test_sync_close_uses_the_backend_owned_by_the_client(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_async_close_uses_the_backend_owned_by_the_client(monkeypatch):
+    """The async client also closes the backend it owns rather than one found through the
+    legacy connection.
+
+    Same reasoning as the sync case, checked separately because the two closing
+    paths are written independently and only one of them would be fixed if the
+    lookup were changed in one place.
+    """
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
     del client.client_connection._backend
@@ -259,6 +262,11 @@ async def test_async_close_uses_the_backend_owned_by_the_client(monkeypatch):
 
 
 def _install_async_close_resources(monkeypatch, client):
+    """Install a synthetic driver handle and mocked credential-release hook.
+
+    No driver or credential thread is created. The returned mocks expose
+    cleanup invocations for the following tests.
+    """
     binding = MagicMock()
     monkeypatch.setattr(async_rust_module, "_rust_module", binding)
     credential = MagicMock(spec=["_close_cosmos_async_bridge"])
@@ -271,6 +279,24 @@ def _install_async_close_resources(monkeypatch, client):
 def test_async_close_after_executor_shutdown_releases_resources(
     monkeypatch, caplog, resources
 ):
+    """With no worker threads left to run cleanup on, the async client cleans up on its
+    own thread instead of giving up.
+
+    Releasing the driver blocks, so cleanup normally runs on a worker thread to
+    avoid stalling the event loop. During program shutdown those workers are
+    already gone -- which is exactly when clients get closed. Refusing to clean
+    up there would strand the driver and its threads for the life of the
+    process.
+
+    Three combinations are covered: both resources held, only the credential
+    bridge, and neither. Each is released once and only if it was actually held,
+    closing twice is safe, and nothing new is started on the way out.
+
+    Falling back to the calling thread is recorded in the log, since it means
+    the loop was briefly blocked. When there was nothing to release, nothing is
+    logged -- an ordinary close must not leave a message implying something
+    unusual happened.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     if resources != "driver-and-bridge":
@@ -301,6 +327,22 @@ def test_async_close_after_executor_shutdown_releases_resources(
 
 @pytest.mark.parametrize("cancel_first", [False, True])
 def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_first):
+    """A second close waits for the cleanup already running instead of starting its own or
+    returning early.
+
+    Cleanup is held partway through and a second close is started. It does not
+    finish while the first is still working, and when it does return the
+    resources were released exactly once.
+
+    Returning early would be the tempting shortcut and the wrong one: the caller
+    would believe the client was closed and move on -- typically to exiting the
+    program -- while the driver was still being torn down.
+
+    The second run cancels the first caller before the second arrives. Cleanup
+    was started by the client, not owned by whoever asked for it, so one
+    caller's cancellation must not abandon it. Otherwise a timeout around close
+    would leave the driver permanently half-released.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     allow_finish = threading.Event()
@@ -348,6 +390,17 @@ def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_fir
 
 
 def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch):
+    """Two closes from two different event loops still produce one cleanup, and the second
+    waits for the first.
+
+    Each thread runs its own loop, which is what happens when a client is shared
+    across threads or closed from a shutdown handler that starts a fresh loop.
+
+    The waiting cannot be built from anything tied to a single loop. Something
+    that only works within one loop would let the second close sail past while
+    the first was still releasing the driver, and would release it twice. The
+    resources are confirmed released exactly once.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     started = threading.Event()
@@ -386,6 +439,7 @@ def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch
 
 
 def test_completed_async_close_does_not_schedule_more_work(monkeypatch):
+    """A second close submits no executor work and repeats no native/bridge release."""
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
 
@@ -405,6 +459,21 @@ def test_completed_async_close_does_not_schedule_more_work(monkeypatch):
 async def test_async_close_preserves_logged_native_and_bridge_errors(
     monkeypatch, caplog
 ):
+    """When releasing resources fails, closing still succeeds and both failures are
+    written to the log.
+
+    Both cleanup steps are made to fail. Close returns normally, and each
+    failure appears in the log with its own message.
+
+    Raising instead would be worse than useless. Close is usually called while
+    shutting down or unwinding from another error, so an exception there would
+    replace the problem the customer is actually trying to diagnose with one
+    they can do nothing about.
+
+    Both steps run even though the first failed -- the second is not skipped --
+    and both messages are kept rather than one replacing the other, so support
+    can see everything that went wrong.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     binding.release_driver_handle.side_effect = RuntimeError("native cleanup failed")
@@ -425,6 +494,18 @@ async def test_async_close_preserves_logged_native_and_bridge_errors(
 async def test_async_transport_error_still_reaches_caller_after_backend_cleanup(
     monkeypatch,
 ):
+    """A failure closing the transport does reach the caller, and the backend is still
+    released first.
+
+    This is the deliberate counterpart to the test above. Failures releasing the
+    SDK's own Rust resources are logged, because the caller cannot act on them.
+    A transport failure is different: it is the same error the legacy client
+    always raised, and customers have handling built around it, so it is passed
+    through unchanged.
+
+    Either way the backend is released exactly once. The error does not cut
+    cleanup short.
+    """
     client = _make_async_client(monkeypatch)
     calls = _record_async_backend_closes(monkeypatch, client)
     failure = RuntimeError("transport cleanup failed")
@@ -445,12 +526,28 @@ async def test_async_transport_error_still_reaches_caller_after_backend_cleanup(
     ],
 )
 def test_close_public_signature_is_unchanged(client_type, asynchronous):
+    """Check close's parameter list, None return annotation, and coroutine status.
+
+    This is introspection, not an assertion about a runtime return value.
+    """
     assert list(inspect.signature(client_type.close).parameters) == ["self"]
     assert inspect.signature(client_type.close).return_annotation is None
     assert inspect.iscoroutinefunction(client_type.close) is asynchronous
 
 
 def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
+    """A client using the legacy backend can be closed repeatedly, and the transport is
+    closed each time.
+
+    The legacy backend holds nothing of its own, so there is no state to guard
+    and every close passes straight through to the transport -- twice here, once
+    per call.
+
+    That differs from the Rust backend, where later closes do nothing. The
+    difference is deliberate and is preserved rather than tidied away: this is
+    what the legacy client has always done, and code that closes more than once
+    depends on the transport being closed each time.
+    """
     client = _make_sync_client(monkeypatch)
     client._backend.close()
     client._backend = LEGACY_BACKEND
@@ -462,6 +559,11 @@ def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
+    """The async legacy backend behaves the same way: every close reaches the transport.
+
+    Checked separately from the sync case because the two have separate closing
+    paths, and the async one additionally has to await the transport each time.
+    """
     client = _make_async_client(monkeypatch)
     await client._backend.close()
     client._backend = ASYNC_LEGACY_BACKEND
@@ -475,6 +577,18 @@ async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
 async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises(
     monkeypatch, caplog
 ):
+    """If the helper that is supposed to swallow credential cleanup errors raises anyway,
+    the driver is still released.
+
+    That helper exists precisely so bridge failures cannot disturb anything
+    else, so it raising is a bug in the safety net itself. Cleanup has to
+    survive it regardless.
+
+    The driver handle is the resource that matters most here -- it is held by
+    the Rust side and nothing else will ever give it back. Close still succeeds,
+    and the unexpected failure is logged so the broken helper can be found
+    rather than passing unnoticed.
+    """
     client = _make_async_client(monkeypatch)
     binding, _ = _install_async_close_resources(monkeypatch, client)
     monkeypatch.setattr(
@@ -492,6 +606,17 @@ async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises(
 
 @pytest.mark.asyncio
 async def test_closed_async_backend_does_not_schedule_initialization(monkeypatch):
+    """A closed client refuses to start a driver rather than quietly building one.
+
+    After closing, an operation is attempted and fails with a message saying the
+    client is closed, without any work being handed to a worker thread.
+
+    Building a driver here would undo the close: the program would be left
+    holding Rust resources belonging to a client the customer already finished
+    with, and nothing would ever release them. The refusal also names the real
+    problem, which is use after close, rather than surfacing as a strange
+    failure deeper down.
+    """
     client = _make_async_client(monkeypatch)
     await client.close()
     submit = MagicMock(side_effect=AssertionError("closed client must not start work"))
@@ -505,6 +630,12 @@ async def test_closed_async_backend_does_not_schedule_initialization(monkeypatch
 
 @pytest.mark.asyncio
 async def test_cleanup_runs_once_if_executor_queues_work_then_raises(monkeypatch):
+    """A simulated submit failure after queuing does not cause duplicate cleanup.
+
+    The fallback runs first; the saved job is then invoked manually. Both
+    resource-release mocks must still have exactly one call. This matters
+    because a duplicate native release could decrement another client's hold.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     queued = []
@@ -527,6 +658,20 @@ async def test_cleanup_runs_once_if_executor_queues_work_then_raises(monkeypatch
 async def test_cleanup_survives_worker_failure_before_job_starts(
     monkeypatch, caplog, cancelled
 ):
+    """If the worker never runs the cleanup, the client does it instead rather than
+    waiting forever.
+
+    Two ways of never running are covered: the worker fails to start, and the
+    work is cancelled before it begins. In both, close finishes well within its
+    time limit and the resources are released exactly once.
+
+    Waiting on something that will never happen is the failure to avoid here.
+    Close would simply hang, usually during shutdown, and the program would not
+    exit -- a symptom with nothing in it to point at the client.
+
+    The log records that background cleanup did not complete, so the cause is
+    visible even though the customer sees an ordinary close.
+    """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     loop = asyncio.get_running_loop()
@@ -548,6 +693,19 @@ async def test_cleanup_survives_worker_failure_before_job_starts(
 def test_sync_context_manager_preserves_existing_error_precedence(
     monkeypatch, transport_fails
 ):
+    """When leaving a block fails in more than one way, which error the caller sees is
+    unchanged from the legacy client.
+
+    Releasing the Rust backend fails in both runs and never wins. That is the
+    new part of closing, and it must not displace an error the customer already
+    knew how to handle.
+
+    Of the other two, a transport failure replaces the application's own error,
+    and with no transport failure the application's error comes through. The
+    first is not obviously desirable -- the customer's error is the more useful
+    one -- but it is what the legacy client has always done, and this pins it
+    rather than quietly changing which exception escapes existing blocks.
+    """
     client = _make_sync_client(monkeypatch)
     application_error = ValueError("application failed")
     transport_error = RuntimeError("transport cleanup failed")
@@ -572,6 +730,13 @@ def test_sync_context_manager_preserves_existing_error_precedence(
 async def test_async_context_manager_preserves_existing_error_precedence(
     monkeypatch, transport_fails
 ):
+    """The async block follows the same order of precedence as the sync one.
+
+    Backend cleanup failures never surface, a transport failure replaces the
+    application's error, and otherwise the application's error comes through.
+    Checked separately because the async exit path is written on its own and
+    could easily end up ordering these differently.
+    """
     client = _make_async_client(monkeypatch)
     application_error = ValueError("application failed")
     transport_error = RuntimeError("transport cleanup failed")

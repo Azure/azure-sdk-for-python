@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Map a non-2xx ``BackendResponse`` to the right typed Cosmos exception.
+"""Map error ``BackendResponse`` records to typed Cosmos exceptions.
 
 Customer code relies on the typed subclasses (``CosmosResourceExistsError``
 for 409, ``CosmosResourceNotFoundError`` for 404, etc.) — for example
 ``try: create_item(...) except CosmosResourceExistsError:`` as an
-idempotency check. This module is the single mapping site so both
-backends raise the same typed class for the same status code.
+conflict check. Sync and async prepared-response paths share this mapping;
+legacy execution has its own response processing.
 
 It also exposes a small ``_ResponseAdapter``. When a Cosmos call fails, the
 raised exception carries a ``.response`` object, and customer ``except`` blocks
@@ -17,8 +17,8 @@ read ``e.response.status_code`` / ``e.response.headers`` / ``e.response.text()``
 off it. That object is normally an azure-core ``HttpResponse``, but the Rust
 backend hands back a plain ``BackendResponse`` instead. ``_ResponseAdapter``
 wraps that ``BackendResponse`` and re-exposes just those same attributes and
-methods, so existing customer error-handling keeps working unchanged no matter
-which backend produced the response.
+methods for Cosmos exception construction and common error handlers. It is not
+a complete ``HttpResponse`` implementation or a guarantee of backend parity.
 """
 from __future__ import annotations
 
@@ -37,14 +37,12 @@ from ..exceptions import (
 class _ResponseAdapter:
     """Minimal ``HttpResponse``-shaped wrapper around a ``BackendResponse``.
 
-    Exposes only the attributes customer code is documented to read
-    (``status_code``, ``headers``, ``text()``, ``body()``). Anything
-    else would invite reliance on azure-core internals the Rust backend
-    cannot reproduce.
+    Provides ``status_code``, ``headers``, ``reason``, ``text()``, and ``body()``.
+    It retains the response and header mapping rather than making a snapshot.
     """
 
     def __init__(self, backend_response: BackendResponse) -> None:
-        """Copy the public response fields used by Cosmos exceptions."""
+        """Expose response fields used by Cosmos exception construction."""
         self._inner = backend_response
         self.status_code = backend_response.status_code
         self.headers = backend_response.headers if backend_response.headers is not None else {}
@@ -56,9 +54,8 @@ class _ResponseAdapter:
     def text(self, encoding: Optional[str] = None) -> str:
         """Return the response body as decoded text.
 
-        Never raises on invalid bytes / unknown encoding — falls back to
-        ``errors="replace"`` so a customer's ``except`` block keeps
-        running.
+        Replace undecodable bytes; fall back to UTF-8 replacement decoding
+        when the requested encoding cannot be found.
 
         :param encoding: Text encoding (defaults to UTF-8).
         :type encoding: Optional[str]
@@ -92,13 +89,12 @@ def map_backend_response_to_exception(
     *,
     message: str = "",
 ) -> CosmosHttpResponseError:
-    """Build the typed ``CosmosHttpResponseError`` subclass for a non-2xx response.
+    """Build the typed ``CosmosHttpResponseError`` subclass for an error response.
 
     Returns the exception instance; the caller decides when to ``raise``
-    (for example after invoking a ``response_hook``).
+    it. This function does not invoke a response hook.
 
-    :param response: The non-2xx ``BackendResponse``. The caller is
-        responsible for ensuring ``status_code`` is actually >= 400.
+    :param response: The ``BackendResponse`` the caller has classified as an error.
     :type response: BackendResponse
     :param message: Server-provided error message text.
     :type message: str
@@ -128,9 +124,10 @@ def extract_message_from_body(body: bytes) -> str:
 
     Cosmos error bodies are typically
     ``{"code": "Conflict", "message": "..."}``. Returns the ``message``
-    field when the body parses as a JSON object containing it; otherwise
+    or ``Message`` field when it is a string in a decoded JSON object; otherwise
     returns the body decoded as UTF-8 (or its ``repr`` if the bytes are
-    not valid UTF-8). Never raises.
+    not valid UTF-8). JSON ``ValueError``/``TypeError`` fall back to decoded text;
+    other failures are not caught here.
 
     :param body: The response body bytes.
     :type body: bytes

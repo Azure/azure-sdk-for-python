@@ -3,24 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_wire_encoding.py`` — no network, no Cosmos emulator.
+"""Offline examples for serialize_body_to_bytes.
 
-``serialize_body_to_bytes`` is the one function in the SDK that turns
-a customer's Python body (dict / list / str / bytes / None) into the
-exact bytes that go on the network to Cosmos. The "exact" part is the
-whole point: anything downstream that hashes or string-compares a
-Cosmos document — audit logs, dedup checks, content-addressed
-storage, customer test fixtures — breaks silently if the SDK changes
-how it formats the JSON (extra whitespace, key reordering, numeric
-promotion, etc.).
-
-These tests cover the byte-for-byte output for every input shape the
-SDK accepts, plus a parity check against the legacy serializer
-(``_synchronized_request._data_to_unicode_string``) so the new
-helper is provably a drop-in replacement.
-
-The function is pure (no I/O, no globals), so the whole file runs in
-milliseconds and is safe to run on every PR.
+Assert exact bytes or errors for the listed inputs and compare a finite
+input table with an inline reproduction of the legacy serializer.
+No network transmission, stored-item representation, or exhaustive
+serializer equivalence is established.
 """
 import json
 import unittest
@@ -42,7 +30,7 @@ class TestEmptyAndPrimitiveBodies(unittest.TestCase):
         self.assertEqual(serialize_body_to_bytes(None), b"")
 
     def test_bytes_input_passes_through_unchanged(self):
-        """A ``bytes`` body (e.g. pre-encoded by a future rust path) is returned as-is."""
+        """A ``bytes`` body (e.g. pre-encoded by a future Rust path) is returned as-is."""
         payload = b'{"id":"x","total":1}'
         result = serialize_body_to_bytes(payload)
         self.assertEqual(result, payload)
@@ -100,11 +88,7 @@ class TestDictListSerialization(unittest.TestCase):
         )
 
     def test_integer_stays_integer_not_float(self):
-        """``123`` stays ``123`` and is not promoted to ``123.0``.
-
-        Cosmos query semantics distinguish the two in some contexts,
-        so silent numeric promotion would be a real bug.
-        """
+        """The sample integer is encoded as 123 rather than 123.0."""
         self.assertEqual(
             serialize_body_to_bytes({"n": 123}),
             b'{"n":123}',
@@ -158,12 +142,7 @@ class TestDictListSerialization(unittest.TestCase):
         )
 
     def test_non_ascii_string_value_uses_unicode_escape(self):
-        """Non-ASCII characters are emitted as ``\\uXXXX`` escapes (``ensure_ascii=True``).
-
-        This matches every existing Cosmos parity test fixture in the
-        repo. Switching to ``ensure_ascii=False`` would silently break
-        any fixture comparing raw bytes.
-        """
+        """Check escaped Unicode bytes for the supplied string with ensure_ascii enabled."""
         self.assertEqual(
             serialize_body_to_bytes({"name": "café"}),
             b'{"name":"caf\\u00e9"}',
@@ -203,18 +182,10 @@ class TestUnknownTypeRaisesLoudly(unittest.TestCase):
 
 
 class TestParityWithLegacySerializer(unittest.TestCase):
-    """Cross-check the new helper against the legacy serializer.
+    """Compare selected inputs with an inline legacy-style serializer.
 
-    The legacy code lives at
-    ``_synchronized_request._data_to_unicode_string`` and produces a
-    ``str`` for dict/list/tuple inputs which the transport then UTF-8
-    encodes. The new helper must produce exactly those same request-byte
-    bytes for every input the SDK actually accepts — otherwise the
-    byte-for-byte parity guarantee between the core-python and rust
-    backends breaks.
-
-    The legacy logic is reproduced inline below so this test is self-
-    contained even if the legacy code moves or is deleted.
+    This reference is not a call into the legacy transport and does not
+    establish byte parity for every possible SDK input.
     """
 
     @staticmethod
@@ -229,7 +200,7 @@ class TestParityWithLegacySerializer(unittest.TestCase):
         raise TypeError("test-only helper does not handle this input")
 
     def test_parity_for_full_input_table(self):
-        """For every accepted input shape, helper bytes == legacy bytes."""
+        """Helper bytes equal the inline reference for each input in this table."""
         for value in [
             None,
             "",

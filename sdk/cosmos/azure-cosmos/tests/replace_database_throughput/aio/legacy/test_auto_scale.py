@@ -1,15 +1,15 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async autoscale-change check, re-run on the rust engine.
+"""The existing legacy async autoscale-change check, re-run on the Rust engine.
 
 Why this file exists: it covers the one combination the other three files in
 this operation leave out -- changing an autoscale setting on the async client.
 An autoscale change rewrites a ceiling and a growth step that sit in a nested
 part of the offer document, and the async client builds and sends that document
 through its own code path. Neither the sync autoscale test nor the async
-fixed-number test would catch rust dropping the new ceiling here.
+fixed-number test would catch Rust dropping the new ceiling here.
 
-What it does: the real v4 test copied from
+What it does: the real legacy test copied from
 ``tests/test_auto_scale_async.py``, changed in one place -- the client is built
 with ``_backend="rust"``. It creates a database with a 5000 ceiling and 0%
 step, changes it to a 7000 ceiling and 20% step, reads it back and checks both
@@ -19,7 +19,7 @@ neighbouring operation that shares the offer document format.
 This is NOT the side-by-side comparison. The comparison tests
 (``replace_database_throughput/aio/test_replace_database_throughput_parity_async.py``)
 run the same change on both engines and diff the results. This file runs on
-rust only.
+Rust only.
 
 Self-contained: it creates and deletes its own database and container.
 
@@ -60,6 +60,17 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_replace_throughput_async(self):
+        """Autoscale settings can be changed after creation, on a database and a container.
+
+        Both start at a 5000 request unit ceiling and are moved to 7000 with a
+        20 percent increment, then read back.
+
+        The increment is the value worth watching. The database starts at 2
+        percent and the container at 0, so a replacement that changed only the
+        ceiling and left the increment alone would be caught in both cases.
+        Starting the container at 0 also means a dropped increment cannot hide
+        behind a falsy default.
+        """
         # Source: tests/test_auto_scale_async.py::TestAutoScaleAsync.test_replace_throughput_async
         database_id = "replace_db" + str(uuid.uuid4())
         container_id = None

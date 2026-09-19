@@ -316,6 +316,7 @@ class PluginRegistryTests(unittest.TestCase):
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
 def captured_listing(request, monkeypatch):
     plugin = _load_plugin()
+    monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
     emitted = []
     fetches = []
     client = SimpleNamespace(client_connection=SimpleNamespace(
@@ -372,6 +373,7 @@ async def test_paged_capture_preserves_lazy_partial_iteration(captured_listing):
     assert emitted[0]["return_value"] == [{"id": "db-1"}, {"id": "db-2"}]
     assert emitted[0]["executed_engine"] == "rust"
     assert emitted[0]["rust_operation_delta"] == 1
+    assert emitted[0]["ordinal"] == 0
 
 
 @pytest.mark.asyncio
@@ -409,6 +411,7 @@ async def test_paged_capture_preserves_continuation_replay_empty_pages_and_error
     assert len(emitted) == len(fetches) == 5
     assert all(block["rust_operation_delta"] == 1 for block in emitted)
     assert all(block["rust_fallback_delta"] == 0 for block in emitted)
+    assert [block["ordinal"] for block in emitted] == list(range(5))
 
 
 if __name__ == "__main__":

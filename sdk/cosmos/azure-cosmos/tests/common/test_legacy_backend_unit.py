@@ -14,7 +14,7 @@ concrete :class:`~azure.cosmos._backend.cosmos_backend.CosmosBackend` /
 whether to run the legacy path -- that selection lives entirely behind
 ``run_operation`` / ``run_page_operation`` polymorphism, exercised directly here.
 
-These tests run in milliseconds: no network, no emulator, no compiled rust
+These tests run in milliseconds: no network, no emulator, no compiled Rust
 binding required.
 """
 
@@ -50,7 +50,7 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
         self.assertEqual(LEGACY_BACKEND.name, BACKEND_NAME_CORE_PYTHON)
 
     def test_legacy_backend_execute_is_not_prepared_request_driven(self):
-        """``execute`` is the rust wire primitive; the legacy engine does not
+        """``execute`` is the Rust wire primitive; the legacy engine does not
         implement it (its work is the original call arguments, not a wire
         request), so calling it raises rather than silently returning ``None``."""
         with self.assertRaises(NotImplementedError):

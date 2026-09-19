@@ -1,28 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Client-vs-server latency split report: which layer owns a latency tail.
+"""Compare pooled client durations and captured request-duration header values.
 
-A point operation's client-side latency (wall clock at the caller) is network +
-transport + the Python-to-Rust binding + the time the service spends processing
-the request (server time). When one backend has a higher tail than another for the
-same operation and account, this report shows which layer owns the extra time. The
-service reports its own processing time in the ``x-ms-request-duration-ms``
-response header, which both backends surface, so:
+Merge client and header-derived histograms across result windows and show
+their percentiles side by side. Missing or partial header coverage limits
+comparability; neither histogram preserves per-request sample pairing.
 
-    client_tail - server_tail = everything outside the service
-                                (network + transport + binding)
+Subtracting independent p99 values does not yield the p99 of client-minus-
+server time. The reported excess is a diagnostic comparison, not a causal
+attribution to network, binding, driver, or service. Header-derived time
+also need not cover all requests, retries, or metadata work in one call.
 
-If the Rust create tail is high in client time but its server time matches
-core-python's, the extra time is client-side, not the service. If the server tail
-is also high, it is service variance and hits both backends. This script pools the
-client histogram (``hist_b64``) and the server histogram (``server_hist_b64``) per
-window across the run and prints both tails side by side.
-
-USAGE:
-  source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)
-  python3 crt_split_report.py [--run-id YYYYMMDD-HHMMSS] [--prefix crepro-]
-      --run-id  which run to read; default = the most recent matching run.
-      --prefix  workload_id prefix identifying the run (default crepro-).
+Run crt_split_report.py with --run-id and --prefix, after configuring the
+results account.
 """
 
 import argparse
@@ -234,8 +224,8 @@ def main():
             )
         print()
 
-    # Head-to-head: for each op, is the Rust CLIENT tail excess (over its own
-    # server time) larger than core-python's? That isolates a client-side tail.
+    # Compare differences between independently computed percentiles.
+    # This is not the percentile of per-call overhead or a causal attribution.
     if "core-python" in backends and "rust" in backends:
         print("-- rust vs core-python: client-side excess = cli_999 - srv_999 --")
         print(f"  {'op':8s} {'py_excess':>10s} {'ru_excess':>10s} {'ru-py':>8s}")
@@ -254,7 +244,7 @@ def main():
                 flag = "  [!] partial server coverage; excess is not comparable"
             print(f"  {op:8s} {pe:>10.2f} {re:>10.2f} {re-pe:>8.2f}{flag}")
 
-    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to Rust rows) ----
     commits, missing, rust_rows = prov_info
     commit_ok, commit_lines = _driver_gate.decide(
         commits, missing, rust_rows, strict=_driver_gate.strict_from(args)

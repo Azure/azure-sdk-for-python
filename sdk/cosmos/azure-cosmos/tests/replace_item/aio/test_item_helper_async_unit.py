@@ -15,10 +15,10 @@ touchpoints replace adds:
    ``document_link`` the caller resolved from ``item`` and the ``body``
    forwarded unchanged.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict``
-   and ``ReplaceItem`` is **not** awaited (the rust dispatch path).
+   and ``ReplaceItem`` is **not** awaited (the Rust dispatch path).
 3. ``etag`` / ``match_condition`` still reach the legacy options as the
    ``If-Match`` access condition (the version-guarded replace).
-4. Cache miss awaits the refresh and stamps the rid.
+4. Cache miss awaits the refresh and writes the rid.
 
 Sibling of ``tests/upsert_item/aio/test_item_helper_async_unit.py``.
 """
@@ -40,7 +40,7 @@ from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
 
 def _async_dispatch_backend(response):
     """A real ``AsyncCosmosBackend`` whose ``execute`` returns ``response``
-    (the rust dispatch path -- the helper parses it instead of awaiting
+    (the Rust dispatch path -- the helper parses it instead of awaiting
     the legacy ``ReplaceItem``). Inheriting from ``AsyncCosmosBackend``
     gives ``run_operation`` its genuine default implementation."""
 
@@ -69,13 +69,13 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncReplaceItem(unittest.TestCase):
-    """The explicit core-Python backend is the async fallback replace path."""
+    """The explicit legacy backend is the async fallback replace path."""
 
     def test_async_dispatch_falls_through_to_replace_item(self):
-        """The explicit core-Python backend awaits ``ReplaceItem`` and returns
+        """The explicit legacy backend awaits ``ReplaceItem`` and returns
         its value; the resolved ``document_link`` and the new ``body`` are
         forwarded unchanged and id generation is disabled (a replace never
-        mints)."""
+        generates one)."""
         cc = _connection_with_cache()
         body = {"id": "order-42", "pk": "customerA", "total": 129.0}
 
@@ -96,7 +96,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
     def test_async_backend_dispatch_parses_response_and_skips_legacy(self):
-        """When the backend returns a ``BackendResponse`` (rust path), the
+        """When the backend returns a ``BackendResponse`` (Rust path), the
         helper parses it into a ``CosmosDict`` and never awaits the legacy
         ``ReplaceItem``."""
         cc = _connection_with_cache()
@@ -142,7 +142,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
 
     def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
-        awaited and the refreshed rid is stamped into the options."""
+        awaited and the refreshed rid is written into the options."""
         cc = MagicMock()
         cache = {}
 

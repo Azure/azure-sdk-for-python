@@ -1,27 +1,27 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 ``test_offer_read_and_query`` check, re-run on the rust engine.
+"""The existing legacy ``test_offer_read_and_query`` check, re-run on the Rust engine.
 
 Why this file exists: when a customer reads a container's throughput, the SDK
 returns an offer document, and one field on it -- ``resource`` -- is the link
 that ties the offer back to the container it belongs to. Tools and dashboards
 rely on that link (plus ``id`` / ``_rid`` / ``_self``) to know *which*
-container a throughput number is for. If the rust engine returned an offer
+container a throughput number is for. If the Rust engine returned an offer
 body with a wrong or missing ``resource`` link, a customer could attribute
 RU/s to the wrong container, and code reading those fields would break.
 
-What it does: it is the real v4 test copied verbatim from
+What it does: it is the real legacy test copied verbatim from
 ``tests/test_crud_container.py``, changed in exactly one place -- the client
 is built with ``_backend="rust"`` -- so the same assertions now run against
-the rust path. It reads the offer, then checks the offer body has non-null
+the Rust path. It reads the offer, then checks the offer body has non-null
 ``id`` / ``_rid`` / ``_self`` / ``resource``, that ``_self`` contains the
 offer ``id``, and that ``resource`` points back at this container's link.
-Without this copy, an offer-body regression on the rust engine would slip
+Without this copy, an offer-body regression on the Rust engine would slip
 through.
 
 This is NOT the side-by-side parity comparison. The parity tests
 (``read_offer/sync/test_read_offer_parity.py``) run the same call on both
-engines and diff the numbers. This file runs on rust only; the core-python
+engines and diff the numbers. This file runs on Rust only; the core-python
 side of the contract is already guaranteed by the original test in
 ``tests/``. Together: parity catches value drift (wrong RU/s), this catches
 contract drift (wrong offer body) by reusing a check the team already trusts.
@@ -84,6 +84,17 @@ class TestCRUDContainerOperations(unittest.TestCase):
             self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
     def test_offer_read_and_query(self):
+        """Reading a container's offer returns a complete, correctly linked offer body.
+
+        Checks the offer has an id, a resource id, a self link and a resource
+        link, that the self link contains the id, and that the resource link
+        points back at this container.
+
+        The resource link is the field that matters most: it is what ties a
+        throughput number to the container it belongs to. An offer that came
+        back otherwise well formed but pointing at the wrong container would
+        make dashboards and tooling report throughput against the wrong thing.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_offer_read_and_query
         collection = self.container
         # Read the offer.

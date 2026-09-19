@@ -17,7 +17,7 @@ without knowing which engine served the request.
 
 This is a static, source-level check (parses the two files as text/AST) so it
 catches a regression the moment the forbidden pattern is reintroduced, without
-needing a live connection, the compiled rust binding, or an emulator.
+needing a live connection, the compiled Rust binding, or an emulator.
 """
 from __future__ import annotations
 

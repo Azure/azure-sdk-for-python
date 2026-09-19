@@ -5,7 +5,7 @@
 
 Copied from ``tests/test_headers_async.py``; the class and method names
 match the source so the parity reporter can pair the core-python and
-rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
+Rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
 / ``ACCOUNT_KEY`` from the environment.
 
 Run: ``pytest --noconftest tests/upsert_item/aio/legacy/test_headers.py -v``
@@ -25,7 +25,7 @@ KEY = os.environ.get(
 )
 
 
-# Same value as the source, so the wire bytes match core-python.
+# Same value as the source, so the wire bytes match the legacy path.
 request_throughput_bucket_number = 3
 
 
@@ -55,7 +55,11 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_container_upsert_item_throughput_bucket_async(self):
-        """Verify the async upsert_item forwards the per-request throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header."""
+        """Pass a throughput bucket with the copied operation arguments.
+
+        The raw-response hook checks the header if invoked, but this test
+        does not assert hook invocation or inspect transmitted bytes.
+        """
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_upsert_item_throughput_bucket_async
         await self.container.upsert_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},

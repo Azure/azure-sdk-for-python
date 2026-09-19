@@ -1,23 +1,23 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 database-throughput check, re-run on the rust engine.
+"""The existing legacy database-throughput check, re-run on the Rust engine.
 
 Why this file exists: a database can own throughput that all of its containers
 share. A customer reads that number with ``read_offer`` (the older name) or
 ``get_throughput`` (the current name), and puts it into cost and capacity
 dashboards. ``read_offer`` is not a separate request path -- it forwards to
 ``get_throughput`` -- so this file also proves the older name still returns the
-same number after the move to rust. If rust returned a different RU/s here, a
+same number after the move to Rust. If Rust returned a different RU/s here, a
 customer would size their database against a wrong figure.
 
-What it does: the real v4 test copied from ``tests/test_crud_database.py``,
+What it does: the real legacy test copied from ``tests/test_crud_database.py``,
 changed in one place -- the client is built with ``_backend="rust"``. It
 creates a database with 1000 RU/s, reads the offer back and checks it says
 1000, replaces it with 2000, and checks the replace result says 2000.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/sync/test_get_database_throughput_parity.py``) run
-the same call on both engines and diff the numbers. This file runs on rust
+the same call on both engines and diff the numbers. This file runs on Rust
 only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -60,6 +60,15 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.key_client.close()
 
     def test_database_level_offer_throughput(self):
+        """Throughput set on a database can be read back, then read back again after a change.
+
+        Creates a database at 1000 request units, confirms ``read_offer``
+        reports it, raises it to 2000 and confirms the new figure comes back.
+
+        Kept here for the reading half. Three operations have to agree about
+        one number, and the read after the change is the one that catches a
+        cached offer still reporting the original value.
+        """
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_level_offer_throughput
         # Create a database with throughput
         offer_throughput = 1000

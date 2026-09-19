@@ -49,9 +49,7 @@ pub(crate) fn feed_range_from_partition_key<'py>(
 /// the two feed ranges arrive in the request body as `{"parent": <feed-range
 /// dict>, "child": <feed-range dict>}` and the answer comes back as
 /// `{"IsSubset": <bool>}`. The binding normalizes both ranges to `[min, max)`
-/// bounds (matching the legacy python path) before asking the driver. Without it,
-/// is_feed_range_subset could not run on the rust backend and would stay on the
-/// legacy python path.
+/// bounds before calling the driver's local subset comparison.
 #[pyfunction]
 pub(crate) fn is_feed_range_subset<'py>(
     py: Python<'py>,

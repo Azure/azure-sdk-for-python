@@ -66,7 +66,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
     """The async delete behaves the same as the sync delete."""
 
     async def test_string_item_resolves_to_document_link(self):
-        """A delete by id string targets that document."""
+        """A delete by id string targets that item."""
         proxy, cc = _make_async_proxy()
 
         await proxy.delete_item("delete_item", "a")
@@ -92,7 +92,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
     async def test_delete_routes_to_backend_with_item_id(self):
-        """A delete goes to the Rust backend with the document id; the
+        """A delete goes to the Rust backend with the item id; the
         existing client is not called and the call returns nothing."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()

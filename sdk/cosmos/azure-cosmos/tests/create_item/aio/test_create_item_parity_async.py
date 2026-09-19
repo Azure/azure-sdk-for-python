@@ -252,7 +252,7 @@ async def test_async_throughput_bucket(container_for):
 async def test_async_enable_automatic_id_generation(container_for):
     """``enable_automatic_id_generation=True`` with no ``id`` in the body.
 
-    Both backends must mint an id rather than reject the insert. The generated
+    Both backends must generate an id rather than reject the insert. The generated
     ids differ between backends by definition, so the harness's functional
     comparison (which tolerates server-assigned identity fields) is the right
     assertion here.

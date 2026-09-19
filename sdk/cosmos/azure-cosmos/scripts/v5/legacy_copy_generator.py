@@ -424,9 +424,9 @@ CREATE_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
 
 
 _HEADERS_MODULE_CODE_SYNC = """\
-# The throughput-bucket number the test asserts is stamped on the
+# The throughput-bucket number the test asserts is set on the
 # outgoing request. Kept identical to the source constant so the wire
-# value is the same as what core-python sent.
+# value is the same as what the legacy path sent.
 request_throughput_bucket_number = 3
 
 
@@ -476,9 +476,9 @@ Run with::
 
 
 _HEADERS_MODULE_CODE_AIO = """\
-# The throughput-bucket number the test asserts is stamped on the
+# The throughput-bucket number the test asserts is set on the
 # outgoing request. Kept identical to the source constant so the wire
-# value is the same as what core-python sent.
+# value is the same as what the legacy path sent.
 request_throughput_bucket_number = 3
 
 

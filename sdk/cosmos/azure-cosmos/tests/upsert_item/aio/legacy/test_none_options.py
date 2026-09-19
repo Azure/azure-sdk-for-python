@@ -5,7 +5,7 @@
 
 Copied from ``tests/test_none_options_async.py``; the class and method
 names match the source so the parity reporter can pair the core-python
-and rust runs. The file name drops the ``_async`` suffix so it pairs
+and Rust runs. The file name drops the ``_async`` suffix so it pairs
 with the sync copy. Builds its own database + container and reads
 ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
 

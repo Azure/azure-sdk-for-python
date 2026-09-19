@@ -3,107 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pytest plugin that observes per-operation SDK calls and emits JSON
-capture blocks for the legacy-folder parity reporter.
+"""Capture selected SDK methods for cross-backend comparison reports.
 
-Activation
-----------
+COSMOS_PARITY_CAPTURE_OP selects a registered operation. With no selection,
+hooks do not install method patches or emit captures. Registrations cover
+client, database, and container methods on synchronous and asynchronous
+surfaces; lazy results are captured when the caller consumes them.
 
-The plugin is **dormant by default**. It activates only when the env
-var ``COSMOS_PARITY_CAPTURE_OP`` is set to an operation name the
-plugin knows how to patch (e.g. ``read_item``). When the env var is
-unset the plugin's hooks return immediately and there is zero effect
-on a normal ``pytest tests/`` run.
+Each capture includes supplied arguments, observed results or exceptions,
+available headers, a backend label, and process-wide binding/fallback
+counter deltas. The label comes from the connection's concrete backend
+name unless explicitly overridden. Neither labels nor counter deltas
+prove a particular network request or complete service execution.
 
-Two-track audit story
----------------------
+The original suites and Rust-pinned copies can produce transcripts for
+comparison. Running copies without capture checks only their existing
+assertions; passing them does not establish every legacy contract.
 
-The plugin powers track 1 of the two parity tracks the legacy-folder
-workflow runs:
-
-  * **Track 1 -- parity audit.** Run the *originals* once under
-    ``COSMOS_PARITY_CAPTURE_OP=read_item`` (core-python column), then
-    run the *legacy/ copies* once under the same env var (rust column,
-    because the copies pin ``_backend="rust"``). The reporter parses
-    both transcripts, pairs captures by ``(class name, method name)``,
-    and renders the rich PARITY CALL block per test (REQUEST /
-    CORE-PYTHON / RUST / DIFFS / VERDICT) using the same diff +
-    verdict logic the in-process parity tests use.
-
-  * **Track 2 -- legacy contract proof.** The same legacy/ copies are
-    also runnable on rust without the env var; ``PASSED`` on every
-    copy means no v4 customer contract regressed. The plugin is not
-    involved in track 2.
-
-How the patch works
--------------------
-
-When active, the plugin replaces the unbound ``read_item`` method on
-the relevant ``ContainerProxy`` class (sync at
-``azure.cosmos.container.ContainerProxy`` and aio at
-``azure.cosmos.aio._container.ContainerProxy``) with a wrapper that:
-
-  1. Records the call's positional + keyword arguments.
-  2. Invokes the original method (so the test sees the real return
-     value / exception).
-  3. Snapshots ``container.client_connection.last_response_headers``
-     post-call.
-  4. Reads the backend label from
-     ``container.client_connection._backend`` (``None`` →
-     ``core-python``, else → ``rust``).
-  5. Emits one ``===PARITY-CAPTURE-START===\\n{json}\\n===PARITY-CAPTURE-END===``
-     fenced block to ``sys.stdout``.
-  6. Re-raises (if it raised) or returns the value (if it succeeded).
-
-The patch is installed at ``pytest_sessionstart`` and reverted at
-``pytest_sessionfinish``, so it has no effect outside the test
-process.
-
-Block format
-------------
-
-Single-line JSON wrapped in fixed sentinels. One-line because pytest
-line-wraps multi-line stdout under some terminals; explicit sentinels
-because the JSON body may itself contain ``}`` characters. The
-reporter is the only consumer and uses the sentinels to slice.
-
-Example block (whitespace added for readability — the real thing is
-on one line)::
-
-    ===PARITY-CAPTURE-START===
-    {
-      "nodeid": "tests/test_none_options.py::TestNoneOptions::test_container_read_item_none_options",
-      "backend": "core-python",
-      "surface": "sync",
-      "op": "read_item",
-      "ordinal": 0,
-      "status": "ok",
-      "request": {
-        "args": ["a1b2c3..."],
-        "kwargs": {"partition_key": "pk-value", ...}
-      },
-      "return_value": {"id": "...", "pk": "...", "value": 42, "_rid": "...", ...},
-      "response_headers": {"x-ms-request-charge": "1.0", "etag": "\\"0x8DC...\\"", ...},
-      "exception": null
-    }
-    ===PARITY-CAPTURE-END===
-
-For an exception::
-
-    ===PARITY-CAPTURE-START===
-    {
-      ...,
-      "status": "raised",
-      "return_value": null,
-      "response_headers": {...},  // last_response_headers snapshot if available
-      "exception": {
-        "type": "CosmosResourceNotFoundError",
-        "message": "(NotFound) ...",
-        "status_code": 404,
-        "sub_status": null
-      }
-    }
-    ===PARITY-CAPTURE-END===
+Patches are installed at session start and restored at session finish.
+Captures use tokenized START/END sentinels around single-line JSON.
+Exception headers are preferred over connection state; the latter's
+object identity is only a heuristic for avoiding stale headers.
 """
 from __future__ import annotations
 
@@ -662,7 +582,8 @@ _register_op(
 
 # create_container_if_not_exists ----------------------------------------------
 # Reads the container first and creates it only on a 404, so one customer call
-# can produce either one request or two. Patching create_container alone would
+# can include a read and a create. These are logical calls, not HTTP attempt counts.
+# Patching create_container alone would
 # record the create leg without recording which path the call actually took.
 
 def _sync_create_container_if_not_exists_target() -> Tuple[Any, str, str]:
@@ -730,10 +651,8 @@ _register_op(
 
 
 # list_containers -------------------------------------------------------------
-# A feed op: the method returns a pager and the HTTP call happens on drain, so
-# both ops below are listed in _LAZY_CAPTURE_OPS. Routing lives inside
-# __QueryFeed's ResourceType.Collection branch, not in DatabaseProxy, so the
-# public method here is only the observation point.
+# These methods return lazy pagers, so captures are deferred to consumption.
+# The patched public method is an observation point, not the routing decision.
 
 def _sync_list_containers_target() -> Tuple[Any, str, str]:
     """Return the synchronous ``list_containers`` method to record."""
@@ -755,9 +674,8 @@ _register_op(
 
 
 # query_containers ------------------------------------------------------------
-# Only a dictionary-shaped query reaches
-# Rust; a bare string query stays on legacy by design, because legacy posts it
-# as text/plain while the driver always posts application/query+json.
+# Capture the public query call; normalization and backend eligibility belong
+# to the SDK, not this registry.
 
 def _sync_query_containers_target() -> Tuple[Any, str, str]:
     """Return the synchronous ``query_containers`` method to record."""
@@ -841,11 +759,10 @@ def _infer_backend_label(container_self: Any) -> str:
 # ---------------------------------------------------------------------------
 
 def _coerce_json_safe(value: Any) -> Any:
-    """Return a JSON-safe view of ``value``.
+    """Convert supported captured values recursively to JSON-friendly forms.
 
-    Handles the types we actually capture: ``CosmosDict``,
-    ``CaseInsensitiveDict``, sets, bytes, and anything else gets
-    ``repr()``-folded so the block is never malformed.
+    Unknown objects use a scrubbed repr. This does not guarantee successful
+    serialization for arbitrary objects, recursive structures, or failing reprs.
     """
     if value is None or isinstance(value, (bool, int, float, str)):
         return value
@@ -937,7 +854,12 @@ def _rust_fallback_count() -> int:
 
 
 def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str, Any]:
-    """Describe which implementation completed the recorded call."""
+    """Classify observed counter deltas using the plugin's reporting rule.
+
+    The counters are process-wide and can include unrelated concurrent work.
+    A zero delta can also mean early rejection or an uninstrumented path;
+    it does not by itself prove core-Python execution.
+    """
     after = _rust_operation_count()
     fallback_delta = max(0, _rust_fallback_count() - fallback_before)
     if before is None or after is None:
@@ -959,17 +881,10 @@ def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str
 
 
 def _snapshot_headers_identity(container_self: Any) -> int:
-    """Return the ``id()`` of the live ``last_response_headers`` dict.
+    """Return the current headers object's id, or zero if unavailable.
 
-    Used as a cheap "did the SDK swap in a new headers dict on this
-    call?" check. The SDK's request path does
-    ``headers = copy.copy(response.headers)`` and re-assigns
-    ``client_connection.last_response_headers`` on every HTTP round-
-    trip, so a fresh ``id()`` means a fresh response. Same ``id()``
-    before and after means no HTTP call happened on this invocation
-    -- e.g. the wrapper's input validation raised client-side and
-    the headers we'd be about to snapshot are a stale carry-over
-    from a previous call.
+    Identity changes are a freshness heuristic, not HTTP evidence: mappings
+    can be mutated in place or replaced without a request, and ids can be reused.
     """
     try:
         cc = container_self.client_connection
@@ -980,10 +895,10 @@ def _snapshot_headers_identity(container_self: Any) -> int:
 
 
 def _emit_block(payload: Dict[str, Any]) -> None:
-    """Write one capture block to stdout.
+    """Attempt to emit a JSON capture, then a minimal error block on failure.
 
-    Wrapped in a try/except so a serialisation bug in one capture
-    cannot break the test under run.
+    The fallback write is not protected by another catch, so stdout failures
+    can still propagate.
     """
     token = _ensure_sentinel_token()
     sentinel_start = f"{SENTINEL_PREFIX}{token}{SENTINEL_SUFFIX_START}"
@@ -1029,8 +944,8 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 # its own process and its own ``_STATE``). Multi-threaded test runs
 # inside a single pytest worker would race on
 # ``_STATE.current_nodeid`` and the ordinal counter. The current
-# cosmos test suite is single-threaded per worker so this is not a
-# concrete issue.
+# state is not protected by locks; concurrent calls within a worker can
+# therefore misattribute captures.
 
 _LAZY_CAPTURE_OPS = frozenset((
     "read_feed_ranges",
@@ -1163,7 +1078,6 @@ def _build_sync_wrapper(op_name: str, surface: str,
         nodeid = _STATE.current_nodeid
         if nodeid is None:
             return original(self_container, *args, **kwargs)
-        ordinal = _STATE.next_ordinal(nodeid)
         backend = _infer_backend_label(self_container)
         rust_count_before = _rust_operation_count()
         fallback_count_before = _rust_fallback_count()
@@ -1221,7 +1135,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                             "backend": backend,
                             "surface": surface,
                             "op": op_name,
-                            "ordinal": ordinal,
+                            "ordinal": _STATE.next_ordinal(nodeid),
                             "plugin_version": PLUGIN_VERSION,
                             "status": "raised",
                             "test_doc": test_doc,
@@ -1238,7 +1152,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                         "backend": backend,
                         "surface": surface,
                         "op": op_name,
-                        "ordinal": ordinal,
+                        "ordinal": _STATE.next_ordinal(nodeid),
                         "plugin_version": PLUGIN_VERSION,
                         "status": "ok",
                         "test_doc": test_doc,
@@ -1267,7 +1181,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                             "backend": backend,
                             "surface": surface,
                             "op": op_name,
-                            "ordinal": ordinal,
+                            "ordinal": _STATE.next_ordinal(nodeid),
                             "plugin_version": PLUGIN_VERSION,
                             "status": "raised",
                             "test_doc": test_doc,
@@ -1284,7 +1198,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                         "backend": backend,
                         "surface": surface,
                         "op": op_name,
-                        "ordinal": ordinal,
+                        "ordinal": _STATE.next_ordinal(nodeid),
                         "plugin_version": PLUGIN_VERSION,
                         "status": "ok",
                         "test_doc": test_doc,
@@ -1304,7 +1218,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 "backend": backend,
                 "surface": surface,
                 "op": op_name,
-                "ordinal": ordinal,
+                "ordinal": _STATE.next_ordinal(nodeid),
                 "plugin_version": PLUGIN_VERSION,
                 "status": "ok",
                 "test_doc": test_doc,
@@ -1323,7 +1237,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 "backend": backend,
                 "surface": surface,
                 "op": op_name,
-                "ordinal": ordinal,
+                "ordinal": _STATE.next_ordinal(nodeid),
                 "plugin_version": PLUGIN_VERSION,
                 "status": "raised",
                 "test_doc": test_doc,

@@ -3,7 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Rust patches through both public proxies and the real backend adapters."""
+"""Patch contract through both public clients, against the real Rust dispatch adapters.
+
+Unlike the create and read contract files, every test here runs twice --
+sync-Rust and async-Rust -- because patch is a Rust-only path in this
+migration. The legacy column is covered separately by the parity files and
+by ``sync/test_container_patch_item_regression_unit.py``.
+
+Patch differs from the other single-item writes in three ways that drive
+most of these tests:
+
+* the caller sends an **operations list**, not a body, so "invalid input"
+  means a malformed operation rather than a malformed item;
+* an ``If-Match`` guard is the normal case (read-modify-write), and there
+  are many spellings of it that must all land on the same header;
+* several options the other writes accept are simply not implemented here,
+  and must say so loudly rather than being ignored.
+
+``rust_patch.events`` records ``("metadata", budget)`` and
+``("patch", budget)`` in order, so a test can prove an argument was
+rejected *before* anything reached the network.
+"""
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
@@ -38,6 +58,21 @@ pytestmark = pytest.mark.parametrize(
 
 @pytest.fixture
 def point_patch(point_read, monkeypatch):
+    """Reuse the point-read harness and repoint it at ``patch_item``.
+
+    Replaces the Rust binding's ``patch_item`` with a fake that records
+    ``("patch", budget)``, fails when the remaining budget is smaller than
+    ``write_delay``, and returns an empty payload when the request asked for
+    no response body.
+
+    ``context.mutate`` is the hook that lets a test change the caller's own
+    arguments while the metadata lookup is in flight -- that is how the
+    snapshot test proves the inputs were copied up front.
+
+    ``call`` always patches item ``"item"`` in partition ``"pk"``, defaulting
+    to a single ``set`` operation, so individual tests only state what they
+    are actually varying.
+    """
     context = point_read
     context.write_delay = 0
     context.mutate = lambda: None
@@ -92,6 +127,7 @@ def point_patch(point_read, monkeypatch):
 
 @pytest.fixture
 def rust_patch(point_patch):
+    """Readable alias for ``point_patch``; patch only runs on the Rust path here."""
     return point_patch
 
 
@@ -115,6 +151,11 @@ def rust_patch(point_patch):
     ],
 )
 def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
+    """Inspect equivalent If-Match settings through the test's header-view helper.
+
+    The fake binding records one patch phase and legacy PatchItem is untouched.
+    The header view is not a capture of actual native HTTP serialization.
+    """
     rust_patch.call(**kwargs)
     assert wire_headers(rust_patch.prepared)["if-match"] == etag
     assert [phase for phase, _ in rust_patch.events] == ["metadata", "patch"]
@@ -147,6 +188,22 @@ def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
     ],
 )
 def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error):
+    """Bad and not-yet-supported options raise before any request is sent.
+
+    Two kinds of failure, deliberately given different types:
+
+    * ``ValueError`` -- the argument is wrong. An ``etag`` with no
+      ``match_condition``, an empty ``if_match``, a malformed
+      ``access_condition``, or the same guard supplied twice with conflicting
+      values (the SDK must not silently pick a winner).
+    * ``NotImplementedError`` -- the argument is valid Cosmos usage that this
+      path does not support yet: any ``If-None-Match`` form, a
+      ``filter_predicate``, ``read_timeout``, ``retry_write``.
+
+    The distinction matters to a customer: one says "fix your call", the
+    other says "this does not work here yet". Neither may reach the service,
+    which the empty ``events`` list proves.
+    """
     with pytest.raises(error):
         rust_patch.call(**kwargs)
     assert rust_patch.events == []
@@ -157,6 +214,16 @@ def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error
 )
 @pytest.mark.parametrize("nested", [False, True])
 def test_invalid_timeout_fails_before_io(rust_patch, timeout, nested):
+    """An unusable ``timeout`` is rejected up front, whether passed directly or nested.
+
+    Covers zero and negative values, a value too small to be meaningful,
+    ``nan`` and ``inf``, a string, a bool, and a number too large to convert.
+    Each must raise ``ValueError`` naming ``timeout`` rather than being
+    clamped, ignored, or passed down to overflow inside the driver.
+
+    Running each case both as ``timeout=`` and inside ``request_options``
+    proves the same validation covers both entry points.
+    """
     kwargs = (
         {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
     )
@@ -169,6 +236,14 @@ def test_invalid_timeout_fails_before_io(rust_patch, timeout, nested):
 def test_one_deadline_covers_metadata_and_patch(
     rust_patch, metadata_delay, write_delay
 ):
+    """``timeout`` covers metadata and the patch together, and expiry skips the hook.
+
+    Three cases: the metadata lookup alone overruns the budget; it consumes
+    the budget exactly, leaving nothing; it leaves too little for the patch to
+    finish. All three must surface as ``CosmosClientTimeoutError``.
+
+    The response hook must not run -- there is no response to give it.
+    """
     rust_patch.metadata_delay, rust_patch.write_delay = metadata_delay, write_delay
     hook = MagicMock()
     with pytest.raises(CosmosClientTimeoutError):
@@ -177,6 +252,16 @@ def test_one_deadline_covers_metadata_and_patch(
 
 
 def test_subsecond_remaining_budget_reaches_binding(rust_patch):
+    """Time spent on metadata is deducted, and the fraction left is handed to the patch.
+
+    A one second budget less a 0.75 second lookup leaves 0.25 seconds, which
+    must reach the binding as a fraction. Rounding down to zero would abandon
+    a call that still had time; rounding up would overrun the budget.
+
+    The prepared request must carry no ``deadline`` attribute: the remaining
+    time travels as the call's timeout, not as an absolute deadline baked
+    into the request.
+    """
     rust_patch.metadata_delay = 0.75
     rust_patch.call(timeout=1)
     assert rust_patch.events == [("metadata", 1), ("patch", 0.25)]
@@ -184,6 +269,13 @@ def test_subsecond_remaining_budget_reaches_binding(rust_patch):
 
 
 def test_lazy_initialization_uses_the_same_budget(rust_patch):
+    """Starting the Rust driver counts against the caller's timeout.
+
+    The driver is built on first use. If that setup were not charged to the
+    budget, a one second timeout could be exceeded before any work started.
+    Setup here outlasts the whole budget, so the call must time out with
+    nothing recorded in ``events``.
+    """
     rust_patch.init_delay = 2
     with pytest.raises(CosmosClientTimeoutError):
         rust_patch.call(timeout=1)
@@ -191,6 +283,19 @@ def test_lazy_initialization_uses_the_same_budget(rust_patch):
 
 
 def test_inputs_are_snapshotted_before_metadata(rust_patch):
+    """Everything the caller passes is copied up front, so later edits cannot change the request.
+
+    While the metadata lookup is in flight, the caller mutates all three
+    inputs: a value nested inside an operation, a header dict, and an
+    excluded-locations list. None of those changes may appear in the request
+    that is ultimately sent.
+
+    Without an up-front copy, a customer reusing an options dict across
+    concurrent calls would see one call's arguments leak into another.
+
+    ``request_options`` is passed read-only, so any attempt to write the
+    partition key back into the caller's mapping fails the test outright.
+    """
     operations = [{"op": "set", "path": "/data", "value": {"nested": [1]}}]
     initial = {"x-trace": "original"}
     exclusions = ["West US"]
@@ -222,6 +327,15 @@ def test_inputs_are_snapshotted_before_metadata(rust_patch):
     ],
 )
 def test_invalid_payload_fails_before_io(rust_patch, operations, error):
+    """A malformed operations list is rejected locally, not by the service.
+
+    An empty list has nothing to do, a mapping is the wrong container, a list
+    of non-operations has no ``op`` to read, and a value that JSON cannot
+    represent (``nan``, an arbitrary object) cannot be serialised.
+
+    Catching these locally turns a confusing service error into an immediate,
+    specific one, and costs the customer no request.
+    """
     with pytest.raises(error):
         rust_patch.call(operations)
     assert rust_patch.events == []
@@ -229,6 +343,16 @@ def test_invalid_payload_fails_before_io(rust_patch, operations, error):
 
 @pytest.mark.parametrize("no_response", [False, True])
 def test_hooks_get_independent_snapshots(rust_patch, no_response):
+    """A falsey response hook still runs, and its edits stay inside its own copy.
+
+    ``Hook.__bool__`` returns ``False``, so any layer testing the hook with a
+    plain truth check would skip it. It must still run exactly once.
+
+    Whatever the hook writes -- the headers it is handed, the body's response
+    headers, a nested list inside the body -- must not reach the caller's
+    result or the stored last-response headers. Both the populated body and
+    the empty one are covered.
+    """
     seen = []
 
     class Hook:
@@ -252,6 +376,14 @@ def test_hooks_get_independent_snapshots(rust_patch, no_response):
 
 
 def test_hook_failure_does_not_replay_write(rust_patch):
+    """If the customer's hook raises, the patch is not applied a second time.
+
+    The hook runs after the patch has already succeeded. The exception it
+    raises is a ``TimeoutError``, which the retry machinery would normally
+    find tempting -- so this test proves it is passed straight through
+    (the same object) rather than triggering a replay that would apply the
+    operations twice.
+    """
     error = TimeoutError("customer hook")
     hook = MagicMock(side_effect=error)
     with pytest.raises(TimeoutError) as raised:
@@ -268,6 +400,13 @@ def test_hook_failure_does_not_replay_write(rust_patch):
 def test_error_tuple_stays_typed_and_never_invokes_success_hook(
     rust_patch, status, error
 ):
+    """Service errors keep their specific type and status, and skip the hook.
+
+    A 400 becomes ``CosmosHttpResponseError``; a 412 (the version guard
+    failed) becomes ``CosmosAccessConditionFailedError``, which is the one a
+    read-modify-write loop catches to retry. Both must carry the original
+    status code, and neither may invoke the success hook.
+    """
     rust_patch.status = status
     hook = MagicMock()
     with pytest.raises(error) as raised:
@@ -277,6 +416,15 @@ def test_error_tuple_stays_typed_and_never_invokes_success_hook(
 
 
 def test_client_defaults_and_per_call_overrides(rust_patch):
+    """Client-level defaults apply to a patch, and per-call arguments override them.
+
+    The client is configured to suppress response bodies and to send a
+    priority and throughput bucket. A bare call must honour all three. The
+    same call with explicit arguments must win on all three.
+
+    This is checked on the wire headers rather than on the options dict, so a
+    default that is recorded but never sent would still fail.
+    """
     context = rust_patch.proxy._item_context
     rust_patch.proxy._item_context = replace(
         context,
@@ -295,6 +443,11 @@ def test_client_defaults_and_per_call_overrides(rust_patch):
 
 
 def test_async_cancellation_drains_single_native_call(rust_patch):
+    """Cancellation unwinds the fake async binding coroutine and skips the hook.
+
+    Assert one patch await, no metadata-entry call, and the coroutine's finally
+    marker. No real driver task, socket cleanup, or service rollback is observed.
+    """
     if not inspect.iscoroutinefunction(rust_patch.proxy.patch_item):
         pytest.skip("Async cancellation contract.")
 

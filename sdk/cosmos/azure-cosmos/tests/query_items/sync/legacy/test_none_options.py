@@ -48,6 +48,17 @@ class TestNoneOptions(unittest.TestCase):
             pass
 
     def test_container_query_items_none_options_partition(self):
+        """query_items accepts None for every optional argument.
+
+        None means "not supplied". Customers commonly build one call site that
+        passes every option through from their own config, leaving most of
+        them None, so each must behave as if it had been omitted: no header,
+        no error, and the query returns its results.
+
+        Fourteen options are covered here, including the ones that would
+        otherwise be easy to misread as a real value -- a None partition key
+        must mean "not scoped", not "the null partition".
+        """
         # Source: tests/test_none_options.py::TestNoneOptions.test_container_query_items_none_options_partition
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         self.container.create_item(item)

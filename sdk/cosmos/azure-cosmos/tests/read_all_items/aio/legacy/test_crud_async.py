@@ -51,11 +51,23 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_query_iterable_functionality_async(self):
+        """Enumerating a whole container works item by item and page by page.
+
+        Three items are created, then read back three ways with a page size of
+        two: as a flat async iterator, as a manually counted loop, and page by
+        page.
+
+        All three must see the same three items in the same order. Paging must
+        split them 2 then 1 and then stop cleanly, which proves the page size
+        is honoured and the end of the feed is signalled properly rather than
+        looping or repeating the last page.
+
+        This runs against a real account because read_all_items takes no
+        partition key, so it is a whole-container read served through the Rust
+        query fast path. If it were routed to a native read-feed instead the
+        driver would reject it and this would error.
+        """
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_query_iterable_functionality_async
-        # End-to-end on the real Rust driver: read_all_items takes no partition key,
-        # so this is a whole-container read served through the Rust query fast path.
-        # If it were routed to a native read-feed the driver would reject it and this
-        # would error -- which is why running it against a real account matters.
         doc1 = await self.container.upsert_item(body={"id": "doc1", "prop1": "value1"})
         doc2 = await self.container.upsert_item(body={"id": "doc2", "prop1": "value2"})
         doc3 = await self.container.upsert_item(body={"id": "doc3", "prop1": "value3"})

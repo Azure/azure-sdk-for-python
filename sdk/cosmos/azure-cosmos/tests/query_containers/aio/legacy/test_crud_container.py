@@ -1,28 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async container-query checks, re-run on the rust engine.
+"""Copied legacy container lifecycle assertions with _backend="rust".
 
-The async twin of ``query_containers/sync/legacy/test_crud_container.py``. See
-that file for why this operation matters, why reading only
-``DatabaseProxy.query_containers`` makes it look unmigrated when it is not, and
-why the routing gate's non-dict branch is unreachable today.
+This aio copy retains the source assertions and owns its setup database.
+Method-level Source comments identify the originals. Cleanup is registered
+for the owned resources, but service failures can still prevent deletion.
 
-Two things differ from the sync copy. The pager is drained with an async
-comprehension rather than ``list()``, which matters here because the HTTP call
-happens on drain, not when the method returns. And the async surface spells the
-query as separate ``query=`` and ``parameters=`` keywords, where the sync
-surface takes a single dict positionally -- both spellings have to route to
-rust, and this copy covers the keyword one.
+The listing assertion checks a count increase after creation; the filtered
+query assertion checks that results are nonempty. Neither is exhaustive
+paging coverage or proof of each internal routing step. Lazy results are
+consumed before assertions.
 
-The file name deliberately drops the ``_async`` suffix the source carries. The
-parity reporter pairs a legacy copy to its original on the file name with any
-trailing ``_async`` stripped, and decides sync-vs-async from the ``/aio/`` path
-segment. The class and method names keep their ``_async`` suffix, matching the
-source exactly.
-
-Run with::
-
-    pytest --noconftest tests/query_containers/aio/legacy/test_crud_container.py -v
+Separate parity tests compare backends. This file runs its copied
+assertions with a Rust-selected client only.
 """
 import os
 import unittest
@@ -67,6 +57,19 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert inst.status_code == status_code
 
     async def test_collection_crud_async(self):
+        """A newly created container can be found by querying for its id.
+
+        The full legacy lifecycle test, kept here for the query half. After
+        creating a container, a parameterised query filtering on the id must
+        return it.
+
+        This is the query path rather than the listing path, and the two are
+        served differently, so a container that shows up in a plain list can
+        still go missing from a filtered query.
+
+        The same legacy test is also copied into ``list_containers`` and
+        ``read_container``, each pinning the part of it they own.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_collection_crud_async
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]

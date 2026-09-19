@@ -10,36 +10,30 @@
 //!         -> looks up the rust driver by handle
 //!         -> runs the driver's work on the shared Tokio runtime
 //!
-//! Each entry point extracts fields from `PreparedRequest` and delegates to the
-//! matching runner under `wire/`. Request signing, region routing, retries, and
-//! service execution remain in the shared Rust driver.
+//! Operation entry points extract fields from `PreparedRequest` and delegate to
+//! runners under `wire/`; metadata helpers take explicit arguments instead.
+//! Request signing, region routing, retries, and service execution remain in the
+//! shared Rust driver. Local feed-range subset checks do not contact the service.
 //!
 //! Terminology used here (consistent with the rest of the backend):
 //!   * binding      -- this compiled `_rust` extension Python calls into.
 //!   * rust driver  -- the `CosmosDriver` driver that does the real Cosmos work.
 //!   * driver handle -- the string naming which pooled rust driver a client uses.
-//!   * shared Tokio runtime -- the one process-wide Tokio thread pool (in the
+//!   * shared Tokio runtime -- the binding-owned process-wide executor (in the
 //!     binding) that runs the driver's async work; see `runtime.rs`. It is NOT
 //!     the rust driver and NOT the driver runtime -- it is just the executor the
 //!     driver's futures run on.
 //!
 //! What is shared, what is not, and why (all grounded in `runtime.rs`):
-//!   * SHARED, one per process: the Tokio runtime (`RuntimeContext.tokio_rt`)
-//!     and the driver runtime (`CosmosDriverRuntime`, which owns the connection
-//!     pool). Both are built once, lazily, on the first `acquire_driver_handle` and live
-//!     until the process exits. One thread pool and one connection pool for the
-//!     whole process means fewer threads and reused sockets, and -- on the async
-//!     path -- no worker thread pinned per in-flight call.
-//!   * SHARED, one per distinct `(endpoint, credential, config)`: the rust
-//!     driver (`CosmosDriver`). Clients that match on all three get the *same*
-//!     driver (the driver handle is that key); clients that differ get their
-//!     own. So two `CosmosClient`s to the same account with the same credential
-//!     and config share one driver and its routing state.
-//!   * NOT shared -- per call: the inputs pulled off each PreparedRequest (body,
-//!     item id, partition key, modifiers) and the `CosmosOperation` built from
-//!     them. Each operation carries its own; nothing about one call leaks into
-//!     another. The functions here hold no state -- they look the shared driver
-//!     up by handle and run one operation on the shared runtime.
+//!   * SHARED, per process: `RuntimeContext.tokio_rt` and `CosmosDriverRuntime`,
+//!     initialized lazily by acquisition. The saved initialization result can
+//!     also be an error. The Python awaitable bridge is a separate mechanism.
+//!   * SHARED, per cache handle: a `CosmosDriver` and its routing state. The
+//!     handle combines endpoint, credential fingerprint, and config fingerprint;
+//!     see `runtime.rs` for hash and reference-counting limitations.
+//!   * PER CALL: extracted body, item id, partition key, modifiers, and the
+//!     constructed operation. These inputs are separate even when calls share
+//!     a driver and its caches.
 
 use crate::wire::partition_key::{extract_partition_key, PartitionKeyInput};
 use pyo3::types::PyTuple;
@@ -201,16 +195,14 @@ fn extract_feed_range_from_partition_key_inputs(
 // Async entry points
 // ---------------------------------------------------------------------------
 //
-// One `*_item_async` per operation, matching the sync six above. Input
-// extraction is byte-for-byte identical; the ONLY difference is the runner
-// (`execute_item_operation_async` instead of `execute_item_operation_sync`) and the return
-// type: a Python awaitable instead of a ready tuple.
+// Async item entry points share input extraction and operation construction
+// with their synchronous counterparts, but return awaitables rather than tuples.
 //
 // What "async" means here, precisely (grounded in `wire/`):
-//   * The driver work is `spawn`ed on the shared Tokio runtime -- the one
-//     process-wide Tokio thread pool from `runtime.rs`, the same executor the
-//     driver was built on (so its connection pool and timers stay put). Nothing
-//     blocks a Python thread while the request is in flight.
+//   * Driver work is spawned on the binding's Tokio runtime. No Python worker
+//     thread is reserved for the full operation, but argument extraction, result
+//     conversion, and credential callbacks still acquire the GIL. Credential
+//     callbacks can block the thread polling the driver future.
 //   * The spawned Rust task is turned into a Python awaitable by
 //     `pyo3_async_runtimes::tokio::future_into_py`. That is a library that maps
 //     a Rust future onto an object the customer's asyncio event loop can
@@ -218,10 +210,9 @@ fn extract_feed_range_from_partition_key_inputs(
 //     tuple. This is NOT the credential bridge (`AsyncTokenCredentialBridge`) --
 //     that one wraps an async *credential* into a sync `get_token` and is
 //     unrelated to dispatching operations.
-//   * If the customer's `await` is cancelled (e.g. a client-side timeout), the
-//     awaitable drops an abort guard that cancels the Tokio task, so the driver
-//     operation actually stops (connection released, no more RU spent) instead
-//     of running on with its result discarded.
+//   * Dropping the Rust bridge future drops its abort guard and requests task
+//     cancellation. This does not guarantee immediate cleanup or undo service
+//     work already submitted.
 //
 // The Python async backend (`aio/_backend/rust.py`) dispatches to these.
 //
@@ -232,7 +223,7 @@ fn extract_feed_range_from_partition_key_inputs(
 //         -> look up the rust driver by handle (GIL held)
 //         -> spawn the driver's work on the shared Tokio runtime
 //         -> hand asyncio a Python awaitable (via pyo3-async-runtimes)
-//         -> [request runs on the runtime; no Python thread held]
+//         -> [driver future runs; credential callbacks can re-enter Python]
 //         -> await resolves with the BackendResponse tuple
 
 mod containers;

@@ -1,38 +1,19 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Automated leak verdict for the leak sweep.
+"""Classify observed RSS traces using tail slopes and adjacent-sample steps.
 
-Judging a memory trace by eye is unreliable: a trace that steps up and then
-plateaus looks flat, while a whole-run regression over the same trace reports a
-fake slope because it spans the step. This script produces a reproducible verdict
-per (config_backend, operation):
+Group samples by backend/operation, fit the final time window, and compare
+ordinary least-squares intervals and median pairwise slopes with configured
+thresholds. The final window need not be a plateau; serial dependence and
+sampling affect inference. Labels describe the observed run, not proof of
+a leak's cause or bounded memory in longer runs.
 
-  1. Backend match check (enforced, exits non-zero). Every row for a backend must
-     carry the matching runtime_backend ('core-python' or 'AsyncRustBackend'). A
-     blank or mismatched value means the engine is unproven, so the run fails.
+Backend names and declared driver-commit labels are checked separately.
+They do not attest execution or the extension's actual build provenance.
+A successful exit is not equivalent to every trace being leak-free.
 
-  2. Shape-aware slope. The traces are staircases, so the leak signal is the slope
-     of the final plateau (the last hour), not the whole run. We fit OLS over the
-     tail and report the slope with its standard error and 95% confidence interval,
-     plus a Theil-Sen robust slope as a cross-check.
-
-  3. Step detection. We count discrete RSS jumps. A run that ends flat but stepped
-     repeatedly is reported STAIRCASE, not "bounded", because one plateau cannot
-     prove the next would not be higher.
-
-  4. Rust vs core. Print final RSS and the tail slope for both engines side by
-     side per operation.
-
-USAGE:
-  source ./perf_env.sh                      # exports RESULTS_COSMOS_* (incl. key)
-  python3 leak_verdict.py [--stamp YYYYMMDD-HHMMSS] [--prefix leak-]
-      --stamp   which run to judge; default = the most recent leak-* stamp.
-      --prefix  workload_id prefix for the leak sweep (default 'leak-').
-
-EXIT CODE:
-  0 = backend match check passed (verdicts are trustworthy).
-  1 = backend match check failed (blank/mismatched runtime_backend rows).
-  2 = configuration error (env vars not set, no rows for the stamp).
+Run leak_verdict.py with --stamp and --prefix after configuring the results
+account.
 """
 
 import argparse
@@ -47,13 +28,12 @@ except ImportError:
     print("ERROR: azure-cosmos is required (pip install azure-cosmos).", file=sys.stderr)
     sys.exit(2)
 
-# Recent-slope thresholds (MB/h) for the verdict. A point-op write loop sampled
-# on 5-min windows: a tail slope whose 95% CI sits below ~2 MB/h is flat within
-# allocator noise; a CI entirely above ~5 MB/h is genuine ongoing growth.
+# Heuristic recent-slope thresholds (MB/h), not measured allocator-noise bounds
+# or proof of a leak. Classification depends on the sampled time window.
 FLAT_MAX = 2.0
 LEAK_MIN = 5.0
 WARMUP_S = 600          # drop the first 10 min (warmup) before fitting anything.
-TAIL_S = 3600           # the "final plateau" window the leak slope is measured on.
+TAIL_S = 3600           # final time window; it need not be a plateau.
 STEP_MB = 10.0          # an adjacent-window RSS jump this large counts as a step.
 
 # Two-sided 95% t critical values by degrees of freedom (n-2). Embedded so we
@@ -73,12 +53,11 @@ def t_critical(df):
 
 
 def regress(pts):
-    """OLS fit for [(elapsed_s, rss_MB)].
+    """Fit ordinary least squares to (elapsed seconds, RSS MB) samples.
 
-    Returns (slope_MB_per_h, r2, se_MB_per_h, ci95_halfwidth_MB_per_h, n).
-    The standard error and CI are what let us call a near-zero slope
-    *statistically* flat instead of merely small. Tuple of Nones if n < 3 or x
-    has no spread.
+    Return slope/hour, r2, slope standard error/hour, nominal 95% interval
+    half-width/hour, and sample count. With fewer than three samples or no time
+    spread, only the count is populated. No residual independence check is made.
     """
     if len(pts) < 3:
         return None, None, None, None, len(pts)
@@ -104,10 +83,9 @@ def regress(pts):
 
 
 def theil_sen(pts):
-    """Robust slope (MB/h): the median of all pairwise slopes.
+    """Return the median of nonvertical pairwise slopes in MB/hour.
 
-    Resistant to the discrete allocator *steps* in the trace, so it answers
-    'ignoring the step jumps, is the floor drifting up?'.
+    Step changes remain in the input and can influence this statistic.
     """
     if len(pts) < 3:
         return None
@@ -127,11 +105,10 @@ def theil_sen(pts):
 
 
 def settled_tail(pts, tail_seconds=TAIL_S):
-    """OLS fit over only the final `tail_seconds` of the series.
+    """Fit samples within tail_seconds of the final sample.
 
-    A whole-run regression spans a step and shows a misleading trend; the
-    'is it growing now' signal is the slope of the final plateau. Returns a
-    dict with slope, se, ci half-width, ci_lo/ci_hi, theil-sen, r2, n.
+    This is a time-window selection, not plateau detection. Return slope,
+    interval, median pairwise slope, r2, and count when available.
     """
     if not pts:
         return None
@@ -148,10 +125,10 @@ def settled_tail(pts, tail_seconds=TAIL_S):
 
 
 def detect_steps(pts, step_mb=STEP_MB):
-    """Count abrupt jumps: adjacent-window RSS deltas exceeding step_mb.
+    """Count adjacent RSS increases greater than or equal to step_mb.
 
-    Returns (n_steps, largest_step_mb, total_step_mb). A staircase shows a few
-    large steps; smooth growth shows none (it is spread across many windows).
+    Return their count, maximum, and sum. Sampling alone cannot distinguish
+    a sudden allocation from accumulated growth between samples.
     """
     steps = [pts[i][1] - pts[i - 1][1] for i in range(1, len(pts))]
     big = [d for d in steps if d >= step_mb]
@@ -173,12 +150,11 @@ def verdict(tail, n_steps):
     hi = tail["hi"] if tail["hi"] is not None else slope
     lo = tail["lo"] if tail["lo"] is not None else slope
     if hi <= FLAT_MAX:
-        # Confidently flat right now. But repeated large steps mean the next
-        # plateau could be higher -- one run ending flat cannot prove bounded.
+        # Below the configured slope threshold; this does not prove bounded RSS.
         return "PLATEAUED" if n_steps <= 1 else "STAIRCASE"
     if lo >= LEAK_MIN:
         return "GROWING"            # CI entirely above the leak threshold.
-    return "WATCH"                  # CI spans both thresholds -- not conclusive.
+    return "WATCH"                  # neither classification threshold was met.
 
 
 def _glyph_or_fallback(glyph: str, fallback: str) -> str:
@@ -315,7 +291,7 @@ def main():
     print("GATE:", "FAIL" if gate_fail else "PASS",
           "(None/blank/mismatched runtime_backend rows mean the backend is unconfirmed)")
 
-    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to Rust rows) ----
     commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
     for _l in commit_lines:

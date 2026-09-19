@@ -181,10 +181,11 @@ def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched(parity_c
 
 
 def test_L7_is_feed_range_subset_inverted_range_matches_legacy(parity_container):
-    """An inverted range (min > max) is a nonsensical opaque value the legacy compare
-    tolerates (it never validates min <= max). The rust driver rejects such bounds, so
-    the rust path must fall back to legacy rather than raise -- both backends return the
-    same answer and neither errors. Guards the invalid-range behavior-drift fix."""
+    """Compare the local compatibility result for an inverted parent range.
+
+    Routing selects the compatibility calculation before native execution.
+    This is not replay after a rejected native operation.
+    """
     inverted_parent = _feed_range("7F", "3F")
     child = _feed_range("3F", "7F")
     _run(

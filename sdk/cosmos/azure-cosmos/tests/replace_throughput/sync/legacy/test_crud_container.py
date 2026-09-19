@@ -1,19 +1,19 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 replace-throughput checks, re-run on the rust engine.
+"""The existing legacy replace-throughput checks, re-run on the Rust engine.
 
 Why this file exists: when a customer changes a container's throughput, the SDK
 reads the container's offer, changes the RU/s in it, and PUTs it back, then hands
 back a ``ThroughputProperties`` showing the applied number. Customers and their
 automation act on that returned number (a scaler confirms it took; a dashboard shows
-the new capacity). If the rust engine set the wrong number, wrote to the wrong
+the new capacity). If the Rust engine set the wrong number, wrote to the wrong
 offer, or handed back a different object type, a capacity change could silently fail
 or report the wrong value -- at exactly the moment (a sale, a nightly load) the
 change was meant to protect.
 
-What it does: these are the real v4 tests copied verbatim from
+What it does: these are the real legacy tests copied verbatim from
 ``tests/test_crud_container.py``, changed in exactly one place -- the client is
-built with ``_backend="rust"`` -- so the same assertions now run against the rust
+built with ``_backend="rust"`` -- so the same assertions now run against the Rust
 path. They set throughput to a fixed 2500 RU/s (as an int and as a
 ``ThroughputProperties``) and confirm ``get_throughput`` reads 2500 back, and they
 confirm that a ``ThroughputProperties`` mixing fixed and autoscale settings raises
@@ -23,7 +23,7 @@ parity audit compares like with like.
 
 This is NOT the side-by-side parity comparison. The parity tests
 (``replace_throughput/sync/test_replace_throughput_parity.py``) run the same call on
-both engines and diff the numbers. This file runs on rust only; the core-python side
+both engines and diff the numbers. This file runs on Rust only; the core-python side
 of the contract is guaranteed by the original test in ``tests/``. Together: parity
 catches value drift (wrong RU/s), this catches contract drift (wrong return type or
 a change that doesn't take) by reusing checks the team already trusts.
@@ -55,11 +55,11 @@ KEY = os.environ.get(
 
 @pytest.mark.cosmosEmulator
 class TestCRUDContainerOperations(unittest.TestCase):
-    """Runs the v4 throughput-change checks on the rust engine (rust-only).
+    """Runs the legacy throughput-change checks on the Rust engine (Rust-only).
 
     Each method builds a fresh container at 400 RU/s, changes its throughput, and
-    reads it back to confirm the change took -- the same assertions the v4 SDK
-    already shipped, now run with a ``_backend="rust"`` client. If the rust engine
+    reads it back to confirm the change took -- the same assertions the legacy SDK
+    already shipped, now run with a ``_backend="rust"`` client. If the Rust engine
     wrote the wrong number, wrote to the wrong offer, or handed back a different
     object, one of these checks fails. The core-python side of the contract is
     guaranteed by the original tests in ``tests/test_crud_container.py``.
@@ -83,6 +83,14 @@ class TestCRUDContainerOperations(unittest.TestCase):
             pass
 
     def test_replace_throughput_offer_with_int(self):
+        """Throughput can be changed by passing a plain number.
+
+        The container starts at 400 request units and is moved to 2500 by
+        passing the integer directly, then read back.
+
+        This is the shorthand form most callers reach for. It has to end up at
+        the same place as the object form below.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_replace_throughput_offer_with_int
         collection = self.container
 
@@ -93,6 +101,15 @@ class TestCRUDContainerOperations(unittest.TestCase):
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
     def test_replace_throughput_offer_with_object(self):
+        """Throughput can be changed by passing a ``ThroughputProperties`` object.
+
+        The same move from 400 to 2500 request units, expressed as an object
+        rather than a number.
+
+        Both forms are supported and must behave identically. Accepting the
+        object but reading the wrong field off it would leave the container at
+        its original throughput while the call still appeared to succeed.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_replace_throughput_offer_with_object
         collection = self.container
 
@@ -103,6 +120,17 @@ class TestCRUDContainerOperations(unittest.TestCase):
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
     def test_negative_replace_throughput_with_all_configs_set(self):
+        """Mixing fixed and autoscale settings is refused before anything is sent.
+
+        A ``ThroughputProperties`` carrying both a fixed throughput and
+        autoscale settings is contradictory, and raises a ``KeyError`` on the
+        client rather than reaching the service.
+
+        Failing early is the point. The two modes are mutually exclusive, so a
+        request that carried both would have to pick one, and the caller would
+        have no way of knowing which. This guard behaves the same on both
+        engines.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_negative_replace_throughput_with_all_configs_set
         collection = self.container
 

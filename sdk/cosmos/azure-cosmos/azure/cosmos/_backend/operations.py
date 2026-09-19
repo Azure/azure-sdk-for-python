@@ -51,7 +51,7 @@ OP_REPLACE_OFFER = "replace_offer"
 #
 # ``query_items`` / ``read_all_items`` / ``list_databases`` are deliberately NOT
 # here: they are multi-page feeds, not single-reply operations, so they are
-# registered in ``STATELESS_QUERY_TO_BINDING_METHOD`` below and dispatched through
+# registered in the applicable page tables below and dispatched through
 # ``execute_pages``, never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
@@ -78,12 +78,8 @@ OP_TO_BINDING_METHOD = {
 }
 
 
-# ``PreparedQuery.op`` -> binding function name, matching ``OP_TO_BINDING_METHOD``
-# for the paged operations: the two container-scoped feeds (``query_items``,
-# ``read_all_items``) and the account-scoped one (``list_databases``). A
-# backend's ``execute_pages`` reads this (never ``OP_TO_BINDING_METHOD``) so a
-# paged op can never be reached through the single-reply ``execute`` path by
-# accident.
+# Stateless page operations use this table; retained item-feed cursors use the
+# next table. Neither page table controls migration fallback policy.
 STATELESS_QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",

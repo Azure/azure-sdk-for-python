@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The rust backend routes ``replace_item`` through the compiled binding.
+"""The Rust backend routes ``replace_item`` through the compiled binding.
 
-``replace_item`` is a first-class rust operation: the driver exposes
+``replace_item`` is a first-class Rust operation: the driver exposes
 ``CosmosOperation::replace_item`` (mapped to ``OperationType::Replace``,
 an overwrite-only PUT), and the binding's ``replace_item`` entry point
 maps to it. ``RustBackend.execute`` therefore dispatches an
@@ -113,7 +113,7 @@ def test_async_rust_backend_dispatches_replace_to_binding(monkeypatch):
 
 def test_sync_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
     """Before ``maturin develop`` builds ``_rust.pyd``, a replace on the
-    rust backend raises the same clear ``NotImplementedError`` every other
+    Rust backend raises the same clear ``NotImplementedError`` every other
     op raises -- never a silent wrong-op dispatch."""
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")

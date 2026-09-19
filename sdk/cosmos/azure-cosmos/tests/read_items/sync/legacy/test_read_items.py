@@ -15,8 +15,8 @@ is caught even when the two backends agree with each other.
 Not copied here (and why): the fault-injection tests
 (``test_read_items_surfaces_exceptions``, ``test_read_failure_preserves_headers``,
 ``test_read_items_with_throttling_retry``, ``test_read_items_with_gone_retry``)
-build a client with a core-python ``FaultInjectionTransport`` that the rust
-backend does not route through, so a fault cannot be injected on the rust path;
+build a client with a core-python ``FaultInjectionTransport`` that the Rust
+backend does not route through, so a fault cannot be injected on the Rust path;
 ``test_read_items_concurrency_internals`` patches an internal method; and the
 very large / multi-physical-partition cases reach into client internals or are
 prohibitively slow against a live account.
@@ -44,7 +44,7 @@ KEY = os.environ.get(
 @pytest.mark.cosmosEmulator
 class TestReadItems(unittest.TestCase):
     """read_items on a Rust-backed client: each test seeds its own container, runs
-    the batched read, and checks the customer-visible contract (which documents
+    the batched read, and checks the customer-visible contract (which items
     come back, in what order, and the aggregated request-charge header)."""
 
     def setUp(self):
@@ -65,7 +65,7 @@ class TestReadItems(unittest.TestCase):
 
     @staticmethod
     def _create_records_for_read_items(container, count, id_prefix="item"):
-        # Seed `count` documents and return the (id, pk) pairs to read back plus the
+        # Seed `count` items and return the (id, pk) pairs to read back plus the
         # ids alone; the container is keyed on /id, so each id doubles as its own pk.
         items_to_read = []
         item_ids = []
@@ -77,7 +77,7 @@ class TestReadItems(unittest.TestCase):
         return items_to_read, item_ids
 
     def test_read_items_single_item(self):
-        """One (id, pk) pair in the batch -> read_items returns exactly that one document."""
+        """One (id, pk) pair in the batch -> read_items returns exactly that one item."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_single_item
         items_to_read, item_ids = self._create_records_for_read_items(self.container, 1)
         read_items = self.container.read_items(items=items_to_read)
@@ -85,7 +85,7 @@ class TestReadItems(unittest.TestCase):
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
     def test_read_items_with_missing_items(self):
-        """A batch mixing real and non-existent ids -> only the real documents come back; missing ids are omitted, not errors."""
+        """A batch mixing real and non-existent ids -> only the real items come back; missing ids are omitted, not errors."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_with_missing_items
         items_to_read, _ = self._create_records_for_read_items(self.container, 3, "existing_item")
         items_to_read.append(("non_existent_item1" + str(uuid.uuid4()), "non_existent_pk1"))
@@ -97,7 +97,7 @@ class TestReadItems(unittest.TestCase):
         self.assertSetEqual(returned_ids, expected_ids)
 
     def test_read_items_different_partition_key(self):
-        """Partition key on its own path (/pk, not /id) -> read_items still finds every requested document."""
+        """Partition key on its own path (/pk, not /id) -> read_items still finds every requested item."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_different_partition_key
         container_id = 'read_items_pk_container_' + str(uuid.uuid4())
         self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
@@ -144,7 +144,7 @@ class TestReadItems(unittest.TestCase):
             self.database.delete_container(container_id)
 
     def test_read_items_hierarchical_partition_key(self):
-        """Two-level (tenantId, userId) partition key -> read_items returns every requested document."""
+        """Two-level (tenantId, userId) partition key -> read_items returns every requested item."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_hierarchical_partition_key
         container_id = 'read_hpk_container_' + str(uuid.uuid4())
         self.database.create_container(
@@ -194,7 +194,7 @@ class TestReadItems(unittest.TestCase):
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
     def test_read_items_order_using_zip_comparison(self):
-        """The returned documents come back in the same order as the input (id, pk) list."""
+        """The returned items come back in the same order as the input (id, pk) list."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_order_using_zip_comparison
         container_id = 'read_order_zip_container_' + str(uuid.uuid4())
         self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))

@@ -47,7 +47,8 @@ where
 }
 
 /// Start an operation on the shared runtime and return a Python awaitable.
-/// Dropping the awaitable cancels the spawned task.
+/// The Rust bridge future owns a guard that requests task cancellation when
+/// dropped. Merely discarding a Python reference is not a cancellation contract.
 pub(super) fn run_driver_operation_async<'py, R, F, Fut>(
     py: Python<'py>,
     driver_handle: &str,

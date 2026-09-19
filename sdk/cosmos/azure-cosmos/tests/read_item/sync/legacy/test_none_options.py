@@ -64,7 +64,17 @@ class TestNoneOptions(unittest.TestCase):
         return item
 
     def test_container_read_item_none_options(self):
-        """Verify read_item accepts None for every optional kwarg (post_trigger_include, session_token, initial_headers, max_integrated_cache_staleness_in_ms, priority, throughput_bucket) and returns the item unchanged."""
+        """read_item accepts None for every optional argument.
+
+        None means "not supplied". Customers commonly build one call site
+        that passes every option through from their own config, leaving most
+        of them None, so each must behave as if it had been omitted: no
+        header, no error, and the item comes back unchanged.
+
+        The options covered are post_trigger_include, session_token,
+        initial_headers, max_integrated_cache_staleness_in_ms, priority and
+        throughput_bucket.
+        """
         # Source: tests/test_none_options.py::TestNoneOptions.test_container_read_item_none_options
         item = self._create_sample_item()
         read_back = self.container.read_item(

@@ -9,7 +9,7 @@ A real container is wired to a fake connection so each test can see what
 the delete sends on. They check two things:
 
 1. When no Rust backend is set, the delete goes to the existing client
-   with the right document, partition key, etag guard, and options -- and
+   with the right item, partition key, etag guard, and options -- and
    any options the caller passed are kept, not thrown away.
 2. When a Rust backend is set, the delete goes to it and the existing
    client is not called.
@@ -63,7 +63,7 @@ class TestContainerDeleteItemPreservesLegacyBehaviour(unittest.TestCase):
     """When no Rust backend is set, the delete still behaves exactly as before."""
 
     def test_string_item_resolves_to_document_link(self):
-        """A delete by id string targets that document."""
+        """A delete by id string targets that item."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
         proxy.delete_item("delete_item", "a")
@@ -75,7 +75,7 @@ class TestContainerDeleteItemPreservesLegacyBehaviour(unittest.TestCase):
         )
 
     def test_dict_item_resolves_to_its_self_link(self):
-        """A delete by item dict targets the document the dict points to."""
+        """A delete by item dict targets the item the dict points to."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         item = {"id": "delete_item", "pk": "a", "_self": "dbs/db/colls/c/docs/rid-abc"}
 
@@ -185,7 +185,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
     client is not used."""
 
     def test_delete_routes_to_backend_with_item_id(self):
-        """A delete goes to the Rust backend with the document id; the
+        """A delete goes to the Rust backend with the item id; the
         existing client is not called and the call returns nothing."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()

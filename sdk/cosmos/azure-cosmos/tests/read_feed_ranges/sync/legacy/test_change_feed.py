@@ -46,6 +46,15 @@ class TestChangeFeed(unittest.TestCase):
             pass
 
     def test_get_feed_ranges(self):
+        """A container on a single physical partition reports exactly one feed range.
+
+        Feed ranges are how a caller splits a change feed or a query across
+        workers, so the count has to reflect the container's real layout.
+
+        One is the correct answer for a small container. Returning none would
+        leave a caller with nothing to iterate, and returning more than one
+        would have workers processing ranges that do not exist.
+        """
         # Source: tests/test_change_feed.py::TestChangeFeed.test_get_feed_ranges
         result = list(self.container.read_feed_ranges())
         assert len(result) == 1

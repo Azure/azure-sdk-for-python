@@ -4,7 +4,7 @@
 
 Copied from ``tests/test_none_options.py``; the class and method names
 match the source so the parity reporter can pair the core-python and
-rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
+Rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
 / ``ACCOUNT_KEY`` from the environment.
 
 Run: ``pytest --noconftest tests/upsert_item/sync/legacy/test_none_options.py -v``

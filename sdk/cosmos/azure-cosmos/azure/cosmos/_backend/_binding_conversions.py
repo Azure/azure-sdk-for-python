@@ -6,9 +6,8 @@
 """Conversions between the Rust binding's plain values and our typed objects.
 
 The binding speaks in tuples and plain dicts. These helpers convert in both
-directions -- arguments on the way in, responses on the way out -- so the shape
-of each binding call is written once and the sync and async backends cannot
-drift apart on it.
+directions -- arguments on the way in, responses on the way out -- providing
+shared conversions for the synchronous and asynchronous backends.
 """
 from __future__ import annotations
 
@@ -59,14 +58,9 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
 # Response-header normalisation (binding dict -> CaseInsensitiveDict)
 # ---------------------------------------------------------------------------
 #
-# The binding returns a plain dict keyed by the gateway's wire
-# header names. The legacy core-python path returns azure-core's
-# ``CaseInsensitiveDict`` (it just does ``copy.copy(response.headers)`` --
-# the raw gateway headers, no renaming or aliasing). To keep
-# ``last_response_headers`` lookups case-insensitive and identical across
-# both backends, we wrap the binding's dict in the same type. No keys are
-# added or renamed: both backends surface exactly the header names the
-# gateway emitted (e.g. ``x-ms-cosmos-llsn``, ``x-ms-item-lsn``, ``lsn``).
+# Convert the binding's header mapping to case-insensitive lookup. Its values
+# come from native response conversion and may include synthesized headers;
+# this conversion does not establish parity with raw HTTP or legacy headers.
 
 
 def normalize_response_headers(
@@ -74,9 +68,9 @@ def normalize_response_headers(
 ) -> Optional[CaseInsensitiveDict]:
     """Wrap the binding's response-header dict in a ``CaseInsensitiveDict``.
 
-    A pure type-normalisation step: every key from the input is copied
-    through unchanged so the rust path returns the same gateway header
-    names the legacy path does. ``None`` or empty input returns ``None``.
+    Copy entries into a new mapping. Names that differ only in case can collapse
+    to one entry, with the later assignment winning. ``None`` or empty input
+    returns ``None``.
     """
     if not headers:
         return None
@@ -99,10 +93,9 @@ def acquire_driver_handle_args(
     exactly one of the two. Shared by both backends so the call shape lives in
     one place.
 
-    The exactly-one invariant is enforced here rather than assumed: if both are
-    somehow set, the silent default would pick the token and drop the master
-    key with no signal, so instead we raise -- a contract violation upstream is
-    a bug, not something to paper over.
+    This helper rejects both credentials being set. If neither is supplied, it
+    still builds the three-argument form; the native acquisition function rejects
+    the missing credential.
     """
     if master_key is not None and token_credential is not None:
         raise ValueError(
@@ -124,10 +117,10 @@ def build_backend_response(
 ) -> BackendResponse:
     """Wrap the binding's response tuple as a ``BackendResponse``.
 
-    The binding currently returns ``(status, sub_status, headers, body)`` plus
-    an optional fifth diagnostics payload. The diagnostics element is optional
-    so older test doubles (or older bindings) that still return a 4-tuple keep
-    working unchanged.
+    The native response serializer returns five elements:
+    ``(status, sub_status, headers, body, diagnostics_or_none)``. The default
+    diagnostics argument also accepts four-element test doubles; it does not
+    establish compatibility with an older binding's request protocol.
     """
     return BackendResponse(
         status_code=int(status_code),

@@ -33,7 +33,7 @@ def container_for(request):
 
 
 def test_upsert_insert_then_update(container_for):
-    """upsert inserts, then upserts the same id with a new field — parity on both."""
+    """upsert inserts, then upserts the same id with a new field -- parity on both."""
     item_id = uuid.uuid4().hex
 
     def _do(client):

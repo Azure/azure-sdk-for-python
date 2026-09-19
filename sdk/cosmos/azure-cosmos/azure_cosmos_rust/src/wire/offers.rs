@@ -141,13 +141,10 @@ pub(crate) fn run_replace_offer_operation_async<'py>(
 }
 /// Driver work for an offer/throughput read. Offers live at the account level and
 /// are not partitioned, so this resolves no container and targets no partition: it
-/// builds `query_offers` against the account, attaches the offer query JSON from the
-/// request body, and -- because `query_offers` (unlike `query_items`) does not set
-/// them itself -- adds the query `Content-Type` and `x-ms-documentdb-isquery`
-/// markers the service needs to treat the body as a query. The container-recreate
-/// guard header (`x-ms-cosmos-intended-collection-rid`) the wrapper attached rides
-/// through `with_custom_headers` unchanged. `entry(...).or_insert_with` is
-/// used so a caller-supplied value for either marker is never overwritten.
+/// builds `query_offers` against the account and attaches the prepared query JSON.
+/// Add default query `Content-Type` and `x-ms-documentdb-isquery` markers only if
+/// absent from custom headers. The prepared container-recreate guard header is
+/// also supplied through those custom headers; this helper does not enforce it.
 async fn run_read_offer_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
@@ -184,15 +181,10 @@ async fn run_read_offer_future(
 /// Driver work for an offer/throughput replace. Like `run_read_offer_future`, offers
 /// are an account-level, non-partitioned resource, so this resolves no container and
 /// targets no partition: it builds `CosmosOperation::replace_offer(account, offer_id)`
-/// -- where `offer_id` is the offer's RID (the driver signs the request with the
-/// lowercased RID and PUTs to `/offers/{rid}`) -- and attaches the full, already
-/// mutated offer document as the body. Unlike the read path there is no query
-/// `Content-Type` to force: a replace carries a resource body, and the driver's
-/// transport defaults an absent `Content-Type` to `application/json`. The
-/// container-recreate guard header the wrapper attached rides through the
-/// `with_custom_headers` unchanged. This is a single-document write, so it uses
-/// `execute_singleton_operation` (returns one `CosmosResponse`), and the callers
-/// shape it with `tuple_from_result` -- not the offer-feed envelope the read uses.
+/// using the offer's RID and the prepared replacement document. Signing and
+/// transport header defaults are left to the driver. Custom headers include any
+/// prepared container-recreate guard. `execute_singleton_operation` returns one
+/// response, converted with `tuple_from_result` rather than the offer-feed envelope.
 async fn run_replace_offer_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
@@ -209,13 +201,9 @@ async fn run_replace_offer_future(
         op = op.with_session_token(SessionToken::from(session.clone()));
     }
 
-    // Offers always require the full response body: the service does not honor
-    // "return=minimal" for offers, and the caller (`replace_throughput`) reads the
-    // applied RU/s back out of the returned offer. Force content-response Enabled
-    // (the Rust SDK's own offers client does the same) so the body is never
-    // suppressed -- independent of any `no_response`/`responsePayloadOnWriteDisabled`
-    // the caller may have set. Without this the driver could return an empty body and
-    // the caller's `data["content"]["offerThroughput"]` would fail.
+    // Request response content because replace_throughput reads the returned
+    // offer. Override the extracted no-response setting here; this option alone
+    // does not guarantee that a service response contains a body.
     let content_response = Some(ContentResponseOnWrite::Enabled);
     let options = build_operation_options(
         content_response,

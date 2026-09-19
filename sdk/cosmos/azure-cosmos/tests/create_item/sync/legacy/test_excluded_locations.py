@@ -5,8 +5,8 @@
 
 The original ``TestExcludedLocations`` class in
 ``tests/test_excluded_locations.py`` covers eleven operations
-(create / read / query / replace / upsert / patch / batch / delete /
-…). This copy keeps only ``test_create_item`` and the helpers it
+(create, read, query, replace, upsert, patch, batch, delete and
+more). This copy keeps only ``test_create_item`` and the helpers it
 needs; everything else belongs in its own operation's ``legacy/``
 folder.
 
@@ -123,7 +123,7 @@ def _create_item_with_excluded_locations(container, body, excluded_locations):
 
 
 def _build_client_and_container(preferred_locations, client_excluded_locations, multiple_write_locations):
-    """Build a rust-backed CosmosClient with the given region-routing
+    """Build a Rust-backed CosmosClient with the given region-routing
     configuration and return ``(client, container)``. Also clears the
     log capture so a fresh test iteration starts with no leftover URLs.
     """

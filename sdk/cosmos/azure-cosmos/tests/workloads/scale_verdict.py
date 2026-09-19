@@ -17,12 +17,12 @@ turns the sweep rows into an explicit verdict per (op, backend):
      CPU-bound: we flag err% > MAX_ERR_PCT or system CPU > MAX_SYS_CPU so host
      saturation is not mistaken for the SDK's limit.
 
-  4. Crossover. Per op, the rust-vs-core throughput ratio across shared concurrency
+  4. Crossover. Per op, the Rust-vs-core throughput ratio across shared concurrency
      levels (geomean and range).
 
   5. Backend match check (enforced, exits non-zero). Every point's runtime_backend must
      match its config_backend label, so a "rust" point that fell back to
-     core-python is never reported as a rust ceiling. Empty reporting windows
+     core-python is never reported as a Rust ceiling. Empty reporting windows
      (count 0/None, e.g. cold-start or idle intervals) carry no engine label and
      are ignored; a point with no non-empty window at all fails the gate.
 
@@ -185,7 +185,7 @@ def main():
     if not gate_fail:
         print("  OK -- every point's runtime_backend matches its config_backend label.")
 
-    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to Rust rows) ----
     commit_ok, commit_lines = _driver_gate.evaluate(rows, strict=_driver_gate.strict_from(args))
     print()
     for _l in commit_lines:
@@ -253,7 +253,7 @@ def main():
                     print(f"    -> {bk}: NO PLATEAU REACHED -- still gaining >"
                           f"{args.knee_gain*100:.0f}% at top of ladder (c{peak}, "
                           f"~{pk['thr']:,.0f} ops/s). Extend the ladder to find the ceiling.")
-        # crossover: rust vs core across shared levels
+        # crossover: Rust vs core across shared levels
         if "rust" in backends and "core-python" in backends:
             common = sorted({k[2] for k in points if k[0] == op and k[1] == "rust"}
                             & {k[2] for k in points if k[0] == op and k[1] == "core-python"})

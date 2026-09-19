@@ -6,16 +6,16 @@
 """Regression tests for the ``Container.replace_item`` slim-down.
 
 ``Container.replace_item`` used to build the request options, populate
-the container-properties cache, stamp the container rid, and call
+the container-properties cache, write the container rid, and call
 ``client_connection.ReplaceItem`` all in one method body. The migration
 moved the last three steps into ``ItemHelper`` (the same path
 ``create_item`` / ``read_item`` / ``delete_item`` / ``upsert_item``
 already use) so both backends share the prep code.
 
-These tests pin the **core-python fall-through path**: with no rust
+These tests pin the **legacy fall-through path**: with no Rust
 backend wired (``_backend = LEGACY_BACKEND``), the helper builds the options,
-stamps the rid, and calls ``client_connection.ReplaceItem`` -- exactly
-the path the default (v4) client takes. The rust backend's own
+writes the rid, and calls ``client_connection.ReplaceItem`` -- exactly
+the path the default (legacy) client takes. The Rust backend's own
 ``replace_item`` dispatch is covered separately by
 ``tests/replace_item/test_backend_dispatches_replace_unit.py``. What this
 file pins:
@@ -23,7 +23,7 @@ file pins:
 * the ``item`` argument still resolves to the document link the legacy
   ``ReplaceItem`` consumes (bare id string and document-dict shapes),
 * the new ``body`` reaches ``ReplaceItem`` unchanged (a replace never
-  rewrites the body and never mints an id),
+  rewrites the body and never generates an id),
 * the cache-hit rid still reaches the options dict (drop-and-recreate
   guard),
 * ``disableAutomaticIdGeneration`` is always set,
@@ -68,7 +68,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache  # legacy alias used by the proxy
 
-    # No rust backend wired -- absence of ``_backend`` makes the
+    # No Rust backend wired -- absence of ``_backend`` makes the
     # dispatch fall through to ``client_connection.ReplaceItem``.
     cc._backend = LEGACY_BACKEND
     cc.ReplaceItem = MagicMock(return_value={"id": "order-42", "_rid": rid})
@@ -136,7 +136,7 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
 
     def test_options_always_disable_id_generation(self):
         """Every replace sets ``disableAutomaticIdGeneration`` -- a replace
-        targets an existing id and never mints one."""
+        targets an existing id and never generates one."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
 
         proxy.replace_item("order-42", {"id": "order-42", "pk": "a"})
@@ -200,11 +200,11 @@ class TestContainerReplaceItemPreservesLegacyBehaviour(unittest.TestCase):
         lock_use_recorder.__enter__.assert_called()
 
     def test_backend_path_uses_item_id_from_item_not_body(self):
-        """On the rust backend path, the id the binding puts on the wire URL
+        """On the Rust backend path, the id the binding puts on the wire URL
         is resolved from ``item`` (a string id as-is, a dict's ``id`` field)
         and carried on ``PreparedRequest.item_id`` -- never re-derived from
         the body. Pins the parity fix: a body whose id disagrees with
-        ``item`` must not retarget the write to the wrong document."""
+        ``item`` must not retarget the write to the wrong item."""
         from azure.core.utils import CaseInsensitiveDict
 
         from azure.cosmos._backend.cosmos_backend import CosmosBackend

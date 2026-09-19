@@ -34,7 +34,7 @@ def container_for(request):
 
 @pytest.mark.asyncio
 async def test_async_upsert_insert_then_update(container_for):
-    """async upsert insert then update — parity on both backends."""
+    """async upsert insert then update -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
     async def _do(client):

@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for the ``upsert_item`` request-prep path — no network, no emulator.
+"""Unit tests for the ``upsert_item`` request-prep path -- no network, no emulator.
 
 These pin the three helpers the migrated ``upsert_item`` adds:
 
 * ``prepare_upsert_item_request`` -- carries the body like create does (the
   id rides inside the body, which is serialised to JSON bytes), but it
-  never mints an id and it can emit ``If-Match`` / ``If-None-Match`` from
+  never generates an id and it can emit ``If-Match`` / ``If-None-Match`` from
   an access condition (an upsert honours ``etag`` / ``match_condition``).
 * ``build_upsert_item_request_options`` -- always sets
   ``disableAutomaticIdGeneration`` and honours ``etag`` /
@@ -53,7 +53,7 @@ from common.request_preparation import (
 
 def test_baseline_is_write_with_body_not_bodiless():
     """An upsert carries the id inside the body, so the prep serialises the
-    body to JSON bytes -- unlike the bodiless delete / read prep. It also copies
+    body to JSON bytes -- unlike the delete / read prep, which sends no body. It also copies
     the body's id onto ``item_id`` as a fast-path hint so the binding can skip
     re-parsing the whole body just to read one field."""
     prepared = prepare_upsert_item_request(
@@ -71,7 +71,7 @@ def test_baseline_is_write_with_body_not_bodiless():
     # The id is authoritative in the body; the prep also forwards it on item_id
     # so the binding reads one Python attribute instead of re-parsing the body.
     assert prepared.item_id == "order-42"
-    # Dropped-and-recreated container guard: the rid is stamped under the standard key.
+    # Dropped-and-recreated container guard: the rid is set under the standard key.
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
@@ -90,13 +90,13 @@ def test_body_bytes_round_trip_to_the_same_dict():
 
 
 # ---------------------------------------------------------------------------
-# Never mints an id (the create-vs-upsert difference)
+# Never generates an id (the create-vs-upsert difference)
 # ---------------------------------------------------------------------------
 
 
 def test_missing_id_is_not_minted_and_body_is_not_mutated():
     """Unlike create with ``enable_automatic_id_generation=True``, an upsert
-    never mints an id. A body without one is serialised as-is and the
+    never generates an id. A body without one is serialised as-is and the
     server rejects it -- the prep must not invent an id, which would defeat
     the "replace if present" half of insert-or-replace."""
     body = {"pk": "customerA", "total": 109.5}
@@ -166,7 +166,7 @@ def test_etag_if_not_modified_translates_to_if_match_guarded_replace():
 
 
 def test_if_present_translates_to_if_match_wildcard():
-    """``match_condition=IfPresent`` (no etag) → ``If-Match: *`` (replace
+    """``match_condition=IfPresent`` (no etag) -> ``If-Match: *`` (replace
     only if it exists at all)."""
     options = build_upsert_item_request_options({"match_condition": MatchConditions.IfPresent})
     prepared = prepare_upsert_item_request(
@@ -251,7 +251,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
-    the binding can lift it into the driver's own timeout setting -- the
+    the binding can turn it into the driver's own timeout setting -- the
     same mechanism as create / delete / read prep."""
     prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
@@ -286,7 +286,7 @@ def test_compose_consumes_recognised_kwargs():
 
 def test_merge_omits_none_entries():
     """Only the explicit keyword arguments that aren't None land in the
-    merged dict -- None means "not supplied" and must not be stamped."""
+    merged dict -- None means "not supplied" and must not be set."""
     kwargs: dict = {}
     merge_upsert_item_explicit_kwargs(
         kwargs,

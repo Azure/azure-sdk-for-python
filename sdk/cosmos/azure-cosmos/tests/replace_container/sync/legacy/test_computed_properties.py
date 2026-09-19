@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Unchanged v4 policy-replacement methods with isolated Rust setup."""
+"""Unchanged legacy policy-replacement methods with isolated Rust setup."""
 
 import uuid
 import pytest
@@ -89,6 +89,19 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.assertEqual(len(queried_items), 0)
 
     def test_replace_with_same_computed_properties(self):
+        """Replacing a container with the identical computed properties leaves them working.
+
+        The container is created with three computed properties, items are
+        written, then it is replaced passing the very same definitions.
+
+        A replace rewrites the whole container definition, so even a no-op
+        replace can drop the properties if they are not carried through.
+        Afterwards all three must still be queryable, and a name that was never
+        defined must still match nothing.
+
+        Query counts are retried rather than checked once, because the service
+        applies computed properties in the background after the replace.
+        """
         # Source: tests/test_computed_properties.py::TestComputedPropertiesQuery.test_replace_with_same_computed_properties
         created_collection_ref = self.key_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -112,6 +125,15 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.key_db.delete_container(replaced_collection.id)
 
     def test_replace_without_computed_properties(self):
+        """Replace can add computed properties to a container created without any.
+
+        The container starts with none, items are written, then a replace
+        introduces all three for the first time.
+
+        This is the adding path rather than the preserving path: the properties
+        have to be sent on a container that has no existing set to merge with,
+        and existing items must become queryable through them.
+        """
         # Source: tests/test_computed_properties.py::TestComputedPropertiesQuery.test_replace_without_computed_properties
         created_collection_ref = self.key_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -133,6 +155,16 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.key_db.delete_container(replaced_collection.id)
 
     def test_replace_with_new_computed_properties(self):
+        """Replace swaps one set of computed properties for a different set.
+
+        The container starts with ``cp_lower``, ``cp_power`` and
+        ``cp_str_len``, and is replaced with ``cp_upper`` and ``cp_len``.
+
+        Both halves of the swap are checked: the new names must become
+        queryable, and the old ``cp_lower`` must stop matching anything. The
+        second half is the one that catches a replace which merges the two sets
+        instead of substituting one for the other.
+        """
         # Source: tests/test_computed_properties.py::TestComputedPropertiesQuery.test_replace_with_new_computed_properties
         created_collection_ref = self.key_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -189,6 +221,13 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
         self.key_db.delete_container(created_collection.id)
 
     def test_replace_with_incorrect_computed_properties(self):
+        """A single dict instead of a list of them is rejected by the service.
+
+        Computed properties must be a list. Passing one bare dict is an easy
+        mistake to make, and it has to come back as a 400 saying the input is
+        invalid rather than being silently accepted or mangled into something
+        the customer did not ask for.
+        """
         # Source: tests/test_computed_properties.py::TestComputedPropertiesQuery.test_replace_with_incorrect_computed_properties
         created_collection_ref = self.key_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -214,6 +253,16 @@ class TestComputedPropertiesQuery(SyncReplacementCase):
             assert "One of the specified inputs is invalid" in e.http_error_message
 
     def test_replace_with_remove_computed_properties_(self):
+        """Replacing without mentioning computed properties removes them entirely.
+
+        The container is created with three, then replaced with no
+        ``computed_properties`` argument at all.
+
+        Omitting them means removal, not "leave as they are", and removal has
+        to be complete: reading the container afterwards must not contain a
+        ``computedProperties`` key, which is why the check is a ``KeyError``
+        rather than an empty list.
+        """
         # Source: tests/test_computed_properties.py::TestComputedPropertiesQuery.test_replace_with_remove_computed_properties_
         created_collection_ref = self.key_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),

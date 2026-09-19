@@ -123,21 +123,12 @@ class BackendComparison:
         assert self.is_parity, "Backend parity diffs:\n  - " + "\n  - ".join(self.diffs)
 
     def assert_functional_parity(self):
-        """Assert parity ignoring response-header-surface-only differences.
+        """Assert that no differences remain after filtering header-diff categories.
 
-        Today the rust backend exposes a smaller set of response headers
-        than core-python (it omits things like ``x-ms-resource-quota`` /
-        ``content-type`` / ``x-ms-content-path``). That's a known
-        rust-binding reporting gap, not a behavioural difference: the
-        request was sent, the server accepted it, the response body is
-        equivalent. ``assert_functional_parity`` lets baseline tests pass
-        in that state while the printed report still calls the gap out
-        in the VERDICT line. Use ``assert_parity`` (strict) for tests
-        that explicitly cover header-surface parity itself.
-
-        The "header diff" filter must match the prefixes ``_verdict``
-        recognises (see ``_HEADER_DIFF_PREFIXES``) so the two helpers
-        agree on what counts as a header-only divergence.
+        This ignores header values as well as header presence. It does not prove
+        that ignored headers are unimportant or that service behavior is identical.
+        Body exclusions and exception normalization also limit the comparison.
+        The full report still includes the observed header differences.
         """
         non_header_diffs = [
             d for d in self.diffs
@@ -153,18 +144,11 @@ class BackendComparison:
         self.print_report()
 
     def assert_exception_parity(self):
-        """Strictest exception check: same typed exception, same status_code
-        and sub_status, same *normalized* message, and no response diffs at all.
+        """Compare exception type, status, substatus, and normalized message.
 
-        The message IS compared, but only after
-        :func:`_normalize_exception_message` has removed the parts that vary
-        per request rather than per backend (the service's diagnostics tail,
-        the response-body echo, the service host's build string).
-
-        Note this also requires the response-header surfaces to match, which
-        the rust backend does not yet achieve -- it reports fewer headers. Use
-        :meth:`assert_functional_exception_parity` for error-path tests unless
-        the test is specifically about header-surface parity.
+        Also require no differences under diff_outcomes' default body/header
+        exclusions. This is stricter than functional exception parity, but does
+        not compare raw exception text or every response header value.
         """
         self._assert_exception_contract()
         exception_diffs = diff_outcomes(self.core_python, self.rust)
@@ -173,7 +157,7 @@ class BackendComparison:
         )
 
     def assert_functional_exception_parity(self):
-        """Assert the typed exception contract while reporting known header gaps."""
+        """Check the normalized exception contract while ignoring header-diff categories."""
         self._assert_exception_contract()
         non_header_diffs = [
             diff
@@ -433,12 +417,9 @@ class BackendComparison:
         print(self.format_report())
 
 
-# Response headers Cosmos guarantees on every successful response (and that
-# customer code reads back) — the *value* is per-request noisy (a fresh
-# request charge / activity id / etag / etc. every call) but the *header*
-# must be present on both backends. ``diff_outcomes`` skips these in the
-# value-diff but enforces presence: if one backend emits the header and the
-# other doesn't, that's a parity failure.
+# Default comparison policy: ignore these values but report asymmetric presence
+# on captured success and error responses. Absence from both sides passes.
+# Membership does not establish that a service response must contain the header.
 _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-request-charge",
     "x-ms-activity-id",
@@ -451,117 +432,38 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-number-of-read-regions",
     "x-ms-transport-request-id",
     "lsn",
-    # HTTP transport-layer headers core-python surfaces via azure-core's
-    # underlying HTTP transport. Values are legitimately noisy (``date``
-    # ticks every second; ``server`` identifies the transport / gateway
-    # software and differs between core-python and rust), but customer
-    # code and ops dashboards read them, so the parity contract is
-    # "both backends must surface *some* value." Presence is enforced.
-    # On the Rust path today both are missing because the binding only
-    # projects fields the driver explicitly models in ``cosmos_headers.rs``
-    # and HTTP-framing headers aren't modeled. That's a binding-projection
-    # gap (the driver needs a raw-headers accessor on its response so the
-    # binding can forward them) — the failing presence check is the
-    # signal that closes the loop.
+    # Compare presence, not the date or server string from separate calls.
     "date",
     "server",
-    # Resource accounting — capacity dashboards read these. Values tick
-    # up between the two back-to-back parity calls because the first
-    # call creates the item the second call's response then sees, so
-    # the value diff has to skip; both backends must surface them.
+    # Resource-accounting values are outside the default value comparison.
     "x-ms-resource-quota",
     "x-ms-resource-usage",
-    # LSN family — replica/replication-progress counters. Different
-    # replicas legitimately answer different calls so the value
-    # legitimately differs, but the presence is part of the diagnostics
-    # contract. Two name families coexist on the wire, both gateway-
-    # emitted and faithfully surfaced by both backends:
-    #   * the cosmos-prefixed double-l names (``x-ms-cosmos-llsn``,
-    #     ``x-ms-cosmos-item-llsn``);
-    #   * the un-prefixed single-l names (``x-ms-item-lsn``, ``lsn``).
-    # The un-prefixed *double*-l aliases (``x-ms-llsn`` /
-    # ``x-ms-item-llsn``) are not on this list: the gateway does not
-    # emit them and neither backend surfaces them, so there is nothing
-    # to presence-check.
+    # These specific LSN spellings receive presence-only comparison.
     "x-ms-cosmos-llsn",
     "x-ms-cosmos-item-llsn",
     "x-ms-item-lsn",
-    # Topology / diagnostic IDs — which replica answered, the routing
-    # decision the gateway made, the schema version of the responding
-    # replica. Values differ across replicas / calls; presence is part
-    # of the diagnostics contract customer ops code and the SDK's own
-    # routing logic depend on.
+    # Compare topology/diagnostic header presence rather than values.
     "x-ms-documentdb-partitionkeyrangeid",
     "x-ms-cosmos-physical-partition-id",
     "x-ms-current-write-quorum",
     "x-ms-current-replica-set-size",
     "x-ms-xp-role",
     "x-ms-schemaversion",
-    # Per-container internal-partition UUID. Both backends emit it,
-    # but the value is a fresh GUID minted per physical partition by
-    # the service, so each backend's freshly-created test container
-    # gets its own value. Presence is part of the diagnostics surface
-    # support engineers correlate against; value is per-container
-    # noise.
     "x-ms-cosmos-internal-partition-id",
-    # Cluster-side "last partition-map state change" timestamp. Both
-    # backends surface it, but the value moves whenever the cluster's
-    # partition map ticks (which happens at minute-scale intervals on
-    # a live account), so two parity calls captured even seconds apart
-    # routinely land on different values. Presence is part of the
-    # routing-diagnosis surface; value is wall-clock noise.
     "x-ms-last-state-change-utc",
 })
 
-# Headers (and one body field) where both value and presence
-# are dropped from the diff. The bar for adding to this set is very
-# high: an entry only qualifies if *neither* backend can plausibly
-# surface the value to a customer. "Undocumented" alone is not enough,
-# because the core-python transport copies *every* response header the
-# service returns through to ``last_response_headers`` (the request
-# path does ``headers = copy.copy(response.headers)`` on both sync and
-# async), so any header the gateway emits can legitimately appear on
-# the Python side — and silently ignoring it here would mask a real
-# Python↔Rust header-surface drift (the binding dropping something the
-# legacy path is surfacing).
-#
-# So a header the gateway may echo into core-python's
-# ``last_response_headers`` -- ``x-ms-session-token-rid`` and
-# ``x-ms-cosmos-replica-side-cache-token`` are two -- does not belong
-# here. It belongs in the full presence-and-value diff bucket (the
-# implicit "everything else" population), where the diff will show how
-# often it appears and whether either backend needs a tweak.
+# These header names are omitted from default key/value comparisons.
+# Each exclusion can hide an observed difference and is a test policy choice.
 _FULLY_IGNORED_HEADERS = frozenset({
-    # Body field, not a response header (the ``etag`` response header
-    # is a separate key). Kept as defence in depth alongside
-    # ``_DEFAULT_IGNORED_BODY_FIELDS`` below, in case a caller wires
-    # the body field set into the header filter by mistake. Safe to
-    # keep because it is structurally not a header name either backend
-    # could ever surface from a response.
+    # Distinct from the HTTP "etag" spelling; ignored here if captured as a header.
     "_etag",
 })
 
-# Headers the Cosmos gateway emits *non-deterministically* -- whether
-# the header appears on a given response depends on which replica
-# answered, the consistency level on the request, and other server-
-# side conditions outside the SDK's control. The evidence is that the
-# SAME header can appear "only on core-python" in one test and "only
-# on rust" in the next test of the same parity run (compare the
-# ``read_item`` ``TestNoneOptions`` and ``TestNoneOptionsAsync``
-# results). Enforcing presence here would produce false-positive
-# "rust gaps" the binding cannot fix, so these headers are dropped
-# from BOTH the value diff (they're in ``_DEFAULT_IGNORED_HEADERS``
-# below) AND the value-volatile presence-required loop
-# (``diff_outcomes`` skips them explicitly).
-#
-# The bar for adding to this set is high: pick this only when the
-# evidence shows the gateway sometimes-emits-sometimes-omits on the
-# SAME backend, not just "one backend doesn't surface it". The
-# latter is a real binding gap and belongs in a tracked rust-side
-# issue.
+# Quorum headers excluded by default from key/value and presence-only checks.
+# This policy does not attribute an observed omission to the service or binding.
+# A custom ignored_headers set can reintroduce ordinary key/value comparisons.
 _WIRE_NONDETERMINISTIC_HEADERS = frozenset({
-    # Quorum-acked family -- replication-quorum diagnostics that the
-    # gateway emits per request based on which replica answered.
     "x-ms-quorum-acked-lsn",
     "x-ms-quorum-acked-llsn",
     "x-ms-cosmos-quorum-acked-llsn",
@@ -571,46 +473,18 @@ _WIRE_NONDETERMINISTIC_HEADERS = frozenset({
 # scope can pass their own frozenset to ``diff_outcomes(ignored_headers=...)``.
 # The presence check below always runs against ``_VALUE_VOLATILE_REQUIRED_HEADERS``
 # regardless of what's passed for ``ignored_headers``, but
-# ``_WIRE_NONDETERMINISTIC_HEADERS`` is excluded from BOTH passes.
+# the presence loop explicitly skips ``_WIRE_NONDETERMINISTIC_HEADERS``.
 _DEFAULT_IGNORED_HEADERS = (
     _VALUE_VOLATILE_REQUIRED_HEADERS
     | _FULLY_IGNORED_HEADERS
     | _WIRE_NONDETERMINISTIC_HEADERS
 )
 
-# Body fields that legitimately differ between create calls and so
-# are excluded from return-value diffs by default:
-#
-#   - ``_rid``, ``_self``, ``_ts``, ``_etag``, ``_attachments`` — the
-#     five server-stamped per-document fields (resource id, self
-#     link, timestamp, etag, attachments link). Different on every
-#     successful create even when the request body is identical.
-#
-#   - ``id`` — for create-style parity tests the test harness in
-#     ``test_create_item_parity.py::_call`` deep-copies the body
-#     template and rewrites ``id`` with a fresh UUID4 *per backend
-#     invocation*. That keeps the second backend from getting a 409
-#     on what would otherwise look like a duplicate create. The cost
-#     is that backend 1 and backend 2 genuinely create different
-#     items, so their returned ``id`` values differ by construction.
-#     That's a harness artefact, not
-#     a backend-behaviour difference, so the diff ignores it.
-#
-#     KNOWN COVERAGE GAP: because ``id`` is rewritten per-backend AND
-#     ignored on the return-value diff, the create-item parity suite
-#     CANNOT detect id-handling parity bugs end-to-end -- e.g. a
-#     binding that silently lower-cased the id, or stripped a
-#     trailing space, or rejected a legitimate id format. Customer-
-#     level "the id we sent matches the id we got back" is therefore
-#     covered separately by the unit tests in
-#     ``test_request_prep_unit.py`` and ``test_auto_id_unit.py``,
-#     which build a ``PreparedRequest`` deterministically and assert
-#     on the body bytes before any backend dispatch. If a parity gap
-#     opens up specifically around id round-tripping, add a focused
-#     test that uses ``id_factory_per_backend=lambda: SAME_ID`` (or
-#     equivalent) and removes ``"id"`` from ``ignored_body_fields``
-#     for just that one assertion -- do NOT broaden the default
-#     ignore-set here.
+# Default body exclusions accommodate separately created resources and ids.
+# Filtering removes top-level keys in dictionaries and recurses through lists,
+# not through nested dictionary values. Ignoring id can conceal returned-id bugs.
+# Request-preparation unit tests check outgoing bytes, not service round-tripping;
+# that needs a separate end-to-end assertion against each requested id.
 _DEFAULT_IGNORED_BODY_FIELDS = frozenset({
     "id",
     "_rid", "_self", "_ts", "_etag", "_attachments",
@@ -639,82 +513,18 @@ def _filtered_body(b: Any, ignored: frozenset) -> Any:
     return b
 
 
-# Boundary marker for the SDK's appended diagnostics JSON blob. The
-# ``CosmosHttpResponseError`` formatter renders ``str(exc)`` as
-#   "(<reason-phrase>) <server-error-text>, {"Summary":...}"
-# where the trailing ``, {"Summary":...`` is a JSON-stringified dump
-# of the client-side request-stats / diagnostics tree -- per-call AND
-# per-backend by construction. core-python's call stack hits the
-# document endpoint directly and produces ``"DirectCalls": {...}``;
-# the rust path goes through one or more metadata-cache pre-flights
-# and produces ``"DirectCalls": {...}, "GatewayCalls": {...}`` with
-# different call counts each time. Comparing that tail across the two
-# backends is comparing routing decisions, not error behaviour. The
-# cross-backend contract is the canonical server-error text *before*
-# this comma -- that's what a customer error handler reads, and that's
-# what both backends agree on when the typed exception matches.
-#
-# ``_normalize_exception_message`` trims everything from this marker
-# onward before running the per-request-noise scrubbers below. If the
-# pattern isn't found (binding-side errors, transport failures, any
-# exception that didn't go through the diagnostics formatter), the
-# whole string is normalised as before.
+# Textual cutoff used by the comparison policy. Everything from this marker
+# onward is discarded regardless of its origin or whether it contains differences.
 _DIAGNOSTICS_BLOB_START = re.compile(r',\s*\{"Summary":')
 
-# Boundary marker for the *service-emitted* diagnostics tail.
-#
-# On a typed gateway error the service appends its own diagnostics to the
-# error text, starting at ``, RequestStartTime:``. Everything from there on
-# is telemetry about how that one request happened to go:
-#
-#   ..., Number of regions attempted:1 {"systemHistory":[{"cpu":0.713,
-#   "memory":856364468.000,...}]} RequestStart: ...; StoreResult:
-#   StorePhysicalAddress: rntbd://...:15657/...; BELatencyMs: 0.264;
-#   TransportRequestTimeline: {...,"requestSizeInBytes":715}
-#   ; ResourceType: Document, OperationType: Read
-#
-# None of that describes which client engine sent the request. It is the
-# service's CPU and free memory at that instant, which replica port answered,
-# back-end latency in fractional milliseconds, socket counts, and per-event
-# transit timings. Two calls issued a second apart never agree on any of it,
-# so diffing this tail across backends produces guaranteed false failures.
-#
-# Two fields buried in that tail ARE meaningful, though: ``ResourceType`` and
-# ``OperationType`` say which operation the service believed it was serving,
-# so a backend that issued the wrong kind of request must still be caught.
-# Rather than truncate the tail (losing those) or scrub it field by field
-# (an unwinnable game as the service adds telemetry), the normaliser keeps
-# the canonical error text before the marker and re-appends just these two
-# fields. Deduplicated and sorted, so a retry that produces the tail twice
-# reads the same as a single attempt.
+# From a matching tail, keep only ResourceType and OperationType matches.
+# This intentionally ignores all other tail content and repeated field occurrences.
 _SERVICE_DIAGNOSTICS_TAIL_START = re.compile(r",\s*RequestStartTime:")
 _SERVICE_DIAGNOSTICS_SEMANTIC_FIELDS = re.compile(
     r"\b(ResourceType|OperationType):\s*([A-Za-z]+)")
 
-# The same service error arrives in two shapes depending on whether the error
-# body was echoed back into the exception text. Both were captured live, from
-# the same test, on the same account:
-#
-#   short: (NotFound) Entity with the specified id does not exist in the
-#          system. More info: <url>
-#   long:  (NotFound) Entity ... <url>, Windows/10.0.20348
-#          cosmos-netstandard-sdk/3.18.0 Code: NotFound Message: Entity ...
-#          <url>, Windows/10.0.20348 cosmos-netstandard-sdk/3.18.0
-#
-# The long shape says nothing new: it repeats the canonical sentence verbatim
-# after a ``Code: <reason> Message:`` marker, and tags each copy with the
-# operating system and SDK build of the *service host* that answered.
-#
-# The decisive observation is that which backend got which shape FLIPPED
-# between runs -- core-python produced the long form in one run and the short
-# form in the next, with rust doing the opposite. A property that swaps sides
-# run to run cannot be a property of the backend, so comparing it would only
-# manufacture false failures.
-#
-# ``Code:``/``Message:`` is also already covered elsewhere: the reason phrase
-# is in the ``(NotFound)`` prefix, and the numeric status and sub-status are
-# asserted separately from the typed exception. Nothing is lost by cutting the
-# echo, and the service-host build string is scrubbed wherever it appears.
+# Truncation/removal patterns for comparison; neither verifies provenance or
+# that the removed text repeats information retained elsewhere.
 _SERVICE_ERROR_BODY_ECHO = re.compile(r"\s+Code:\s+\w+\s+Message:\s")
 _SERVICE_HOST_AGENT = re.compile(r",\s*\S+/\S+\s+cosmos-netstandard-sdk/\S+")
 
@@ -725,9 +535,7 @@ _SERVICE_HOST_AGENT = re.compile(r",\s*\S+/\S+\s+cosmos-netstandard-sdk/\S+")
 # same error produce the same normalised text" -- *not* byte-identity
 # of the raw ``str(exc)``.
 _EXCEPTION_MESSAGE_NOISE = [
-    # Activity / correlation IDs, transport request IDs, RIDs, etc. --
-    # any UUID-shaped token. Covers both lowercase (azure-core default)
-    # and uppercase variants the driver sometimes emits.
+    # Any UUID-shaped token, including customer text matching this pattern.
     (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "<uuid>"),
     # ISO-8601 timestamps the driver embeds in diagnostics summaries.
     (re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"), "<ts>"),
@@ -746,11 +554,10 @@ _EXCEPTION_MESSAGE_NOISE = [
 
 
 def _strip_service_error_decorations(text: str) -> str:
-    """Reduce an error to one copy of its canonical text.
+    """Cut text at the configured Code/Message marker and remove matching build labels.
 
-    Cuts the ``Code: <reason> Message: ...`` echo (which repeats the sentence
-    already present) and removes the service host's build string wherever it
-    appears. Messages without either are returned unchanged.
+    The helper does not verify that the discarded suffix duplicates the prefix.
+    Differences confined to that suffix are outside this comparison.
     """
     echo = _SERVICE_ERROR_BODY_ECHO.search(text)
     if echo:
@@ -759,14 +566,10 @@ def _strip_service_error_decorations(text: str) -> str:
 
 
 def _summarize_service_diagnostics_tail(text: str) -> str:
-    """Reduce the service's diagnostics tail to the fields that carry meaning.
+    """Keep the prefix and selected fields from a matching RequestStartTime tail.
 
-    Returns ``text`` unchanged when the tail is absent -- binding-side errors,
-    transport failures, and plain ``ValueError``\\ s never carry one.
-
-    When the tail is present, keeps the canonical error text before it and
-    re-appends only ``ResourceType`` / ``OperationType`` (deduplicated and
-    sorted), discarding the surrounding per-request telemetry.
+    ResourceType and OperationType matches are deduplicated and sorted.
+    All other tail text is discarded. Without the marker, return the input.
     """
     match = _SERVICE_DIAGNOSTICS_TAIL_START.search(text)
     if not match:
@@ -782,54 +585,26 @@ def _summarize_service_diagnostics_tail(text: str) -> str:
 
 
 def _normalize_exception_message(exc: BaseException) -> str:
-    """Strip per-request noise out of an exception's text for diffing.
+    """Normalize exception text using this harness's comparison policy.
 
-    Two-stage normalisation:
+    Cut at a Summary marker; reduce a RequestStartTime tail to selected fields;
+    strip Code/Message suffixes and matching build labels; then replace UUIDs,
+    timestamps, replica identifiers, and whitespace with normalized forms.
 
-    1. If the message carries the SDK's appended ``, {"Summary":...``
-       diagnostics blob (the standard ``CosmosHttpResponseError``
-       formatter does this on every typed error from the gateway),
-       trim everything from that marker onward. The diagnostics blob
-       is per-backend by construction -- core-python emits a
-       ``DirectCalls`` summary, the rust path emits
-       ``DirectCalls`` + ``GatewayCalls`` because of its metadata-
-       cache pre-flights. Comparing it across backends is comparing
-       internal routing, not error behaviour.
-
-    2. Reduce any service-emitted diagnostics tail to its meaningful
-       fields. That tail is the *service's* account of one request --
-       its CPU and free memory at that instant, which replica answered,
-       back-end latency, byte counts -- so two calls never agree on it.
-       See :func:`_summarize_service_diagnostics_tail`.
-
-    3. Drop the response-body echo (``Code: ... Message: ...``, which repeats
-       the canonical sentence) and the service host's build string. Whether
-       these appear depends on the shape of the error body, not on the
-       backend -- see :func:`_strip_service_error_decorations`.
-
-    4. Run the remaining text through the per-request-noise scrubbers
-       (UUIDs, RIDs, timestamps, numeric counters, whitespace).
-
-    The complete normalized message is compared. Rendering code may truncate
-    display text, but comparison must not discard a semantic suffix.
+    The entire resulting string is compared, but discarded text is not.
+    These pattern-based rules can hide meaningful differences and do not
+    establish semantic equivalence of arbitrary exceptions.
     """
     if exc is None:
         return ""
     text = str(exc)
-    # Strip the appended diagnostics blob before scrubbing so the
-    # presence/shape of ``DirectCalls`` vs ``DirectCalls + GatewayCalls``
-    # doesn't end up in the diff. Search-and-truncate is intentionally
-    # done BEFORE the regex substitutions so the marker is matched
-    # against the unscrubbed text (the base64-ish RID scrubber would
-    # otherwise rewrite ``"Summary"`` to ``"<rid>"`` and break it).
+    # Match the cutoff against the original text before applying other patterns.
     blob_match = _DIAGNOSTICS_BLOB_START.search(text)
     if blob_match:
         text = text[:blob_match.start()]
-    # Then reduce the service's own diagnostics tail to the couple of fields
-    # that describe the operation rather than the machine that served it.
+    # Keep only the selected fields from a matching RequestStartTime tail.
     text = _summarize_service_diagnostics_tail(text)
-    # Finally drop the response-body echo and the service host's build string,
-    # which appear or not depending on the shape of the error body.
+    # Apply the remaining truncation/removal patterns before noise substitutions.
     text = _strip_service_error_decorations(text)
     for pattern, replacement in _EXCEPTION_MESSAGE_NOISE:
         text = pattern.sub(replacement, text)
@@ -859,10 +634,11 @@ def diff_outcomes(
     ignored_headers: frozenset = _DEFAULT_IGNORED_HEADERS,
     ignored_body_fields: frozenset = _DEFAULT_IGNORED_BODY_FIELDS,
 ) -> List[str]:
-    """Compare two outcomes and return a list of human-readable diff lines.
+    """Return differences under the supplied filters and default normalization.
 
-    Empty list = parity. Each diff line names the dimension and the
-    two values, so a failure message is self-explanatory.
+    An empty list means this comparison found no differences, not exhaustive
+    SDK or service parity. Presence-only headers may be absent from both sides.
+    Both successes and errors have their captured headers compared.
     """
     diffs: List[str] = []
 
@@ -925,19 +701,12 @@ def diff_outcomes(
         if ch[k] != rh[k]:
             diffs.append("header {}: core-python {!r} / rust {!r}".format(k, ch[k], rh[k]))
 
-    # Presence check for the value-volatile headers Cosmos guarantees on
-    # every successful response. Without this loop, the filter above drops
-    # those headers from both sides before the key-set diff, so a binding
-    # silently dropping (say) ``x-ms-request-charge`` would go undetected.
-    # The presence check runs against the *unfiltered* response headers and
-    # uses ``_VALUE_VOLATILE_REQUIRED_HEADERS`` regardless of the
-    # ``ignored_headers`` override, since those headers are part of the
-    # cross-backend contract.
+    # Compare asymmetric presence using unfiltered captured headers, including
+    # error outcomes. This policy runs independently of ignored_headers.
     core_names = {k.lower() for k in (core.response_headers or {})}
     rust_names = {k.lower() for k in (rust.response_headers or {})}
-    # Wire-nondeterministic headers are excluded from BOTH the key-set
-    # diff above (via ``_DEFAULT_IGNORED_HEADERS``) and this presence
-    # loop. See ``_WIRE_NONDETERMINISTIC_HEADERS`` for the rationale.
+    # These exclusions always apply to this loop. A custom ignored_headers set
+    # can still cause those names to participate in the ordinary diff above.
     presence_check_headers = (
         _VALUE_VOLATILE_REQUIRED_HEADERS - _WIRE_NONDETERMINISTIC_HEADERS
     )
@@ -1001,7 +770,7 @@ def _assert_expected_backend(client: Any, expected: str) -> None:
 
 
 def _binding_operation_count() -> int:
-    """Return the number of operations observed by the Rust extension."""
+    """Read the process-wide counter at instrumented Rust binding entry points."""
     try:
         from azure.cosmos import _rust
         counter = getattr(_rust, "operation_count", None)
@@ -1024,7 +793,12 @@ def run_target_operation(
     *,
     expect_rust: bool = True,
 ) -> Any:
-    """Run one target call and prove whether that exact call entered Rust."""
+    """Run the closure and check process-wide binding/fallback counter deltas.
+
+    A positive binding delta indicates instrumented entry during this window,
+    not successful driver execution or a network request. Unrelated concurrent
+    work can affect the counters; keep target-call checks isolated.
+    """
     if _observed_backend_name(client) == "core-python":
         return call()
     before = _binding_operation_count()

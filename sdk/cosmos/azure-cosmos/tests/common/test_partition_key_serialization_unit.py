@@ -188,7 +188,7 @@ class TestParityWithExistingHeaderBuilder(unittest.TestCase):
 
     Until the legacy code path is removed, both serializers run side
     by side. If they ever drift, the byte-for-byte parity guarantee
-    between the core-python and rust backends breaks silently. This
+    between the core-python and Rust backends breaks silently. This
     class reproduces the legacy logic inline (so the test stays
     self-contained even if the legacy code moves) and asserts both
     produce the same output for every row of the documented table.

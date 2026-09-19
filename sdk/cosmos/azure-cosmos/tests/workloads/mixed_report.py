@@ -1,28 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Mixed (blended) workload report: per-operation and blended pooled percentiles.
+"""Report per-operation and blended percentiles from available success histograms.
 
-A single-operation run measures one operation type in isolation. Real applications
-send a mix (mostly reads, some creates/upserts, a few replaces/patches). A blended
-run (WORKLOAD_MIX) issues that mix from one process, so a run can be gated on one
-blended p99 instead of the fastest operation's p99.
+Merge window histograms within each backend, grouping operations by the
+row's operation field. Blended percentiles describe the observed sample mix,
+not every operation's tail or an automatically satisfied application SLA.
 
-This script prints two things:
-  1. a per-operation table (each op's pooled p50/p90/p99/p99.9), and
-  2. a blended distribution that pools every operation together, the headline SLA
-     number for the mix.
+Pooling preserves histogram quantization and workload range clamping; it
+cannot recover missing windows, failed-call durations, or unrecorded samples.
 
-Pooling: each row stores ``hist_b64``, the full histogram for that window.
-Percentiles cannot be averaged across windows, so this script merges the
-histograms -- per operation for the per-op table, and across all operations of a
-backend for the blended distribution -- and the printed values are exact for the
-whole run. Grouping is by the row's ``operation`` field (the op actually run), not
-the workload_id: a blended run shares one workload_id
-(``mixed-blend-<backend>-<stamp>``), so the operation must come from the row.
-
-USAGE:
-  source ./perf_env.sh
-  python3 mixed_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix mixed-]
+Run mixed_report.py with --stamp and --prefix after configuring the results
+account.
 """
 
 import argparse

@@ -61,7 +61,17 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         return item
 
     async def test_container_read_item_none_options_async(self):
-        """Verify the async read_item accepts None for every optional kwarg (post_trigger_include, session_token, initial_headers, max_integrated_cache_staleness_in_ms, priority, throughput_bucket) and returns the item unchanged."""
+        """The async read_item accepts None for every optional argument.
+
+        None means "not supplied". Customers commonly build one call site
+        that passes every option through from their own config, leaving most
+        of them None, so each must behave as if it had been omitted: no
+        header, no error, and the item comes back unchanged.
+
+        The options covered are post_trigger_include, session_token,
+        initial_headers, max_integrated_cache_staleness_in_ms, priority and
+        throughput_bucket.
+        """
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_read_item_none_options_async
         item = await self._create_sample_item()
         read_back = await self.container.read_item(

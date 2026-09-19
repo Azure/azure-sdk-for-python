@@ -7,7 +7,7 @@
 
 The create helper sits between the public create call and the backend. On
 each call it finds the container's resource id, builds the request, and
-then drives it through the configured backend: the real (or a rust-shaped
+then drives it through the configured backend: the real (or a Rust-shaped
 test) backend builds+sends+parses a prepared request, while the explicit
 ``LegacyBackend`` runs the existing client.
 These tests check each of those steps on its own.
@@ -84,7 +84,7 @@ def _capturing_backend(response):
 # ---------------------------------------------------------------------------
 
 class TestItemHelperFallThrough(unittest.TestCase):
-    """When ``backend`` is ``None`` (core-python), the helper calls the
+    """When no Rust backend is set, the helper calls the
     existing client via the explicit ``LegacyBackend``.
 
     These tests check the call the helper makes: the id-generation and

@@ -1,15 +1,15 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async container-read checks, re-run on the rust engine.
+"""The existing legacy async container-read checks, re-run on the Rust engine.
 
 Why this file exists: the async client is a separate code path from the sync
 client, so it has to be proved separately. ``ContainerProxy.read`` returns the
 container's stored settings -- its id, its partition key, its indexing policy,
-and on request its storage usage. If rust returned a different partition key
+and on request its storage usage. If Rust returned a different partition key
 path on the async path only, async applications would break while sync ones
 kept working.
 
-What it does: three original v4 tests copied from
+What it does: three original legacy tests copied from
 ``tests/test_crud_container_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. ``test_collection_crud_async`` creates a
 container, reads it back and checks the indexing mode and partition key
@@ -22,7 +22,7 @@ counter and a zero-fallback assertion.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``read_container/aio/test_read_container_parity_async.py``) run the same call
-on both engines and diff the results. This file runs on rust only and reuses
+on both engines and diff the results. This file runs on Rust only and reuses
 assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -101,6 +101,20 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert inst.status_code == status_code
 
     async def test_collection_crud_async(self):
+        """Reading a container returns its real settings, and reading a deleted one fails cleanly.
+
+        The full legacy lifecycle test, kept here for the read half. After
+        creating a container, reading it must report the indexing mode and the
+        partition key definition that were actually asked for.
+
+        The ending matters most: once the container is deleted, reading it
+        raises with a 404 rather than returning stale properties from a cache.
+        A read layer that keeps serving a container that no longer exists is a
+        correctness bug a customer would hit immediately.
+
+        The same legacy test is also copied into ``list_containers`` and
+        ``query_containers``, each pinning the part of it they own.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_collection_crud_async
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]
@@ -138,6 +152,16 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
                                                      created_container.read)
 
     async def test_partitioned_collection_async(self):
+        """Reading a partitioned container returns its partition key and throughput.
+
+        Creates a container with an explicit hash partition key and 10100
+        request units, then checks the partition key path and kind survive the
+        round trip and that ``get_throughput`` reports the value the container
+        was created with.
+
+        Unlike the sync copy, this one stops there. The statistics and quota
+        assertions live in ``test_partitioned_collection_quota_async``.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_partitioned_collection_async
         created_db = self.database_for_test
 
@@ -172,6 +196,19 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 
     async def test_partitioned_collection_quota_async(self):
+        """Asking for statistics and quota information returns both.
+
+        Reads a container with the partition key range statistics and quota
+        information both requested, and checks two places: the statistics block
+        inside the body, and the ``x-ms-resource-usage`` header carrying the
+        quota numbers.
+
+        The header is the one at risk, because it travels beside the body
+        rather than in it and is easy to drop when the response is rebuilt.
+
+        The sync copy folds these assertions into
+        ``test_partitioned_collection``; async keeps them separate.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_partitioned_collection_quota_async
         created_db = self.database_for_test
 

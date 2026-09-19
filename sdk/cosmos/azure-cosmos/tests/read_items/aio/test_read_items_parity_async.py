@@ -7,10 +7,10 @@
 
 Async twin of ``test_read_items_parity.py``. Each test runs the same batched read
 once on core-python and once on rust through the ``azure.cosmos.aio`` client
-against one shared, pre-seeded container, then compares the returned documents
+against one shared, pre-seeded container, then compares the returned items
 (projected to id + data). Covers the single-item (point read), same-partition
 (query), and cross-partition (fan-out) shapes plus missing-omitted and
-empty-result, so rust returns the same set of documents core-python does.
+empty-result, so rust returns the same set of items core-python does.
 """
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ async def _run(container_id, items, description, request_kwargs):
 
 
 async def test_read_items_single_item(seeded):
-    """One item -> read as a point read; same document on both backends."""
+    """One item -> read as a point read; same item on both backends."""
     await _run(seeded["container_id"], [seeded["seeded"][-1]],
                description="async read_items single item (point-read leaf)",
                request_kwargs={"count": 1})
@@ -109,7 +109,7 @@ async def test_read_items_all_missing(seeded):
 async def _run_with_options(container_id, items, description, read_items_kwargs):
     """Same as ``_run`` but forwards extra kwargs to ``read_items`` -- checks that
     per-request options (availability strategy, custom headers, read timeout)
-    leave the returned documents identical on both backends."""
+    leave the returned items identical on both backends."""
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_id)
         result = await container.read_items(items=items, **read_items_kwargs)
@@ -124,7 +124,7 @@ async def _run_with_options(container_id, items, description, read_items_kwargs)
 
 async def test_read_items_availability_strategy_disabled(seeded):
     """availability_strategy=False (hedging off) is honored on the rust point
-    leg and returns the same documents as legacy."""
+    leg and returns the same items as legacy."""
     await _run_with_options(seeded["container_id"], [seeded["seeded"][-1]],
                             description="async read_items availability_strategy=False",
                             read_items_kwargs={"availability_strategy": False})
@@ -132,7 +132,7 @@ async def test_read_items_availability_strategy_disabled(seeded):
 
 async def test_L6_read_items_custom_initial_headers(seeded):
     """A non-x-ms customer header on read_items is forwarded on both backends and
-    does not change the returned documents."""
+    does not change the returned items."""
     await _run_with_options(seeded["container_id"], [seeded["seeded"][-1]],
                             description="[L6] async read_items initial_headers (custom)",
                             read_items_kwargs={"initial_headers": {"x-trace-id": "read-items-parity"}})
@@ -140,7 +140,7 @@ async def test_L6_read_items_custom_initial_headers(seeded):
 
 async def test_L7_read_items_read_timeout_falls_back_to_legacy(seeded):
     """read_timeout keeps the point leg on legacy (rust has no per-request read
-    timeout); the returned documents still match legacy."""
+    timeout); the returned items still match legacy."""
     await _run_with_options(seeded["container_id"], [seeded["seeded"][-1]],
                             description="[L7] async read_items read_timeout (legacy fallback)",
                             read_items_kwargs={"read_timeout": 30})

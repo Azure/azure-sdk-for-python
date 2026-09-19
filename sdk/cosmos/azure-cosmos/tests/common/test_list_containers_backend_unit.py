@@ -1,3 +1,27 @@
+"""Unit coverage for listing the containers in a database, on both engines (no network).
+
+Listing is a feed: the service answers one page at a time and hands back a
+continuation token to fetch the next. That shape drives almost everything here.
+
+Nothing should happen until the caller actually asks for items. Building the
+pager makes no request, so a customer who creates one and never iterates it
+pays nothing.
+
+The pages must join up. A token from one page has to resume exactly where it
+left off, including on a brand-new pager, which is how customers page across
+separate calls or processes.
+
+Empty is not the same as finished. A page with no containers in it is still a
+successful page, and the feed has to keep going rather than stop early.
+
+The deadline applies to fetching one page, not to the whole walk. A customer
+iterating slowly must not have the feed expire underneath them.
+
+Each of the four setups -- sync and async, Rust and legacy -- is a separate code
+path, so every test runs on all four.
+
+All fakes, no Cosmos account.
+"""
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -27,6 +51,17 @@ from .test_container_backend_unit import (
 
 
 def _page(ids, continuation=None, status=200):
+    """Build one fake feed page holding the named containers.
+
+    The containers sit under the ``DocumentCollections`` key, which is what the
+    service really uses for a container feed. A database feed uses a different
+    key, and reading the wrong one yields an empty list rather than an error --
+    the worst kind of wrong, because the customer sees "no containers" instead
+    of a failure.
+
+    The activity id is set from the container names so a test can tell the pages
+    apart in the headers a hook receives.
+    """
     headers = CaseInsensitiveDict({"x-ms-request-charge": "2", "x-ms-activity-id": ",".join(ids) or "empty"})
     if continuation:
         headers["x-ms-continuation"] = continuation
@@ -38,6 +73,19 @@ def _page(ids, continuation=None, status=200):
 
 @pytest.fixture(params=["sync-rust", "async-rust", "sync-legacy", "async-legacy"])
 def listing_case(request):
+    """Build a container listing across all four combinations of client and engine.
+
+    By default the feed is two pages: one container with a token, then one more
+    without. Tests can replace either page to stage an empty page or a failure.
+
+    Every request is recorded, which is how the tests prove that building a
+    pager sends nothing and that a failure is not quietly tried a second time.
+    A failure can also be armed so the next fetch raises instead of answering.
+
+    At the end of every Rust run the fixture asserts the legacy transport was
+    never called. That is the guard against a silent fallback: without it, a
+    test could pass while the work was actually done by the other engine.
+    """
     is_async = request.param.startswith("async")
     rust = request.param.endswith("rust")
     conn = _new_async_connection() if is_async else _new_sync_connection()
@@ -82,16 +130,34 @@ def listing_case(request):
 
 
 def _run(case, sync_call, async_call):
+    """Run whichever of the two versions matches the client under test."""
     return asyncio.run(async_call()) if case.is_async else sync_call()
 
 
 def _drain(case, pager):
+    """Walk the whole feed to the end and return every container it yielded."""
     async def collect():
         return [item async for item in pager]
     return _run(case, lambda: list(pager), collect)
 
 
 def test_lazy_pages_and_continuation_resume(listing_case):
+    """No request until the caller asks, one request per page, and a token resumes on
+    a fresh pager.
+
+    Creating the pager sends nothing and runs no hook, and on the async client it
+    is not even something to wait on -- the work starts when iteration does. A
+    customer who builds a pager and abandons it pays nothing.
+
+    Taking the first page makes exactly one request and hands back a token.
+    That token is then given to a *brand-new* pager, which picks up at the second
+    container rather than starting over. This is what lets customers page across
+    separate calls, or hand a token to another process.
+
+    Two requests in total, so resuming did not silently refetch the first page.
+    On the Rust path each request is a container listing scoped to this database,
+    carries the caller's page size, and the second carries the token.
+    """
     case = listing_case
     hooks = []
     pager = case.database.list_containers(max_item_count=1, response_hook=hooks.append)
@@ -131,6 +197,22 @@ def test_lazy_pages_and_continuation_resume(listing_case):
 
 @pytest.mark.parametrize("empty_first", [False, True])
 def test_falsey_hook_receives_each_page_as_an_isolated_snapshot(listing_case, empty_first):
+    """The hook runs once per page with that page's own headers, and cannot disturb
+    the client.
+
+    The hook reports itself as false when tested as a boolean, and still runs,
+    because being callable is what matters.
+
+    It fires twice, once per page, and never before iteration begins. Each call
+    gets the headers belonging to *that* page -- checked through the activity id
+    -- rather than a single set overwritten as the walk goes on, which is what a
+    customer needs to account for charges page by page.
+
+    The headers are its own copy: it writes a marker and nothing reaches the
+    client's record of the last response.
+
+    The run with an empty first page proves an empty page still reports itself.
+    """
     case = listing_case
     if empty_first:
         case.responses[""] = _page([], "next")
@@ -156,6 +238,12 @@ def test_falsey_hook_receives_each_page_as_an_isolated_snapshot(listing_case, em
 
 
 def test_empty_database_still_reports_its_successful_page(listing_case):
+    """A database with no containers yields nothing but still reports one successful
+    page.
+
+    The hook fires once. A customer tracking request charges needs to see the
+    request that was actually made and paid for, even though it returned nothing.
+    """
     case = listing_case
     case.responses[""] = _page([])
     hook = MagicMock()
@@ -166,6 +254,14 @@ def test_empty_database_still_reports_its_successful_page(listing_case):
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics", "availability_strategy"])
 @pytest.mark.parametrize("value", [None, False, True])
 def test_obsolete_options_fail_before_paging(listing_case, option, value):
+    """Retired options are refused as the pager is built, not on the first fetch.
+
+    Session token, query metrics, and availability strategy each raise
+    ``TypeError`` naming the option, whatever the value. Failing straight away
+    matters for a feed: if the error waited until iteration, a customer could
+    build a pager, pass it elsewhere, and only discover the mistake far from the
+    call that caused it.
+    """
     case = listing_case
     with pytest.raises(TypeError, match=option):
         case.database.list_containers(**{option: value})
@@ -174,6 +270,12 @@ def test_obsolete_options_fail_before_paging(listing_case, option, value):
 
 @pytest.mark.parametrize("args", [(1,), (1, False)])
 def test_options_are_keyword_only(listing_case, args):
+    """Listing takes no positional arguments; every option must be named.
+
+    One and two positional values are both refused. Older code passed page size
+    and a flag by position, and silently accepting them now would land a
+    customer's values in whichever options happen to sit in those slots today.
+    """
     with pytest.raises(TypeError):
         listing_case.database.list_containers(*args)
     assert listing_case.requests == []
@@ -181,6 +283,10 @@ def test_options_are_keyword_only(listing_case, args):
 
 @pytest.mark.parametrize("value", [False, 0, 1])
 def test_socket_timeout_is_rejected(listing_case, value):
+    """The socket-level ``read_timeout`` is not accepted here, including when false or
+    zero, which are still the customer asking for it. The error names the option
+    so it is clear what to remove, and it is raised before any request.
+    """
     with pytest.raises(TypeError, match="read_timeout"):
         listing_case.database.list_containers(read_timeout=value)
     assert listing_case.requests == []
@@ -188,6 +294,16 @@ def test_socket_timeout_is_rejected(listing_case, value):
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
 def test_supported_timeout_and_application_headers(listing_case, timeout):
+    """A supported deadline and the customer's own header reach every page request.
+
+    The header must ride on both requests, not just the first, or a customer's
+    tracing breaks partway through a long walk.
+
+    With no timeout, no deadline is invented. With one, each page gets a
+    remaining allowance that is positive and no larger than what was asked for:
+    a page is never given more time than the customer allowed, and is never
+    started with none left.
+    """
     case = listing_case
     pager = case.database.list_containers(
         timeout=timeout, read_timeout=None, initial_headers={"x-company-trace": "listing"}
@@ -215,6 +331,20 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     {"request_options": {"read_timeout": 2}},
 ])
 def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
+    """Options the Rust path cannot honor never produce a request, and never move the
+    feed to the legacy transport.
+
+    Eighteen calls are covered: ten unusable deadlines, two driver-owned headers,
+    both raw hooks, a connect timeout, an unknown keyword, and two raw
+    request-options dictionaries.
+
+    Building the pager still sends nothing. The failure comes when the customer
+    starts iterating, and no request is made then either -- so the refusal costs
+    nothing and the hook never runs. The fixture's own check confirms the legacy
+    transport was not used as a silent substitute.
+
+    Skipped on the legacy setups, where these options are genuinely supported.
+    """
     case = listing_case
     if not case.rust:
         pytest.skip("Rust-specific option rejection")
@@ -234,6 +364,18 @@ def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
     exceptions.CosmosHttpResponseError(status_code=500),
 ])
 def test_hook_failure_does_not_fetch_again_or_fall_back(listing_case, error):
+    """An error from the customer's hook stops the walk without refetching the page.
+
+    Five errors are raised from the hook, including two that the SDK would
+    normally read as service replies -- a not-found and a throttling response --
+    and one that normally means "this engine cannot serve this page". Any of
+    those, if caught too broadly, would be mistaken for something the SDK should
+    react to: retrying the page, or restarting the feed on the other engine.
+
+    Instead the exact exception reaches the caller after exactly one request,
+    with the hook having run once. Refetching would charge the customer twice
+    for a page they already received.
+    """
     case = listing_case
     hook = MagicMock(side_effect=error)
     with pytest.raises(type(error)) as raised:
@@ -245,6 +387,15 @@ def test_hook_failure_does_not_fetch_again_or_fall_back(listing_case, error):
 
 @pytest.mark.parametrize("status", [403, 404, 429, 500])
 def test_error_page_does_not_invoke_success_hook(listing_case, status):
+    """A failed page keeps its status and does not run the success hook.
+
+    Four statuses are covered. Each reaches the caller with its status code
+    intact, and the hook stays silent, because nothing succeeded -- a hook that
+    fired here would report a charge for a page the customer never got.
+
+    Throttling is allowed more than one request, since that is the one status the
+    client is expected to retry; the others must produce exactly one.
+    """
     case = listing_case
     case.responses[""] = _page([], status=status)
     hook = MagicMock()
@@ -261,6 +412,20 @@ def test_error_page_does_not_invoke_success_hook(listing_case, status):
     PageNotSupportedByBackendError("unsupported page"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
 def test_binding_failures_are_not_replayed(listing_case, error):
+    """A failure inside the Rust engine, including cancellation, ends the walk after
+    one request.
+
+    All three reach the caller unchanged: a page the engine says it cannot
+    serve, an ordinary error, and cancellation. The first is the tempting one --
+    it sounds like an invitation to retry on legacy -- but restarting the feed
+    there would charge the customer for the same page twice and could interleave
+    results from two different walks.
+
+    Cancellation must also pass through untouched, or it stops unwinding and the
+    caller's request to stop is ignored.
+
+    Skipped on the legacy setups, which have no such engine.
+    """
     case = listing_case
     if not case.rust:
         pytest.skip("Rust-specific binding failure")
@@ -272,6 +437,17 @@ def test_binding_failures_are_not_replayed(listing_case, error):
 
 
 def test_timeout_restarts_between_public_page_fetches(listing_case, monkeypatch):
+    """The deadline covers fetching one page, not the whole walk.
+
+    The clock is moved forward by ten seconds before the first page and ten more
+    before the second, far past the one-second timeout, yet both pages arrive.
+
+    This is deliberate. Customers iterate feeds slowly -- processing each page,
+    waiting on something else, looping in a job. If the deadline covered the
+    whole walk, a feed would expire mid-iteration for reasons that have nothing
+    to do with how the service responded. The timeout limits how long any single
+    page may take.
+    """
     case = listing_case
     clock = [100.0]
     monkeypatch.setattr(time, "time", lambda: clock[0])
@@ -294,6 +470,21 @@ def test_timeout_restarts_between_public_page_fetches(listing_case, monkeypatch)
 
 
 def test_empty_service_page_does_not_reset_current_page_budget(listing_case, monkeypatch):
+    """Time spent skipping past empty pages counts against the page the customer is
+    waiting for.
+
+    The previous test showed the deadline restarts between pages the *customer*
+    asks for. This is the other half: when the service answers with an empty page
+    carrying a token, the SDK fetches again on its own to find something to
+    return. That inner loop must not keep resetting the allowance.
+
+    Here the hook advances the clock by two seconds against a one-second
+    deadline, and the walk gives up with a timeout after a single request. If the
+    allowance restarted on every empty page, a run of them could keep a customer
+    waiting indefinitely on a call they had given one second.
+
+    Skipped on legacy, where the fake transport bypasses these checks.
+    """
     case = listing_case
     if not case.rust:
         pytest.skip("Legacy transport timeout checks are bypassed by the fake HTTP response")
@@ -310,6 +501,14 @@ def test_empty_service_page_does_not_reset_current_page_budget(listing_case, mon
 
 
 def test_query_container_timeout_policy_matches_listing():
+    """A container query with an ordinary deadline is allowed on the Rust path, the
+    same as a listing.
+
+    The two feeds are built by separate code, so it would be easy for one to
+    start turning away a deadline the other accepts. A customer switching from
+    listing to querying would then be moved to a different engine by a setting
+    that has nothing to do with the difference between the two calls.
+    """
     assert can_use_rust_backend_for_query_containers_page(
         path="/dbs/db1/colls/", query_payload={"query": "SELECT * FROM c"},
         options={"timeout": 10}, kwargs={"timeout": 10},

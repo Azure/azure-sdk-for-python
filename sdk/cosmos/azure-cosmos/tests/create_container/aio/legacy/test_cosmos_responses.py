@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async create-container return-shape checks, re-run on the rust engine.
+"""The existing legacy async create-container return-shape checks, re-run on the Rust engine.
 
 Why this file exists: the async client is a separate code path from the sync
 client, so it has to be proved separately. ``create_container`` returns two
@@ -11,7 +11,7 @@ pair carries the response headers, which is where a customer reads how many
 request units the create cost. Code written against either shape breaks if the
 other one comes back.
 
-What it does: two real v4 tests copied from
+What it does: two real legacy tests copied from
 ``tests/test_cosmos_responses_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. ``test_create_container_headers_async`` asks
 for properties and checks the headers are not empty.
@@ -20,7 +20,7 @@ checks a ``ContainerProxy`` came back.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``create_container/aio/test_create_container_parity_async.py``) run the same
-call on both engines and diff the results. This file runs on rust only and
+call on both engines and diff the results. This file runs on Rust only and
 reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -65,6 +65,11 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_create_container_headers_async(self):
+        """With ``return_properties=True``, the response headers come back populated.
+
+        The second half of the returned pair is what a customer reads the
+        request unit charge from, so it must not be empty.
+        """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_create_container_headers_async
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
                                                                    partition_key=PartitionKey(path="/company"),
@@ -72,6 +77,12 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_container_returns_container_proxy_async(self):
+        """Without ``return_properties``, the plain ``ContainerProxy`` comes back.
+
+        This is the default and by far the common case: callers chain straight
+        into reading and writing items. Returning the pair here instead would
+        break every existing caller.
+        """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_create_container_returns_container_proxy_async
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
                                                                    partition_key=PartitionKey(path="/company"))

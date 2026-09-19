@@ -49,9 +49,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Incremented on entry so it reflects every op routed into the
-    // binding on the sync path.
+    // Count runner entry, before driver lookup or execution can fail.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
@@ -82,25 +80,14 @@ pub(crate) fn execute_item_operation_sync<'py>(
     tuple_from_result(py, response_result)
 }
 
-/// Aborts the spawned driver task if this guard is dropped before the task has
-/// finished. The problem it solves: a Tokio `JoinHandle` does NOT own its task --
-/// dropping the handle *detaches* the task, leaving it to run to completion in the
-/// background (holding a connection, spending RU) with its result thrown away. So
-/// the async runner keeps this guard (built from the task's `abort_handle()`)
-/// alive for the lifetime of the bridged Python awaitable. When asyncio cancels
-/// the `await` (a client-side timeout, or the surrounding task being cancelled)
-/// `pyo3-async-runtimes` drops the bridging future, which drops this guard, which
-/// calls `abort()` -- so the in-flight driver operation is actually cancelled (its
-/// connection released, no further work or RU spent) instead of detached. On
-/// normal completion the task is already finished, so `abort()` is a harmless
-/// Async sibling of `execute_item_operation_sync`: same inputs and identical driver work,
-/// but instead of blocking the calling Python thread it spawns the driver future on the
-/// shared Tokio runtime (the same runtime the driver was built on, so its
-/// connection pool and timers stay put) and hands the asyncio event loop an
-/// awaitable that resolves to the `BackendResponse` tuple. The pending operation
-/// does not reserve a dedicated Python worker thread. The awaitable owns an
-/// `AbortOnDrop` guard (see above) so a cancelled `await` actually cancels the
-/// driver operation rather than detaching it.
+/// Async sibling of `execute_item_operation_sync`, using the same driver future.
+/// Validate inputs under the GIL, spawn driver work on the shared Tokio runtime,
+/// and bridge its result to a Python awaitable. Result conversion reacquires the
+/// GIL; credential callbacks can also re-enter Python during driver execution.
+///
+/// The Rust bridge future owns an `AbortOnDrop` guard so dropping that future
+/// requests cancellation instead of merely detaching the task. This is not a
+/// guarantee of immediate cleanup or cancellation of work already at the service.
 pub(crate) fn execute_item_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -113,8 +100,7 @@ pub(crate) fn execute_item_operation_async<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
-    // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Incremented on entry, async path.
+    // Count runner entry, not completion or a network attempt.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     // Synchronous extraction (GIL held) -- identical to the sync path. Errors
     // here appear when the coroutine is created, before it is awaited.
@@ -124,7 +110,7 @@ pub(crate) fn execute_item_operation_async<'py>(
     let runtime_ctx = require_runtime_context(op_name)?;
 
     // Spawn the driver work on the shared runtime; `join` is a cheap handle the
-    // bridge below awaits without holding the GIL or pinning a worker thread.
+    // bridge below awaits without holding the GIL for the wait.
     let timeout = modifiers.item_timeout;
     let join = runtime_ctx.tokio_rt.spawn(with_item_timeout(
         timeout,
@@ -141,22 +127,15 @@ pub(crate) fn execute_item_operation_async<'py>(
         ),
     ));
 
-    // Propagate Python-side cancellation to the driver. Without this, cancelling
-    // the awaitable would only drop the JoinHandle -- which *detaches* the Tokio
-    // task, letting the operation run to completion in the background (holding a
-    // connection, spending RU) with its result discarded. Holding this guard for
-    // the lifetime of the bridging future means a cancelled `await` drops the
-    // guard and aborts the task instead, so a client-side timeout actually stops
-    // the work.
+    // Request cancellation when the bridge future is dropped rather than only
+    // dropping the JoinHandle, which would detach the task.
     let abort_guard = AbortOnDrop(join.abort_handle());
 
     // Bridge the Rust JoinHandle to a Python asyncio awaitable. The response
     // tuple is built under the GIL after the future resolves, exactly like the
     // sync path's `tuple_from_result`.
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        // Keep the abort guard alive for exactly as long as we await the task; if
-        // the Python future is cancelled, this block is dropped, dropping the
-        // guard and aborting the task (see AbortOnDrop).
+        // Keep the guard until the bridge completes or is dropped.
         let _abort_guard = abort_guard;
         let response_result = join.await.map_err(|join_error| {
             if join_error.is_cancelled() {
@@ -171,13 +150,6 @@ pub(crate) fn execute_item_operation_async<'py>(
     })
 }
 
-// ---------------------------------------------------------------------------
-// Query page execution
-//
-// This is the driver that lets feed-style operations be fetched by the Rust
-// driver instead of by the Python HTTP path:
-//   * query_items (one SQL query page)
-//   * read_all_items (native read-feed, no synthetic SQL)
 /// The driver work shared by both runners -- the sync runner
 /// (`execute_item_operation_sync`, which blocks on it) and the async runner
 /// (`execute_item_operation_async`, which spawns it) -- so the two paths do identical
@@ -231,12 +203,7 @@ fn execute_item_on_driver(
         let mut op = build_op(item_ref, body_bytes);
 
         if let Some(activity) = modifiers.activity_header.as_ref() {
-            // Forward the correlation id verbatim. The legacy path forwards any
-            // x-ms-activity-id string; gating on UUID-parseability silently dropped
-            // non-UUID correlation ids (e.g. an application-supplied trace id), so
-            // server-side request correlation broke for exactly those requests --
-            // the moment a customer is trying to trace one. ActivityId accepts any
-            // string, and the service treats the header as opaque.
+            // Pass the supplied activity id to the driver without UUID parsing.
             op = op.with_activity_id(ActivityId::from(activity.clone()));
         }
         if let Some(session) = modifiers.session_header.as_ref() {

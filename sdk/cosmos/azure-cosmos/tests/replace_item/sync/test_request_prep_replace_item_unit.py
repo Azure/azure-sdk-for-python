@@ -3,19 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for the ``replace_item`` request-prep path — no network, no emulator.
+"""Unit tests for the ``replace_item`` request-prep path -- no network, no emulator.
 
 These pin ``prepare_replace_item_request`` -- the overwrite-only,
 body-carrying builder added for the migrated ``replace_item``.
 
 ``replace_item`` shares one builder with ``upsert_item``: both carry the
-body, never mint an id, and turn ``etag`` / ``match_condition`` into
+body, never generate an id, and turn ``etag`` / ``match_condition`` into
 ``If-Match`` / ``If-None-Match``. Two things differ:
 
 * the ``op`` tag (the backend sends a replace to the binding's
   ``replace_item``, an overwrite-only PUT, rather than to
   ``upsert_item``), and
-* the ``item_id`` slot. A replace names an existing document, so the
+* the ``item_id`` slot. A replace names an existing item, so the
   caller passes the id resolved from ``item`` and the binding puts that
   on the request URL (matching the legacy ``ReplaceItem``); an upsert has
   no ``item`` argument and leaves ``item_id`` unset (the binding reads the
@@ -54,7 +54,7 @@ from common.request_preparation import (
 
 def test_baseline_is_write_with_body_with_item_id():
     """A replace carries the new body (serialised to JSON bytes) and the id
-    of the document to overwrite on ``item_id`` -- both at once. The op tag
+    of the item to overwrite on ``item_id`` -- both at once. The op tag
     is ``OP_REPLACE_ITEM``."""
     prepared = prepare_replace_item_request(
         container_link="dbs/d/colls/orders",
@@ -70,9 +70,9 @@ def test_baseline_is_write_with_body_with_item_id():
     assert prepared.body_bytes == b'{"id":"order-42","pk":"customerA","total":129.0}'
     assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     # Unlike upsert (id from the body, item_id None), replace carries the
-    # id of the document to overwrite so the binding uses it for the URL.
+    # id of the item to overwrite so the binding uses it for the URL.
     assert prepared.item_id == "order-42"
-    # Dropped-and-recreated container guard: the rid is stamped under the standard key.
+    # Dropped-and-recreated container guard: the rid is set under the standard key.
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
@@ -80,13 +80,13 @@ def test_url_id_comes_from_item_id_not_body():
     """The URL id is whatever ``item_id`` the caller resolved from ``item`` --
     it is not re-derived from the body. The legacy ``ReplaceItem`` takes the
     URL id from the resolved document link, so a body whose own id disagrees
-    with ``item`` must not change which document the URL targets (the server
+    with ``item`` must not change which item the URL targets (the server
     then rejects the id change).
     """
     prepared = prepare_replace_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "B", "pk": "a"},   # body's own id
-        item_id="A",                   # the document the customer named
+        item_id="A",                   # the item the customer named
         partition_key_value="a",
         container_rid=None,
         kwargs={},
@@ -114,13 +114,13 @@ def test_body_bytes_round_trip_to_the_same_dict():
 
 
 # ---------------------------------------------------------------------------
-# Never mints an id (replace targets an existing document)
+# Never generates an id (replace targets an existing item)
 # ---------------------------------------------------------------------------
 
 
 def test_missing_body_id_is_not_minted_and_body_is_not_mutated():
-    """A replace never mints an id into the body (it overwrites a specific
-    document named by ``item``). A body without one is serialised as-is and
+    """A replace never adds an id to the body (it overwrites the existing
+    item named by ``item``). A body without one is serialised as-is and
     the server rejects it -- the prep must not invent one."""
     body = {"pk": "customerA", "total": 129.0}
     prepared = prepare_replace_item_request(
@@ -254,7 +254,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30`` so
-    the binding can lift it into the driver's own timeout setting -- the
+    the binding can turn it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
     prepared = prepare_replace_item_request(
         container_link="dbs/d/colls/c",

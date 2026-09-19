@@ -23,24 +23,20 @@ _FIRST_N_CAP = 200
 
 
 class Stats:
-    """Thread-safe per-operation latency and error tracking using HdrHistogram.
+    """Lock-protected, per-operation success histograms and error tracking.
 
-    Uses HdrHistogram for O(1) record/query with fixed ~40KB memory per histogram,
-    replacing the previous sorted-list approach that grew unbounded.
-    Values are stored in microseconds internally for sub-ms precision.
+    Durations are quantized in microseconds and clamped to the configured range.
+    Each distinct operation allocates its own histograms; storage and percentile
+    lookup costs are not established by this module's tests.
     """
 
     def __init__(self):
         self._lock = threading.Lock()
         # min 1 microsecond, max 60 seconds (in microseconds), 3 significant digits
         self._histograms: dict[str, HdrHistogram] = {}
-        # Histogram of server-reported processing time (the
-        # x-ms-request-duration-ms response header) for the same ops. The client
-        # histogram above measures wall clock at the caller (network + transport +
-        # binding + service); this one measures only the service's own time.
-        # Client minus server shows where a tail is spent: a high client tail with
-        # a normal server tail is client-side cost, not the service. Both backends
-        # set the header, so the split is comparable across them.
+        # Header-derived durations are sampled separately from client durations.
+        # Missing headers and multiple requests per call can make the populations
+        # differ. Independent percentiles cannot be subtracted to isolate overhead.
         self._server_histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
         # Running RU charge per operation: sum and sample count, so drain can
@@ -53,13 +49,13 @@ class Stats:
         self._errors: deque = deque(maxlen=2000)
         # Worst event-loop scheduling delay seen this interval, in milliseconds.
         # Fed by the async loop-lag monitor and drained per flush. It is process-
-        # wide, not per operation, so it lives outside the per-op histograms. A
-        # large value means the loop is the bottleneck, not the SDK.
+        # wide, not per operation, so it lives outside the per-op histograms.
+        # A large sample records a scheduling delay, not its cause.
         self._loop_lag_max_ms: float = 0.0
         # Earliest per-op durations (ms) since process start, capped at _FIRST_N_CAP.
         # Unlike the histograms, this is NOT reset on drain, so a cold-start analyzer
         # can see the very first calls (startup penalty) even after warm windows have
-        # flushed. Reported once, on the final row, via first_ms_snapshot().
+        # flushed. The reporter repeats these snapshots on result rows.
         self._first_ms: dict[str, list] = {}
 
     def first_ms_snapshot(self):
@@ -89,13 +85,11 @@ class Stats:
                 first.append(duration_ms)
 
     def record_server_ms(self, operation: str, server_ms: float):
-        """Record the service-reported processing time of a successful operation.
+        """Record a supplied nonnegative request-duration header value.
 
-        Fed from the SDK ``response_hook`` (the ``x-ms-request-duration-ms``
-        header), which both backends set. Stored in a separate histogram from the
-        client latency, so an analyzer can compare the server tail against the
-        client tail: a high client tail with a normal server tail is client-side
-        cost, not the service.
+        Header samples are kept separately from client durations and may cover a
+        different population. Their percentiles cannot identify per-call overhead
+        by subtraction or establish which layer caused a latency tail.
         """
         if server_ms < 0:
             return
@@ -108,11 +102,10 @@ class Stats:
             self._server_histograms[operation].record_value(value_us)
 
     def record_ru(self, operation: str, request_charge: float):
-        """Record the RU charge of a successful operation.
+        """Accumulate a supplied nonnegative RU value and its sample count.
 
-        Kept as a running sum and count so drain_all can report the mean RU per
-        operation. Fed from the SDK ``response_hook`` (the ``x-ms-request-charge``
-        header), which fires once per successful op on both backends.
+        The caller determines which response/header is sampled. This method does
+        not check one sample per operation or complete retry/request accounting.
         """
         with self._lock:
             if operation not in self._ru_sums:

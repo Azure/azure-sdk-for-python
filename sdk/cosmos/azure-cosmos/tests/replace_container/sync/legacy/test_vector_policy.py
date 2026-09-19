@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Unchanged v4 policy-replacement methods with isolated Rust setup."""
+"""Unchanged legacy policy-replacement methods with isolated Rust setup."""
 
 import uuid
 import pytest
@@ -14,6 +14,17 @@ class TestVectorPolicy(SyncReplacementCase):
         return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
 
     def test_replace_vector_indexing_policy(self):
+        """A vector embedding policy and its vector indexes survive a replace.
+
+        Replaces a container carrying a vector embedding policy and matching
+        vector indexes, then reads it back and checks both came through
+        unchanged.
+
+        These two settings have to agree with each other, and they live in
+        different parts of the container definition -- the embedding policy at
+        the top level, the indexes inside the indexing policy. A replace that
+        rebuilds one and not the other leaves vector search broken.
+        """
         # Source: tests/test_vector_policy.py::TestVectorPolicy.test_replace_vector_indexing_policy
         # Replace should work so long as the new indexing policy doesn't change the vector indexes, and as long as
         # the previously defined vector embedding policy is also provided.
@@ -98,6 +109,18 @@ class TestVectorPolicy(SyncReplacementCase):
             self.test_db.delete_container(container_id)
 
     def test_fail_replace_vector_indexing_policy(self):
+        """Three invalid vector replacements are each refused with their own message.
+
+        First a vector index whose path does not match any path in the
+        embedding policy. Then a replace that tries to change the paths of an
+        existing vector index. Then one that tries to change the paths of the
+        existing embedding policy.
+
+        All three come back as 400s, and the test pins the wording of each,
+        because the distinction between "these two do not agree" and "this
+        cannot be changed after creation" is the only thing telling a customer
+        whether to fix their input or recreate the container.
+        """
         # Source: tests/test_vector_policy.py::TestVectorPolicy.test_fail_replace_vector_indexing_policy
         vector_embedding_policy = {
             "vectorEmbeddings": [

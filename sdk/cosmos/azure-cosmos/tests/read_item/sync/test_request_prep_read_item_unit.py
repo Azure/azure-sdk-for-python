@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``prepare_read_item_request`` — no network, no emulator.
+"""Unit tests for ``prepare_read_item_request`` -- no network, no emulator.
 
 These pin how a ``read_item`` call is turned into a request, end to end:
 
@@ -56,15 +56,18 @@ def test_baseline_returns_read_item_prepared_with_no_body():
     assert isinstance(prepared, PreparedRequest)
     assert prepared.op == OP_READ_ITEM
     assert prepared.container_link == "dbs/d/colls/c"
-    assert prepared.body_bytes == b""  # GET is bodiless
+    assert prepared.body_bytes == b""  # a read sends no body
     assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     assert prepared.item_id == "order-42"
 
 
 def test_baseline_stamps_container_rid_into_headers():
-    """The container rid is stamped under the key the binding turns into
-    ``x-ms-cosmos-intended-collection-rid`` — the same dropped-and-recreated
-    container guard that ``create_item`` and ``delete_item`` get."""
+    """The container rid is set under the key the binding turns into
+    ``x-ms-cosmos-intended-collection-rid``. This is the same guard against a
+    dropped-and-recreated container that ``create_item`` and ``delete_item``
+    get: if someone deletes the container and makes a new one with the same
+    name, the rid no longer matches and the service rejects the read instead
+    of silently answering from the replacement container."""
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -76,13 +79,16 @@ def test_baseline_stamps_container_rid_into_headers():
 
 
 # ---------------------------------------------------------------------------
-# max_integrated_cache_staleness_in_ms → x-ms-dedicatedgateway-max-age
+# max_integrated_cache_staleness_in_ms -> x-ms-dedicatedgateway-max-age
 # ---------------------------------------------------------------------------
 
 
 def test_cache_staleness_positive_emits_dedicated_gateway_header():
-    """``max_integrated_cache_staleness_in_ms=5000`` →
-    ``x-ms-dedicatedgateway-max-age: 5000``."""
+    """``max_integrated_cache_staleness_in_ms=5000`` becomes
+    ``x-ms-dedicatedgateway-max-age: 5000``.
+
+    This is how a customer says "an answer up to 5 seconds old is fine",
+    which lets the dedicated gateway serve the read from its cache."""
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -91,7 +97,7 @@ def test_cache_staleness_positive_emits_dedicated_gateway_header():
         kwargs={"max_integrated_cache_staleness_in_ms": 5000},
     )
     assert wire_headers(prepared)["x-ms-dedicatedgateway-max-age"] == "5000"
-    # It must not also stamp the option-key form -- the prep translates
+    # It must not also set the option-key form -- the prep translates
     # the value, it doesn't just copy it under a new name.
     assert "maxIntegratedCacheStaleness" not in wire_headers(prepared)
 
@@ -220,8 +226,12 @@ def test_post_trigger_include_lands_as_option_key():
 
 
 def test_priority_high_lands_as_option_key():
-    """``priority="High"`` is stamped as the ``priorityLevel`` request header the
-    driver reads."""
+    """``priority="High"`` is set as the ``priorityLevel`` request header the
+    driver reads.
+
+    Priority tells the service which requests to shed first when the account
+    is over its throughput limit, so customers mark background work low and
+    customer-facing work high."""
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -233,7 +243,10 @@ def test_priority_high_lands_as_option_key():
 
 
 def test_throughput_bucket_lands_as_option_key():
-    """``throughput_bucket=1`` is stamped as the ``throughputBucket`` request header."""
+    """``throughput_bucket=1`` is set as the ``throughputBucket`` request header.
+
+    Buckets let a customer cap how much of a container's throughput one class
+    of traffic may consume, so a batch job cannot starve live traffic."""
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -250,8 +263,9 @@ def test_throughput_bucket_lands_as_option_key():
 
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
-    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30``, a
-    sentinel header the binding lifts into the driver's own timeout setting."""
+    """``timeout=30`` is forwarded as ``__overall_timeout_seconds: 30``, an
+    internal marker header that never reaches the wire: the binding reads it
+    out and turns it into the driver's own timeout setting."""
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -263,15 +277,15 @@ def test_timeout_kwarg_is_forwarded_under_sentinel_header():
 
 
 # ---------------------------------------------------------------------------
-# merge_read_item_explicit_kwargs — building the kwargs dict
+# merge_read_item_explicit_kwargs -- building the kwargs dict
 # ---------------------------------------------------------------------------
 
 
 def test_merge_read_item_explicit_kwargs_omits_none_entries():
     """Only the explicit keyword arguments that aren't None land in the
-    merged dict — None means "not supplied" and must not be stamped
-    (otherwise the options build would write ``priorityLevel: None`` and
-    so on)."""
+    merged dict. None means "not supplied" and must not be set, otherwise
+    the options build would write ``priorityLevel: None`` and so on, and the
+    customer would get a header they never asked for."""
     kwargs: dict = {}
     merge_read_item_explicit_kwargs(
         kwargs,

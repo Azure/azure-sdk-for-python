@@ -278,9 +278,8 @@ mod tests {
 
     #[test]
     fn subset_rejects_inverted_range() {
-        // min > max is nonsensical; the driver's FeedRange::new rejects it, so the
-        // binding returns an error (the Python routing layer then falls back to the
-        // more permissive legacy compare for parity).
+        // The local computation rejects this reversed range. This test does
+        // not exercise Python routing or establish a legacy fallback.
         let body = subset_body(
             &range_dict("7F", "3F", true, false),
             &range_dict("3F", "7F", true, false),

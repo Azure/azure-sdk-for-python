@@ -13,7 +13,7 @@ aggregated request-charge header, and input-order preservation.
 
 Not copied here (and why): the fault-injection and internals-patching tests, for
 the same reasons noted in the sync legacy copy -- the core-python
-``FaultInjectionTransport`` is not on the rust path, and the concurrency-internals
+``FaultInjectionTransport`` is not on the Rust path, and the concurrency-internals
 test patches an internal method rather than pinning a customer contract.
 
 Run with::
@@ -40,7 +40,7 @@ KEY = os.environ.get(
 @pytest.mark.cosmosEmulator
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     """Async twin of TestReadItems: read_items on a Rust-backed aio client, checking
-    the same customer-visible contract (which documents come back, in what order,
+    the same customer-visible contract (which items come back, in what order,
     and the aggregated request-charge header)."""
 
     async def asyncSetUp(self):
@@ -62,7 +62,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def _create_records_for_read_items(self, container, count, id_prefix="item"):
-        # Seed `count` documents and return the (id, pk) pairs to read back plus the
+        # Seed `count` items and return the (id, pk) pairs to read back plus the
         # ids alone; the container is keyed on /id, so each id doubles as its own pk.
         items_to_read = []
         item_ids = []
@@ -74,7 +74,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         return items_to_read, item_ids
 
     async def test_read_items_single_item_async(self):
-        """One (id, pk) pair in the batch -> read_items returns exactly that one document."""
+        """One (id, pk) pair in the batch -> read_items returns exactly that one item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_single_item_async
         items_to_read, item_ids = await self._create_records_for_read_items(self.container, 1)
         read_items = await self.container.read_items(items=items_to_read)
@@ -82,7 +82,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
     async def test_read_items_with_missing_items_async(self):
-        """A batch mixing real and non-existent ids -> only the real documents come back; missing ids are omitted, not errors."""
+        """A batch mixing real and non-existent ids -> only the real items come back; missing ids are omitted, not errors."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_with_missing_items_async
         items_to_read, _ = await self._create_records_for_read_items(self.container, 3, "existing_item")
         items_to_read.append(("non_existent_item1" + str(uuid.uuid4()), "non_existent_pk1"))
@@ -94,7 +94,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertSetEqual(returned_ids, expected_ids)
 
     async def test_read_items_different_partition_key_async(self):
-        """Partition key on its own path (/pk, not /id) -> read_items still finds every requested document."""
+        """Partition key on its own path (/pk, not /id) -> read_items still finds every requested item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_different_partition_key_async
         container_id = 'read_items_pk_container_' + str(uuid.uuid4())
         await self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
@@ -141,7 +141,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             await self.database.delete_container(container_id)
 
     async def test_read_items_hierarchical_partition_key_async(self):
-        """Two-level (tenantId, userId) partition key -> read_items returns every requested document."""
+        """Two-level (tenantId, userId) partition key -> read_items returns every requested item."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_hierarchical_partition_key_async
         container_id = 'read_hpk_container_' + str(uuid.uuid4())
         await self.database.create_container(
@@ -191,7 +191,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
     async def test_read_items_order_using_zip_comparison_async(self):
-        """The returned documents come back in the same order as the input (id, pk) list."""
+        """The returned items come back in the same order as the input (id, pk) list."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_order_using_zip_comparison_async
         container_id = 'read_order_zip_container_' + str(uuid.uuid4())
         await self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))

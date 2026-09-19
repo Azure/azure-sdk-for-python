@@ -70,7 +70,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
     """The async read behaves the same as the sync read."""
 
     async def test_string_item_resolves_to_document_link(self):
-        """A read by id string targets that document."""
+        """A read by id string targets that item."""
         proxy, cc = _make_async_proxy()
 
         await proxy.read_item("read_item", "a")
@@ -96,7 +96,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
     async def test_read_routes_to_backend_with_item_id(self):
-        """A read goes to the Rust backend with the document id; the existing
+        """A read goes to the Rust backend with the item id; the existing
         client is not called."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()

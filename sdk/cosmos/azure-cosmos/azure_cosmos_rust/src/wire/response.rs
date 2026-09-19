@@ -17,10 +17,10 @@ use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKe
 
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
 /// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
-/// / 412 / ...) becomes the same tuple shape as success so the Python parser raises
-/// the right typed exception. Local request-validation and precondition failures
-/// retain their Cosmos status; response-less transport failures remain
-/// `DriverTransportError` (azure-core's `ServiceResponseError`).
+/// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
+/// Without a response, statuses 400 and 412 become synthesized error tuples;
+/// other statuses become `DriverTransportError`. The latter does not prove a
+/// transport-only failure or that no request was sent.
 pub(super) fn tuple_from_result<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -60,8 +60,7 @@ pub(super) fn tuple_from_result<'py>(
                 )
             } else {
                 // No wire response: combine any attached diagnostics into the
-                // process-wide attempt counters so timeouts and transport
-                // failures are counted alongside successful operations.
+                // process-wide counters when diagnostics are available.
                 record_diagnostics_for_responseless(&cosmos_error);
                 // Report a typed transport error (Display preserves the
                 // Cosmos status) the Python layer maps to
@@ -74,12 +73,11 @@ pub(super) fn tuple_from_result<'py>(
     }
 }
 
-/// Turn the driver's query reply into the tuple the Python parser reads. Handles
-/// the three outcomes: a page of rows becomes a success reply; `None` (no rows)
-/// becomes an empty `{"Documents":[]}` page; an error carrying a real service
-/// response (e.g. a 400) becomes the same tuple shape so the Python parser raises
-/// the right Cosmos error, while a pure transport failure becomes a Rust error.
-/// Feed variant of `tuple_from_result`, which handles single-document replies.
+/// Convert a query page, or synthesize an empty `{"Documents":[]}` page for `None`.
+/// Unsupported-query status becomes `UnsupportedQueryFeatureError` without
+/// replaying through legacy. Other errors return an attached response tuple or,
+/// without one, raise `DriverTransportError`. Unlike the point-operation path,
+/// response-less 400/412 errors are not synthesized into tuples here.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -112,15 +110,10 @@ pub(super) fn tuple_from_feed_result<'py>(
 
 /// Database-feed variant of [`tuple_from_feed_result`].
 ///
-/// Turns the driver's reply into the same `{"Databases":[...]}` shape the legacy
-/// path returns, so the Python code that reads the page cannot tell which path
-/// produced it. Service errors keep their wire status, substatus, headers, and
-/// body; a failure with no wire response at all becomes
-/// [`DriverTransportError`].
-///
-/// Without this the Rust page would hand back driver-shaped rows, and a customer
-/// looping over `client.list_databases()` would see different keys depending on
-/// which backend served the call.
+/// Wraps item-list bodies in `{"Databases":[...]}` and supplies an empty envelope
+/// for `None`; raw byte bodies pass through. Errors with attached responses use
+/// the feed-error converter; response-less errors become `DriverTransportError`.
+/// Matching the envelope does not establish full legacy response parity.
 pub(super) fn tuple_from_database_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -239,8 +232,8 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
         Ok(Some(ranges)) => {
             let response_headers = PyDict::new_bound(py);
             response_headers.set_item("content-type", "application/json")?;
-            // Match the wire contract observed on core-python for pkranges:
-            // this feed response reports x-ms-item-count as "0".
+            // Synthesized compatibility header, not the number of returned ranges
+            // or a header copied from this operation's HTTP response.
             response_headers.set_item("x-ms-item-count", "0")?;
             let body = partition_key_ranges_to_response_body(&ranges)?;
             backend_response_tuple(py, 200, 0, response_headers, &body, None)
@@ -300,11 +293,10 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
 }
 
 /// Offer-feed variant of `tuple_from_feed_result`: an offer/throughput query page
-/// becomes a success reply whose body is the `{"Offers":[...]}` envelope the Python
-/// offer parser reads; `None` (no offers) becomes an empty `{"Offers":[]}` page; an
-/// error carrying a real service response (e.g. a 400) becomes the same tuple shape
-/// so the parser raises the right Cosmos error, while a pure transport failure
-/// becomes a Rust error.
+/// uses the `{"Offers":[...]}` envelope for item-list bodies; raw bytes pass through.
+/// `None` becomes an empty `{"Offers":[]}` page. Errors with attached responses
+/// use the feed-error converter; other errors become `DriverTransportError`,
+/// without assuming they were transport-only failures.
 pub(super) fn tuple_from_offer_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -350,9 +342,8 @@ pub(super) fn tuple_from_is_feed_range_subset_result<'py>(
     }
 }
 
-/// Assemble the fixed 5-part reply the Python backend reads. Every success and
-/// wire-error path ends here, so the tuple shape stays identical no matter which
-/// operation or backend produced it.
+/// Assemble the fixed 5-part reply used by these backend-response converters.
+/// The separate container-metadata success contract does not use this helper.
 fn backend_response_tuple<'py>(
     py: Python<'py>,
     status_code: i64,
@@ -379,8 +370,8 @@ fn backend_response_tuple<'py>(
 }
 
 /// Build the reply tuple for a successful point operation: read status and
-/// sub-status, combine this operation's wire attempts into the diagnostics counters,
-/// copy the response headers under their wire names, and convert the body.
+/// sub-status, record available diagnostics, convert driver headers, and copy
+/// the body. An unexpected feed-shaped body is rejected.
 fn backend_response_tuple_from_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
@@ -432,12 +423,8 @@ fn backend_response_tuple_from_feed_success<'py>(
 /// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
 /// Python `BackendResponse.body` bytes field.
 ///
-/// `ResponseBody` is an enum (`NoPayload | Bytes | Items`); `create_item`
-/// always produces a single payload (or no payload when the caller passed
-/// `no_response=True`), so we never expect the `Items` feed-shape here.
-/// We concatenate it as a defensive fallback rather than panic -- if it ever
-/// fires the test harness will show a body mismatch that's easier to
-/// diagnose than an unwrap panic from inside the binding.
+/// `NoPayload` becomes empty bytes, `Bytes` is copied, and an unexpected
+/// `Items` feed body raises `PyRuntimeError`; items are not concatenated.
 fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     match body {
         ResponseBody::NoPayload => Ok(Vec::new()),
@@ -449,12 +436,9 @@ fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     }
 }
 
-/// Wrap the driver's query results into the `{"Documents":[ ... ]}` JSON envelope
-/// the Python query parser expects -- the same shape the Cosmos REST service
-/// returns for a query. The driver returns the rows as a list of item bytes
-/// (or raw bytes, or nothing); this assembles them into that envelope so the parser
-/// can read a Rust-served page without knowing it came from Rust. No rows becomes
-/// `{"Documents":[]}`.
+/// Wrap item-list query results in `{"Documents":[...]}` for the Python parser.
+/// `NoPayload` becomes an empty envelope. Raw `Bytes` pass through unchanged;
+/// this helper does not validate or wrap their contents.
 fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     named_feed_response_body_to_vec(body, b"Documents")
 }
@@ -624,7 +608,8 @@ fn record_diagnostics_for_responseless(error: &CosmosError) {
     }
 }
 
-/// Preserve a real wire response, or let the caller classify a local error.
+/// Convert an attached driver response, or return `None` if there is no response.
+/// Absence alone does not distinguish a local failure from one after a request.
 fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
@@ -703,13 +688,10 @@ fn status_code_and_sub_status(status: CosmosStatus) -> (i64, i64) {
     )
 }
 
-/// Copy every populated field on the driver's `CosmosResponseHeaders` into a
-/// Python dict keyed by the wire-header name the Python parser expects.
-///
-/// Only fields that are `Some(_)` are written, so a caller reading a header the
-/// service did not send gets `KeyError` rather than `None`, which is what the
-/// legacy core-Python path emits today. Values stay as strings, including the
-/// encoded index metrics.
+/// Copy the driver's `to_raw_headers()` output into a Python dict of strings.
+/// Header inclusion and serialization are defined by that driver conversion;
+/// this is not a copy of the original HTTP header collection or a guarantee
+/// of legacy-header parity. Repeated names are overwritten by later assignments.
 fn response_headers_dict<'py>(
     py: Python<'py>,
     h: &azure_data_cosmos_driver::models::CosmosResponseHeaders,
@@ -915,8 +897,8 @@ mod tests {
 
             let out = response_headers_dict(py, &headers).expect("header copy should succeed");
 
-            // Every value is the string the service sends, matching what the
-            // legacy path reads off the HTTP response.
+            // Expected strings from the synthetic driver-header fixture.
+            // No service response or legacy backend is compared here.
             for (name, expected) in [
                 ("x-ms-continuation", "ct-1"),
                 ("x-ms-item-count", "7"),

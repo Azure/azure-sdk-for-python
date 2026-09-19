@@ -6,8 +6,9 @@
 """Token-credential builders for the auth test lane.
 
 Provides a sync and an async token credential so the tests can sign in with a
-token instead of the account key. By default both build a token the emulator
-accepts from ACCOUNT_KEY, so the lane runs anywhere the account key is set. If
+token instead of master-key authentication. By default both build an
+emulator-format token from ACCOUNT_KEY; this does not enable token auth on a
+live account merely because its key is available. If
 COSMOS_AAD_TENANT_ID / COSMOS_AAD_CLIENT_ID / COSMOS_AAD_CLIENT_SECRET are set,
 the builders return a real azure-identity credential instead.
 """
@@ -34,21 +35,21 @@ def have_real_aad() -> bool:
 
 
 def _is_emulator_host() -> bool:
-    """True when ACCOUNT_HOST points at the local emulator."""
+    """Check whether ACCOUNT_HOST contains localhost or 127.0.0.1; no probe."""
     host = os.environ.get("ACCOUNT_HOST", "")
     return "localhost" in host or "127.0.0.1" in host
 
 
 def token_lane_enabled() -> bool:
-    """True only where a token can actually sign in: the emulator (the token
-    built from the account key is accepted only there) or a real Entra tenant.
-    A live account that only takes the account key would fail, so skip it there.
+    """Enable the lane for a localhost-like host or three configured Entra values.
+
+    This checks configuration only, not token validity, connectivity, or role grants.
     """
     return _is_emulator_host() or have_real_aad()
 
 
 def skip_unless_token_auth():
-    """pytest mark: skip unless the emulator or a real Entra tenant is set up."""
+    """Skip unless the host/configuration check enables the token lane."""
     return pytest.mark.skipif(
         not token_lane_enabled(),
         reason="Token lane needs the emulator (ACCOUNT_HOST=localhost) "
@@ -85,8 +86,11 @@ class SyncTokenCredential:
 
 
 class AsyncTokenCredential:
-    """A token credential with an async get_token. The client runs it on a
-    background loop to fetch the token."""
+    """Emulator token credential exposing an async get_token.
+
+    The Rust wrapper adapts it through its credential bridge; this class itself
+    neither starts a loop nor selects which loop calls it.
+    """
 
     async def get_token(self, *scopes, **kwargs) -> AccessToken:  # noqa: D401
         return _mint_emulator_token(os.environ[ENV_KEY])
@@ -110,5 +114,4 @@ def make_async_token_credential():
             os.environ["COSMOS_AAD_CLIENT_SECRET"],
         )
     return AsyncTokenCredential()
-
 

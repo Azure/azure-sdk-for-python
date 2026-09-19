@@ -4,8 +4,8 @@
 
 A deterministic copy of ``sync/legacy/test_headers.py`` (identical except
 that it doesn't pass the ``_backend`` argument). The partition-key value
-and id are fixed so the parity reporter can diff the patched document
-field by field against the rust run; the original test uses a random pk
+and id are fixed so the parity reporter can diff the patched item
+field by field against the Rust run; the original test uses a random pk
 each run, which would show up as a spurious mismatch.
 
 Run: ``pytest tests/patch_item/sync/test_headers.py -v -s``
@@ -21,7 +21,7 @@ HOST = os.environ["ACCOUNT_HOST"]
 KEY = os.environ["ACCOUNT_KEY"]
 
 
-# Same value as the rust copy, so the wire bytes match.
+# Same value as the Rust copy, so the wire bytes match.
 request_throughput_bucket_number = 3
 
 
@@ -56,9 +56,9 @@ class TestHeaders(unittest.TestCase):
     def test_container_patch_item_throughput_bucket(self):
         """patch_item forwards the ``throughput_bucket`` keyword as the
         ``x-ms-cosmos-throughput-bucket`` header, and all six patch
-        operations apply to produce the expected document."""
-        # Fixed (pk, id) so the parity reporter can diff the patched document
-        # against the rust run field by field; each run has its own fresh
+        operations apply to produce the expected item."""
+        # Fixed (pk, id) so the parity reporter can diff the patched item
+        # against the Rust run field by field; each run has its own fresh
         # container, so there is no collision.
         pkValue = "patch_item_pk"
         item = {

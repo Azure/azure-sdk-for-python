@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The rust backend routes ``upsert_item`` through the compiled binding.
+"""The Rust backend routes ``upsert_item`` through the compiled binding.
 
-``upsert_item`` is a first-class rust operation: the driver exposes
+``upsert_item`` is a first-class Rust operation: the driver exposes
 ``CosmosOperation::upsert_item``, and the binding's ``upsert_item`` entry
-point maps to it (the driver stamps ``x-ms-documentdb-is-upsert`` and
+point maps to it (the driver sets ``x-ms-documentdb-is-upsert`` and
 POSTs to the collection feed, so an existing ``(partition_key, id)`` is
 replaced rather than rejected with 409). ``RustBackend.execute`` therefore
 dispatches an ``OP_UPSERT_ITEM`` request to ``_rust_module.upsert_item`` --
@@ -86,7 +86,7 @@ def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
 
 
 def test_sync_rust_backend_upsert_raises_when_binding_not_built(monkeypatch):
-    """Before ``maturin develop``, an upsert on the rust backend raises
+    """Before ``maturin develop``, an upsert on the Rust backend raises
     the same clear ``NotImplementedError`` every other op raises --
     upsert is no longer special-cased to silently defer to legacy."""
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)

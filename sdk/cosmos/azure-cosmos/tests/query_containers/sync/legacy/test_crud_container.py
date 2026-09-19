@@ -1,45 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 container-query checks, re-run on the rust engine.
+"""Copied legacy container lifecycle assertions with _backend="rust".
 
-Why this file exists: ``DatabaseProxy.query_containers`` is how an application
-finds containers matching a condition rather than fetching all of them. A
-management tool looking up one container by id, or filtering on a naming
-convention, goes through here. If rust returned no rows for a query that
-matches, the caller concludes the container does not exist and may recreate it.
+This sync copy retains the source assertions and owns its setup database.
+Method-level Source comments identify the originals. Cleanup is registered
+for the owned resources, but service failures can still prevent deletion.
 
-What it does: one real v4 test copied from ``tests/test_crud_container.py``,
-with its assertions retained and the client built with ``_backend="rust"``.
-Cleanup is registered before setup so partial setup failures do not leak resources.
-``test_collection_crud`` queries for the container it just created by id and
-asserts the result is non-empty.
+The listing assertion checks a count increase after creation; the filtered
+query assertion checks that results are nonempty. Neither is exhaustive
+paging coverage or proof of each internal routing step. Lazy results are
+consumed before assertions.
 
-Two things worth knowing about how this operation routes:
-
-First, ``DatabaseProxy.query_containers`` calls ``QueryContainers`` with no
-visible backend branch; the routing happens further down, inside
-``__QueryFeed``'s ``ResourceType.Collection`` branch. Reading only the public
-method suggests this operation was never migrated; it was.
-
-Second, a query reaches rust as a dict. A caller may pass a bare string, which
-``__CheckAndUnifyQueryFormat`` normalizes to ``{"query": ...}`` before the
-routing gate sees it, so that spelling routes to rust too. The gate's branch
-rejecting a non-dict payload targets the ``SqlQuery`` compatibility mode, which
-is unreachable today because ``__CheckAndUnifyQueryFormat`` raises for every
-input in that mode. This copy uses the dict form, matching the source test.
-
-This is NOT the side-by-side comparison. The comparison tests
-(``query_containers/sync/test_query_containers_parity.py``) run the same call on
-both engines and diff the results. This file runs on rust only and reuses
-assertions the team already trusts.
-
-Self-contained: it creates and deletes its own database, so it shares no state
-with any other test. The class name and method names match the source, so the
-two test IDs differ only by path.
-
-Run with::
-
-    pytest --noconftest tests/query_containers/sync/legacy/test_crud_container.py -v
+Separate parity tests compare backends. This file runs its copied
+assertions with a Rust-selected client only.
 """
 import os
 import unittest
@@ -84,6 +57,19 @@ class TestCRUDContainerOperations(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def test_collection_crud(self):
+        """A newly created container can be found by querying for its id.
+
+        The full legacy lifecycle test, kept here for the query half. After
+        creating a container, a parameterised query filtering on the id must
+        return it.
+
+        This is the query path rather than the listing path, and the two are
+        served differently, so a container that shows up in a plain list can
+        still go missing from a filtered query.
+
+        The same legacy test is also copied into ``list_containers`` and
+        ``read_container``, each pinning the part of it they own.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_collection_crud
         created_db = self.databaseForTest
         collections = list(created_db.list_containers())

@@ -18,7 +18,7 @@ Steps 1-4 prove the overwrite-only semantics and the access-condition path
 the Python helper builds from ``etag`` + ``match_condition=IfNotModified``.
 Step 5 proves the binding takes the wire URL id from ``PreparedRequest.item_id``
 (the resolved ``item`` argument), not from the body -- so a mismatched id can
-never retarget the write to the wrong document.
+never retarget the write to the wrong item.
 
 Not a pytest test: needs a real account (or the local emulator) and prints
 visible output so a human can confirm the round trip.
@@ -62,7 +62,7 @@ PARTITION_KEY = PartitionKeyInput("components", ("smokeA",))
 
 def _ensure_db_and_container() -> None:
     """Create the db + container via the legacy backend if missing, so the
-    rust path is never asked to resolve a container that does not exist."""
+    Rust path is never asked to resolve a container that does not exist."""
     client = CosmosClient(ENDPOINT, KEY)
     db = client.create_database_if_not_exists(DB)
     db.create_container_if_not_exists(id=COLL, partition_key=PartitionKey(path="/pk"))
@@ -162,7 +162,7 @@ def main() -> int:
         return 1
 
     # ---- 3) version-guarded replace with a STALE etag -> 412 -----------
-    # Step 2 replaced the document, so the etag captured at create time is
+    # Step 2 replaced the item, so the etag captured at create time is
     # now stale. A guarded replace (If-Match: <stale-etag>, built by the
     # Python helper from match_condition=IfNotModified) must fail with 412.
     print("[3] guarded replace with stale If-Match (expect 412) ...", flush=True)
@@ -192,10 +192,10 @@ def main() -> int:
     print(f"    status={r4.status_code} sub_status={r4.sub_status}")
 
     # ---- 5) id-mismatch parity check -----------------------------------
-    # The URL id (item_id) is the real, existing document; the body carries a
+    # The URL id (item_id) is the real, existing item; the body carries a
     # *different* id. The binding takes the URL id from item_id (not the
-    # body), so the server sees a request to change the document's id and
-    # rejects it (a document's id is immutable). The critical property: it
+    # body), so the server sees a request to change the item's id and
+    # rejects it (an item's id is immutable). The critical property: it
     # must NEVER be a silent 200 that overwrote the body's id instead.
     print("[5] replace with item_id != body id (expect a 4xx, never 200) ...", flush=True)
     try:

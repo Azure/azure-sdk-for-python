@@ -11,7 +11,7 @@ feed, one page at a time.
 
 What these protect, and the customer behavior behind each:
 
-* the request the rust engine is handed. A container create is scoped to a
+* the request the Rust engine is handed. A container create is scoped to a
   database, not to a container -- the container does not exist yet -- so the
   database name rides in ``item_id`` and the definition the caller assembled
   rides in the body. Get either wrong and the container is created in the wrong
@@ -23,7 +23,7 @@ What these protect, and the customer behavior behind each:
 * the ``DocumentCollections`` envelope. The legacy reader pulls containers out of
   that key; a database feed uses ``Databases``. Getting it wrong yields a
   silently empty list rather than an error, which is the worst kind of wrong.
-* routing away from rust when rust cannot honor an option exactly -- a
+* routing away from Rust when Rust cannot honor an option exactly -- a
   sub-second ``timeout``, a socket-level ``read_timeout``, a query in the
   legacy-only string form that goes on the wire as ``text/plain``.
 * create rejects obsolete keywords and unsupported Rust calls rather than
@@ -111,7 +111,7 @@ def _created_container_response() -> BackendResponse:
 
 
 class _RustBackend(CosmosBackend):
-    """Stand-in rust backend: records the request it was handed and returns a
+    """Stand-in Rust backend: records the request it was handed and returns a
     canned reply, so a test can check what would have gone on the wire."""
     name = "rust"
 
@@ -127,7 +127,7 @@ class _RustBackend(CosmosBackend):
 
 
 class _AsyncRustBackend(AsyncCosmosBackend):
-    """Async stand-in rust backend: records the request it was handed and returns
+    """Async stand-in Rust backend: records the request it was handed and returns
     a canned reply.
 
     Subclasses the real ``AsyncCosmosBackend`` and overrides only ``execute``, so
@@ -149,6 +149,18 @@ class _AsyncRustBackend(AsyncCosmosBackend):
 
 @pytest.fixture(params=["sync", "async"])
 def container_create_case(request):
+    """Build a container create that runs once as a sync client and once as async.
+
+    Both clients are driven through the same tests because the sync and async
+    paths build their requests through separate code and could drift apart.
+
+    The connection is a stand-in with a recording ``CreateContainer`` for the
+    legacy route and a recording cache write, so a test can prove which route ran
+    and whether the new container's properties were remembered.
+
+    Handing out the legacy backend as well lets a test flip the connection over
+    mid-setup and run the same call on the other engine.
+    """
     is_async = request.param == "async"
     backend = _AsyncRustBackend() if is_async else _RustBackend()
     mock_type = AsyncMock if is_async else MagicMock
@@ -173,6 +185,11 @@ def container_create_case(request):
 
 
 def _call_container_create(case, *args, method="create_container", **kwargs):
+    """Call the named create method on the database and wait for it if the client is async.
+
+    The method name is an argument because plain create and get-or-create share
+    almost all of their rules, so most tests here run against both.
+    """
     result = getattr(case.database, method)(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
@@ -182,6 +199,15 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
 def test_container_create_rejects_obsolete_keywords(container_create_case, use_legacy, method, option, value):
+    """Retired options are refused on both create methods, both engines, and every value.
+
+    Session token and query metrics no longer do anything. Passing one raises
+    ``TypeError`` naming it, even when the value is ``None`` or ``False``,
+    because it is the presence of the option that signals a stale expectation.
+
+    Nothing is created and the customer's hook never runs, so the refusal cannot
+    be mistaken for a call that partly happened.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -198,6 +224,13 @@ def test_container_create_rejects_obsolete_keywords(container_create_case, use_l
 @pytest.mark.parametrize("method", ["create_container", "create_container_if_not_exists"])
 @pytest.mark.parametrize("timeout", [False, 0.5, 1, "invalid"])
 def test_container_create_rejects_per_call_socket_timeout(container_create_case, use_legacy, method, timeout):
+    """The socket-level ``read_timeout`` is not accepted per call on either create
+    method or either engine.
+
+    False, half a second, one second, and a string all raise ``TypeError`` naming
+    the option, so the error points straight at what to remove. Nothing is
+    created.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -209,6 +242,14 @@ def test_container_create_rejects_per_call_socket_timeout(container_create_case,
 
 @pytest.mark.parametrize("extra_args", [(None,), (None, None), (None, None, False), (None, None, None, 400)])
 def test_container_create_optional_settings_are_keyword_only(container_create_case, extra_args):
+    """Settings past the container name and partition key must be named, not passed
+    by position.
+
+    One, two, three, and four extra positional values are all refused with an
+    error that says so. Older code passed indexing policy and time to live
+    positionally; silently accepting them now would land a customer's values in
+    whichever settings happen to sit in those slots today.
+    """
     case = container_create_case
     with pytest.raises(TypeError, match="Unexpected positional parameters"):
         _call_container_create(case, "c1", PartitionKey(path="/pk"), *extra_args)
@@ -218,6 +259,14 @@ def test_container_create_optional_settings_are_keyword_only(container_create_ca
 
 @pytest.mark.parametrize("method", ["create_container", "create_container_if_not_exists"])
 def test_container_create_retains_manual_runtime_signature(container_create_case, method):
+    """Both create methods really do accept open-ended arguments at runtime.
+
+    They take any positional and any keyword arguments and sort them out
+    themselves, which is what lets the tests above produce their exact error
+    messages. If someone later replaced that with a normal declared signature,
+    Python would raise its own wording instead and the careful messages would
+    quietly disappear.
+    """
     signature = inspect.signature(getattr(container_create_case.database, method))
     assert list(signature.parameters) == ["args", "kwargs"]
     assert signature.parameters["args"].kind == inspect.Parameter.VAR_POSITIONAL
@@ -226,6 +275,14 @@ def test_container_create_retains_manual_runtime_signature(container_create_case
 
 @pytest.mark.parametrize("proxy_type", [DatabaseProxy, AsyncDatabaseProxy])
 def test_container_get_or_create_overloads_match_keyword_only_contract(proxy_type):
+    """The published signatures agree with the rules the runtime enforces.
+
+    Because get-or-create accepts open-ended arguments at runtime, the two
+    declared forms are what customers actually see in editors and docs. Both
+    must show only the container name and partition key as positional, show
+    settings as keyword-only, and must not still advertise the retired query
+    metrics option. Sync and async are both checked.
+    """
     from typing import get_overloads
 
     overloads = get_overloads(proxy_type.create_container_if_not_exists)
@@ -258,6 +315,19 @@ def test_container_get_or_create_overloads_match_keyword_only_contract(proxy_typ
 def test_container_create_invalid_argument_binding_fails_before_dispatch(
     container_create_case, use_legacy, method, args, kwargs, message
 ):
+    """Calls that do not match the signature fail before anything is created, with a
+    message naming the method and the problem.
+
+    Nine shapes are covered: nothing at all, a partition key with no name, a name
+    with no partition key, each of the two given twice, and settings passed by
+    position. Each error names the method the customer called, so the same
+    wording does not appear for both create methods.
+
+    Two further guarantees: the caller's keyword dictionary is unchanged, so
+    argument parsing reads rather than consumes, and the fallback counter does
+    not move, since a mistake in the customer's own call is not the Rust engine
+    being unable to do something.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -278,6 +348,14 @@ def test_container_create_invalid_argument_binding_fails_before_dispatch(
 
 @pytest.mark.parametrize("positional_count", [0, 1, 2])
 def test_container_create_argument_binding_preserves_values_and_optional_kwargs(positional_count):
+    """Argument parsing returns the name and partition key and leaves the other
+    settings behind untouched.
+
+    The two required values are given by position, by keyword, and split between
+    the two; all three yield the same pair. A settings keyword passed alongside
+    is still there afterwards, so parsing removes only what it claimed and the
+    rest goes on to build the container definition.
+    """
     from azure.cosmos._helpers._request_container import parse_container_create_args
 
     values = ("c1", None)
@@ -288,6 +366,12 @@ def test_container_create_argument_binding_preserves_values_and_optional_kwargs(
 
 
 def test_container_create_argument_binding_does_not_consume_arguments_on_error():
+    """A failed parse leaves the caller's arguments exactly as they were.
+
+    Parsing removes what it recognizes as it goes, so a failure partway through
+    could leave the dictionary half emptied. If a caller then retried, or
+    inspected what they passed, the name would already be gone.
+    """
     from azure.cosmos._helpers._request_container import parse_container_create_args
 
     kwargs = {"id": "c1", "default_ttl": 60}
@@ -302,6 +386,21 @@ def test_container_create_argument_binding_does_not_consume_arguments_on_error()
 def test_container_create_preserves_required_arguments_and_return_shapes(
     container_create_case, use_legacy, return_properties, positional_count
 ):
+    """A successful create returns the same thing however the arguments were passed
+    and whichever engine ran it.
+
+    The name and partition key are given by position, by keyword, and split
+    between the two. In every case the returned proxy points at this database's
+    container and carries the shared item context, so it can be used to read and
+    write items straight away.
+
+    Asking for the properties back returns a pair rather than a proxy alone, with
+    the request charge still attached so the customer can account for the call.
+
+    The properties cache is written exactly once, never twice and never zero
+    times. Only the chosen engine runs, and the legacy route is not handed the
+    socket-level timeout that does not belong in its options.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -330,6 +429,23 @@ def test_container_create_preserves_required_arguments_and_return_shapes(
 
 @pytest.mark.parametrize("partition_key", [None, PartitionKey(path="/pk"), PartitionKey(path=["/tenant", "/user"])])
 def test_container_create_preserves_definition_and_none_semantics(container_create_case, partition_key):
+    """Every policy the customer set reaches the request body under its wire name,
+    and no partition key means no partition key field at all.
+
+    Nine settings are sent at once -- indexing, time to live, unique keys,
+    conflict resolution, analytical storage, computed properties, vector
+    embeddings, change feed, and full text -- and each has to arrive renamed
+    correctly. One that fails to map leaves the container created with a default
+    the customer did not choose, while the call reports success.
+
+    Two of the values are minus one, which is a real setting meaning "keep
+    forever", not an absence.
+
+    The partition key is tried three ways: absent, a single path, and a
+    hierarchical pair of paths. When it is absent the field is left out entirely
+    rather than sent as empty, and when present it is expanded into its wire
+    form. The hierarchical case matters because those paths must stay in order.
+    """
     case = container_create_case
     policies = {
         "indexing_policy": {"indexingMode": "consistent", "automatic": False},
@@ -362,6 +478,19 @@ def test_container_create_preserves_definition_and_none_semantics(container_crea
 @pytest.mark.parametrize("timeout", [None, 1, 3.5, 10])
 @pytest.mark.parametrize("autoscale", [False, True])
 def test_container_create_preserves_throughput_headers_and_deadlines(container_create_case, timeout, autoscale):
+    """Throughput, the customer's own header, the bucket, and the deadline all reach
+    the request.
+
+    Throughput is set both ways: a fixed amount, which becomes a plain header,
+    and an autoscale maximum, which becomes a small settings block. Sending
+    the wrong one leaves the container on the wrong billing model, which the
+    customer only discovers on their bill.
+
+    The request also proves the shape of a container create: the operation is a
+    create, and the *database* name rides in the item field, because the
+    container has no name on the service yet and the request is scoped to the
+    database it will live in.
+    """
     case = container_create_case
     throughput = ThroughputProperties(auto_scale_max_throughput=4000) if autoscale else 400
     _call_container_create(
@@ -395,6 +524,19 @@ def test_container_create_preserves_throughput_headers_and_deadlines(container_c
     ],
 )
 def test_container_create_unsupported_calls_never_fall_back(container_create_case, kwargs):
+    """Options the Rust path cannot honor stop the create instead of quietly moving
+    it to the legacy transport.
+
+    Twenty calls are covered: ten unusable deadlines, a connect timeout, both raw
+    hooks, an unknown keyword, four driver-owned headers, and two raw
+    request-options dictionaries.
+
+    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    Nothing is created on either route, the hook does not run, and the fallback
+    counter does not move -- a refusal is not a fallback, and counting it as one
+    would make the metric useless for judging how much traffic the Rust engine
+    actually turns away.
+    """
     case = container_create_case
     before = rust_compatibility_fallback_count()
     hook = MagicMock()
@@ -408,6 +550,18 @@ def test_container_create_unsupported_calls_never_fall_back(container_create_cas
 
 @pytest.mark.parametrize("use_legacy", [False, True])
 def test_container_create_keeps_isolated_hook_headers_and_falsey_callable(container_create_case, use_legacy):
+    """A hook that reports itself as false still runs, and the headers it is handed
+    are its own copy.
+
+    Being callable is what makes something a hook, not being true, so a hook
+    object that says it is false is still invoked exactly once.
+
+    It is given the same properties the caller receives, so the two views agree.
+    But the headers are a separate copy: the hook changes the request charge and
+    neither the properties nor the client's own record of the last response
+    headers moves. A hook meant for logging must not be able to rewrite what the
+    customer sees.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -449,6 +603,17 @@ def test_container_create_keeps_isolated_hook_headers_and_falsey_callable(contai
     ],
 )
 def test_container_create_preserves_conditional_headers(container_create_case, use_legacy, kwargs, expected):
+    """Conditions become the right request headers on both engines, silently.
+
+    Nine cases: no condition at all, an etag with not-modified and with modified,
+    the two wildcard forms alone, the two wildcard forms with an etag alongside
+    that is correctly ignored, and the older explicit match headers, which are
+    still accepted and produce the same result as the modern spelling.
+
+    No warning is raised in any of them, including where the etag is ignored. A
+    warning there would send the customer looking for a problem that does not
+    exist.
+    """
     case = container_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -479,6 +644,13 @@ def test_container_create_preserves_conditional_headers(container_create_case, u
     ],
 )
 def test_container_create_invalid_conditions_fail_before_dispatch(container_create_case, kwargs, error_type):
+    """An incomplete or malformed condition stops the create.
+
+    An etag with no condition, a condition with no etag, and an empty etag are
+    all ``ValueError``; a condition that is not a real match condition is a
+    ``TypeError``. Sending any of them would create unconditionally for a
+    customer who believed the call was guarded.
+    """
     case = container_create_case
     with pytest.raises(error_type):
         _call_container_create(case, "c1", PartitionKey(path="/pk"), **kwargs)
@@ -489,6 +661,21 @@ def test_container_create_invalid_conditions_fail_before_dispatch(container_crea
 @pytest.mark.parametrize("failure_source", ["hook", "backend"])
 @pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, ServiceRequestError, asyncio.CancelledError])
 def test_container_create_errors_never_replay(container_create_case, failure_source, error_type):
+    """A failure, wherever it comes from, is raised as-is after exactly one attempt.
+
+    The error is injected in two places -- the customer's hook, which runs after
+    the container exists, and the engine itself -- and in four flavors: an
+    ordinary error, a capability failure, a transport failure, and cancellation.
+
+    In all eight combinations the same exception object reaches the caller, the
+    engine ran once, and the legacy route was never tried. Retrying would risk
+    creating the container twice, and a transport failure is exactly the case
+    where the client cannot tell whether the first attempt was applied.
+
+    Cancellation must also pass through unchanged, or it stops unwinding and the
+    caller's request to stop is ignored. The fallback counter does not move,
+    because an error is not the engine declining the work.
+    """
     case = container_create_case
     error = error_type("create failed")
     hook = MagicMock(side_effect=error if failure_source == "hook" else None)
@@ -506,6 +693,18 @@ def test_container_create_errors_never_replay(container_create_case, failure_sou
 
 @pytest.mark.parametrize("status", [400, 403, 404, 409, 412, 429, 500])
 def test_container_create_service_errors_preserve_status_and_never_replay(container_create_case, status):
+    """Every failure status from the service keeps its meaning and is not retried
+    elsewhere.
+
+    Seven statuses are covered, from bad request through conflict and
+    precondition-failed to server error. Each keeps its status code, and the two
+    that customers routinely catch by type keep their specific types: conflict
+    becomes already-exists, which is how "the container is already there" is
+    normally handled, and not-found stays not-found.
+
+    The hook does not run, since nothing succeeded, and the legacy route is not
+    tried, so a conflict is not turned into a second create attempt.
+    """
     case = container_create_case
     case.backend.response = BackendResponse(
         status_code=status, headers=CaseInsensitiveDict({"x-ms-activity-id": "failed"}),
@@ -526,6 +725,16 @@ def test_container_create_service_errors_preserve_status_and_never_replay(contai
 
 @pytest.mark.parametrize("use_legacy", [False, True])
 def test_container_get_or_create_still_creates_after_404(container_create_case, use_legacy):
+    """When the container is not there, get-or-create goes on to create it.
+
+    This is the whole point of the method: the read comes back not-found, and
+    that is the signal to create rather than an error to report. On the Rust
+    path that means two requests, the second of them a create; on legacy it
+    means the create call runs once.
+
+    The legacy create also has to go out without the retired session token and
+    query metrics options, which older code used to put there by habit.
+    """
     case = container_create_case
     missing = CosmosResourceNotFoundError(status_code=404, message="missing")
     mock_type = AsyncMock if isinstance(case.database, AsyncDatabaseProxy) else MagicMock
@@ -555,6 +764,20 @@ def test_container_get_or_create_still_creates_after_404(container_create_case, 
 
 @pytest.fixture(params=[False, True], ids=["existing", "missing"])
 def container_get_or_create_case(container_create_case, request):
+    """Extend the create setup to cover both outcomes of get-or-create.
+
+    Each test runs twice: once where the container already exists and once where
+    it does not. Those are two genuinely different paths -- one request or two --
+    and the method has to return the same shape either way.
+
+    The existing container is deliberately given settings that differ from what
+    the tests ask for: a different partition key path and a different time to
+    live. That lets a test prove the existing definition is returned untouched
+    rather than quietly overwritten with the caller's arguments.
+
+    The missing case is staged as a not-found reply followed by a created reply,
+    which is the real two-step sequence.
+    """
     case = container_create_case
     case.missing = request.param
     case.existing_properties = CosmosDict(
@@ -580,6 +803,7 @@ def container_get_or_create_case(container_create_case, request):
 
 
 def _call_get_or_create(case, **kwargs):
+    """Call ``create_container_if_not_exists`` with a fixed name and partition key."""
     return _call_container_create(
         case, "c1", PartitionKey(path="/pk"), method="create_container_if_not_exists", **kwargs
     )
@@ -591,6 +815,28 @@ def _call_get_or_create(case, **kwargs):
 def test_container_get_or_create_preserves_shapes_and_existing_settings(
     container_get_or_create_case, use_legacy, return_properties, positional_count
 ):
+    """Get-or-create returns the same shape whether the container was found or
+    created, and never rewrites one that already exists.
+
+    The arguments are passed by position, by keyword, and split between the two,
+    and the result is asked for both ways. In every case the proxy points at
+    this database's container and carries the shared item context.
+
+    The important guarantee is what happens when the container is already there:
+    the properties handed back are the *existing* ones, still carrying the
+    original partition key path and time to live, not the values passed to this
+    call. A customer calling this at startup must not have their live container
+    silently reshaped.
+
+    The request charge also tells the two cases apart, so the hook sees the
+    charge for whichever request actually ran.
+
+    Settings meant for the create must not leak into the read: throughput is
+    absent from the read on both engines, since asking to provision throughput
+    while merely looking is meaningless and could be rejected. The deadline and
+    the customer's own header, by contrast, apply to both steps. The properties
+    cache is written once even when two requests were made.
+    """
     case = container_get_or_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -654,6 +900,19 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings(
     {"request_options": {Constants.ContainerRID: "rid1"}},
 ])
 def test_container_get_or_create_preflights_both_steps(container_get_or_create_case, kwargs):
+    """An option the Rust path cannot honor is caught before the first request, not
+    between the two.
+
+    Get-or-create can make two requests, so an option that only the create step
+    would choke on has to be spotted up front. Otherwise the read goes out, the
+    call then fails, and the customer has paid for a request that achieved
+    nothing.
+
+    Fourteen cases are covered, including two options that only apply to reads.
+    Each raises ``NotImplementedError`` naming the method, with no request on
+    either engine, no cache write, no hook, and no movement in the fallback
+    counter.
+    """
     case = container_get_or_create_case
     hook = MagicMock()
     before = rust_compatibility_fallback_count()
@@ -676,6 +935,13 @@ def test_container_get_or_create_preflights_both_steps(container_get_or_create_c
 def test_container_get_or_create_validates_conditions_before_read(
     container_get_or_create_case, use_legacy, kwargs, error
 ):
+    """A malformed condition is rejected before the read, not after it.
+
+    An etag with no condition and a condition with no etag are ``ValueError``; a
+    condition that is not a real match condition is a ``TypeError``. All three
+    are caught before anything goes out, so a call that was never going to work
+    does not cost a request or leave the cache holding properties from it.
+    """
     case = container_get_or_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -697,6 +963,15 @@ def test_container_get_or_create_validates_conditions_before_read(
 def test_container_get_or_create_forwards_conditions_without_ignored_warnings(
     container_get_or_create_case, use_legacy, kwargs, expected
 ):
+    """A valid condition is attached to every request the call makes, on both engines,
+    without warning.
+
+    All four forms are covered. What is specific to get-or-create is that the
+    condition must ride on *both* steps when the container turns out to be
+    missing -- the read and the create that follows. Dropping it from the second
+    would leave the create unguarded, which is exactly the step where a
+    concurrent caller may have created the container in between.
+    """
     case = container_get_or_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -730,6 +1005,19 @@ def test_container_get_or_create_forwards_conditions_without_ignored_warnings(
 def test_container_get_or_create_does_not_interpret_hook_errors_as_missing(
     container_get_or_create_case, use_legacy, error
 ):
+    """A not-found raised by the customer's own hook is not mistaken for the
+    container being absent.
+
+    This is the trap unique to this method. Get-or-create decides what to do next
+    by catching not-found from the read. The hook runs afterwards, in customer
+    code, and if it happens to raise the same error type, code that catches too
+    broadly would read it as "the container is missing" and create one.
+
+    Both a not-found and an ordinary error are raised from the hook, and in both
+    cases the exact exception reaches the caller, the hook ran once, and no extra
+    request was made beyond what the found-or-missing path already required. The
+    cache is not written, since the call did not succeed.
+    """
     case = container_get_or_create_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -750,6 +1038,18 @@ def test_container_get_or_create_does_not_interpret_hook_errors_as_missing(
 
 
 def test_container_get_or_create_falsey_hook_has_isolated_headers(container_get_or_create_case):
+    """A hook that reports itself as false still runs, and cannot reach back into the
+    result.
+
+    The hook is handed headers that are not the ones attached to the properties,
+    so editing them changes nothing the caller sees. It also replaces the
+    client's record of the last response headers outright, imitating another
+    request landing on the same client while this one is still finishing.
+
+    Afterwards the properties still carry the request charge from this call --
+    whichever of the two paths ran -- rather than a charge belonging to someone
+    else's request.
+    """
     case = container_get_or_create_case
     seen = []
 
@@ -773,6 +1073,22 @@ def test_container_get_or_create_falsey_hook_has_isolated_headers(container_get_
 def test_container_get_or_create_propagates_failures_without_replay(
     container_get_or_create_case, use_legacy, status
 ):
+    """A failure at either step reaches the caller with its status intact and is not
+    retried.
+
+    Six statuses are covered against both outcomes. Where the container exists
+    the failure lands on the read; where it is missing it lands on the create
+    that follows, so both steps are exercised.
+
+    A genuine initial not-found is skipped in the existing case, because that is
+    not a failure at all -- it is the signal to create, covered by its own test.
+
+    Conflict is the one worth naming: if the create comes back saying the
+    container already exists, that means somebody else created it in the moment
+    between the read and the create. It is reported, not retried, and never
+    quietly reinterpreted as success. The hook does not run and nothing is
+    cached.
+    """
     case = container_get_or_create_case
     if not case.missing and status == 404:
         pytest.skip("A genuine initial 404 is the create branch, covered separately.")
@@ -807,6 +1123,18 @@ def test_container_get_or_create_propagates_failures_without_replay(
 
 @pytest.mark.parametrize("error", [ValueError("binding"), NotImplementedError("binding"), asyncio.CancelledError()])
 def test_container_get_or_create_binding_errors_never_fall_back(container_get_or_create_case, error):
+    """A failure inside the Rust engine is raised as-is and never restarted on legacy.
+
+    The error is injected at whichever step comes last, so it lands on the read
+    when the container exists and on the create when it does not. All three
+    kinds -- an ordinary error, a capability failure, and cancellation -- reach
+    the caller unchanged.
+
+    Restarting the whole call on legacy would be worse here than elsewhere: the
+    create may already have been applied, so the second attempt could come back
+    reporting a conflict for a container the customer had just successfully
+    created.
+    """
     case = container_get_or_create_case
     replies = []
     if case.missing:
@@ -822,6 +1150,21 @@ def test_container_get_or_create_binding_errors_never_fall_back(container_get_or
 
 @pytest.mark.parametrize("use_legacy", [False, True])
 def test_container_get_or_create_preserves_bodyless_conditional_results(container_get_or_create_case, use_legacy):
+    """A reply with no body is passed through as it is, not invented around.
+
+    A condition can produce a success with nothing in it -- a not-modified reply
+    to the read, or a create whose body the service left empty. The SDK does not
+    fill in the gap.
+
+    Where the container exists, the caller gets a working proxy, since the name
+    was known from the arguments, together with genuinely empty properties, and
+    no create is attempted. Where it was missing, the empty create reply has no
+    name to build from and the call fails plainly on the missing key rather than
+    returning a proxy pointing at nothing.
+
+    In both cases the hook is called once and is handed the same empty
+    properties, so it sees exactly what the caller sees.
+    """
     case = container_get_or_create_case
     empty = CosmosDict({}, response_headers=CaseInsensitiveDict({"etag": '"v1"'}))
     if use_legacy:
@@ -850,6 +1193,14 @@ def test_container_get_or_create_preserves_bodyless_conditional_results(containe
 
 
 def test_container_get_or_create_explicit_legacy_keeps_transport_options(container_get_or_create_case):
+    """A customer who chose legacy on purpose keeps the transport options only legacy
+    supports.
+
+    A sub-second deadline and a connect timeout are refused on the Rust path, but
+    here the customer has explicitly asked for legacy, so both are forwarded --
+    to every request the call makes, not just the first. Dropping them would
+    silently give a call a longer deadline than the one asked for.
+    """
     case = container_get_or_create_case
     case.connection._backend = case.legacy_backend
     _call_get_or_create(case, timeout=0.5, connection_timeout=2)
@@ -863,6 +1214,19 @@ def test_container_get_or_create_explicit_legacy_keeps_transport_options(contain
 
 
 def test_container_get_or_create_preflight_does_not_mutate_caller_options():
+    """Preparing the read reports eligibility and builds the read options without
+    touching what the caller passed.
+
+    This runs before the request, and the same arguments are needed again for the
+    create step that may follow, so consuming or editing them would leave the
+    second step working from a changed set.
+
+    The caller's arguments are unchanged afterwards, including the nested headers
+    dictionary. The read options carry the condition, correctly translated to its
+    wildcard form. Throughput is left out, because provisioning belongs to the
+    create and not to merely looking. What remains is only the deadline, which is
+    handed on to the transport.
+    """
     from copy import deepcopy
     from azure.cosmos._helpers._request_container import prepare_container_get_or_create_read
 
@@ -879,17 +1243,17 @@ def test_container_get_or_create_preflight_does_not_mutate_caller_options():
     assert remaining == {"timeout": 10}
 
 
-# --- dispatch registration ------------------------------------------------
+# --- routing registration ------------------------------------------------
 
 
 def test_create_container_is_a_single_response_operation():
-    """One create, one reply: it dispatches through ``execute``, not the paged path."""
+    """One create, one reply: it is sent through ``execute``, not the paged path."""
     assert OP_TO_BINDING_METHOD[OP_CREATE_CONTAINER] == "create_container"
     assert OP_CREATE_CONTAINER not in STATELESS_QUERY_TO_BINDING_METHOD
 
 
 def test_container_feeds_are_paged_operations():
-    """Both feeds dispatch through ``execute_pages``, never the single-reply path."""
+    """Both feeds are sent through ``execute_pages``, never the single-reply path."""
     assert STATELESS_QUERY_TO_BINDING_METHOD[OP_LIST_CONTAINERS] == "list_containers"
     assert STATELESS_QUERY_TO_BINDING_METHOD[OP_QUERY_CONTAINERS] == "query_containers"
     assert OP_LIST_CONTAINERS not in OP_TO_BINDING_METHOD
@@ -1011,7 +1375,7 @@ def test_create_container_is_not_rust_eligible_with_a_read_timeout():
 
 def test_create_container_is_not_rust_eligible_with_an_intended_container_rid():
     """``_base.GetHeaders`` emits ``x-ms-cosmos-intended-collection-rid`` for every
-    resource type except ``dbs``, which includes this one. The rust path has no
+    resource type except ``dbs``, which includes this one. The Rust path has no
     equivalent, so running it there would drop a header legacy sends."""
     assert is_create_container_rust_eligible({Constants.ContainerRID: "rid1"}, {}) is False
 
@@ -1047,7 +1411,7 @@ def test_sync_create_container_routes_to_rust_and_fires_the_hook_once():
 
 def test_sync_create_container_explicit_legacy_helper_preserves_read_timeout():
     """The legacy call gets the definition and options unchanged, and the hook still
-    fires exactly once with the same shape as on the rust path."""
+    fires exactly once with the same shape as on the Rust path."""
     legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
     legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
     connection = SimpleNamespace(
@@ -1139,7 +1503,7 @@ def test_query_containers_prepared_carries_the_query_and_the_database_link():
 def test_container_feed_headers_keep_the_customers_own_headers():
     """A plain header the customer set survives into the nested ``initialHeaders``
     entry the binding forwards verbatim. Left flat it would be dropped by the
-    option-key translation on the rust side."""
+    option-key translation on the Rust side."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
     prepared = build_list_containers_prepared_query(
         path=path,
@@ -1170,7 +1534,7 @@ def test_list_containers_page_is_rust_eligible_for_a_plain_feed():
 
 
 def test_list_containers_page_is_not_eligible_when_the_path_names_no_database():
-    """Without a database name the rust page has nothing to run against, so the call
+    """Without a database name the Rust page has nothing to run against, so the call
     belongs on legacy rather than failing."""
     assert _list_gate(path="dbs//colls") is False
     assert _list_gate(path="dbs/db1/docs") is False
@@ -1296,13 +1660,13 @@ def test_create_container_still_rejects_an_etag_without_a_match_condition():
             proxy.create_container("c1", PartitionKey(path="/pk"), etag="e1")
 
 
-# --- end-to-end feed dispatch --------------------------------------------
+# --- end-to-end feed routing --------------------------------------------
 #
 # The gates and builders above are only half of it. The other half is the
-# dispatch inside the client connection that picks them: it tells a container
+# routing inside the client connection that picks them: it tells a container
 # feed apart from a database feed and an item feed by resource type alone, and a
 # wrong arm there sends the call to the wrong binding entry point. These drive
-# the real dispatch with a fake backend.
+# the real routing with a fake backend.
 
 
 class _CapturingPagedBackend(CosmosBackend):
@@ -1324,7 +1688,7 @@ class _CapturingPagedBackend(CosmosBackend):
         )
 
     def execute(self, prepared, *, deadline=None):
-        """Fail immediately — a paged backend must never be called through the single-reply path."""
+        """Fail immediately -- a paged backend must never be called through the single-reply path."""
         raise AssertionError("a feed must not dispatch through the single-reply path")
 
 
@@ -1347,12 +1711,12 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
         )
 
     async def execute(self, prepared, *, deadline=None):
-        """Fail immediately — a paged backend must never be called through the single-reply path."""
+        """Fail immediately -- a paged backend must never be called through the single-reply path."""
         raise AssertionError("a feed must not dispatch through the single-reply path")
 
 
 def _new_sync_connection() -> SyncConnection:
-    """Build a minimal ``SyncConnection`` with no live transport, for dispatch tests."""
+    """Build a minimal ``SyncConnection`` with no live transport, for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = LEGACY_BACKEND
@@ -1376,7 +1740,7 @@ def _new_sync_connection() -> SyncConnection:
 
 
 def _new_async_connection() -> AsyncConnection:
-    """Build a minimal ``AsyncConnection`` with no live transport, for dispatch tests."""
+    """Build a minimal ``AsyncConnection`` with no live transport, for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = ASYNC_LEGACY_BACKEND
@@ -1449,9 +1813,9 @@ def test_sync_query_containers_dispatches_to_the_container_query_feed():
 
 
 def test_async_list_containers_dispatches_to_the_container_feed():
-    """The async dispatch is separate code with its own arm, so it can break alone."""
+    """The async routing is separate code with its own branch, so it can break alone."""
     async def _run():
-        """Drive the async dispatch arm for a list feed so it can be verified independently."""
+        """Drive the async routing branch for a list feed so it can be verified independently."""
         conn = _new_async_connection()
         backend = _CapturingAsyncPagedBackend(_CONTAINER_PAGE)
         conn._backend = backend
@@ -1476,7 +1840,7 @@ def test_async_list_containers_dispatches_to_the_container_feed():
 def test_async_query_containers_dispatches_to_the_container_query_feed():
     """The async query arm builds an ``OP_QUERY_CONTAINERS`` request, separate from the list arm."""
     async def _run():
-        """Drive the async dispatch for a query feed."""
+        """Drive the async routing for a query feed."""
         conn = _new_async_connection()
         backend = _CapturingAsyncPagedBackend(_CONTAINER_PAGE)
         conn._backend = backend
@@ -1540,7 +1904,7 @@ def test_read_container_prepared_rejects_a_link_missing_either_name(link):
 
 def test_read_container_prepared_drops_the_session_token():
     """A container is a master resource, so neither engine sends a session token on
-    this read. Sending one on rust only would be a difference between the two."""
+    this read. Sending one on Rust only would be a difference between the two."""
     prepared = build_read_container_prepared(
         "dbs/db1/colls/c1",
         {"sessionToken": "0:1#22"},
@@ -1653,15 +2017,15 @@ def test_async_read_container_routes_to_rust():
 # --- async legacy fallback -------------------------------------------------
 #
 # ``AsyncContainerHelper`` is a separate module from the sync helper: it awaits
-# its request builder and its legacy call. The rust-path tests above prove the
-# request it builds; these prove the other branch -- that an option rust cannot
+# its request builder and its legacy call. The Rust-path tests above prove the
+# request it builds; these prove the other branch -- that an option Rust cannot
 # honor still reaches the legacy call, and that the hook fires exactly once with
 # the response's own headers on that branch too. Without them the async legacy
 # arm is the one code path in this family with no coverage at all.
 
 
 def test_async_create_container_explicit_legacy_helper_preserves_read_timeout():
-    """Explicit legacy helper selection keeps its internal timeout plumbing."""
+    """Explicit legacy helper selection keeps the timeout handling it passes through."""
     legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
     legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
     connection = SimpleNamespace(

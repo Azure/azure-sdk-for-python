@@ -53,8 +53,15 @@ def pytest_collection_finish(session):
     set up and no account to reach, so this returns immediately. That is what
     lets the routing tests for ``list_databases`` and the other operations run
     with no Cosmos account and no emulator.
+    Do not provision for collection-only or aborted runs. An explicit request
+    to continue after collection errors still needs setup for runnable tests.
     """
-    if not session.items or all(item.path.name.endswith("_unit.py") for item in session.items):
+    if (
+        session.config.option.collectonly
+        or (session.testsfailed and not session.config.option.continue_on_collection_errors)
+        or not session.items
+        or all(item.path.name.endswith("_unit.py") for item in session.items)
+    ):
         return
 
     global _live_resources_initialized  # pylint: disable=global-statement

@@ -3,7 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""No-network regression for transactional client startup and validation."""
+"""Offline checks of client construction and rollback of Python reservations.
+
+Inject startup failures and inspect registry state and mocked cleanup calls.
+Native-reported runtime settings are simulated where needed. The cases
+distinguish provisional reservations from settings reported as initialized,
+but do not initialize a real runtime or prove complete resource cleanup.
+"""
 import asyncio
 import concurrent.futures
 import inspect
@@ -27,6 +33,17 @@ from azure.cosmos.documents import ConnectionPolicy
 
 @pytest.fixture(autouse=True)
 def reset_registry(monkeypatch):
+    """Clear the process-wide client bookkeeping before and after every test.
+
+    This state lives for the life of the process, not the test, so without a
+    reset one test's client would establish a proxy or timeout setting that the
+    next test then conflicts with. That shows up as failures that depend on the
+    order tests happen to run in, which is among the most expensive kinds of
+    test bug to track down.
+
+    The strict isolation switch is cleared from the environment too, so a
+    developer who has it turned on locally gets the same results as the build.
+    """
     registry._reset_for_tests()
     monkeypatch.delenv("COSMOS_RUST_STRICT_ISOLATION", raising=False)
     yield
@@ -35,12 +52,24 @@ def reset_registry(monkeypatch):
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
 def module(request, monkeypatch):
+    """Give each test both the sync and async client, with the legacy connection replaced.
+
+    Replacing the legacy connection is what keeps these tests offline: it is the
+    part that would otherwise contact the account during construction. It
+    doubles as a witness -- a test can assert it was never built to prove that a
+    bad argument was caught before startup began.
+    """
     client = request.param
     monkeypatch.setattr(client, "CosmosClientConnection", MagicMock())
     return client
 
 
 def close_backend(backend):
+    """Close a backend without the caller needing to know if it is the sync or async one.
+
+    The async close must be awaited and the sync one must not. Keeping that
+    difference here lets each test read the same for both.
+    """
     result = backend.close()
     if inspect.isawaitable(result):
         asyncio.run(result)
@@ -49,6 +78,21 @@ def close_backend(backend):
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
 @pytest.mark.parametrize("nested", [False, True])
 def test_invalid_retry_counts_fail_before_legacy_startup(module, value, nested):
+    """A retry count that is not a whole number of attempts is refused before anything is
+    started or reserved.
+
+    Five bad values are covered: negative, true, a fraction, text, and a number
+    too large to fit. True is the one worth naming -- Python treats it as the
+    number one, so a check that only asks for a whole number would accept it and
+    silently retry once.
+
+    The same value is supplied two ways, directly and buried in a connection
+    policy, because customers configure retries both ways and a check on only
+    the direct argument would miss the other entirely.
+
+    Neither the legacy startup ran nor was any reservation left against the
+    account, so the mistake costs nothing and can be corrected and retried.
+    """
     kwargs = {"retry_throttle_total": value}
     if nested:
         policy = ConnectionPolicy()
@@ -63,6 +107,11 @@ def test_invalid_retry_counts_fail_before_legacy_startup(module, value, nested):
 @pytest.mark.parametrize("name", ["preferred_locations", "excluded_locations"])
 @pytest.mark.parametrize("value", [[123], [None], [True], [" "], {"West US": 1}, False])
 def test_invalid_region_values_rejected_at_construction(module, name, value):
+    """Reject the listed malformed region-list containers and entries.
+
+    The assertion checks types/nonblank strings, error naming, and no legacy
+    connection construction. It does not validate names against Azure's regions.
+    """
     with pytest.raises(ValueError, match=name):
         module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **{name: value})
     module.CosmosClientConnection.assert_not_called()
@@ -70,12 +119,31 @@ def test_invalid_region_values_rejected_at_construction(module, name, value):
 
 @pytest.mark.parametrize("value", [-1, True, "30", float("nan"), float("inf"), 2**64 - 1, 2**64])
 def test_invalid_retry_wait_rejected(value):
+    """Reject the listed invalid cumulative throttle-wait budgets during config building.
+
+    This setting is a total retry-wait budget, not the longest individual delay.
+    """
     with pytest.raises(ValueError, match="retry_throttle_backoff_max"):
         build_client_config(None, throttling_max_retry_wait_time_seconds=value)
 
 
 @pytest.mark.parametrize("stage", ["encoding", "auth", "policy", "legacy"])
 def test_failed_constructor_unwinds_backend_and_reservations(module, monkeypatch, stage):
+    """However far construction got before failing, the backend is closed and its
+    reservations are given back.
+
+    Four failure points are covered, from an argument rejected early to the
+    legacy startup failing at the very end. Each is checked the same way: the
+    backend that was built is marked closed and its settings released, and the
+    account is left with no live clients.
+
+    The proof is the last part. Another client is then built for the same
+    account with different transport settings and succeeds, which it could not
+    do if the failed attempt had kept its claim on them. Without this, one
+    failed constructor would make every later client in the process unable to
+    choose its own timeouts, with an error naming a conflict against something
+    that does not exist.
+    """
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
     retained = []
@@ -112,6 +180,19 @@ def test_failed_constructor_unwinds_backend_and_reservations(module, monkeypatch
 
 
 def test_timeout_conflict_does_not_leave_a_proxy_reservation():
+    """A client refused over a timeout conflict does not get to keep the proxy setting it
+    asked for on the way in.
+
+    The two settings are registered one after the other, so a client can claim
+    the proxy setting and then be turned away over timeouts. If that claim
+    stayed, it would be enforced against every later client for the rest of the
+    process -- an error about a value nobody chose.
+
+    The sequence proves it is given back: after the refusal, another client
+    takes the opposite proxy setting without complaint. Later, once that one has
+    closed, the setting is free again and the last client takes the very
+    combination that was refused at the start.
+    """
     first = sync_backend.RustBackend(
         "https://first.invalid", master_key="key",
         client_config=PreparedClientConfig(read_timeout_seconds=20),
@@ -140,6 +221,21 @@ def test_timeout_conflict_does_not_leave_a_proxy_reservation():
 
 
 def test_strict_isolation_failure_rolls_back_new_runtime_reservations():
+    """A client refused by strict isolation leaves nothing of its own behind.
+
+    Strict isolation is the opt-in rule that a second client for an account must
+    not quietly cause a second driver to be built. Here the second client asks
+    for the same account with different settings and is refused.
+
+    Two things must follow. The account still shows exactly one live client, so
+    the refused one was never counted. And its transport settings were not
+    claimed, shown by a third client immediately taking different ones.
+
+    Rolling back matters more under strict isolation than anywhere else, because
+    it exists to be turned on in production by customers who need the guarantee.
+    A rule that leaked state each time it fired would punish exactly the people
+    who opted into it.
+    """
     first = sync_backend.RustBackend("https://account.invalid", master_key="key")
     with pytest.raises(registry.StrictDriverIsolationError):
         sync_backend.RustBackend(
@@ -157,6 +253,11 @@ def test_strict_isolation_failure_rolls_back_new_runtime_reservations():
 
 @pytest.mark.parametrize("frozen", [False, True])
 def test_close_during_initialization_retains_inflight_reservation(monkeypatch, frozen):
+    """Keep a reservation until a blocked fake handle acquisition finishes.
+
+    Check release of the late synthetic handle and reservation conflicts with
+    simulated unfrozen/frozen native settings. No real runtime is initialized.
+    """
     started, finish = threading.Event(), threading.Event()
     state = SimpleNamespace(settings=None)
 
@@ -206,6 +307,11 @@ def test_close_during_initialization_retains_inflight_reservation(monkeypatch, f
 
 @pytest.mark.parametrize("settings", [(False, 2, 25), (None, None, None)])
 def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch, settings):
+    """Keep policy reported as initialized by a fake runtime-configuration function.
+
+    Both explicit values and reported defaults remain conflict constraints after
+    the injected build failure. This tests Python policy, not native startup.
+    """
     monkeypatch.setattr(sync_backend, "_rust_module", SimpleNamespace(
         acquire_driver_handle=MagicMock(side_effect=RuntimeError("driver failed")),
     ))
@@ -224,11 +330,35 @@ def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch,
 
 
 class AsyncCredential:
+    """A credential that returns a token without contacting anything.
+
+    Used to reach the bridge that lets a sync client use an async credential,
+    which is what the credential-sharing test below inspects. The token's expiry
+    is far in the future so nothing tries to refresh it mid-test.
+    """
+
     async def get_token(self, *args, **kwargs):
+        """Return a fixed fake token and expiry; no service validity is implied."""
         return AccessToken("test-token", 9999999999)
 
 
 def test_failed_constructor_does_not_release_another_clients_credential_hold(module, monkeypatch):
+    """A client that fails to start does not tear down the credential machinery a working
+    client is still using.
+
+    One client is built successfully and takes a token, which starts a
+    background thread shared by everyone using that credential. A second client
+    is then built with the same credential and fails.
+
+    Cleaning up after the failure must not touch what the first client holds:
+    the shared count is still one and the thread is still alive. Only when the
+    first client itself closes does the thread stop.
+
+    Getting this wrong would be nasty to diagnose. A failed construction
+    anywhere in the program would silently break token renewal for an unrelated
+    working client, which would keep running until its current token expired and
+    then start failing to authenticate for no visible reason.
+    """
     credential = AsyncCredential()
     first = module.CosmosClient("https://first.invalid", credential, _backend="rust")
     bridge = first._backend._token_credential
@@ -255,6 +385,21 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold(mod
 
 @pytest.mark.parametrize("cancelled", [False, True])
 def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
+    """If entering the async client fails, everything opened on the way in is closed
+    again.
+
+    The async client does its account setup when it is entered rather than when
+    it is constructed, so this is a second place a half-built client can appear.
+    The setup fails, and the transport, the endpoint manager, and the routing
+    information are each closed or released exactly once, with the backend
+    marked closed and no reservation left on the account.
+
+    Cancellation is covered alongside an ordinary error because it arrives by a
+    different route and is easy to leave out of a cleanup path -- and the
+    likeliest cause is a caller's own timeout around startup, which is not rare.
+    A client abandoned there would hold its connections open until the program
+    ended.
+    """
     error = asyncio.CancelledError() if cancelled else RuntimeError("discovery failed")
     connection = SimpleNamespace(
         pipeline_client=SimpleNamespace(__aenter__=AsyncMock(), __aexit__=AsyncMock()),
@@ -279,6 +424,15 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
 
 
 def test_client_priority_defaults_are_captured(module):
+    """Priority and throughput bucket given to the client are kept as defaults for later
+    item calls.
+
+    Both describe how the account should treat this client's work, so customers
+    set them once on the client rather than on every call. Dropping them at
+    construction would be invisible: every request would still succeed, just
+    without the priority or bucket the customer was relying on to protect their
+    important traffic.
+    """
     client = module.CosmosClient(
         "https://account.invalid", "ZmFrZQ==", _backend="rust", priority="Low", throughput_bucket=3
     )
@@ -288,6 +442,10 @@ def test_client_priority_defaults_are_captured(module):
 
 
 def test_frozen_timeout_compares_native_nanosecond_precision():
+    """Compare Python reservations with supplied frozen values at nanosecond precision.
+
+    This exercises the registry's comparison, not actual native duration storage.
+    """
     registry.freeze_runtime_policy((None, 2.123456789, 25.123456789))
     backend = sync_backend.RustBackend(
         "https://account.invalid", master_key="key",
@@ -305,6 +463,20 @@ def test_frozen_timeout_compares_native_nanosecond_precision():
 
 @pytest.mark.parametrize("stage", ["account", "consistency"])
 def test_real_sync_connection_releases_partial_startup_resources(monkeypatch, stage):
+    """The real legacy connection cleans up after itself when its own startup fails partway.
+
+    Two failure points are covered: fetching the account information, and
+    settling the consistency level just after. Both happen inside the real
+    connection code rather than a stand-in, which is the point -- everything
+    else in this file replaces that code, so this is the one place its own
+    cleanup is exercised.
+
+    The routing information is released, the transport is closed, the original
+    error reaches the caller unchanged, and no reservation is left on the
+    account. The refresh that would normally follow a successful start is
+    confirmed not to have run, so failed startup does not go on doing work in
+    the background for a client that does not exist.
+    """
     from azure.cosmos import _cosmos_client_connection as connection_module
 
     error = RuntimeError("account startup failed")

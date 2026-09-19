@@ -7,7 +7,7 @@
 
 These lock in the throughput-dispatch behavior: the public ``ContainerProxy.replace_throughput``
 holds no engine logic. It delegates to the throughput coordinator, which routes the
-read-modify-write (read the offer, then replace it) to the rust backend when the call
+read-modify-write (read the offer, then replace it) to the Rust backend when the call
 is eligible, and otherwise falls back to the legacy ``QueryOffers`` / ``ReplaceOffer``
 calls -- all without the public method knowing which engine ran. No network: the
 backend and the client connection are test doubles.
@@ -57,7 +57,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
             self.calls: List[str] = []
 
         def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
-            """Assert rust eligibility, record the operation name, and return a canned offer."""
+            """Assert Rust eligibility, record the operation name, and return a canned offer."""
             assert routing.supported is True
             self.calls.append(routing.op)
             return [_offer()] if routing.op == "read_offer" else _offer(500)
@@ -103,9 +103,9 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
 
 
 def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Legacy fallback (sync): an unsupported knob (``read_timeout``) makes the call
-    rust-ineligible, so the coordinator runs the legacy operation and still returns
-    the updated offer. Guards against silently dropping an option the rust engine
+    """Legacy fallback (sync): an unsupported option (``read_timeout``) makes the call
+    Rust-ineligible, so the coordinator runs the legacy operation and still returns
+    the updated offer. Guards against silently dropping an option the Rust engine
     cannot honor yet.
     """
     container = SyncContainerProxy.__new__(SyncContainerProxy)
@@ -125,10 +125,10 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
         return kwargs["offer"]
 
     class _Backend:
-        """A backend stub that enforces rust-ineligibility and invokes the legacy operation."""
+        """A backend stub that enforces Rust-ineligibility and invokes the legacy operation."""
 
         def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
-            """Assert the call is rust-ineligible, then delegate to the legacy operation."""
+            """Assert the call is Rust-ineligible, then delegate to the legacy operation."""
             assert routing.supported is False
             return legacy_call()
 
@@ -149,7 +149,7 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
 async def test_async_replace_throughput_routes_to_rust_when_supported(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Async twin of the rust-route test: same guarantee on the async proxy -- both
+    """Async twin of the Rust-route test: same guarantee on the async proxy -- both
     offer operations go through the backend, legacy is untouched, timeout is lifted,
     and no stray kwargs reach the gate.
     """
@@ -176,7 +176,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
         async def run_operation(
             self, *, routing: Any, legacy_call: Any, **_kwargs: Any
         ) -> Any:
-            """Assert rust eligibility, record the operation name, and return a canned offer."""
+            """Assert Rust eligibility, record the operation name, and return a canned offer."""
             assert routing.supported is True
             self.calls.append(routing.op)
             return [_offer()] if routing.op == "read_offer" else _offer(500)
@@ -237,7 +237,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
 async def test_async_replace_throughput_falls_back_on_read_timeout(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Async twin of the fallback test: an unsupported knob forces the legacy
+    """Async twin of the fallback test: an unsupported option forces the legacy
     operation on the async proxy and still returns the updated offer.
     """
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
@@ -279,12 +279,12 @@ async def test_async_replace_throughput_falls_back_on_read_timeout(
 
     container._get_properties = _get_properties
     class _Backend:
-        """A backend stub that enforces rust-ineligibility and awaits the legacy operation."""
+        """A backend stub that enforces Rust-ineligibility and awaits the legacy operation."""
 
         async def run_operation(
             self, *, routing: Any, legacy_call: Any, **_kwargs: Any
         ) -> Any:
-            """Assert the call is rust-ineligible, then await the legacy operation."""
+            """Assert the call is Rust-ineligible, then await the legacy operation."""
             assert routing.supported is False
             return await legacy_call()
 

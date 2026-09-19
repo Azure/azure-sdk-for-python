@@ -16,9 +16,9 @@ surfaces azure-core's ``CaseInsensitiveDict`` straight from
 It does **not** add, rename, or alias any header. In particular it does
 not synthesise the un-prefixed double-``l`` LSN names (``x-ms-llsn`` /
 ``x-ms-item-llsn``): the gateway never emits those and the legacy SDK
-never produced them, so inventing them on the rust path would create a
-rust-only header surface. Both backends surface exactly the gateway's
-names (``x-ms-cosmos-llsn``, ``x-ms-item-lsn``, ``lsn``, …).
+never produced them, so inventing them on the Rust path would create a
+Rust-only header surface. Both backends surface exactly the gateway's
+names (``x-ms-cosmos-llsn``, ``x-ms-item-lsn``, ``lsn``, ...).
 
 These tests pin "pass everything through unchanged, invent nothing" so a
 future regression that re-introduces an alias step shows up as a failure.
@@ -38,8 +38,12 @@ def test_returns_none_for_none_input():
 
 
 def test_returns_none_for_empty_mapping():
-    # An empty dict is treated the same as ``None`` so callers can keep
-    # their existing ``if response.headers:`` guards unchanged.
+    """An empty collection of headers is reported as absent, like no collection at all.
+
+    Both mean the reply carried no headers worth passing on, so they get one answer.
+    Callers already written as "if there are headers" keep working unchanged, and none of
+    them has to tell the two cases apart.
+    """
     assert normalize_response_headers({}) is None
 
 
@@ -77,7 +81,7 @@ def test_lsn_family_passes_through_without_inventing_aliases():
 
     The legacy core-python path surfaces only what the gateway emits
     (``x-ms-cosmos-llsn`` etc.). Synthesising ``x-ms-llsn`` /
-    ``x-ms-item-llsn`` here would be a rust-only header surface the
+    ``x-ms-item-llsn`` here would be a Rust-only header surface the
     legacy SDK never produced -- exactly the behaviour that was removed.
     """
     headers = {

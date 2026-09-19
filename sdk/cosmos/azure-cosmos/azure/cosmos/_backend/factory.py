@@ -25,8 +25,8 @@ High-level view -- what this file does
 
 When a customer writes ``CosmosClient(url, credential, _backend="rust")``,
 something has to (1) decide which backend that client will use, and (2) if it is
-the Rust backend, check that everything the customer passed is something the Rust
-driver can actually handle, and repackage it into the shape the driver expects.
+the Rust backend, validate the supported startup options and repackage them for
+native initialization. Per-call options and token/service failures are checked later.
 That is this file's whole job. The client calls :func:`make_backend` once, at
 construction, and stores the concrete backend it returns: a
 :class:`RustBackend` when Rust was chosen, or the shared

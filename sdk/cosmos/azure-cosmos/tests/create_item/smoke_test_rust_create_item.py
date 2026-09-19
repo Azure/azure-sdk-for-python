@@ -1,16 +1,18 @@
 """End-to-end smoke test for the Rust binding's ``create_item``.
 
-What this script does\n---------------------\nThis is a one-shot manual smoke test you run after ``maturin develop``
+What this script does
+---------------------
+This is a one-shot manual smoke test you run after ``maturin develop``
 to prove the *whole* Rust path actually works against a live Cosmos
-account: Python → PyO3 binding → Rust driver → HTTPS → Cosmos →
-back. It is deliberately *not* a pytest test — it expects a real
+account: Python -> PyO3 binding -> Rust driver -> HTTPS -> Cosmos ->
+back. It is deliberately *not* a pytest test: it expects a real
 account (or the local emulator) and produces visible printed output
 so you can tell at a glance whether the round-trip succeeded.
 
 It bypasses the Python helper layer that would normally build the
-``PreparedRequest`` (request-prep / options / PK serialization /
-body request-byte / etc.). Building the prepared request by hand keeps the
-failure mode focused on the binding and the driver — if this fails,
+``PreparedRequest`` (request-prep, options, partition-key
+serialization, body bytes). Building the prepared request by hand keeps
+the failure mode focused on the binding and the driver: if this fails,
 you know the problem is below the helper layer, not above it.
 
 Set ``ACCOUNT_HOST`` + ``ACCOUNT_KEY`` to your Cosmos account (the emulator
@@ -24,10 +26,10 @@ Prerequisites
 
 Exit codes
 ----------
-* 0 — round trip succeeded with a 2xx response.
-* 1 — the binding executed but the service returned non-2xx, or the
+* 0 -- round trip succeeded with a 2xx response.
+* 1 -- the binding executed but the service returned non-2xx, or the
        backend produced no response.
-* 2 — the compiled ``_rust`` module is missing (run ``maturin develop``).
+* 2 -- the compiled ``_rust`` module is missing (run ``maturin develop``).
 """
 from __future__ import annotations
 
@@ -46,7 +48,7 @@ COLL = os.environ.get("COSMOS_COLL", "smoke_create")
 
 def _ensure_db_and_container() -> None:
     """Create the db + container via the legacy backend if missing, so the
-    rust path is never asked to resolve a container that does not exist."""
+    Rust path is never asked to resolve a container that does not exist."""
     client = CosmosClient(ENDPOINT, KEY)
     db = client.create_database_if_not_exists(DB)
     db.create_container_if_not_exists(id=COLL, partition_key=PartitionKey(path="/pk"))
@@ -83,7 +85,7 @@ def main() -> int:
         headers={},
     )
 
-    # 3. Hand it to the backend and round-trip it through PyO3 → driver → Cosmos.
+    # 3. Hand it to the backend and round-trip it through PyO3 -> driver -> Cosmos.
     print(f"Endpoint : {ENDPOINT}")
     print(f"Container: dbs/{DB}/colls/{COLL}")
     print(f"Item id  : {item_id}")

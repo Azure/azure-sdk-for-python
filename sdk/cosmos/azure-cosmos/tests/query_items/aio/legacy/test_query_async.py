@@ -51,6 +51,17 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_paging_with_continuation_token_async(self):
+        """A continuation token replays the page that follows it.
+
+        Two items are queried one page at a time. After taking the first page,
+        the token is saved and the second page is read normally. A fresh page
+        iterator resumed from that token must then return the same second page.
+
+        This is the promise behind every saved token: a customer who stores one
+        and comes back later gets the next page, not a repeat of what they
+        already have and not a gap. Run against a real account so the token is
+        a genuine one from the service rather than a fake.
+        """
         # Source: tests/test_query_async.py::TestQueryAsync.test_paging_with_continuation_token_async
         await self.container.upsert_item({"pk": "pk", "id": "1"})
         await self.container.upsert_item({"pk": "pk", "id": "2"})

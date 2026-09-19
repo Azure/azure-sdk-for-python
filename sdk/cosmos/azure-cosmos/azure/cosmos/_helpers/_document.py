@@ -25,7 +25,8 @@ def ensure_item_id(body: Dict[str, Any], *, generate: bool = True) -> Optional[s
         original dict must be preserved.
     :type body: Dict[str, Any]
     :param generate: When ``True`` (default), mint a UUID4 for a missing
-        id. When ``False``, leave ``body`` alone and return ``None``.
+        id. When ``False``, leave ``body`` alone and return ``None`` only if
+        no truthy id already exists.
     :type generate: bool
     :returns: The id the body now carries, or ``None`` if id was missing
         and ``generate=False``.

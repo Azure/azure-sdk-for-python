@@ -3,23 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_document.py`` — no network, no Cosmos emulator.
+"""In-process unit tests for ``_helpers/_document.py`` -- no network, no Cosmos emulator.
 
 When a customer calls ``container.create_item(body)`` without putting
 an ``"id"`` field on the body, the SDK has to invent one (a random
-UUID4) and stamp it onto the document before sending it. That tiny
+UUID4) and write it onto the item before sending it. That tiny
 piece of logic lives in ``ensure_item_id`` and these tests cover its
 behavior, branch by branch.
 
-Why this matters: if the SDK ever minted one id but routed the
-request using a *different* id (e.g. for a retry), the same logical
+Why this matters: if the SDK ever generated one id but routed the
+request using a *different* id (for example on a retry), the same logical
 write could land in storage twice under two different ids. There is
-no loud error for that — it just shows up later as duplicated
-documents. So every branch of ``ensure_item_id`` (id present, id
+no loud error for that; it just shows up later as duplicated
+items. So every branch of ``ensure_item_id`` (id present, id
 missing, id falsy, generation disabled) gets its own test here.
 
 These tests are pure-Python and run in milliseconds; they do not
-need the emulator, credentials, or the rust binding.
+need the emulator, credentials, or the Rust binding.
 """
 import re
 import unittest
@@ -39,8 +39,8 @@ class TestEnsureItemIdWhenIdAlreadyPresent(unittest.TestCase):
     """Caller-supplied id wins.
 
     When the body already has a truthy ``"id"``, the helper must
-    return that id verbatim and leave the body untouched — no
-    minting, no overwriting, no surprise mutation.
+    return that id verbatim and leave the body untouched: nothing
+    generated, nothing overwritten, no surprise mutation.
     """
 
     def test_existing_string_id_is_returned(self):
@@ -72,17 +72,17 @@ class TestEnsureItemIdWhenIdAlreadyPresent(unittest.TestCase):
 
 
 class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
-    """Missing or falsy id triggers minting (or returns ``None`` if disabled).
+    """A missing or falsy id is generated, unless generation is turned off.
 
     "Falsy" mirrors the legacy ``not document.get("id")`` check:
     missing key, ``None``, empty string, ``0`` and ``False`` all count
-    as "no id" and cause a UUID4 to be minted when ``generate=True``.
+    as "no id" and cause a UUID4 to be generated when ``generate=True``.
     With ``generate=False``, those same inputs produce ``None`` and
     leave the body alone.
     """
 
     def test_missing_id_mints_uuid_and_mutates_body(self):
-        """No ``id`` key at all: a UUID4 is minted, written into the body, and returned."""
+        """No ``id`` key at all: a UUID4 is generated, written into the body, and returned."""
         body = {"total": 99.5}
         returned = ensure_item_id(body)
         self.assertIsNotNone(returned)
@@ -90,13 +90,13 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         self.assertEqual(body["id"], returned)
         # Other fields are preserved untouched.
         self.assertEqual(body["total"], 99.5)
-        # Minted id is a UUID4 string in canonical form.
+        # The generated id is a UUID4 string in canonical form.
         self.assertIsInstance(returned, str)
         self.assertRegex(returned, _UUID4_PATTERN)
         self.assertEqual(uuid.UUID(returned).version, 4)
 
     def test_empty_string_id_treated_as_missing_and_minted(self):
-        """``id=""`` is falsy, so it is replaced with a freshly minted UUID4."""
+        """``id=""`` is falsy, so it is replaced with a freshly generated UUID4."""
         body = {"id": "", "v": 1}
         returned = ensure_item_id(body)
         self.assertNotEqual(returned, "")
@@ -104,7 +104,7 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         self.assertRegex(returned, _UUID4_PATTERN)
 
     def test_none_id_treated_as_missing_and_minted(self):
-        """``id=None`` is falsy, so it is replaced with a freshly minted UUID4."""
+        """``id=None`` is falsy, so it is replaced with a freshly generated UUID4."""
         body = {"id": None, "v": 1}
         returned = ensure_item_id(body)
         self.assertIsNotNone(returned)
@@ -128,7 +128,7 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
     def test_missing_id_with_generate_false_returns_none_and_no_mutation(self):
         """``generate=False`` + missing id: returns ``None`` and adds no ``id`` key.
 
-        This is the "I'll supply the id myself, don't mint for me" path.
+        This is the "I'll supply the id myself, don't generate one for me" path.
         """
         body = {"total": 99.5}
         returned = ensure_item_id(body, generate=False)
@@ -140,12 +140,12 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         body = {"id": "", "v": 1}
         returned = ensure_item_id(body, generate=False)
         self.assertIsNone(returned)
-        # The falsy id is left as-is — not overwritten, not removed.
+        # The falsy id is left as-is: not overwritten, not removed.
         self.assertEqual(body, {"id": "", "v": 1})
 
 
 class TestEnsureItemIdProperties(unittest.TestCase):
-    """Properties of the *minted* id that callers and other tests rely on.
+    """Properties of the *generated* id that callers and other tests rely on.
 
     The format of the id is part of the public contract: it must be a
     standard lowercase UUID4 string and each call must produce a
@@ -154,19 +154,19 @@ class TestEnsureItemIdProperties(unittest.TestCase):
     """
 
     def test_each_call_mints_a_distinct_uuid(self):
-        """Two empty bodies must end up with two different minted ids."""
+        """Two empty bodies must end up with two different generated ids."""
         first = ensure_item_id({})
         second = ensure_item_id({})
         self.assertNotEqual(first, second)
 
     def test_minted_id_round_trips_through_uuid_parser(self):
-        """The minted id parses back as a UUID with version == 4."""
+        """The generated id parses back as a UUID with version == 4."""
         minted = ensure_item_id({})
         self.assertEqual(uuid.UUID(minted).version, 4)
 
 
 class TestParityWithLegacyGenerator(unittest.TestCase):
-    """Cross-check ``ensure_item_id`` against the legacy mint branch.
+    """Cross-check ``ensure_item_id`` against the legacy id-generation branch.
 
     The legacy code (still in ``_base.GenerateGuidId`` + the inline
     check on the create_item path) does this::
@@ -183,7 +183,7 @@ class TestParityWithLegacyGenerator(unittest.TestCase):
 
     @staticmethod
     def _legacy_mint_if_needed(document, generate):
-        """Inline reproduction of the legacy mint branch, kept identical to the original."""
+        """Inline reproduction of the legacy id-generation branch, kept identical to the original."""
         if not document.get("id") and generate:
             document["id"] = GenerateGuidId()
             return document["id"]
@@ -208,7 +208,7 @@ class TestParityWithLegacyGenerator(unittest.TestCase):
                     "id" in helper_body and bool(helper_body["id"]),
                     "id" in legacy_body and bool(legacy_body["id"]),
                 )
-                # Both produce a non-None id (preset or minted).
+                # Both produce a non-None id (preset or generated).
                 self.assertIsNotNone(helper_id)
                 self.assertIsNotNone(legacy_id)
                 # When the input had no truthy id, both ids must be UUID4.

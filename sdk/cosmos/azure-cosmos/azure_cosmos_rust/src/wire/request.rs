@@ -32,13 +32,13 @@ use super::query::QueryTarget;
 // Shared prepared-request input extraction
 // ---------------------------------------------------------------------------
 //
-// Each entry point pulls its inputs off the PreparedRequest with these before
-// handing a CosmosOperation builder to execute_item_operation_sync.
+// Operation entry points use these helpers before calling their sync/async runners.
 
-/// Binding inputs extracted from `PreparedRequest.headers` and `request_options` by
-/// `settings::extract_settings`. Headers such as activity-id and session token
-/// and options such as no-response, excluded regions, timeout, and availability
-/// strategy become typed fields. Other headers go through `with_custom_headers`.
+/// Binding inputs extracted from `PreparedRequest.headers` and typed `settings`
+/// by `settings::extract_settings`. Activity id, session token, no-response,
+/// excluded regions, timeout, and availability strategy become typed fields.
+/// Other settings can generate or overwrite custom headers; operation-specific
+/// code can consume those headers before passing the remainder to the driver.
 /// Fields are `pub(crate)` so the operation runners
 /// in sibling modules can consume them directly without going through an accessor.
 pub(crate) struct RequestHeadersAndOptions {
@@ -46,13 +46,13 @@ pub(crate) struct RequestHeadersAndOptions {
     pub(crate) session_header: Option<String>,
     // ``no_response=True`` -> Disabled, otherwise Enabled. The runner
     // applies this on writes (create / upsert / replace / patch) and ignores it on
-    // reads / deletes, which have no body to suppress.
+    // reads / deletes. This option controls write responses, not read payloads.
     pub(crate) content_response_on_write: ContentResponseOnWrite,
     pub(crate) excluded_regions_value: Option<ExcludedRegions>,
     pub(crate) end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
     pub(crate) item_timeout: Option<Duration>,
     // Per-request cross-region hedging control pulled out of the
-    // ``availabilityStrategy`` option-key. ``Disabled`` turns hedging off for
+    // typed ``settings.hedging`` field. ``Disabled`` turns hedging off for
     // this request (the ``availability_strategy=False`` case); ``Hedging(..)``
     // turns it on with the caller's threshold. ``None`` means the caller did
     // not set it and the driver keeps its default.
@@ -73,18 +73,8 @@ pub(crate) fn extract_common_prepared_inputs<'py>(
 /// Read the fields an account-level database operation needs from a
 /// ``PreparedRequest``.
 ///
-/// Separate from `extract_common_prepared_inputs` because a database operation
-/// has no container and no partition key: reading `container_link` and
-/// `partition_key_header` here would be two attribute lookups whose results are
-/// thrown away, and it would let a caller believe those fields mean something
-/// for a database request. The tuple orders its parts like
-/// `extract_common_prepared_inputs`: the identifying value first, the modifiers
-/// last.
-///
-/// Without it a database request goes through the container-shaped reader, which
-/// still works -- the prepared request carries an empty container link and an
-/// empty partition key -- but it reads two fields that mean nothing here and
-/// suggests to the next reader that they do.
+/// Database operations use an id and request settings, not a container link or
+/// partition key. Read only those account-scoped inputs.
 pub(crate) fn extract_database_prepared_inputs<'py>(
     prepared: &Bound<'py, PyAny>,
     error_message: &'static str,
@@ -144,10 +134,9 @@ pub(crate) fn extract_required_item_id<'py>(
         .ok_or_else(|| PyValueError::new_err(error_message))
 }
 
-/// Build an OperationOptions from the typed-field values the binding
-/// pulled out of the headers dict. ``content_response`` is ``Some(_)`` for
-/// the write ops (create / upsert / replace) and ``None`` for reads /
-/// deletes, which leave the driver default in place.
+/// Build OperationOptions from extracted typed settings and custom headers.
+/// Callers supply ``content_response`` for applicable writes (including PATCH);
+/// ``None`` leaves that option unset.
 pub(super) fn build_operation_options(
     content_response: Option<ContentResponseOnWrite>,
     excluded_regions: Option<ExcludedRegions>,
@@ -155,7 +144,7 @@ pub(super) fn build_operation_options(
     availability_strategy: Option<AvailabilityStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
-    // Python consumes text JSON; driver 0.8 otherwise negotiates binary responses.
+    // Python consumes text JSON, so disable binary response negotiation.
     let mut builder = OperationOptionsBuilder::new()
         .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false));
     if let Some(cr) = content_response {
@@ -369,8 +358,8 @@ fn partition_key_path_tokens(path: &str) -> PyResult<Vec<&str>> {
 
 /// A partial view of an item body that deserializes only the `id` field.
 ///
-/// This skips the rest of the item, so a large body isn't parsed in full
-/// just to get one string. The `id` is kept as a `Value` so a
+/// Other fields are not retained, but the deserializer still scans the JSON.
+/// The `id` is kept as a `Value` so a
 /// present-but-non-string value still gives the "no string id" error rather
 /// than a deserialization failure.
 #[derive(Deserialize)]
@@ -380,8 +369,7 @@ struct BodyId {
 
 /// Read the item `id` out of a JSON body.
 ///
-/// The caller guarantees it is present; we error if it is not rather than
-/// inventing one.
+/// Reject invalid JSON or a missing/non-string id rather than inventing one.
 pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
     let parsed: BodyId = serde_json::from_slice(body)
         .map_err(|e| PyValueError::new_err(format!("body is not valid JSON: {e}")))?;
@@ -393,22 +381,11 @@ pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
         .ok_or_else(|| PyValueError::new_err("body has no string `id` field"))
 }
 
-/// Resolve the item id for a create / upsert without re-parsing the whole body.
-///
-/// Python already holds the item dict and resolved its id during request prep
-/// (`ensure_item_id` for create, the body's own id for upsert), so it carries the
-/// id on `PreparedRequest.item_id`. Prefer that: reading one Python attribute is
-/// O(1), whereas re-parsing the body to find `id` has no early exit -- serde must
-/// scan the entire item to consume it. On a small item that is microseconds
-/// against a multi-ms network call, but on a large body (e.g. a 256 KB blob) at
-/// thousands/sec it is real, repeated CPU for one field Python already had.
-///
-/// Fall back to parsing the body only when the attribute is absent or empty -- an
-/// Python prep that has not been updated to set it. The fallback also preserves the existing
-/// "body has no string `id`" / "non-string id" error behavior, because Python only
-/// fills the attribute with a non-empty string id (anything else stays unset and
-/// lands here). For create/upsert the body's id is authoritative and Python derived
-/// `item_id` from that same body, so the attribute and the body always agree.
+/// Prefer a non-empty `PreparedRequest.item_id` for create/upsert, avoiding another
+/// body parse. Parse the body's id only when the attribute is `None` or empty;
+/// a missing or wrongly typed attribute raises instead of taking that fallback.
+/// The binding does not compare a supplied id with the body's id, so request
+/// preparation must keep them consistent.
 pub(crate) fn extract_create_item_id<'py>(
     prepared: &Bound<'py, PyAny>,
     body: &[u8],
@@ -441,11 +418,9 @@ mod tests {
         assert!(!options.binary_encoding.unwrap().enabled);
     }
 
-    // Tests for the per-operation parsers: the container-link split, the
-    // partition-key header parse, the body-id read, and the per-value
-    // conversion. They build no Python objects, so they run under `cargo test`
-    // on their own: the success cases check the parsed value, the bad inputs
-    // check that an error comes back.
+    // Parser/conversion tests include pure Rust helpers and Python-backed
+    // protocol extraction. Legacy header cases exercise a test-only oracle,
+    // not the production typed-partition-key protocol.
 
     // ---- parse_container_link -------------------------------------------------
 
@@ -472,8 +447,8 @@ mod tests {
 
     #[test]
     fn item_id_read_from_body_and_ignores_other_fields() {
-        // Only `id` matters; the rest of the item is skipped, including when
-        // it precedes/follows id, so it works regardless of field order.
+        // Check id extraction with unrelated fields before and after it.
+        // Those values are not retained, but their JSON is still scanned.
         assert_eq!(extract_item_id(br#"{"id":"C-42"}"#).unwrap(), "C-42");
         assert_eq!(
             extract_item_id(br#"{"name":"Ada","id":"C-42","tags":["x"]}"#).unwrap(),
@@ -616,8 +591,7 @@ mod tests {
 
     #[test]
     fn pk_header_rejects_empty_overflow_and_garbage() {
-        // `[]` is overloaded by the driver to mean cross-partition query, so a
-        // partitionless write must fail fast rather than land in the wrong place.
+        // The legacy point-operation header oracle rejects an empty array.
         assert!(legacy_partition_key_header("[]").is_err());
         // Cosmos allows at most 3 levels.
         assert!(legacy_partition_key_header(r#"["a","b","c","d"]"#).is_err());
@@ -735,14 +709,9 @@ mod tests {
 
     #[test]
     fn pk_component_accepts_large_integer_as_finite_f64() {
-        // A large-integer partition key (> 2^53) is converted via `as_f64()`,
-        // which lossily rounds it but still returns a *finite* Some(_), so the
-        // "non-finite number" guard does not reject it. This is correct, not a
-        // bug: Cosmos hashes numeric partition keys as IEEE-754 doubles on both
-        // the client and the server, so the same rounding happens server-side
-        // and routing stays consistent. This test pins that behavior so a future
-        // change to integer-PK handling (e.g. attempting exact i64 routing) is a
-        // conscious, reviewed decision rather than a silent regression.
+        // This integer exceeds exact f64 integer precision. The assertion checks
+        // that conversion succeeds, not its exact rounded value, a partition
+        // hash, or agreement with service-side routing.
         let big: serde_json::Value = serde_json::from_str("9007199254740993").unwrap(); // 2^53 + 1
         assert!(big.is_i64(), "fixture must be an integer, not a float");
         assert!(

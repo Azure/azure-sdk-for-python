@@ -53,6 +53,11 @@ class TestFeedRange(unittest.TestCase):
             pass
 
     def test_partition_key_to_feed_range(self):
+        """Pin the normalized effective-key range for the sample key '1'.
+
+        Check the literal lower bound, successor upper bound, and inclusivity flags.
+        This does not prove collision-free hashing or unique physical ownership.
+        """
         # Source: tests/test_feed_range.py::TestFeedRange.test_partition_key_to_feed_range
         feed_range = self.container.feed_range_from_partition_key("1")
         feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
@@ -65,6 +70,15 @@ class TestFeedRange(unittest.TestCase):
         self.assertEqual(feed_range_epk.get_normalized_range(), expected_range)
 
     def test_feed_range_is_subset_from_pk(self):
+        """A range built from a partition key sits inside the full range.
+
+        The full range covers everything from empty to ``FF``, so any single
+        key must fall within it.
+
+        Kept here for the conversion: this checks the range handed back is a
+        usable one that the subset comparison recognises, rather than only
+        matching an expected value on paper.
+        """
         # Source: tests/test_feed_range.py::TestFeedRange.test_feed_range_is_subset_from_pk
         parent_feed_range = FeedRangeInternalEpk(Range("", "FF", True, False)).to_dict()
         child_feed_range = self.container.feed_range_from_partition_key("1")

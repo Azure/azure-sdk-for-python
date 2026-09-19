@@ -104,11 +104,10 @@ PARTITION_KEY = os.environ.get("COSMOS_PARTITION_KEY", "id")
 MAX_ITEM_INDEX = int(os.environ.get("COSMOS_MAX_ITEM_INDEX", "10000"))
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
-# Per-request end-to-end timeout in seconds, passed as the `timeout` kwarg on
-# every timed operation. Unset or <= 0 means each backend keeps its own default
-# (about 65 s per attempt on core-python, about 6 s end-to-end on Rust). Set the
-# same value on both runs so a tail difference reflects the SDK, not the timeout.
-# Sub-second values clamp to a 1 s floor on the Rust path.
+# Timeout setting passed by workload call sites when positive; nonpositive values
+# leave it unspecified. Supported values and budget scope depend on the operation.
+# This parser does not clamp subsecond values or establish equivalent backend
+# defaults. Match timeout policy as well as load when interpreting comparisons.
 REQUEST_TIMEOUT = _safe_float(os.environ.get("COSMOS_REQUEST_TIMEOUT", "0"), 0.0)
 
 # WORKLOAD_OPERATIONS picks which operations the loop runs: any subset of the six

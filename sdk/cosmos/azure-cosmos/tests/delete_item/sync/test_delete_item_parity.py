@@ -103,7 +103,7 @@ def container_for(request):
 # only present to give each backend a row to point at.
 
 def _new_item_factory(pk: str = "customerA"):
-    """Return a no-arg callable that mints ``(id, pk)`` per invocation."""
+    """Return a no-arg callable that generates ``(id, pk)`` per invocation."""
     def _factory():
         return uuid.uuid4().hex, pk
     return _factory
@@ -121,7 +121,7 @@ def _delete_by_id_call(container_id: str, item_factory, **kwargs):
 
 def _delete_by_dict_call(container_id: str, item_factory, **kwargs):
     """Closure: backend creates its own item, then deletes it by passing
-    the returned dict (which carries the SDK-stamped ``_self``)."""
+    the returned dict (which carries the ``_self`` the SDK set)."""
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_id)
         item_id, pk = item_factory()
@@ -248,7 +248,7 @@ def test_throughput_bucket(container_for):
 
 # ---------------------------------------------------------------------------
 # Behavioural / Python-only kwargs. Some are honoured everywhere
-# (``timeout``), others are Python-only knobs with no rust analogue today.
+# (``timeout``), others are Python-only options with no rust analogue today.
 # The skips quote the same reason the create_item parity suite uses.
 # ---------------------------------------------------------------------------
 
@@ -266,7 +266,7 @@ def test_timeout(container_for):
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
 def test_retry_write(container_for):
-    """Baseline call plus ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
+    """Baseline call plus ``retry_write=1`` (Python-only retry option; no rust analogue)."""
     _run_delete(container_for, summary="baseline + retry_write=1",
                 retry_write=1).assert_functional_parity()
 

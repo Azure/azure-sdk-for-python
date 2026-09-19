@@ -3,17 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Every point operation should offer the same ``response_hook`` callback,
-spelled the same way on both the sync and async clients.
+"""Inspect the declared response_hook surface on sync and async point methods.
 
-Why a dedicated test: the hook keeps working even when a method forgets to
-list it, because it can quietly slip in through ``**kwargs``. So a passing
-call doesn't prove the parameter is really part of the public surface.
-These tests check the surface itself, so a method that drops the parameter
-fails here instead of passing unnoticed -- which is exactly how three async
-methods (read / upsert / replace) drifted once.
-
-Pure introspection: no network, no emulator, no Rust binding.
+Check explicit parameters and callback annotations rather than acceptance
+through **kwargs. These tests do not invoke hooks or inspect runtime values.
 """
 import inspect
 import unittest
@@ -97,8 +90,7 @@ class TestResponseHookTypeMatchesExpectedShape(unittest.TestCase):
     """The hook advertises the right shape, and advertises it the same way everywhere."""
 
     def test_annotation_matches_expected(self):
-        """Proves each operation's hook promises the callback it actually calls:
-        one given the response headers and the returned item."""
+        """Compare each hook's declared annotation with the expected callback type."""
         for method_name in _POINT_METHODS:
             expected = _normalise(_EXPECTED_HOOK[method_name])
             for label, cls in _SURFACES:

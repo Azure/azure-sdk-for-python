@@ -1,28 +1,19 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Post-run integrity gate for the latency matrix.
+"""Post-run checks for workload quality, continuity, logs, and backend counters.
 
-Each window's row is written to Cosmos with a best-effort upsert that is only
-logged on failure, so under pressure a window's data can silently vanish. A
-vanished bad window would make the run look healthier than it was. This script
-catches that with two checks at the end of a run:
+Check success/error totals and required backend labels per observed operation;
+compare elapsed/window times; scan available cell logs for upsert warnings;
+and check backend labels against the recorded counters. A failed check makes
+the exit status nonzero. Overrides can permit weaker log/counter evidence.
 
-  1. Row-continuity -- each row records ``window_seconds`` (how long it covers) and
-     ``elapsed_seconds`` (seconds since post-warmup start). In a healthy run the
-     jump in elapsed_seconds between two rows equals the later row's
-     window_seconds; a larger jump means a window was dropped.
+These are integrity heuristics, not proof that every result was persisted:
+missing final windows or entire cells can escape continuity checks, and a
+clean log scan only establishes absence of matching text in the files read.
+Backend counters do not attribute each service operation to an engine.
 
-  2. Reporter-warning scan -- grep the per-cell logs for the reporter's own
-     "upsert failed" warnings. Zero hits means nothing was dropped at the source.
-
-Exit code is non-zero if either check finds a problem, so a caller can treat it
-as a hard gate.
-
-USAGE:
-  source ./perf_env.sh            # exports RESULTS_COSMOS_* (incl. the key)
-  python3 perf_validate.py [--run-id YYYYMMDD-HHMMSS] [--log-dir logs/latency-...]
-      --run-id   which run to check; default = the most recent matching run.
-      --log-dir  per-cell logs to scan for reporter warnings; optional.
+Run perf_validate.py with --run-id, --prefix, and --log-dir to select the
+result rows and cell logs. Results-account configuration is required.
 """
 
 import argparse
@@ -38,10 +29,8 @@ except ImportError:
     sys.exit(2)
 
 
-# A continuity hole only counts if the elapsed jump exceeds the row's own
-# window by more than this slack, so normal jitter (a flush a few seconds late,
-# a merged/short final window) never trips a false alarm. One full report
-# interval of slack means "we tolerate timing wobble but not a whole lost row".
+# Allow the larger of 60 seconds and half a report interval when checking gaps.
+# This timing tolerance can hide smaller gaps and does not rule out false alarms.
 def _gap_tolerance_s(report_interval_s: float) -> float:
     return max(60.0, 0.5 * report_interval_s)
 
@@ -150,8 +139,8 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
 
     required = set(required_backends)
     # Every operation must have been measured on every backend the caller asked
-    # for. The default remains the two-sided rust-vs-core comparison, while an
-    # explicitly selected rust-only baseline is still a valid path proof.
+    # for. The default remains the two-sided Rust-vs-core comparison, while an
+    # explicitly selected Rust-only baseline is still a valid path proof.
     for op in sorted(backends_by_op):
         present = backends_by_op[op]
         missing = required - present
@@ -225,17 +214,11 @@ def check_continuity(container, prefix: str, run_id: str, report_interval_s: flo
 
 
 def check_warnings(log_dir: str, strict: bool = True):
-    """Return (ok, lines) for the reporter-warning scan over the per-cell logs.
+    """Scan available .log files for the two reporter-upsert warning patterns.
 
-    The scan proves a negative -- that no cell dropped a results write -- so it is
-    only worth anything if the logs were actually read. Absent evidence is not the
-    same as clean evidence: with no ``--log-dir``, a directory that isn't there, no
-    ``.log`` files in it, or a file that won't open, the gate has checked nothing
-    and must say so rather than report the run clean.
-
-    In strict mode (the default) each of those is a failure. Pass ``strict=False``
-    (``--allow-missing-logs``) to score a run whose logs were genuinely not kept,
-    which downgrades them to warnings.
+    Missing log arguments, directories, or files fail in strict mode and may be
+    allowed otherwise. Unreadable files fail even when strict=False.
+    A clean scan does not prove that all expected logs or result writes exist.
     """
     def _missing(reason: str):
         """Report absent evidence: a failure in strict mode, a note otherwise."""
@@ -283,21 +266,13 @@ def check_warnings(log_dir: str, strict: bool = True):
 
 
 def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_binding: bool = False):
-    """Prove every cell ran on the engine its label claims, from counters in the
-    rows rather than COSMOS_BACKEND.
+    """Check per-workload aggregates against configured backend/counter rules.
 
-    Each row carries, beside the declared ``config_backend``:
-      * ``runtime_backend``    -- the class of the backend object the client built.
-      * ``rust_execute_calls`` -- ops the Rust path handled this window.
-      * ``binding_calls``      -- ops the Rust binding counted (-1 when unknown).
-
-    Rules per cell (workload_id):
-      * "rust": must have run on Rust. Require binding_calls > 0 and
-        rust_execute_calls > 0, and binding_calls must cover essentially all
-        operations (a small slack for the wave open at the final flush). If
-        binding_calls is unknown (-1), fall back to rust_execute_calls > 0.
-      * "core-python": must not have touched Rust. Both counts must be 0
-        (binding_calls == -1 is also fine).
+    Runtime names identify objects, Python counts measure normal execute
+    returns, and native counts measure instrumented binding entries.
+    Unknown native counts are accepted only with allow_unknown_binding.
+    Process-wide deltas, timing slack, and aggregation limit attribution;
+    a passing cell does not prove each row or operation ran entirely in Rust.
     """
     rows = list(
         container.query_items(
@@ -352,7 +327,7 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
             # around the backend object's execute, so it proves a backend object
             # existed and returned responses -- weaker, and taken on the Python
             # side of the boundary rather than beyond it. (The run cannot start
-            # with COSMOS_BACKEND=rust and no extension at all: workload.py
+            # with COSMOS_BACKEND=Rust and no extension at all: workload.py
             # refuses on the backend mismatch check before any row is written.
             # The difference here is where the count is taken, not whether the
             # extension loaded.) A row with no binding_calls therefore cannot

@@ -1,22 +1,17 @@
-//! Build-time check that the QueryPlanInterop files staged into the wheel were
-//! compiled for the platform this wheel targets.
+//! Embed supplied source-commit labels and check staged QueryPlanInterop binaries.
 //!
-//! Cargo runs this file before compiling the binding crate. It only does work
-//! when a wheel build has staged QueryPlanInterop files (see
-//! `azure_cosmos_build_backend.py`); an ordinary `cargo build` skips it.
+//! Cargo runs this before compiling the binding. Commit labels are always set
+//! from the environment, defaulting to `unknown`. Binary checks run only when a
+//! source directory is supplied and the wheel backend marks staging active.
 //!
 //! Why it exists: nothing about a `.dll`, `.so`, or `.dylib` filename says
 //! which CPU it was built for. An x64 file and an ARM64 file are named
-//! identically. If the wrong one is copied into an `azure/cosmos/.libs`
-//! directory, the mistake is invisible until a customer installs that wheel
-//! and the operating system refuses to load the library at run time. The
-//! symptom is silent: the driver treats an unloadable library the same as a
-//! missing one and quietly falls back to asking the gateway for query plans,
-//! so the wheel looks fine and simply never delivers the feature it shipped
-//! for.
+//! identically. Inspecting their headers catches an architecture mismatch at
+//! build time, rather than relying on a later load attempt to discover it.
 //!
 //! So this file reads each staged binary's own header, which does record the
-//! CPU, and fails the build immediately on a mismatch.
+//! CPU, and fails the build on a mismatch. This does not load the library or
+//! prove that its dependencies, exports, or runtime behavior are compatible.
 
 use std::env;
 use std::fs;
@@ -53,8 +48,8 @@ fn is_native_library(path: &Path, target_os: &str) -> bool {
 
 fn main() {
     // Profiling builds supply both source commits explicitly. Embedding them in
-    // the extension lets a later run prove that the binary it imported matches
-    // the currently checked-out sources, even when compilation is skipped.
+    // the extension lets a later run compare the recorded labels. They are
+    // supplied identifiers, not verification of dirty source contents.
     for variable in [PYTHON_COMMIT_ENV, RUST_DRIVER_COMMIT_ENV] {
         println!("cargo:rerun-if-env-changed={variable}");
         let value = env::var(variable).unwrap_or_else(|_| "unknown".to_string());

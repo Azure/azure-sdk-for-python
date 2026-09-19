@@ -6,7 +6,7 @@
 Deterministic twin of ``aio/legacy/test_headers.py`` -- identical except
 the absent ``_backend`` argument (so this runs the SDK default
 core-python path) -- with a fixed partition-key value and id so the
-parity reporter's body diff against the rust column is meaningful. See
+parity reporter's body diff against the Rust column is meaningful. See
 the sync sibling ``tests/patch_item/sync/test_headers.py`` for the full
 rationale (the main-tree async original uses a random per-run pk).
 
@@ -25,7 +25,7 @@ HOST = os.environ["ACCOUNT_HOST"]
 KEY = os.environ["ACCOUNT_KEY"]
 
 
-# Same value as the rust copy, so the wire bytes match.
+# Same value as the Rust copy, so the wire bytes match.
 request_throughput_bucket_number = 3
 
 
@@ -58,7 +58,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_container_patch_item_throughput_bucket_async(self):
-        """Verify the async patch_item forwards the throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header and that all six patch operations produce the expected document."""
+        """Verify the async patch_item forwards the throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header and that all six patch operations produce the expected item."""
         pkValue = "patch_item_pk"
         item = {
             "id": "patch_item",

@@ -1,24 +1,24 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 default-indexing-policy check, re-run on the rust engine.
+"""The existing legacy default-indexing-policy check, re-run on the Rust engine.
 
 Why this file exists: when a customer creates a container without spelling out
 a full indexing policy, the service fills in the rest. The filled-in policy
 decides which fields can be used in a query without a scan, so it decides what
 the customer's queries cost. This test creates containers with four different
 partly-specified policies and checks the service filled each one in the same
-way. If rust sent the partly-specified policy differently -- for example by
+way. If Rust sent the partly-specified policy differently -- for example by
 turning an empty policy into a missing one -- the container would come back
 with a policy the customer did not ask for.
 
-What it does: the real v4 test copied from ``tests/test_crud_container.py``,
+What it does: the real legacy test copied from ``tests/test_crud_container.py``,
 changed in one place -- the client is built with ``_backend="rust"``. The
 helper it calls, ``_check_default_indexing_policy_paths``, is copied with it
 because the test cannot run without it.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``create_container/sync/test_create_container_parity.py``) run the same call
-on both engines and diff the results. This file runs on rust only and reuses
+on both engines and diff the results. This file runs on Rust only and reuses
 assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -96,6 +96,19 @@ class TestCRUDContainerOperations(unittest.TestCase):
         self.assertFalse(root_included_path.get('indexes'))
 
     def test_create_default_indexing_policy(self):
+        """Five ways of leaving the indexing policy incomplete all produce the same defaults.
+
+        A customer can omit the indexing policy entirely, or supply a partial
+        one. In every case the service is expected to fill in the rest, and the
+        filled-in result must look identical no matter which shape went in.
+
+        The five shapes: no policy at all, mode and ``automatic`` only, an
+        empty dict, ``includedPaths`` carrying just a path, and included paths
+        whose indexes leave out the precision.
+
+        Each result is checked for exactly one excluded path (``/_etag``) and
+        exactly one included path (``/*``) carrying no explicit indexes.
+        """
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_create_default_indexing_policy
         db = self.databaseForTest
 

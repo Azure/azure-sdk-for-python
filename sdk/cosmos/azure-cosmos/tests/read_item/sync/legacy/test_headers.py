@@ -35,7 +35,7 @@ KEY = os.environ.get(
 
 
 # Constants kept identical to the source so the wire value is the same
-# as what core-python sent.
+# as what the legacy path sent.
 request_throughput_bucket_number = 3
 
 
@@ -67,7 +67,11 @@ class TestHeaders(unittest.TestCase):
             pass
 
     def test_container_read_item_throughput_bucket(self):
-        """Verify read_item forwards the per-request throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header."""
+        """Pass a throughput bucket and a header-checking raw-response hook.
+
+        The hook checks the header if invoked. This copied test does not assert
+        that the hook ran, inspect transmitted bytes, or test throughput isolation.
+        """
         # Source: tests/test_headers.py::TestHeaders.test_container_read_item_throughput_bucket
         created_document = self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}
@@ -80,7 +84,11 @@ class TestHeaders(unittest.TestCase):
         )
 
     def test_negative_max_integrated_cache_staleness(self):
-        """Verify read_item raises ValueError when max_integrated_cache_staleness_in_ms is negative."""
+        """If the negative-staleness call raises, require a ValueError.
+
+        The copied try/except has no assertion when the call returns normally.
+        It therefore does not establish that rejection occurs or precedes I/O.
+        """
         # Source: tests/test_headers.py::TestHeaders.test_negative_max_integrated_cache_staleness
         try:
             self.container.read_item(

@@ -7,11 +7,12 @@
 
 Builds both backends with a synchronous token credential and diffs the result,
 so signing in with a token is checked for parity, not just the account key. The
-two engine tests check that reusing one credential object shares a single engine
-while a fresh object each time builds a separate one.
+two handle tests compare returned driver-handle strings for reused and distinct
+credential objects at the same endpoint with default configuration. They do not
+measure native driver construction or prove driver identity across lifetimes.
 
-Runs wherever the parity suite runs (the credential is built from ACCOUNT_KEY);
-uses a real Entra credential when the COSMOS_AAD_* env vars are set.
+Runs when the account, binding, and token-lane gates pass. Uses an emulator-format
+token or, when all COSMOS_AAD_* values are set, a real Entra credential.
 """
 from __future__ import annotations
 
@@ -70,7 +71,7 @@ def test_create_item_parity_with_token_credential(container_for):
 
 
 def test_read_item_parity_with_token_credential(container_for):
-    """read back an item created under a token credential, on both backends."""
+    """Read the account-key fixture's item using token credentials on both backends."""
     item_id = uuid.uuid4().hex
     container_for.create_item(body={"id": item_id, "pk": "a"})
     cmp = run_on_both_backends(
@@ -84,7 +85,7 @@ def test_read_item_parity_with_token_credential(container_for):
 
 
 def test_engine_shared_for_one_credential_object():
-    """Two clients sharing one credential object must reuse a single engine."""
+    """The same credential object and endpoint produce equal driver-handle strings."""
     cred = make_sync_token_credential()
     h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
     h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
@@ -92,12 +93,11 @@ def test_engine_shared_for_one_credential_object():
 
 
 def test_engine_multiplied_for_distinct_credential_objects():
-    """A fresh credential object per client builds a separate engine."""
+    """The two distinct credential objects produce different driver-handle strings."""
     h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()
     h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()
     assert h1 != h2, "distinct credential objects must build distinct engine handles"
-
 
 

@@ -7,16 +7,15 @@
 
 A customer proves who they are in one of several ways: a master key string, a
 dict holding one, an ``azure-identity`` token credential (sync or async), or a
-set of per-user resource tokens. The Rust driver accepts only the first two
-shapes, and only a *synchronous* token credential -- it signs requests on a
-plain worker thread with no event loop running.
+set of per-user resource tokens. This resolver accepts master-key shapes and
+token credentials, but rejects resource-token shapes. Async token methods need
+a bridge because the binding expects a synchronous ``get_token`` callback.
 
 :func:`resolve_credential` is the single place that sorts those shapes out. It
 returns exactly one of a master key or a synchronous token credential, wrapping
 an async credential in an :class:`AsyncTokenCredentialBridge` so it still works,
-and rejecting what the driver genuinely cannot do -- at ``CosmosClient(...)``,
-where the customer can see which argument was wrong, rather than on their first
-database call.
+and rejecting unsupported credential shapes at construction. It does not
+acquire a token or validate the key, token contents, or service permissions.
 
 Both the sync factory (:mod:`~azure.cosmos._backend.factory`) and the async one
 (:mod:`~azure.cosmos.aio._backend.factory`) call it, so the two clients accept
@@ -98,7 +97,8 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
 
     Without it: an unsupported login would blow up on the first request with an
     opaque error, not at the line where the customer created the client. So this
-    rejects anything Rust can't do upfront -- at construction. Returns
+    rejects unsupported shapes at construction; token acquisition and service
+    authorization can still fail later. Returns
     ``(master_key, token_credential)`` with exactly one entry set:
 
     * a ``str`` or a dict with a ``'masterKey'`` entry -> master key (rejected if
@@ -165,18 +165,11 @@ def resolved_credential(
     """Sort the customer's credential as :func:`resolve_credential` does, and undo
     the wrapping if the caller fails to finish building its backend.
 
-    An async credential is not sorted for free: :func:`resolve_credential` wraps it
-    in an :class:`AsyncTokenCredentialBridge`, which starts a background event-loop
-    thread and takes a hold on the shared bridge for that credential object. Only a
-    backend that is successfully constructed will ever close that hold.
-
-    Everything the factories do after sorting the credential can still raise -- an
-    unsupported consistency level or an out-of-range timeout while building the
-    client config, a process-wide proxy or transport-timeout conflict, or a strict
-    isolation clash while registering. Without this helper each of those turns a
-    plain ``ValueError`` at ``CosmosClient(...)`` into a permanently leaked thread
-    that also pins the customer's credential object alive for the life of the
-    process, with nothing left holding a reference that could ever release it.
+    Resolving an async credential acquires a registry hold on a shared bridge.
+    Its thread starts only on the first token call. Configuration validation or
+    backend registration can fail before a backend takes ownership of that hold;
+    releasing it here avoids retaining a failed constructor's registry entry
+    and credential reference, even when no thread was started.
 
     So the caller builds its backend inside this context manager. On success the
     bridge is left open for the backend that now owns it; on any exception the hold

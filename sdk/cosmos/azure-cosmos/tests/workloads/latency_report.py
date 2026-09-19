@@ -1,23 +1,18 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Low-load latency report: pooled percentiles per operation.
+"""Report pooled success-latency histograms by operation and backend.
 
-Reads the low-load probe rows (concurrency 1, one client, no proxy) and prints a
-latency table per operation and backend. At one request in flight each number is a
-single round trip, not a throughput figure.
+Intended for low-load, single-client probes; one timed SDK call can include
+multiple requests or retries, so its duration is not one wire round trip.
 
-Percentiles are pooled correctly. A per-window scalar percentile cannot be
-averaged across windows, so each row also stores the full histogram for its window
-(``hist_b64``). This script merges those histograms per cell and reads the
-percentile off the merged result, so the printed values are exact for the whole
-run. When a row has no ``hist_b64`` (an older run) the script says so per cell and
-falls back to a count-weighted average, which understates the tail.
+Merge available window histograms rather than averaging their percentiles.
+Results retain histogram quantization and the workload's range clamping.
+Missing windows or omitted failures are not reconstructed. The fallback
+count-weighted average of scalar percentiles is only a summary, not a
+pooled percentile, and is not guaranteed to err in one direction.
 
-USAGE:
-  source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)
-  python3 latency_report.py [--run-id YYYYMMDD-HHMMSS] [--prefix baseline-]
-      --run-id  which run to read; default = the most recent matching run.
-      --prefix  workload_id prefix identifying the run (default baseline-).
+Run latency_report.py with --run-id and --prefix after configuring the
+results account.
 """
 
 import argparse
@@ -301,7 +296,7 @@ def main():
                 f"{_pctile_ms(py,99.9):>8.2f} {_pctile_ms(ru,99.9):>8.2f}"
             )
 
-    # ---- Rust driver commit check (enforced; scoped to rust rows) ----
+    # ---- Rust driver commit check (enforced; scoped to Rust rows) ----
     commits, missing, rust_rows = prov_info
     commit_ok, commit_lines = _driver_gate.decide(
         commits, missing, rust_rows, strict=_driver_gate.strict_from(args)

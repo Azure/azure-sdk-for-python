@@ -3,7 +3,7 @@
 """Sync ``test_container_patch_item_throughput_bucket`` on the ``_backend="rust"`` path.
 
 Copied from ``tests/test_headers.py``; the class and method names match the
-source so the parity reporter can pair the core-python and rust runs. Builds its
+source so the parity reporter can pair the core-python and Rust runs. Builds its
 own database + container and reads ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the
 environment. The single patch call exercises all six operation kinds
 (add / remove / replace / set / incr / move) in one request.
@@ -54,11 +54,15 @@ class TestHeaders(unittest.TestCase):
             pass
 
     def test_container_patch_item_throughput_bucket(self):
-        """Verify patch_item forwards the throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header and that all six patch operations produce the expected document."""
+        """Pass a throughput bucket with the copied operation arguments.
+
+        The raw-response hook checks the header if invoked, but this test
+        does not assert hook invocation or inspect transmitted bytes.
+        """
         # Source: tests/test_headers.py::TestHeaders.test_container_patch_item_throughput_bucket
         # NOTE: the partition-key value and item id are FIXED (not a random
         # uuid like the source) so the parity reporter can diff the patched
-        # document field-by-field against the core-python column -- a random
+        # item field-by-field against the core-python column -- a random
         # pk would show up as a spurious body divergence. Each column builds
         # its own fresh container, so the fixed (pk, id) never collides.
         pkValue = "patch_item_pk"

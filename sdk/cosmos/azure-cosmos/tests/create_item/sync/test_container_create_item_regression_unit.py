@@ -7,7 +7,7 @@
 
 ``Container.create_item`` used to do four things in one method body:
 build the request options, populate the container-properties cache,
-stamp the container rid into the options, and call
+set the container rid into the options, and call
 ``client_connection.CreateItem``. The slim-down refactor moved the
 last three steps into ``ItemHelper`` so both backends share the same
 prep code.
@@ -48,7 +48,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     """Build a real ``ContainerProxy`` wired to a mocked ``client_connection``.
 
     The proxy's own ``container_cache_lock`` and
-    ``_get_properties_with_options`` stay real — that's what these
+    ``_get_properties_with_options`` stay real; that's what these
     tests are checking. Only the underlying connection is mocked, so
     the test can observe what was forwarded into ``CreateItem`` and
     what kwargs reached the cache-refresh ``read``.
@@ -66,7 +66,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache  # legacy alias used by the proxy
 
-    # No rust backend wired in this test fixture — the absence of
+    # No Rust backend wired in this test fixture. The absence of
     # ``_backend`` is the signal for the dispatch site to fall
     # through to ``client_connection.CreateItem`` directly.
     cc._backend = LEGACY_BACKEND
@@ -88,13 +88,18 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
     """Cover the four invariants the slim-down refactor must preserve.
 
     Each test corresponds to a contract that earlier drafts of the
-    helper accidentally broke. Together they cover: rid stamping on
+    helper accidentally broke. Together they cover: setting the rid on
     the cache-hit path, per-call option forwarding into the
     cache-refresh read, and lock acquisition during cache populate.
     """
 
     def test_cache_hit_path_still_stamps_rid_into_options(self):
-        """Cache hit: the cached ``_rid`` ends up in the options dict sent to ``CreateItem``."""
+        """Cache hit: the cached ``_rid`` ends up in the options dict sent to ``CreateItem``.
+
+        The rid tells the service which container the caller believed it was
+        writing to, so a container dropped and recreated under the same name
+        is rejected rather than silently written to.
+        """
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")
 
         proxy.create_item({"id": "x", "pk": "a"})
@@ -128,7 +133,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
     def test_cache_miss_forwards_timeout_kwargs_into_cache_fetch(self):
         """Cache miss: ``timeout`` and ``read_timeout`` reach the cache-refresh ``read``.
 
-        Same contract as ``excluded_locations`` — a 5-second
+        Same contract as ``excluded_locations``: a 5-second
         ``read_timeout`` on the customer's call must not silently
         become the default 60-second timeout during cache refresh.
         """

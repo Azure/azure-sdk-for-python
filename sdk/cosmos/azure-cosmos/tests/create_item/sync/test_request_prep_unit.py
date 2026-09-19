@@ -3,17 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for ``prepare_create_item_request`` — no network, no emulator.
+"""Unit tests for ``prepare_create_item_request`` -- no network, no emulator.
 
 ``prepare_create_item_request`` takes a customer ``create_item`` call and
 builds everything the backend needs to send the request. It does five
 small things in order:
 
-* Turn the customer's keyword arguments (``pre_trigger_include=…``,
-  ``priority=…``, …) into the internal options dict.
-* Stamp the container's resource id into the headers, so the service can
+* Turn the customer's keyword arguments (``pre_trigger_include=...``,
+  ``priority=...`` and the rest) into the internal options dict.
+* Set the container's resource id into the headers, so the service can
   tell when a container was dropped and recreated under the same name.
-* Mint a random id for the document when the body has none and id
+* Generate a random id for the item when the body has none and id
   generation is on.
 * Turn the partition-key value into the JSON-array string the
   ``x-ms-documentdb-partitionkey`` header expects.
@@ -21,7 +21,7 @@ small things in order:
 
 Each of those steps has its own dedicated test file. This file checks how
 they fit together: that the prep returns a ``PreparedRequest`` whose fields
-all line up, and that a value touched by more than one step (a minted id,
+all line up, and that a value touched by more than one step (a generated id,
 say) comes out the same in the body, the bytes, and the return value.
 
 Pure in-process; runs in milliseconds.
@@ -71,7 +71,7 @@ class TestHappyPathComposition(unittest.TestCase):
         self.assertIsInstance(prepared, PreparedRequest)
         # The container link passes straight through.
         self.assertEqual(prepared.container_link, "dbs/db/colls/orders")
-        # The id comes from the body (nothing was minted; the body had one).
+        # The id comes from the body (nothing was generated; the body had one).
         self.assertEqual(item_id, "order-42")
         # The same id is forwarded on item_id so the binding skips re-parsing
         # the body just to read it.
@@ -85,7 +85,7 @@ class TestHappyPathComposition(unittest.TestCase):
         self.assertEqual(legacy_partition_key_from_request(prepared), '["customerA"]')
         # The keyword shortcut landed under its internal option-key name.
         self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
-        # The rid is stamped into the headers under the key the SDK reads.
+        # The rid is set into the headers under the key the SDK reads.
         self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-orders-1")
 
     def test_kwargs_dict_is_consumed_by_compose_step(self):
@@ -110,8 +110,8 @@ class TestHappyPathComposition(unittest.TestCase):
 
     def test_body_bytes_are_json_round_trippable(self):
         """The serialised body bytes parse back into the dict the body now
-        carries (after the id is minted)."""
-        body = {"v": 1}  # No id, so one is minted.
+        carries (after the id is generated)."""
+        body = {"v": 1}  # No id, so one is generated.
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body=body,
@@ -128,13 +128,13 @@ class TestHappyPathComposition(unittest.TestCase):
 class TestAutoIdGeneration(unittest.TestCase):
     """How the prep handles the auto-id step.
 
-    Covers the four cases: a missing id is minted, generation is turned
+    Covers the four cases: a missing id is generated, generation is turned
     off, and the two values the ``disableAutomaticIdGeneration`` option
     flag can take.
     """
 
     def test_missing_id_mints_uuid_and_writes_into_body(self):
-        """When the body has no id, the prep mints one, writes it into the
+        """When the body has no id, the prep generates one, writes it into the
         body, returns it, and includes it in the bytes."""
         body = {"total": 99.5}
         prepared = prepare_create_item_request(
@@ -148,7 +148,7 @@ class TestAutoIdGeneration(unittest.TestCase):
         self.assertNotIn("id", body)
         self.assertEqual(json.loads(prepared.body_bytes)["id"], item_id)
         self.assertIn(f'"id":"{item_id}"', prepared.body_bytes.decode())
-        # The minted id is forwarded on item_id (fast-path: no body re-parse).
+        # The generated id is forwarded on item_id (fast-path: no body re-parse).
         self.assertEqual(prepared.item_id, item_id)
 
     def test_disabled_id_generation_rejects_missing_id_before_metadata(self):
@@ -247,7 +247,7 @@ class TestPartitionKeyShapes(unittest.TestCase):
 class TestContainerRidOptional(unittest.TestCase):
     """The container-rid step, including the case where it is skipped.
 
-    The prep accepts ``container_rid=None`` and simply skips the stamp
+    The prep accepts ``container_rid=None`` and simply skips that header
     rather than inventing a value. That lets a test (or a caller that
     doesn't have a rid yet) drive the prep without the helper making up
     state it doesn't have.
@@ -380,16 +380,16 @@ class TestPreparedRequestImmutability(unittest.TestCase):
 
 
 class TestRoundTripWithMintedId(unittest.TestCase):
-    """A minted id appears, identically, in three places.
+    """A generated id appears, identically, in three places.
 
     Auto-id only works if the same string ends up in the body dict, the
     serialised bytes, and the return value. If any two of those drifted
-    apart, a retry could write the same document twice under different
+    apart, a retry could write the same item twice under different
     ids. This test checks all three hold the same value.
     """
 
     def test_minted_id_appears_identically_in_three_places(self):
-        """A minted id is the same string in the body dict, the serialised bytes, and the return value."""
+        """A generated id is the same string in the body dict, the serialised bytes, and the return value."""
         body = {"pk": "customerA", "total": 99.5}
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -412,7 +412,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
 
     The legacy path joins a list into one comma-separated string
     (``"t1,t2"``), and ``flatten_options_to_headers`` must do the same. If
-    it didn't, the rust binding would call ``str()`` on the list and put
+    it didn't, the Rust binding would call ``str()`` on the list and put
     its repr (``"['t1', 't2']"``) on the wire instead. These tests guard
     against that.
     """
@@ -430,7 +430,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
         self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
 
     def test_list_pre_trigger_is_comma_joined(self):
-        """A list ``pre_trigger_include`` is comma-joined — not turned into a Python repr."""
+        """A list ``pre_trigger_include`` is comma-joined, not turned into a Python repr."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -454,7 +454,7 @@ class TestTriggerIncludeSerialization(unittest.TestCase):
         self.assertEqual(wire_headers(prepared)["x-ms-documentdb-post-trigger-include"], "a,b,c")
 
     def test_single_element_list_has_no_brackets_or_comma(self):
-        """A one-element list is just the bare id — no brackets, no trailing comma."""
+        """A one-element list is just the bare id: no brackets, no trailing comma."""
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -515,7 +515,7 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         self.assertNotIn("x-ms-dedicatedgateway-max-age", headers)
 
     def test_indexing_directive_zero_omitted(self):
-        """``indexingDirective=0`` (Default) is dropped — no header."""
+        """``indexingDirective=0`` (Default) is dropped, so no header is sent."""
         self.assertNotIn("indexingDirective", flatten_options_to_headers({"indexingDirective": 0}))
 
     def test_indexing_directive_nonzero_emitted(self):
@@ -524,7 +524,7 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         self.assertEqual(flatten_options_to_headers({"indexingDirective": 2})["x-ms-indexing-directive"], "2")
 
     def test_throughput_bucket_zero_omitted(self):
-        """``throughputBucket=0`` is dropped — no header."""
+        """``throughputBucket=0`` is dropped, so no header is sent."""
         self.assertNotIn("throughputBucket", flatten_options_to_headers({"throughputBucket": 0}))
 
     def test_throughput_bucket_nonzero_emitted(self):

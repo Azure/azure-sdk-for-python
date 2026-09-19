@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit tests for the ``patch_item`` request-prep path — no network, no emulator.
+"""Unit tests for the ``patch_item`` request-prep path -- no network, no emulator.
 
 These pin ``build_patch_operations_payload`` and
 ``prepare_patch_item_request``.
@@ -51,6 +51,12 @@ def test_payload_wraps_operations_under_operations_key():
 
 
 def test_incr_op_code_uses_canonical_service_spelling():
+    """Both spellings of the increment operator produce the one the service accepts.
+
+    Customers write either ``incr`` or ``increment``; the service only
+    understands ``incr``. The payload builder normalises ``increment`` down to
+    it, so the two calls must produce byte-identical payloads.
+    """
     payload = build_patch_operations_payload([{"op": "incr", "path": "/n", "value": 1}])
     assert payload == {"operations": [{"op": "incr", "path": "/n", "value": 1}]}
     assert build_patch_operations_payload([{"op": "increment", "path": "/n", "value": 1}]) == payload
@@ -95,7 +101,7 @@ def test_payload_never_carries_a_condition():
 
 def test_baseline_is_operations_body_with_item_id():
     """A patch carries the operations payload (serialised to JSON bytes) and
-    the id of the document to patch on ``item_id``. The op tag is
+    the id of the item to patch on ``item_id``. The op tag is
     ``OP_PATCH_ITEM``."""
     prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/orders",
@@ -120,7 +126,7 @@ def test_baseline_is_operations_body_with_item_id():
     assert legacy_partition_key_from_request(prepared) == '["customerA"]'
     # The id rides on item_id for the binding to put on the URL.
     assert prepared.item_id == "order-42"
-    # Dropped-and-recreated container guard: the rid is stamped under the standard key.
+    # Dropped-and-recreated container guard: the rid is set under the standard key.
     assert wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"] == "RID=="
 
 
@@ -145,6 +151,12 @@ def test_body_round_trips_to_patch_instructions_shape():
 
 
 def test_patch_preparation_accepts_if_match():
+    """The argument-normalising step turns ``etag`` plus ``IfNotModified`` into an access condition.
+
+    This is the step ahead of request prep: it must both accept the guard as
+    valid for a patch and translate it into the internal ``accessCondition``
+    shape that the prep then renders as ``If-Match``.
+    """
     from azure.cosmos._helpers.item_helper import normalize_item_arguments, validate_rust_item_options
 
     args, options = normalize_item_arguments("patch_item", {
@@ -181,7 +193,7 @@ def test_initial_headers_are_flattened_into_outer_headers():
 def test_trigger_priority_bucket_no_response_land_as_option_keys():
     """The option set reaches the headers map under the internal option-key
     names. ``no_response`` is kept on patch (a patch returns the patched
-    document, unlike delete / read)."""
+    item, unlike delete / read)."""
     prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -205,7 +217,7 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
 
 def test_timeout_kwarg_is_forwarded_under_sentinel_header():
     """``timeout=30`` is forwarded as an operation option so
-    the binding can lift it into the driver's own timeout setting -- the
+    the binding can turn it into the driver's own timeout setting -- the
     same mechanism as every other migrated operation."""
     prepared = prepare_patch_item_request(
         container_link="dbs/d/colls/c",

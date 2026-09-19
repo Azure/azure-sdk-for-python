@@ -338,8 +338,9 @@ async def test_timeout(container_for):
 async def test_availability_strategy(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
-    The rust driver surface has no hedging knob, so there is nothing to
-    compare against. Skipped for the same reason as its sync twin.
+    Hedging means sending the same read to a second region when the first
+    region is slow to answer. The rust driver has no hedging option, so there
+    is nothing to compare against. Skipped for the same reason as its sync twin.
     """
     cmp = await _run_read(container_for, summary="baseline + availability_strategy=True",
                           availability_strategy=True)
@@ -373,8 +374,8 @@ async def test_excluded_locations(container_for):
 async def test_response_hook_fires_once(container_for):
     """``response_hook`` must fire exactly once per backend on success.
 
-    The harness runs core-python first and rust second, deterministically, so
-    an invocation-order counter attributes each hook fire to the right backend
+    The harness always runs the legacy backend first and the rust backend
+    second, so a call counter attributes each hook fire to the right backend
     without any synchronisation. This asserts the callback actually *runs* --
     not merely that the keyword was accepted.
     """
@@ -459,7 +460,7 @@ async def test_conditional_etag_if_not_modified_match_returns_200_body(container
     """``etag`` + ``IfNotModified``, server etag matches -> 200 + body.
 
     Same set-up as the 304 case above but with ``IfNotModified`` (which
-    translates to ``If-Match``). On a match the service returns the document
+    translates to ``If-Match``). On a match the service returns the item
     normally, so both backends must produce a populated body.
     """
     async def _do(client):

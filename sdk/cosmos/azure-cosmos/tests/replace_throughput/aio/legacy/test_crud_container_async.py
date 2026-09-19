@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 replace-throughput checks (async), re-run on the rust engine.
+"""The existing legacy replace-throughput checks (async), re-run on the Rust engine.
 
 Why this file exists: see the sync sibling
 (``replace_throughput/sync/legacy/test_crud_container.py``). This is the async
@@ -8,13 +8,13 @@ surface of the same contract: a customer who changes throughput through the asyn
 client must get the same applied RU/s back, and the same client-side guard when a
 ``ThroughputProperties`` mixes fixed and autoscale settings.
 
-What it does: the real v4 async tests copied verbatim from
+What it does: the real legacy async tests copied verbatim from
 ``tests/test_crud_container_async.py``, changed in exactly one place -- the client is
-built with ``_backend="rust"`` -- so the same assertions run against the rust path.
+built with ``_backend="rust"`` -- so the same assertions run against the Rust path.
 
 This is NOT the side-by-side parity comparison; that lives in
 ``replace_throughput/aio/test_replace_throughput_parity_async.py``. This file runs on
-rust only and reuses checks the team already trusts.
+Rust only and reuses checks the team already trusts.
 
 Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
 them in ``asyncTearDown``. The class name and method names match the source so the
@@ -45,11 +45,11 @@ KEY = os.environ.get(
 
 @pytest.mark.cosmosEmulator
 class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
-    """Async surface of the v4 throughput-change checks on the rust engine (rust-only).
+    """Async surface of the legacy throughput-change checks on the Rust engine (Rust-only).
 
     Same intent as the sync ``TestCRUDContainerOperations``: build a fresh container
     at 400 RU/s, change its throughput through the async client, and confirm the
-    change took -- the v4 assertions run with a ``_backend="rust"`` client. The
+    change took -- the legacy assertions run with a ``_backend="rust"`` client. The
     core-python side is guaranteed by the originals in
     ``tests/test_crud_container_async.py``.
     """
@@ -74,6 +74,14 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_replace_throughput_offer_with_int(self):
+        """Throughput can be changed by passing a plain number.
+
+        The container starts at 400 request units and is moved to 2500 by
+        passing the integer directly, then read back.
+
+        This is the shorthand form most callers reach for. It has to end up at
+        the same place as the object form below.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_replace_throughput_offer_with_int
         collection = self.container
 
@@ -84,6 +92,15 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
     async def test_replace_throughput_offer_with_object(self):
+        """Throughput can be changed by passing a ``ThroughputProperties`` object.
+
+        The same move from 400 to 2500 request units, expressed as an object
+        rather than a number.
+
+        Both forms are supported and must behave identically. Accepting the
+        object but reading the wrong field off it would leave the container at
+        its original throughput while the call still appeared to succeed.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_replace_throughput_offer_with_object
         collection = self.container
 
@@ -94,6 +111,17 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
 
     async def test_negative_replace_throughput_with_all_configs_set(self):
+        """Mixing fixed and autoscale settings is refused before anything is sent.
+
+        A ``ThroughputProperties`` carrying both a fixed throughput and
+        autoscale settings is contradictory, and raises a ``KeyError`` on the
+        client rather than reaching the service.
+
+        Failing early is the point. The two modes are mutually exclusive, so a
+        request that carried both would have to pick one, and the caller would
+        have no way of knowing which. This guard behaves the same on both
+        engines.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_negative_replace_throughput_with_all_configs_set
         collection = self.container
 

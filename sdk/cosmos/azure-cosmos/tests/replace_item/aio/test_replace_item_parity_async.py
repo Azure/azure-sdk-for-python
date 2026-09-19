@@ -34,7 +34,7 @@ def container_for(request):
 
 @pytest.mark.asyncio
 async def test_async_create_then_replace(container_for):
-    """async create then replace — parity on both backends."""
+    """async create then replace -- parity on both backends."""
     item_id = uuid.uuid4().hex
 
     async def _do(client):

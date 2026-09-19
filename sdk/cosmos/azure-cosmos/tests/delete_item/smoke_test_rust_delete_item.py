@@ -40,7 +40,7 @@ COLL = os.environ.get("COSMOS_COLL", "smoke_del")
 def _ensure_db_and_container() -> None:
     """Create the db and container via the legacy backend if missing.
 
-    Done up-front so the rust path is not asked to resolve a container
+    Done up-front so the Rust path is not asked to resolve a container
     that does not exist yet; otherwise the binding would surface a 404
     that looks like a binding bug.
     """

@@ -1,16 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 async default-indexing-policy check, re-run on the rust engine.
+"""The existing legacy async default-indexing-policy check, re-run on the Rust engine.
 
 Why this file exists: the async client is a separate code path from the sync
 client, so it has to be proved separately. When a customer creates a container
 without spelling out a full indexing policy, the service fills in the rest. The
 filled-in policy decides which fields can be used in a query without a scan, so
-it decides what the customer's queries cost. If rust sent a partly-specified
+it decides what the customer's queries cost. If Rust sent a partly-specified
 policy differently on the async path only, async applications would end up with
 containers indexed differently from sync ones.
 
-What it does: the real v4 test copied from
+What it does: the real legacy test copied from
 ``tests/test_crud_container_async.py``, changed in one place -- the client is
 built with ``_backend="rust"``. It creates containers with four different
 partly-specified policies and checks the service filled each one in the same
@@ -19,7 +19,7 @@ with it because the test cannot run without it.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``create_container/aio/test_create_container_parity_async.py``) run the same
-call on both engines and diff the results. This file runs on rust only and
+call on both engines and diff the results. This file runs on Rust only and
 reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so it shares no state
@@ -99,6 +99,19 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert not root_included_path.get('indexes')
 
     async def test_create_default_indexing_policy_async(self):
+        """Five ways of leaving the indexing policy incomplete all produce the same defaults.
+
+        A customer can omit the indexing policy entirely, or supply a partial
+        one. In every case the service is expected to fill in the rest, and the
+        filled-in result must look identical no matter which shape went in.
+
+        The five shapes: no policy at all, mode and ``automatic`` only, an
+        empty dict, ``includedPaths`` carrying just a path, and included paths
+        whose indexes leave out the precision.
+
+        Each result is checked for exactly one excluded path (``/_etag``) and
+        exactly one included path (``/*``) carrying no explicit indexes.
+        """
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_create_default_indexing_policy_async
         db = self.database_for_test
 

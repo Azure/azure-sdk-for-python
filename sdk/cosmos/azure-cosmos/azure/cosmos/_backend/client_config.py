@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping
+from dataclasses import fields
 from numbers import Real
 from typing import Any, Optional, Sequence, Tuple
 
@@ -71,6 +72,7 @@ _RUST_FAULT_OPERATION_TYPES = frozenset(
         "MetadataPartitionKeyRanges",
     )
 )
+_RUST_FAULT_RULE_FIELDS = frozenset(field.name for field in fields(PreparedFaultInjectionRule))
 
 
 def _normalize_locations(
@@ -137,7 +139,7 @@ def build_client_config(
       ``True`` or a dict carries the enabled hedging threshold.
     * ``user_agent_suffix`` -- ``None`` or an empty string carries nothing, so
       the driver keeps its default SDK User-Agent; any non-empty label is carried
-      for the driver to stamp on every request's User-Agent.
+      for native User-Agent construction.
     * ``consistency_level`` -- ``None`` carries nothing, so the driver keeps the
       account default; one of the supported levels (Eventual / Session / Strong)
       is carried so the chosen level actually reaches the driver. Bounded
@@ -151,9 +153,9 @@ def build_client_config(
     * ``read_timeout_seconds`` -- ``None`` carries nothing; a value is
       approximate, because Python treats it as socket-read inactivity while the
       Rust transport caps the complete HTTP attempt on both data-plane and
-      metadata requests. Both timeouts configure the process-wide driver runtime,
-      so carrying one pins it for every later client in the process; that is why
-      only an explicitly requested timeout is ever carried here.
+      metadata requests. Both participate in process-wide policy reservations;
+      runtime initialization, not this builder, freezes the effective values.
+      Only explicitly requested timeouts are carried here.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
         raise ValueError(
@@ -224,9 +226,9 @@ def _prepare_fault_injection_rules(
     rules: Optional[Sequence[Mapping[str, Any]]],
 ) -> tuple[PreparedFaultInjectionRule, ...]:
     """Validate the internal test-only fault-rule dictionaries."""
-    if not rules:
+    if rules is None:
         return ()
-    if isinstance(rules, (str, bytes, Mapping)):
+    if isinstance(rules, (str, bytes, bytearray)) or not isinstance(rules, Sequence):
         raise ValueError("_fault_injection_rules must be a sequence of rule mappings.")
 
     prepared = []
@@ -235,6 +237,13 @@ def _prepare_fault_injection_rules(
         if not isinstance(rule, Mapping):
             raise ValueError(
                 "_fault_injection_rules[{}] must be a mapping.".format(index)
+            )
+        unknown_fields = rule.keys() - _RUST_FAULT_RULE_FIELDS
+        if unknown_fields:
+            raise ValueError(
+                "_fault_injection_rules[{}] contains unsupported fields: {}.".format(
+                    index, ", ".join(sorted(repr(field) for field in unknown_fields))
+                )
             )
         rule_id = rule.get("id")
         if not isinstance(rule_id, str) or not rule_id:
@@ -246,7 +255,7 @@ def _prepare_fault_injection_rules(
         seen_ids.add(rule_id)
 
         operation_type = rule.get("operation_type")
-        if operation_type not in _RUST_FAULT_OPERATION_TYPES:
+        if not isinstance(operation_type, str) or operation_type not in _RUST_FAULT_OPERATION_TYPES:
             raise ValueError(
                 "_fault_injection_rules[{}].operation_type must be one of {}; got {!r}.".format(
                     index, sorted(_RUST_FAULT_OPERATION_TYPES), operation_type
@@ -278,9 +287,13 @@ def _prepare_fault_injection_rules(
             )
 
         delay_ms = rule.get("delay_ms", 0)
-        if isinstance(delay_ms, bool) or not isinstance(delay_ms, int) or delay_ms < 0:
+        if (
+            isinstance(delay_ms, bool)
+            or not isinstance(delay_ms, int)
+            or not 0 <= delay_ms <= 2**64 - 1
+        ):
             raise ValueError(
-                "_fault_injection_rules[{}].delay_ms must be a non-negative integer.".format(
+                "_fault_injection_rules[{}].delay_ms must be an integer from 0 to 2**64 - 1.".format(
                     index
                 )
             )
@@ -289,8 +302,8 @@ def _prepare_fault_injection_rules(
         if (
             isinstance(probability, bool)
             or not isinstance(probability, Real)
+            or not 0.0 <= probability <= 1.0
             or not math.isfinite(float(probability))
-            or not 0.0 <= float(probability) <= 1.0
         ):
             raise ValueError(
                 "_fault_injection_rules[{}].probability must be between 0.0 and 1.0.".format(
@@ -304,11 +317,11 @@ def _prepare_fault_injection_rules(
             and (
                 isinstance(hit_limit, bool)
                 or not isinstance(hit_limit, int)
-                or hit_limit < 0
+                or not 0 <= hit_limit <= 2**32 - 1
             )
         ):
             raise ValueError(
-                "_fault_injection_rules[{}].hit_limit must be a non-negative integer or None.".format(
+                "_fault_injection_rules[{}].hit_limit must be an integer from 0 to 2**32 - 1 or None.".format(
                     index
                 )
             )

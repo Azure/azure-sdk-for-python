@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The rust backend routes ``patch_item`` through the compiled binding.
+"""The Rust backend routes ``patch_item`` through the compiled binding.
 
 ``RustBackend.execute`` dispatches an ``OP_PATCH_ITEM`` request to the
 binding's ``patch_item`` entry point and wraps the returned tuple as a
@@ -32,7 +32,7 @@ def _patch_prepared() -> PreparedRequest:
     return PreparedRequest(
         op=OP_PATCH_ITEM,
         container_link="dbs/d/colls/c",
-        # The body is the driver's PatchInstructions payload, not a document.
+        # The body is the driver's PatchInstructions payload, not an item body.
         body_bytes=b'{"operations":[{"op":"set","path":"/status","value":"shipped"}]}',
         partition_key=key_from_legacy_header('["customerA"]'),
         headers={},
@@ -43,7 +43,7 @@ def _patch_prepared() -> PreparedRequest:
 def test_sync_rust_backend_dispatches_patch_to_binding(monkeypatch):
     """The sync backend calls the binding's ``patch_item`` (not
     ``replace_item`` and not ``create_item``) for a patch op and wraps the
-    4-tuple it returns. A 200 here models the patched document coming
+    4-tuple it returns. A 200 here models the patched item coming
     back."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -107,7 +107,7 @@ def test_async_rust_backend_dispatches_patch_to_binding(monkeypatch):
 
 
 def test_sync_rust_backend_patch_raises_when_binding_not_built(monkeypatch):
-    """Before ``maturin develop`` builds ``_rust.pyd``, a patch on the rust
+    """Before ``maturin develop`` builds ``_rust.pyd``, a patch on the Rust
     backend raises the same clear ``NotImplementedError`` every other op
     raises -- never a silent wrong-op dispatch."""
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)

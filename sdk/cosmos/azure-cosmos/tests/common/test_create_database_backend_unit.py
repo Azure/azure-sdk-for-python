@@ -25,7 +25,7 @@ both paths, since customers read those directly.
 
 What the read-specific tests cover, and the customer behavior behind each:
 
-* the request the rust engine is handed -- database name, no body, the headers
+* the request the Rust engine is handed -- database name, no body, the headers
   built from the caller's options, and the per-call ``timeout``. If any of that
   is wrong the call reads the wrong database or drops an option.
 * rejecting Rust reads when an option cannot be honored exactly, without
@@ -102,7 +102,7 @@ from azure.cosmos.offer import ThroughputProperties
 
 def _created_response() -> BackendResponse:
     """Return a successful fake database-create response."""
-    # A canned "201 Created" reply from the rust backend: the new database's body
+    # A canned "201 Created" reply from the Rust backend: the new database's body
     # plus a request-charge header, used by the fake backends below.
     return BackendResponse(
         status_code=201,
@@ -112,7 +112,7 @@ def _created_response() -> BackendResponse:
 
 
 def test_create_database_is_registered_as_single_response_operation():
-    """Create-database is wired as a single-reply operation, so it dispatches to the
+    """Create-database is wired as a single-reply operation, so it is sent to the
     binding's ``create_database`` entry point rather than the paged query path."""
     assert OP_TO_BINDING_METHOD[OP_CREATE_DATABASE] == "create_database"
 
@@ -125,7 +125,7 @@ def test_create_database_if_not_exists_is_not_registered_in_the_binding():
 
 @pytest.mark.parametrize("autoscale_mode", [False, True])
 def test_create_database_prepared_request_preserves_body_and_options(autoscale_mode):
-    """The request handed to the rust backend carries everything the create needs:
+    """The request handed to the Rust backend carries everything the create needs:
     the database body, account-level scope (empty container link, cross-partition
     ``"[]"`` header since there is no partition key), and every option the customer
     set -- fixed throughput, autoscale settings, throughput bucket, custom headers,
@@ -159,7 +159,7 @@ def test_create_database_prepared_request_preserves_body_and_options(autoscale_m
 def test_read_database_prepared_request_is_bodiless():
     """The existence read sends no body, only the database id.
 
-    Create sends the database document; read identifies the database by id alone.
+    Create sends the database definition; read identifies the database by id alone.
     Both build through the same helper, so this checks the read leg did not pick
     up the create's body while still carrying the caller's options and timeout.
     """
@@ -330,7 +330,7 @@ def test_create_database_prepared_preserves_legacy_id_validation(database, error
 
 
 class _RustBackend(CosmosBackend):
-    """Stand-in rust backend: records the request it was handed and returns a canned
+    """Stand-in Rust backend: records the request it was handed and returns a canned
     reply, so a test can check what would have gone on the wire without a network."""
     name = "rust"
 
@@ -350,7 +350,7 @@ class _RustBackend(CosmosBackend):
 
 
 def test_sync_helper_routes_to_rust_and_parses_response():
-    """On a rust-backed client the coordinator runs the create through the backend,
+    """On a Rust-backed client the coordinator runs the create through the backend,
     returns the created database, records the response headers on the connection, and
     fires ``response_hook`` once with the headers and the created database."""
     connection = SimpleNamespace(last_response_headers={})
@@ -406,7 +406,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response():
 
 
 def test_sync_read_database_keeps_legacy_path_and_read_timeout():
-    """Explicit legacy helper selection retains its internal timeout plumbing."""
+    """Choosing the legacy helper explicitly still passes the internal timeout through."""
     response_headers = {"x-ms-request-charge": "1.0"}
     legacy_body = {"id": "db1", "_rid": "legacy"}
     hook_calls = []
@@ -446,7 +446,7 @@ def test_sync_read_database_keeps_legacy_path_and_read_timeout():
 
 
 def test_sync_read_database_maps_not_found_and_skips_hook():
-    """A Rust 404 preserves the typed not-found exception contract."""
+    """A not-found from the Rust engine still raises the typed not-found error."""
     backend = _RustBackend(
         BackendResponse(
             status_code=404,
@@ -490,7 +490,7 @@ def test_sync_database_proxy_read_selects_rust_backend():
 
 
 def test_sync_database_proxy_read_rejects_deprecated_session_token():
-    """Obsolete session-token usage fails before dispatch."""
+    """Obsolete session-token usage fails before any request is sent."""
     backend = _RustBackend(
         BackendResponse(
             status_code=200,
@@ -508,6 +508,23 @@ def test_sync_database_proxy_read_rejects_deprecated_session_token():
 
 @pytest.fixture(params=["sync", "async"])
 def database_read_case(request):
+    """Build a ``DatabaseProxy`` whose read can be run against either engine.
+
+    Each test using this fixture runs twice, once sync and once async, because
+    the two proxies build their requests through separate code.
+
+    Both engines are wired to hand back the same activity id, the same request
+    charge, and the same body, so a test can switch engines and compare behavior
+    without the response itself changing. The Rust backend's ``execute`` is
+    wrapped in a mock, and the legacy ``ReadDatabase`` is a stand-in that also
+    fires the caller's ``response_hook``, matching what the real legacy path
+    does.
+
+    One deliberate trap: the proxy starts out holding stale properties with an
+    etag of ``"old"``. A successful read must replace them, and a failed read
+    must leave them alone. Without that starting value a test could not tell the
+    two apart.
+    """
     response = BackendResponse(
         status_code=200,
         headers=CaseInsensitiveDict({"x-ms-activity-id": "read-one", "x-ms-request-charge": "1.5"}),
@@ -541,6 +558,10 @@ def database_read_case(request):
 
 
 def _call_database_read(case, *args, **kwargs):
+    """Call ``proxy.read`` and wait for it if the async proxy is under test.
+
+    Lets one test body cover both the sync and the async proxy.
+    """
     result = case.proxy.read(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
@@ -553,6 +574,18 @@ def _call_database_read(case, *args, **kwargs):
     + [("read_timeout", value) for value in (False, True, "unused")],
 )
 def test_database_read_rejects_obsolete_and_socket_options(database_read_case, use_legacy, option, value):
+    """Retired options are refused up front on both engines, whatever value they
+    carry.
+
+    ``session_token`` and ``populate_query_metrics`` no longer do anything, and
+    ``read_timeout`` is a socket-level setting this method does not support. All
+    three raise ``TypeError`` naming the offending option, including when the
+    value passed is ``None`` or ``False`` -- a customer who leaves one of these
+    in their call should be told, not silently ignored.
+
+    The rejection happens before any request is sent, so no engine is called,
+    the hook never fires, and the cached properties still hold the stale etag.
+    """
     case = database_read_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -567,6 +600,10 @@ def test_database_read_rejects_obsolete_and_socket_options(database_read_case, u
 
 @pytest.mark.parametrize("value", [None, False, True])
 def test_database_read_is_keyword_only(database_read_case, value):
+    """``read`` takes no positional arguments, so a stray one is a ``TypeError``
+    rather than being quietly bound to the first keyword and changing what the
+    call does. Nothing is sent to either engine.
+    """
     with pytest.raises(TypeError):
         _call_database_read(database_read_case, value)
     database_read_case.backend.execute.assert_not_called()
@@ -575,6 +612,19 @@ def test_database_read_is_keyword_only(database_read_case, value):
 
 @pytest.mark.parametrize("timeout", [None, 1, 3.5, 10, float(2**64 - 2048)])
 def test_database_read_preserves_supported_options_and_refreshes_properties(database_read_case, timeout):
+    """Supported options reach the Rust request unchanged, and the read refreshes
+    the proxy's cached properties.
+
+    The request names the right database, sends no body, carries the caller's
+    own header, and carries the throughput bucket. The per-call ``timeout``
+    arrives as a deadline in seconds; when it is left off, no overall-timeout
+    header is added at all rather than a made-up default being sent.
+
+    Afterwards the proxy holds the object the read returned, so a customer who
+    reads and then inspects properties sees the values that just came back
+    instead of the stale ones. A second read goes to the Rust engine as well,
+    confirming a completed read does not switch the proxy over to legacy.
+    """
     case = database_read_case
     result = _call_database_read(
         case, timeout=timeout, read_timeout=None, throughput_bucket=7,
@@ -605,6 +655,18 @@ def test_database_read_preserves_supported_options_and_refreshes_properties(data
          "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
 )
 def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_case, timeout):
+    """A timeout the Rust engine cannot express exactly is refused before anything
+    is sent.
+
+    The list covers booleans, zero, negatives, a value below one second, a
+    string, the three non-finite floats, and values at or past the range the
+    engine can hold. Each raises ``NotImplementedError`` telling the customer to
+    use the legacy Python client for this call.
+
+    Neither engine is invoked, so an unusable deadline can never be rounded into
+    a usable one behind the customer's back. The compatibility fallback counter
+    is also unchanged: this is an outright refusal, not a recorded fallback.
+    """
     case = database_read_case
     before = rust_compatibility_fallback_count()
     with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
@@ -629,6 +691,18 @@ def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_c
     ],
 )
 def test_database_read_unsupported_settings_never_fall_back(database_read_case, kwargs):
+    """Settings the Rust engine cannot honor raise instead of quietly replaying the
+    call through the legacy transport.
+
+    The list covers a socket-level connect timeout, the two raw request and
+    response hooks, an unknown keyword, four headers the driver owns and a
+    caller must not override, and a raw request-options dictionary.
+
+    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    The hook never fires and no request is sent, so a customer does not end up
+    on a different transport, with different retries and diagnostics, without
+    having asked for it.
+    """
     case = database_read_case
     hook = MagicMock()
     with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
@@ -640,6 +714,23 @@ def test_database_read_unsupported_settings_never_fall_back(database_read_case, 
 
 @pytest.mark.parametrize("use_legacy", [False, True])
 def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(database_read_case, use_legacy):
+    """The response hook runs once on both engines, and gets its own copy of the
+    headers.
+
+    Two things are checked at the same time. First, the hook here is an object
+    that reports itself as false when tested as a boolean. It is still callable,
+    so it must still run: deciding whether to call a hook by truth-testing it
+    would skip a perfectly valid one.
+
+    Second, the headers handed to the hook are a private copy. The hook edits
+    them and the client's own record is unaffected; the returned response still
+    reports the real request charge; and later changes to the client's headers
+    do not reach back into what the hook already received. A customer logging
+    cost from the hook gets the charge for their call, not a value some later
+    request overwrote.
+
+    On the Rust engine the hook also receives the driver diagnostics header.
+    """
     case = database_read_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -689,6 +780,19 @@ def test_database_read_hook_snapshot_is_isolated_and_falsey_callable_runs(databa
     ],
 )
 def test_database_read_preserves_conditional_headers(database_read_case, use_legacy, kwargs, expected):
+    """Conditional read arguments turn into the same request headers on both
+    engines.
+
+    An etag with a not-modified condition becomes ``If-Match``; with a modified
+    condition it becomes ``If-None-Match``. A presence or absence condition
+    becomes the wildcard form, and in that case any etag passed alongside is
+    ignored, since the condition does not depend on a version. The raw
+    ``if_match`` and ``if_none_match`` arguments pass through as given.
+
+    No warning is raised for any of these. A customer relying on a conditional
+    read to avoid clobbering a concurrent change must get identical behavior
+    whichever engine they are on.
+    """
     from common.typed_requests import flatten_options_to_headers
 
     case = database_read_case
@@ -724,6 +828,14 @@ def test_database_read_preserves_conditional_headers(database_read_case, use_leg
     ],
 )
 def test_database_read_invalid_guards_fail_before_dispatch(database_read_case, use_legacy, kwargs, error_type):
+    """Incomplete or malformed conditional arguments fail before a request is sent,
+    on both engines.
+
+    An etag with no condition, a condition with no etag, and an empty etag are
+    all ``ValueError``; a condition that is not a real match condition is a
+    ``TypeError``. Sending any of these would produce a read whose conditional
+    behavior is not what the customer asked for, so the call is stopped instead.
+    """
     case = database_read_case
     if use_legacy:
         case.connection._backend = case.legacy_backend
@@ -738,6 +850,20 @@ def test_database_read_invalid_guards_fail_before_dispatch(database_read_case, u
 def test_database_read_exceptions_never_replay_or_replace_cached_properties(
     database_read_case, failure_source, error_type
 ):
+    """A failure in either the hook or the engine is raised as-is, with no retry and
+    no damage to the cached properties.
+
+    The same four error types are raised from two places: from the customer's
+    own response hook, and from the engine itself. In every combination the
+    exact exception object reaches the caller, rather than being wrapped or
+    turned into a different type.
+
+    The engine is called exactly once, the legacy path is never tried, and the
+    compatibility fallback counter does not move -- a failed read must not be
+    replayed on the other engine, which for the hook case would mean running the
+    customer's code twice. The proxy also keeps its previous properties, so a
+    failed read never leaves a half-updated view behind.
+    """
     case = database_read_case
     error = error_type("read failed")
     hook = MagicMock(side_effect=error if failure_source == "hook" else None)
@@ -756,6 +882,19 @@ def test_database_read_exceptions_never_replay_or_replace_cached_properties(
 
 @pytest.mark.parametrize("status", [403, 404, 408, 412, 429, 500])
 def test_database_read_service_errors_never_replay(database_read_case, status):
+    """An error status from the service surfaces as a typed error and is not retried
+    on the other engine.
+
+    Forbidden, not-found, request-timeout, precondition-failed, throttled, and
+    server-error all raise with the status preserved, and not-found raises the
+    specific not-found type customers catch to decide whether to create the
+    database.
+
+    The conditional header the caller asked for is still on the request that
+    failed, the success hook does not fire, the engine was called once, and the
+    legacy path was never touched. Replaying a rejected conditional read would
+    risk it succeeding the second time under different conditions.
+    """
     case = database_read_case
     case.backend.responses = [BackendResponse(
         status_code=status,
@@ -776,6 +915,18 @@ def test_database_read_service_errors_never_replay(database_read_case, status):
 
 
 def test_database_read_not_modified_preserves_empty_response_and_hook(database_read_case):
+    """A not-modified reply is a success, not an error.
+
+    When the customer's conditional read matches, the service replies with no
+    body. The call returns an empty result that still carries the response
+    headers, including the etag, so the customer can confirm which version they
+    already hold.
+
+    The hook fires with those headers and a body of ``None``, since there was no
+    body to hand over, and it receives its own copy of the headers rather than
+    the one attached to the result. The proxy adopts the empty result as its
+    properties, and the legacy path is not involved.
+    """
     case = database_read_case
     case.backend.responses = [BackendResponse(
         status_code=304,
@@ -796,7 +947,7 @@ def test_database_read_not_modified_preserves_empty_response_and_hook(database_r
 
 
 def test_sync_helper_keeps_legacy_create_database_behind_boundary():
-    """With no rust backend (the core-python client) the coordinator runs the legacy
+    """With no Rust backend (the core-python client) the coordinator runs the legacy
     ``CreateDatabase`` call directly, passing the database, options, and any extra
     kwargs straight through -- the legacy engine stays behind the same boundary."""
     connection = SimpleNamespace(
@@ -1133,7 +1284,7 @@ def test_sync_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
 
 
 class _AsyncRustBackend(AsyncCosmosBackend):
-    """Async stand-in rust backend: records the request and returns the canned reply."""
+    """Async stand-in Rust backend: records the request and returns the canned reply."""
     name = "rust"
 
     def __init__(self, response=None, responses=None):
@@ -1152,7 +1303,7 @@ class _AsyncRustBackend(AsyncCosmosBackend):
 
 
 def test_async_helper_routes_to_rust():
-    """Async twin of the rust-route test: the create runs through the async backend
+    """Async twin of the Rust-route test: the create runs through the async backend
     and returns the created database. The async ``response_hook`` fires once with
     the response headers and database body, matching legacy async behavior."""
     async def run():
@@ -1180,7 +1331,7 @@ def test_async_helper_routes_to_rust():
 def test_async_read_database_routes_to_rust():
     """Async database reads use the existing Rust read binding."""
     async def run():
-        """Confirm the async read helper dispatches to Rust and fires the hook with the returned database body."""
+        """Confirm the async read helper sends the read to the Rust engine and fires the hook with the returned database body."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             last_response_headers={},
@@ -1289,7 +1440,7 @@ def test_async_connection_read_database_forwards_initial_headers():
 
 
 def test_async_read_database_keeps_legacy_read_timeout():
-    """Explicit async legacy helper selection retains internal timeout plumbing."""
+    """Choosing the async legacy helper explicitly still passes the internal timeout through."""
     async def run():
         """The explicitly selected legacy path fires the hook once."""
         response_headers = {"x-ms-request-charge": "1.0"}
@@ -1494,7 +1645,7 @@ def test_async_database_proxy_read_selects_rust_backend():
 
 
 def test_async_database_proxy_read_rejects_deprecated_session_token():
-    """The async proxy also rejects the obsolete token before dispatch."""
+    """The async proxy also rejects the obsolete token before any request is sent."""
     async def run():
         """No request is prepared for an obsolete option."""
         backend = _AsyncRustBackend(
@@ -1550,7 +1701,7 @@ def test_async_helper_does_not_call_response_hook_on_failure():
 
 
 def test_async_helper_keeps_legacy_create_database_behind_boundary():
-    """Async twin: with no rust backend, the async coordinator awaits the legacy
+    """Async twin: with no Rust backend, the async coordinator awaits the legacy
     ``CreateDatabase`` call directly, passing database/options/extra kwargs through."""
     async def run():
         """Create via legacy-only path (no backend) and confirm the async ``CreateDatabase`` is awaited with correct args."""
@@ -1789,6 +1940,15 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
 
 @pytest.fixture(params=[False, True], ids=["sync", "aio"])
 def create_database_client(request):
+    """Build a real client object wired to a fake Rust engine, once sync and once
+    async.
+
+    The client is created without running its constructor, so no account or
+    credentials are needed. Its legacy connection is deliberately booby-trapped:
+    both ``CreateDatabase`` and ``ReadDatabase`` raise if they are ever called.
+    That turns any accidental fall back to the legacy path into a loud failure
+    rather than a test that quietly passes for the wrong reason.
+    """
     client_type = AsyncCosmosClient if request.param else CosmosClient
     client = object.__new__(client_type)
     client.client_connection = SimpleNamespace(
@@ -1803,6 +1963,11 @@ def create_database_client(request):
 
 
 def _call_create_database(client, *args, method_name="create_database", **kwargs):
+    """Call a create method on the client and wait for it if the client is async.
+
+    ``method_name`` lets the same helper drive either ``create_database`` or
+    ``create_database_if_not_exists``.
+    """
     result = getattr(client, method_name)(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
@@ -1823,6 +1988,22 @@ def _call_create_database(client, *args, method_name="create_database", **kwargs
     )],
 ])
 def test_create_rejects_unhonored_options_without_dispatch(create_database_client, options):
+    """Anything the Rust engine cannot honor exactly stops the call before a request
+    is built.
+
+    Three kinds of input are covered. First, options with no Rust equivalent: a
+    socket-level connect timeout, the raw request and response hooks, a
+    misspelled keyword, and paging or write-retry settings that do not apply to
+    creating a database. Second, the same retired settings passed the back way
+    in, nested inside a raw request-options dictionary, so the check cannot be
+    bypassed by burying them. Third, twelve headers the driver owns outright,
+    covering authentication, the API version, the client identity, and
+    conditional and session headers.
+
+    Each raises ``NotImplementedError`` naming ``create_database``. Nothing is
+    prepared and the legacy create is never called, so a customer is told their
+    option is unsupported instead of watching it be dropped.
+    """
     client = create_database_client
     with pytest.raises(NotImplementedError, match="create_database"):
         _call_create_database(client, "db1", **options)
@@ -1833,6 +2014,14 @@ def test_create_rejects_unhonored_options_without_dispatch(create_database_clien
 @pytest.mark.parametrize("timeout", [0.25, 0, -1, True, "5", float("nan"), float("inf"), 2**64])
 @pytest.mark.parametrize("nested", [False, True])
 def test_create_rejects_invalid_timeout_before_dispatch(create_database_client, timeout, nested):
+    """An unusable timeout is a ``ValueError`` before any request is prepared,
+    whether it is passed directly or nested in a raw request-options dictionary.
+
+    A value under one second, zero, a negative, a boolean, a string, the two
+    non-finite floats, and a value past the range the engine can hold are all
+    refused. Both entry points are tested because a customer can supply the
+    deadline either way and the two must agree.
+    """
     options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
     with pytest.raises(ValueError, match="timeout"):
         _call_create_database(create_database_client, "db1", **options)
@@ -1847,6 +2036,18 @@ def test_create_rejects_invalid_timeout_before_dispatch(create_database_client, 
     ThroughputProperties(),
 ])
 def test_create_rejects_invalid_throughput_choice(create_database_client, throughput):
+    """A throughput setting that does not describe one clear choice is refused.
+
+    A database is either at fixed throughput or autoscale, never both, so asking
+    for a fixed amount and an autoscale ceiling together is an error -- including
+    when the fixed amount is zero, which is still a stated fixed choice rather
+    than an absence. An autoscale growth percentage with no ceiling to grow
+    toward, and a completely empty throughput object, are equally unusable.
+
+    Guessing which half the customer meant could create a database that bills
+    differently from what they asked for, so the call raises instead and nothing
+    is prepared.
+    """
     with pytest.raises(ValueError):
         _call_create_database(create_database_client, "db1", offer_throughput=throughput)
     assert not create_database_client._backend.prepared_requests
@@ -1863,12 +2064,38 @@ def test_create_rejects_invalid_throughput_choice(create_database_client, throug
     }},
 ])
 def test_create_rejects_mixed_throughput_across_input_routes(create_database_client, options):
+    """Conflicting throughput is caught even when the two halves arrive by different
+    routes.
+
+    There are three ways to ask for throughput: the ``offer_throughput``
+    argument, a raw request-options dictionary, and raw headers. A customer can
+    mix them, so the conflict check cannot look at only one. Here fixed and
+    autoscale are combined through nested options, through the argument plus a
+    header, and through two headers.
+
+    All three raise ``ValueError`` saying not both, and nothing is prepared.
+    """
     with pytest.raises(ValueError, match="not both"):
         _call_create_database(create_database_client, "db1", **options)
     assert not create_database_client._backend.prepared_requests
 
 
 def test_create_snapshots_options_and_does_not_leak_throughput(create_database_client):
+    """The caller's options dictionary is read, never written to, and never carried
+    over into the next call.
+
+    The same dictionary is reused for two creates, one asking for throughput and
+    one not. Afterwards it is byte-for-byte what the customer passed in: no
+    internal bookkeeping such as a start timestamp was written into it.
+
+    The first request carries the throughput header and the second does not, so
+    a value from an earlier call cannot leak into a later one and silently bill
+    a customer for capacity they did not ask for the second time.
+
+    Finally, editing the dictionary after the fact does not change the request
+    that was already built, confirming the values were copied rather than
+    referenced.
+    """
     from copy import deepcopy
     client = create_database_client
     options = {"initialHeaders": {"x-trace-id": "original"}}
@@ -1885,6 +2112,11 @@ def test_create_snapshots_options_and_does_not_leak_throughput(create_database_c
 
 
 def test_create_explicit_throughput_replaces_nested_mode(create_database_client):
+    """The explicit ``offer_throughput`` argument wins over an autoscale setting
+    buried in raw options, and the autoscale header is dropped rather than sent
+    alongside it. Sending both would leave the service to decide which one
+    applies.
+    """
     _call_create_database(create_database_client, "db1", offer_throughput=400,
                           request_options={"autoUpgradePolicy": '{"maxThroughput":4000}'})
     headers = wire_headers(create_database_client._backend.prepared)
@@ -1893,6 +2125,18 @@ def test_create_explicit_throughput_replaces_nested_mode(create_database_client)
 
 
 def test_create_hook_owns_headers_and_nested_body(create_database_client):
+    """What the response hook receives is its own to modify, all the way down.
+
+    The hook here reports itself as false when tested as a boolean but is still
+    callable, so it must still run. It then edits everything it was handed: the
+    headers, a top-level field, a field nested one level deeper, and the headers
+    hanging off the properties object.
+
+    None of those edits reach the caller's result or the client's own record of
+    the last response. The nested edit is the important one: a shallow copy
+    would have let it through. A customer whose logging hook happens to modify
+    what it logs must not thereby change the object returned to their own code.
+    """
     client = create_database_client
     client._backend.responses = [BackendResponse(
         status_code=201, headers={"x-ms-activity-id": "own"},
@@ -1920,6 +2164,18 @@ def test_create_hook_owns_headers_and_nested_body(create_database_client):
 
 
 def test_create_hook_uses_result_not_latest_client_headers(create_database_client, monkeypatch):
+    """The hook reports the headers from its own call, not whatever the client saw
+    most recently.
+
+    Response parsing is wrapped so that another request appears to land in
+    between parsing and the hook firing, overwriting the client's shared record
+    with a different request charge. The hook still receives the charge from the
+    call it belongs to.
+
+    This is what makes the hook usable for per-call cost tracking on a client
+    shared across threads or tasks; reading a shared field instead would
+    attribute one caller's charge to another.
+    """
     from azure.cosmos._helpers import database_helper as sync_helper
     from azure.cosmos.aio._helpers import database_helper as async_helper
     client = create_database_client
@@ -1942,12 +2198,29 @@ def test_create_hook_uses_result_not_latest_client_headers(create_database_clien
 
 @pytest.mark.parametrize("hook", [False, "invalid", 0])
 def test_create_validates_hook_before_dispatch(create_database_client, hook):
+    """A ``response_hook`` that is not callable is a ``TypeError`` before the
+    database is created.
+
+    The values tried are all falsey, which is the trap: a check that simply
+    tested the hook for truth would treat them as absent and create the database
+    anyway, leaving the customer with a new resource and no notification. Here
+    nothing is prepared.
+    """
     with pytest.raises(TypeError, match="response_hook"):
         _call_create_database(create_database_client, "db1", response_hook=hook)
     assert not create_database_client._backend.prepared_requests
 
 
 def test_create_hook_error_is_not_retried_or_reclassified(create_database_client):
+    """An error raised by the customer's hook reaches them unchanged and does not
+    cause a second create.
+
+    The hook raises a timeout error, which is exactly the type the SDK's own
+    retry logic would be tempted to act on. The same exception object comes back
+    out, only one request was made, and the legacy path was not tried. Retrying
+    here would create a second database, because the first create already
+    succeeded -- the failure was in the callback, after the fact.
+    """
     failure = TimeoutError("customer callback failed")
 
     def hook(headers, body):
@@ -1961,6 +2234,16 @@ def test_create_hook_error_is_not_retried_or_reclassified(create_database_client
 
 
 def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_client, monkeypatch):
+    """A timeout given in raw options becomes one absolute deadline, computed once.
+
+    The clock is pinned so the arithmetic is exact: a 3.5 second budget starting
+    at 10 produces a deadline of 13.5 handed to the engine, and the original 3.5
+    still travels with the request as the per-request limit.
+
+    Recomputing the deadline at each layer instead would let a slow step restart
+    the customer's budget, so a call given 3.5 seconds could run considerably
+    longer.
+    """
     from azure.cosmos._helpers import _request_database
     client = create_database_client
     clock = [10.0]
@@ -1984,6 +2267,19 @@ def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_cl
 
 @pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
 def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch, setup_seconds):
+    """Time spent starting the driver counts against the customer's timeout.
+
+    The customer allows one second. Preparing the driver is made to burn part of
+    that budget while the clock is pinned so the outcome is exact.
+
+    When setup takes three quarters of a second, the request still goes out and
+    the driver is given the quarter second that remains, not a fresh second.
+    When setup takes longer than the whole budget, a client timeout error is
+    raised, the driver is never called, and the hook never fires.
+
+    Without this, a one second timeout could take two seconds or more: one spent
+    on setup and the full second again on the request.
+    """
     from azure.cosmos._backend import rust as sync_rust
     from azure.cosmos.aio._backend import rust as async_rust
     from azure.cosmos._helpers import _request_database
@@ -2025,6 +2321,16 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
 
 
 def test_create_async_timeout_drains_pending_work():
+    """When an async create times out, the work already in flight is cancelled and
+    waited on before the error is raised.
+
+    The engine is made to hang forever. The deadline passes, a client timeout
+    error is raised, and the hanging task is confirmed cancelled rather than
+    left running. The success hook does not fire, since nothing succeeded.
+
+    Abandoning the task instead would leak it for the life of the event loop and
+    produce warnings about a task that was never retrieved.
+    """
     from azure.cosmos.exceptions import CosmosClientTimeoutError
     import time
 
@@ -2053,6 +2359,15 @@ def test_create_async_timeout_drains_pending_work():
 @pytest.mark.parametrize("name", ["create_database", "create_database_async"])
 @pytest.mark.parametrize("remaining", [0.125, 1.0])
 def test_create_native_binding_accepts_remaining_budget(name, remaining):
+    """The native create entry points, sync and async, accept a prepared request plus
+    whatever time is left, and get as far as looking for the driver.
+
+    The handle passed in was never registered, so the expected outcome is a
+    driver error. That failure is the proof: the call was accepted and rejected
+    on the missing driver, not on the shape of its arguments. If the remaining
+    budget were the wrong type or in the wrong units the call would have failed
+    earlier and differently.
+    """
     from azure.cosmos import _rust
     prepared = build_create_database_prepared({"id": "db1"}, {})
     with pytest.raises(RuntimeError, match="(?i)driver"):
@@ -2061,6 +2376,18 @@ def test_create_native_binding_accepts_remaining_budget(name, remaining):
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 def test_create_boolean_overload_preserves_literal_overloads(client_type):
+    """``create_database`` keeps its three declared forms in order: asking for
+    properties as a constant false, as a constant true, and as a plain boolean.
+
+    That ordering is what lets a type checker tell a customer writing
+    ``return_properties=True`` that they get a proxy and properties, and a
+    customer writing ``False`` that they get only a proxy. Collapsing or
+    reordering the declarations would leave them with an unhelpful union and no
+    warning when they unpack the result wrongly.
+
+    Runtime inspection of these declarations needs Python 3.11, so the test
+    skips on older versions.
+    """
     import typing
     from typing import Literal, get_type_hints
     if not hasattr(typing, "get_overloads"):
@@ -2076,6 +2403,17 @@ def test_create_boolean_overload_preserves_literal_overloads(client_type):
 
 @pytest.mark.parametrize("is_async", [False, True])
 def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook(is_async):
+    """On the legacy path the transport settings still reach the old call, and the
+    hook is still handed its own copy.
+
+    A customer who deliberately stays on the legacy client keeps the features
+    only that path offers, so a socket-level connect timeout must arrive at the
+    old create call untouched.
+
+    At the same time the hook protection is identical to the Rust path: the hook
+    edits its headers and a nested field of the body, and neither edit shows up
+    in the result. The two paths must not differ in how safe a hook is to write.
+    """
     response = CosmosDict(
         {"id": "db1", "nested": {"value": "original"}},
         response_headers={"x-ms-activity-id": "own"},
@@ -2104,6 +2442,18 @@ def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook(is_async):
 @pytest.mark.parametrize("value", [None, False, True, "value"])
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 def test_create_database_rejects_inapplicable_options(create_database_client, option, value, method_name):
+    """Options that mean nothing when creating a database are refused by both create
+    methods, whatever value they carry.
+
+    Query metrics and session token are retired. An etag or match condition
+    cannot apply either: there is no existing version to compare against when
+    creating something new, and on the get-or-create method allowing them would
+    make the read leg behave conditionally while the create leg ignored them.
+
+    Each raises ``TypeError`` naming the option in quotes, including for ``None``
+    and ``False``. Nothing is prepared, neither legacy call runs, and the hook
+    does not fire.
+    """
     client = create_database_client
     hook = MagicMock()
 
@@ -2128,6 +2478,17 @@ def test_create_database_rejects_inapplicable_options(create_database_client, op
 )
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 def test_create_database_rejects_invalid_argument_binding(create_database_client, args, kwargs, method_name):
+    """Arguments that do not match the signature fail as ``TypeError`` before
+    anything is created.
+
+    The cases are a customer writing positionally as if the old signature still
+    applied, passing throughput as the second positional argument, omitting the
+    required id entirely, and passing the id both positionally and by keyword.
+
+    Both create methods are covered. Accepting any of these would risk creating
+    a database with the wrong name or the wrong capacity, so nothing is prepared
+    and no legacy call is made.
+    """
     client = create_database_client
     with pytest.raises(TypeError):
         _call_create_database(client, *args, method_name=method_name, **kwargs)
@@ -2143,6 +2504,31 @@ def test_create_database_rejects_invalid_argument_binding(create_database_client
 def test_create_database_preserves_supported_settings(
     create_database_client, keyword_id, return_properties, throughput, workflow
 ):
+    """The broadest test in the file: every supported option survives, across all
+    four ways these calls can play out.
+
+    The four workflows are a plain create; get-or-create finding the database
+    already there; get-or-create finding nothing and creating it; and the race,
+    where the create loses to another caller and a final read fetches the
+    winner. Each is checked to make exactly the requests it should, in order:
+    one, one, two, and three.
+
+    Across all of them the customer's own header, the throughput bucket, and the
+    per-call deadline reach the request; the id works positionally or by
+    keyword; and asking for properties returns them alongside the proxy while
+    not asking returns the proxy alone.
+
+    The throughput rules are the subtle part. Throughput describes a database
+    being created, so it must appear only on a create request. It is absent from
+    every read, and absent altogether when the database already existed or when
+    another caller won the race -- in both cases this caller created nothing and
+    must not be billed as though they had. In the race the final read is checked
+    to carry the same headers as the first read, while the create leg in the
+    middle keeps its throughput.
+
+    The hook fires exactly once with the final response, and neither legacy call
+    is ever reached.
+    """
     client = create_database_client
     method_name = "create_database" if workflow == "create" else "create_database_if_not_exists"
     if workflow in ("missing", "race"):
@@ -2239,6 +2625,15 @@ def test_create_database_preserves_supported_settings(
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
 def test_create_database_signature_is_keyword_only_after_id(client_type, method_name):
+    """Both create methods take the database id positionally and require everything
+    else by name.
+
+    The id is required with no default, throughput must be passed by name, and
+    neither method accepts extra positional arguments. Keeping the shape fixed
+    means a customer cannot pass throughput positionally and have it silently
+    land on some other argument, and it leaves room to add options later without
+    changing what existing positional calls mean.
+    """
     parameters = inspect.signature(getattr(client_type, method_name)).parameters
     assert parameters["id"].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
     assert parameters["id"].default is inspect.Parameter.empty
@@ -2247,6 +2642,16 @@ def test_create_database_signature_is_keyword_only_after_id(client_type, method_
 
 
 def test_if_not_exists_unsupported_option_does_not_recommend_legacy(create_database_client):
+    """The error for an unsupported option tells the customer how to fix it, in their
+    own terms.
+
+    The message names the offending option and points at how the client was
+    constructed, which is the thing they can actually change. It does not
+    mention the internal backend name, which would mean nothing to them and
+    would leak an implementation detail into a public error message.
+
+    Nothing is prepared and neither leg of the workflow runs.
+    """
     client = create_database_client
     with pytest.raises(NotImplementedError) as error:
         _call_create_database(
@@ -2275,6 +2680,24 @@ def test_if_not_exists_unsupported_option_does_not_recommend_legacy(create_datab
     ],
 )
 def test_if_not_exists_recovery_is_bounded_and_preserves_errors(create_database_client, statuses):
+    """Get-or-create gives up after at most three requests and reports the last real
+    failure.
+
+    The workflow is read, then create if the read found nothing, then one final
+    read if the create hit a conflict. The cases here stop it at each point: a
+    conflict on the first read, a forbidden read, a read that finds nothing
+    followed by a failing create, and a full three-step sequence ending in a
+    second not-found, a forbidden, another conflict, or a server error.
+
+    In every case the request sequence is a prefix of read, create, read -- never
+    a fourth attempt. A loop retrying until success could spin indefinitely
+    against a database being repeatedly created and deleted.
+
+    The error raised carries the status and message of the last step, not the
+    first, so the customer sees what actually stopped the call. The client's
+    recorded activity id matches that same step, and the success hook does not
+    fire.
+    """
     client = create_database_client
     client._backend.responses = [
         BackendResponse(
@@ -2306,6 +2729,20 @@ def test_if_not_exists_recovery_is_bounded_and_preserves_errors(create_database_
 def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation(
     create_database_client, failure_type
 ):
+    """If the final read is interrupted, the interruption itself is what the customer
+    sees.
+
+    The workflow reaches its third step -- read found nothing, create hit a
+    conflict, so another caller owns the database -- and that last read then
+    fails, either with a transport error or with cancellation.
+
+    The original exception object comes back untouched. Cancellation especially
+    must not be swallowed or converted: turning it into an ordinary error would
+    stop it unwinding and leave a cancelled task looking like a failed request.
+
+    All three steps ran in order, nothing was retried, and the success hook did
+    not fire.
+    """
     client = create_database_client
     failure = failure_type("follow-up interrupted")
     responses = [
@@ -2335,7 +2772,7 @@ def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation(
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 def test_public_create_database_does_not_select_backend(client_type):
     """The public ``create_database`` (sync and async) must not name an engine: its
-    source mentions no rust backend, no eligibility check, and no direct legacy call.
+    source mentions no Rust backend, no eligibility check, and no direct legacy call.
     That keeps engine selection entirely behind the coordinator, so the public method
     stays a thin delegate."""
     source = inspect.getsource(client_type.create_database)
@@ -2347,7 +2784,7 @@ def test_public_create_database_does_not_select_backend(client_type):
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 def test_public_create_database_if_not_exists_does_not_orchestrate_backends(client_type):
     """The public ``create_database_if_not_exists`` (sync and async) must stay a thin
-    delegate: its source names no rust backend and makes no direct ReadDatabase or
+    delegate: its source names no Rust backend and makes no direct ReadDatabase or
     CreateDatabase call, so the read-then-create and the engine choice live entirely in
     the coordinator."""
     source = inspect.getsource(client_type.create_database_if_not_exists)
@@ -2365,7 +2802,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
     """Async twin: the database already exists, so the read is the only request
     sent and no legacy call is made."""
     async def run():
-        """Read an existing database via the async coordinator and confirm only a Rust read is dispatched."""
+        """Read an existing database via the async coordinator and confirm only a Rust read is sent."""
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(),
@@ -2668,11 +3105,19 @@ def test_async_if_not_exists_non_404_read_error_propagates_without_create():
 
 
 # ---------------------------------------------------------------------------
-# Additional get-or-create contracts
+# Additional get-or-create rules
 # ---------------------------------------------------------------------------
 
 
 def _get_or_create_responses(statuses):
+    """Build canned replies for a get-or-create run, one per status given.
+
+    Successful steps carry a database body with a nested field, so a test can
+    prove a hook's edit did not reach a value one level down. Failing steps
+    carry a message instead. Every step is tagged with its own activity id and a
+    request charge that counts up, which is what lets a test say which step a
+    given header came from.
+    """
     return [
         BackendResponse(
             status_code=status,
@@ -2712,6 +3157,20 @@ def _get_or_create_responses(statuses):
     ({"initial_headers": {"Authorization": "unused"}}, NotImplementedError),
 ])
 def test_if_not_exists_preflight_validates_the_complete_workflow(create_database_client, options, error):
+    """Get-or-create checks every option against the whole workflow before it sends
+    anything.
+
+    Twenty-one bad inputs are covered: unusable deadlines, throughput that is
+    not one clear choice or is contradicted by a header, hooks that are not
+    callable, conditional headers and arguments that cannot apply to a create,
+    and settings the Rust engine does not support at all.
+
+    The point is where the failure happens. A valid reply is queued and ready,
+    yet nothing is prepared and neither leg runs. Validating lazily instead
+    would let the read succeed and only then reject the create, leaving the
+    customer with an error after work had already been done -- and, in the race
+    case, after another caller's database had already been found.
+    """
     client = create_database_client
     client._backend.responses = _get_or_create_responses([200])
     with pytest.raises(error):
@@ -2730,6 +3189,23 @@ def test_if_not_exists_preflight_validates_the_complete_workflow(create_database
 def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create(
     create_database_client, statuses, mapping_name, header, value
 ):
+    """Options are read once at the start, and throughput reaches only the create
+    leg.
+
+    The customer's dictionary is edited from underneath the call, between one
+    request and the next. Every request still carries the values as they were
+    when the call began, so a dictionary a customer reuses or shares across
+    threads cannot change a workflow that is already running.
+
+    Throughput appears only on the create request. The reads before and after it
+    must not carry it: a read is not a resource being created, and the final
+    read in the race case belongs to a database somebody else created.
+
+    All three shapes of the workflow are covered -- already there, created, and
+    the race -- along with both names a customer can pass the dictionary under.
+    The returned properties carry the last step's request charge, and the
+    caller's dictionary gains no extra keys.
+    """
     client = create_database_client
     client._backend.responses = _get_or_create_responses(statuses)
     options = {"initialHeaders": {"x-trace-id": "original", header: value}}
@@ -2768,6 +3244,19 @@ def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create(
 
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
 def test_if_not_exists_hook_has_independent_final_response(create_database_client, monkeypatch, statuses):
+    """The hook fires once, for the step that actually produced the result, and owns
+    what it is given.
+
+    Another call is made to appear between parsing and the hook firing,
+    overwriting the client's shared record. The hook still receives the last
+    step of its own workflow, whether that was a single read, a read and a
+    create, or the full race.
+
+    The hook then edits its headers, the returned headers, the database id, and
+    a nested field. None of it reaches the caller: the properties keep the
+    original nested value and the real activity id, and the proxy still points
+    at the database the customer asked for rather than the name the hook wrote.
+    """
     from azure.cosmos._helpers import database_helper as sync_helper
     from azure.cosmos.aio._helpers import database_helper as async_helper
     client = create_database_client
@@ -2811,6 +3300,18 @@ def test_if_not_exists_hook_has_independent_final_response(create_database_clien
     CosmosResourceExistsError(status_code=409, message="customer hook"),
 ])
 def test_if_not_exists_hook_errors_never_enter_recovery(create_database_client, statuses, failure):
+    """An error from the customer's hook is never mistaken for a service reply.
+
+    This is the trap the test exists for. The hook raises the very error types
+    the workflow uses to decide what to do next: not-found, which normally means
+    create it, and already-exists, which normally means read the winner. If the
+    hook's error were caught by that same logic, a failing callback would
+    trigger extra requests and could create a database the customer never got
+    told about.
+
+    The exact exception reaches the caller, and the request count is unchanged:
+    the hook runs after the workflow is finished, so nothing more is sent.
+    """
     client = create_database_client
     client._backend.responses = _get_or_create_responses(statuses)
 
@@ -2830,6 +3331,17 @@ def test_if_not_exists_hook_errors_never_enter_recovery(create_database_client, 
 def test_if_not_exists_expiration_stops_requests_and_success_hooks(
     create_database_client, monkeypatch, expire_after
 ):
+    """When the budget runs out mid-workflow, the remaining steps are not attempted.
+
+    The clock is pinned and pushed past the deadline just before the first,
+    second, or third request. In each case a client timeout error is raised and
+    exactly that many requests were attempted -- the workflow stops where the
+    budget ran out instead of finishing on borrowed time.
+
+    Every step was handed the same deadline, confirming the budget is worked out
+    once for the whole call rather than renewed per leg. The success hook never
+    fires, since there was no successful result to report.
+    """
     from azure.cosmos._helpers import _request_database
     from azure.cosmos.exceptions import CosmosClientTimeoutError
     client = create_database_client
@@ -2864,6 +3376,15 @@ def test_if_not_exists_expiration_stops_requests_and_success_hooks(
 
 
 def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_client, monkeypatch):
+    """Each leg of the workflow is given only the time left, not a fresh budget.
+
+    With a pinned clock, a five second budget, one second spent starting the
+    driver and one second per request, the driver is handed four, then three,
+    then two seconds.
+
+    Handing five seconds to each leg would let a three-step workflow run for
+    fifteen seconds after the customer asked for five.
+    """
     from azure.cosmos._backend import rust as sync_rust
     from azure.cosmos.aio._backend import rust as async_rust
     from azure.cosmos._helpers import _request_database
@@ -2909,6 +3430,17 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
 @pytest.mark.parametrize("stage", [1, 2, 3])
 @pytest.mark.parametrize("cancel", [False, True])
 def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage(stage, cancel):
+    """Whichever step is in flight when the async workflow stops, that work is
+    cancelled and waited on before the error is raised.
+
+    Each of the three steps is made to hang in turn, and each is interrupted
+    both ways: by the deadline passing, and by the customer cancelling the task.
+
+    Six combinations, same outcome every time. The hanging work is confirmed
+    drained rather than abandoned, no further step is attempted, and the success
+    hook does not fire. Cancellation surfaces as cancellation and a timeout as a
+    client timeout error, so a customer can tell which one happened.
+    """
     import time
     from azure.cosmos.exceptions import CosmosClientTimeoutError
 
@@ -2949,6 +3481,14 @@ def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage(stage, ca
 @pytest.mark.parametrize("name", ["read_database", "read_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
 def test_database_read_native_binding_accepts_remaining_budget(name, remaining):
+    """The native read entry points, sync and async, accept a prepared read plus the
+    time remaining, including no limit at all.
+
+    As with the create binding, the handle is unregistered, so reaching a driver
+    error proves the arguments themselves were accepted. Passing no limit is
+    included because a read with no deadline is a normal call, not a special
+    case.
+    """
     from azure.cosmos import _rust
     prepared = build_read_database_prepared("db1", {})
     with pytest.raises(RuntimeError, match="(?i)driver"):
@@ -2957,6 +3497,10 @@ def test_database_read_native_binding_accepts_remaining_budget(name, remaining):
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 def test_if_not_exists_boolean_overload_preserves_literal_overloads(client_type):
+    """Get-or-create declares the same three forms in the same order as the plain
+    create, so a customer gets identical type checking whichever method they
+    pick. Needs Python 3.11 to inspect the declarations at runtime.
+    """
     import typing
     from typing import Literal, get_type_hints
     if not hasattr(typing, "get_overloads"):
@@ -2972,6 +3516,27 @@ def test_if_not_exists_boolean_overload_preserves_literal_overloads(client_type)
 def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
     create_database_client, monkeypatch, statuses
 ):
+    """On the legacy path the same budget and hook rules apply, in that path's own
+    terms.
+
+    The legacy calls take a deadline rather than a handle, so the checks are
+    made against what they receive. Every leg gets the same shared deadline, and
+    each one is given a per-call timeout one second smaller than the last as the
+    pinned clock advances -- the budget shrinks here exactly as it does on the
+    Rust path.
+
+    The legacy-only ``read_timeout`` is passed through, since a customer on this
+    path is entitled to the settings it supports, and each call carries its own
+    start time.
+
+    Two rules are kept from the Rust path. The hook is not handed down to the
+    legacy call; the coordinator fires it once itself, so the customer's
+    callback cannot run once per leg. And throughput reaches only the create
+    leg, never the reads on either side of it.
+
+    The hook's edits to the id, to a nested field, and to the headers do not
+    reach the caller's result.
+    """
     from azure.cosmos._helpers import _request_database
     from azure.cosmos._helpers._item_context import ItemClientContext
     client = create_database_client
@@ -3040,6 +3605,16 @@ def _deleted_response() -> BackendResponse:
 
 @pytest.fixture(params=[False, True], ids=["sync", "aio"])
 def delete_database_client(request):
+    """Build a client for delete tests, once sync and once async.
+
+    The legacy ``DeleteDatabase`` raises if called, so an accidental fall back
+    shows up as a failure rather than a quiet pass. The client starts with a
+    stale activity id recorded, so a test can prove the hook got this call's
+    headers and not what was left over from before.
+
+    The canned reply is a no-content success with a request charge, which is
+    what a real successful delete looks like: headers but no body.
+    """
     is_async = request.param
     client_type = AsyncCosmosClient if is_async else CosmosClient
     client = object.__new__(client_type)
@@ -3063,11 +3638,18 @@ def delete_database_client(request):
 
 
 def _call_delete_database(client, *args, **kwargs):
+    """Call ``delete_database`` and wait for it if the client is async."""
     result = client.delete_database(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
 
 def _use_legacy_delete(client):
+    """Switch the client to the legacy path and make its delete succeed.
+
+    The legacy call records the response headers on the connection instead of
+    returning them, which is how that path reports a delete. Tests read them
+    from there.
+    """
     is_async = isinstance(client, AsyncCosmosClient)
     client._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
 
@@ -3086,6 +3668,17 @@ def _use_legacy_delete(client):
 def test_delete_database_rejects_obsolete_options_before_dispatch(
     delete_database_client, use_legacy, option, value
 ):
+    """Retired options are refused on both paths before anything is deleted.
+
+    Session token and query metrics no longer do anything. Each raises
+    ``TypeError`` naming the option, for every value including ``None`` and
+    ``False``.
+
+    Failing before anything is sent matters more here than anywhere else in this
+    file: a delete cannot be undone, so the customer must be told their option is
+    unsupported rather than have the database removed and the option ignored.
+    Neither path is called and the hook does not fire.
+    """
     client = delete_database_client
     rust_backend = client._backend
     if use_legacy:
@@ -3100,6 +3693,13 @@ def test_delete_database_rejects_obsolete_options_before_dispatch(
 
 @pytest.mark.parametrize("value", [None, False, True])
 def test_delete_database_rejects_positional_query_metrics(delete_database_client, value):
+    """A second positional argument is a ``TypeError``, not a silently accepted
+    option.
+
+    Older code passed query metrics this way. Accepting it now would mean the
+    value lands on whatever argument happens to be second, so the call is
+    refused and nothing is deleted.
+    """
     client = delete_database_client
     with pytest.raises(TypeError):
         _call_delete_database(client, "db1", value)
@@ -3109,6 +3709,21 @@ def test_delete_database_rejects_positional_query_metrics(delete_database_client
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
 def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot(delete_database_client, use_legacy):
+    """The delete hook is handed one argument -- the headers -- and they are its own
+    private copy, on both paths.
+
+    A successful delete has no body, so the hook takes headers alone and the
+    call itself returns nothing. Header lookups are case-insensitive, so the
+    hook can use whatever spelling it likes.
+
+    The copy is independent in both directions. Changing the client's headers
+    afterwards does not alter what the hook received, and the hook emptying its
+    own copy does not wipe the client's record. A customer whose hook logs the
+    request charge gets the charge for this delete, and cannot break the client
+    by modifying what it was handed.
+
+    On the Rust path the hook also receives the driver diagnostics header.
+    """
     client = delete_database_client
     rust_backend = client._backend
     if use_legacy:
@@ -3138,6 +3753,11 @@ def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot(del
 
 
 def test_delete_database_invokes_falsey_callable_hook(delete_database_client):
+    """A hook that reports itself as false when tested as a boolean is still
+    callable, so it still runs exactly once. Deciding whether to call a hook by
+    truth-testing it would silently skip a valid one and lose the customer's
+    record of a delete.
+    """
     class Hook:
         calls = 0
 
@@ -3155,6 +3775,17 @@ def test_delete_database_invokes_falsey_callable_hook(delete_database_client):
 
 @pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, asyncio.CancelledError])
 def test_delete_database_hook_failure_never_replays(delete_database_client, error_type):
+    """If the customer's hook raises after a successful delete, the delete is not
+    repeated.
+
+    The exact exception reaches the caller, the engine was called once, and the
+    legacy path was never tried. The database is already gone at this point;
+    replaying would send a second delete that finds nothing and reports a
+    confusing not-found for a delete the customer actually completed.
+
+    The compatibility fallback counter does not move either, so this is not
+    recorded as a fallback.
+    """
     client = delete_database_client
     error = error_type("callback failed")
     hook = MagicMock(side_effect=error)
@@ -3170,6 +3801,15 @@ def test_delete_database_hook_failure_never_replays(delete_database_client, erro
 
 @pytest.mark.parametrize("error_type", [ServiceRequestError, NotImplementedError, asyncio.CancelledError])
 def test_delete_database_backend_failure_never_replays(delete_database_client, error_type):
+    """A failure inside the engine is raised as-is and is not retried on the other
+    path.
+
+    A transport error is the dangerous case: the delete may well have reached
+    the service before the connection broke, so repeating it could report
+    not-found for a delete that succeeded. The exact exception is raised, the
+    engine was called once, the hook never fires, and the fallback counter is
+    unchanged.
+    """
     client = delete_database_client
     error = error_type("backend failed")
     client._backend.execute.side_effect = error
@@ -3186,6 +3826,19 @@ def test_delete_database_backend_failure_never_replays(delete_database_client, e
 
 @pytest.mark.parametrize("status", [403, 404, 412, 429, 500])
 def test_delete_database_service_error_never_fires_success_hook_or_replays(delete_database_client, status):
+    """A rejected delete surfaces with its status and is never tried again on the
+    other path.
+
+    Forbidden, not-found, precondition-failed, throttled, and server error all
+    raise with the status preserved. The conditional header the customer asked
+    for is still on the request that failed, and the failure's activity id is
+    recorded so they can quote it in a support case.
+
+    The success hook does not fire, since nothing was deleted, and the fallback
+    counter does not move. Replaying a precondition failure on the other path
+    would be the worst case of all: the condition might pass the second time and
+    delete a database the customer had guarded against exactly that.
+    """
     client = delete_database_client
     client._backend.responses = [BackendResponse(
         status_code=status,
@@ -3224,6 +3877,18 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays(delet
     ],
 )
 def test_delete_database_unsupported_options_never_fall_back(delete_database_client, kwargs):
+    """Options the Rust engine cannot honor stop the delete instead of quietly
+    sending it through the legacy transport.
+
+    The list covers a socket-level read timeout, deadlines that are too small,
+    zero, or not a number, a connect timeout, the raw request and response
+    hooks, two headers the driver owns, and an unknown keyword.
+
+    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    Nothing is sent on either path, the hook does not fire, and the fallback
+    counter does not move -- a customer must not have a delete carried out on a
+    transport they did not choose.
+    """
     client = delete_database_client
     hook = MagicMock()
     before = rust_compatibility_fallback_count()
@@ -3237,6 +3902,14 @@ def test_delete_database_unsupported_options_never_fall_back(delete_database_cli
 
 @pytest.mark.parametrize("timeout", [None, 1, 3.5])
 def test_delete_database_preserves_supported_deadlines_and_options(delete_database_client, timeout):
+    """Supported options reach the delete request unchanged, and the call returns
+    nothing on success.
+
+    The customer's own header and the throughput bucket are both on the request.
+    A per-call deadline travels with it in seconds; leaving it off adds no
+    overall-timeout header at all, rather than inventing a default the customer
+    never asked for. One request, and the legacy path is untouched.
+    """
     client = delete_database_client
     assert _call_delete_database(
         client, "db1", timeout=timeout, throughput_bucket=7,
@@ -3271,6 +3944,18 @@ def test_delete_database_preserves_supported_deadlines_and_options(delete_databa
 def test_delete_database_preserves_conditional_headers_on_both_backends(
     delete_database_client, use_legacy, kwargs, expected
 ):
+    """Conditional delete arguments become the same headers on both paths.
+
+    An etag with a not-modified condition becomes ``If-Match``; with a modified
+    condition it becomes ``If-None-Match``. A presence or absence condition
+    becomes the wildcard form, and any etag passed alongside is ignored because
+    the condition does not depend on a version. The raw ``if_match`` and
+    ``if_none_match`` arguments pass through as given, and no warning is raised.
+
+    This is a customer's protection against deleting a database that changed
+    since they last looked at it, so it has to behave identically whichever path
+    they are on.
+    """
     client = delete_database_client
     rust_backend = client._backend
     if use_legacy:
@@ -3310,6 +3995,16 @@ def test_delete_database_preserves_conditional_headers_on_both_backends(
 def test_delete_database_invalid_guards_fail_before_dispatch(
     delete_database_client, use_legacy, kwargs, error
 ):
+    """Incomplete or malformed conditional arguments stop the delete on both paths.
+
+    An etag with no condition, a condition with no etag, and an empty etag are
+    ``ValueError``; a condition that is not a real match condition is a
+    ``TypeError``.
+
+    Sending any of these would produce an unconditional delete from a customer
+    who believed they had guarded it. Nothing is sent and the hook does
+    not fire.
+    """
     client = delete_database_client
     rust_backend = client._backend
     if use_legacy:
@@ -3323,7 +4018,7 @@ def test_delete_database_invalid_guards_fail_before_dispatch(
 
 
 def test_delete_database_is_registered_as_single_response_operation():
-    """Delete-database is a single-reply operation, so it dispatches to the
+    """Delete-database is a single-reply operation, so it is sent to the
     binding's ``delete_database`` entry point rather than the paged query path."""
     assert OP_TO_BINDING_METHOD[OP_DELETE_DATABASE] == "delete_database"
 
@@ -3381,7 +4076,7 @@ def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses():
 
 
 def test_sync_delete_database_routes_to_rust_and_never_calls_legacy():
-    """On a rust-backed client the delete runs through the backend, records the
+    """On a Rust-backed client the delete runs through the backend, records the
     response headers on the connection, and returns nothing. A 204 with no body is
     a success, not a parse failure."""
     connection = SimpleNamespace(

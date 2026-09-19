@@ -240,7 +240,7 @@ async def test_timeout(container_for):
                          "Same rationale as the sync suite's L3_retry_write.")
 @pytest.mark.asyncio
 async def test_retry_write(container_for):
-    """Baseline call plus ``retry_write=1`` (Python-only retry knob).
+    """Baseline call plus ``retry_write=1`` (Python-only retry option).
 
     The rust driver owns its own retry policy and exposes no per-request
     write-retry override, so there is nothing to compare against.
@@ -255,7 +255,7 @@ async def test_retry_write(container_for):
 async def test_availability_strategy(container_for):
     """Baseline call plus ``availability_strategy=True`` (Python-only hedging feature).
 
-    The rust driver surface has no hedging knob, so there is nothing to
+    The rust driver surface has no hedging option, so there is nothing to
     compare against.
     """
     cmp = await _run_delete(container_for, summary="baseline + availability_strategy=True",

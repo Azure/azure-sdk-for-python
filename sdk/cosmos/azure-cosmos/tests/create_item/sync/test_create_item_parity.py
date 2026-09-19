@@ -18,7 +18,7 @@ The suite is organised as a **graduated sequence**:
     from the baseline and adds **exactly one** optional kwarg that maps to a
     request header. If the test fails the diff cleanly attributes the
     gap to that one kwarg.
-  * **behavioural kwargs.** Knobs that change behaviour rather
+  * **behavioural kwargs.** Options that change behaviour rather
     than just header shape (auto id, no-response, retry-write,
     availability-strategy).
   * **output / parsing parity.** ``response_hook`` invocation
@@ -30,12 +30,12 @@ Every test prints a structured report (request body, request kwargs,
 both backends' response bodies, response headers, diffs, and a
 plain-English VERDICT line). The verdict distinguishes:
 
-  * ``FULL PARITY`` — request and response bytes both equivalent.
-  * ``FUNCTIONAL PARITY, HEADER GAP`` — both backends performed
+  * ``FULL PARITY`` -- request and response bytes both equivalent.
+  * ``FUNCTIONAL PARITY, HEADER GAP`` -- both backends performed
     the operation; only the *set of response headers exposed by the
     rust binding* differs (a known rust-binding limitation).
-  * ``FUNCTIONAL DIVERGENCE`` — the operation behaved differently.
-  * ``EXCEPTION DIVERGENCE`` — both raised but with different types.
+  * ``FUNCTIONAL DIVERGENCE`` -- the operation behaved differently.
+  * ``EXCEPTION DIVERGENCE`` -- both raised but with different types.
 
 Skips are stated in **plain English** in the reason string -- the
 first clause of every reason is a one-line explanation a PM or a new
@@ -157,22 +157,21 @@ def test_baseline_body_and_pk_only(container_for):
 # Body / partition-key shape variants
 # ---------------------------------------------------------------------------
 
-# The binding accepts ``[{}]`` and treats it as the undefined
-# partition-key value end to end; this test pins that round-trip.
+# Compare the omitted-key case through the public clients.
 def test_pk_undefined(container_for):
-    """body missing the declared PK path -- wire bytes must be ``[{}]``."""
+    """Compare outcomes when the body omits the declared partition-key path.
+
+    The comparison filters headers and selected body fields; it does not capture
+    native partition-key header bytes.
+    """
     body = {"id": uuid.uuid4().hex, "n": 1}
     _run(container_for, body, summary="undefined PK").assert_functional_parity()
 
 
 def test_pk_explicit_none(container_for):
-    """explicit ``pk: None`` -- the bytes on the wire must be ``[null]``.
+    """Compare outcomes when the body explicitly contains a null partition key.
 
-    Python serialises ``None`` as ``[null]`` and the rust binding accepts
-    JSON ``null`` as a valid partition-key value, so this case works on
-    both backends end to end. (The partitionless ``[]`` case is a
-    separate, still-rejected shape -- see the partitionless-rejection
-    test at the bottom of the file.)
+    This differs from an absent path. No native header bytes are inspected.
     """
     body = {"id": uuid.uuid4().hex, "pk": None}
     _run(container_for, body, summary="explicit None PK").assert_functional_parity()
@@ -201,29 +200,12 @@ def test_indexing_directive(container_for):
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
 def test_intended_collection_rid_present_on_wire(container_for):
-    """check that ``x-ms-cosmos-intended-collection-rid`` is sent on the request.
+    """Compare the rid captured at two different Python dispatch boundaries.
 
-    That header is a request-side safety net for detecting a container
-    that was dropped and recreated. The service doesn't echo it back, so
-    we can't check the response — we have to look at the outgoing request.
-
-    Both backends are watched the same way: a recording wrapper is
-    temporarily put around the place that sees the fully-built request.
-
-      * core-python — wrap the ``__Post`` method so it records the
-        headers before passing the request on. The intended-rid header is
-        already filled in by the time ``__Post`` runs. (An earlier version
-        tried the azure-core ``per_call_policies`` constructor keyword,
-        but ``CosmosClient`` doesn't accept it, so wrapping the method
-        directly is the right approach.)
-      * rust — wrap ``RustBackend.execute`` the same way to capture the
-        ``PreparedRequest`` the helper hands to the binding. The rid
-        rides under the ``containerRID`` option key, and the binding
-        turns that into the ``x-ms-cosmos-intended-collection-rid``
-        header before calling the driver.
-
-    Both wrappers are installed inside a ``try`` / ``finally`` so the
-    originals are always restored, whatever the test outcome.
+    Capture legacy __Post headers and Rust PreparedRequest.headers, then require
+    matching nonempty values. This retained expectation does not inspect native
+    HTTP headers or establish that the current driver needs a Python-stamped rid.
+    The patched methods are restored in finally.
     """
 
     intended_rid_header = "x-ms-cosmos-intended-collection-rid"
@@ -304,11 +286,8 @@ def test_intended_collection_rid_present_on_wire(container_for):
         "captured headers: {!r}".format(intended_rid_header, sorted(core_request_headers))
     )
 
-    # rust: the PreparedRequest's option-key the binding translates to
-    # the wire header. We accept either the option-key form (what the
-    # helper writes today) or the lowercase wire-name form (in case a
-    # future helper revision writes the wire-name directly) — exactly
-    # one of them must be present and equal to core-python's value.
+    # Accept the first truthy value under either spelling in the prepared map.
+    # This does not require exactly one spelling or observe native serialization.
     rust_val = (
         rust_prepared_headers.get(_Constants.ContainerRID)
         or rust_prepared_headers.get(intended_rid_header)
@@ -367,7 +346,7 @@ def test_session_token(container_for):
 # Binding forwards the per-request header through the driver's custom-headers channel.
 # Python side: ``_request_headers.py`` now flattens the ``initialHeaders`` dict
 # into individual entries on ``PreparedRequest.headers`` so the binding's
-# existing ``x-ms-…``/``prefer`` pass-through picks each one up.
+# existing ``x-ms-...``/``prefer`` pass-through picks each one up.
 def test_initial_headers(container_for):
     """Baseline call plus ``initial_headers={'x-ms-test': 'v'}`` (caller-injected headers)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
@@ -388,15 +367,17 @@ def test_throughput_bucket(container_for):
 # ---------------------------------------------------------------------------
 
 def test_enable_automatic_id_generation(container_for):
-    """Body without `id` — the Python helper mints a UUID4 client-side and
-    writes it back into the body before either backend sees it. Both
-    backends therefore see an identical body shape."""
-    body = {"pk": "a"}  # no id — helper will mint one
+    """Compare create outcomes with automatic id generation requested.
+
+    This comparison excludes returned ids by default; it does not establish
+    identical generated ids or mutation of the caller's original dictionary.
+    """
+    body = {"pk": "a"}  # no id -- the helper generates one
     _run(container_for, body, summary="auto-id (no `id` in body)",
          enable_automatic_id_generation=True).assert_functional_parity()
 
 
-# No_response — binding now maps responsePayloadOnWriteDisabled
+# No_response -- binding now maps responsePayloadOnWriteDisabled
 # onto the driver's typed content_response_on_write option.
 def test_no_response(container_for):
     """Baseline call plus ``no_response=True`` (suppresses response body via Prefer hdr)."""
@@ -407,7 +388,7 @@ def test_no_response(container_for):
 
 @pytest.mark.skip(reason="Permanent skip: no rust-side equivalent (Python-only knob).")
 def test_retry_write(container_for):
-    """Baseline call plus ``retry_write=1`` (Python-only retry knob; no rust analogue)."""
+    """Baseline call plus ``retry_write=1`` (Python-only retry option; no rust analogue)."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     _run(container_for, body, summary="baseline + retry_write=1",
          retry_write=1).assert_functional_parity()
@@ -448,7 +429,7 @@ def test_timeout(container_for):
 
     Both backends honour this keyword now: core-python through
     azure-core's per-call timeout, rust by handing the value to the
-    driver's own timeout setting (the prep stamps a sentinel header the
+    driver's own timeout setting (the prep sets an internal marker header the
     binding reads). The driver clamps sub-second values to its 1 s floor;
     the parity harness uses 30 s, well above it.
     """
@@ -566,44 +547,22 @@ def test_retired_create_arguments_are_rejected(container_for, name, value):
 
 
 # ---------------------------------------------------------------------------
-# (gap) a partitionless container, where the partition key goes on
-# the wire as ``"[]"``.
-#
-# Python serialises the partitionless / "none" partition key as the JSON
-# literal ``"[]"``, and both v4.x and the helper layer use that shape for
-# a partitionless container's create_item. The rust binding rejects
-# ``"[]"`` on purpose, because the driver currently reuses the empty
-# partition key to mean "cross-partition query": sending it would set the
-# cross-partition query header instead of the partition-key header and
-# quietly send the write down the wrong path. Until the driver separates
-# the two meanings, the binding has to keep failing fast.
-#
-# This test pins both halves of that contract on the rust path so the gap
-# is exercised in CI, not just described in a comment. It is deliberately
-# scoped to the binding (no live partitionless container needed) -- the
-# moment the binding stops raising on ``"[]"`` (because the driver gap
-# closed), this test fails loudly and forces a follow-up to either:
-#   (a) turn it into a full live parity test against a partitionless
-#       container, or
-#   (b) delete it along with the binding's rejection branch.
+# Empty-array legacy-key compatibility case. The helper converts that spelling
+# into a typed partition key before binding dispatch. This test retains an expected
+# partitionless rejection; it does not prove the current driver's routing model
+# or replace an end-to-end test against a partitionless container.
 # ---------------------------------------------------------------------------
 
 def test_partitionless_container_rejected_by_rust_binding():
-    """Known gap: the binding rejects ``partition_key_header == "[]"``.
+    """Check rejection of a typed key converted from the legacy empty-array shape.
 
-    Build a ``PreparedRequest`` whose ``partition_key_header`` is the
-    partitionless wire shape and hand it straight to
-    ``RustBackend.execute``. The binding must raise ``ValueError`` with a
-    message that names the partitionless-container limitation in plain
-    English, so an engineer chasing a failing partitionless write knows
-    what they hit and which backend to use instead.
+    Accept ValueError or RuntimeError and require 'partitionless' in its message.
+    No partition_key_header field is passed to the binding, and this test does
+    not independently detect whether initialization performed network I/O.
     """
 
-    # The endpoint / key are only needed to build the driver handle on the
-    # first call. The request itself fails before any network IO because
-    # the binding rejects the partition-key shape while validating the
-    # PreparedRequest. We still need a backend instance to drive the
-    # rejection through the public dispatch path.
+    # Real configuration is required by this test's lazy driver initialization.
+    # No network recorder or prohibition is installed here.
     endpoint = os.environ.get("ACCOUNT_HOST")
     master_key = os.environ.get("ACCOUNT_KEY")
     if not endpoint or not master_key:
@@ -619,15 +578,11 @@ def test_partitionless_container_rejected_by_rust_binding():
         op=OP_CREATE_ITEM,
         container_link="dbs/parity_db/colls/does_not_matter",
         body_bytes=json.dumps(body).encode("utf-8"),
-        partition_key=key_from_legacy_header("[]"),  # the partitionless wire shape
+        partition_key=key_from_legacy_header("[]"),  # converted to the typed protocol
         headers={},
     )
 
-    # The binding surfaces internal errors as ``RuntimeError`` /
-    # ``ValueError``. This rejection comes back as a ``ValueError`` on the
-    # Python side. ``pytest.raises`` matches the exception class plus a
-    # regex on the message, so rewording the error has to be a deliberate
-    # test update.
+    # Accept either exception type, then check the message substring separately.
     with pytest.raises((ValueError, RuntimeError)) as excinfo:
         backend.execute(prepared)
 
@@ -639,4 +594,3 @@ def test_partitionless_container_rejected_by_rust_binding():
     print(
         "partitionless container rejection pinned: {}".format(message)
     )
-

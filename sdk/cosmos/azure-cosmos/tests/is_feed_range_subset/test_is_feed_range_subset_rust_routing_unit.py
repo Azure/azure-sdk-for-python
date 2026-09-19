@@ -82,6 +82,21 @@ def test_gate_allows_backend():
 )
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_legacy_only_ranges_are_selected_before_execution(parent, async_mode):
+    """Awkward range shapes are answered locally and never dispatched to Rust.
+
+    Five parents that the Rust path does not handle: bounds the wrong way
+    round, bounds that are not hexadecimal, an odd number of hex digits, an
+    inclusive upper bound, and a range carrying a value that cannot be turned
+    into JSON.
+
+    Both backends fail the test outright if ``execute`` is ever called, which
+    is what proves the decision happens before dispatch rather than after a
+    failed attempt.
+
+    Each answer is compared against the legacy calculation, so falling back has
+    to produce the right result and not merely avoid crashing. Run for sync and
+    async, since the two dispatch through different code.
+    """
     import asyncio
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
     from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend

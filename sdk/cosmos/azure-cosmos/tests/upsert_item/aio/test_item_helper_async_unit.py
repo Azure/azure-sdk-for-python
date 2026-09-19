@@ -42,12 +42,12 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncUpsertItem(unittest.TestCase):
-    """The explicit core-Python backend is the async fallback upsert path."""
+    """The explicit legacy backend is the async fallback upsert path."""
 
     def test_async_dispatch_falls_through_to_upsert_item(self):
-        """The explicit core-Python backend awaits ``UpsertItem`` and returns
+        """The explicit legacy backend awaits ``UpsertItem`` and returns
         its value; the body and link are forwarded unchanged and id
-        generation is disabled (an upsert never mints an id)."""
+        generation is disabled (an upsert never generates an id)."""
         cc = _connection_with_cache()
         body = {"id": "order-42", "pk": "customerA"}
 
@@ -84,7 +84,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
 
     def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
-        awaited and the refreshed rid is stamped into the options."""
+        awaited and the refreshed rid is written into the options."""
         cc = MagicMock()
         cache = {}
 

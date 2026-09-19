@@ -10,7 +10,7 @@ identified by a driver handle; the runtime owns process-wide transport settings.
 Native acquisition is lazy and independent of Python client registration.
 
 Construction reserves client identity and provisional process policies with
-register_driver_client. Close releases that registration exactly once and releases
+register_driver_client. Close guards against duplicate registration releases and releases
 this client's hold on an async credential bridge when present. The Python registry
 predicts isolation conflicts; its counts do not own native driver handles or their
 reference counts.
@@ -58,8 +58,9 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
     that was the difference.
 
     An explicit user setting wins. A source checkout with no ``.libs``
-    directory keeps the driver's normal operating-system search and Gateway
-    fallback. Queries stay correct either way; only the extra round trip differs.
+    directory leaves native library discovery and any query-plan fallback to
+    the driver. This helper checks only the directory, not library loadability,
+    supported query shapes, or whether a fallback request will succeed.
     """
     if rust_module is None:
         return
@@ -89,11 +90,9 @@ def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorM
     A binding that is present but does not export ``name`` is a hard error
     rather than a silent miss: the backends rely on catching these classes to
     convert driver failures into the azure-core exceptions customers handle. An
-    exception class that silently never matches would let a driver failure reach
-    the customer as a raw ``RuntimeError``, so their
-    ``except (ServiceRequestError, ServiceResponseError)`` handlers -- and the
-    SDK's automatic transport retries -- would quietly stop working. Failing at
-    lookup time points at the real cause: a stale compiled extension.
+    missing exception class could bypass the intended Python error translation.
+    Failing at lookup time identifies an incompatible extension; translation
+    itself does not add a Python transport retry around the native operation.
     """
     if rust_module is None:
         return _NO_BINDING_ERRORS
@@ -110,8 +109,8 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatc
     """Return the binding's ``DriverTransportError`` class for ``except`` use.
 
     The backends convert that error into azure-core's ``ServiceResponseError``.
-    A transport failure is one with *no* server response -- a client-side
-    validation error, or a timeout before any HTTP exchange.
+    This classification means no HTTP response was returned to this wrapper,
+    not that the request was never sent or that the service performed no work.
     """
     return _binding_error_type(rust_module, "DriverTransportError")
 
@@ -119,9 +118,9 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatc
 def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
     """Return the binding class raised when the driver cannot finish a query.
 
-    The paged dispatch path catches it as its fallback signal and replays the
-    page on the legacy transport, so an unsupported query feature degrades to a
-    slower path instead of surfacing to the customer as an error.
+    The Rust backends translate it to ``QueryNotSupportedByBackendError``.
+    It is an execution failure, not the static preflight signal that permits
+    selected migration paths to use legacy dispatch.
     """
     return _binding_error_type(rust_module, "UnsupportedQueryFeatureError")
 
@@ -228,13 +227,11 @@ class RustBackendShared:
         self._config_released = False
 
     def _release_config_once(self) -> None:
-        """Release this client's guard registration exactly once.
+        """Attempt this client's guard-registration release at most once.
 
-        Without the once-guarantee, releasing twice would decrement the guard's count
-        too far and could drop an driver entry other clients still share. A lock plus
-        the ``_config_released`` flag make it exactly-once no matter how close is reached
-        -- handle never built, ``close()`` called twice, or ``close()`` racing the
-        object's finalizer.
+        The lock and flag allow at most one call to ``release_driver_client``
+        from this backend, including concurrent close/finalizer paths. The flag
+        is set before that call, so a failed release is not retried here.
         """
         with self._driver_handle_lock:
             if self._config_released:
@@ -272,9 +269,8 @@ class RustBackendShared:
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
         """Return the arguments for the binding's ``acquire_driver_handle``, in one place.
 
-        Because both backends build their driver handle from these exact same arguments,
-        this is what guarantees the sync and async paths ask the binding for the same
-        driver identity instead of diverging.
+        Both backends use this conversion, so equal stored inputs produce the
+        same argument mapping. Driver identity and acquisition remain native concerns.
         """
         return acquire_driver_handle_args(
             self._endpoint,

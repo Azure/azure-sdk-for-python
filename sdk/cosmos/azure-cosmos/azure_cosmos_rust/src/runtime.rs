@@ -4,40 +4,33 @@
 //! Per-process runtime, the driver cache, and the client lifecycle entry points
 //! (`acquire_driver_handle` / `release_driver_handle`).
 //!
-//! This file is the rust backend's pooling-and-lifecycle brain. It exists so the
-//! whole process shares one set of runtimes, so clients with the same
-//! `(endpoint, credential, config)` share one reference-counted rust driver
-//! (built and torn down exactly once, at the right times), and so a customer's
-//! construction settings and credential are turned into driver options safely at
-//! the boundary. Without it, every `CosmosClient` on the rust backend would build
-//! its own rust driver -- its own connection pool and routing state -- so N
-//! clients to the same account would mean N connection pools; and there would be
-//! no safe place to decide when to tear a driver down (closing one client could
-//! remove the driver while another client is still using it).
+//! This file initializes the binding's driver runtimes, converts client settings
+//! into driver options, and caches drivers using endpoint, credential, and config
+//! fingerprints. Each successful acquisition adds a reference to the cache entry.
 //!
 //! Three "runtime"-ish things live here; keep them distinct:
-//!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the one process-wide
-//!     thread pool that *runs* async work. General-purpose Tokio; knows nothing
-//!     about Cosmos.
+//!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the binding-owned
+//!     executor for driver work, distinct from Python's event loop and the
+//!     `pyo3-async-runtimes` bridge.
 //!   * driver runtime (`CosmosDriverRuntime`) -- the *factory* that builds rust
 //!     drivers and carries the process-wide connection-pool config. Also one per
 //!     process. It is built *on* the Tokio runtime.
 //!   * rust driver (`CosmosDriver`) -- the per-account *driver* that signs,
 //!     routes, and retries. This is the one thing here that is NOT process-wide:
-//!     there is one per distinct `(endpoint, credential, config)`, produced by
+//!     the cache retains one per handle, produced by
 //!     `driver_runtime.create_driver(...)`, and its async work runs on the shared
 //!     Tokio runtime.
 //!
 //! So the relationship is: one shared Tokio runtime and one driver runtime per
 //! process (bundled together in `RuntimeContext`, behind one `OnceLock`); the
-//! driver runtime is a factory that makes many rust drivers (one per key), which
-//! this file caches and reference-counts.
+//! driver runtime is a factory that makes rust drivers, which this file caches
+//! and reference-counts. Concurrent cache misses can build surplus drivers before
+//! one is selected for the cache. Runtime initialization errors are cached too.
 //!
-//! The driver handle `acquire_driver_handle` returns is exactly that
-//! `(endpoint, credential, config)` cache key. Clients that match on all three
-//! share one rust driver, and it is dropped when the last one closes. A client
-//! that differs in credential or config gets its own driver, so one client's auth
-//! or settings are never used for another.
+//! `acquire_driver_handle` returns the cache key. Its credential and config
+//! fingerprints are described below; the 64-bit hashes are not collision-free.
+//! A balanced final release evicts the entry, but active operations can retain
+//! their own `Arc` references to the driver after eviction.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
 //! `documents/`): client = the `CosmosClient`; binding = this compiled `_rust`
@@ -94,31 +87,15 @@ struct RuntimeSettings {
     max_metadata_request_timeout: Option<Duration>,
 }
 
-/// One cached driver plus a count of how many live clients use it.
+/// One cached driver, its fault rules, and the number of outstanding acquisitions.
 ///
-/// The handle `acquire_driver_handle` returns is the `(endpoint, credential, config)` key, so
-/// clients that match on all three share one `CosmosDriver` and clients that differ
-/// get their own. This map is the only per-account cache, since the driver runtime
-/// builds a fresh driver on every `create_driver`.
+/// The key includes endpoint, credential, and config fingerprints because drivers
+/// retain authentication and settings. Keying only by endpoint would incorrectly
+/// share those values between differently configured clients.
 ///
-/// All three parts are required -- this is the minimum safe key, not a tuning choice:
-///
-/// * **credential** -- a driver bakes in the auth it signs requests with, so sharing
-///   across credentials would sign one client's requests with another's credential.
-/// * **config** -- a driver bakes in its settings (preferred/excluded regions,
-///   consistency, throttling, hedging, user-agent suffix) at build time, so a client
-///   with different settings would silently inherit another's instead of its own.
-/// * **endpoint** -- different accounts always need different drivers.
-///
-/// A coarser key (endpoint-only, or endpoint+credential) is therefore unsafe: it
-/// would misuse a credential or drop config settings. The cost is more drivers -- more
-/// connection pools and memory -- when a process deliberately varies credential or
-/// config; a normal app (one credential, one config per account) still gets one driver
-/// per account. Sharing only happens when all three match.
-///
-/// The count keeps the shared driver alive until the last user closes: `acquire_driver_handle`
-/// adds one, `release_driver_handle` drops one, and the driver is evicted at zero. Without it,
-/// closing one of two sharers would evict the driver the other still needs.
+/// Acquisition adds one reference; release removes one and evicts at zero.
+/// Callers must balance these calls. This count does not include operation-held
+/// `Arc`s, which can keep the driver alive independently of the cache.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
     fault_rules: HashMap<String, Arc<FaultInjectionRule>>,
@@ -127,7 +104,8 @@ pub(crate) struct DriverEntry {
 
 /// Compute a `DriverEntry`'s next refcount and whether to evict it. Split out of
 /// `release_driver_handle` so the drop-one / evict-at-zero rule can be tested without a real
-/// `CosmosDriver`. `saturating_sub` keeps a stray extra close from underflowing.
+/// `CosmosDriver`. Saturation prevents underflow, not duplicate-release errors:
+/// an extra close on a shared handle still removes another acquisition's count.
 fn apply_close(refcount: usize) -> (usize, bool) {
     let next = refcount.saturating_sub(1);
     (next, next == 0)
@@ -137,37 +115,21 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 // Cache key: (endpoint, credential, config)
 // ---------------------------------------------------------------------------
 //
-// The key carries all three, so two clients share a driver only when they match on
-// every one:
-//
-// * Credential -- a shared driver shares its signed-request auth, so an
-//   endpoint-only key could sign one client's requests with another's credential.
-// * Config -- a driver bakes in its settings (preferred/excluded regions,
-//   consistency, throttling, hedging, user-agent suffix) when built, so a client
-//   with different settings needs its own driver to honor them.
-//
-// This builds more drivers but never uses one client's auth or settings for another.
-//
-// No secret goes into the key:
-//
-// * A master key becomes a salted, non-reversible 64-bit hash, so the plaintext
-//   secret is never stored in the handle. The handle still identifies a specific
-//   endpoint, credential, and config and should not be logged.
+// * A master key becomes a randomized 64-bit hash, not plaintext in the handle.
+//   This is an internal cache fingerprint, not encryption or a collision-free
+//   identity. Handles should not be logged.
 // * A token credential is keyed by its Python object identity. The cache holds a
 //   reference to it, so its address can't be reused by another live credential while
 //   cached. The token value is never read.
-// * A config is keyed by the hash of its `PreparedClientConfig` repr: equal configs
-//   render equal reprs, different configs differ.
+// * A config is keyed by the hash of its Python repr after lossy string conversion,
+//   not by a structural comparison of its fields.
 //
-// The parts are tagged (`mk:` / `tc:` / `cfg:`) so they can't collide.
+// Tags (`mk:` / `tc:` / `cfg:`) distinguish fingerprint kinds, not hash collisions.
 
-// Per-process random salt for the master-key and config-repr hashes. `RandomState`
-// seeds from the OS RNG, so the hash is stable within a process and unpredictable
-// across processes.
+// Reuse one RandomState so fingerprints stay stable within this process.
 static SALTED_HASHER: OnceLock<RandomState> = OnceLock::new();
 
-/// Salted, non-reversible 64-bit hash of a string. Used for the master key (so the
-/// secret never appears) and the config repr (to keep the handle short).
+/// Randomized 64-bit cache fingerprint for a master key or config repr.
 fn salted_hash(value: &str) -> u64 {
     let state = SALTED_HASHER.get_or_init(RandomState::new);
     let mut hasher = state.build_hasher();
@@ -183,13 +145,13 @@ fn master_key_fingerprint(master_key: &str) -> String {
 }
 
 /// Fingerprint a token credential by its Python object identity, tagged `tc:`. The
-/// `mk:` / `tc:` / `cfg:` tags keep the parts from colliding.
+/// tag distinguishes it from a master-key fingerprint.
 fn token_credential_fingerprint(object_id: usize) -> String {
     format!("tc:{object_id:x}")
 }
 
 /// Fingerprint a config from its repr: a `cfg:`-tagged salted hash, or `cfg:none`
-/// when no config was given. Equal configs render equal reprs and share a driver.
+/// when no config was given. Equal repr strings produce equal fingerprints.
 fn config_fingerprint_from_repr(repr: Option<&str>) -> String {
     match repr {
         Some(repr) => format!("cfg:{:016x}", salted_hash(repr)),
@@ -203,8 +165,7 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
     match config {
         None => Ok(config_fingerprint_from_repr(None)),
         Some(cfg) => {
-            // `to_string_lossy` reads the text under abi3 (zero-copy `to_str` is not
-            // in the limited API). A Python repr() is valid UTF-8, so nothing is lost.
+            // Hash the lossy Rust string returned from the Python repr.
             let repr = cfg.repr()?;
             let repr_str = repr.to_string_lossy();
             Ok(config_fingerprint_from_repr(Some(repr_str.as_ref())))
@@ -212,9 +173,8 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
     }
 }
 
-/// Join the endpoint and the two fingerprints into the cache key / handle. The
-/// unit-separator delimiter can't appear in a URL or a fingerprint, so two different
-/// triples never produce the same key.
+/// Join the endpoint and tagged fingerprints with unit separators. Distinct
+/// credentials or configs can still have the same 64-bit fingerprint.
 fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> String {
     format!("{endpoint}\u{1f}{credential_fp}\u{1f}{config_fp}")
 }
@@ -388,27 +348,17 @@ pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Opti
     }
 }
 
-/// The entry point, called once on a rust-backed client's first Rust operation.
-/// It returns the driver handle -- the `(endpoint, credential, config)` cache key
-/// -- and makes sure a rust driver for that key exists:
-///   * Fast path: a driver for this key already exists (another client with the
-///     same endpoint, credential, and config), so just add one reference and reuse
-///     it. This is what makes same-settings clients share one rust driver.
-///   * Slow path: no driver yet, so build one on the shared Tokio runtime (via the
-///     process-wide driver runtime) and insert it as the first reference.
-/// Process-wide vs per-key: the runtimes are shared once for the process; the rust
-/// driver this builds is per key. The optional `config` is a Python
-/// `PreparedClientConfig` of construction settings the driver honors --
-/// preferred_locations, process-wide connection-pool settings, plus account-level
-/// operation options (excluded locations, throttle-retry caps, hedging threshold,
-/// consistency level). They apply when the runtime/driver is first built; later
-/// clients with the same key share the driver.
-/// Without this entry point there would be no way to get or make a client's rust
-/// driver, and no reference counting to share and tear it down safely.
+/// Acquire one reference to a cached driver and return its handle.
+/// The Python backend calls this during lazy initialization, which can be retried
+/// after a driver-build failure. This function does not enforce one call per client.
 ///
-/// Auth is either the `master_key` or a `credential` (a synchronous Python
-/// token credential wrapped as `PyTokenCredential`); the Python factory
-/// supplies exactly one.
+/// A cache hit increments its count. On a miss, build outside the cache lock,
+/// then insert the driver or use the entry another caller inserted in the meantime.
+/// Runtime settings are initialized process-wide; preferred regions and operation
+/// defaults are configured on each newly built driver.
+///
+/// Validate that exactly one of `master_key` and the synchronous Python
+/// `credential` is present. Token credentials are adapted by `PyTokenCredential`.
 
 #[pyfunction]
 #[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
@@ -427,10 +377,8 @@ pub(crate) fn acquire_driver_handle(
     let requested_settings = runtime_settings_from_config(config)?;
     let runtime_ctx = runtime_context(py, requested_settings)?;
 
-    // Fingerprint the credential first so it joins the key: a different credential
-    // must not reuse another's driver. Reading a token credential's identity or
-    // hashing the master key exposes no secret. Erroring when neither is given stops
-    // a credential-less call before it builds a driver.
+    // Include the credential fingerprint without embedding the master key or
+    // fetching a token. Auth input presence/exclusivity was validated above.
     let credential_fp = match credential {
         Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
         None => {
@@ -443,10 +391,8 @@ pub(crate) fn acquire_driver_handle(
     let config_fp = config_fingerprint(config)?;
     let driver_handle = compose_cache_key(endpoint, &credential_fp, &config_fp);
 
-    // Fast path: a driver for this key already exists, so this is another client with
-    // the same endpoint, credential, and config. Add a reference and reuse it. A
-    // write lock is taken because we change the count; acquire_driver_handle runs once per
-    // client.
+    // Fast path: reuse the matching cache entry and add one acquisition.
+    // This changes the count, so it requires a write lock.
     {
         let mut cache = drivers().write();
         if let Some(entry) = cache.get_mut(&driver_handle) {
@@ -504,12 +450,8 @@ pub(crate) fn acquire_driver_handle(
     };
 
     // Build the driver on the shared runtime as a spawned task, then wait on its
-    // handle with the GIL released. Spawning -- rather than running the build
-    // directly on this thread -- lets several clients build at the same time on the
-    // runtime's worker threads instead of competing on the calling threads, which
-    // was making the first call on each of many newly built clients slow. A panic
-    // during the build comes back as a JoinError we turn into a Python error rather
-    // than crashing the process.
+    // handle with the GIL released. Concurrent acquisitions can submit separate
+    // build tasks. Join failures are mapped to Python errors below.
     let driver_runtime = Arc::clone(&runtime_ctx.driver_runtime);
     let build_task = runtime_ctx
         .tokio_rt
@@ -617,7 +559,7 @@ fn validate_region_names(names: &[String]) -> PyResult<()> {
 }
 
 /// Read the optional `user_agent_suffix` and turn it into the driver's
-/// `UserAgentSuffix`, which it stamps on every request's User-Agent. A missing
+/// `UserAgentSuffix` for driver construction. A missing
 /// attribute, a Python `None`, or an empty string yields `None`, leaving the driver's
 /// default SDK User-Agent in place. (`build_client_config` normalizes an empty suffix
 /// to `None`, so an empty string only reaches here from a hand-built config.)
@@ -712,9 +654,9 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
 }
 
 /// Build a driver-level `OperationOptions` from the prepared client config's
-/// per-account settings -- excluded regions, throttle-retry caps, the hedging
-/// threshold, and the chosen read consistency level. These are carried on the
-/// "account" layer the driver applies to every request the client makes.
+/// defaults -- excluded regions, throttle-retry caps, the hedging threshold,
+/// and the chosen read consistency level. Individual operations can also supply
+/// options; this function does not establish their final merged values.
 ///
 /// Missing config or threshold means Python's default: hedging disabled.
 /// Other absent fields keep the driver's defaults. An enabled per-operation
@@ -738,8 +680,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     }
 
     // throttling_max_retry_count / _wait_time_seconds -> ThrottlingRetryOptions.
-    // Carried only when the customer tuned one of them; an untuned client leaves
-    // the driver's defaults (9 retries / 30 s) in place, which match core-python.
+    // Set only when at least one field was supplied; otherwise leave this option
+    // to the driver defaults.
     for name in [
         "throttling_max_retry_count",
         "throttling_max_retry_wait_time_seconds",
@@ -786,11 +728,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     }
 
     // consistency_level -> ReadConsistencyStrategy. Set only when the customer
-    // chose a level at construction; an untuned client carries nothing, so the
-    // driver keeps the account default. The Python layer already rejected the
-    // levels the driver can't carry (Bounded Staleness / Consistent Prefix), so a
-    // value reaching here is one of the supported three; an unrecognized value is
-    // still rejected here rather than dropped.
+    // supplied a non-empty value. This binding accepts Eventual, Session, and
+    // Strong; reject other non-empty values even if Python preparation was bypassed.
     if let Some(level) = get_config_opt::<String>(config, "consistency_level")? {
         if !level.is_empty() {
             match read_consistency_from_str(&level) {
@@ -812,11 +751,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
 
 /// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
 ///
-/// Only the levels the driver supports are accepted: `"Eventual"` and `"Session"`
-/// map directly, and `"Strong"` maps to the driver's `GlobalStrong` (the driver
-/// has no plain `Strong`). Bounded Staleness and Consistent Prefix have no
-/// equivalent and are rejected by the Python layer before they reach here; any
-/// other value returns `None` so the caller raises rather than dropping the level.
+/// This binding maps `"Eventual"` and `"Session"` directly, and `"Strong"` to
+/// `GlobalStrong`. Any other string returns `None` for the caller to reject.
 fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     match level {
         "Eventual" => Some(ReadConsistencyStrategy::Eventual),
@@ -848,17 +784,14 @@ where
     }
 }
 
-/// Drop one client's reference to the per-endpoint driver in the process-local
-/// cache. The driver is evicted only when the last client sharing that account
-/// closes, because the cache is reference-counted, so closing one of several
-/// clients pointed at one account does not break the others. An unknown or
-/// already-evicted handle is a no-op, so close is idempotent.
+/// Release one acquisition for this exact cache handle and evict at zero.
+/// Unknown handles are no-ops, but repeated releases of a still-shared handle
+/// decrement other holders' count. The Python backend must release at most once
+/// per acquisition. Operation-held Arcs can outlive cache eviction.
 #[pyfunction]
 pub(crate) fn release_driver_handle(driver_handle: &str) -> PyResult<()> {
-    // Drop one client's reference; only the last closer evicts the driver. An unknown
-    // handle is a no-op, so close stays idempotent and safe from both close() and
-    // __del__. The evicted entry is removed under the lock but dropped after it, so a
-    // CosmosDriver's teardown never runs while the cache lock is held.
+    // Remove the entry under the lock, then drop its Arc outside the lock.
+    // This drop need not be the driver's final reference.
     let evicted: Option<DriverEntry> = {
         let mut cache = drivers().write();
         let evict = match cache.get_mut(driver_handle) {
@@ -1049,30 +982,25 @@ class ExplicitNone:
         );
     }
 
-    // The reference-counted driver cache evicts an endpoint's driver only when
-    // its last client closes. apply_close is the decision behind that: it must
-    // drop the count by one and report "evict" exactly when the count reaches
-    // zero. This is the rule that stops one client's close from removing the
-    // driver while another client to the same account is still using it.
+    // Test the count/eviction decision in isolation, not a live cache or driver
+    // destructor. The count belongs to one exact handle, not an entire endpoint.
     #[test]
     fn apply_close_drops_one_reference_and_evicts_only_at_zero() {
-        // Two clients share the driver: closing one leaves it alive (one left).
+        // One release from a count of two leaves one acquisition.
         assert_eq!(apply_close(2), (1, false));
-        // The last client closing takes the count to zero and evicts.
+        // Releasing the final count requests eviction.
         assert_eq!(apply_close(1), (0, true));
     }
 
     #[test]
     fn apply_close_on_zero_is_a_saturating_no_op_evict() {
-        // A stray extra close on an already-zero entry must not underflow; it
-        // stays at zero and is reported evictable (a harmless re-remove).
+        // Saturation at zero prevents underflow. It does not make duplicate
+        // releases safe while another acquisition still contributes to the count.
         assert_eq!(apply_close(0), (0, true));
     }
 
-    // The customer's chosen consistency level must reach the driver. The three
-    // supported levels map onto the driver's strategy type (Strong -> GlobalStrong,
-    // the driver has no plain Strong), and anything else returns None so the caller
-    // raises rather than dropping the level.
+    // Check the binding's string-to-strategy mapping, not request transmission
+    // or customer-visible consistency guarantees.
     #[test]
     fn read_consistency_maps_supported_levels() {
         assert_eq!(
@@ -1092,8 +1020,7 @@ class ExplicitNone:
 
     #[test]
     fn read_consistency_rejects_unsupported_and_unknown() {
-        // Bounded Staleness / Consistent Prefix have no driver equivalent; the
-        // Python layer rejects them first, but the binding is defensive too.
+        // This binding mapping does not accept these two Python names.
         assert_eq!(read_consistency_from_str("BoundedStaleness"), None);
         assert_eq!(read_consistency_from_str("ConsistentPrefix"), None);
         // An outright-unknown string is rejected, not dropped.
@@ -1248,16 +1175,13 @@ class Config:
 
     // ---- Cache-key / credential-fingerprint isolation -------------------------
     //
-    // The cache is keyed by (endpoint, credential). These tests pin the security
-    // property that makes that fail-closed: the same credential fingerprints
-    // stably (so it shares a driver), different credentials fingerprint
-    // differently (so they never share -- no silent auth substitution), and a
-    // master key and a token credential can never collide on one fingerprint.
+    // Exercise the endpoint/credential/config key helpers on selected inputs.
+    // Different sample hashes are not proof that 64-bit fingerprints cannot
+    // collide. These tests do not construct drivers or verify auth isolation.
 
     #[test]
     fn master_key_fingerprint_is_stable_for_equal_keys() {
-        // Same key string -> same fingerprint within the process, so two clients
-        // with the same master key share one driver.
+        // Equal key strings produce the same fingerprint within this process.
         assert_eq!(
             master_key_fingerprint("secret-key"),
             master_key_fingerprint("secret-key")
@@ -1266,8 +1190,7 @@ class Config:
 
     #[test]
     fn master_key_fingerprint_differs_for_different_keys() {
-        // Different keys -> different fingerprints, so a different credential is a
-        // cache miss and gets its own driver instead of reusing another's auth.
+        // These two sample keys produce different fingerprints.
         assert_ne!(
             master_key_fingerprint("key-a"),
             master_key_fingerprint("key-b")
@@ -1276,8 +1199,8 @@ class Config:
 
     #[test]
     fn master_key_fingerprint_does_not_leak_the_key() {
-        // The fingerprint must be safe to put in the (logged) handle: it must not
-        // contain the secret in cleartext.
+        // The sample key is not embedded verbatim. This is not a guarantee that
+        // a credential-derived handle is safe to log.
         let key = "super-secret-master-key";
         let fp = master_key_fingerprint(key);
         assert!(fp.starts_with("mk:"));
@@ -1297,8 +1220,8 @@ class Config:
 
     #[test]
     fn token_credential_fingerprint_tracks_object_identity() {
-        // The same object identity (address) fingerprints equally (shared driver);
-        // a different identity fingerprints differently (its own driver).
+        // Compare synthetic object addresses; no live Python credentials or
+        // driver lifetimes are exercised.
         assert_eq!(
             token_credential_fingerprint(0x1000),
             token_credential_fingerprint(0x1000)
@@ -1311,8 +1234,8 @@ class Config:
 
     #[test]
     fn config_fingerprint_is_stable_and_distinguishes() {
-        // Equal config reprs fingerprint equally (shared driver); different reprs
-        // fingerprint differently (its own driver); absent config is a fixed value.
+        // Check stability, separation of these two sample reprs, and the
+        // absent-config sentinel. This is not an exhaustive collision check.
         let a = "PreparedClientConfig(preferred_locations=('West US',))";
         let b = "PreparedClientConfig(preferred_locations=('East US',))";
         assert_eq!(
@@ -1349,17 +1272,17 @@ class Config:
         let cfg_a = config_fingerprint_from_repr(Some("cfg-a"));
         let cfg_b = config_fingerprint_from_repr(Some("cfg-b"));
 
-        // Same endpoint + credential + config -> same key (one shared driver).
+        // Equal endpoint and fingerprint strings produce an equal cache key.
         assert_eq!(
             compose_cache_key(endpoint, &cred_a, &cfg_a),
             compose_cache_key(endpoint, &cred_a, &cfg_a)
         );
-        // A different credential -> different key (no sharing).
+        // Changing this sample credential fingerprint changes the key.
         assert_ne!(
             compose_cache_key(endpoint, &cred_a, &cfg_a),
             compose_cache_key(endpoint, &cred_b, &cfg_a)
         );
-        // A different config -> different key (no sharing, settings honored).
+        // Changing this sample config fingerprint changes the key.
         assert_ne!(
             compose_cache_key(endpoint, &cred_a, &cfg_a),
             compose_cache_key(endpoint, &cred_a, &cfg_b)
@@ -1373,11 +1296,8 @@ class Config:
 
     #[test]
     fn cache_key_delimiter_prevents_aliasing() {
-        // Without separators, ("ab","c","d") and ("a","bc","d") would both
-        // concatenate to "abcd" and alias to one key. The unit-separator delimiter
-        // -- which real endpoints and mk:/tc:/cfg: fingerprints never contain --
-        // keeps every distinct (endpoint, credential, config) triple mapped to a
-        // distinct key.
+        // These triples would alias under plain concatenation. Separators keep
+        // the sample strings distinct; they do not prevent upstream hash collisions.
         assert_ne!(
             compose_cache_key("ab", "c", "d"),
             compose_cache_key("a", "bc", "d")

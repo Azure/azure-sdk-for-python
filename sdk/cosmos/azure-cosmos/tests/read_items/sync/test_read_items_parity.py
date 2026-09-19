@@ -6,15 +6,15 @@
 """Parity tests for ``Container.read_items``.
 
 Each test runs the same batched read once on core-python and once on rust against
-one shared, pre-seeded container, then compares the returned documents. Because
+one shared, pre-seeded container, then compares the returned items. Because
 ``read_items`` fans a batch out into point reads and per-partition queries, these
 cover the shapes that exercise both kinds of leaf: a single item (a point read),
 several items in one partition (a query), and items spread across partitions (a
 fan-out), plus the customer-visible rules -- missing ids omitted and an empty
-result -- so rust returns the same set of documents core-python does.
+result -- so rust returns the same set of items core-python does.
 
-The call under test returns a small projection (each document's id and data)
-rather than the raw documents, so the comparison ignores the server-stamped
+The call under test returns a small projection (each item's id and data)
+rather than the raw items, so the comparison ignores the server-set
 fields (``_rid`` / ``_ts`` / ``_etag`` / ...) that legitimately differ per write.
 """
 from __future__ import annotations
@@ -65,7 +65,7 @@ def _run(container_id, items, description, request_kwargs):
         container = client.get_database_client("parity_db").get_container_client(container_id)
         result = container.read_items(items=items)
         # Project to (id, data) and sort, so the compare is stable and ignores
-        # server-stamped fields and any per-backend ordering.
+        # server-set fields and any per-backend ordering.
         return sorted((doc["id"], doc.get("data")) for doc in result)
 
     comparison = run_on_both_backends(_do, description=description, request_kwargs=request_kwargs)
@@ -74,7 +74,7 @@ def _run(container_id, items, description, request_kwargs):
 
 
 def test_read_items_single_item(seeded):
-    """One item -> read as a point read; same document on both backends."""
+    """One item -> read as a point read; same item on both backends."""
     items = [seeded["seeded"][-1]]  # the lone pk-c item
     _run(seeded["container_id"], items,
          description="read_items single item (point-read leaf)",
@@ -115,7 +115,7 @@ def test_read_items_all_missing(seeded):
 def _run_with_options(container_id, items, description, read_items_kwargs):
     """Same as ``_run`` but forwards extra kwargs to ``read_items`` -- used to
     check that per-request options (availability strategy, custom headers, read
-    timeout) leave the returned documents identical on both backends."""
+    timeout) leave the returned items identical on both backends."""
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_id)
         result = container.read_items(items=items, **read_items_kwargs)
@@ -128,7 +128,7 @@ def _run_with_options(container_id, items, description, read_items_kwargs):
 
 def test_read_items_availability_strategy_disabled(seeded):
     """availability_strategy=False (hedging off) is honored on the rust point
-    leg and returns the same documents as legacy."""
+    leg and returns the same items as legacy."""
     items = [seeded["seeded"][-1]]  # single item -> point read
     _run_with_options(seeded["container_id"], items,
                       description="read_items availability_strategy=False",
@@ -137,7 +137,7 @@ def test_read_items_availability_strategy_disabled(seeded):
 
 def test_L6_read_items_custom_initial_headers(seeded):
     """A non-x-ms customer header on read_items is forwarded on both backends and
-    does not change the returned documents."""
+    does not change the returned items."""
     items = [seeded["seeded"][-1]]
     _run_with_options(seeded["container_id"], items,
                       description="[L6] read_items initial_headers (custom)",
@@ -146,7 +146,7 @@ def test_L6_read_items_custom_initial_headers(seeded):
 
 def test_L7_read_items_read_timeout_falls_back_to_legacy(seeded):
     """read_timeout keeps the point leg on legacy (rust has no per-request read
-    timeout); the returned documents still match legacy."""
+    timeout); the returned items still match legacy."""
     items = [seeded["seeded"][-1]]
     _run_with_options(seeded["container_id"], items,
                       description="[L7] read_items read_timeout (legacy fallback)",

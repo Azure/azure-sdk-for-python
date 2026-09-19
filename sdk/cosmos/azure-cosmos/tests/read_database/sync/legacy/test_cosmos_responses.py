@@ -6,8 +6,8 @@
 """Selected sync database response test pinned to the Rust backend.
 
 An existing test from the main suite, re-run with the client forced onto the
-rust engine. The main suite runs it on whichever engine is the default, so on
-its own it would stop covering rust the moment that default changes.
+Rust engine. The main suite runs it on whichever engine is the default, so on
+its own it would stop covering Rust the moment that default changes.
 
 What it protects: a customer calling ``db.read()`` gets a result they can pull
 response headers off (``get_response_headers()``). Those headers carry the
@@ -39,6 +39,12 @@ class TestCosmosResponses(unittest.TestCase):
         self.addCleanup(self.client.close)
 
     def test_database_read_headers(self):
+        """Reading a database returns populated response headers.
+
+        ``read`` is the plainest operation there is, and its headers still
+        carry the request unit charge. A read path that rebuilds the response
+        from the body alone would lose them.
+        """
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_database_read_headers
         database_id = "responses_test" + str(uuid.uuid4())
         self.addCleanup(self.client.delete_database, database_id)

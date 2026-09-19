@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 create-container-if-not-exists checks, re-run on the rust engine.
+"""The existing legacy create-container-if-not-exists checks, re-run on the Rust engine.
 
 Why this file exists: ``create_container_if_not_exists`` has two legs. If the
 container is not there it creates it; if it is already there it reads it and
@@ -10,7 +10,7 @@ shape. With ``return_properties`` set the call returns a pair whose second half
 carries the response headers -- that is where a customer reads how many request
 units the call cost, and the number differs between the two legs.
 
-What it does: two real v4 tests copied from
+What it does: two real legacy tests copied from
 ``tests/test_cosmos_responses.py``, changed in one place -- the client is built
 with ``_backend="rust"``. ``test_create_container_if_not_exists_headers`` uses
 a fresh id, so it takes the create leg.
@@ -20,7 +20,7 @@ headers are not empty.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``create_container_if_not_exists/sync/test_create_container_if_not_exists_parity.py``)
-run the same call on both engines and diff the results. This file runs on rust
+run the same call on both engines and diff the results. This file runs on Rust
 only and reuses assertions the team already trusts.
 
 Self-contained: it creates and deletes its own database, so the fixed id
@@ -65,6 +65,11 @@ class TestCosmosResponses(unittest.TestCase):
         self.client.close()
 
     def test_create_container_if_not_exists_headers(self):
+        """First call creates the container and returns populated headers.
+
+        This is the create branch: nothing exists yet, so the call really does
+        create. The headers carry the request unit charge.
+        """
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_create_container_if_not_exists_headers
         first_response = self.test_database.create_container_if_not_exists(
             id="responses_test" + str(uuid.uuid4()),
@@ -72,6 +77,16 @@ class TestCosmosResponses(unittest.TestCase):
         assert len(first_response[1].get_response_headers()) > 0
 
     def test_create_container_if_not_exists_headers_negative(self):
+        """Second call finds the container already there and still returns headers.
+
+        Despite the name, nothing fails here. "Negative" means the create was
+        skipped: the same id is requested twice, so the second call takes the
+        already-exists branch and reads the container instead of creating it.
+
+        That branch is a different code path with a different response, and it
+        is the one at risk of coming back with empty headers. A customer
+        reading the request unit charge must get a value either way.
+        """
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_create_container_if_not_exists_headers_negative
         first_response = self.test_database.create_container_if_not_exists(
             id="responses_test",

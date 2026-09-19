@@ -145,7 +145,7 @@ def is_create_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Return whether Rust supports every option on this container create."""
+    """Reject an explicit RID and apply the shared database-request eligibility checks."""
     if request_options.get(Constants.ContainerRID) is not None:
         return False
     return is_read_database_rust_eligible(request_options, operation_kwargs)
@@ -186,7 +186,7 @@ def is_read_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Return whether Rust supports every option on this container read."""
+    """Apply the shared database-request eligibility checks to a container read."""
     return is_read_database_rust_eligible(request_options, operation_kwargs)
 
 

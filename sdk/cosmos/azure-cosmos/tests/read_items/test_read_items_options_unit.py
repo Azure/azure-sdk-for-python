@@ -82,6 +82,21 @@ def _make_async_proxy():
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("diagnosed_ids", [(), ("b",), ("b", "a", "missing")])
 async def test_read_items_retains_available_chunk_diagnostics(is_async, diagnosed_ids):
+    """Diagnostics are collected from whichever legs reported them, and never faked.
+
+    Three items are read as three separate point reads, and the parameters
+    vary which of them come back carrying a diagnostics header: none, one, or
+    all three.
+
+    Whatever arrives is joined into the combined headers, once per leg, with
+    nothing duplicated or dropped. When no leg reported diagnostics the header
+    is absent rather than present-but-empty -- an empty string would look like
+    a call that produced no diagnostics at all.
+
+    Charges are added across all three legs including the missing item, since
+    a lookup that finds nothing still costs. The missing item contributes its
+    charge but no row, and the hook sees exactly the returned result.
+    """
     hook = MagicMock()
     items = [("b", "pk-b"), ("a", "pk-a"), ("missing", "pk-missing")]
     helper_type = ReadItemsHelperAsync if is_async else ReadItemsHelperSync
@@ -116,6 +131,13 @@ async def test_read_items_retains_available_chunk_diagnostics(is_async, diagnose
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "async"])
 async def test_empty_read_items_does_not_invent_diagnostics(is_async):
+    """An empty batch reports empty headers rather than a zero charge.
+
+    Nothing was sent, so there is no charge and no diagnostics to report. The
+    headers come back empty instead of carrying a manufactured
+    ``x-ms-request-charge`` of 0, which would show up in a customer's cost
+    tracking as a real request that never happened.
+    """
     helper_type = ReadItemsHelperAsync if is_async else ReadItemsHelperSync
     helper = helper_type(MagicMock(), _CONTAINER_LINK, [], {}, {"paths": ["/pk"]})
     result = await helper.read_items() if is_async else helper.read_items()

@@ -66,9 +66,9 @@ test_subset_ranges = [(Range("", "FF", True, False),
 
 @pytest.fixture(scope="class")
 def rust_container():
-    # Fresh rust-backed database + container, deleted afterward. Every method in
+    # Fresh Rust-backed database + container, deleted afterward. Every method in
     # this file runs against this one container with the client pinned to the
-    # rust backend, which is what makes this the "rust" column of the parity audit.
+    # Rust backend, which is what makes this the "rust" column of the parity audit.
     client = CosmosClient(HOST, KEY, _backend="rust")
     db_id = "legacy_is_feed_range_subset_sync_" + uuid.uuid4().hex[:8]
     container_id = "c_" + uuid.uuid4().hex[:8]
@@ -89,12 +89,35 @@ class TestFeedRange:
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
     def test_feed_range_is_subset(self, rust_container, parent_feed_range, child_feed_range, is_subset):
+        """A table of parent and child range pairs with the answer pinned for each.
+
+        The cases cover full containment, the same pair the other way round,
+        partial overlap, and two identical ranges with inclusive bounds.
+
+        Both the true and false answers are pinned. Half the value is in the
+        false rows: an implementation that leaned towards saying yes would
+        still pass every containment case while handing back ranges a caller
+        must not treat as covered.
+
+        Inclusive and exclusive bounds are varied deliberately, since that is
+        where an off-by-one at the boundary shows up.
+        """
         # Source: tests/test_feed_range.py::TestFeedRange.test_feed_range_is_subset
         epk_parent_feed_range = FeedRangeInternalEpk(parent_feed_range).to_dict()
         epk_child_feed_range = FeedRangeInternalEpk(child_feed_range).to_dict()
         assert rust_container.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range) == is_subset
 
     def test_feed_range_is_subset_from_pk(self, rust_container):
+        """A range built from a partition key sits inside the full range.
+
+        The full range covers everything from empty to ``FF``, so any single
+        key must fall within it.
+
+        Kept here for the comparison itself: unlike the table above, the child
+        range is produced at runtime rather than written out by hand, so this
+        also confirms a freshly built range is in a shape the comparison
+        understands.
+        """
         # Source: tests/test_feed_range.py::TestFeedRange.test_feed_range_is_subset_from_pk
         epk_parent_feed_range = FeedRangeInternalEpk(Range("", "FF", True, False)).to_dict()
         epk_child_feed_range = rust_container.feed_range_from_partition_key("1")

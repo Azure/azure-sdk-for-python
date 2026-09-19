@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Unchanged v4 policy-replacement methods with isolated Rust setup."""
+"""Unchanged legacy policy-replacement methods with isolated Rust setup."""
 
 import uuid
 import pytest
@@ -14,6 +14,21 @@ class TestFullTextPolicyAsync(AsyncReplacementCase):
         return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
 
     async def test_replace_full_text_container_async(self):
+        """Replace can both add a full text policy and change an existing one.
+
+        Two rounds. First a container with no full text settings is replaced so
+        it gains a policy and matching full text indexes. Then a container
+        created with them already in place is replaced with the path changed to
+        ``/new_path``.
+
+        Each round checks the new values arrived and also that the result
+        differs from what was there before. That second check is what stops the
+        test passing when a replace quietly ignores the request and leaves the
+        old settings in place.
+
+        As with vector search, the policy and the indexes live in different
+        parts of the definition and have to move together.
+        """
         # Source: tests/test_full_text_policy_async.py::TestFullTextPolicyAsync.test_replace_full_text_container_async
         # Replace a container without a full text policy and full text indexing policy
 

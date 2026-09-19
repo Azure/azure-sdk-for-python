@@ -52,7 +52,7 @@ def _legacy_feed_ranges(raw_ranges):
 
 
 def test_rust_parser_matches_legacy_for_multi_range_mixed_case():
-    """Rust payload → feed ranges must be byte-identical to the legacy builder.
+    """Rust payload to feed ranges must be byte-identical to the legacy builder.
 
     Uses multiple ranges with lowercase hex EPKs so a dropped .upper() (or any
     other divergence) would make the two backends produce different opaque
@@ -132,8 +132,12 @@ def test_gate_allows_backend_with_no_kwargs():
 
 
 def test_gate_falls_back_to_legacy_when_kwargs_present():
-    # Legacy forwards unknown kwargs into routing-map reads; the Rust path must
-    # stay off until each knob is mirrored, so any kwarg forces legacy.
+    """Any extra keyword argument sends the call to legacy.
+
+    Legacy forwards unknown keyword arguments into its routing-map reads. The
+    Rust path stays off until each one is matched there, so rather than guess,
+    the gate refuses as soon as it sees anything it was not built to handle.
+    """
     assert (
         can_use_rust_backend_for_read_feed_ranges(
             backend=RUST_BACKEND, kwargs={"partition_key": "x"}

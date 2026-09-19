@@ -1,16 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""The existing v4 autoscale-change check, re-run on the rust engine.
+"""The existing legacy autoscale-change check, re-run on the Rust engine.
 
 Why this file exists: changing a fixed RU/s number and changing an autoscale
 setting are not the same edit. A fixed change writes one number; an autoscale
 change writes a ceiling and a growth step, which live in a nested part of the
 offer document that the SDK has to find and rewrite. The fixed-number test in
-this folder never touches that nested part, so without this file rust could
+this folder never touches that nested part, so without this file Rust could
 send back an autoscale document that keeps the old ceiling and nobody would
 notice until a customer's database stopped scaling to the limit they set.
 
-What it does: the real v4 test copied from ``tests/test_auto_scale.py``,
+What it does: the real legacy test copied from ``tests/test_auto_scale.py``,
 changed in one place -- the client is built with ``_backend="rust"``. It
 creates a database with a 5000 ceiling and 2% step, changes it to a 7000
 ceiling and 20% step, reads it back and checks both new values. It then does
@@ -20,7 +20,7 @@ the offer document format.
 This is NOT the side-by-side comparison. The comparison tests
 (``replace_database_throughput/sync/test_replace_database_throughput_parity.py``)
 run the same change on both engines and diff the results. This file runs on
-rust only.
+Rust only.
 
 Self-contained: it creates and deletes its own database and container.
 
@@ -60,6 +60,17 @@ class TestAutoScale(unittest.TestCase):
         self.key_client.close()
 
     def test_autoscale_replace_throughput(self):
+        """Autoscale settings can be changed after creation, on a database and a container.
+
+        Both start at a 5000 request unit ceiling and are moved to 7000 with a
+        20 percent increment, then read back.
+
+        The increment is the value worth watching. The database starts at 2
+        percent and the container at 0, so a replacement that changed only the
+        ceiling and left the increment alone would be caught in both cases.
+        Starting the container at 0 also means a dropped increment cannot hide
+        behind a falsy default.
+        """
         # Source: tests/test_auto_scale.py::TestAutoScale.test_autoscale_replace_throughput
         database_id = "replace_db" + str(uuid.uuid4())
         container_id = None
