@@ -29,6 +29,30 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AdapterDeploymentOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation states reported by an adapter deployment."""
+
+    ACCEPTED = "Accepted"
+    """The operation was accepted."""
+    RUNNING = "Running"
+    """The operation is running."""
+    SUCCEEDED = "Succeeded"
+    """The operation completed successfully."""
+    FAILED = "Failed"
+    """The operation failed."""
+
+
+class AdapterDeploymentOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation types reported by an adapter deployment."""
+
+    CREATE = "Create"
+    """Creates the adapter deployment."""
+    UPDATE = "Update"
+    """Re-targets the adapter deployment."""
+    DELETE = "Delete"
+    """Deletes the adapter deployment."""
+
+
 class AgentDeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of an agentic deployment, as an Azure resource."""
 
@@ -450,6 +474,8 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GENERIC_REST."""
     REMOTE_TOOL = "RemoteTool"
     """REMOTE_TOOL."""
+    OPEN_API = "OpenAPI"
+    """Connection to an endpoint described by an OpenAPI specification."""
     AMAZON_MWS = "AmazonMws"
     """AMAZON_MWS."""
     CONCUR = "Concur"
@@ -998,6 +1024,78 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class RaiAcsHarmCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Harm categories supported by the Unified Moderate text profile."""
+
+    HATE = "Hate"
+    """Hate-related content."""
+    SELF_HARM = "SelfHarm"
+    """Self-harm-related content."""
+    SEXUAL = "Sexual"
+    """Sexual content."""
+    VIOLENCE = "Violence"
+    """Violent content."""
+    PROMPT_INJECTION = "PromptInjection"
+    """Prompt-injection content."""
+    PROTECTED_MATERIAL_TEXT = "ProtectedMaterialText"
+    """Protected text material."""
+    PROTECTED_MATERIAL_CODE = "ProtectedMaterialCode"
+    """Protected source-code material."""
+
+
+class RaiAcsModerationSubjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The representation sent to AACS moderation capabilities."""
+
+    TEXT = "text"
+    """Moderates the selected policy target as text."""
+    CANONICAL_JSON = "canonical_json"
+    """Moderates the canonical JSON representation of the selected policy target."""
+
+
+class RaiAcsPolicyDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy language supported by the Unified Moderate AACS host profile."""
+
+    REGO = "rego"
+    """A policy evaluated by Rego."""
+
+
+class RaiAcsPolicyTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical policy targets supported by the Unified Moderate AACS host profile."""
+
+    INPUT = "$snap.input"
+    """Selects the incoming user input."""
+    OUTPUT = "$snap.output"
+    """Selects the assistant output."""
+    TOOL_ARGUMENTS = "$snap.tool_call.args"
+    """Selects tool-call arguments."""
+    TOOL_RESULT = "$snap.tool_result.value"
+    """Selects a tool result."""
+
+
+class RaiAcsPolicyTargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical target kinds supported by the Unified Moderate AACS host profile."""
+
+    USER_INPUT = "user_input"
+    """The target contains user input."""
+    ASSISTANT_OUTPUT = "assistant_output"
+    """The target contains assistant output."""
+    TOOL_ARGUMENTS = "tool_args"
+    """The target contains tool-call arguments."""
+    TOOL_RESULT = "tool_result"
+    """The target contains a tool result."""
+
+
+class RaiAcsToolNameSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Snapshot paths for selecting a tool catalog entry. The listed values are recognized by the
+    Unified Moderate AACS host profile; other values are allowed for forward compatibility.
+    """
+
+    TOOL_CALL_NAME = "$snap.tool_call.name"
+    """Selects the tool-call name from the canonical snapshot root."""
+    TOOL_CALL_NAME_ALIAS = "$.tool_call.name"
+    """Selects the tool-call name through the snapshot-root alias."""
+
+
 class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action types to apply to the content filters."""
 
@@ -1091,6 +1189,15 @@ class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """POST_RUN."""
 
 
+class RaiPolicyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public representation used by a RAI policy body."""
+
+    CONTENT_FILTERS = "ContentFilters"
+    """A legacy content-filter policy."""
+    ACS = "ACS"
+    """An Agent Control Specification policy."""
+
+
 class RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1, Blocking=2,
     Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-06-01. It is the same as
@@ -1114,6 +1221,15 @@ class RaiPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """USER_MANAGED."""
     SYSTEM_MANAGED = "SystemManaged"
     """SYSTEM_MANAGED."""
+
+
+class RaiRegoEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport encoding of reusable Rego source."""
+
+    NONE = "None"
+    """The Rego property contains plain UTF-8 source."""
+    BASE64 = "Base64"
+    """The Rego property contains Base64-encoded UTF-8 source."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

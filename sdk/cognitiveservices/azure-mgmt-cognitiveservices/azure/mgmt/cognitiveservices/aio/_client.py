@@ -23,6 +23,7 @@ from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
+    AdapterDeploymentsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
     ArcDeploymentsOperations,
@@ -52,12 +53,14 @@ from .operations import (
     ProjectConnectionsOperations,
     ProjectsOperations,
     QuotaTiersOperations,
+    RaiBindingsOperations,
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
     RaiContentFiltersOperations,
     RaiExternalSafetyProviderOperations,
     RaiExternalSafetyProvidersOperations,
     RaiPoliciesOperations,
+    RaiRegosOperations,
     RaiToolLabelsOperations,
     RaiTopicsOperations,
     ResourceSkusOperations,
@@ -106,6 +109,10 @@ class CognitiveServicesManagementClient(
     :ivar subscription_rai_policy: SubscriptionRaiPolicyOperations operations
     :vartype subscription_rai_policy:
      azure.mgmt.cognitiveservices.aio.operations.SubscriptionRaiPolicyOperations
+    :ivar rai_regos: RaiRegosOperations operations
+    :vartype rai_regos: azure.mgmt.cognitiveservices.aio.operations.RaiRegosOperations
+    :ivar rai_bindings: RaiBindingsOperations operations
+    :vartype rai_bindings: azure.mgmt.cognitiveservices.aio.operations.RaiBindingsOperations
     :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
     :vartype rai_blocklist_items:
      azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistItemsOperations
@@ -143,6 +150,9 @@ class CognitiveServicesManagementClient(
     :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
     :vartype managed_compute_deployments:
      azure.mgmt.cognitiveservices.aio.operations.ManagedComputeDeploymentsOperations
+    :ivar adapter_deployments: AdapterDeploymentsOperations operations
+    :vartype adapter_deployments:
+     azure.mgmt.cognitiveservices.aio.operations.AdapterDeploymentsOperations
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.aio.operations.ComputeOperationsOperations
@@ -213,7 +223,7 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-15-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-15-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -289,6 +299,8 @@ class CognitiveServicesManagementClient(
         self.subscription_rai_policy = SubscriptionRaiPolicyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.rai_regos = RaiRegosOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_bindings = RaiBindingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_blocklist_items = RaiBlocklistItemsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -317,6 +329,9 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.adapter_deployments = AdapterDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.compute_operations = ComputeOperationsOperations(

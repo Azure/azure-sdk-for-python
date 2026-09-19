@@ -39,6 +39,9 @@ def main():
             "properties": {
                 "acceleratorType": "H100_80GB",
                 "deploymentTemplate": "azureml://registries/azureml-openai-oss/deploymenttemplates/gpt-oss-120b-short-context/versions/1",
+                "gatedModelAccess": {
+                    "connectionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroupName/providers/Microsoft.CognitiveServices/accounts/accountName/projects/my-project/connections/my-hf-connection"
+                },
                 "model": "azureml://registries/azureml-openai-oss/models/gpt-oss-120b/versions/4",
                 "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
             },
@@ -48,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/CreateOrUpdateManagedComputeDeployment.json
+# x-ms-original-file: 2026-09-15-preview/CreateOrUpdateManagedComputeDeployment.json
 if __name__ == "__main__":
     main()

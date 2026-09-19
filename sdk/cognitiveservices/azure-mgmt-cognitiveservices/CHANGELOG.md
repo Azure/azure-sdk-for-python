@@ -1,5 +1,58 @@
 # Release History
 
+## 15.0.0b6 (2026-09-18)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `adapter_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_bindings`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_regos`
+  - Enum `ConnectionCategory` added member `OPEN_API`
+  - Model `ManagedComputeDeploymentProperties` added property `gated_model_access`
+  - Model `RaiPolicyProperties` added property `acs`
+  - Model `RaiPolicyProperties` added property `acs_regos`
+  - Model `RaiPolicyProperties` added property `custom_external_safety_providers`
+  - Model `RaiPolicyProperties` added property `format`
+  - Model `Usage` added property `id`
+  - Model `Usage` added property `type`
+  - Added model `AdapterDeployment`
+  - Added model `AdapterDeploymentLastOperation`
+  - Added enum `AdapterDeploymentOperationState`
+  - Added enum `AdapterDeploymentOperationType`
+  - Added model `AdapterDeploymentProperties`
+  - Added model `GatedModelAccessProperties`
+  - Added model `RaiAcsEmptyObject`
+  - Added enum `RaiAcsHarmCategory`
+  - Added model `RaiAcsHarmConfiguration`
+  - Added model `RaiAcsInterventionPoint`
+  - Added model `RaiAcsInterventionPoints`
+  - Added model `RaiAcsManifest`
+  - Added model `RaiAcsModerationBindingExtension`
+  - Added enum `RaiAcsModerationSubjectFormat`
+  - Added model `RaiAcsPolicyBinding`
+  - Added enum `RaiAcsPolicyDefinitionType`
+  - Added enum `RaiAcsPolicyTarget`
+  - Added enum `RaiAcsPolicyTargetKind`
+  - Added model `RaiAcsRegoPolicyDefinition`
+  - Added model `RaiAcsToolDefinition`
+  - Added model `RaiAcsToolInterventionPoint`
+  - Added enum `RaiAcsToolNameSelector`
+  - Added model `RaiBinding`
+  - Added model `RaiBindingProperties`
+  - Added model `RaiPolicyCustomExternalSafetyProviderReference`
+  - Added enum `RaiPolicyFormat`
+  - Added model `RaiRego`
+  - Added enum `RaiRegoEncoding`
+  - Added model `RaiRegoProperties`
+  - Added model `RaiRegoReference`
+  - Model `RaiPoliciesOperations` added parameter `etag` in method `begin_delete`
+  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `RaiPoliciesOperations` added parameter `etag` in method `create_or_update`
+  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `create_or_update`
+  - Added operation group `AdapterDeploymentsOperations`
+  - Added operation group `RaiBindingsOperations`
+  - Added operation group `RaiRegosOperations`
+
 ## 15.0.0b5 (2026-08-27)
 
 ### Features Added

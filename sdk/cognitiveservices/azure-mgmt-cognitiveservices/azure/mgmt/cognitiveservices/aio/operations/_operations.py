@@ -12,12 +12,13 @@ import json
 from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core import AsyncPipelineClient
+from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -60,6 +61,10 @@ from ...operations._operations import (
     build_accounts_list_usages_request,
     build_accounts_regenerate_key_request,
     build_accounts_update_request,
+    build_adapter_deployments_create_or_update_request,
+    build_adapter_deployments_delete_request,
+    build_adapter_deployments_get_request,
+    build_adapter_deployments_list_request,
     build_agent_applications_create_or_update_request,
     build_agent_applications_delete_request,
     build_agent_applications_disable_request,
@@ -171,6 +176,10 @@ from ...operations._operations import (
     build_quota_tiers_get_request,
     build_quota_tiers_list_by_subscription_request,
     build_quota_tiers_update_request,
+    build_rai_bindings_create_or_update_request,
+    build_rai_bindings_delete_request,
+    build_rai_bindings_get_request,
+    build_rai_bindings_list_request,
     build_rai_blocklist_items_batch_add_request,
     build_rai_blocklist_items_batch_delete_request,
     build_rai_blocklist_items_create_or_update_request,
@@ -191,6 +200,10 @@ from ...operations._operations import (
     build_rai_policies_delete_request,
     build_rai_policies_get_request,
     build_rai_policies_list_request,
+    build_rai_regos_create_or_update_request,
+    build_rai_regos_delete_request,
+    build_rai_regos_get_request,
+    build_rai_regos_list_request,
     build_rai_tool_labels_create_or_update_request,
     build_rai_tool_labels_delete_request,
     build_rai_tool_labels_get_request,
@@ -1795,7 +1808,7 @@ class AccountsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def evaluate_deployment_policies(
         self,
@@ -6344,6 +6357,20 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
     async def get(
         self, resource_group_name: str, account_name: str, rai_policy_name: str, **kwargs: Any
     ) -> _models.RaiPolicy:
@@ -6409,13 +6436,16 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RaiPolicy, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -6428,6 +6458,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         rai_policy: _models.RaiPolicy,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RaiPolicy:
         """Update the state of specified Content Filters associated with the Azure OpenAI account.
@@ -6445,6 +6477,11 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: RaiPolicy. The RaiPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.cognitiveservices.models.RaiPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6459,6 +6496,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         rai_policy: _types.RaiPolicy,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RaiPolicy:
         """Update the state of specified Content Filters associated with the Azure OpenAI account.
@@ -6476,6 +6515,11 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: RaiPolicy. The RaiPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.cognitiveservices.models.RaiPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6490,6 +6534,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         rai_policy: IO[bytes],
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RaiPolicy:
         """Update the state of specified Content Filters associated with the Azure OpenAI account.
@@ -6507,18 +6553,43 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: RaiPolicy. The RaiPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.cognitiveservices.models.RaiPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_policy_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
     async def create_or_update(
         self,
         resource_group_name: str,
         account_name: str,
         rai_policy_name: str,
         rai_policy: Union[_models.RaiPolicy, _types.RaiPolicy, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RaiPolicy:
         """Update the state of specified Content Filters associated with the Azure OpenAI account.
@@ -6535,6 +6606,11 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
          IO[bytes] type. Required.
         :type rai_policy: ~azure.mgmt.cognitiveservices.models.RaiPolicy or
          ~azure.mgmt.cognitiveservices.types.RaiPolicy or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: RaiPolicy. The RaiPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.cognitiveservices.models.RaiPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6545,6 +6621,12 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6565,6 +6647,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             account_name=account_name,
             rai_policy_name=rai_policy_name,
             subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6597,18 +6681,43 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RaiPolicy, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_policy_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
     async def _delete_initial(
-        self, resource_group_name: str, account_name: str, rai_policy_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_policy_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6616,6 +6725,12 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -6628,6 +6743,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
             account_name=account_name,
             rai_policy_name=rai_policy_name,
             subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6670,8 +6787,30 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_policy_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
     async def begin_delete(
-        self, resource_group_name: str, account_name: str, rai_policy_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_policy_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified Content Filters associated with the Azure OpenAI account.
 
@@ -6683,6 +6822,11 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
         :param rai_policy_name: The name of the RaiPolicy associated with the Cognitive Services
          Account. Required.
         :type rai_policy_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6699,6 +6843,8 @@ class RaiPoliciesOperations:  # pylint: disable=docstring-missing-param
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 rai_policy_name=rai_policy_name,
+                etag=etag,
+                match_condition=match_condition,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -7176,6 +7322,1146 @@ class SubscriptionRaiPolicyOperations:  # pylint: disable=docstring-missing-para
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class RaiRegosOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
+        :attr:`rai_regos` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_rego_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, account_name: str, rai_rego_name: str, **kwargs: Any
+    ) -> _models.RaiRego:
+        """Gets one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :return: RaiRego. The RaiRego is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RaiRego] = kwargs.pop("cls", None)
+
+        _request = build_rai_regos_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_rego_name=rai_rego_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RaiRego, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_rego_name: str,
+        rai_rego: _models.RaiRego,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiRego:
+        """Creates or replaces one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :param rai_rego: The reusable Rego artifact. Required.
+        :type rai_rego: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiRego. The RaiRego is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_rego_name: str,
+        rai_rego: _types.RaiRego,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiRego:
+        """Creates or replaces one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :param rai_rego: The reusable Rego artifact. Required.
+        :type rai_rego: ~azure.mgmt.cognitiveservices.types.RaiRego
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiRego. The RaiRego is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_rego_name: str,
+        rai_rego: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiRego:
+        """Creates or replaces one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :param rai_rego: The reusable Rego artifact. Required.
+        :type rai_rego: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiRego. The RaiRego is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_rego_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_rego_name: str,
+        rai_rego: Union[_models.RaiRego, _types.RaiRego, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiRego:
+        """Creates or replaces one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :param rai_rego: The reusable Rego artifact. Is either a RaiRego type or a IO[bytes] type.
+         Required.
+        :type rai_rego: ~azure.mgmt.cognitiveservices.models.RaiRego or
+         ~azure.mgmt.cognitiveservices.types.RaiRego or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiRego. The RaiRego is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiRego
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RaiRego] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(rai_rego, (IOBase, bytes)):
+            _content = rai_rego
+        else:
+            _content = json.dumps(rai_rego, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rai_regos_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_rego_name=rai_rego_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RaiRego, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_rego_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_rego_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Deletes one reusable Rego artifact.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_rego_name: The name of the reusable Rego artifact. Required.
+        :type rai_rego_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_rai_regos_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_rego_name=rai_rego_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "top",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, *, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RaiRego"]:
+        """Lists reusable Rego artifacts on an account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :keyword top: The maximum number of reusable Rego artifacts to return. Defaults to 10. Default
+         value is None.
+        :paramtype top: int
+        :return: An iterator like instance of RaiRego
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.RaiRego]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RaiRego]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_rai_regos_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RaiRego],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class RaiBindingsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
+        :attr:`rai_bindings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_binding_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, account_name: str, rai_binding_name: str, **kwargs: Any
+    ) -> _models.RaiBinding:
+        """Gets one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :return: RaiBinding. The RaiBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RaiBinding] = kwargs.pop("cls", None)
+
+        _request = build_rai_bindings_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_binding_name=rai_binding_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RaiBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_binding_name: str,
+        rai_binding: _models.RaiBinding,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiBinding:
+        """Creates or replaces one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :param rai_binding: The RAI binding. Required.
+        :type rai_binding: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiBinding. The RaiBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_binding_name: str,
+        rai_binding: _types.RaiBinding,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiBinding:
+        """Creates or replaces one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :param rai_binding: The RAI binding. Required.
+        :type rai_binding: ~azure.mgmt.cognitiveservices.types.RaiBinding
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiBinding. The RaiBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_binding_name: str,
+        rai_binding: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiBinding:
+        """Creates or replaces one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :param rai_binding: The RAI binding. Required.
+        :type rai_binding: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiBinding. The RaiBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_binding_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_binding_name: str,
+        rai_binding: Union[_models.RaiBinding, _types.RaiBinding, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RaiBinding:
+        """Creates or replaces one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :param rai_binding: The RAI binding. Is either a RaiBinding type or a IO[bytes] type. Required.
+        :type rai_binding: ~azure.mgmt.cognitiveservices.models.RaiBinding or
+         ~azure.mgmt.cognitiveservices.types.RaiBinding or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: RaiBinding. The RaiBinding is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiBinding
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RaiBinding] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(rai_binding, (IOBase, bytes)):
+            _content = rai_binding
+        else:
+            _content = json.dumps(rai_binding, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_rai_bindings_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_binding_name=rai_binding_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RaiBinding, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "rai_binding_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        rai_binding_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Deletes one RAI binding.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param rai_binding_name: The name of the RAI binding. Required.
+        :type rai_binding_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_rai_bindings_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            rai_binding_name=rai_binding_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "top",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, *, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RaiBinding"]:
+        """Lists RAI bindings on an account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :keyword top: The maximum number of RAI bindings to return. Defaults to 50. Default value is
+         None.
+        :paramtype top: int
+        :return: An iterator like instance of RaiBinding
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.RaiBinding]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RaiBinding]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_rai_bindings_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RaiBinding],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class RaiBlocklistItemsOperations:  # pylint: disable=docstring-missing-param
@@ -13371,7 +14657,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -13462,7 +14748,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -13656,7 +14942,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -13752,7 +15038,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _update_initial(
         self,
@@ -13946,7 +15232,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_update(
         self,
@@ -14040,7 +15326,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -14118,7 +15404,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -14189,7 +15475,7 @@ class ArcDeploymentsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-07-15-preview"],
+        api_versions_list=["2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -15195,7 +16481,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -15286,7 +16572,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -15480,7 +16766,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -15576,7 +16862,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _update_initial(
         self,
@@ -15774,7 +17060,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_update(
         self,
@@ -15869,7 +17155,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -15948,7 +17234,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
                 "deployment_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
@@ -16019,7 +17305,7 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
         params_added_on={
             "2026-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -16124,6 +17410,674 @@ class ManagedComputeDeploymentsOperations:  # pylint: disable=docstring-missing-
         return AsyncItemPaged(get_next, extract_data)
 
 
+class AdapterDeploymentsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
+        :attr:`adapter_deployments` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "adapter_deployment_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, account_name: str, adapter_deployment_name: str, **kwargs: Any
+    ) -> _models.AdapterDeployment:
+        """Gets an adapter deployment by name.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :return: AdapterDeployment. The AdapterDeployment is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.AdapterDeployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AdapterDeployment] = kwargs.pop("cls", None)
+
+        _request = build_adapter_deployments_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            adapter_deployment_name=adapter_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AdapterDeployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "adapter_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        adapter_deployment_name: str,
+        resource: Union[_models.AdapterDeployment, _types.AdapterDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_adapter_deployments_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            adapter_deployment_name=adapter_deployment_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        adapter_deployment_name: str,
+        resource: _models.AdapterDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AdapterDeployment]:
+        """Creates an adapter deployment or re-targets it to another compatible managed compute
+        deployment. The source model ID is immutable.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :param resource: The complete adapter deployment resource to create or re-target. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.AdapterDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AdapterDeployment. The AdapterDeployment is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AdapterDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        adapter_deployment_name: str,
+        resource: _types.AdapterDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AdapterDeployment]:
+        """Creates an adapter deployment or re-targets it to another compatible managed compute
+        deployment. The source model ID is immutable.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :param resource: The complete adapter deployment resource to create or re-target. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.types.AdapterDeployment
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AdapterDeployment. The AdapterDeployment is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AdapterDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        adapter_deployment_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AdapterDeployment]:
+        """Creates an adapter deployment or re-targets it to another compatible managed compute
+        deployment. The source model ID is immutable.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :param resource: The complete adapter deployment resource to create or re-target. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AdapterDeployment. The AdapterDeployment is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AdapterDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "adapter_deployment_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        adapter_deployment_name: str,
+        resource: Union[_models.AdapterDeployment, _types.AdapterDeployment, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AdapterDeployment]:
+        """Creates an adapter deployment or re-targets it to another compatible managed compute
+        deployment. The source model ID is immutable.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :param resource: The complete adapter deployment resource to create or re-target. Is either a
+         AdapterDeployment type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.AdapterDeployment or
+         ~azure.mgmt.cognitiveservices.types.AdapterDeployment or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AdapterDeployment. The AdapterDeployment is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AdapterDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AdapterDeployment] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                adapter_deployment_name=adapter_deployment_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AdapterDeployment, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AdapterDeployment].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AdapterDeployment](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    def list(
+        self, resource_group_name: str, account_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AdapterDeployment"]:
+        """Lists adapter deployments associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :return: An iterator like instance of AdapterDeployment
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.AdapterDeployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AdapterDeployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_adapter_deployments_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AdapterDeployment],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "adapter_deployment_name",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, account_name: str, adapter_deployment_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_adapter_deployments_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            adapter_deployment_name=adapter_deployment_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-15-preview",
+        params_added_on={
+            "2026-09-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "adapter_deployment_name",
+            ]
+        },
+        api_versions_list=["2026-09-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, account_name: str, adapter_deployment_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Drains requests and deletes an adapter deployment and its serving snapshot.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param adapter_deployment_name: The account-unique adapter deployment name and inference
+         identity. Required.
+        :type adapter_deployment_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                adapter_deployment_name=adapter_deployment_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
 class ComputeOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -16149,7 +18103,13 @@ class ComputeOperationsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-01-15-preview": ["api_version", "subscription_id", "location", "operation_id", "accept"]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=[
+            "2026-01-15-preview",
+            "2026-03-15-preview",
+            "2026-05-15-preview",
+            "2026-07-15-preview",
+            "2026-09-15-preview",
+        ],
     )
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.ComputeOperationStatus:
         """Gets the status of a compute operation.
@@ -16243,7 +18203,7 @@ class ManagedComputeUsagesOperationGroupOperations:  # pylint: disable=docstring
     @api_version_validation(
         method_added_on="2026-03-15-preview",
         params_added_on={"2026-03-15-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.ManagedComputeUsage"]:
         """List managed compute quota usages for a subscription and location.
@@ -16374,7 +18334,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16463,7 +18423,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -16652,7 +18612,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -16751,7 +18711,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16827,7 +18787,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -16897,7 +18857,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Compute"]:
         """Gets the computes associated with the Cognitive Services account.
@@ -17009,7 +18969,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _start_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17085,7 +19045,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_start(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17161,7 +19121,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _stop_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17237,7 +19197,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_stop(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17313,7 +19273,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _restart_initial(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17389,7 +19349,7 @@ class ComputesOperations:  # pylint: disable=docstring-missing-param
                 "compute_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_restart(
         self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
@@ -17488,7 +19448,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def get(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -17581,7 +19541,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -17781,7 +19741,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -17880,7 +19840,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _update_initial(
         self,
@@ -18078,7 +20038,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_update(
         self,
@@ -18175,7 +20135,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18253,7 +20213,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18332,7 +20292,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(
         self, resource_group_name: str, account_name: str, project_name: str, **kwargs: Any
@@ -18450,7 +20410,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _start_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18528,7 +20488,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_start(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18607,7 +20567,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _stop_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18685,7 +20645,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_stop(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18764,7 +20724,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def _restart_initial(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18842,7 +20802,7 @@ class WorkbenchesOperations:  # pylint: disable=docstring-missing-param
                 "workbench_name",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     async def begin_restart(
         self, resource_group_name: str, account_name: str, project_name: str, workbench_name: str, **kwargs: Any
@@ -18942,7 +20902,7 @@ class ManagedComputeCapacitiesOperations:  # pylint: disable=docstring-missing-p
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview"],
+        api_versions_list=["2026-03-15-preview", "2026-05-15-preview", "2026-07-15-preview", "2026-09-15-preview"],
     )
     def list(
         self, *, offer: str, accelerator_type: Optional[str] = None, deployment_id: Optional[str] = None, **kwargs: Any
@@ -22449,6 +24409,8 @@ class ManagedNetworkSettingsOperations:  # pylint: disable=docstring-missing-par
             "2026-05-15-preview",
             "2026-07-01",
             "2026-07-15-preview",
+            "2026-09-01",
+            "2026-09-15-preview",
         ],
     )
     async def _delete_initial(
@@ -22533,6 +24495,8 @@ class ManagedNetworkSettingsOperations:  # pylint: disable=docstring-missing-par
             "2026-05-15-preview",
             "2026-07-01",
             "2026-07-15-preview",
+            "2026-09-01",
+            "2026-09-15-preview",
         ],
     )
     async def begin_delete(
