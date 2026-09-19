@@ -5,6 +5,9 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.download(name=..., output_name=...)` silently downloading nothing for named data outputs by accepting both RunHistory and ARM asset-type spellings (issue [#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)). Model output types are also compared case- and separator-insensitively.
+- Fixed `MLClient.jobs.stream()` failing for identity-based and SAS-authenticated datastores by using service-provided RunHistory log URLs instead of attempting to sign a new SAS without an account key.
+- Fixed datastore-backed log streaming to resolve canonical datastore URI paths, handle trailing slashes, and generate valid Azure Data Lake Storage Gen2 file SAS URLs.
 
 ## 1.35.0 (2026-09-08)
 
