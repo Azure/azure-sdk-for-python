@@ -35,7 +35,7 @@ import time
 from typing import Any, cast, Final, List, Tuple
 
 import pytest
-from test_base import TestBase, servicePreparer
+from test_base import TestBase, voiceAgentRealtimeServicePreparer
 from devtools_testutils import is_live
 from azure.ai.projects.models import (
     RealtimeConversationItemFunctionCallOutput,
@@ -105,7 +105,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
 
     # To run only this test:
     # pytest tests\agents\test_voice_agent_realtime_livetest.py::TestVoiceAgentRealtimeLivetest::test_realtime_session_lifecycle -s
-    @servicePreparer()
+    @voiceAgentRealtimeServicePreparer()
     def test_realtime_session_lifecycle(self, **kwargs):
         """
         Test opening and cleanly closing a realtime WebSocket session, and receiving the initial
@@ -131,7 +131,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
 
     # To run only this test:
     # pytest tests\agents\test_voice_agent_realtime_livetest.py::TestVoiceAgentRealtimeLivetest::test_realtime_text_turn_produces_audio_and_transcript -s
-    @servicePreparer()
+    @voiceAgentRealtimeServicePreparer()
     def test_realtime_text_turn_produces_audio_and_transcript(self, **kwargs):
         """
         Test sending one typed user turn and receiving a streamed audio + transcript reply.
@@ -195,7 +195,7 @@ class TestVoiceAgentRealtimeLivetest(TestBase):
 
     # To run only this test:
     # pytest tests\agents\test_voice_agent_realtime_livetest.py::TestVoiceAgentRealtimeLivetest::test_realtime_function_tool_call -s
-    @servicePreparer()
+    @voiceAgentRealtimeServicePreparer()
     def test_realtime_function_tool_call(self, **kwargs):
         """
         Test a client-executed function-tool round trip during a live realtime session.
