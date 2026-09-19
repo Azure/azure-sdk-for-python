@@ -2,6 +2,11 @@
 
 ## 2.2.0b2 (Unreleased)
 
+### Features Added
+
+- Added optional response metadata to `ResponseEventStream.emit_failed`. Invalid failure metadata is logged and
+  omitted so metadata validation cannot suppress the original failure response.
+
 ### Bugs Fixed
 
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when

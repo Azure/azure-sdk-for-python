@@ -8,9 +8,9 @@ import json
 from collections.abc import Iterator, MutableMapping
 from typing import Any
 
+from .._metadata_constraints import MAX_METADATA_KEYS, MAX_METADATA_VALUE_LENGTH
+
 _RESERVED_KEY = "_internal_metadata"
-_MAX_METADATA_KEYS = 16
-_MAX_VALUE_LEN = 512
 
 
 class _ResponseInternalMetadataView(MutableMapping[str, Any]):
@@ -52,20 +52,20 @@ class _ResponseInternalMetadataView(MutableMapping[str, Any]):
             separators=(",", ":"),
             sort_keys=True,
         )
-        if len(encoded) > _MAX_VALUE_LEN:
+        if len(encoded) > MAX_METADATA_VALUE_LENGTH:
             raise ValueError(
                 f"internal_metadata encodes to {len(encoded)} chars, exceeding the "
-                f"{_MAX_VALUE_LEN}-char limit of the response metadata value"
+                f"{MAX_METADATA_VALUE_LENGTH}-char limit of the response metadata value"
             )
 
         if not isinstance(metadata, dict):
             metadata = {}
             self._response["metadata"] = metadata
         projected_key_count = len(metadata) + (0 if _RESERVED_KEY in metadata else 1)
-        if projected_key_count > _MAX_METADATA_KEYS:
+        if projected_key_count > MAX_METADATA_KEYS:
             raise ValueError(
                 f"cannot add internal_metadata: response metadata already has "
-                f"{len(metadata)} keys (limit {_MAX_METADATA_KEYS})"
+                f"{len(metadata)} keys (limit {MAX_METADATA_KEYS})"
             )
         metadata[_RESERVED_KEY] = encoded
 
