@@ -329,9 +329,30 @@ async def test_history_respects_limit(tmp_path: Path) -> None:
         ids = await provider.get_history_item_ids("r_prev", None, limit=3)
         # Chronological order is oldest-first; truncation must keep the newest IDs.
         assert ids == ["out1", "out2", "out3"]
-        # Non-positive limit returns empty.
+        ids_all = await provider.get_history_item_ids("r_prev", None, limit=-1)
+        assert ids_all == ["hist1", "hist2", "in1", "in2", "out1", "out2", "out3"]
+        # Zero still returns empty.
         ids_zero = await provider.get_history_item_ids("r_prev", None, limit=0)
         assert ids_zero == []
+
+
+@pytest.mark.asyncio
+async def test_history_unlimited_preserves_all_conversation_items(tmp_path: Path) -> None:
+    for _label, factory in _make_provider_factories(tmp_path):
+        provider = factory()
+        expected = []
+        for turn in range(3):
+            items = [_input_item(f"in_{turn}_{index}") for index in range(50)]
+            output = _output_item(f"out_{turn}")
+            await provider.create_response(
+                _response(f"r_{turn}", conversation_id="conv-1", output=[output]),
+                items,
+                history_item_ids=None,
+            )
+            expected.extend(item["id"] for item in items)
+            expected.append(output["id"])
+        assert await provider.get_history_item_ids(None, "conv-1", limit=-1) == expected
+        assert await provider.get_history_item_ids(None, "conv-1", limit=10) == expected[-10:]
 
 
 @pytest.mark.asyncio
