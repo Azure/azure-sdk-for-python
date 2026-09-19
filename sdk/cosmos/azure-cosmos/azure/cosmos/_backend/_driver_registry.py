@@ -5,10 +5,10 @@
 # -------------------------------------------------------------------------
 """Python client registrations and process-policy reservations for Rust drivers.
 
-Driver identity is (canonical endpoint, credential identity, client config).
-Matching live registrations increment a count. Strict driver isolation rejects
-a second identity for an account; default mode permits it. Credential keys retain
-no master-key secret.
+Driver identity is supplied by the binding's cache-key function. Canonical
+endpoints group registrations for the per-account strict-isolation policy only;
+they do not determine whether native drivers share. Matching identities are
+allowed in strict mode; default mode also permits distinct identities.
 
 register_driver_client reserves identity, proxy and transport policies as one
 transaction. release_driver_client drops provisional holds while retaining live
@@ -21,20 +21,20 @@ acquisition and driver creation remain lazy and are owned by the binding.
 """
 from __future__ import annotations
 
-import hashlib
 import threading
 from fractions import Fraction
 from typing import Any, Dict, Optional, Tuple
 from urllib.parse import urlsplit, urlunsplit
 
 from .contracts import PreparedClientConfig
+from ._binding_conversions import acquire_driver_handle_args
 
 
-class StrictDriverIsolationError(ValueError):
+class _StrictDriverIsolationError(ValueError):
     """Raised by this guard (in the python wrapper) when, under strict isolation, a
     later ``CosmosClient`` would make the binding build a *second* driver (rust driver)
-    for an account: it targets an account another live client already targets, but
-    with a credential or config that matches no driver live for that account.
+    for an account: its native cache identity matches no registered client for
+    that account. Endpoint spelling, credential and config all contribute.
 
     Opt-in: it fires only when strict isolation is enabled (the
     ``COSMOS_RUST_STRICT_ISOLATION`` env var or the factory toggle), and it fires at
@@ -82,11 +82,12 @@ _READ_TIMEOUT_POLICY: Optional[float] = None
 _READ_TIMEOUT_POLICY_SET: bool = False
 
 
-# Canonical endpoint -> counts for registered (credential_key, config) identities.
+# Canonical account endpoint -> counts for (native identity, config) reservations.
+# Config is retained for process-policy reservations, not driver-identity equality.
 # Counts include temporary initialization reservations and do not prove a native
 # driver exists. Empty identities/accounts are removed on release. Guarded by _LOCK.
 _LOCK = threading.RLock()
-_REGISTRY: Dict[str, Dict[Tuple[Any, Optional[PreparedClientConfig]], int]] = {}
+_REGISTRY: Dict[str, Dict[Tuple[str, Optional[PreparedClientConfig]], int]] = {}
 _FROZEN_RUNTIME_POLICY: Optional[tuple[Optional[bool], Optional[float], Optional[float]]] = None
 
 
@@ -113,7 +114,7 @@ def _restore_policy_state(state: tuple) -> None:
 
 
 def register_driver_client(
-    endpoint: str, config: Optional[PreparedClientConfig], credential_key: Any, strict: bool = False
+    endpoint: str, config: Optional[PreparedClientConfig], driver_identity: str, strict: bool = False
 ) -> None:
     """Reserve all startup policies and driver identity as one transaction."""
     with _LOCK:
@@ -121,7 +122,7 @@ def register_driver_client(
         try:
             register_proxy_policy(config)
             register_transport_timeout_policy(config)
-            _register_client_identity(endpoint, config, credential_key, strict)
+            _register_client_identity(endpoint, config, driver_identity=driver_identity, strict=strict)
         except BaseException:
             _restore_policy_state(previous)
             raise
@@ -137,11 +138,11 @@ def freeze_runtime_policy(settings: tuple[Optional[bool], Optional[float], Optio
 
 
 def release_driver_client(
-    endpoint: str, config: Optional[PreparedClientConfig], credential_key: Any
+    endpoint: str, config: Optional[PreparedClientConfig], driver_identity: str
 ) -> None:
     """Release provisional reservations, retaining live clients and native runtime settings."""
     with _LOCK:
-        _release_client_identity(endpoint, config, credential_key)
+        _release_client_identity(endpoint, config, driver_identity=driver_identity)
         if _FROZEN_RUNTIME_POLICY is not None:
             freeze_runtime_policy(_FROZEN_RUNTIME_POLICY)
         else:
@@ -153,8 +154,7 @@ def release_driver_client(
 
 
 def _canonicalize_endpoint(endpoint: str) -> str:
-    """Normalize an account endpoint so trivial URL variants of the same account
-    share one registry entry.
+    """Group account URL variants for strict-policy checks, not cache identity.
 
     Lowercases scheme and host (DNS is case-insensitive), drops a default port and
     a trailing slash, and discards any query or fragment. Conservative on purpose:
@@ -183,22 +183,26 @@ def _canonicalize_endpoint(endpoint: str) -> str:
         return endpoint
 
 
-def make_credential_key(master_key: Optional[str], token_credential: Optional[Any]) -> Any:
-    """Reduce a client's credential to a hashable identity matching the binding's.
+def make_driver_identity(
+    endpoint: str,
+    master_key: Optional[str],
+    config: Optional[PreparedClientConfig],
+    token_credential: Optional[Any],
+) -> str:
+    """Ask the binding for its cache identity without acquiring a driver.
 
-    The factory supplies exactly one of the two. A token credential is keyed by its
-    object identity (``id``), which equals the raw pointer the binding uses as its key
-    (``as_ptr``); the client holds a strong reference for its whole life, so that
-    identity is stable while it is registered. A master key is reduced to a
-    SHA-256 digest, so registry keys do not retain the plaintext secret.
-    Equal master keys produce equal digests; this is not a collision-free
-    identity guarantee. Both ``None`` keys as ``None``.
+    No Python approximation is used when the extension is absent or outdated.
+    The returned identity is internal and must not be logged.
     """
-    if token_credential is not None:
-        return id(token_credential)
-    if master_key is not None:
-        return "mk:" + hashlib.sha256(master_key.encode("utf-8")).hexdigest()
-    return None
+    from azure.cosmos import _rust
+
+    identity_function = getattr(_rust, "_driver_identity", None)
+    if not callable(identity_function):
+        raise RuntimeError(
+            "The compiled azure.cosmos._rust extension does not export _driver_identity; "
+            "rebuild it from the current source."
+        )
+    return identity_function(*acquire_driver_handle_args(endpoint, master_key, config, token_credential))
 
 
 def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
@@ -301,37 +305,35 @@ def register_transport_timeout_policy(config: Optional[PreparedClientConfig]) ->
 def _register_client_identity(
     endpoint: str,
     config: Optional[PreparedClientConfig] = None,
-    credential_key: Any = None,
+    *,
+    driver_identity: str,
     strict: bool = False,
 ) -> None:
     """Record one live client against ``endpoint``. Called by the python wrapper when a
     client is opened, before and independently of the binding building any driver.
 
-    The client's driver identity is its ``(credential_key, config)`` pair -- the
-    same key (with the endpoint) the binding keys its rust-driver cache by. A
-    client matching an existing registration increments its count without a
-    strict-isolation error. A new pair is handled as follows:
+    The binding supplies the exact cache identity. A client matching an existing
+    identity records its reservation without a strict-isolation error. A new
+    identity is handled as follows:
 
-    * strict -- raise ``StrictDriverIsolationError`` without recording, so the
+    * strict -- raise ``_StrictDriverIsolationError`` without recording, so the
       failed client never enters a count (it is not built, so it must not be
       released later) and the existing counts stay correct.
     * default -- register the new identity; native acquisition occurs separately.
 
     The first client to an account always records, whatever its strict flag.
-    ``PreparedClientConfig`` compares by value and ``None`` (an untuned client)
-    compares cleanly, so two untuned clients -- or two with equal settings and the
-    same credential -- share one driver and never trigger the strict check.
+    Config equality is used only to balance process-policy reservations;
+    strict-mode acceptance uses native identity alone.
 
     :param endpoint: The account endpoint the client targets (canonicalized here).
     :param config: The client's prepared config, or ``None`` when untuned.
-    :param credential_key: The client's credential identity from
-        ``make_credential_key``; ``None`` keys an unspecified credential.
+    :param driver_identity: The binding's cache key from ``make_driver_identity``.
     :param strict: When ``True``, building a new driver raises instead of isolating.
-    :raises StrictDriverIsolationError: In strict mode, when this client's pair
-        matches no driver already live for the account.
+    :raises _StrictDriverIsolationError: In strict mode, when this client's native
+        identity matches no registration already live for the account.
     """
     key = _canonicalize_endpoint(endpoint)
-    driver = (credential_key, config)
+    driver = (driver_identity, config)
     with _LOCK:
         live = _REGISTRY.get(key)
         if live is None:
@@ -340,18 +342,18 @@ def _register_client_identity(
         if driver in live:
             live[driver] += 1
             return
-        if strict:
+        if strict and not any(identity == driver_identity for identity, _ in live):
             # Do NOT record: the client construction is about to fail, so it must not
             # count against the account (it will never call _release_client_identity).
-            raise StrictDriverIsolationError(
+            raise _StrictDriverIsolationError(
                 "Strict driver isolation is enabled and another CosmosClient is "
-                "already active against {endpoint!r} with a different configuration "
-                "or credential. The Rust backend (_backend='rust') would build a "
+                "already active against {endpoint!r} with a different native driver "
+                "identity. The Rust binding would build a "
                 "second, separate per-account driver to honor this client's settings "
                 "(credential, preferred/excluded locations, consistency level, "
                 "throttling, hedging, user-agent suffix). To proceed, give this client "
-                "the same credential and configuration as an existing one, disable "
-                "strict isolation (COSMOS_RUST_STRICT_ISOLATION), or build it in a "
+                "the same account, credential and configuration as an existing one, "
+                "change the internal test isolation policy, or build it in a "
                 "separate process.".format(endpoint=endpoint)
             )
         live[driver] = 1
@@ -360,7 +362,8 @@ def _register_client_identity(
 def _release_client_identity(
     endpoint: str,
     config: Optional[PreparedClientConfig] = None,
-    credential_key: Any = None,
+    *,
+    driver_identity: str,
 ) -> None:
     """Drop one registration; remove identity/account entries when counts reach zero.
 
@@ -370,7 +373,7 @@ def _release_client_identity(
     still shared by other clients would decrement their count.
     """
     key = _canonicalize_endpoint(endpoint)
-    driver = (credential_key, config)
+    driver = (driver_identity, config)
     with _LOCK:
         live = _REGISTRY.get(key)
         if live is None:

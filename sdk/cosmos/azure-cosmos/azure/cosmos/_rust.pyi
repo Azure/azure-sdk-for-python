@@ -4,7 +4,7 @@
 
 from typing import Any
 
-class ItemFeedCursor:
+class _ItemFeedCursor:
     def __init__(self) -> None: ...
     @property
     def has_more(self) -> bool: ...

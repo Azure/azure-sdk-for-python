@@ -37,9 +37,10 @@ that case is supported on Rust, and the gates go away once the Rust path reaches
 """
 from __future__ import annotations
 
-from ._backend.partition_key import PartitionKeyInput
+from ._backend.partition_key_input import BindingPartitionKey
 
 from dataclasses import dataclass, replace
+from copy import deepcopy
 import time
 from typing import Any, Callable, Mapping, Optional, Union, cast
 
@@ -152,7 +153,7 @@ def can_use_rust_backend_for_query_page(
 
     has_partition_key = "partitionKey" in options
     partition_key_value = options.get("partitionKey")
-    partition_key_wire = PartitionKeyInput("cross_partition")
+    partition_key_wire = BindingPartitionKey("cross_partition")
     if has_partition_key:
         try:
             partition_key_wire = normalize_partition_key(partition_key_value)
@@ -410,11 +411,11 @@ def _build_feed_request(
     if continuation is None:
         continuation = raw_continuation
     raw_partition_key = headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-    partition_key = PartitionKeyInput("cross_partition")
+    partition_key = BindingPartitionKey("cross_partition")
     if resource_type == "docs" and "partitionKey" in options:
         partition_key = normalize_partition_key(options["partitionKey"])
         if partition_key.kind == "empty_sentinel":
-            partition_key = PartitionKeyInput("cross_partition")
+            partition_key = BindingPartitionKey("cross_partition")
     elif resource_type == "docs" and raw_partition_key is not None:
         partition_key = parse_customer_partition_key_header(raw_partition_key)
     if query_payload is not None:
@@ -427,7 +428,7 @@ def _build_feed_request(
             query_payload.get("query") if query_payload is not None else None
         ),
         parameters=tuple(query_payload.get("parameters") or ()) if isinstance(query_payload, Mapping) else (),
-        partition_key=partition_key if resource_type == "docs" else PartitionKeyInput("cross_partition"),
+        partition_key=partition_key if resource_type == "docs" else BindingPartitionKey("cross_partition"),
         max_item_count=max_item_count,
         continuation=continuation,
         headers=headers,
@@ -611,11 +612,12 @@ def finalize_rust_page_response(
         last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
             get_query_advice_info(query_advice_raw)
         )
+    client_connection.last_response_headers = deepcopy(last_response_headers)
     if response_headers is not None:
         response_headers.clear()
-        response_headers.update(last_response_headers)
+        response_headers.update(deepcopy(last_response_headers))
     if response_hook:
-        response_hook(last_response_headers, parsed)
+        response_hook(deepcopy(last_response_headers), parsed)
     return last_response_headers
 
 
@@ -639,7 +641,7 @@ def process_query_page(  # pylint: disable=too-many-arguments
     )
     parsed = cast(dict[str, Any], parsed_response)
     last_response_headers = parsed_response.get_response_headers()
-    client_connection.last_response_headers = last_response_headers
+    client_connection.last_response_headers = deepcopy(last_response_headers)
     last_response_headers = finalize_rust_page_response(
         client_connection=client_connection,
         req_headers=req_headers,

@@ -11,29 +11,116 @@ shared conversions for the synchronous and asynchronous backends.
 """
 from __future__ import annotations
 
+import json
 from typing import Any, Mapping, Optional
 from dataclasses import replace
 
 from azure.core.utils import CaseInsensitiveDict
 
-from .contracts import BackendResponse, ContainerMetadata, PreparedClientConfig
-from .errors import BackendProtocolError
+from .contracts import (
+    BackendResponse, ContainerMetadata, PreparedClientConfig,
+    PreparedQuery, PreparedRequest, QueryPage, QueryScope,
+)
+from .errors import BindingProtocolError
+from .operations import (
+    OP_LIST_CONTAINERS, OP_LIST_DATABASES, OP_READ_ALL_ITEMS,
+    OP_QUERY_ITEMS_CHANGE_FEED, OP_QUERY_ITEMS,
+)
 from ..exceptions import CosmosHttpResponseError
+from .._operation_deadline import remaining_timeout
+
+
+_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
+
+
+def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
+    """Adapt sync/async page requests to the binding's request object.
+
+    Reuse the pager's serialized service query body when available. Retained
+    query scope travels separately. Only headers and typed page settings change
+    between fetches; change-feed and parameterless-feed bodies keep their shape.
+    """
+    if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
+        body = json.dumps(prepared.change_feed, separators=(",", ":")).encode("utf-8")
+    elif prepared.op in _PARAMETERLESS_FEED_OPS:
+        body = b""
+    elif prepared.query_body is not None:
+        body = prepared.query_body
+    else:
+        if prepared.query is None:
+            raise ValueError("{} requires PreparedQuery.query.".format(prepared.op))
+        payload: dict[str, Any] = {"query": prepared.query}
+        if prepared.parameters:
+            payload["parameters"] = list(prepared.parameters)
+        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    headers = dict(prepared.headers)
+    query_settings = prepared.settings.query
+    if prepared.continuation is not None:
+        headers.pop("x-ms-continuation", None)
+        query_settings = replace(query_settings, continuation=prepared.continuation)
+    if prepared.max_item_count is not None:
+        headers.pop("x-ms-max-item-count", None)
+        query_settings = replace(query_settings, max_item_count=prepared.max_item_count)
+    query_scope = None
+    if prepared.op == OP_QUERY_ITEMS and prepared.cursor is not None:
+        query_scope = prepared.query_scope or QueryScope()
+    return PreparedRequest(
+        op=prepared.op,
+        container_link=prepared.container_link,
+        body_bytes=body,
+        partition_key=prepared.partition_key,
+        headers=headers,
+        settings=replace(prepared.settings, query=query_settings),
+        query_scope=query_scope,
+    )
+
+
+def page_dispatch_arguments(
+    driver_handle: str,
+    request: PreparedRequest,
+    prepared: PreparedQuery,
+    deadline: Optional[float],
+) -> tuple[tuple[Any, ...], dict[str, Optional[float]]]:
+    """Compute the remaining budget immediately before sync or async dispatch."""
+    args: tuple[Any, ...] = (driver_handle, request)
+    if prepared.cursor is not None:
+        args += (prepared.cursor,)
+    kwargs = (
+        {"timeout_seconds": remaining_timeout(deadline)}
+        if prepared.cursor is not None or deadline is not None
+        else {}
+    )
+    return args, kwargs
+
+
+def build_query_page(prepared: PreparedQuery, response: BackendResponse) -> QueryPage:
+    """Attach continuation and retained-query cursor state to one response."""
+    cursor = prepared.cursor if prepared.op == OP_QUERY_ITEMS else None
+    return QueryPage(
+        status_code=response.status_code,
+        continuation=response.headers.get("x-ms-continuation") if response.headers else None,
+        sub_status=response.sub_status,
+        headers=response.headers,
+        body=response.body,
+        diagnostics=response.diagnostics,
+        has_more=cursor.has_more if cursor is not None else None,
+        continuation_supported=cursor.continuation_supported if cursor is not None else True,
+    )
 
 
 def build_container_metadata(raw: Any) -> ContainerMetadata:
     """Validate the native metadata contract once, without JSON or response state."""
     if not isinstance(raw, tuple) or len(raw) != 4:
-        raise BackendProtocolError("The binding returned invalid container metadata")
+        raise BindingProtocolError("The binding returned invalid container metadata")
     rid, paths, kind, system_key = raw
     if not isinstance(rid, str) or not rid:
-        raise BackendProtocolError("Container metadata requires a non-empty rid")
+        raise BindingProtocolError("Container metadata requires a non-empty rid")
     if not isinstance(paths, tuple) or any(not isinstance(path, str) or not path for path in paths):
-        raise BackendProtocolError("Container metadata requires a tuple of non-empty paths")
+        raise BindingProtocolError("Container metadata requires a tuple of non-empty paths")
     if kind not in (None, "Hash", "MultiHash", "Range") or bool(paths) != (kind is not None):
-        raise BackendProtocolError("Container metadata contains an invalid partition-key definition")
+        raise BindingProtocolError("Container metadata contains an invalid partition-key definition")
     if system_key is not None and not isinstance(system_key, bool):
-        raise BackendProtocolError("Container metadata system_key must be bool or None")
+        raise BindingProtocolError("Container metadata system_key must be bool or None")
     return ContainerMetadata(rid, paths, kind, system_key)
 
 
@@ -43,10 +130,10 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     from .._helpers._response_parse import apply_response_diagnostics, apply_request_charge_format
 
     if len(error.args) != 1 or not isinstance(error.args[0], tuple) or len(error.args[0]) != 5:
-        raise BackendProtocolError("The binding returned an invalid metadata error")
+        raise BindingProtocolError("The binding returned an invalid metadata error")
     response = build_backend_response(*error.args[0])
     if response.status_code < 400:
-        raise BackendProtocolError("The binding returned a non-error metadata failure")
+        raise BindingProtocolError("The binding returned a non-error metadata failure")
     headers = CaseInsensitiveDict(response.headers or {})
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)

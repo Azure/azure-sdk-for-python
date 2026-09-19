@@ -41,14 +41,14 @@ from .documents import IndexingMode
 from ._cosmos_responses import CosmosDict
 from ._helpers._item_dispatch import get_selected_backend
 from ._helpers._page_response_hook import wrap_page_response_hook
-from ._helpers.container_helper import ContainerHelper
+from ._helpers._container_operations import ContainerHelper
 from ._helpers._request_container import (
     parse_container_create_args,
     prepare_container_get_or_create_read,
     validate_container_create_kwargs,
 )
-from ._helpers.database_helper import DatabaseHelper
-from ._helpers.database_throughput_helper import (
+from ._helpers._database_operations import DatabaseHelper
+from ._helpers._database_throughput import (
     get_database_throughput,
     replace_database_throughput,
 )

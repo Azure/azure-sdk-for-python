@@ -24,8 +24,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 from azure.core import MatchConditions
 
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -82,7 +82,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         options = cc.UpsertItem.call_args.kwargs["options"]
         self.assertEqual(options["accessCondition"], {"type": "IfNoneMatch", "condition": "*"})
 
-    def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
+    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
         awaited and the refreshed rid is written into the options."""
         cc = MagicMock()

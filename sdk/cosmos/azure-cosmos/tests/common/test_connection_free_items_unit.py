@@ -30,17 +30,17 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse, ContainerMetadata, PreparedRequest
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults, ClientLastResponseHeaders
 from azure.cosmos._helpers import _request_item
-from azure.cosmos._helpers.item_helper import ItemHelper, build_item_request, normalize_item_arguments
+from azure.cosmos._helpers._item_operations import ItemHelper, build_item_request, normalize_item_arguments
 from common.request_preparation import call_item_helper
 from azure.cosmos._helpers._paths import parse_paths
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.item_helper import build_item_request as async_execute_item_builder
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._item_operations import build_item_request as async_execute_item_builder
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from azure.cosmos._read_items_helper import ReadItemsHelperSync
@@ -289,8 +289,8 @@ def test_standalone_item_execution(async_mode, op):
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("metadata", [
-    BackendProtocolError("missing metadata"), BackendProtocolError("invalid rid"),
-    BackendProtocolError("invalid partition key"),
+    BindingProtocolError("missing metadata"), BindingProtocolError("invalid rid"),
+    BindingProtocolError("invalid partition key"),
     CosmosResourceNotFoundError(status_code=404, message="missing"), AttributeError("lookup failed"),
 ])
 def test_native_preparation_failure_propagates_without_a_python_metadata_call(async_mode, metadata):
@@ -309,7 +309,7 @@ def test_native_preparation_failure_propagates_without_a_python_metadata_call(as
     backend = AsyncBackend() if async_mode else Backend()
     backend.metadata = metadata
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
-    with pytest.raises((BackendProtocolError, CosmosResourceNotFoundError, AttributeError)):
+    with pytest.raises((BindingProtocolError, CosmosResourceNotFoundError, AttributeError)):
         invoke(helper, "create_item")
     assert len(backend.events) == 1
     assert backend.events[0].op == "create_item"
@@ -420,8 +420,8 @@ def test_all_public_point_methods_work_with_no_connection(async_mode, op):
                 "azure.cosmos._base",
                 "azure.cosmos._cosmos_client_connection",
                 "azure.cosmos.aio._cosmos_client_connection_async",
-                "azure.cosmos._helpers.legacy_item_helper",
-                "azure.cosmos.aio._helpers.legacy_item_helper",
+                "azure.cosmos._helpers._legacy_item_operations",
+                "azure.cosmos.aio._helpers._legacy_item_operations",
             ) or (module == "azure.cosmos._helpers._item_dispatch"
                   and frame.f_code.co_name.startswith("build_")):
                 legacy_calls.append((module, frame.f_code.co_name))

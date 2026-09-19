@@ -10,12 +10,10 @@ turns the sweep rows into an explicit verdict per (op, backend):
 
   2. Automated knee. Walking the concurrency ladder, the first level whose
      throughput gain over the previous level falls below KNEE_GAIN (default 5%) is
-     the plateau, the single-process saturation point. If throughput is still
-     climbing at the top of the ladder we report NO PLATEAU REACHED.
+     a low-gain point. It is not proof of an inherent single-process ceiling.
 
-  3. Saturation flags. A point is only a trustworthy ceiling if it is not error- or
-     CPU-bound: we flag err% > MAX_ERR_PCT or system CPU > MAX_SYS_CPU so host
-     saturation is not mistaken for the SDK's limit.
+  3. Error/system-CPU flags identify conditions to investigate. Low whole-host
+     CPU does not exclude a bottleneck on one thread.
 
   4. Crossover. Per op, the Rust-vs-core throughput ratio across shared concurrency
      levels (geomean and range).
@@ -43,6 +41,7 @@ import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import EXPECTED_RUNTIME, OPERATIONS, post_warmup, summary_rows
 
 try:
     from azure.cosmos import CosmosClient
@@ -56,16 +55,16 @@ MAX_ERR_PCT = 0.5       # a point above this error fraction is not a clean ceili
 MAX_SYS_CPU = 85.0      # system CPU above this means host-bound, not SDK-bound.
 
 # runtime_backend (live class) each config_backend label must resolve to.
-_EXPECTED_RUNTIME = {"core-python": {"core-python"}, "rust": {"AsyncRustBackend"}}
+_EXPECTED_RUNTIME = EXPECTED_RUNTIME
 
 
 def geomean(xs):
     return math.exp(sum(math.log(x) for x in xs) / len(xs)) if xs else 0.0
 
 
-def parse_wid(wid):
+def parse_wid(wid, prefix="sweep-"):
     """sweep-<op>-<backend>-c<N>-<stampdate>-<stamptime> -> (op, backend, conc)."""
-    body = wid[len("sweep-"):]
+    body = wid[len(prefix):]
     fields = body.split("-")
     core = fields[:-2]                       # strip the 2-field stamp
     cidx = max(i for i, f in enumerate(core) if f.startswith("c") and f[1:].isdigit())
@@ -117,6 +116,8 @@ def main():
                     help="fractional throughput gain below which a level is a plateau")
     _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
+    if any(not math.isfinite(x) or x < 0 for x in (args.warmup, args.knee_gain)):
+        ap.error("Warmup and gain threshold must be finite and nonnegative")
 
     container = _connect()
     stamp = args.stamp or _latest_stamp(container, args.prefix)
@@ -129,9 +130,7 @@ def main():
 
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.config_backend, c.operation, c.runtime_backend, "
-            "c.elapsed_seconds, c.window_seconds, c.count, c.errors, "
-            "c.ru_sum, c.ru_count, c.system_cpu_percent, c.p99_ms, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @p) AND ENDSWITH(c.workload_id, @s)",
             parameters=[
                 {"name": "@p", "value": args.prefix},
@@ -147,12 +146,16 @@ def main():
     # Group post-warmup windows per (op, backend, concurrency).
     cells = {}
     labels = {}
-    for r in rows:
+    for r in summary_rows(rows):
         wid = r.get("workload_id") or ""
         try:
-            op, bk, conc = parse_wid(wid)
+            op, bk, conc = parse_wid(wid, args.prefix)
         except (ValueError, IndexError):
             continue
+        if r.get("operation") != OPERATIONS.get(op):
+            continue
+        if r.get("config_backend") != bk or r.get("config_concurrency") != conc:
+            raise ValueError(f"Workload label and recorded configuration disagree: {wid}")
         key = (op, bk, conc)
         cells.setdefault(key, []).append(r)
         labels.setdefault(key, {})
@@ -167,7 +170,7 @@ def main():
 
     # ---- backend match check (enforced) ----
     print("\n### GATE: backend purity per (op, backend, concurrency) ###")
-    gate_fail = False
+    gate_fail = not bool(labels)
     for key in sorted(labels):
         op, bk, conc = key
         expected = _EXPECTED_RUNTIME.get(bk)
@@ -194,21 +197,24 @@ def main():
     # Reduce each cell to a pooled point.
     points = {}
     for key, rs in cells.items():
-        post = [r for r in rs if (r.get("elapsed_seconds") or 0) > args.warmup]
+        post = [r for r in rs if post_warmup(r, args.warmup)]
         if not post:
+            gate_fail = True
+            print(f"  FAIL {key}: no complete post-warmup windows")
             continue
         cnt = sum(r.get("count") or 0 for r in post)
         wsec = sum(r.get("window_seconds") or 0 for r in post)
         err = sum(r.get("errors") or 0 for r in post)
         ru = sum(r.get("ru_sum") or 0 for r in post)
         ruc = sum(r.get("ru_count") or 0 for r in post)
-        if wsec <= 0:
+        if wsec <= 0 or cnt <= 0:
+            gate_fail = True
             continue
         points[key] = {
             "n": len(post),
             "thr": cnt / wsec,
-            "rups": ru / wsec if wsec else 0.0,
-            "ru_op": (ru / ruc) if ruc else 0.0,
+            "rups": ru / wsec if ruc else float("nan"),
+            "ru_op": (ru / ruc) if ruc else float("nan"),
             "err_pct": 100.0 * err / (cnt + err) if (cnt + err) else 0.0,
             "syscpu": max((r.get("system_cpu_percent") or 0) for r in post),
             "p99": max((r.get("p99_ms") or 0) for r in post),
@@ -219,7 +225,7 @@ def main():
         backends = sorted({k[1] for k in points if k[0] == op})
         print(f"\n### {op} ###")
         print(f"{'backend':11s} {'conc':>5s} {'pts':>4s} {'ops/s':>9s} {'RU/s':>9s} "
-              f"{'RU/op':>6s} {'err%':>6s} {'sys%':>5s} {'p99ms':>7s}  note")
+              f"{'RU/op':>6s} {'err%':>6s} {'sys%':>5s} {'maxWinP99ms':>11s}  note")
         for bk in backends:
             ladder = sorted([k[2] for k in points if k[0] == op and k[1] == bk])
             prev = None
@@ -246,7 +252,7 @@ def main():
                 pk = points[(op, bk, peak)]
                 if knee_conc is not None:
                     kp = points[(op, bk, knee_conc)]
-                    print(f"    -> {bk}: saturates at concurrency {knee_conc} "
+                    print(f"    -> {bk}: first low-gain point at concurrency {knee_conc} "
                           f"(~{kp['thr']:,.0f} ops/s, {kp['rups']:,.0f} RU/s); "
                           f"peak ~{pk['thr']:,.0f} ops/s at c{peak}.")
                 else:

@@ -6,7 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, fields
 import math
 from typing import Any, ClassVar, Literal, Optional, Union, get_args, get_origin, get_type_hints
-from .partition_key import PartitionKeyInput
+from .partition_key_input import BindingPartitionKey
 
 
 _ANNOTATIONS: dict[type, dict[str, Any]] = {}
@@ -123,21 +123,21 @@ class RequestSettings(_ValidatedSettings):
             raise ValueError("throughput_bucket must be an unsigned 32-bit integer")
 
 
-def request_settings_schema() -> dict[str, tuple[str, ...]]:
+def _request_settings_schema() -> dict[str, tuple[str, ...]]:
     """Field inventory compared with the native reader before driver acquisition."""
     return {
         cls.__name__: tuple(member.name for member in fields(cls))
-        for cls in (RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings, PartitionKeyInput)
+        for cls in (RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings, BindingPartitionKey)
     }
 
 
 def native_settings_contract_error(native: Any) -> Optional[str]:
     """Defer incompatibility until Rust is selected, without blocking legacy use."""
-    exported = getattr(native, "request_settings_schema", None)
+    exported = getattr(native, "_request_settings_schema", None)
     if exported is None:
         return "Incompatible native request protocol: rebuild azure.cosmos._rust for typed settings."
     actual = exported()
-    expected = request_settings_schema()
+    expected = _request_settings_schema()
     if actual.keys() != expected.keys() or any(set(actual[name]) != set(fields) for name, fields in expected.items()):
         return "Python/native request settings schemas differ; rebuild azure.cosmos._rust."
     return None

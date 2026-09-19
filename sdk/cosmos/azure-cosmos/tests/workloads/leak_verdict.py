@@ -17,10 +17,12 @@ account.
 """
 
 import argparse
+import math
 import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import EXPECTED_RUNTIME, summary_rows
 
 try:
     from azure.cosmos import CosmosClient
@@ -184,7 +186,7 @@ def spark(ys):
 
 # runtime_backend (the live class) that each config_backend label must resolve
 # to. A row that does not match -- or is None/blank -- fails the backend match check.
-_EXPECTED_RUNTIME = {"core-python": {"core-python"}, "rust": {"AsyncRustBackend"}}
+_EXPECTED_RUNTIME = EXPECTED_RUNTIME
 
 
 def _connect():
@@ -236,8 +238,7 @@ def main():
 
     rows = list(
         container.query_items(
-            "SELECT c.config_backend, c.operation, c.runtime_backend, "
-            "c.elapsed_seconds, c.memory_bytes, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @p) AND ENDSWITH(c.workload_id, @s)",
             parameters=[
                 {"name": "@p", "value": args.prefix},
@@ -253,26 +254,26 @@ def main():
     # ---- backend match check (enforced) ----
     grp = {}                                  # (config_backend, op) -> [(elapsed, rss)]
     labels = {}                               # (config_backend, op) -> {runtime_backend: count}
-    err_docs = {}                             # (config_backend, op) -> count of error documents
-    for r in rows:
+    processes = {}
+    for r in summary_rows(rows):
         bk = r.get("config_backend")
         op = r.get("operation")
         key = (bk, op)
-        # Error documents are a separate doc type: perf_reporter writes them with an
-        # error_message and none of the measurement fields -- no memory_bytes,
-        # elapsed_seconds, or runtime_backend. They must stay out of the backend match
-        # gate, or their missing runtime_backend reads as a None "mismatch" and fails
-        # a clean run. Tally them instead, so a real error surge is still visible.
-        if r.get("memory_bytes") is None:
-            err_docs[key] = err_docs.get(key, 0) + 1
+        if op not in ("ReadItem", "CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem", "PatchItem"):
             continue
+        processes.setdefault(key, set()).add(r.get("process_id") or r["workload_id"])
+        if len(processes[key]) > 1:
+            raise ValueError(f"RSS trends require one process per operation/backend, got {key}")
+        memory = r.get("memory_bytes")
+        if isinstance(memory, bool) or not isinstance(memory, (int, float)) or not math.isfinite(memory) or memory <= 0:
+            raise ValueError(f"Missing or invalid RSS measurement for {r['workload_id']}")
         grp.setdefault(key, []).append((r.get("elapsed_seconds"), r.get("memory_bytes")))
         labels.setdefault(key, {})
         rb = r.get("runtime_backend")
         labels[key][rb] = labels[key].get(rb, 0) + 1
 
     print("\n### GATE: backend purity per (config_backend, op) ###")
-    gate_fail = False
+    gate_fail = not bool(grp)
     for (bk, op), seen in sorted(labels.items()):
         expected = _EXPECTED_RUNTIME.get(bk)
         bad = expected is None or any(rb not in expected for rb in seen)
@@ -282,12 +283,6 @@ def main():
             print(f"  FAIL {bk:11s} {op:11s} runtime_backend={seen} (expected all '{exp}')")
     if not gate_fail:
         print("  OK -- every row's runtime_backend matches its config_backend label.")
-    if err_docs:
-        total_err = sum(err_docs.values())
-        print(f"  NOTE: {total_err} error document(s) excluded from the gate/trend "
-              f"(separate doc type, no measurement fields):")
-        for (bk, op), n in sorted(err_docs.items()):
-            print(f"    {bk:11s} {op:11s} error_docs={n}")
     print("GATE:", "FAIL" if gate_fail else "PASS",
           "(None/blank/mismatched runtime_backend rows mean the backend is unconfirmed)")
 
@@ -309,6 +304,7 @@ def main():
             pts = sorted([(e, m / 1e6) for e, m in grp.get((bk, op), [])
                           if e is not None and m and e > WARMUP_S], key=lambda x: x[0])
             if len(pts) < 3:
+                gate_fail = True
                 print(f"{op:11s} {len(pts):4d}  (insufficient post-warmup points)")
                 continue
             first_rss, rss_now = pts[0][1], pts[-1][1]

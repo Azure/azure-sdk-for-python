@@ -15,6 +15,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
 
@@ -26,6 +28,7 @@ KEY = os.environ.get(
 )
 
 
+@pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
@@ -69,4 +72,3 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
             throughput_bucket=None,
         )
         assert replaced["value"] == 999
-

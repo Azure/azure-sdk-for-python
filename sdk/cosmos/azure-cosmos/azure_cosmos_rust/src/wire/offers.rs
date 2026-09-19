@@ -171,7 +171,7 @@ async fn run_read_offer_future(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         custom_headers,
     );
@@ -208,7 +208,7 @@ async fn run_replace_offer_future(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );

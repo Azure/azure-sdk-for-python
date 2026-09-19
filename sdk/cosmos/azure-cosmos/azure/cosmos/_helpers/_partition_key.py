@@ -7,9 +7,9 @@ from __future__ import annotations
 import json
 from typing import Any, Sequence
 
-from .._backend.partition_key import PartitionKeyInput, UNDEFINED_PARTITION_KEY
+from .._backend.partition_key_input import BindingPartitionKey, UNDEFINED_PARTITION_KEY
 from ..partition_key import NonePartitionKeyValue, _Empty, _Undefined
-from .._backend.partition_key import PartitionKeyComponent
+from .._backend.partition_key_input import PartitionKeyComponent
 from ._wire_encoding import normalize_utf16_surrogates
 
 
@@ -30,16 +30,16 @@ def _scalar(value: Any) -> PartitionKeyComponent:
     raise TypeError("Unsupported partition-key component type")
 
 
-def normalize_partition_key(value: Any) -> PartitionKeyInput:
+def normalize_partition_key(value: Any) -> BindingPartitionKey:
     """Preserve point/feed-range sentinel rules, including empty-sequence provenance."""
     if isinstance(value, _Undefined):
-        return PartitionKeyInput("components", (UNDEFINED_PARTITION_KEY,))
+        return BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))
     if isinstance(value, _Empty) or value is NonePartitionKeyValue:
-        return PartitionKeyInput("empty_sentinel")
+        return BindingPartitionKey("empty_sentinel")
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
         if not value:
-            return PartitionKeyInput("empty_sequence")
-        return PartitionKeyInput(
+            return BindingPartitionKey("empty_sequence")
+        return BindingPartitionKey(
             "components",
             tuple(
                 (
@@ -50,12 +50,12 @@ def normalize_partition_key(value: Any) -> PartitionKeyInput:
                 for component in value
             ),
         )
-    return PartitionKeyInput("components", (_scalar(value),))
+    return BindingPartitionKey("components", (_scalar(value),))
 
 
-def query_partition_key_components(components: Sequence[Any]) -> PartitionKeyInput:
+def query_partition_key_components(components: Sequence[Any]) -> BindingPartitionKey:
     """Query/change-feed normalization retains undefined hierarchical components."""
-    return PartitionKeyInput(
+    return BindingPartitionKey(
         "components",
         tuple(
             (
@@ -68,17 +68,17 @@ def query_partition_key_components(components: Sequence[Any]) -> PartitionKeyInp
     )
 
 
-def parse_customer_partition_key_header(header: str) -> PartitionKeyInput:
+def parse_customer_partition_key_header(header: str) -> BindingPartitionKey:
     """Decode an explicitly supplied HTTP header, never an internally serialized key."""
     values = json.loads(header)
     if not isinstance(values, list):
         raise ValueError("Partition-key header must contain a JSON array")
     if not values:
-        return PartitionKeyInput("cross_partition")
+        return BindingPartitionKey("cross_partition")
     return normalize_partition_key(values)
 
 
-def partition_key_bookmark_value(key: PartitionKeyInput) -> str:
+def partition_key_bookmark_value(key: BindingPartitionKey) -> str:
     """Keep existing persisted bookmark identities; this is not the native transport."""
     if key.kind != "components":
         raise ValueError("A scoped bookmark requires partition-key components")

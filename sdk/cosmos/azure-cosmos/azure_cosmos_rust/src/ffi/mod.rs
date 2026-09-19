@@ -6,7 +6,7 @@
 //!
 //! Where this fits in the layering (same direction as a normal call):
 //!
-//!     Python client -> RustBackend (Python) -> a function here (binding)
+//!     Python client -> RustBinding (Python) -> a function here (binding)
 //!         -> looks up the rust driver by handle
 //!         -> runs the driver's work on the shared Tokio runtime
 //!
@@ -35,7 +35,7 @@
 //!     constructed operation. These inputs are separate even when calls share
 //!     a driver and its caches.
 
-use crate::wire::partition_key::{extract_partition_key, PartitionKeyInput};
+use crate::wire::partition_key_input::{extract_partition_key, BindingPartitionKey};
 use pyo3::types::PyTuple;
 use pyo3::{exceptions::PyValueError, prelude::*};
 
@@ -69,20 +69,30 @@ const DELETE_ITEM_PARTITION_KEY_REQUIRED: &str = "delete_item requires an explic
 const READ_ITEM_PARTITION_KEY_REQUIRED: &str = "read_item requires an explicit partition key";
 const PATCH_ITEM_ID_REQUIRED: &str = "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)";
 
-type CommonInputs = (String, PartitionKeyInput, RequestHeadersAndOptions);
-type ItemInputs = (String, PartitionKeyInput, RequestHeadersAndOptions, String);
+type CommonInputs = (String, BindingPartitionKey, RequestHeadersAndOptions);
+type ItemInputs = (String, BindingPartitionKey, RequestHeadersAndOptions, String);
 type ItemBodyInputs = (
     String,
-    PartitionKeyInput,
+    BindingPartitionKey,
     RequestHeadersAndOptions,
     String,
     Vec<u8>,
 );
-type QueryInputs = (String, PartitionKeyInput, RequestHeadersAndOptions, Vec<u8>);
+type BodyInputs = (String, BindingPartitionKey, RequestHeadersAndOptions, Vec<u8>);
 type OfferReplaceInputs = (RequestHeadersAndOptions, String, Vec<u8>);
-type ReadAllInputs = (String, PartitionKeyInput, RequestHeadersAndOptions);
+type ReadAllInputs = (String, BindingPartitionKey, RequestHeadersAndOptions);
 type ReadFeedRangesInputs = (String, bool);
-type FeedRangeFromPartitionKeyInputs = (String, PartitionKeyInput);
+type FeedRangeFromPartitionKeyInputs = (String, BindingPartitionKey);
+
+fn validate_prepared_operation(prepared: &Bound<'_, PyAny>, expected: &str) -> PyResult<()> {
+    crate::wire::settings::validate_request_protocol(prepared)?;
+    if prepared.getattr("op")?.extract::<String>()? != expected {
+        return Err(PyValueError::new_err(format!(
+            "PreparedRequest.op does not match binding operation {expected}"
+        )));
+    }
+    Ok(())
+}
 
 /// Pull the common fields (container link, partition-key header, per-request
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
@@ -99,7 +109,7 @@ fn extract_item_inputs(
 ) -> PyResult<ItemInputs> {
     let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
-    if matches!(partition_key, PartitionKeyInput::Extract) {
+    if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(partition_key_error));
     }
     let item_id = extract_required_item_id(prepared, item_id_error)?;
@@ -112,10 +122,7 @@ fn extract_item_inputs(
 /// Without this shared extractor, create and upsert could disagree on that
 /// preference and fallback behavior.
 fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyInputs> {
-    let container_link = prepared.getattr("container_link")?.extract()?;
-    let partition_key = extract_partition_key(prepared)?;
-    let modifiers = extract_account_prepared_modifiers(prepared)?;
-    let body_bytes = extract_body_bytes(prepared)?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     let item_id = extract_create_item_id(prepared, &body_bytes)?;
     Ok((
         container_link,
@@ -134,10 +141,7 @@ fn extract_item_body_inputs(
     prepared: &Bound<'_, PyAny>,
     error_message: &'static str,
 ) -> PyResult<ItemBodyInputs> {
-    let container_link = prepared.getattr("container_link")?.extract()?;
-    let partition_key = extract_partition_key(prepared)?;
-    let modifiers = extract_account_prepared_modifiers(prepared)?;
-    let body_bytes = extract_body_bytes(prepared)?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     let item_id = extract_required_item_id(prepared, error_message)?;
     Ok((
         container_link,
@@ -148,8 +152,8 @@ fn extract_item_body_inputs(
     ))
 }
 
-/// Common fields plus a required query body. Used by query_items (sync/async).
-fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
+/// Common fields and body, shared by item writes, queries and offer reads.
+fn extract_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<BodyInputs> {
     let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
@@ -161,9 +165,7 @@ fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
 /// account-level, non-partitioned resource, so the container link and partition-key
 /// header on the PreparedRequest are unused here (matches `read_offer`).
 fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
-    let (_container_link, _partition_key, modifiers): CommonInputs =
-        extract_common_prepared_inputs(prepared)?;
-    let body_bytes = extract_body_bytes(prepared)?;
+    let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     let offer_id = extract_required_item_id(prepared, REPLACE_OFFER_ID_REQUIRED)?;
     Ok((modifiers, offer_id, body_bytes))
 }
@@ -201,8 +203,9 @@ fn extract_feed_range_from_partition_key_inputs(
 // What "async" means here, precisely (grounded in `wire/`):
 //   * Driver work is spawned on the binding's Tokio runtime. No Python worker
 //     thread is reserved for the full operation, but argument extraction, result
-//     conversion, and credential callbacks still acquire the GIL. Credential
-//     callbacks can block the thread polling the driver future.
+//     conversion, and credential callbacks still acquire the GIL. Synchronous
+//     credential acquisition is offloaded to a blocking worker; an async
+//     credential is awaited through its Python bridge.
 //   * The spawned Rust task is turned into a Python awaitable by
 //     `pyo3_async_runtimes::tokio::future_into_py`. That is a library that maps
 //     a Rust future onto an object the customer's asyncio event loop can
@@ -214,12 +217,12 @@ fn extract_feed_range_from_partition_key_inputs(
 //     cancellation. This does not guarantee immediate cleanup or undo service
 //     work already submitted.
 //
-// The Python async backend (`aio/_backend/rust.py`) dispatches to these.
+// The Python async backend (`aio/_backend/binding.py`) dispatches to these.
 //
 // Layering (async path) -- same downward direction as the sync path, the tail
 // end just returns to asyncio instead of blocking:
 //
-//     async Python client -> AsyncRustBackend (Python) -> a *_item_async here
+//     async Python client -> AsyncRustBinding (Python) -> a *_item_async here
 //         -> look up the rust driver by handle (GIL held)
 //         -> spawn the driver's work on the shared Tokio runtime
 //         -> hand asyncio a Python awaitable (via pyo3-async-runtimes)

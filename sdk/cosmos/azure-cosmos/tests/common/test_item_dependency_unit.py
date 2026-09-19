@@ -38,17 +38,17 @@ from azure.cosmos import CosmosDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers import _item_prep, _response_parse
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
-from azure.cosmos._helpers.item_helper import ItemHelper, normalize_item_arguments
-from azure.cosmos._helpers.legacy_item_helper import (
+from azure.cosmos._helpers._item_operations import ItemHelper, normalize_item_arguments
+from azure.cosmos._helpers._legacy_item_operations import (
     LegacyItemHelper,
     prepare_legacy_item_arguments,
 )
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from common.test_connection_free_items_unit import Backend, AsyncBackend
 from create_item.test_create_item_contract_unit import point_create
 from read_item.test_read_item_contract_unit import point_read

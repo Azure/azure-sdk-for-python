@@ -13,7 +13,7 @@ who reuse a feed-range value in a later call."""
 
 from __future__ import annotations
 
-from ._backend.partition_key import PartitionKeyInput
+from ._backend.partition_key_input import BindingPartitionKey
 
 from typing import Any, Mapping
 
@@ -58,7 +58,7 @@ def build_read_feed_ranges_prepared_request(
         op=OP_READ_FEED_RANGES,
         container_link=normalized_container_link,
         body_bytes=body_bytes,
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers={},
         item_id=None,
     )
@@ -232,7 +232,7 @@ def build_is_feed_range_subset_prepared_request(
         op=OP_IS_FEED_RANGE_SUBSET,
         container_link="",
         body_bytes=body_bytes,
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers={},
         item_id=None,
     )

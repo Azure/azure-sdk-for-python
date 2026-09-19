@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async version of the item helper in azure/cosmos/_helpers/item_helper.py.
+"""Async version of the item helper in azure/cosmos/_helpers/_item_operations.py.
 
 The steps and their order are the same, and the first three of them are
 imported from that file rather than copied. Read it for what the steps are
@@ -20,7 +20,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from ..._helpers._item_context import ItemClientDefaults, ClientLastResponseHeaders
-from ..._helpers.item_helper import (
+from ..._helpers._item_operations import (
     normalize_item_arguments, validate_rust_item_options,
     build_item_request,
 )

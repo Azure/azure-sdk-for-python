@@ -61,13 +61,11 @@ def test_baseline_returns_read_item_prepared_with_no_body():
     assert prepared.item_id == "order-42"
 
 
-def test_baseline_stamps_container_rid_into_headers():
-    """The container rid is set under the key the binding turns into
-    ``x-ms-cosmos-intended-collection-rid``. This is the same guard against a
-    dropped-and-recreated container that ``create_item`` and ``delete_item``
-    get: if someone deletes the container and makes a new one with the same
-    name, the rid no longer matches and the service rejects the read instead
-    of silently answering from the replacement container."""
+def test_baseline_preserves_container_resource_id():
+    """The prepared request's test header view contains the supplied resource id.
+
+    No native HTTP request or service-side enforcement is exercised here.
+    """
     prepared = prepare_read_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",

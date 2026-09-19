@@ -22,6 +22,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey
 
 
@@ -32,6 +34,7 @@ KEY = os.environ.get(
 )
 
 
+@pytest.mark.cosmosEmulator
 class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -84,4 +87,3 @@ class TestNoneOptions(unittest.TestCase):
             throughput_bucket=None,
         )
         assert read_back["id"] == item["id"]
-

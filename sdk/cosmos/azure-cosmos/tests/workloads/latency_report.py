@@ -7,19 +7,20 @@ multiple requests or retries, so its duration is not one wire round trip.
 
 Merge available window histograms rather than averaging their percentiles.
 Results retain histogram quantization and the workload's range clamping.
-Missing windows or omitted failures are not reconstructed. The fallback
-count-weighted average of scalar percentiles is only a summary, not a
-pooled percentile, and is not guaranteed to err in one direction.
+Missing histograms make pooled percentiles unavailable; omitted failures are
+not reconstructed from scalar percentiles.
 
 Run latency_report.py with --run-id and --prefix after configuring the
 results account.
 """
 
 import argparse
+import math
 import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import OPERATIONS, add_histogram, split_workload_id, summary_rows
 
 try:
     from azure.cosmos import CosmosClient
@@ -71,13 +72,10 @@ def _split_wid(workload_id: str):
     LAST two dash fields and the backend is everything between the op and run id —
     never taken positionally from a fixed index.
     """
-    parts = workload_id.split("-")
-    if len(parts) < 5:
+    try:
+        return split_workload_id(workload_id)
+    except ValueError:
         return None, None, ""
-    run_id = parts[-2] + "-" + parts[-1]
-    op = parts[1]
-    backend = "-".join(parts[2:-2])
-    return op, backend, run_id
 
 
 def _latest_run_id(container, prefix: str) -> str:
@@ -106,11 +104,7 @@ def _aggregate(container, prefix: str, run_id: str):
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.count, c.errors, c.throttled_429, "
-            "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms, c.driver_commit, "
-            "c.config_arrival_rate, c.config_concurrency, c.config_proxy_enabled, "
-            "c.config_num_clients, c.config_use_sync, "
-            "c.attempt_calls, c.retry_calls "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
@@ -122,15 +116,15 @@ def _aggregate(container, prefix: str, run_id: str):
     )
     agg = {}
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in rows:
-        op, backend, _ = _split_wid(r["workload_id"])
-        if op is None:
+    for r in summary_rows(rows):
+        op, backend, _ = split_workload_id(r["workload_id"], prefix)
+        if r.get("operation") != OPERATIONS.get(op):
             continue
         key = (op, backend)
         if backend and "rust" in backend.lower():
             prov_rust += 1
             _dc = str(r.get("driver_commit") or "").strip()
-            if _dc:
+            if _driver_gate.is_stamped_commit(_dc):
                 prov_commits.add(_dc)
             else:
                 prov_missing += 1
@@ -157,7 +151,12 @@ def _aggregate(container, prefix: str, run_id: str):
         c = int(r.get("count", 0) or 0)
         a["count"] += c
         a["errors"] += int(r.get("errors", 0) or 0)
-        a["throttled_429"] += int(r.get("throttled_429", 0) or 0)
+        for field in ("throttled_429", "attempt_calls", "retry_calls"):
+            value = r.get(field)
+            if value is None or value < 0 or a[field] is None:
+                a[field] = None
+            else:
+                a[field] += int(value)
         a["arrival_rates"].add(float(r.get("config_arrival_rate", 0.0) or 0.0))
         a["concurrencies"].add(int(r.get("config_concurrency", 0) or 0))
         # -1 / None mean the field was absent, i.e. an older harness wrote the
@@ -166,18 +165,12 @@ def _aggregate(container, prefix: str, run_id: str):
         a["client_counts"].add(int(_nc) if _nc is not None else -1)
         _us = r.get("config_use_sync")
         a["sync_values"].add(bool(_us) if _us is not None else None)
-        a["proxy_values"].add(bool(r.get("config_proxy_enabled", False)))
-        a["attempt_calls"] += int(r.get("attempt_calls", 0) or 0)
-        a["retry_calls"] += int(r.get("retry_calls", 0) or 0)
+        a["proxy_values"].add(r.get("config_proxy_enabled"))
         a["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
-        mr = float(r.get("mean_ru", 0.0) or 0.0)
-        if mr:
-            a["ru_weighted"] += mr * c
-            a["ru_count"] += c
+        a["ru_weighted"] += float(r.get("ru_sum", 0.0) or 0.0)
+        a["ru_count"] += int(r.get("ru_count", 0) or 0)
         hb = r.get("hist_b64")
-        if hb:
-            a["hist"].decode_and_add(hb)
-        else:
+        if not add_histogram(a["hist"], hb, c):
             a["no_hist_windows"] += 1
             a["scalar_p999_weighted"] += float(r.get("p99_9_ms", 0.0) or 0.0) * c
     return agg, (sorted(prov_commits), prov_missing, prov_rust)
@@ -185,26 +178,26 @@ def _aggregate(container, prefix: str, run_id: str):
 
 def _pctile_ms(a, q):
     """Pooled percentile in ms from the merged histogram (values are in µs)."""
-    if a["count"] <= 0:
+    if a["count"] <= 0 or a["no_hist_windows"]:
         return float("nan")
     return a["hist"].get_value_at_percentile(q) / 1000.0
 
 
 def _mean_ms(a):
     """Pooled arithmetic mean in ms from the merged histogram."""
-    if a["count"] <= 0:
+    if a["count"] <= 0 or a["no_hist_windows"]:
         return float("nan")
     return a["hist"].get_mean_value() / 1000.0
 
 
 def _fmt_cell(op, backend, a):
     rps = a["count"] / a["window_s"] if a["window_s"] else 0.0
-    ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else 0.0
+    ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else float("nan")
     exact = a["no_hist_windows"] == 0
-    note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64 (approx)"
+    note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
     return (
         f"  {op:8s} {backend:11s} count={a['count']:>9d} err={a['errors']:>4d} "
-        f"429={a['throttled_429']:>4d} retries={a['retry_calls']:>4d} rps={rps:>8.1f} "
+        f"429={str(a['throttled_429']):>4s} retries={str(a['retry_calls']):>4s} rps={rps:>8.1f} "
         f"mean={_mean_ms(a):>6.2f} p50={_pctile_ms(a,50):>6.2f} "
         f"p90={_pctile_ms(a,90):>6.2f} "
         f"p99={_pctile_ms(a,99):>6.2f} p99.9={_pctile_ms(a,99.9):>7.2f} "
@@ -244,8 +237,14 @@ def main():
         "deliberately exercised one engine, e.g. BASELINE_BACKENDS=rust.",
     )
     _driver_gate.add_cli_flag(ap)
+    ap.add_argument("--workload-health", action="store_true",
+                    help="require successful, error-free samples and known zero Rust retry counts")
     args = ap.parse_args()
     args.gate_backends = [b.strip() for b in args.gate_backends.split(",") if b.strip()]
+    if not args.gate_backends or not set(args.gate_backends) <= {"core-python", "rust"}:
+        ap.error("--gate-backends must name core-python and/or rust")
+    if any(not math.isfinite(value) or value <= 0 for value in (args.expected_rps, args.max_p99_ms)):
+        ap.error("Rate and latency threshold must be finite and positive")
 
     container = _connect()
     run_id = args.run_id or _latest_run_id(container, args.prefix)
@@ -260,8 +259,8 @@ def main():
 
     backends = sorted({b for (_, b) in agg})
     print(f"=== Low-load latency baseline (prefix {args.prefix}, run id {run_id}) ===")
-    print("    Fixed-rate arrivals, 1 client, no proxy; latency is end-to-end from scheduled arrival.")
-    print("    Percentiles are POOLED across windows from merged HdrHistograms (exact).")
+    print("    Timing follows each row's load mode: scheduled arrival or SDK-call start.")
+    print("    Percentiles merge recorded success histograms; missing samples remain unavailable.")
     print()
 
     for backend in backends:
@@ -307,6 +306,14 @@ def main():
     print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
 
     latency_ok = True
+    if args.workload_health:
+        latency_ok = all(
+            a["count"] > 0 and a["errors"] == 0 and a["no_hist_windows"] == 0
+            and a["throttled_429"] == 0
+            and ("rust" not in backend or a["retry_calls"] == 0)
+            for (_, backend), a in agg.items()
+        )
+        print("### WORKLOAD HEALTH:", "PASS" if latency_ok else "FAIL", "###")
     if args.point_read_gate:
         checks = []
         notes = []
@@ -393,7 +400,7 @@ def main():
                     f"({_pctile_ms(read, 99):.2f} ms)",
                 )
             )
-        latency_ok = all(ok for ok, _ in checks)
+        latency_ok = latency_ok and all(ok for ok, _ in checks)
         print("\n### POINT-READ GATE ###")
         for ok, message in checks:
             print(f"  [{'PASS' if ok else 'FAIL'}] {message}")

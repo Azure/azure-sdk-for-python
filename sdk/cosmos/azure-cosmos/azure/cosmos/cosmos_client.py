@@ -51,7 +51,7 @@ from ._cosmos_responses import CosmosDict
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
-from ._helpers.database_helper import DatabaseHelper
+from ._helpers._database_operations import DatabaseHelper
 
 if TYPE_CHECKING:
     from . import ThroughputProperties

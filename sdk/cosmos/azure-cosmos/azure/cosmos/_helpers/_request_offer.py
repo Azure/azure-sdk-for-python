@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 
 from typing import Any, Mapping
 
@@ -31,7 +31,7 @@ def build_read_offer_request(
         op=OP_READ_OFFER,
         container_link=TrimBeginningAndEndingSlashes(resource_link),
         body_bytes=serialize_body_to_bytes(dict(offer_query)),
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
     )
@@ -52,7 +52,7 @@ def build_replace_offer_request(
         container_link=TrimBeginningAndEndingSlashes(resource_link),
         item_id=offer_id,
         body_bytes=serialize_body_to_bytes(dict(offer_body)),
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
     )

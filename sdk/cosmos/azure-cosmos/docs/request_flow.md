@@ -54,7 +54,7 @@ sequenceDiagram
     participant Public as ContainerProxy
     participant Helper as ItemHelper
     participant Builder as Item builders
-    participant Backend as Python RustBackend
+    participant Backend as Python RustBinding
     participant Binding as Rust binding and driver
 
     App->>Public: 4. Receive create_item and retain on_response
@@ -140,8 +140,8 @@ options explicitly, rather than packaging and rescanning `wire_kwargs`.
 
 Python no longer finds the RID or obtains the partition-key definition for a point
 operation. `build_request` is entirely local. For create/upsert/replace without an
-explicit key, it sets `partition_key=PartitionKeyInput("extract")`.
-Explicit null is `PartitionKeyInput("components", (None,))`; read/delete/patch require a target key and
+explicit key, it sets `partition_key=BindingPartitionKey("extract")`.
+Explicit null is `BindingPartitionKey("components", (None,))`; read/delete/patch require a target key and
 never infer one from patch instructions.
 
 Inside the single item binding call, `execute_item_on_driver` resolves the container
@@ -151,7 +151,7 @@ preserving key kind, path rules, and missing-level behavior. The driver owns rou
 identity and the corresponding transport headers. There is no preliminary metadata
 FFI call, returned Python metadata object, or additional Python metadata cache.
 
-Metadata failures still raise `DriverResponseError` separately from item responses.
+Metadata failures still raise `_DriverResponseError` separately from item responses.
 The backend maps their details to Cosmos exceptions without updating public response
 headers or calling the item hook. The native timeout covers resolution, extraction,
 and execution; an expired extraction budget is checked before constructing the item.
@@ -187,7 +187,7 @@ PreparedRequest(
     op="create_item",
     container_link="dbs/Contoso/colls/Orders",
     body_bytes=b'{"id":"order-42","customerId":"customer-17","total":125.5}',
-    partition_key=PartitionKeyInput("extract"),
+    partition_key=BindingPartitionKey("extract"),
     headers={},
     settings=RequestSettings(no_response=True),
     item_id="order-42",
@@ -220,7 +220,7 @@ processes the response. There is no `run_item_operation`, builder callback,
 legacy operation or fallback callback in this path.
 Explicitly selected legacy clients use the separate `LegacyItemHelper`.
 
-`RustBackend.execute` resolves the binding function using
+`RustBinding.execute` resolves the binding function using
 `_get_binding_function`, then supplies the driver handle and prepared request.
 The `aio` backend has the same `_get_binding_function` name and looks up the
 native export with its `_async` suffix.
@@ -232,7 +232,7 @@ Unknown normalized Rust options always raise `TypeError`; `COSMOS_WIRE_STRICT`
 no longer controls this behavior. Raw caller headers remain a separate input.
 
 Private protocol version 3 requires typed settings and partition keys; rebuilding
-`_rust.pyd` is required. Python compares settings and `PartitionKeyInput` field
+`_rust.pyd` is required. Python compares settings and `BindingPartitionKey` field
 inventories with the native reader's exported schema before acquiring a driver handle.
 Native readers also check the request-envelope version. A mismatch fails when Rust is selected,
 without blocking import or use of the legacy backend.
@@ -343,8 +343,8 @@ change the sibling driver, or establish a measured latency improvement.
 ## 12. Typed partition-key boundary
 
 `PreparedRequest`, `PreparedQuery` and the reserved batch record carry
-`partition_key: PartitionKeyInput`, not an HTTP header string.
-`_helpers/_partition_key.py` normalizes public inputs; `wire/partition_key.rs`
+`partition_key: BindingPartitionKey`, not an HTTP header string.
+`_helpers/_partition_key.py` normalizes public inputs; `wire/partition_key_input.rs`
 extracts the tuple directly into driver components while holding the GIL.
 Only Rust-owned values enter asynchronous driver work.
 
@@ -405,7 +405,7 @@ snapshot does not generate another ID or encode the payload again.
 Upsert/replace retain their existing non-finite-number serialization policy;
 this does not promise acceptance by native parsing or the service. Create's body
 ID is resolved before native key extraction, including when the partition path is
-`/id`. Explicit keys still travel separately as `PartitionKeyInput`; automatic
+`/id`. Explicit keys still travel separately as `BindingPartitionKey`; automatic
 extraction reads the exact outgoing bytes using native container metadata.
 
 Encoding remains in `_helpers/_wire_encoding.py`: compact JSON separators, insertion
@@ -428,7 +428,7 @@ and a shallow top-level dictionary is used for document preparation. A completed
 snapshot is immutable; it does not guarantee an atomic snapshot against concurrent
 mutation while serialization itself is running.
 
-**Removable legacy code:** `legacy_item_helper._prepare_legacy_create_item_body`
+**Removable legacy code:** `_legacy_item_operations._prepare_legacy_create_item_body`
 retains recursive copying and pre-I/O encoding validation only because the
 temporary legacy pipeline still accepts dictionaries. Delete it with that adapter,
 not the retained document serializer, ID policy or UTF-8 codec. No driver change
@@ -478,7 +478,7 @@ For paging, `STATELESS_QUERY_TO_BINDING_METHOD` and
 `get_page_binding_method` selects once using the operation and
 `cursor is not None`. The pager creates its cursor lazily at its first fetch
 through the backend factory; dispatch never writes into a caller-owned dictionary.
-Retained read-all, query and change feeds use `ItemFeedCursor` and
+Retained read-all, query and change feeds use `_ItemFeedCursor` and
 `fetch_page_with_cursor` / `fetch_page_with_cursor_async` from
 `wire/item_feed.rs`. Logging names the actual selected export. Missing required
 cursor exports raise a rebuild error before driver acquisition, not a stateless
@@ -489,7 +489,7 @@ A **backend** is the Python dispatch object; a **driver** is the native
 `CosmosDriver` identified by a handle. The **runtime** owns process-wide settings
 and remains a distinct concept. `register_driver_client` / `release_driver_client`
 manage Python reservations, not native handle references. Their private identity
-helpers maintain counts; `StrictDriverIsolationError` reports strict isolation
+helpers maintain counts; `_StrictDriverIsolationError` reports strict isolation
 conflicts. Transaction rollback, provisional holds and frozen runtime policies
 are unchanged. Legitimate references to a service query engine are not renamed.
 
@@ -502,7 +502,7 @@ new capability, or measured performance improvement is implied.
 Point helpers own build -> execute -> process directly. `execute` takes a
 non-optional `PreparedRequest` and returns a `BackendResponse` or raises; `None`
 is neither a no-op request nor a fallback response. Concrete Rust executors reject
-a missing native reply with `BackendProtocolError`. Empty successful bodies still
+a missing native reply with `BindingProtocolError`. Empty successful bodies still
 produce response records with status and headers.
 
 `PreparedRequest` and `PreparedQuery` have no `deadline` field.
@@ -598,7 +598,7 @@ shapes are selected before dispatch rather than caught as `ValueError` afterward
 The compatibility counter includes both allowed pre-dispatch routes, not explicit
 core-python selection or failed/rejected Rust calls.
 
-`PreparedQuery.cursor` names a concretely typed `ItemFeedCursor`, declared in the
+`PreparedQuery.cursor` names a concretely typed `_ItemFeedCursor`, declared in the
 extension stub. Runtime native imports remain confined to the backend boundary.
 The pager creates it lazily, keeps it across internal and public pages, and
 releases it on completion or invalidation after cancellation is drained.

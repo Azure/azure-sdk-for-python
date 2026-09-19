@@ -839,7 +839,7 @@ def _rust_operation_count() -> Optional[int]:
     """Return the Rust operation count when the extension exposes it."""
     try:
         from azure.cosmos import _rust
-        counter = getattr(_rust, "operation_count", None)
+        counter = getattr(_rust, "_debug_operation_count", None)
         if callable(counter):
             return int(counter())
     except (ImportError, TypeError, ValueError):

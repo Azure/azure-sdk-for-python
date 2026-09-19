@@ -33,16 +33,16 @@ from itertools import permutations
 import pytest
 
 from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
-from azure.cosmos._backend.rust import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.rust import build_binding_request_from_page as async_page
+from azure.cosmos._backend.binding import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.binding import build_binding_request_from_page as async_page
 from azure.cosmos._helpers import _request_item
 from azure.cosmos._helpers._document import serialize_document
 from common.typed_requests import legacy_preparation as prepare_request_headers
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 from azure.cosmos._backend.request_settings import RequestSettings
 from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -293,7 +293,7 @@ def test_native_rejects_old_private_request_shape(monkeypatch):
     """
     native = pytest.importorskip("azure.cosmos._rust")
     from types import SimpleNamespace
-    old = SimpleNamespace(container_link="dbs/d/colls/c", protocol_version=3, partition_key=key_from_legacy_header('["p"]'), headers={}, item_id="item")
+    old = SimpleNamespace(op="read_item", container_link="dbs/d/colls/c", protocol_version=3, partition_key=key_from_legacy_header('["p"]'), headers={}, item_id="item")
     with pytest.raises(TypeError, match="typed settings"):
         native.read_item("unused-handle", old)
 

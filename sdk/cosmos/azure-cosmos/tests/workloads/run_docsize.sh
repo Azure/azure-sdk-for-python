@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Document size/shape sensitivity run: does the latency/RU conclusion hold beyond
-# one document shape? Runs a CREATE leg with the DEFAULT (732-byte flat) body and
-# again with the LARGE (4,670-byte nested) body, for each backend.
+# one document shape? Compare CREATE with default and large body profiles.
+# Measure actual serialized size rather than assuming a historical byte count.
 #
 # Why: every other phase uses one fixed item shape. Bigger, deeper documents cost
 # more to serialize, transfer and index, so a conclusion drawn on one shape may not
@@ -19,13 +19,15 @@
 # Results land in perfdb/perfresults-v2 tagged docsize-create-<backend>-<profile>-<stamp>;
 # read them back with latency_report.py --prefix docsize- (backend column shows
 # <backend>-<profile>, e.g. core-python-large).
-set -uo pipefail
+set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
 source ./perf_env.sh >/dev/null 2>&1
 source ~/venvs/perfdrill/bin/activate
+perf_single_operation_shape
 
 DURATION="${1:-600}"
+perf_require_positive "${DURATION}"
 DOCSIZE_PROFILES_RAW="${DOCSIZE_PROFILES:-default,large}"
 DOCSIZE_PROFILES_RAW="${DOCSIZE_PROFILES_RAW//,/ }"
 read -r -a PROFILES <<< "${DOCSIZE_PROFILES_RAW}"
@@ -39,7 +41,7 @@ _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/docsize-${STAMP}"
-mkdir -p "$LOG_DIR"
+perf_create_log_dir "$LOG_DIR" || exit 2
 
 # Use the shared probe container. The CREATE leg self-cleans (fresh uuids), so it
 # does not mutate the seeded items -- no dedicated container needed.
@@ -53,6 +55,10 @@ export WORKLOAD_USE_PROXY=false
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-60}"
 export WORKLOAD_OPERATIONS=create
+write_run_manifest "${LOG_DIR}" "${STAMP}" "document-size"
+for prof in "${PROFILES[@]}"; do
+  for bk in "${BACKENDS[@]}"; do printf 'docsize-create-%s-%s-%s\n' "$bk" "$prof" "$STAMP"; done
+done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Document size/shape sensitivity run ==="
 echo "    stamp=${STAMP} dur=${DURATION}s profiles=${PROFILES[*]} backends=${BACKENDS[*]}"
@@ -87,6 +93,8 @@ done
 echo "=== Doc-size run complete. stamp=${STAMP} ==="
 echo
 echo "=== Running doc-size report + driver commit check ==="
+BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
+perf_check_run "${LOG_DIR}" "${STAMP}" "docsize-" "${BACKEND_CSV}" || overall_rc=1
 # Lightweight post-run gate for this mini-phase: validate the Rust driver commit
 # and print pooled create latency per backend/profile for this stamp.
 if python3 latency_report.py --prefix "docsize-" --run-id "${STAMP}"; then

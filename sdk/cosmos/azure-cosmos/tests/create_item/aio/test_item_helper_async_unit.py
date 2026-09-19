@@ -18,8 +18,8 @@ from unittest.mock import MagicMock, AsyncMock
 
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 
 
 class TestAsyncItemHelper(unittest.TestCase):

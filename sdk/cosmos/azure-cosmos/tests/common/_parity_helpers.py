@@ -284,7 +284,7 @@ class BackendComparison:
     # or strengthen an existing one.
     _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
         26,
-        "The original HTTP response headers are discarded",
+        "Original service response headers are discarded",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         "date": _PUSHBACK_RAW_HEADERS,
@@ -773,7 +773,7 @@ def _binding_operation_count() -> int:
     """Read the process-wide counter at instrumented Rust binding entry points."""
     try:
         from azure.cosmos import _rust
-        counter = getattr(_rust, "operation_count", None)
+        counter = getattr(_rust, "_debug_operation_count", None)
         if callable(counter):
             return int(counter())
     except (ImportError, TypeError, ValueError):

@@ -27,9 +27,9 @@ from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos._helpers.legacy_item_helper import LegacyItemHelper
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos._helpers._legacy_item_operations import LegacyItemHelper
+from azure.cosmos._backend.errors import BindingProtocolError
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         options = cc.CreateItem.call_args.kwargs["options"]
         self.assertEqual(options["indexingDirective"], 1)
 
-    def test_container_rid_stamped_from_cache(self):
+    def test_cached_container_resource_id_is_added_to_options(self):
         """When the container is already cached, its resource id is added
         to the options."""
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
@@ -240,7 +240,7 @@ class TestItemHelperMetadataIndependence(unittest.TestCase):
 
     def test_item_does_not_call_python_metadata_getter(self):
         backend = _capturing_backend(BackendResponse(201, 0, {}, b'{"id":"x"}'))
-        backend.get_container_metadata = MagicMock(side_effect=BackendProtocolError("Missing metadata"))
+        backend.get_container_metadata = MagicMock(side_effect=BindingProtocolError("Missing metadata"))
         result = call_create_item_helper(ItemHelper(backend),container_link="dbs/db/colls/c", body={"id": "x"})
         self.assertEqual(result["id"], "x")
         self.assertIsNone(legacy_partition_key_from_request(backend.prepared))

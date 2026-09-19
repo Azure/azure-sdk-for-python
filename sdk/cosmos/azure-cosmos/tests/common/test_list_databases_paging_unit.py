@@ -33,10 +33,10 @@ import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _rust
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from query_items.test_query_backend_routing_unit import (
     listing_client,
@@ -394,7 +394,7 @@ async def test_real_rust_backend_deducts_setup_before_binding(listing_client, mo
     async def dispatch_async(handle, prepared, *, timeout_seconds):
         return dispatch(handle, prepared, timeout_seconds=timeout_seconds)
     backend._ensure_driver_handle = acquire_async if is_async else acquire
-    execute = module.AsyncRustBackend.execute_pages if is_async else module.RustBackend.execute_pages
+    execute = module.AsyncRustBinding.execute_pages if is_async else module.RustBinding.execute_pages
     backend.execute_pages = lambda prepared, deadline=None: execute(backend, prepared, deadline=deadline)
     monkeypatch.setattr(module, "_get_page_dispatch", lambda method: dispatch_async if is_async else dispatch)
     pager = client.list_databases(timeout=5).by_page()
@@ -589,7 +589,7 @@ async def test_malformed_rust_page_is_an_explicit_error(listing_client, body):
     client, _, backend, is_async = listing_client
     backend._response = BackendResponse(status_code=200, headers={}, body=body)
     hook = MagicMock()
-    with pytest.raises(BackendProtocolError, match="invalid Databases"):
+    with pytest.raises(BindingProtocolError, match="invalid Databases"):
         await _next_listing_page(client.list_databases(response_hook=hook).by_page(), is_async)
     hook.assert_not_called()
 
@@ -641,7 +641,7 @@ async def test_repeated_empty_page_bookmark_is_an_explicit_error(listing):
         status_code=200, headers={"x-ms-continuation": "same"}, body=b'{"Databases":[]}',
     )
     pager = client.list_databases().by_page("same")
-    with pytest.raises(BackendProtocolError, match="without continuation progress"):
+    with pytest.raises(BindingProtocolError, match="without continuation progress"):
         await _next_listing_page(pager, is_async)
     requests(listing).assert_called_once()
 

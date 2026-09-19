@@ -62,23 +62,16 @@ profiling_python_repo() {
   git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel 2>/dev/null
 }
 
-profiling_rust_repo() {
-  local python_repo="$1"
-  printf '%s\n' "${AZURE_SDK_FOR_RUST_DIR:-${python_repo}/../azure-sdk-for-rust}"
-}
-
-# The extension carries the two commits supplied to Cargo when it was built.
-# Comparing those attributes with both current checkouts closes the stale-build
-# hole when source update and compilation are deliberately skipped together.
+# Compare embedded labels to the Python checkout and Cargo's resolved Git driver.
+# The session check also compares the binary and local source fingerprints.
 profiling_verify_extension_build() {
-  local python_repo rust_repo python_commit rust_commit
+  local python_repo python_commit rust_commit
   python_repo="$(profiling_python_repo)" || {
     echo "ERROR: cannot locate the azure-sdk-for-python checkout." >&2
     return 2
   }
-  rust_repo="$(profiling_rust_repo "${python_repo}")"
   python_commit="$(git -C "${python_repo}" rev-parse HEAD 2>/dev/null || echo unknown)"
-  rust_commit="$(git -C "${rust_repo}" rev-parse HEAD 2>/dev/null || echo unknown)"
+  rust_commit="$(python3 "$(dirname "${BASH_SOURCE[0]}")/perf_provenance.py" driver-commit)" || return 2
 
   python3 - "${python_commit}" "${rust_commit}" <<'PY'
 import sys
@@ -96,9 +89,9 @@ problems = []
 if actual_python != expected_python:
     problems.append(f"Python commit: extension={actual_python}, checkout={expected_python}")
 if actual_rust != expected_rust:
-    problems.append(f"Rust driver commit: extension={actual_rust}, checkout={expected_rust}")
+    problems.append(f"Rust driver commit: extension={actual_rust}, Cargo dependency={expected_rust}")
 if problems:
-    print("ERROR: loaded _rust was not built from the current checkouts:", file=sys.stderr)
+    print("ERROR: loaded _rust build labels disagree with the selected source:", file=sys.stderr)
     for problem in problems:
         print(f"       {problem}", file=sys.stderr)
     print("       Re-run profiling_build_extension.sh.", file=sys.stderr)
@@ -139,6 +132,7 @@ profiling_load_session() {
     "${COSMOS_URI}" "${COSMOS_DATABASE}" "${COSMOS_CONTAINER}" <<'PY'
 import json
 import sys
+from perf_provenance import extension_details, source_digest
 
 path, run_id, phase, uri, database, container = sys.argv[1:]
 try:
@@ -158,6 +152,13 @@ expected = {
 }
 bad = [f"{name}: manifest={actual!r}, expected={wanted!r}"
        for name, (actual, wanted) in expected.items() if actual != wanted]
+build = manifest.get("build") or {}
+if build.get("source_sha256") != source_digest():
+    bad.append("SDK/binding/workload sources changed since session creation")
+current = extension_details()
+for name in ("rust_extension_sha256", "rust_extension_python_commit", "rust_extension_driver_commit"):
+    if build.get(name) != current[name]:
+        bad.append(f"{name}: loaded extension differs from the session manifest")
 if bad:
     print("ERROR: session manifest does not match the active session/target:", file=sys.stderr)
     for problem in bad:

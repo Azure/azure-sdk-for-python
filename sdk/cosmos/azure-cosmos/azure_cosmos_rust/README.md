@@ -21,13 +21,19 @@ The binding is split across modules:
 
 - `src/lib.rs` — module registration (`#[pymodule]` export list)
 - `src/runtime.rs` — process runtime + driver cache + `acquire_driver_handle`/`release_driver_handle`
-- `src/documents.rs` — operation entry points (sync + async)
-- `src/wire.rs` — request/response translation, header mapping, tuple shaping
+- `src/ffi/mod.rs` and its operation modules — entry points and shared input extraction
+- `src/wire/mod.rs` and its operation modules — request/response translation
+- `src/wire/driver_runner.rs` — shared lookup, execution, cancellation and tuple-conversion lifecycle
 - `src/credential.rs` — Python token-credential adapter for driver auth
 
 ## What Python actually sees
 
-After a successful build, this is what Python can do:
+This entire module is an SDK implementation detail, not a supported customer API.
+Importability is not an access-control boundary within the Python process.
+Customers use `CosmosClient`, not the entry points below. The wrapper translates
+private native exceptions into the appropriate customer-facing exceptions.
+
+After a successful build, this is how the wrapper calls the binding:
 
 ```python
 from azure.cosmos import _rust
@@ -44,28 +50,66 @@ Current surface:
 - item ops (async): `*_item_async` for the same six operations
 - feed/query ops (sync): `query_items`, `read_feed_ranges`
 - feed/query ops (async): `query_items_async`, `read_feed_ranges_async`
-- retained feed paging: `fetch_page_with_cursor`, `query_items_change_feed`, and
-  their `_async` counterparts, sharing per-iterator `ItemFeedCursor` storage.
+- retained feed paging: `fetch_page_with_cursor` and its `_async` counterpart,
+  including the `query_items_change_feed` operation tag, with per-iterator
+  `_ItemFeedCursor` storage.
   Public `query_items` also uses this retained cursor through `fetch_page_with_cursor`
-  (not the older one-shot `query_items` binding helper). Its prepared body contains
-  the SQL specification plus partition/feed-range scope and cross-partition permission.
+  (not the older one-shot `query_items` binding helper). Python serializes the SQL
+  body once per pager and the binding forwards those bytes without parsing and
+  re-encoding them. Partition/feed-range scope and cross-partition permission
+  travel separately as typed fields.
   The cursor reports `has_more` independently of `continuation_supported`, so a
   non-bookmarkable DISTINCT/non-streaming sort can still be fully enumerated.
+  These properties read a snapshot of the last completed page and do not fail
+  while a fetch holds the execution lock. Concurrent fetches still fail.
+  Each Python pager creates its own cursor, including when two clients share a
+  native driver. The driver's cache key is not the pager identity.
   Only the driver's two explicit unsupported-snapshot statuses suppress token minting;
   other snapshot failures remain errors. Python exposes query-bound `q1.` bookmarks
   for resumable queries and raises on bookmark access for non-resumable shapes.
-  The page deadline covers initialization, metadata, planning and execution; a
+  The wrapper checks the remaining budget after initialization; the native page
+  deadline covers metadata, planning and execution. A
   cancelled or failed page invalidates its cursor. Public queries never replay on
   legacy Python after a Rust failure. Rebuild the extension after this cursor change.
   Change feed uses native change-feed operations, not a SQL query. The Python
   layer wraps its opaque driver token with backend/container/mode/scope metadata.
-  Multi-physical-partition change-feed scopes currently fail explicitly because
-  the driver's unordered merge does not poll all children before returning an
-  empty response (migration pushback 12).
+  The binding deliberately rejects multi-physical-partition change-feed scopes:
+  it does not currently guarantee complete polling and checkpointing across
+  those scopes. This is binding policy, not a rejection delegated to the driver.
 - container deletion: `delete_container`, `delete_container_async`
 - container replacement: `replace_container`, `replace_container_async`
 - container reads: `read_container`, `read_container_async`
-- diagnostics/provenance: `operation_count`, `DriverTransportError`, `__version__`
+- process-wide measurement only: `_debug_operation_count`,
+  `_debug_attempt_count`, `_debug_retry_count`. These cannot attribute work to a
+  particular `CosmosClient`; concurrent callers contribute to the same totals.
+- internal contract/runtime checks: `_request_settings_schema`,
+  `_runtime_configuration`; neither is a client telemetry API.
+- fault-test observation: `_debug_fault_injection_rule_hit_count`, scoped to the
+  driver handle and rule rather than a particular Python client.
+- private error translation: `_DriverTransportError`, `_DriverResponseError`,
+  `_UnsupportedQueryFeatureError`.
+- build provenance: `__version__` and the recorded source revisions.
+
+Native operation entry points reject a mismatched `PreparedRequest.op` before
+driver lookup. The request protocol remains structural and versioned; it is not
+a sealed native request type. Deep immutability and a native/compact request
+boundary are parked for a separate design and measurement pass.
+
+Timeout names distinguish the customer's duration (`timeout`), the wrapper's
+absolute monotonic deadline, and the remaining duration passed across the
+boundary (`timeout_seconds`). `operation_timeout` bounds binding work including
+metadata; `driver_timeout_policy` configures driver execution. The constructor's
+`read_timeout` mapping still configures whole HTTP-attempt caps, not read
+inactivity; renaming fields does not resolve that driver limitation.
+
+Diagnostic formatting is also parked: `record_diagnostics` still updates
+counters and eagerly formats the synthetic diagnostic response header.
+Removing that work requires deciding when the header remains available.
+Likewise, query/patch option snapshots still protect caller-owned mutable data.
+The retained SQL-query path already reuses prepared body bytes rather than
+parsing and reserializing the query in the binding. Synchronous driver
+acquisition still blocks for initial native construction with the GIL released;
+that is first-operation binding latency, not Python wrapper preparation time.
 
 `acquire_driver_handle` requires **exactly one** auth input: either `master_key` or
 `credential` (token credential), never both.
@@ -92,7 +136,7 @@ The provider wrappers and their per-operation dictionaries have been removed.
 Metadata success performs no JSON encode/decode and cannot update public response
 headers. The driver remains the sole shared-cache owner.
 
-Create/upsert/replace accept `PreparedRequest.partition_key=PartitionKeyInput("extract")` to extract
+Create/upsert/replace accept `PreparedRequest.partition_key=BindingPartitionKey("extract")` to extract
 the key from `body_bytes` after native container resolution. An explicit key wins;
 typed null and undefined remain distinct from extraction. Read/delete/patch require an
 explicit key and never derive one from a patch payload. All six point operations
@@ -111,10 +155,10 @@ Python preserves its existing fallback behavior; this refactor does not establis
 legacy system-key parity. The partition-key kind is retained independently of
 path count.
 
-Metadata failures carrying a response raise `DriverResponseError` with the error
+Metadata failures carrying a response raise `_DriverResponseError` with the error
 tuple in `args[0]`. Python preserves its Cosmos exception contract and diagnostics,
 without publishing metadata headers to client state. Response-less transport
-errors retain `DriverTransportError`; deadlines and cancellation keep their
+errors retain `_DriverTransportError`; deadlines and cancellation keep their
 existing behavior. Rebuild the extension for the renamed private entry points
 and new exception export. There are no old-name compatibility aliases.
 
@@ -143,6 +187,26 @@ Internal callers using the old `handle` keyword must use `driver_handle`;
 there is no compatibility alias. Positional calls are unchanged. Rebuild the
 extension after this signature rename before validating native keyword calls.
 
+Driver identity is binding-owned. It uses the parsed URL (normalizing host case,
+default ports and the root slash without erasing meaningful paths or queries),
+process-salted SHA-256 for master keys, token-credential object identity, and
+typed configuration fields rather than Python `repr()`. The returned handle is
+an opaque digest. `_driver_identity` and acquisition use the same computation;
+identity lookup does not initialize a runtime or request a token.
+
+Driver work and the Python async bridge share one Tokio executor. The binding
+still owns one process-wide driver runtime: conflicting explicit proxy or
+transport timeout settings raise rather than silently adopting another client's
+values. The binding intentionally maps `read_timeout` to both complete-attempt
+data-plane and metadata timeout caps; it is not a socket read-inactivity timer.
+
+The token adapter qualifies its bounded cache by scopes and permits one active
+refresh per adapter. A cancelled wait does not release a synchronous Python
+refresh's ownership until that Python call finishes, preventing overlapping
+refreshes and late overwrites. Async future cancellation remains cooperative.
+The pinned `azure_core` 1.1.0 token options contain native method context, not
+claims or a CAE flag; this binding does not claim to support those auth options.
+
 The response body passed to Python is text JSON (or empty for operations such
 as deletion). The shared operation-options builder explicitly disables binary
 encoding: driver 0.8 defaults to binary responses, which Python's current JSON
@@ -154,6 +218,8 @@ an optional keyword-only `timeout_seconds` containing the remaining Python
 operation budget; this bounds native metadata resolution and execution together.
 Caller If-Match headers become typed operation preconditions and are removed
 from custom headers, keeping them separate from internal read/replace conditions.
+The binding rejects patch If-None-Match and filtered patches rather than risk
+dropping their conditions across the available execution strategies.
 Python serializes canonical `incr` instructions before metadata access, copies
 request options, and isolates success-hook body/header snapshots. Rebuild the
 extension after updating this integration.
@@ -163,7 +229,7 @@ replay. Forcing server-side PATCH alone does not establish predicate-aware retry
 safety. Local point-operation validation/precondition failures with status 400/412
 retain their status, substatus, message, and available diagnostics in the backend
 tuple. Missing service headers are not fabricated. Other response-less failures
-retain the existing `DriverTransportError` mapping.
+retain the existing `_DriverTransportError` mapping.
 
 Container deletion takes database/container names from the prepared request.
 The binding asks the Rust driver to resolve the container, then execute DELETE;
@@ -277,17 +343,17 @@ paths. Sync/async page adapters preserve settings and put page controls in
 Unknown normalized Rust options always fail explicitly, independent of
 `COSMOS_WIRE_STRICT`. The old dictionary reader and compact hedging parser are gone.
 Private protocol version 3 requires a matching Python package and rebuilt extension.
-`request_settings_schema()` exports field inventories derived from native readers;
+`_request_settings_schema()` exports field inventories derived from native readers;
 Python checks agreement before driver acquisition. Older private request shapes
 are rejected before I/O, not supported through a compatibility shim. Legacy
 backend use remains available when only the settings schema is incompatible.
 
-The request envelope now carries `PartitionKeyInput(kind, values)` and its own
-protocol version. `wire/partition_key.rs` extracts native scalars directly into
+The request envelope now carries `BindingPartitionKey(kind, values)` and its own
+protocol version. `wire/partition_key_input.rs` extracts native scalars directly into
 `PartitionKeyValue`: no JSON text is used to transport explicit keys through PyO3.
 Extraction, cross-partition scope, empty sentinels and explicit empty sequences
 have distinct kinds. Null and the private undefined component are distinct, too.
-The schema inventory includes `PartitionKeyInput`, and sparse feed-range readers
+The schema inventory includes `BindingPartitionKey`, and sparse feed-range readers
 also validate the envelope version.
 
 Retained query/change-feed bodies no longer contain encoded partition-key strings.
@@ -322,10 +388,10 @@ Python driver-client registration does not acquire a native handle.
 
 The wrapper now passes synchronous `build_request` callbacks in both modes.
 Native exports retain `_async` where sync and async functions share this module.
-`ItemFeedCursor` and `fetch_page_with_cursor` / `fetch_page_with_cursor_async`
+`_ItemFeedCursor` and `fetch_page_with_cursor` / `fetch_page_with_cursor_async`
 serve retained item queries, read-all and change feeds. Stateless pages use their
 own dispatch table; cursor dispatch depends on operation plus a non-`None`
-`PreparedQuery.cursor`. The pager creates its concretely typed `ItemFeedCursor`
+`PreparedQuery.cursor`. The pager creates its concretely typed `_ItemFeedCursor`
 lazily through the backend factory and owns its release; execution no longer
 inserts it into a Python dictionary. Frozen `QueryScope` preserves the existing
 wire payload and bookmark identity. The old read-all cursor names and native
@@ -347,7 +413,7 @@ azure_cosmos_rust/
 ├── src/
 │   ├── lib.rs          # module export registration
 │   ├── runtime.rs      # runtime/cache/client lifecycle
-│   ├── documents/      # item + query/feed ops, sync + async
+│   ├── ffi/            # Python entry points, sync + async
 │   ├── wire/           # prepared request parsing + response tuple shaping
 │   │   └── item_feed.rs # shared retained item-feed cursor
 │   └── credential.rs   # Python token credential adapter
@@ -355,7 +421,7 @@ azure_cosmos_rust/
 ```
 
 Start at `lib.rs` to see the exported surface, then read in this order:
-`runtime.rs` -> `documents/mod.rs` -> `wire/mod.rs` -> `wire/item_feed.rs` -> `credential.rs`.
+`runtime.rs` -> `ffi/mod.rs` -> `wire/mod.rs` -> `wire/item_feed.rs` -> `credential.rs`.
 
 ## Where to look when you're stuck
 
@@ -368,7 +434,7 @@ Start at `lib.rs` to see the exported surface, then read in this order:
 - **Build/packaging questions** (why the cdylib gets renamed, what
   `extension-module` and `abi3-py310` actually do, why a `.dll` ends up
   named `.pyd`): `../docs/PYTHON_RUST_PACKAGING.md`.
-- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/rust.py`
+- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/binding.py`
   builds the `PreparedRequest` and parses the backend tuple. Reading it
   alongside `lib.rs` shows exactly what every parameter and every return
   value carries.

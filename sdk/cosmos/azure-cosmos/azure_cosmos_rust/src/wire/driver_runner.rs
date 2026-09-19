@@ -32,17 +32,36 @@ pub(super) fn run_driver_operation_sync<'py, R, F, Fut>(
 ) -> PyResult<Bound<'py, PyTuple>>
 where
     F: FnOnce(Arc<CosmosDriver>) -> Fut + Send,
-    Fut: Future<Output = R>,
+    Fut: Future<Output = R> + Send,
+    R: Send,
+{
+    run_prepared_driver_operation_sync(
+        py,
+        driver_handle,
+        operation_name,
+        move |driver| Ok(operation_future_factory(driver)),
+        convert_response,
+    )
+}
+
+/// Prepare after driver lookup, preserving synchronous validation errors.
+pub(super) fn run_prepared_driver_operation_sync<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    prepare: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyTuple>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> PyResult<Fut>,
+    Fut: Future<Output = R> + Send,
     R: Send,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
+    let future = prepare(driver)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
-    let response_result = py.allow_threads(|| {
-        runtime_ctx
-            .tokio_rt
-            .block_on(operation_future_factory(driver))
-    });
+    let response_result = py.allow_threads(|| runtime_ctx.tokio_rt.block_on(future));
     convert_response(py, response_result)
 }
 
@@ -61,10 +80,33 @@ where
     Fut: Future<Output = R> + Send + 'static,
     R: Send + 'static,
 {
+    run_prepared_driver_operation_async(
+        py,
+        driver_handle,
+        operation_name,
+        move |driver| Ok(operation_future_factory(driver)),
+        convert_response,
+    )
+}
+
+/// Preparation errors are raised before returning the awaitable, not on await.
+pub(super) fn run_prepared_driver_operation_async<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    prepare: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyAny>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> PyResult<Fut>,
+    Fut: Future<Output = R> + Send + 'static,
+    R: Send + 'static,
+{
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
+    let future = prepare(driver)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
-    let join = runtime_ctx.tokio_rt.spawn(operation_future_factory(driver));
+    let join = runtime_ctx.tokio_rt.spawn(future);
     let abort_guard = AbortOnDrop(join.abort_handle());
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;

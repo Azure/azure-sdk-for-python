@@ -37,8 +37,8 @@ import pytest
 from azure.core import MatchConditions
 
 from azure.cosmos import CosmosDict
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._helpers import _item_prep
 from azure.cosmos._helpers._item_context import ItemClientDefaults
 from azure.cosmos.exceptions import (

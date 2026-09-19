@@ -5,13 +5,14 @@
 import os
 import subprocess
 import uuid
+from pathlib import Path
 
 
 def _get_git_sha() -> str:
     """Get the current git commit SHA, or 'unknown' if unavailable."""
     try:
         result = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
+            ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "HEAD"],
             capture_output=True,
             text=True,
             timeout=5,
@@ -24,32 +25,12 @@ def _get_git_sha() -> str:
 
 
 def _get_driver_sha() -> str:
-    """Read the current short HEAD of the configured or sibling Rust checkout.
-
-    This does not inspect the loaded extension's build provenance or uncommitted
-    changes. get_perf_config may override the field using PERF_DRIVER_COMMIT.
-    Return 'unknown' if the Git lookup fails.
-    """
-    driver_dir = os.environ.get("AZURE_SDK_FOR_RUST_DIR")
-    if not driver_dir:
-        # perf_config.py lives in sdk/cosmos/azure-cosmos/tests/workloads; five
-        # levels up is the azure-sdk-for-python repo root, and the driver clone
-        # sits next to it as a sibling directory.
-        here = os.path.dirname(os.path.abspath(__file__))
-        repo_root = os.path.abspath(os.path.join(here, "..", "..", "..", "..", ".."))
-        driver_dir = os.path.join(os.path.dirname(repo_root), "azure-sdk-for-rust")
+    """Read the loaded extension's declared driver revision, not sibling HEAD."""
     try:
-        result = subprocess.run(
-            ["git", "-C", driver_dir, "rev-parse", "--short", "HEAD"],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        if result.returncode == 0:
-            return result.stdout.strip()
-    except Exception:
-        pass
-    return "unknown"
+        from azure.cosmos import _rust
+    except ImportError:
+        return "unknown"
+    return getattr(_rust, "__rust_driver_commit__", "unknown")
 
 
 def _safe_int_env(name: str, default: int) -> int:
@@ -58,25 +39,29 @@ def _safe_int_env(name: str, default: int) -> int:
 
 
 def _safe_int(value: object, default: int) -> int:
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return default
+    return int(value)
 
 
 def get_perf_config() -> dict:
     """Build performance reporter configuration from environment variables."""
+    interval = _safe_int_env("PERF_REPORT_INTERVAL", 300)
+    if interval <= 0:
+        raise ValueError("PERF_REPORT_INTERVAL must be positive")
+    enabled = os.environ.get("PERF_ENABLED", "true").lower()
+    if enabled not in ("true", "false"):
+        raise ValueError("PERF_ENABLED must be true or false")
+    actual = _get_driver_sha()
+    declared = os.environ.get("PERF_DRIVER_COMMIT", actual)
+    if actual != "unknown" and declared != actual:
+        raise ValueError("PERF_DRIVER_COMMIT disagrees with the loaded extension")
     return {
-        "enabled": os.environ.get("PERF_ENABLED", "true").lower() == "true",
+        "enabled": enabled == "true",
         "results_endpoint": os.environ.get("RESULTS_COSMOS_URI", ""),
         "results_database": os.environ.get("RESULTS_COSMOS_DATABASE", "perfdb"),
         "results_container": os.environ.get("RESULTS_COSMOS_CONTAINER", "perfresults-v2"),
-        "report_interval": _safe_int(
-            os.environ.get("PERF_REPORT_INTERVAL", "300"), 300
-        ),
+        "report_interval": interval,
         "workload_id": os.environ.get("PERF_WORKLOAD_ID", str(uuid.uuid4())),
         "commit_sha": os.environ.get("PERF_COMMIT_SHA", _get_git_sha()),
-        # Declared driver provenance: an override or the checkout's current HEAD,
-        # not a revision extracted from the loaded extension.
-        "driver_commit": os.environ.get("PERF_DRIVER_COMMIT", _get_driver_sha()),
+        # Embedded build label; the session manifest also fingerprints the binary.
+        "driver_commit": actual,
     }

@@ -5,8 +5,8 @@ use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
-use super::deadline::{parse_remaining_timeout, with_item_timeout};
-use super::errors::DriverResponseError;
+use super::deadline::{parse_remaining_timeout, with_operation_timeout};
+use super::errors::_DriverResponseError;
 use super::request::{build_operation_options, parse_container_link};
 use super::response::tuple_from_result;
 use super::{lookup_driver, AbortOnDrop};
@@ -48,7 +48,7 @@ fn metadata_result<'py>(
 
 pub(super) fn metadata_error(py: Python<'_>, error: CosmosError) -> PyErr {
     match tuple_from_result(py, Err(error)) {
-        Ok(response) => DriverResponseError::new_err((response.unbind(),)),
+        Ok(response) => _DriverResponseError::new_err((response.unbind(),)),
         Err(error) => error,
     }
 }
@@ -72,7 +72,7 @@ pub(crate) fn get_container_metadata<'py>(
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context("get_container_metadata")?;
     let result = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(with_item_timeout(
+        runtime_ctx.tokio_rt.block_on(with_operation_timeout(
             timeout,
             driver.resolve_container(&database_name, &container_name, options),
         ))
@@ -105,7 +105,7 @@ pub(crate) fn get_container_metadata_async<'py>(
     };
     let join = runtime_ctx
         .tokio_rt
-        .spawn(with_item_timeout(timeout, operation));
+        .spawn(with_operation_timeout(timeout, operation));
     let abort_guard = AbortOnDrop(join.abort_handle());
 
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
@@ -216,7 +216,7 @@ mod tests {
             .await;
         Python::with_gil(|py| {
             let error = metadata_result(py, missing).unwrap_err();
-            assert!(error.is_instance_of::<DriverResponseError>(py));
+            assert!(error.is_instance_of::<_DriverResponseError>(py));
             let response = error
                 .value_bound(py)
                 .getattr("args")

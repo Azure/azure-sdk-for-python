@@ -109,7 +109,7 @@ class TestContainerDeleteItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    def test_cache_hit_path_stamps_rid_into_options(self):
+    def test_cached_container_resource_id_is_added_to_options(self):
         """When the container is already cached, its resource id is added
         to the options."""
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")

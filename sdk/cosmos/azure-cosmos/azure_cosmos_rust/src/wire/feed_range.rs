@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::partition_key::PartitionKeyInput;
+use super::partition_key_input::BindingPartitionKey;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
@@ -164,7 +164,7 @@ pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
@@ -192,7 +192,7 @@ pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     op_name: &str,
 ) -> PyResult<Bound<'py, PyAny>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);

@@ -81,7 +81,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
 class TestContainerUpsertItemPreservesLegacyBehaviour(unittest.TestCase):
     """The fall-through path must stay byte-for-byte the legacy upsert."""
 
-    def test_cache_hit_path_stamps_rid_into_options(self):
+    def test_cached_container_resource_id_is_added_to_options(self):
         """Cache hit: the cached ``_rid`` ends up in the options dict sent to ``UpsertItem``."""
         proxy, cc, _ = _make_proxy_with_mock_connection(rid="rid-hot")
 

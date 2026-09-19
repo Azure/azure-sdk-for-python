@@ -18,11 +18,11 @@ from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 def test_header_pushback_references_match_document_headings():
     document = (
-        pathlib.Path(__file__).resolve().parents[2] / "docs" / "V5" / "RUST_PARITY_PUSHBACKS.md"
+        pathlib.Path(__file__).resolve().parents[2] / "docs" / "V5" / "api-review" / "RUST_PARITY_PUSHBACKS.md"
     ).read_text(encoding="utf-8")
     headings = {
         int(number): title
-        for number, title in re.findall(r"^## (\d+) — (.+)$", document, re.MULTILINE)
+        for number, title in re.findall(r"^## (\d+) - (.+)$", document, re.MULTILINE)
     }
     for number, title in set(_parity_helpers.BackendComparison._HEADER_TO_PUSHBACK.values()):
         assert headings.get(number) == title

@@ -32,14 +32,14 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from azure.cosmos import CosmosDict
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers import _item_prep, _document
 from azure.cosmos._helpers._item_context import ItemClientDefaults
 from azure.cosmos._helpers._response_parse import process_backend_response
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceExistsError
 from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
 from read_item.test_read_item_contract_unit import point_read

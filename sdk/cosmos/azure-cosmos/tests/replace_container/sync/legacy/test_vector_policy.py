@@ -9,6 +9,7 @@ from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos import CosmosClient
 from replace_container._legacy_setup import SyncReplacementCase
 
+@pytest.mark.cosmosEmulator
 class TestVectorPolicy(SyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)

@@ -51,7 +51,7 @@ from .._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.factory import make_async_backend
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
-from ._helpers.database_helper import AsyncDatabaseHelper
+from ._helpers._database_operations import AsyncDatabaseHelper
 from ._helpers._list_databases import list_databases as _list_databases
 from ._retry_utility_async import _ConnectionRetryPolicy
 

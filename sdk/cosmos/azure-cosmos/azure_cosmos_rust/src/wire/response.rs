@@ -12,14 +12,14 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::record_diagnostics;
-use super::errors::{DriverTransportError, UnsupportedQueryFeatureError};
+use super::errors::{_DriverTransportError, _UnsupportedQueryFeatureError};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
 
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
 /// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
 /// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
 /// Without a response, statuses 400 and 412 become synthesized error tuples;
-/// other statuses become `DriverTransportError`. The latter does not prove a
+/// other statuses become `_DriverTransportError`. The latter does not prove a
 /// transport-only failure or that no request was sent.
 pub(super) fn tuple_from_result<'py>(
     py: Python<'py>,
@@ -65,7 +65,7 @@ pub(super) fn tuple_from_result<'py>(
                 // Report a typed transport error (Display preserves the
                 // Cosmos status) the Python layer maps to
                 // ServiceResponseError, rather than a bare RuntimeError.
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver execute_singleton_operation failed: {cosmos_error}"
                 )))
             }
@@ -74,9 +74,9 @@ pub(super) fn tuple_from_result<'py>(
 }
 
 /// Convert a query page, or synthesize an empty `{"Documents":[]}` page for `None`.
-/// Unsupported-query status becomes `UnsupportedQueryFeatureError` without
+/// Unsupported-query status becomes `_UnsupportedQueryFeatureError` without
 /// replaying through legacy. Other errors return an attached response tuple or,
-/// without one, raise `DriverTransportError`. Unlike the point-operation path,
+/// without one, raise `_DriverTransportError`. Unlike the point-operation path,
 /// response-less 400/412 errors are not synthesized into tuples here.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
@@ -90,7 +90,7 @@ pub(super) fn tuple_from_feed_result<'py>(
         }
         Err(cosmos_error) => {
             if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
-                return Err(UnsupportedQueryFeatureError::new_err(
+                return Err(_UnsupportedQueryFeatureError::new_err(
                     cosmos_error.to_string(),
                 ));
             }
@@ -100,7 +100,7 @@ pub(super) fn tuple_from_feed_result<'py>(
                 Ok(raw_http_error)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver execute_operation failed: {cosmos_error}"
                 )))
             }
@@ -112,7 +112,7 @@ pub(super) fn tuple_from_feed_result<'py>(
 ///
 /// Wraps item-list bodies in `{"Databases":[...]}` and supplies an empty envelope
 /// for `None`; raw byte bodies pass through. Errors with attached responses use
-/// the feed-error converter; response-less errors become `DriverTransportError`.
+/// the feed-error converter; response-less errors become `_DriverTransportError`.
 /// Matching the envelope does not establish full legacy response parity.
 pub(super) fn tuple_from_database_feed_result<'py>(
     py: Python<'py>,
@@ -122,14 +122,14 @@ pub(super) fn tuple_from_database_feed_result<'py>(
 }
 
 /// Convert a database-query result into a `Databases` response tuple.
-/// Unsupported query plans are returned as `UnsupportedQueryFeatureError`.
+/// Unsupported query plans are returned as `_UnsupportedQueryFeatureError`.
 pub(super) fn tuple_from_query_databases_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     if let Err(cosmos_error) = &response_result {
         if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
-            return Err(UnsupportedQueryFeatureError::new_err(
+            return Err(_UnsupportedQueryFeatureError::new_err(
                 cosmos_error.to_string(),
             ));
         }
@@ -152,14 +152,14 @@ pub(super) fn tuple_from_container_feed_result<'py>(
 }
 
 /// Convert a container-query result into a `DocumentCollections` response tuple.
-/// Unsupported query plans are returned as `UnsupportedQueryFeatureError`.
+/// Unsupported query plans are returned as `_UnsupportedQueryFeatureError`.
 pub(super) fn tuple_from_query_containers_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
     if let Err(cosmos_error) = &response_result {
         if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
-            return Err(UnsupportedQueryFeatureError::new_err(
+            return Err(_UnsupportedQueryFeatureError::new_err(
                 cosmos_error.to_string(),
             ));
         }
@@ -211,7 +211,7 @@ fn tuple_from_named_feed_result_for<'py>(
                 Ok(raw_http_error)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver {operation_name} failed: {cosmos_error}"
                 )))
             }
@@ -238,7 +238,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
             let body = partition_key_ranges_to_response_body(&ranges)?;
             backend_response_tuple(py, 200, 0, response_headers, &body, None)
         }
-        Ok(None) => Err(DriverTransportError::new_err(
+        Ok(None) => Err(_DriverTransportError::new_err(
             "driver resolve_all_partition_key_ranges returned no routing map",
         )),
         Err(cosmos_error) => {
@@ -248,7 +248,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
                 Ok(raw_http_error)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver resolve_all_partition_key_ranges failed: {cosmos_error}"
                 )))
             }
@@ -284,7 +284,7 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
                 Ok(raw_http_error)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver feed_range_from_partition_key failed: {cosmos_error}"
                 )))
             }
@@ -295,7 +295,7 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
 /// Offer-feed variant of `tuple_from_feed_result`: an offer/throughput query page
 /// uses the `{"Offers":[...]}` envelope for item-list bodies; raw bytes pass through.
 /// `None` becomes an empty `{"Offers":[]}` page. Errors with attached responses
-/// use the feed-error converter; other errors become `DriverTransportError`,
+/// use the feed-error converter; other errors become `_DriverTransportError`,
 /// without assuming they were transport-only failures.
 pub(super) fn tuple_from_offer_feed_result<'py>(
     py: Python<'py>,
@@ -314,7 +314,7 @@ pub(super) fn tuple_from_offer_feed_result<'py>(
                 Ok(raw_http_error)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
-                Err(DriverTransportError::new_err(format!(
+                Err(_DriverTransportError::new_err(format!(
                     "driver execute_operation failed: {cosmos_error}"
                 )))
             }
@@ -599,7 +599,7 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
 /// tracked wire attempts before the deadline fired).
 ///
 /// Call exactly once per response-less `CosmosError` path, **before** converting
-/// to `DriverTransportError`.  Do not call for wire-response errors -- those are
+/// to `_DriverTransportError`.  Do not call for wire-response errors -- those are
 /// already counted by `backend_response_tuple_from_cosmos_error` /
 /// `backend_response_tuple_from_cosmos_error_feed`.
 fn record_diagnostics_for_responseless(error: &CosmosError) {
@@ -709,8 +709,8 @@ mod tests {
         backend_response_tuple_from_feed_error_parts, feed_range_to_response_body,
         named_feed_response_body_to_vec, record_diagnostics_for_responseless, response_body_to_vec,
         response_headers_dict, tuple_from_database_feed_result, tuple_from_feed_result,
-        tuple_from_partition_key_ranges_result, tuple_from_result, DriverTransportError,
-        FeedRangeFromPartitionKeyPayload, UnsupportedQueryFeatureError,
+        tuple_from_partition_key_ranges_result, tuple_from_result, _DriverTransportError,
+        FeedRangeFromPartitionKeyPayload, _UnsupportedQueryFeatureError,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
@@ -809,7 +809,7 @@ mod tests {
 
             let py_error = tuple_from_feed_result(py, Err(error)).unwrap_err();
 
-            assert!(py_error.is_instance_of::<UnsupportedQueryFeatureError>(py));
+            assert!(py_error.is_instance_of::<_UnsupportedQueryFeatureError>(py));
         });
     }
 
@@ -1015,8 +1015,8 @@ mod tests {
             let py_error = tuple_from_result(py, Err(error)).unwrap_err();
 
             assert!(
-                py_error.is_instance_of::<DriverTransportError>(py),
-                "response-less CosmosError must raise DriverTransportError"
+                py_error.is_instance_of::<_DriverTransportError>(py),
+                "response-less CosmosError must raise _DriverTransportError"
             );
         });
     }
@@ -1072,8 +1072,8 @@ mod tests {
             let py_error = tuple_from_feed_result(py, Err(error)).unwrap_err();
 
             assert!(
-                py_error.is_instance_of::<DriverTransportError>(py),
-                "response-less feed CosmosError must raise DriverTransportError"
+                py_error.is_instance_of::<_DriverTransportError>(py),
+                "response-less feed CosmosError must raise _DriverTransportError"
             );
         });
     }
@@ -1091,7 +1091,7 @@ mod tests {
 
             let py_error = tuple_from_database_feed_result(py, Err(error)).unwrap_err();
 
-            assert!(py_error.is_instance_of::<DriverTransportError>(py));
+            assert!(py_error.is_instance_of::<_DriverTransportError>(py));
             assert!(py_error
                 .to_string()
                 .contains("driver list_databases failed"));

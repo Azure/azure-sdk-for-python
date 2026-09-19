@@ -7,20 +7,21 @@ compare elapsed/window times; scan available cell logs for upsert warnings;
 and check backend labels against the recorded counters. A failed check makes
 the exit status nonzero. Overrides can permit weaker log/counter evidence.
 
-These are integrity heuristics, not proof that every result was persisted:
-missing final windows or entire cells can escape continuity checks, and a
-clean log scan only establishes absence of matching text in the files read.
-Backend counters do not attribute each service operation to an engine.
+Expected-workload lists catch absent cells; process completion records reconcile
+persisted summary totals. Continuity and warning checks alone cannot establish
+completeness. Backend counters do not attribute each service operation to an engine.
 
 Run perf_validate.py with --run-id, --prefix, and --log-dir to select the
 result rows and cell logs. Results-account configuration is required.
 """
 
 import argparse
+import math
 import glob
 import os
 import re
 import sys
+from perf_results import EXPECTED_RUNTIME, summary_rows, window_key
 
 try:
     from azure.cosmos import CosmosClient
@@ -93,7 +94,7 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.operation, c.config_backend, c.count, c.errors "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
@@ -107,8 +108,8 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
 
     # Aggregate per cell (workload_id), and remember which op/backend it is.
     agg = {}
-    for r in rows:
-        wid = r["workload_id"]
+    for r in summary_rows(rows):
+        wid = (r["workload_id"], r["operation"])
         a = agg.setdefault(
             wid,
             {
@@ -122,7 +123,7 @@ def check_quality(container, prefix: str, run_id: str, required_backends):
         a["errors"] += int(r.get("errors", 0) or 0)
 
     lines = []
-    all_ok = True
+    all_ok = bool(agg)
     backends_by_op = {}
     for wid in sorted(agg):
         a = agg[wid]
@@ -157,8 +158,7 @@ def check_continuity(container, prefix: str, run_id: str, report_interval_s: flo
     """Return (ok, lines) for the row-continuity check across all cells in `run_id`."""
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.elapsed_seconds, c.window_seconds, c.count, "
-            "c.errors, c.operation, c.config_backend FROM c "
+            "SELECT * FROM c "
             "WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
@@ -175,13 +175,13 @@ def check_continuity(container, prefix: str, run_id: str, report_interval_s: flo
     # window, all sharing a workload_id (which is per op+backend already). Group
     # strictly by workload_id so each timeline is a single process.
     cells = {}
-    for r in rows:
-        cells.setdefault(r["workload_id"], []).append(r)
+    for r in summary_rows(rows):
+        cells.setdefault((r["workload_id"], r.get("process_id")), {})[window_key(r)] = r
 
     tol = _gap_tolerance_s(report_interval_s)
-    all_ok = True
+    all_ok = bool(cells)
     for wid in sorted(cells):
-        recs = sorted(cells[wid], key=lambda x: x.get("elapsed_seconds", 0.0))
+        recs = sorted(cells[wid].values(), key=lambda x: x.get("elapsed_seconds", 0.0))
         sum_window = sum(float(x.get("window_seconds", 0.0)) for x in recs)
         max_elapsed = max(float(x.get("elapsed_seconds", 0.0)) for x in recs)
         holes = []
@@ -230,7 +230,7 @@ def check_warnings(log_dir: str, strict: bool = True):
         return _missing("no --log-dir given")
     if not os.path.isdir(log_dir):
         return _missing(f"log dir not found: {log_dir}")
-    pat = re.compile(r"PerfReporter (?:upsert failed|error upsert failed)")
+    pat = re.compile(r"PerfReporter.*(?:failed|incomplete|still alive)|Invalid request-(?:charge|duration) measurement")
     lines = []
     total = 0
     unreadable = 0
@@ -276,8 +276,7 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.config_backend, c.runtime_backend, "
-            "c.rust_execute_calls, c.binding_calls, c.count, c.errors "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
                 {"name": "@prefix", "value": prefix},
@@ -290,7 +289,7 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
         return False, [f"  (no result rows found for run id {run_id})"]
 
     agg = {}
-    for r in rows:
+    for r in summary_rows(rows):
         wid = r["workload_id"]
         a = agg.setdefault(
             wid,
@@ -301,19 +300,30 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                 "execute": 0,
                 "binding": 0,
                 "binding_known": False,
+                "binding_unknown": False,
+                "runtimes": set(),
+                "labels": set(),
+                "windows": set(),
             },
         )
         a["count"] += int(r.get("count", 0) or 0)
+        a["runtimes"].add(r.get("runtime_backend"))
+        a["labels"].add(r.get("config_backend"))
+        if window_key(r) in a["windows"]:
+            continue
+        a["windows"].add(window_key(r))
         a["execute"] += int(r.get("rust_execute_calls", 0) or 0)
         b = r.get("binding_calls", -1)
         b = int(b if b is not None else -1)
         if b >= 0:
             a["binding"] += b
             a["binding_known"] = True
+        else:
+            a["binding_unknown"] = True
         a["runtime"] = r.get("runtime_backend", a["runtime"])
 
     lines = []
-    all_ok = True
+    all_ok = bool(agg)
     # Slack: the closed-loop wave still in flight at the final flush can leave a
     # few ops uncounted on one side; tolerate a small fraction so a healthy run
     # never trips, while a wholesale mismatch (mislabeled engine) still fails.
@@ -333,7 +343,8 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
             # extension loaded.) A row with no binding_calls therefore cannot
             # carry the document's proof, so it fails unless the caller
             # explicitly opts into the weaker evidence.
-            if a["binding_known"]:
+            known = a["binding_known"] and not a["binding_unknown"]
+            if known:
                 proof = a["binding"]
                 proof_name = "binding_calls"
             else:
@@ -344,7 +355,9 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                 proof > 0
                 and a["execute"] > 0
                 and proof >= min_expected
-                and (a["binding_known"] or allow_unknown_binding)
+                and (known or allow_unknown_binding)
+                and a["runtimes"] <= EXPECTED_RUNTIME["rust"]
+                and a["labels"] == {"rust"}
             )
             flag = "OK " if cell_ok else "BAD"
             lines.append(
@@ -367,7 +380,11 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                         "work; this row may actually be core-python."
                     )
         else:
-            cell_ok = a["execute"] == 0 and a["binding"] == 0
+            cell_ok = (
+                label == "core-python" and a["labels"] == {"core-python"}
+                and a["runtimes"] <= EXPECTED_RUNTIME["core-python"]
+                and a["execute"] == 0 and a["binding"] == 0
+            )
             flag = "OK " if cell_ok else "BAD"
             lines.append(
                 f"  [{flag}] {wid}: backend=core-python runtime={a['runtime']} "
@@ -380,6 +397,54 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
                 )
         all_ok = all_ok and cell_ok
     return all_ok, lines
+
+
+def check_completion(container, prefix, run_id, expected_workloads=None):
+    """Require every process's durable completion record and all its summaries."""
+    rows = list(container.query_items(
+        "SELECT * FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id)",
+        parameters=[{"name": "@prefix", "value": prefix}, {"name": "@run_id", "value": run_id}],
+        enable_cross_partition_query=True,
+    ))
+    measurements = list(summary_rows(rows))
+    completed = [r for r in rows if r.get("record_type") == "completion"]
+    observed = {r["workload_id"] for r in measurements}
+    lines = []
+    ok = bool(measurements) and bool(completed)
+    expected = set(expected_workloads or [])
+    if expected and observed != expected:
+        ok = False
+        lines.append(f"  [BAD] missing cells={sorted(expected-observed)} unexpected cells={sorted(observed-expected)}")
+    grouped = {}
+    for row in measurements:
+        grouped.setdefault((row["workload_id"], row.get("process_id")), []).append(row)
+    if len(grouped) != len(observed):
+        ok = False
+        lines.append("  [BAD] workload ID reused by multiple processes")
+    done = {}
+    for row in completed:
+        key = (row["workload_id"], row.get("process_id"))
+        if key in done:
+            raise ValueError("Duplicate process completion records")
+        done[key] = row
+    if grouped.keys() != done.keys():
+        ok = False
+        lines.append("  [BAD] process measurements and completion records do not match")
+    for key, summaries in grouped.items():
+        record = done.get(key, {})
+        windows = {r.get("window_index") for r in summaries}
+        valid = (
+            isinstance(key[1], str) and bool(key[1])
+            and record.get("summary_count") == len(summaries)
+            and record.get("total_count") == sum(r["count"] for r in summaries)
+            and record.get("total_errors") == sum(r["errors"] for r in summaries)
+            and windows == set(range(1, record.get("window_count", 0) + 1))
+        )
+        ok = ok and valid
+        lines.append(f"  [{'OK ' if valid else 'BAD'}] {key[0]} process={key[1]} complete summaries={len(summaries)}")
+    if not measurements:
+        lines.append("  [BAD] no measurement rows")
+    return ok, lines
 
 
 def main():
@@ -415,16 +480,24 @@ def main():
         help="comma-separated backends every operation must contain "
         "(default core-python,rust)",
     )
+    ap.add_argument("--expected-workloads", help="File listing every planned workload ID, one per line")
+    ap.add_argument("--allow-incomplete-history", action="store_true",
+                    help="Inspect historical data without process completion records; not a completeness pass")
     args = ap.parse_args()
     required_backends = [
         backend.strip()
         for backend in args.required_backends.split(",")
         if backend.strip()
     ]
-    if not required_backends:
-        ap.error("--required-backends must name at least one backend")
+    if not required_backends or not set(required_backends) <= EXPECTED_RUNTIME.keys():
+        ap.error("--required-backends must name core-python and/or rust")
 
-    report_interval_s = float(os.environ.get("PERF_REPORT_INTERVAL", "300") or "300")
+    try:
+        report_interval_s = float(os.environ.get("PERF_REPORT_INTERVAL", "300"))
+    except ValueError:
+        ap.error("PERF_REPORT_INTERVAL must be numeric")
+    if not math.isfinite(report_interval_s) or report_interval_s <= 0:
+        ap.error("PERF_REPORT_INTERVAL must be finite and positive")
     container = _connect()
 
     run_id = args.run_id or _latest_run_id(container, args.prefix)
@@ -447,13 +520,24 @@ def main():
     print("-- 2. reporter dropped-write warnings --")
     warn_ok, warn_lines = check_warnings(args.log_dir, strict=not args.allow_missing_logs)
     print("\n".join(warn_lines))
-    print("-- 3. backend check: each row ran on the engine it claims --")
+    print("-- 3. backend labels and available execution evidence --")
     prov_ok, prov_lines = check_backend_execution(
         container, args.prefix, run_id, allow_unknown_binding=args.allow_unknown_binding
     )
     print("\n".join(prov_lines))
 
-    ok = qual_ok and cont_ok and warn_ok and prov_ok
+    expected = None
+    if args.expected_workloads:
+        with open(args.expected_workloads, encoding="utf-8") as handle:
+            expected = [line.strip() for line in handle if line.strip()]
+        if not expected:
+            ap.error("--expected-workloads must not be empty")
+    complete_ok, complete_lines = check_completion(container, args.prefix, run_id, expected)
+    print("-- 4. process completion and complete result windows --")
+    print("\n".join(complete_lines))
+    if args.allow_incomplete_history:
+        print("  WARNING: completeness is unverified (--allow-incomplete-history)")
+    ok = qual_ok and cont_ok and warn_ok and prov_ok and (complete_ok or args.allow_incomplete_history)
     print(f"=== integrity gate: {'PASS' if ok else 'FAIL'} ===")
     sys.exit(0 if ok else 1)
 

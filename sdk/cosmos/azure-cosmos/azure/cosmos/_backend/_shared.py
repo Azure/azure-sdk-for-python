@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Shared lifecycle for the sync and async Python Rust backends.
+"""Shared lifecycle and page-dispatch policy for sync and async Rust backends.
 
 A backend is the Python dispatch object; a driver is the native CosmosDriver
 identified by a driver handle; the runtime owns process-wide transport settings.
@@ -20,13 +20,19 @@ from __future__ import annotations
 import logging
 import os
 import threading
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Callable, Optional, Tuple, Type, Union
+from typing import Any, Callable, Iterator, Optional, Tuple, Type, Union
+
+from azure.core.exceptions import ServiceResponseError
 
 from ._binding_conversions import acquire_driver_handle_args
-from .contracts import PreparedClientConfig
+from .contracts import PreparedClientConfig, PreparedQuery
+from .errors import PagePreflightError, UnsupportedQueryError
+from .operations import get_page_binding_method
+from ..exceptions import CosmosClientTimeoutError
 from ._driver_registry import (
-    make_credential_key,
+    make_driver_identity,
     register_driver_client,
     release_driver_client,
     freeze_runtime_policy,
@@ -38,6 +44,7 @@ _BindingErrorMatcher = Union[Type[BaseException], Tuple[Type[BaseException], ...
 _NO_BINDING_ERRORS: Tuple[Type[BaseException], ...] = ()
 
 _QUERY_PLAN_INTEROP_DIRECTORY_ENV = "AZURE_COSMOS_QUERYPLANINTEROP_DIR"
+_QUERY_PLAN_INTEROP_CONFIG_LOCK = threading.Lock()
 
 
 def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
@@ -50,8 +57,10 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
 
     The driver discovers the library through
     ``AZURE_COSMOS_QUERYPLANINTEROP_DIR``. It cannot infer the Python package's
-    private ``.libs`` directory, so this sets that environment variable before
-    any driver client can lazily load the native library.
+    private ``.libs`` directory. Lazy driver initialization calls this before
+    the first operation, not during package import. The pinned driver's loader
+    accepts only this process-wide setting or the OS library search path; it
+    has no per-client library-path option.
 
     Without this call a customer would have to set an environment variable to
     get a feature their wheel already contains -- and would have no way to know
@@ -71,7 +80,8 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
     try:
         package_directory = Path(module_file).resolve().parent / ".libs"
         if package_directory.is_dir():
-            os.environ[_QUERY_PLAN_INTEROP_DIRECTORY_ENV] = str(package_directory)
+            with _QUERY_PLAN_INTEROP_CONFIG_LOCK:
+                os.environ.setdefault(_QUERY_PLAN_INTEROP_DIRECTORY_ENV, str(package_directory))
     except OSError:
         _LOGGER.warning(
             "Unable to locate packaged QueryPlanInterop; queries will use Gateway fallback "
@@ -106,23 +116,70 @@ def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorM
 
 
 def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
-    """Return the binding's ``DriverTransportError`` class for ``except`` use.
+    """Return the binding's ``_DriverTransportError`` class for ``except`` use.
 
     The backends convert that error into azure-core's ``ServiceResponseError``.
     This classification means no HTTP response was returned to this wrapper,
     not that the request was never sent or that the service performed no work.
     """
-    return _binding_error_type(rust_module, "DriverTransportError")
+    return _binding_error_type(rust_module, "_DriverTransportError")
 
 
 def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
     """Return the binding class raised when the driver cannot finish a query.
 
-    The Rust backends translate it to ``QueryNotSupportedByBackendError``.
+    The Rust backends translate it to ``UnsupportedQueryError``.
     It is an execution failure, not the static preflight signal that permits
     selected migration paths to use legacy dispatch.
     """
-    return _binding_error_type(rust_module, "UnsupportedQueryFeatureError")
+    return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
+
+
+@contextmanager
+def page_dispatch_errors(
+    deadline: Optional[float],
+    unsupported_query_error: _BindingErrorMatcher,
+    transport_error: _BindingErrorMatcher,
+) -> Iterator[None]:
+    """Use identical page error mapping without intercepting async cancellation."""
+    try:
+        yield
+    except TimeoutError as exc:
+        if deadline is None:
+            raise
+        raise CosmosClientTimeoutError(error=exc) from exc
+    except unsupported_query_error as exc:
+        raise UnsupportedQueryError(str(exc)) from exc
+    except transport_error as exc:
+        raise ServiceResponseError(message=str(exc)) from exc
+
+
+def validate_page_request(
+    prepared: PreparedQuery,
+    binding: Optional[Any],
+    get_dispatch: Callable[[Optional[str]], Optional[Any]],
+    backend_name: str,
+    suffix: str = "",
+) -> None:
+    """Check dispatch availability without acquiring either kind of driver handle."""
+    if binding is None:
+        raise PagePreflightError(
+            f"{backend_name}.execute_pages: the compiled azure.cosmos._rust "
+            "module is not present in this environment. Build it with "
+            "`maturin develop` from the repo root."
+        )
+    uses_cursor = prepared.cursor is not None
+    method = get_page_binding_method(prepared.op, uses_cursor=uses_cursor)
+    dispatch = get_dispatch(method)
+    if uses_cursor and method is not None and dispatch is None:
+        raise RuntimeError(
+            f"The compiled azure.cosmos._rust extension does not export {method}{suffix}; "
+            "rebuild it from the current source."
+        )
+    if dispatch is None:
+        raise PagePreflightError(
+            f"{backend_name}.execute_pages does not yet support op={prepared.op!r}."
+        )
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
@@ -140,7 +197,7 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
             _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
 
 
-class RustBackendShared:
+class RustBindingShared:
     """Mixin holding the state and lifecycle common to both Rust backends.
 
     Each backend calls ``_init_shared`` from its ``__init__`` to store the common fields
@@ -150,7 +207,7 @@ class RustBackendShared:
 
     ``_init_shared`` sets all the shared attributes: ``_endpoint``, ``_master_key``,
     ``_token_credential``, ``_client_config``, ``_strict_isolation``,
-    ``_credential_key``, ``_driver_handle``, ``_driver_handle_lock``, ``_closing``, and
+    ``_driver_identity``, ``_driver_handle``, ``_driver_handle_lock``, ``_closing``, and
     ``_config_released``.
     """
 
@@ -170,9 +227,9 @@ class RustBackendShared:
         made. (It is called from each backend's ``__init__`` after that backend has set
         its own fields, so every attribute the finalizer might touch already exists.)
 
-        It computes ``_credential_key`` once -- an async/sync token credential by object
-        identity, or a master key by a hash, never the plaintext secret -- so open
-        and close identify this client to the guard the same way. It also enforces the
+        It asks the binding for ``_driver_identity`` once, without initializing a
+        runtime or driver, so open and close use the same native identity.
+        It also enforces the
         process-wide proxy and transport-timeout policies *first*, so a runtime
         conflict fails before any registration exists to undo.
         """
@@ -187,11 +244,6 @@ class RustBackendShared:
         # call. None means there are none to pass.
         self._client_config = client_config
         self._strict_isolation = strict_isolation
-        # The credential's identity for the driver-isolation guard, keyed the same
-        # way the binding keys its driver cache (token object identity, or a
-        # master-key hash -- never the plaintext secret). Computed once and
-        # reused on release so the registry counts stay balanced.
-        self._credential_key = make_credential_key(master_key, token_credential)
         # The driver handle acquire_driver_handle returns: a key made from (endpoint,
         # credential, config) that names which rust driver this client uses (the
         # rust driver owns the connection pool, request signing, and region
@@ -204,8 +256,8 @@ class RustBackendShared:
         # building a second driver reference and carrying on as if it were open.
         self._closing = False
         # Register against the endpoint last: in strict isolation mode this raises if
-        # a live client already targets the endpoint with a different config or
-        # credential. Start _config_released True so a construction that fails here
+        # a live client already targets the account with a different native identity.
+        # Start _config_released True so a construction that fails here
         # never releases a registration it never made; set it False only once
         # registration succeeds.
         self._config_released = True
@@ -214,10 +266,13 @@ class RustBackendShared:
         # here before recording a registration; the binding checks them again later
         # in case the runtime is only started at that point.
         try:
+            self._driver_identity = make_driver_identity(
+                endpoint, master_key, client_config, token_credential
+            )
             register_driver_client(
                 endpoint,
                 client_config,
-                credential_key=self._credential_key,
+                driver_identity=self._driver_identity,
                 strict=strict_isolation,
             )
         except BaseException:
@@ -240,7 +295,7 @@ class RustBackendShared:
         release_driver_client(
             self._endpoint,
             self._client_config,
-            credential_key=self._credential_key,
+            driver_identity=self._driver_identity,
         )
 
     def abort_construction(self) -> None:
@@ -255,8 +310,9 @@ class RustBackendShared:
         runtime_configuration: Callable[[], Optional[tuple[Optional[bool], Optional[float], Optional[float]]]],
     ) -> str:
         """Hold a reservation across init/close races and observe the real runtime."""
-        register_driver_client(self._endpoint, self._client_config, self._credential_key)
+        register_driver_client(self._endpoint, self._client_config, self._driver_identity)
         try:
+            configure_packaged_query_plan_interop(binding)
             return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
         finally:
             try:
@@ -264,7 +320,7 @@ class RustBackendShared:
                 if settings is not None:
                     freeze_runtime_policy(settings)
             finally:
-                release_driver_client(self._endpoint, self._client_config, self._credential_key)
+                release_driver_client(self._endpoint, self._client_config, self._driver_identity)
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
         """Return the arguments for the binding's ``acquire_driver_handle``, in one place.

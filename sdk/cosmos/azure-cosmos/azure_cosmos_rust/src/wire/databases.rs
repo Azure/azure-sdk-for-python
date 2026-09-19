@@ -208,13 +208,20 @@ pub(crate) fn run_query_databases_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_query_databases_future(driver, modifiers, body_bytes),
-        tuple_from_query_databases_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_query_databases_future(driver, modifiers, body_bytes),
+            )
+        },
+        |py, result| tuple_from_query_databases_result(py, result?),
     )
 }
 
@@ -225,13 +232,20 @@ pub(crate) fn run_query_databases_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_query_databases_future(driver, modifiers, body_bytes),
-        tuple_from_query_databases_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_query_databases_future(driver, modifiers, body_bytes),
+            )
+        },
+        |py, result| tuple_from_query_databases_result(py, result?),
     )
 }
 
@@ -250,7 +264,7 @@ fn prepare_database_operation(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );

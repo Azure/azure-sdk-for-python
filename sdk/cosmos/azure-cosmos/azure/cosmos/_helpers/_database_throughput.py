@@ -10,7 +10,7 @@ container inside it then draws on that one shared budget instead of holding its
 own. These functions back ``DatabaseProxy.get_throughput`` and
 ``DatabaseProxy.replace_throughput`` (sync and async); the container-level
 equivalents are in
-:mod:`~azure.cosmos._helpers.container_throughput_helper`.
+:mod:`~azure.cosmos._helpers._container_throughput`.
 
 The shape of the work is the same as for a container -- find the account-level
 *offer* record for this resource (see
@@ -39,6 +39,7 @@ from .._base import _deserialize_throughput, _replace_throughput
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes as _StatusCodes
 from .._offer_rust_routing import (
+    offer_response_headers,
     can_use_rust_backend_for_read_offer,
     can_use_rust_backend_for_replace_throughput,
     process_read_offer_response,
@@ -98,7 +99,7 @@ def get_database_throughput(
     _require_offers(offers, not_found_message)
 
     if response_hook:
-        response_hook(client_connection.last_response_headers, offers)
+        response_hook(offer_response_headers(offers, client_connection), offers)
     return _deserialize_throughput(throughput=offers)
 
 
@@ -154,7 +155,7 @@ async def get_database_throughput_async(
     _require_offers(offers, not_found_message)
 
     if response_hook:
-        response_hook(client_connection.last_response_headers, offers)
+        response_hook(offer_response_headers(offers, client_connection), offers)
     return _deserialize_throughput(throughput=offers)
 
 

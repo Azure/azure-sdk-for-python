@@ -45,7 +45,8 @@ class ClientLastResponseHeaders:
 
     This is not a response history or per-operation storage. Concurrent calls
     share this state; use a result's headers or response hook for a specific call.
-    It owns no transport or service metadata cache.
+    Response publication copies headers so diagnostic mutations cannot alter
+    the operation's result. It owns no transport or service metadata cache.
     """
 
     last_response_headers: CaseInsensitiveDict = field(default_factory=CaseInsensitiveDict)

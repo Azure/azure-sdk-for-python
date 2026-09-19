@@ -37,9 +37,6 @@ Customer can then use **pip**, Python's installation tool, to select and
 install the package. Pip normally obtains public packages from **PyPI**, the
 Python Package Index, unless another source is configured.
 
-These are separate steps. A wheel sitting on the SDK developer's disk has
-been built, but that does not mean Customer can download it. Installing it
-for a local test does not publish it either.
 
 ### What changes when we add Rust?
 
@@ -71,8 +68,6 @@ The processor labels x64 and ARM64 identify different machine-code families.
 One compiled file cannot serve both simply because the Python source is the
 same.
 
-We must also keep supporting the existing pure-Python production build path.
-Developing the Rust path is not permission to remove or break that path.
 
 
 ## 2. Where the Python and Rust code lives
@@ -135,15 +130,6 @@ driver. A **Git revision** identifies a particular source snapshot. The
 selected driver is version `0.8.0`; the exact revision is recorded in the
 package-level `Cargo.toml` and `Cargo.lock`.
 
-This matters when Central starts a clean build machine:
-
-> "Build using the driver source selected by the package, not whichever Rust
-> checkout happens to exist beside a developer's Python checkout."
-
-A developer working on both repositories can use a temporary local override.
-That override must not become a requirement for everybody else's builds.
-Changing a local source directory can change the compiled result even if its
-declared version has not changed.
 
 For the final release, our plan calls for an approved driver version published
 on **crates.io**, the public registry from which Cargo downloads Rust source
@@ -154,24 +140,6 @@ Cargo downloads driver source and compiles it with the binding. A customer
 installing our wheel does not separately install a Rust driver package.
 
 ## 3. Which work belongs to the SDK team and which belongs to Central
-
-Having correct package instructions is only half of the job. Someone must also
-provide build machines, run those instructions, collect the results, and
-publish the approved release.
-
-The ownership boundary is:
-
-```text
-Cosmos SDK team
-    -> owns the package source and its build requirements
-    -> defines what must be in the wheel
-    -> supplies SDK tests
-
-Central team
-    -> owns the shared build and release infrastructure
-    -> supplies build environments and runs the package build
-    -> collects, processes, and publishes approved outputs
-```
 
 **A pipeline** is an automated sequence of work, such as building and testing
 a package. The SDK owns the Cosmos entry file, `sdk\cosmos\ci.yml`, but that
@@ -192,10 +160,6 @@ The following paths are relative to the package source directory:
 | `azure_cosmos_rust\build.rs`, `query_plan_binary.rs` | Checks on supplied compiled libraries |
 | `tests` | Packaging checks and tests of installed SDK behavior |
 
-The SDK also owns `sdk\cosmos\test-resources.bicep`, which describes the Azure
-resources used by service tests. Adding Rust to the package does not by itself
-require different Cosmos accounts. Change those resources only if the test
-plan needs capabilities the existing resources do not provide.
 
 ### The Central-owned files
 
@@ -211,9 +175,6 @@ Central must arrange the environment that can build it and the environment
 that can execute its required tests. A setting in a package file does not
 create either environment.
 
-The exact shared files and the order they invoke one another are covered in
-[section 12](#12-how-the-pipeline-builds-and-releases-the-complete-wheel-set),
-after the package-build steps they run have been explained.
 
 Ownership also does not override source-branch selection. A run using a
 particular branch uses that branch's same-repository SDK files and shared
@@ -277,15 +238,7 @@ in_bundle = false
 
 The first section selected which repository code checks were enabled.
 
-The second section was for **Conda**, a separate tool for installing packages
-and managing the environments they run in. In the Azure SDK's Conda release
-process, a **bundle** groups several SDK libraries into one Conda package.
-For example, the `azure-storage` bundle groups libraries such as
-`azure-storage-blob` and `azure-storage-queue`.
-
-For Cosmos, `in_bundle = false` means it is not grouped into one of those
-multi-library Conda packages. It does not mean Conda support is disabled.
-This setting concerns the separate Conda distribution process, not how we
+The second section was for **Conda**. This setting concerns the separate Conda distribution process, not how we
 compile Rust or build a wheel for pip.
 
 That file did not yet contain `[project]` package information or
@@ -327,10 +280,6 @@ The Python package information matters because the internal Rust binding has
 its own name and version. Customers are installing `azure-cosmos`, not a
 separately named Rust package.
 
-The current Python project version is `4.17.1`. That is the prototype's
-configuration, not an approved v5 release number. Its version must agree with
-the SDK's runtime version in `azure\cosmos\_version.py`. The binding's internal
-version `0.1.0` must not become the Python package's version.
 
 ### What the SDK-owned build helper does
 
@@ -436,9 +385,7 @@ prerequisite.
 
 Keeping both files is not enough by itself. The build commands and pipeline
 routing must select the intended path, and overlapping package information
-must not contradict itself. This guide does not claim that both production
-and Rust builds are automatically supported by running arbitrary commands
-against the same checkout.
+must not contradict itself. 
 
 **The goal is to add the Rust-backed build process while preserving the
 production build process we still support, not to assume that adding Rust

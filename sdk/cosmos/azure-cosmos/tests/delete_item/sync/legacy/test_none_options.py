@@ -22,6 +22,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
@@ -33,6 +35,7 @@ KEY = os.environ.get(
 )
 
 
+@pytest.mark.cosmosEmulator
 class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -78,4 +81,3 @@ class TestNoneOptions(unittest.TestCase):
                 max_integrated_cache_staleness_in_ms=None, priority=None,
                 throughput_bucket=None,
             )
-

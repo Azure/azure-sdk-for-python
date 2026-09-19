@@ -22,6 +22,7 @@ KEY = os.environ.get(
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosEmulator
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):

@@ -3,7 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend-pinned SQL queries with retained plans and query-bound bookmarks."""
+"""Backend-pinned SQL queries with retained plans and query-bound bookmarks.
+
+The service query body is serialized once per pager. Scope and page settings
+travel separately, so fetching another page does not encode the query again.
+"""
 
 from __future__ import annotations
 
@@ -23,12 +27,13 @@ from .. import _utils, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._backend.contracts import QueryScope, PreparedQuery, QueryPage
 from .._backend.operations import OP_QUERY_ITEMS
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
 from .._query_advisor import get_query_advice_info
 from ._partition_key import query_partition_key_components, partition_key_bookmark_value
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
+from ._wire_encoding import serialize_body_to_bytes
 
 _PREFIX = "q1."
 _QUERY_OPTIONS = {
@@ -55,7 +60,7 @@ def reject_rust_bookmark(kwargs: dict[str, Any]) -> None:
 
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 
 class QueryConfig(ReadAllConfig):
@@ -133,7 +138,7 @@ class QueryConfig(ReadAllConfig):
         )
         if cross is not None and not isinstance(cross, bool):
             raise TypeError("enable_cross_partition_query must be a bool or None.")
-        self.partition_key = partition or PartitionKeyInput("cross_partition")
+        self.partition_key = partition or BindingPartitionKey("cross_partition")
         self.scope = QueryScope(
             feed_range=(interval[0], interval[1]) if interval is not None else None,
             allow_cross_partition=cross is not False,
@@ -207,6 +212,10 @@ class QueryConfig(ReadAllConfig):
             allow_nan=False,
         ).encode()
         self.identity = hashlib.sha256(encoded).hexdigest()
+        payload: dict[str, Any] = {"query": self.query}
+        if self.parameters:
+            payload["parameters"] = list(self.parameters)
+        self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
         self.decode(self.options.get("continuation"))
 
     def decode(self, token: Optional[str]) -> Optional[str]:
@@ -248,13 +257,14 @@ class QueryConfig(ReadAllConfig):
         ).decode().rstrip("=")
 
     def prepared(
-        self, token: Optional[str], cursor: Optional[ItemFeedCursor], deadline: Optional[float]
+        self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
     ) -> PreparedQuery:
         return replace(
             super().prepared(self.decode(token), cursor, deadline),
             op=OP_QUERY_ITEMS,
             query=self.query,
             parameters=self.parameters,
+            query_body=self.query_body,
             query_scope=self.scope,
             partition_key=self.partition_key,
         )
@@ -305,9 +315,7 @@ class QueryPageState(ReadAllPageState):
         self.finish(rows, deadline)
         self.bookmark = self.token
         if self.config.response_state is not None and self.responses:
-            self.config.response_state.last_response_headers = CaseInsensitiveDict(
-                self.headers
-            )
+            self.config.response_state.last_response_headers = deepcopy(self.headers)
         return rows
 
     def invalidate(self, error: BaseException) -> None:

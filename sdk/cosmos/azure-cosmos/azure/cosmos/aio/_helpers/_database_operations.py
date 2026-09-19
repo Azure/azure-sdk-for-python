@@ -66,7 +66,7 @@ class AsyncDatabaseHelper:
         kwargs: Optional[Mapping[str, Any]] = None,
         deadline: Optional[float] = None,
     ) -> CosmosDict:
-        """Async twin of :meth:`azure.cosmos._helpers.database_helper.DatabaseHelper.create_database`.
+        """Async twin of :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.create_database`.
 
         Per-call ``read_timeout`` is not supported; callers configure the read
         timeout when constructing ``CosmosClient``. ``response_hook`` is invoked
@@ -133,7 +133,7 @@ class AsyncDatabaseHelper:
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
         """Async twin of
-        :meth:`azure.cosmos._helpers.database_helper.DatabaseHelper.read_database`."""
+        :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.read_database`."""
         response_hook = with_response_header_snapshot(response_hook)
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -221,7 +221,7 @@ class AsyncDatabaseHelper:
         deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Async twin of
-        :meth:`azure.cosmos._helpers.database_helper.DatabaseHelper.create_database_if_not_exists`.
+        :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.create_database_if_not_exists`.
 
         Same retry-safe behavior: read the named database first and create it
         only when the read returns "not found" (404), so re-running setup for a

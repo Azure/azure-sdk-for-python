@@ -94,11 +94,11 @@ def test_body_bytes_round_trip_to_the_same_dict():
 # ---------------------------------------------------------------------------
 
 
-def test_missing_id_is_not_minted_and_body_is_not_mutated():
-    """Unlike create with ``enable_automatic_id_generation=True``, an upsert
-    never generates an id. A body without one is serialised as-is and the
-    server rejects it -- the prep must not invent an id, which would defeat
-    the "replace if present" half of insert-or-replace."""
+def test_missing_id_is_not_generated_or_added_to_input_body():
+    """The input body and encoded upsert body both remain without an id.
+
+    This preparation-only test does not check the service's response.
+    """
     body = {"pk": "customerA", "total": 109.5}
     prepared = prepare_upsert_item_request(
         container_link="dbs/d/colls/c",

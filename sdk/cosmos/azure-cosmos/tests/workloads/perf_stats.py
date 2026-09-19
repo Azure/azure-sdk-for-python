@@ -4,6 +4,7 @@
 
 import threading
 import time
+import math
 from collections import deque
 
 try:
@@ -39,6 +40,7 @@ class Stats:
         # differ. Independent percentiles cannot be subtracted to isolate overhead.
         self._server_histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
+        self._throttled: dict[str, int] = {}
         # Running RU charge per operation: sum and sample count, so drain can
         # report mean RU per op. Fed by record_ru from the SDK response_hook
         # (x-ms-request-charge).
@@ -69,6 +71,8 @@ class Stats:
 
     def record(self, operation: str, duration_ms: float):
         """Record a successful operation with its duration in milliseconds."""
+        if not math.isfinite(duration_ms) or duration_ms < 0:
+            raise ValueError("Duration must be finite and nonnegative")
         with self._lock:
             if operation not in self._histograms:
                 self._histograms[operation] = HdrHistogram(
@@ -91,8 +95,8 @@ class Stats:
         different population. Their percentiles cannot identify per-call overhead
         by subtraction or establish which layer caused a latency tail.
         """
-        if server_ms < 0:
-            return
+        if not math.isfinite(server_ms) or server_ms < 0:
+            raise ValueError("Header duration must be finite and nonnegative")
         with self._lock:
             if operation not in self._server_histograms:
                 self._server_histograms[operation] = HdrHistogram(
@@ -107,6 +111,8 @@ class Stats:
         The caller determines which response/header is sampled. This method does
         not check one sample per operation or complete retry/request accounting.
         """
+        if not math.isfinite(request_charge) or request_charge < 0:
+            raise ValueError("Request charge must be finite and nonnegative")
         with self._lock:
             if operation not in self._ru_sums:
                 self._ru_sums[operation] = 0.0
@@ -148,6 +154,8 @@ class Stats:
                     _MIN_VALUE_US, _MAX_VALUE_US, 3
                 )
             self._error_counts[operation] += 1
+            if status_code == 429:
+                self._throttled[operation] = self._throttled.get(operation, 0) + 1
             self._errors.append(
                 {
                     "operation": operation,
@@ -269,10 +277,15 @@ class Stats:
                             "server_hist_b64": server_hist_b64,
                         }
                     )
+            for summary in summaries:
+                op = summary["operation"]
+                summary["throttled_429"] = self._throttled.get(op, 0)
+                summary["cold_first_n_ms"] = list(self._first_ms.get(op, []))[:50]
             # Reset for next interval
             self._histograms.clear()
             self._server_histograms.clear()
             self._error_counts.clear()
+            self._throttled.clear()
             self._ru_sums.clear()
             self._ru_counts.clear()
             # Copy into a list so the caller gets a stable copy and the return

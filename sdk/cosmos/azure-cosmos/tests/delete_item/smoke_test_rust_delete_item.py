@@ -28,8 +28,8 @@ import uuid
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_DELETE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.partition_key import PartitionKeyInput
-from azure.cosmos._backend.rust import RustBackend
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
+from azure.cosmos._backend.binding import RustBinding
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -88,9 +88,9 @@ def main() -> int:
 
     item_id = f"smoke-del-{uuid.uuid4()}"
     container_link = f"dbs/{DB}/colls/{COLL}"
-    partition_key = PartitionKeyInput("components", ("smokeA",))
+    partition_key = BindingPartitionKey("components", ("smokeA",))
 
-    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
 
     # ---- create a row to delete ----------------------------------------
     create_prepared = PreparedRequest(
@@ -102,7 +102,7 @@ def main() -> int:
     )
 
     print(f"Item id  : {item_id}")
-    print("Calling RustBackend.execute(create) ...", flush=True)
+    print("Calling RustBinding.execute(create) ...", flush=True)
     try:
         create_resp = backend.execute(create_prepared)
     except Exception as e:  # pylint: disable=broad-except
@@ -127,7 +127,7 @@ def main() -> int:
         item_id=item_id,
     )
 
-    print("Calling RustBackend.execute(delete) ...", flush=True)
+    print("Calling RustBinding.execute(delete) ...", flush=True)
     try:
         delete_resp = backend.execute(delete_prepared)
     except Exception as e:  # pylint: disable=broad-except

@@ -14,6 +14,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
 
 
@@ -33,6 +35,7 @@ def request_raw_response_hook(response):
             == str(request_throughput_bucket_number))
 
 
+@pytest.mark.cosmosEmulator
 class TestHeaders(unittest.TestCase):
 
     @classmethod
@@ -92,4 +95,3 @@ class TestHeaders(unittest.TestCase):
             patch_operations=operations,
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-

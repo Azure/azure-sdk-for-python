@@ -133,9 +133,11 @@ class TestAutoIdGeneration(unittest.TestCase):
     flag can take.
     """
 
-    def test_missing_id_mints_uuid_and_writes_into_body(self):
-        """When the body has no id, the prep generates one, writes it into the
-        body, returns it, and includes it in the bytes."""
+    def test_missing_id_is_generated_without_changing_input_body(self):
+        """Generate an id in the prepared request and its encoded body.
+
+        The caller's original dictionary remains without an id.
+        """
         body = {"total": 99.5}
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
@@ -253,8 +255,11 @@ class TestContainerRidOptional(unittest.TestCase):
     state it doesn't have.
     """
 
-    def test_none_rid_skips_stamping(self):
-        """With ``container_rid=None`` the headers carry no ``Constants.ContainerRID`` entry."""
+    def test_unresolved_container_resource_id_omits_internal_option_header(self):
+        """With no resolved id, the header view omits the internal option name.
+
+        This assertion checks ``Constants.ContainerRID``, not the HTTP header name.
+        """
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
@@ -379,17 +384,14 @@ class TestPreparedRequestImmutability(unittest.TestCase):
             prepared.container_link = "dbs/db/colls/other"  # type: ignore[misc]
 
 
-class TestRoundTripWithMintedId(unittest.TestCase):
-    """A generated id appears, identically, in three places.
+class TestGeneratedIdConsistency(unittest.TestCase):
+    """The prepared request and encoded body agree on the generated id."""
 
-    Auto-id only works if the same string ends up in the body dict, the
-    serialised bytes, and the return value. If any two of those drifted
-    apart, a retry could write the same item twice under different
-    ids. This test checks all three hold the same value.
-    """
+    def test_generated_id_matches_request_body_without_changing_input(self):
+        """Check the generated id's format and equality across request fields.
 
-    def test_minted_id_appears_identically_in_three_places(self):
-        """A generated id is the same string in the body dict, the serialised bytes, and the return value."""
+        The encoded body contains the id; the caller's dictionary does not.
+        """
         body = {"pk": "customerA", "total": 99.5}
         prepared = prepare_create_item_request(
             container_link="dbs/db/colls/c",

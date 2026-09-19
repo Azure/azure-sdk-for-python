@@ -205,6 +205,7 @@ def setup_and_teardown():
 # ---------------------------------------------------------------------------
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosEmulator
 class TestExcludedLocations:
     @pytest.mark.parametrize("test_data", CREATE_ITEM_TEST_DATA)
     def test_create_item(self, test_data):
@@ -221,4 +222,3 @@ class TestExcludedLocations:
             _create_item_with_excluded_locations(container, body, request_excluded_locations)
 
             _verify_endpoint(LOG_CAPTURE.messages, client, list(expected_locations), multiple_write_locations)
-

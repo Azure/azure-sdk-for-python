@@ -47,21 +47,21 @@ from ._helpers._item_dispatch import (
     merge_upsert_item_explicit_kwargs,
     get_selected_backend,
 )
-from ._helpers.item_helper import ItemHelper
+from ._helpers._item_operations import ItemHelper
 from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
 from ._helpers._read_items import complete_read_items_response, prepare_read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_bookmark
 from ._helpers._response_parse import complete_item_response
 from ._operation_deadline import deadline_lock, legacy_deadline_options, remaining_timeout
-from ._helpers.container_helper import ContainerHelper
+from ._helpers._container_operations import ContainerHelper
 from ._helpers._request_container import validate_container_create_kwargs
-from ._helpers.feed_range_helper import (
+from ._helpers._feed_range_operations import (
     feed_range_from_partition_key as _feed_range_from_partition_key,
     is_feed_range_subset as _is_feed_range_subset,
     read_feed_ranges as _read_feed_ranges,
 )
-from ._helpers.container_throughput_helper import (
+from ._helpers._container_throughput import (
     get_container_throughput as _get_throughput,
     replace_container_throughput as _replace_container_throughput,
 )
@@ -78,7 +78,7 @@ from .scripts import ScriptsProxy
 if TYPE_CHECKING:
     from ._backend.cosmos_backend import CosmosBackend
     from ._helpers._item_context import ItemClientContext
-    from ._helpers.legacy_item_helper import LegacyItemHelper
+    from ._helpers._legacy_item_operations import LegacyItemHelper
 
 __all__ = ("ContainerProxy",)
 
@@ -141,10 +141,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 return cached[1]
             self._item_helper_cache = None
         if context is None:
-            from ._helpers.legacy_item_helper import LegacyItemHelper
+            from ._helpers._legacy_item_operations import LegacyItemHelper
             return LegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
         if context.backend.name == "core-python":
-            from ._helpers.legacy_item_helper import LegacyItemHelper
+            from ._helpers._legacy_item_operations import LegacyItemHelper
             return LegacyItemHelper(self.client_connection, self._get_properties_with_options)
         helper = ItemHelper(context.backend, context.defaults, context.response_state)
         self._item_helper_cache = (context, helper)
@@ -155,7 +155,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self._item_context is not None and self._item_context.backend.name != "core-python":
             return partition_key
         if self._item_context is None:
-            from ._helpers.legacy_item_helper import require_legacy_item_connection
+            from ._helpers._legacy_item_operations import require_legacy_item_connection
             require_legacy_item_connection(self.client_connection)
         return self._set_partition_key(partition_key)
 

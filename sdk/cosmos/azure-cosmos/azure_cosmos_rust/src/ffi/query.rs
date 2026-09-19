@@ -12,12 +12,15 @@ use super::*;
 /// (`{"Documents":[...]}`) so the Python query iterator can consume it with the
 /// same shape as the legacy path.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_items<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (container_link, partition_key, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    super::validate_prepared_operation(prepared, "query_items")?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_query_operation(
         py,
         driver_handle,
@@ -26,6 +29,7 @@ pub(crate) fn query_items<'py>(
         modifiers,
         body_bytes,
         "query_items",
+        timeout_seconds,
     )
 }
 
@@ -33,11 +37,14 @@ pub(crate) fn query_items<'py>(
 /// whole-container scope selects `SELECT * FROM root r`. This is separate from
 /// the retained-cursor path used for public feed iteration.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_all_items<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_all_items")?;
     let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation(
         py,
@@ -46,17 +53,21 @@ pub(crate) fn read_all_items<'py>(
         partition_key,
         modifiers,
         "read_all_items",
+        timeout_seconds,
     )
 }
 
 /// Async twin of `query_items`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_items_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (container_link, partition_key, modifiers, body_bytes) = extract_query_inputs(prepared)?;
+    super::validate_prepared_operation(prepared, "query_items")?;
+    let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_query_operation_async(
         py,
         driver_handle,
@@ -65,17 +76,21 @@ pub(crate) fn query_items_async<'py>(
         modifiers,
         body_bytes,
         "query_items",
+        timeout_seconds,
     )
 }
 
 /// Async twin of `read_all_items`: identical inputs/driver work; returns a Python
 /// awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_all_items_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_all_items")?;
     let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
     run_read_all_items_operation_async(
         py,
@@ -84,5 +99,6 @@ pub(crate) fn read_all_items_async<'py>(
         partition_key,
         modifiers,
         "read_all_items",
+        timeout_seconds,
     )
 }

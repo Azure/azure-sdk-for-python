@@ -44,8 +44,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import _operation_deadline
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._helpers import _read_all_items
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError
@@ -118,14 +118,14 @@ def feed(request, monkeypatch):
 
     module = async_rust if async_mode else sync_rust
     binding = SimpleNamespace(
-        ItemFeedCursor=MagicMock(side_effect=object),
+        _ItemFeedCursor=MagicMock(side_effect=object),
         read_all_items=MagicMock(),
         read_all_items_async=AsyncMock(),
         fetch_page_with_cursor=MagicMock(side_effect=page),
         fetch_page_with_cursor_async=AsyncMock(side_effect=page),
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    backend_type = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
+    backend_type = async_rust.AsyncRustBinding if async_mode else sync_rust.RustBinding
     backend = backend_type("https://read-all.invalid", master_key="ZmFrZQ==")
     monkeypatch.setattr(
         backend,
@@ -735,7 +735,7 @@ def test_compiled_page_entrypoint_rejects_legacy_token_without_io(method):
         settings=RequestSettings(query=QuerySettings(continuation="legacy-bookmark")),
     )
     with pytest.raises(ValueError, match="Rust driver continuation"):
-        getattr(native, method)("unused-handle", prepared, native.ItemFeedCursor())
+        getattr(native, method)("unused-handle", prepared, native._ItemFeedCursor())
 
 
 def test_hook_preserves_envelope_fields_and_does_not_alias_rows(feed):

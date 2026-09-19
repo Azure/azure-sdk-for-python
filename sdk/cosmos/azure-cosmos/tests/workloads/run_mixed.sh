@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 # Blended (mixed) workload run: one process issues a realistic MIX of operations
-# instead of one operation type at a time, so we can gate on a single BLENDED p99
-# — the latency a customer's SLA actually feels.
+# instead of one operation type at a time. Inspect both blended and per-op tails.
 #
-# Why: the per-op phases each measure the fastest case for that op in isolation.
-# Real traffic is mostly reads with some writes; the blended p99 is what matters.
+# The selected mix is an experiment input, not a claim about every application.
 #
 #   ./run_mixed.sh 900                          # core-python + rust (default)
 #   MIXED_BACKENDS=rust ./run_mixed.sh 900       # rust
@@ -12,20 +10,22 @@
 # Mix defaults to a read-heavy app profile; override with WORKLOAD_MIX.
 # Results land in perfdb/perfresults-v2 tagged mixed-blend-<backend>-<stamp>;
 # read them back with mixed_report.py.
-set -uo pipefail
+set -euo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
 source ./perf_env.sh >/dev/null 2>&1
 source ~/venvs/perfdrill/bin/activate
+export WORKLOAD_USE_SYNC=false WORKLOAD_SKIP_CLOSE=false PERF_ENABLED=true
 
 DURATION="${1:-900}"
+perf_require_positive "${DURATION}"
 BACKENDS=(${MIXED_BACKENDS:-core-python rust})
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/mixed-${STAMP}"
-mkdir -p "$LOG_DIR"
+perf_create_log_dir "$LOG_DIR" || exit 2
 
 # Read-heavy realistic mix. Weights are relative (need not sum to 100).
 export WORKLOAD_MIX="${WORKLOAD_MIX:-read=70,upsert=15,create=5,replace=5,patch=5}"
@@ -38,6 +38,9 @@ export WORKLOAD_ARRIVAL_RATE=0
 export WORKLOAD_USE_PROXY=false
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL="${PERF_REPORT_INTERVAL:-60}"
+export COSMOS_MAX_ITEM_INDEX="${MIXED_MAX_ITEM_INDEX:-1000}"
+write_run_manifest "${LOG_DIR}" "${STAMP}" "mixed"
+for bk in "${BACKENDS[@]}"; do printf 'mixed-blend-%s-%s\n' "$bk" "$STAMP"; done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Mixed/blended workload run ==="
 echo "    stamp=${STAMP} dur=${DURATION}s backends=${BACKENDS[*]}"
@@ -67,6 +70,8 @@ done
 echo "=== Mixed run complete. stamp=${STAMP} ==="
 echo
 echo "=== Running mixed report + driver commit check ==="
+BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
+perf_check_run "${LOG_DIR}" "${STAMP}" "mixed-" "${BACKEND_CSV}" || overall_rc=1
 # Lightweight post-run check for this mini-phase: confirm every rust row names
 # the same driver build, and print blended/per-op pooled latency for this stamp.
 if python3 mixed_report.py --prefix "mixed-" --stamp "${STAMP}"; then

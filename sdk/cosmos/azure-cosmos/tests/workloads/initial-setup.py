@@ -21,19 +21,20 @@ from workload_utils import create_logger, create_random_item
 
 
 async def write_item_concurrently_initial(container, num_upserts):
-    tasks = []
-    for i in range(num_upserts):
-        item = create_random_item()
-        item["id"] = "test-" + str(i)
-        item["pk"] = "pk-" + str(i)
-        tasks.append(container.upsert_item(item))
-    await asyncio.gather(*tasks)
+    for start in range(0, num_upserts, 100):
+        tasks = []
+        for i in range(start, min(start + 100, num_upserts)):
+            item = create_random_item()
+            item["id"] = "test-" + str(i)
+            item["pk"] = "pk-" + str(i)
+            tasks.append(container.upsert_item(item))
+        await asyncio.gather(*tasks)
 
 
 async def run_workload(client_id: str):
     # Key always needs to be used for the initial setup to create the database and container as aad for control plane
     # operations using the dataplane sdk is not supported.
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY, _backend="core-python", preferred_locations=PREFERRED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")) as client:
         db = await client.create_database_if_not_exists(COSMOS_DATABASE)

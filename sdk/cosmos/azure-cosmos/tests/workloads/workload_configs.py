@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # All configuration is driven by environment variables with sensible defaults.
 import logging
+import math
 import os
 
 from azure.identity import DefaultAzureCredential
@@ -17,17 +18,14 @@ def _parse_region_list(env_var_name):
 
 
 def _safe_float(value, default):
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        return default
+    result = float(value)
+    if not math.isfinite(result):
+        raise ValueError(f"Workload setting must be finite, got {value!r}")
+    return result
 
 
 def _safe_int(value, default):
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        return default
+    return int(value)
 
 
 # Names exported by ``from workload_configs import *`` (keeps stdlib modules and
@@ -175,7 +173,11 @@ if _raw_mix:
             continue
         _k, _sep, _v = _pair.partition("=")
         _k = _OPERATION_ALIASES.get(_k.strip().lower(), _k.strip().lower())
+        if not _sep:
+            raise ValueError(f"WORKLOAD_MIX requires operation=weight, got {_pair!r}")
         _w = _safe_float(_v, 0.0)
+        if _w < 0 or _k == "query":
+            raise ValueError("WORKLOAD_MIX requires nonnegative point-operation weights")
         if _k not in _VALID_OPERATIONS:
             raise ValueError(
                 f"Unknown op in WORKLOAD_MIX: {_k!r}. Valid: {sorted(_VALID_OPERATIONS)} "
@@ -195,11 +197,8 @@ if _raw_mix:
         )
 
 # Document size/shape profile for GENERATED item bodies (create/upsert/replace/
-# patch). "default" is the 732-byte flat document. "large" is a bigger, nested
-# shape (4,670 bytes with nested objects and arrays, roughly 6.4x the default) so
-# a run can check whether the latency/RU conclusions hold beyond one document
-# shape. "nested" is an alias for "large" and generates the identical body. Both
-# sizes are means over 200,000 generated documents. Reads return whatever already
+# patch). "large" has nested objects and arrays; "nested" is an alias for it.
+# Actual serialized sizes depend on generated values. Reads return whatever already
 # exists in the container, so a read-side size test needs the container seeded
 # with that profile separately.
 WORKLOAD_DOC_PROFILE = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
@@ -209,3 +208,27 @@ if WORKLOAD_DOC_PROFILE not in _VALID_DOC_PROFILES:
         "Unknown WORKLOAD_DOC_PROFILE: "
         f"{WORKLOAD_DOC_PROFILE!r}. Valid: {sorted(_VALID_DOC_PROFILES)}."
     )
+
+for _name in ("CONCURRENT_REQUESTS", "CONCURRENT_QUERIES", "WORKLOAD_NUM_CLIENTS",
+              "WORKLOAD_MAX_INFLIGHT", "THROUGHPUT"):
+    if globals()[_name] <= 0:
+        raise ValueError(f"{_name} must be positive")
+if MAX_ITEM_INDEX < 0 or WORKLOAD_ARRIVAL_RATE < 0 or REQUEST_TIMEOUT < 0:
+    raise ValueError("Item index, arrival rate and timeout must be nonnegative")
+if REQUEST_TIMEOUT and not 1 <= REQUEST_TIMEOUT < 2**64:
+    raise ValueError("COSMOS_REQUEST_TIMEOUT must be 0 (unset) or at least 1 and below 2**64 seconds")
+if not WORKLOAD_OPERATIONS and not WORKLOAD_MIX:
+    raise ValueError("Select at least one workload operation")
+if PARTITION_KEY not in ("id", "pk"):
+    raise ValueError("The seeded workload supports COSMOS_PARTITION_KEY=id or pk")
+if WORKLOAD_USE_SYNC and (WORKLOAD_ARRIVAL_RATE or WORKLOAD_NUM_CLIENTS != 1 or WORKLOAD_SKIP_CLOSE):
+    raise ValueError("Sync workloads require zero arrival rate, one client and explicit cleanup")
+if WORKLOAD_ARRIVAL_RATE:
+    _paced_ops = set(WORKLOAD_MIX) if WORKLOAD_MIX else WORKLOAD_OPERATIONS
+    if not _paced_ops <= {"read", "upsert", "replace", "patch"}:
+        raise ValueError("Fixed-rate workloads support only read, upsert, replace and patch")
+for _name in ("WORKLOAD_USE_SYNC", "WORKLOAD_USE_PROXY", "WORKLOAD_SKIP_CLOSE",
+              "WORKLOAD_GC_FREEZE", "WORKLOAD_LOOP_LAG_MONITOR",
+              "COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS"):
+    if os.environ.get(_name, "false").lower() not in ("true", "false"):
+        raise ValueError(f"{_name} must be true or false")

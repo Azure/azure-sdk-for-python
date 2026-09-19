@@ -23,7 +23,7 @@ proxy method. Instead each function uses the concrete backend stored by the
 client and drives the work through
 :meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no backend. This mirrors
-:class:`~azure.cosmos._helpers.item_helper.ItemHelper` and the throughput
+:class:`~azure.cosmos._helpers._item_operations.ItemHelper` and the throughput
 coordinator.
 """
 

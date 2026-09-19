@@ -12,6 +12,7 @@ pub(crate) fn create_database<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "create_database")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation(
@@ -28,6 +29,7 @@ pub(crate) fn create_database_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "create_database")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation_async(
@@ -51,6 +53,7 @@ pub(crate) fn read_database<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
     run_read_database_operation(py, driver_handle, modifiers, database_id, "read_database", timeout_seconds)
@@ -65,6 +68,7 @@ pub(crate) fn read_database_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
     run_read_database_operation_async(py, driver_handle, modifiers, database_id, "read_database_async", timeout_seconds)
@@ -78,6 +82,7 @@ pub(crate) fn delete_database<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "delete_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
     run_delete_database_operation(py, driver_handle, modifiers, database_id, "delete_database")
@@ -90,6 +95,7 @@ pub(crate) fn delete_database_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "delete_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
     run_delete_database_operation_async(py, driver_handle, modifiers, database_id, "delete_database_async")
@@ -110,6 +116,7 @@ pub(crate) fn list_databases<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "list_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     run_list_databases_operation(py, driver_handle, modifiers, "list_databases", timeout_seconds)
 }
@@ -123,30 +130,51 @@ pub(crate) fn list_databases_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "list_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     run_list_databases_operation_async(py, driver_handle, modifiers, "list_databases_async", timeout_seconds)
 }
 
 /// Run a database query and return one page of matching databases.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_databases<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "query_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_query_databases_operation(py, driver_handle, modifiers, body_bytes, "query_databases")
+    run_query_databases_operation(
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "query_databases",
+        timeout_seconds,
+    )
 }
 
 /// Return an awaitable that runs one page of a database query.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_databases_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "query_databases")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    run_query_databases_operation_async(py, driver_handle, modifiers, body_bytes, "query_databases_async")
+    run_query_databases_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "query_databases_async",
+        timeout_seconds,
+    )
 }

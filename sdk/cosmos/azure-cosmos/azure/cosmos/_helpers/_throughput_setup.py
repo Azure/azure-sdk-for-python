@@ -19,8 +19,8 @@ whether the customer called ``ContainerProxy.get_throughput`` or
 
 Those two steps are identical for containers and databases, so they live here
 rather than being written twice in
-:mod:`~azure.cosmos._helpers.container_throughput_helper` and
-:mod:`~azure.cosmos._helpers.database_throughput_helper`, where the two halves
+:mod:`~azure.cosmos._helpers._container_throughput` and
+:mod:`~azure.cosmos._helpers._database_throughput`, where the two halves
 would be free to drift apart.
 """
 from __future__ import annotations

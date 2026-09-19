@@ -6,7 +6,7 @@
 """Reading and replacing a single container's provisioned throughput.
 
 The throughput counterpart to
-:class:`~azure.cosmos._helpers.item_helper.ItemHelper`, for containers. The
+:class:`~azure.cosmos._helpers._item_operations.ItemHelper`, for containers. The
 public proxy methods ``ContainerProxy.get_throughput`` and
 ``ContainerProxy.replace_throughput`` (sync and async) each gather their
 arguments and call one function here; the function does the backend work and
@@ -40,6 +40,7 @@ from .._base import _deserialize_throughput, _replace_throughput
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._offer_rust_routing import (
+    offer_response_headers,
     can_use_rust_backend_for_read_offer,
     can_use_rust_backend_for_replace_throughput,
     process_read_offer_response,
@@ -92,7 +93,7 @@ def get_container_throughput(
     )
 
     if response_hook:
-        response_hook(client_connection.last_response_headers, offers)
+        response_hook(offer_response_headers(offers, client_connection), offers)
     return _deserialize_throughput(throughput=offers)
 
 
@@ -150,7 +151,7 @@ async def get_container_throughput_async(
     )
 
     if response_hook:
-        response_hook(client_connection.last_response_headers, offers)
+        response_hook(offer_response_headers(offers, client_connection), offers)
     return _deserialize_throughput(throughput=offers)
 
 
@@ -221,7 +222,7 @@ def replace_container_throughput(
         ),
     )
     if response_hook:
-        response_hook(client_connection.last_response_headers, updated_offer)
+        response_hook(offer_response_headers(updated_offer, client_connection), updated_offer)
     return ThroughputProperties(
         offer_throughput=updated_offer["content"]["offerThroughput"],
         properties=updated_offer,
@@ -308,7 +309,7 @@ async def replace_container_throughput_async(
         ),
     )
     if response_hook:
-        response_hook(client_connection.last_response_headers, updated_offer)
+        response_hook(offer_response_headers(updated_offer, client_connection), updated_offer)
     return ThroughputProperties(
         offer_throughput=updated_offer["content"]["offerThroughput"],
         properties=updated_offer,

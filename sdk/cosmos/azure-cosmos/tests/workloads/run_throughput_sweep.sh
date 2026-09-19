@@ -6,17 +6,15 @@
 #   The "thousands of requests per second" question is a SCALING question, and one
 #   concurrency level cannot answer it. So we ramp concurrency (1 -> 2048) on both
 #   backends and watch two things: where the two paths CROSS OVER, and where each
-#   one's throughput PLATEAUS (more concurrency stops adding req/s, or 429s /
-#   system_cpu_percent climb). That plateau is the single-process ceiling -- set
-#   by the service, the driver's connection pool, the GIL, and this VM's CPU.
+#   one's observed throughput gain diminishes. That observation alone does not
+#   establish the limiting resource or an inherent single-process ceiling.
 #
 #   The most important output is not a single faster/slower verdict, but the
 #   honest shape of how each backend scales.
 #
 #   It is CLOSED-LOOP on purpose -- concurrency is the independent variable here,
 #   so we hold it fixed per point and read the achieved req/s (count/window_seconds)
-#   from the result rows. One operation per process keeps each ceiling clean; we
-#   sweep a light READ (highest ceiling) and a WRITE (upsert) by default, because
+#   from the result rows. We sweep READ and UPSERT by default, because
 #   "thousands/sec" must be shown for reads AND writes, which scale differently.
 #
 #   Each point runs long enough to clear warmup -- 1800s leaves ~20 min of steady
@@ -25,10 +23,8 @@
 #   The sweep is SEQUENTIAL: each point is its own clean throughput measurement, so
 #   nothing else may run alongside it.
 #
-# IF ONE PROCESS PLATEAUS BELOW YOUR TARGET (common for writes): the account can do
-#   far more than one Python process can drive (GIL + one connection pool). Scale
-#   OUT -- run several copies of this workload at the plateau concurrency, on this
-#   VM and/or more VMs, and SUM their achieved req/s. See the note printed at the end.
+# A scale-out follow-up can test whether more processes help; it is not guaranteed
+# to help a service-, host- or otherwise capacity-limited workload.
 #
 # USAGE:
 #   source ./your-private-keys.sh      # exports COSMOS_KEY (+ RESULTS_COSMOS_KEY)
@@ -40,6 +36,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
+perf_single_operation_shape
+export WORKLOAD_ARRIVAL_RATE=0
 
 # Phase C canonical target for this drill:
 # - VM: vm-python-phasec
@@ -71,13 +69,20 @@ else
 fi
 read -r -a LEVELS <<< "${CONCURRENCY_LEVELS:-1 4 8 16 32 64 128 256 512 1024 2048}"
 BACKENDS=(core-python rust)
+perf_require_positive "${DURATION_SECONDS}" "${LEVELS[@]}"
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/sweep-${STAMP}"
-mkdir -p "${LOG_DIR}"
+perf_create_log_dir "${LOG_DIR}" || exit 2
 write_run_manifest "${LOG_DIR}" "${STAMP}" "C-throughput-sweep"
+for op in "${OPERATIONS[@]}"; do
+  for c in "${LEVELS[@]}"; do
+    for bk in "${BACKENDS[@]}"; do printf 'sweep-%s-%s-c%s-%s\n' "$op" "$bk" "$c" "$STAMP"; done
+  done
+done >"${LOG_DIR}/expected-workloads.txt"
+overall_rc=0
 
 n_points=$(( ${#OPERATIONS[@]} * ${#LEVELS[@]} * ${#BACKENDS[@]} ))
 echo "=== Phase C: throughput / scaling sweep ==="
@@ -104,13 +109,14 @@ for op in "${OPERATIONS[@]}"; do
         timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
+      if [[ "${rc}" -ne 0 ]]; then overall_rc=1; fi
       # Graceful stop => exit 0 is the expected clean outcome (see
       # run_latency_matrix.sh). 130 = SIGINT fell back to KeyboardInterrupt
-      # (handler did not engage; data OK but worth noticing); 137 = hung on stop;
+      # (orderly reporting completion is unconfirmed); 137 = hung on stop;
       # 124 = unexpected with --preserve-status. Flag everything but 0.
       case "${rc}" in
         0)   ;;
-        130) echo "    !! point exited 130 (graceful handler did not engage; data OK); see ${log}" >&2 ;;
+        130) echo "    !! point exited 130; orderly reporting completion is unconfirmed; see ${log}" >&2 ;;
         137) echo "    !! point KILLED after 120s grace (hung on stop); see ${log}" >&2 ;;
         124) echo "    !! point exited 124 (unexpected with --preserve-status); see ${log}" >&2 ;;
         *)   echo "    !! point exited rc=${rc}; see ${log}" >&2 ;;
@@ -127,8 +133,7 @@ echo "=== Running post-run integrity gate (Phase C) ==="
 # biggest error source -- that each row actually ran on the engine it claims
 # (binding_calls check, --prefix sweep-). A failure here fails the script
 # (the sweep itself is already done) so an unattended run cannot pass unnoticed.
-overall_rc=0
-if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "sweep-"; then
+if perf_check_run "${LOG_DIR}" "${STAMP}" "sweep-" "core-python,rust"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2

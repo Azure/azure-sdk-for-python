@@ -47,10 +47,14 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 # than a LockResult; this does not make arbitrary panics or interrupted mutations safe.
 parking_lot = "0.12"
 
+# Process-salted cryptographic driver identities; never expose raw credentials.
+sha2 = "0.10"
+getrandom = "0.3"
+
 # Bridges a Rust future to a Python asyncio awaitable, so the async path can hand
 # the event loop something to `await` instead of parking one worker thread per
 # in-flight call. Version tracks pyo3 (0.22). Used by the async entry points in
-# `documents/` / `wire/`.
+# `ffi/` / `wire/`.
 pyo3-async-runtimes = { version = "0.22", features = ["tokio-runtime"] }
 
 # `async-trait` is required to implement the driver/azure_core `TokenCredential`

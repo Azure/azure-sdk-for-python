@@ -25,6 +25,7 @@ import asyncio
 import inspect
 import json
 import logging
+import threading
 from dataclasses import fields, replace
 from pathlib import Path
 from types import SimpleNamespace
@@ -34,8 +35,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._backend.contracts import (
     BackendResponse,
     PreparedQuery,
@@ -44,13 +45,15 @@ from azure.cosmos._backend.contracts import (
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._backend.errors import (
-    BackendProtocolError,
-    PageNotSupportedByBackendError,
+    BindingProtocolError,
+    PagePreflightError,
+    UnsupportedQueryError,
 )
-from azure.cosmos._backend.partition_key import PartitionKeyInput
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._backend.request_settings import RequestSettings
 from azure.cosmos._backend.operations import (
     CURSOR_QUERY_TO_BINDING_METHOD,
+    OP_TO_BINDING_METHOD,
     STATELESS_QUERY_TO_BINDING_METHOD,
     get_page_binding_method,
 )
@@ -62,7 +65,7 @@ from azure.cosmos._helpers._response_parse import (
     parse_backend_response,
     process_backend_response,
 )
-from azure.cosmos._helpers.item_helper import (
+from azure.cosmos._helpers._item_operations import (
     normalize_item_arguments,
     validate_rust_item_options,
 )
@@ -165,7 +168,7 @@ def executor(request, monkeypatch):
     """
     async_mode = request.param
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
     backend = object.__new__(backend_type)
     state = SimpleNamespace(now=100.0, init_delay=0.0)
 
@@ -190,7 +193,7 @@ def executor(request, monkeypatch):
             create_item_async=state.binding,
             fetch_page_with_cursor=state.binding,
             fetch_page_with_cursor_async=state.binding,
-            ItemFeedCursor=lambda: SimpleNamespace(),
+            _ItemFeedCursor=lambda: SimpleNamespace(),
         ),
     )
 
@@ -220,7 +223,7 @@ def point_request():
         container_link="dbs/d/colls/c",
         item_id="item",
         body_bytes=b"",
-        partition_key=PartitionKeyInput("components", ("p",)),
+        partition_key=BindingPartitionKey("components", ("p",)),
     )
 
 
@@ -288,7 +291,7 @@ def test_executor_enforces_its_response_postcondition(executor):
     starts in the right place.
     """
     executor.binding.return_value = None
-    with pytest.raises(BackendProtocolError, match="no response.*read_item"):
+    with pytest.raises(BindingProtocolError, match="no response.*read_item"):
         executor.run(point_request())
     executor.binding.assert_called_once()
 
@@ -496,7 +499,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     with nothing extra at all, so the two forms cannot quietly converge.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
     backend = object.__new__(backend_type)
     handle = (
         AsyncMock(return_value="handle")
@@ -521,7 +524,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     async def dispatch_async(*args, **kwargs):
         return dispatch(*args, **kwargs)
 
-    exports = {"ItemFeedCursor": cursor_factory}
+    exports = {"_ItemFeedCursor": cursor_factory}
     if expected is not None:
         exports[expected + ("_async" if async_mode else "")] = (
             dispatch_async if async_mode else dispatch
@@ -548,7 +551,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     caplog.set_level(logging.DEBUG, logger=module.__name__)
     assert get_page_binding_method(op, uses_cursor=uses_cursor) == expected
     if expected is None:
-        with pytest.raises(PageNotSupportedByBackendError):
+        with pytest.raises(PagePreflightError):
             run()
         handle.assert_not_called()
         cursor_factory.assert_not_called()
@@ -580,10 +583,11 @@ def test_installed_native_cursor_exports_have_no_concept_aliases():
     rather than by whatever starts using them again.
     """
     native = pytest.importorskip("azure.cosmos._rust")
-    assert hasattr(native, "ItemFeedCursor")
+    assert hasattr(native, "_ItemFeedCursor")
     for name in ("fetch_page_with_cursor", "fetch_page_with_cursor_async"):
         assert "cursor" in inspect.signature(getattr(native, name)).parameters
     for old in (
+        "ItemFeedCursor",
         "ReadAllItemsCursor",
         "read_all_items_page",
         "read_all_items_page_async",
@@ -609,7 +613,7 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
     the fallback and taking a driver are traps, so this proves neither happened.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
     backend = object.__new__(backend_type)
     forbidden = MagicMock(
         side_effect=AssertionError("driver acquisition or stateless dispatch")
@@ -633,3 +637,76 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
     with pytest.raises(RuntimeError, match="rebuild"):
         asyncio.run(collect()) if async_mode else list(backend.execute_pages(prepared))
     forbidden.assert_not_called()
+
+
+def test_query_execution_and_protocol_errors_are_not_page_preflight_errors():
+    assert not issubclass(UnsupportedQueryError, PagePreflightError)
+    assert not issubclass(BindingProtocolError, PagePreflightError)
+    from azure.core.exceptions import HttpResponseError
+    assert not issubclass(BindingProtocolError, HttpResponseError)
+
+
+def test_native_observation_and_contract_exports_are_explicitly_private():
+    native = pytest.importorskip("azure.cosmos._rust")
+    for name in ("operation_count", "attempt_count", "retry_count", "fault_injection_rule_hit_count"):
+        assert not hasattr(native, name)
+        assert callable(getattr(native, "_debug_" + name))
+    for name in (
+        "request_settings_schema", "runtime_configuration", "DriverTransportError",
+        "DriverResponseError", "UnsupportedQueryFeatureError",
+    ):
+        assert not hasattr(native, name)
+        assert callable(getattr(native, "_" + name))
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("method", sorted(set(OP_TO_BINDING_METHOD.values()) | set(STATELESS_QUERY_TO_BINDING_METHOD.values())))
+def test_native_entry_point_rejects_another_operations_request_before_work(method, async_mode):
+    native = pytest.importorskip("azure.cosmos._rust")
+    request = PreparedRequest(
+        op="not-the-called-operation",
+        container_link="",
+        body_bytes=b"",
+        partition_key=BindingPartitionKey("cross_partition"),
+    )
+    before = native._debug_operation_count()
+    with pytest.raises(ValueError, match="op does not match"):
+        getattr(native, method + ("_async" if async_mode else ""))("unregistered", request)
+    assert native._debug_operation_count() == before
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypatch, caplog, async_mode):
+    handle = "https://sensitive.invalid/credential-fingerprint"
+    module = async_rust if async_mode else sync_rust
+    monkeypatch.setattr(
+        module, "_rust_module",
+        SimpleNamespace(release_driver_handle=MagicMock(side_effect=RuntimeError(handle))),
+    )
+    caplog.set_level(logging.DEBUG, logger=module.__name__)
+    if async_mode:
+        module._close_driver_handle_quietly(handle)
+    else:
+        adapter = object.__new__(module.RustBinding)
+        adapter._driver_handle_lock = threading.Lock()
+        adapter._driver_handle = handle
+        monkeypatch.setattr(adapter, "_release_config_once", lambda: None)
+        monkeypatch.setattr(adapter, "_close_token_credential_bridge", lambda: None)
+        adapter.close()
+    assert "releasing native resources" in caplog.text
+    assert handle not in caplog.text
+    assert "credential-fingerprint" not in caplog.text
+    assert all(record.exc_info is None for record in caplog.records)
+
+
+def test_native_handle_lookup_error_does_not_disclose_the_handle():
+    native = pytest.importorskip("azure.cosmos._rust")
+    handle = "https://sensitive.invalid/credential-fingerprint"
+    request = PreparedRequest(
+        op="read_item", container_link="dbs/d/colls/c", body_bytes=b"",
+        item_id="i", partition_key=BindingPartitionKey("components", ("p",)),
+    )
+    with pytest.raises(RuntimeError, match="no driver registered") as caught:
+        native.read_item(handle, request)
+    assert handle not in str(caught.value)
+    assert "credential-fingerprint" not in str(caught.value)

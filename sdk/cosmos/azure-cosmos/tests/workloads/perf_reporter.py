@@ -35,75 +35,51 @@ def _get_sdk_version() -> str:
 
 def _get_cpu_percent(process) -> float:
     """Get current process CPU percent."""
-    try:
-        return process.cpu_percent(interval=None)
-    except Exception:
-        return 0.0
+    return process.cpu_percent(interval=None)
 
 
 def _get_cpu_times(process) -> tuple:
-    """Read cumulative process user/system CPU times, or zeros on error.
+    """Read cumulative process user/system CPU times.
 
     Differences are measurements at the underlying counter's resolution, not
     exact attribution to a particular operation or backend.
     """
-    try:
-        t = process.cpu_times()
-        return float(t.user), float(t.system)
-    except Exception:
-        return 0.0, 0.0
+    t = process.cpu_times()
+    return float(t.user), float(t.system)
 
 
 def _get_gc_stats() -> tuple:
-    """Read cumulative Python GC counters, or zeros on error.
+    """Read cumulative Python GC counters.
 
     Correlation with latency is a diagnostic clue, not proof of causation or
     that the SDK is uninvolved.
     """
-    try:
-        stats = gc.get_stats()
-        collections = sum(g.get("collections", 0) for g in stats)
-        collected = sum(g.get("collected", 0) for g in stats)
-        uncollectable = sum(g.get("uncollectable", 0) for g in stats)
-        return collections, collected, uncollectable
-    except Exception:
-        return 0, 0, 0
+    stats = gc.get_stats()
+    return tuple(sum(g[name] for g in stats) for name in ("collections", "collected", "uncollectable"))
 
 
 def _get_memory_bytes(process) -> int:
     """Get current process RSS in bytes."""
-    try:
-        return process.memory_info().rss
-    except Exception:
-        return 0
+    return process.memory_info().rss
 
 
 def _get_thread_count(process) -> int:
-    """Read the process's OS thread count, or zero on error.
+    """Read the process's OS thread count.
 
     This includes all process threads, not only driver-owned threads.
     """
-    try:
-        return process.num_threads()
-    except Exception:
-        return 0
+    return process.num_threads()
 
 
 def _get_system_cpu_percent() -> float:
     """Get system-wide CPU percent."""
-    try:
-        return psutil.cpu_percent(interval=None)
-    except Exception:
-        return 0.0
+    return psutil.cpu_percent(interval=None)
 
 
 def _get_system_memory() -> tuple:
     """Get system total and used memory in bytes."""
-    try:
-        mem = psutil.virtual_memory()
-        return mem.total, mem.used
-    except Exception:
-        return 0, 0
+    mem = psutil.virtual_memory()
+    return mem.total, mem.used
 
 
 class PerfReporter:
@@ -122,6 +98,12 @@ class PerfReporter:
         self._flush_lock = threading.Lock()
         self._client = None
         self._container = None
+        self._failure = None
+        self._process_id = str(uuid.uuid4())
+        self._window_index = 0
+        self._summary_count = 0
+        self._total_count = 0
+        self._total_errors = 0
         self._hostname = socket.gethostname()
         self._sdk_version = _get_sdk_version()
         self._process = psutil.Process()
@@ -169,22 +151,34 @@ class PerfReporter:
             self._thread.join(timeout=30)
         # Final flush — only if background thread has stopped to avoid concurrent writes
         if self._thread and self._thread.is_alive():
-            logger.warning("PerfReporter thread still alive after join timeout, skipping final flush")
+            raise RuntimeError("PerfReporter thread still alive; final results are incomplete")
         else:
             try:
                 with self._flush_lock:
                     self._ensure_container()
                     self._flush()
+                    self._write_completion()
             except Exception as e:
+                self._failure = e
                 logger.warning("PerfReporter final flush failed: %s", e)
         if self._client:
             try:
                 self._client.close()
-            except Exception:
-                pass
+            except Exception as exc:
+                self._failure = exc
+                logger.warning("PerfReporter client cleanup failed: %s", exc)
+        if self._failure is not None:
+            raise RuntimeError("PerfReporter failed; this run is incomplete") from self._failure
         logger.info("PerfReporter stopped")
 
     def _run(self):
+        try:
+            self._run_reporting()
+        except Exception as exc:
+            self._failure = exc
+            logger.warning("PerfReporter thread failed: %s", exc)
+
+    def _run_reporting(self):
         """Reporter loop: every interval, write the collected numbers out.
 
         The results client is built on the first loop pass, so a results
@@ -219,7 +213,23 @@ class PerfReporter:
                     self._ensure_container()
                     self._flush()
             except Exception as e:
+                self._failure = e
                 logger.warning("PerfReporter flush failed: %s", e)
+
+    def _write_completion(self):
+        if self._failure is not None:
+            raise RuntimeError("Earlier reporting failure prevents completion") from self._failure
+        self._container.upsert_item({
+            "id": f"{self._process_id}-completion",
+            "partition_key": self._process_id,
+            "record_type": "completion",
+            "workload_id": self._config["workload_id"],
+            "process_id": self._process_id,
+            "window_count": self._window_index,
+            "summary_count": self._summary_count,
+            "total_count": self._total_count,
+            "total_errors": self._total_errors,
+        })
 
     def _ensure_container(self):
         """Create the results client and container on the first call."""
@@ -262,7 +272,7 @@ class PerfReporter:
         # Record the per-op timeout and arrival mode on every row, so two rows can
         # be checked for the same policy later. arrival_rate == 0.0 means
         # closed-loop; > 0 means open-loop at that ops/sec per client.
-        request_timeout = _safe_int_env("COSMOS_REQUEST_TIMEOUT", 0)
+        request_timeout = float(os.environ.get("COSMOS_REQUEST_TIMEOUT", "0"))
         try:
             arrival_rate = float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0") or "0")
         except (ValueError, TypeError):
@@ -296,15 +306,22 @@ class PerfReporter:
         doc_profile = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
 
         summaries, errors = self._stats.drain_all()
+        if not summaries and not errors:
+            return
+        self._window_index += 1
+        window_id = f"{self._process_id}-{self._window_index}"
+        self._summary_count += len(summaries)
+        self._total_count += sum(s["count"] for s in summaries)
+        self._total_errors += sum(s["errors"] for s in summaries)
         # The drain is when these counts stop accumulating, so measure the window
         # here. It is normally the configured interval, but longer when a previous
         # flush was skipped; storing it keeps count / window_seconds accurate.
         now_monotonic = time.monotonic()
-        window_seconds = round(now_monotonic - self._last_flush_monotonic, 3)
+        window_seconds = now_monotonic - self._last_flush_monotonic
         self._last_flush_monotonic = now_monotonic
         # Seconds since the (post-warmup) reporter start, so a query can drop
         # warmup windows instead of letting cold start decide the result.
-        elapsed_seconds = round(now_monotonic - self._start_monotonic, 3)
+        elapsed_seconds = now_monotonic - self._start_monotonic
         # Process CPU-time delta, including reporter and other concurrent work.
         # Per-operation attribution requires a suitable isolated workload.
         cur_cpu_user, cur_cpu_system = _get_cpu_times(self._process)
@@ -355,12 +372,15 @@ class PerfReporter:
         # Earliest-N per-op durations since process start (not reset per window), so
         # a cold-start analyzer can pool the first calls across processes. Same for
         # every summary row of this flush; keyed per op below.
-        cold_first_map = self._stats.first_ms_snapshot()
         for s in summaries:
             doc = {
                 "id": str(uuid.uuid4()),
                 "partition_key": str(uuid.uuid4()),
                 "workload_id": self._config["workload_id"],
+                "record_type": "measurement",
+                "process_id": self._process_id,
+                "window_id": window_id,
+                "window_index": self._window_index,
                 "commit_sha": self._config["commit_sha"],
                 "driver_commit": self._config["driver_commit"],
                 "hostname": self._hostname,
@@ -368,6 +388,7 @@ class PerfReporter:
                 "operation": s["operation"],
                 "count": s["count"],
                 "errors": s["errors"],
+                "throttled_429": s["throttled_429"],
                 # Actual seconds this row covers, so throughput is
                 # count / window_seconds. Do not divide count by the configured
                 # interval; that is wrong for merged windows and the final flush.
@@ -394,11 +415,11 @@ class PerfReporter:
                 # does not bloat every result document (the analyzer only needs the
                 # first several points to see where latency settles).
                 "cold_first_ms": (
-                    round(cold_first_map[s["operation"]][0], 3)
-                    if cold_first_map.get(s["operation"]) else None
+                    round(s["cold_first_n_ms"][0], 3)
+                    if s["cold_first_n_ms"] else None
                 ),
                 "cold_first_n_ms": [
-                    round(v, 3) for v in cold_first_map.get(s["operation"], [])[:50]
+                    round(v, 3) for v in s["cold_first_n_ms"]
                 ],
                 # Mean of captured request-charge samples. Matching means alone
                 # do not establish identical backend work or complete accounting.
@@ -466,6 +487,7 @@ class PerfReporter:
             try:
                 self._container.upsert_item(doc)
             except Exception as e:
+                self._failure = e
                 logger.warning(
                     "PerfReporter upsert failed for %s: %s", s["operation"], e
                 )
@@ -475,6 +497,8 @@ class PerfReporter:
                 "id": str(uuid.uuid4()),
                 "partition_key": str(uuid.uuid4()),
                 "workload_id": self._config["workload_id"],
+                "record_type": "error",
+                "process_id": self._process_id,
                 "commit_sha": self._config["commit_sha"],
                 "driver_commit": self._config["driver_commit"],
                 "hostname": self._hostname,
@@ -494,4 +518,5 @@ class PerfReporter:
             try:
                 self._container.upsert_item(doc)
             except Exception as e:
+                self._failure = e
                 logger.warning("PerfReporter error upsert failed: %s", e)

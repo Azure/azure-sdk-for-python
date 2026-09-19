@@ -58,7 +58,7 @@ fi
 
 # The extension that answers this proof must be the one the session recorded,
 # or the proof describes a different build from the one being measured.
-profiling_verify_extension_build || exit 2
+profiling_load_session "${ARTIFACTS}" || exit 2
 
 RECORDED_DATABASE=""
 RECORDED_CONTAINER=""
@@ -85,6 +85,10 @@ export COSMOS_PARTITION_KEY="${PROOF_PARTITION_KEY}"
 
 PROOF_ITEM="${PROFILING_PROOF_ITEM:-test-1}"
 OUT="${ARTIFACTS}/rust-diagnostics-sample.txt"
+if [[ -e "${OUT}" ]]; then
+  echo "ERROR: transport proof already exists; start a new session to preserve prior evidence." >&2
+  exit 2
+fi
 
 echo "=== Path proof: did one real read enter Rust, and over which transport? ==="
 echo "    container : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
@@ -137,7 +141,7 @@ async def main() -> int:
     ) as client:
         backend = type(client._backend).__name__
         print("runtime backend:", backend)
-        if backend != "AsyncRustBackend":
+        if backend != "AsyncRustBinding":
             # Everything below would describe the core-Python path instead.
             print("TRANSPORT VERDICT: invalid sample -- the client is not Rust-backed")
             return 2
@@ -146,11 +150,19 @@ async def main() -> int:
             os.environ["COSMOS_DATABASE"]
         ).get_container_client(os.environ["COSMOS_CONTAINER"])
 
-        before_ops = _rust.operation_count()
-        before_attempts = _rust.attempt_count()
-        before_retries = _rust.retry_count()
+        before_ops = _rust._debug_operation_count()
+        before_attempts = _rust._debug_attempt_count()
+        before_retries = _rust._debug_retry_count()
 
-        pk_value = ITEM if PK_PATH == "id" else os.environ.get("PROFILING_PROOF_PK", ITEM)
+        if PK_PATH == "id":
+            pk_value = ITEM
+        elif PK_PATH == "pk" and re.fullmatch(r"test-\d+", ITEM):
+            pk_value = "pk-" + ITEM.removeprefix("test-")
+        elif os.environ.get("PROFILING_PROOF_PK"):
+            pk_value = os.environ["PROFILING_PROOF_PK"]
+        else:
+            print("TRANSPORT VERDICT: invalid sample -- supply PROFILING_PROOF_PK for this item")
+            return 2
         try:
             item = await container.read_item(
                 item=ITEM, partition_key=pk_value, response_hook=capture
@@ -160,9 +172,9 @@ async def main() -> int:
             print("TRANSPORT VERDICT: invalid sample -- the read did not complete")
             return 2
 
-        ops = _rust.operation_count() - before_ops
-        attempts = _rust.attempt_count() - before_attempts
-        retries = _rust.retry_count() - before_retries
+        ops = _rust._debug_operation_count() - before_ops
+        attempts = _rust._debug_attempt_count() - before_attempts
+        retries = _rust._debug_retry_count() - before_retries
 
     print("item id:", item.get("id"))
     print("binding operation delta:", ops)
@@ -233,7 +245,9 @@ except Exception as exc:
     print("TRANSPORT VERDICT: invalid sample -- the proof did not run to completion")
     sys.exit(2)
 PY
-rc=${PIPESTATUS[0]}
+proof_status=("${PIPESTATUS[@]}")
+rc=${proof_status[0]}
+if [[ "${proof_status[1]}" -ne 0 ]]; then exit 2; fi
 
 # rc is cross-checked against the printed verdict for the same reason the
 # import is guarded: a process that dies before deciding anything can still
@@ -258,8 +272,8 @@ else
     echo >&2
     echo "!! The printed verdict and the exit code disagree: verdict" >&2
     echo "   '${verdict_word}' implies ${expected_rc}, but the process exited ${rc}." >&2
-    echo "   Something ran after the decision was made. Trusting the verdict text." >&2
-    rc=${expected_rc}
+    echo "   The sample is inconsistent; refusing a successful verdict." >&2
+    rc=2
   fi
 fi
 
@@ -268,7 +282,7 @@ case ${rc} in
   0)
     echo "    Recorded in ${OUT}."
     echo "    A completed read entered the Rust binding and used Gateway V2. The"
-    echo "    baseline latency may be attributed to the Rust Gateway V2 path."
+    echo "    transport evidence applies to this read, not every baseline read."
     ;;
   1)
     echo "    Recorded in ${OUT}."

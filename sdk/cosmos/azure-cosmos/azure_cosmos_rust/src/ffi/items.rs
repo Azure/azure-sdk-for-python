@@ -15,7 +15,7 @@ fn patch_precondition(
         .contains_key(&HeaderName::from_static("if-none-match"))
     {
         return Err(PyNotImplementedError::new_err(
-            "The Rust patch backend does not support If-None-Match.",
+            "The Python Rust binding does not support If-None-Match for patch_item.",
         ));
     }
     if serde_json::from_slice::<serde_json::Value>(body)
@@ -23,7 +23,7 @@ fn patch_precondition(
         .is_some_and(|value| value.get("condition").is_some())
     {
         return Err(PyNotImplementedError::new_err(
-            "The Rust backend does not support filtered patches.",
+            "The Python Rust binding does not support filtered patches.",
         ));
     }
     modifiers
@@ -65,9 +65,10 @@ pub(crate) fn create_item<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -97,6 +98,7 @@ pub(crate) fn upsert_item<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
 
@@ -130,6 +132,7 @@ pub(crate) fn replace_item<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "replace_item")?;
     // The URL id (which item to overwrite) comes from item_id, not the
     // body -- deriving it from the body could overwrite the wrong item if
     // the body's id disagreed with `item`.
@@ -161,6 +164,7 @@ pub(crate) fn delete_item<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "delete_item")?;
     let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
         prepared,
         DELETE_ITEM_ID_REQUIRED,
@@ -202,12 +206,13 @@ pub(crate) fn read_item<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
         prepared,
         READ_ITEM_ID_REQUIRED,
         READ_ITEM_PARTITION_KEY_REQUIRED,
     )?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -241,11 +246,12 @@ pub(crate) fn patch_item<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "patch_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
-    if matches!(partition_key, PartitionKeyInput::Extract) {
+    if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(
             "patch_item requires an explicit partition key",
         ));
@@ -275,9 +281,10 @@ pub(crate) fn create_item_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -301,6 +308,7 @@ pub(crate) fn upsert_item_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
 
@@ -326,6 +334,7 @@ pub(crate) fn replace_item_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "replace_item")?;
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
 
@@ -351,6 +360,7 @@ pub(crate) fn delete_item_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "delete_item")?;
     let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
         prepared,
         DELETE_ITEM_ID_REQUIRED,
@@ -381,12 +391,13 @@ pub(crate) fn read_item_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, item_id) = extract_item_inputs(
         prepared,
         READ_ITEM_ID_REQUIRED,
         READ_ITEM_PARTITION_KEY_REQUIRED,
     )?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -413,11 +424,12 @@ pub(crate) fn patch_item_async<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "patch_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, PATCH_ITEM_ID_REQUIRED)?;
-    modifiers.item_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
-    if matches!(partition_key, PartitionKeyInput::Extract) {
+    if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(
             "patch_item requires an explicit partition key",
         ));
@@ -465,7 +477,7 @@ mod tests {
         prepared
             .setattr(
                 "partition_key",
-                crate::wire::partition_key::test_partition_key(py, Some("[\"pk\"]")),
+                crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
             )
             .unwrap();
         prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
@@ -511,10 +523,11 @@ mod tests {
             prepared
                 .setattr(
                     "partition_key",
-                    crate::wire::partition_key::test_partition_key(py, Some("[\"pk\"]")),
+                    crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
                 )
                 .unwrap();
             prepared.setattr("item_id", "item").unwrap();
+            prepared.setattr("op", "patch_item").unwrap();
             prepared.setattr("protocol_version", 3).unwrap();
             prepared
                 .setattr("settings", crate::wire::settings::test_settings(py))

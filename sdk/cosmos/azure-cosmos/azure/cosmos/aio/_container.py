@@ -57,15 +57,15 @@ from .._helpers._item_dispatch import (
     merge_upsert_item_explicit_kwargs,
     get_selected_backend,
 )
-from ._helpers.item_helper import AsyncItemHelper
-from ._helpers.container_helper import AsyncContainerHelper
+from ._helpers._item_operations import AsyncItemHelper
+from ._helpers._container_operations import AsyncContainerHelper
 from .._helpers._request_container import validate_container_create_kwargs
-from .._helpers.feed_range_helper import (
+from .._helpers._feed_range_operations import (
     feed_range_from_partition_key_async as _feed_range_from_partition_key,
     is_feed_range_subset_async as _is_feed_range_subset,
     read_feed_ranges_async as _read_feed_ranges,
 )
-from .._helpers.container_throughput_helper import (
+from .._helpers._container_throughput import (
     get_container_throughput_async as _get_throughput,
     replace_container_throughput_async as _replace_container_throughput,
 )
@@ -81,7 +81,7 @@ from ..partition_key import (_get_partition_key_from_partition_key_definition, P
 if TYPE_CHECKING:
     from .._helpers._item_context import ItemClientContext
     from ._backend.cosmos_backend import AsyncCosmosBackend
-    from ._helpers.legacy_item_helper import AsyncLegacyItemHelper
+    from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
 
 __all__ = ("ContainerProxy",)
 
@@ -141,10 +141,10 @@ class ContainerProxy:
                 return cached[1]
             self._item_helper_cache = None
         if context is None:
-            from ._helpers.legacy_item_helper import AsyncLegacyItemHelper
+            from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
             return AsyncLegacyItemHelper.from_legacy_connection(self.client_connection, self._get_properties_with_options)
         if context.backend.name == "core-python":
-            from ._helpers.legacy_item_helper import AsyncLegacyItemHelper
+            from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
             return AsyncLegacyItemHelper(self.client_connection, self._get_properties_with_options)
         helper = AsyncItemHelper(context.backend, context.defaults, context.response_state)
         self._item_helper_cache = (context, helper)
@@ -155,7 +155,7 @@ class ContainerProxy:
         if self._item_context is not None and self._item_context.backend.name != "core-python":
             return partition_key
         if self._item_context is None:
-            from .._helpers.legacy_item_helper import require_legacy_item_connection
+            from .._helpers._legacy_item_operations import require_legacy_item_connection
             require_legacy_item_connection(self.client_connection)
         return await self._set_partition_key(partition_key)
 

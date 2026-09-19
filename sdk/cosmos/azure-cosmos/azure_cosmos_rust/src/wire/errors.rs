@@ -15,34 +15,34 @@
 mod transport_error {
     pyo3::create_exception!(
         azure_cosmos_rust,
-        DriverTransportError,
+        _DriverTransportError,
         pyo3::exceptions::PyRuntimeError,
         "A Cosmos driver operation failed without a wire response (transport failure, \
          client-side validation, or a pre-HTTP timeout)."
     );
 }
 /// Raised when a driver error is returned without an accompanying response.
-pub use transport_error::DriverTransportError;
+pub use transport_error::_DriverTransportError;
 
 #[allow(unexpected_cfgs)]
 mod response_error {
     pyo3::create_exception!(
         azure_cosmos_rust,
-        DriverResponseError,
+        _DriverResponseError,
         pyo3::exceptions::PyRuntimeError,
         "A metadata operation failed; args[0] contains its error response tuple."
     );
 }
-pub use response_error::DriverResponseError;
+pub use response_error::_DriverResponseError;
 
 #[allow(unexpected_cfgs)]
 mod unsupported_query_error {
     pyo3::create_exception!(
         azure_cosmos_rust,
-        UnsupportedQueryFeatureError,
+        _UnsupportedQueryFeatureError,
         pyo3::exceptions::PyRuntimeError,
         "The Cosmos driver cannot execute this query plan."
     );
 }
 /// Raised when the driver cannot run a query plan.
-pub use unsupported_query_error::UnsupportedQueryFeatureError;
+pub use unsupported_query_error::_UnsupportedQueryFeatureError;

@@ -24,6 +24,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
 
 
@@ -44,6 +46,7 @@ def request_raw_response_hook(response):
             == str(request_throughput_bucket_number))
 
 
+@pytest.mark.cosmosEmulator
 class TestHeaders(unittest.TestCase):
 
     dedicated_gateway_max_age_negative = -1
@@ -97,4 +100,3 @@ class TestHeaders(unittest.TestCase):
             )
         except Exception as exception:
             assert isinstance(exception, ValueError)
-

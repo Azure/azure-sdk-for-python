@@ -1,24 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Cold-start report: latency on a process's first calls.
+"""Report early timed SDK calls in fresh processes, not total startup latency.
 
-Other reports measure warm latency, taken after the client, connection pool, TLS
-sessions, and (for Rust) the Tokio runtime are set up. The first call after a
-process starts is slower because that setup runs on the critical path. This
-matters for applications that run many short-lived workers.
-
-The launcher starts many short processes, each doing a few operations before
-exiting, all tagged with one shared workload_id (``cold-<op>-<backend>-<stamp>``).
-Each process writes one final row carrying:
-  * ``cold_first_ms``    -- that process's first-call latency, and
-  * ``cold_first_n_ms``  -- its earliest-N durations (the warm-up curve).
-These are not reset on a window drain, so they survive to the final flush.
-
-This script prints, per operation and backend:
-  1. First-call distribution: p50/p90/p99 pooled over every process's
-     ``cold_first_ms``.
-  2. Warm-up curve: element-wise mean of ``cold_first_n_ms`` across processes, so
-     call #1 vs #2 vs #10 shows where latency settles.
+Client construction, asynchronous entry and the workload's initial sleep precede
+these timers. Lazy setup may still occur during the calls. Each process has its
+own workload ID; repeated cold snapshots are deduplicated by process identity.
+Failed-call runs cannot establish the first call from successful durations alone.
+The launcher uses concurrency one so completion order also describes call order.
 
 USAGE:
   source ./perf_env.sh
@@ -26,10 +14,12 @@ USAGE:
 """
 
 import argparse
+import math
 import sys
 
 import perf_driver_commit_gate as _driver_gate
 from latency_report import _connect, _latest_run_id, _split_wid
+from perf_results import OPERATIONS, split_workload_id, summary_rows
 
 _OP_ORDER = ["read", "create", "upsert", "replace", "delete", "patch"]
 
@@ -40,7 +30,7 @@ def _pct(sorted_vals, q):
         return float("nan")
     if len(sorted_vals) == 1:
         return sorted_vals[0]
-    idx = int(round((q / 100.0) * (len(sorted_vals) - 1)))
+    idx = math.ceil((q / 100.0) * len(sorted_vals)) - 1
     idx = max(0, min(idx, len(sorted_vals) - 1))
     return sorted_vals[idx]
 
@@ -53,7 +43,7 @@ def _aggregate(container, prefix, stamp):
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.cold_first_ms, c.cold_first_n_ms, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
@@ -67,26 +57,40 @@ def _aggregate(container, prefix, stamp):
     total_rows = 0
     no_first_rows = 0
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in rows:
+    seen = {}
+    for r in summary_rows(rows):
         total_rows += 1
-        op, backend, _ = _split_wid(r["workload_id"])
-        if op is None or not backend:
+        op, backend, _ = split_workload_id(r["workload_id"], prefix)
+        if r.get("operation") != OPERATIONS.get(op):
             continue
         if "rust" in backend.lower():
             prov_rust += 1
             _dc = str(r.get("driver_commit") or "").strip()
-            if _dc:
+            if _driver_gate.is_stamped_commit(_dc):
                 prov_commits.add(_dc)
             else:
                 prov_missing += 1
         first = r.get("cold_first_ms")
+        if not r.get("process_id"):
+            raise ValueError("Cold samples require process_id; historical rows cannot establish one sample per process")
+        key = (backend, op, r["process_id"])
+        if r["errors"]:
+            raise ValueError("Cold workload had failures; first success is not the first call")
         if first is None:
             no_first_rows += 1
             continue  # a row with no cold sample (e.g. an all-errors flush)
+        if key in seen:
+            if seen[key]["cold_first_ms"] != first:
+                raise ValueError("Conflicting first-call samples for one process")
+            if len(r.get("cold_first_n_ms") or []) > len(seen[key].get("cold_first_n_ms") or []):
+                seen[key] = r
+            continue
+        seen[key] = r
+    for (backend, op, _process), r in seen.items():
         cell = cells.get((backend, op))
         if cell is None:
             cell = cells[(backend, op)] = {"firsts": [], "curves": []}
-        cell["firsts"].append(float(first))
+        cell["firsts"].append(float(r["cold_first_ms"]))
         curve = r.get("cold_first_n_ms") or []
         if curve:
             cell["curves"].append([float(v) for v in curve])
@@ -162,7 +166,7 @@ def main():
         print()
 
     if "core-python" in backends and "rust" in backends:
-        print("-- first-call p50 head to head (startup penalty) --")
+        print("-- first timed SDK-call p50 head to head (excludes client startup) --")
         for op in _OP_ORDER:
             py = cells.get(("core-python", op))
             ru = cells.get(("rust", op))

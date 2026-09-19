@@ -12,7 +12,7 @@ use super::feed_range::{FeedRangePartitionKeyInput, FeedRangePartitionKeySource}
 use super::query::QueryTarget;
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) enum PartitionKeyInput {
+pub(crate) enum BindingPartitionKey {
     Components(PartitionKey),
     Extract,
     CrossPartition,
@@ -20,7 +20,7 @@ pub(crate) enum PartitionKeyInput {
     EmptySequence,
 }
 
-impl PartitionKeyInput {
+impl BindingPartitionKey {
     pub(crate) fn into_item_key(self) -> PyResult<Option<PartitionKey>> {
         match self {
             Self::Components(key) => Ok(Some(key)),
@@ -66,10 +66,10 @@ impl PartitionKeyInput {
     }
 }
 
-pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<PartitionKeyInput> {
+pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<BindingPartitionKey> {
     super::settings::validate_request_protocol(prepared)?;
     let input = prepared.getattr("partition_key").map_err(|_| PyTypeError::new_err(
-        "Incompatible partition-key protocol: a typed PartitionKeyInput is required; rebuild azure.cosmos._rust",
+        "Incompatible partition-key protocol: a typed BindingPartitionKey is required; rebuild azure.cosmos._rust",
     ))?;
     let kind: String = input.getattr("kind")?.extract()?;
     let values = input.getattr("values")?;
@@ -81,10 +81,10 @@ pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<Par
             ));
         }
         return match kind.as_str() {
-            "extract" => Ok(PartitionKeyInput::Extract),
-            "cross_partition" => Ok(PartitionKeyInput::CrossPartition),
-            "empty_sentinel" => Ok(PartitionKeyInput::EmptySentinel),
-            "empty_sequence" => Ok(PartitionKeyInput::EmptySequence),
+            "extract" => Ok(BindingPartitionKey::Extract),
+            "cross_partition" => Ok(BindingPartitionKey::CrossPartition),
+            "empty_sentinel" => Ok(BindingPartitionKey::EmptySentinel),
+            "empty_sequence" => Ok(BindingPartitionKey::EmptySequence),
             _ => Err(PyValueError::new_err("Unknown partition-key input kind")),
         };
     }
@@ -118,7 +118,7 @@ pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<Par
         };
         components.push(component);
     }
-    Ok(PartitionKeyInput::Components(PartitionKey::from(
+    Ok(BindingPartitionKey::Components(PartitionKey::from(
         components,
     )))
 }
@@ -222,30 +222,30 @@ mod tests {
 
     #[test]
     fn source_states_are_not_interchangeable() {
-        assert!(PartitionKeyInput::CrossPartition.into_item_key().is_err());
-        assert!(PartitionKeyInput::EmptySentinel.into_item_key().is_err());
-        assert!(PartitionKeyInput::EmptySequence
+        assert!(BindingPartitionKey::CrossPartition.into_item_key().is_err());
+        assert!(BindingPartitionKey::EmptySentinel.into_item_key().is_err());
+        assert!(BindingPartitionKey::EmptySequence
             .into_query_target()
             .is_err());
-        assert!(PartitionKeyInput::Extract
+        assert!(BindingPartitionKey::Extract
             .into_item_key()
             .unwrap()
             .is_none());
         assert!(matches!(
-            PartitionKeyInput::CrossPartition
+            BindingPartitionKey::CrossPartition
                 .into_query_target()
                 .unwrap(),
             QueryTarget::CrossPartition
         ));
         assert!(matches!(
-            PartitionKeyInput::EmptySentinel
+            BindingPartitionKey::EmptySentinel
                 .into_feed_range_key()
                 .unwrap()
                 .source,
             FeedRangePartitionKeySource::EmptySentinel
         ));
         assert!(matches!(
-            PartitionKeyInput::EmptySequence
+            BindingPartitionKey::EmptySequence
                 .into_feed_range_key()
                 .unwrap()
                 .source,

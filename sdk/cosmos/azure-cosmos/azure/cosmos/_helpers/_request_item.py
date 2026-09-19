@@ -14,7 +14,7 @@ from .._backend.operations import (
     OP_CREATE_ITEM, OP_DELETE_ITEM, OP_PATCH_ITEM, OP_READ_ITEM,
     OP_REPLACE_ITEM, OP_UPSERT_ITEM,
 )
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 from .._backend.request_settings import RequestSettings
 from ._request_settings import (
     stamp_container_rid,
@@ -132,7 +132,7 @@ def _build_write_prepared(
         op=op,
         container_link=container_link,
         body_bytes=body_bytes,
-        partition_key=PartitionKeyInput("extract") if extract_partition_key else normalize_partition_key(partition_key_value),
+        partition_key=BindingPartitionKey("extract") if extract_partition_key else normalize_partition_key(partition_key_value),
         headers=headers,
         settings=settings,
         item_id=item_id,

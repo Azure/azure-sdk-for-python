@@ -119,7 +119,7 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     if isinstance(credential, str):
         if not credential:
             raise ValueError(
-                "_backend='rust' requires a non-empty master-key string."
+                "The Rust binding requires a non-empty master-key string."
             )
         return credential, None
     if isinstance(credential, Mapping) and "masterKey" in credential:
@@ -129,8 +129,7 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
             # fail later in a murkier place (credential-key computation or the
             # driver). Reject it at construction with a clear message.
             raise ValueError(
-                "_backend='rust' requires the 'masterKey' entry to be a non-empty "
-                "string; got {!r}.".format(master_key)
+                "The Rust binding requires the 'masterKey' entry to be a non-empty string."
             )
         return master_key, None
     # Check async *before* the sync get_token acceptance, since an async
@@ -145,14 +144,14 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
         return None, credential
     if _is_resource_token_credential(credential):
         raise ValueError(
-            "_backend='rust' does not support resource-token (per-user / "
+            "The Rust binding does not support resource-token (per-user / "
             "permission) credentials yet -- that needs Rust-driver auth support "
             "that isn't available. Use a master-key credential or a synchronous "
             "token credential, or the core-python backend."
         )
     # Falls through for None and any other unrecognized shape.
     raise ValueError(
-        "_backend='rust' requires a master-key credential (a string, or a dict "
+        "The Rust binding requires a master-key credential (a string, or a dict "
         "with a 'masterKey' entry) or a synchronous token credential. The Rust "
         "backend does not support resource-token auth."
     )

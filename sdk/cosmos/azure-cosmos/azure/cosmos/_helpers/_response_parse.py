@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 import json
+from dataclasses import replace
 from azure.core.utils import CaseInsensitiveDict
 from copy import deepcopy
 from typing import Any, Callable, Mapping, Optional
@@ -94,7 +95,8 @@ def process_backend_response(
     :type response_state: Optional[ClientLastResponseHeaders]
     :param response_hook: Optional callable invoked once after parsing and
         result construction with ``(headers, parsed_body)``. Its exceptions
-        propagate. This function does not copy its arguments for isolation.
+        propagate. Headers are copied independently for the hook and client
+        diagnostic state; body isolation is the caller's responsibility.
     :type response_hook: Optional[Callable[[Mapping[str, Any], Any], None]]
     :returns: A ``CosmosDict`` whose content is the parsed JSON (or
         ``{}`` for an accepted empty response) with response headers available
@@ -108,14 +110,14 @@ def process_backend_response(
     apply_response_diagnostics(headers, response.diagnostics)
 
     if client_connection is not None:
-        client_connection.last_response_headers = headers
+        client_connection.last_response_headers = deepcopy(headers)
     if response_state is not None:
-        response_state.last_response_headers = headers
+        response_state.last_response_headers = deepcopy(headers)
 
-    parsed = parse_response_body(response)
+    parsed = parse_response_body(replace(response, headers=headers))
     cosmos_dict = CosmosDict(parsed, response_headers=headers)
     if response_hook is not None:
-        response_hook(headers, parsed)
+        response_hook(deepcopy(headers), parsed)
     return cosmos_dict
 
 
@@ -130,7 +132,7 @@ def build_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
 def parse_backend_response(response: BackendResponse) -> CosmosDict:
     """Decode a response without updating client state or invoking callbacks."""
     headers = build_response_headers(response)
-    return CosmosDict(parse_response_body(response), response_headers=headers)
+    return CosmosDict(parse_response_body(replace(response, headers=headers)), response_headers=headers)
 
 
 def parse_response_body(response: BackendResponse) -> Any:
@@ -154,20 +156,8 @@ def parse_response_body(response: BackendResponse) -> Any:
 
 
 def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
-    """Return the response headers as a ``CaseInsensitiveDict``.
-
-    Reuse an existing ``CaseInsensitiveDict``; otherwise create one.
-    Reuse is an ownership convention, not an enforced snapshot: normalization
-    mutates the reused mapping, and ``process_backend_response`` can publish
-    that same mapping to client state and a hook. Use ``build_response_headers``
-    when a separate header mapping is required.
-    """
-    headers = response.headers
-    if headers is None:
-        return CaseInsensitiveDict()
-    if isinstance(headers, CaseInsensitiveDict):
-        return headers
-    return CaseInsensitiveDict(headers)
+    """Snapshot headers before normalization or publication to customer code."""
+    return CaseInsensitiveDict(deepcopy(response.headers or {}))
 
 
 def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:

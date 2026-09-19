@@ -18,8 +18,8 @@ pub(crate) fn read_offer<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (_container_link, _partition_key, modifiers, body_bytes) =
-        extract_query_inputs(prepared)?;
+    super::validate_prepared_operation(prepared, "read_offer")?;
+    let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_read_offer_operation(py, driver_handle, modifiers, body_bytes, "read_offer")
 }
 
@@ -40,8 +40,16 @@ pub(crate) fn replace_offer<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "replace_offer")?;
     let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
-    run_replace_offer_operation(py, driver_handle, modifiers, offer_id, body_bytes, "replace_offer")
+    run_replace_offer_operation(
+        py,
+        driver_handle,
+        modifiers,
+        offer_id,
+        body_bytes,
+        "replace_offer",
+    )
 }
 /// Async twin of `read_offer`.
 #[pyfunction]
@@ -50,8 +58,8 @@ pub(crate) fn read_offer_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (_container_link, _partition_key, modifiers, body_bytes) =
-        extract_query_inputs(prepared)?;
+    super::validate_prepared_operation(prepared, "read_offer")?;
+    let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     run_read_offer_operation_async(py, driver_handle, modifiers, body_bytes, "read_offer")
 }
 
@@ -62,6 +70,14 @@ pub(crate) fn replace_offer_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "replace_offer")?;
     let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
-    run_replace_offer_operation_async(py, driver_handle, modifiers, offer_id, body_bytes, "replace_offer")
+    run_replace_offer_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        offer_id,
+        body_bytes,
+        "replace_offer",
+    )
 }

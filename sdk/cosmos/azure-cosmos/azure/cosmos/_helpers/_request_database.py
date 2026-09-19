@@ -19,7 +19,7 @@ import json
 import time
 from copy import deepcopy
 
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 
 from typing import Any, Dict, Mapping, Optional
 
@@ -191,7 +191,7 @@ def build_create_database_prepared(
         op=OP_CREATE_DATABASE,
         container_link="",
         body_bytes=serialize_body_to_bytes(database),
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
         item_id=database["id"],
@@ -229,7 +229,7 @@ def build_read_database_prepared(
         op=OP_READ_DATABASE,
         container_link="",
         body_bytes=b"",
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
         # The legacy path routes the id through ``base.GetPathFromLink`` /
@@ -325,7 +325,7 @@ def build_delete_database_prepared(
         op=OP_DELETE_DATABASE,
         container_link="",
         body_bytes=b"",
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
         item_id=database_id,

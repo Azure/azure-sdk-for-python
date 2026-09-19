@@ -75,7 +75,7 @@ def binding_operation_count():
     Entry can precede failure, and local operations can increment it. A delta
     is not a census of successful operations or HTTP requests.
     """
-    return _rust_counter("operation_count")
+    return _rust_counter("_debug_operation_count")
 
 
 def binding_attempt_count():
@@ -85,7 +85,7 @@ def binding_attempt_count():
     round-trip count, nor does it establish a fixed number of attempts per PATCH.
     Return None when the counter cannot be read.
     """
-    return _rust_counter("attempt_count")
+    return _rust_counter("_debug_attempt_count")
 
 
 def binding_retry_count():
@@ -95,4 +95,4 @@ def binding_retry_count():
     examined; compaction or unrecorded paths can leave retries uncounted.
     Zero is therefore not proof that no retry occurred.
     """
-    return _rust_counter("retry_count")
+    return _rust_counter("_debug_retry_count")

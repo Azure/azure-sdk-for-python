@@ -18,7 +18,7 @@ RID_HEADER = "x-ms-cosmos-intended-collection-rid"
 
 
 @pytest.mark.parametrize("existing", [None, "", "customer-rid"])
-def test_stamp_preserves_existing_option_even_when_falsey(existing):
+def test_existing_container_resource_id_is_preserved_even_when_falsey(existing):
     """A value the customer already set is never replaced, even when it is empty.
 
     All three existing values are left alone: a real id, an empty string, and
@@ -34,7 +34,7 @@ def test_stamp_preserves_existing_option_even_when_falsey(existing):
     assert options == {Constants.ContainerRID: existing, "other": "untouched"}
 
 
-def test_stamp_takes_resolved_value_without_lookup_callback():
+def test_container_resource_id_helper_requires_no_lookup_callback():
     """The helper is handed an already-resolved id; it never looks one up itself.
 
     Its only two arguments are the options and the id. If it instead took a
@@ -91,18 +91,3 @@ def test_resolved_canonical_rid_wins_without_mutating_customer_options(resolved,
     assert actual == (expected if resolved is None else resolved)
     assert "containerRID" not in request.headers
     assert options == before
-
-
-@pytest.mark.parametrize("cached", [True, False])
-def test_direct_stamp_matches_legacy_after_metadata_resolution(cached):
-    """Compare option dictionaries for the two synthetic metadata-resolution cases.
-
-    Matching these local dictionaries does not verify a transmitted header.
-    """
-    cache = {"_rid": "cached-rid"} if cached else {}
-    if not cache:
-        cache.update({"_rid": "refreshed-rid"})
-    legacy_options = {Constants.ContainerRID: cache["_rid"]}
-    options = {}
-    stamp_container_rid(options, cache["_rid"])
-    assert options == legacy_options

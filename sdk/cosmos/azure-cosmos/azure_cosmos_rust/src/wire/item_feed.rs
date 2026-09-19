@@ -3,7 +3,11 @@
 
 //! Retained cursors for item queries, read-all feeds and change feeds.
 
-use std::{future::Future, sync::Arc, time::Duration};
+use std::{
+    future::Future,
+    sync::{atomic::{AtomicU8, Ordering}, Arc},
+    time::Duration,
+};
 
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, OperationPlan},
@@ -15,7 +19,9 @@ use azure_data_cosmos_driver::{
     options::PlanOptions,
 };
 use pyo3::{
-    exceptions::{PyNotImplementedError, PyRuntimeError, PyTimeoutError, PyValueError},
+    exceptions::{
+        PyNotImplementedError, PyRuntimeError, PyTimeoutError, PyTypeError, PyValueError,
+    },
     prelude::*,
     types::{PyDict, PyTuple},
 };
@@ -35,7 +41,7 @@ use super::{
     response::tuple_from_feed_result,
     AbortOnDrop,
 };
-use super::{partition_key::PartitionKeyInput, query::QueryTarget};
+use super::{partition_key_input::BindingPartitionKey, query::QueryTarget};
 use crate::runtime::require_runtime_context;
 
 struct Progress {
@@ -53,11 +59,9 @@ enum FeedRequest {
     Query(QueryRequest),
 }
 
-#[derive(Clone, Deserialize, PartialEq)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, PartialEq)]
 struct QueryRequest {
-    query: serde_json::Value,
-    #[serde(skip)]
+    body: Vec<u8>,
     partition_key: Option<PartitionKey>,
     feed_range: Option<(String, String)>,
     allow_cross_partition: bool,
@@ -86,10 +90,8 @@ impl QueryRequest {
                 ))
             }
         };
-        let operation = CosmosOperation::query_items(container, Some(range)).with_body(
-            serde_json::to_vec(&self.query)
-                .map_err(|error| PyValueError::new_err(error.to_string()))?,
-        );
+        let operation =
+            CosmosOperation::query_items(container, Some(range)).with_body(self.body.clone());
         if !self.allow_cross_partition && !operation.is_trivial() {
             return Err(PyNotImplementedError::new_err(
                 "Rust query_items requires a complete partition_key when cross-partition execution \
@@ -146,10 +148,13 @@ impl ChangeFeedRequest {
     fn validate_width(width: Option<usize>) -> PyResult<()> {
         match width {
             Some(1) => Ok(()),
-            None | Some(0) => Err(PyRuntimeError::new_err("Could not resolve the change-feed scope")),
+            None | Some(0) => Err(PyRuntimeError::new_err(
+                "Could not resolve the change-feed scope",
+            )),
             Some(_) => Err(PyNotImplementedError::new_err(
-                "Rust change feed across multiple physical partitions is blocked by driver polling gap 12; \
-                 use an explicit legacy backend or a single-partition scope. No fallback was performed.",
+                "The Python Rust binding does not support multi-partition change-feed scopes: \
+                 complete polling and checkpoint guarantees are not implemented here. \
+                 Use a single-partition scope. No fallback was performed.",
             )),
         }
     }
@@ -195,14 +200,25 @@ struct CursorState {
     progress: Option<Progress>,
     has_more: bool,
     continuation_unsupported: bool,
+    published_status: Arc<AtomicU8>,
 }
 
 /// Retained state for a Python page iterator. In-flight fetches clone the state
 /// Arc, so dropping the Python cursor need not immediately release its plan.
-#[pyclass]
-#[derive(Default)]
+#[pyclass(name = "_ItemFeedCursor", module = "azure.cosmos._rust")]
 pub(crate) struct ItemFeedCursor {
     state: Arc<Mutex<CursorState>>,
+    published_status: Arc<AtomicU8>,
+}
+
+impl Default for ItemFeedCursor {
+    fn default() -> Self {
+        let state = CursorState::default();
+        Self {
+            published_status: state.published_status.clone(),
+            state: Arc::new(Mutex::new(state)),
+        }
+    }
 }
 
 #[pymethods]
@@ -213,21 +229,13 @@ impl ItemFeedCursor {
     }
 
     #[getter]
-    fn has_more(&self) -> PyResult<bool> {
-        Ok(self
-            .state
-            .try_lock()
-            .map_err(|_| PyRuntimeError::new_err("Cursor is in use"))?
-            .has_more)
+    fn has_more(&self) -> bool {
+        self.published_status.load(Ordering::Acquire) & 1 != 0
     }
 
     #[getter]
-    fn continuation_supported(&self) -> PyResult<bool> {
-        Ok(!self
-            .state
-            .try_lock()
-            .map_err(|_| PyRuntimeError::new_err("Cursor is in use"))?
-            .continuation_unsupported)
+    fn continuation_supported(&self) -> bool {
+        self.published_status.load(Ordering::Acquire) & 2 == 0
     }
 }
 
@@ -292,7 +300,7 @@ async fn next_plan_page(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );
@@ -397,10 +405,15 @@ async fn next_plan_page(
     } else {
         None
     };
+    // Properties describe the last completed page, even during another fetch.
+    state.published_status.store(
+        u8::from(state.has_more) | (u8::from(state.continuation_unsupported) << 1),
+        Ordering::Release,
+    );
     Ok((Ok(response), token))
 }
 
-fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: PartitionKeyInput) -> PyResult<FeedRequest> {
+fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyResult<FeedRequest> {
     let op: String = prepared.getattr("op")?.extract()?;
     let key = match scope.into_query_target()? {
         QueryTarget::CrossPartition => None,
@@ -415,6 +428,20 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: PartitionKeyInput) -> PyResul
         return Ok(FeedRequest::ReadAll);
     }
     let body: Vec<u8> = prepared.getattr("body_bytes")?.extract()?;
+    if op == "query_items" {
+        let scope = prepared.getattr("query_scope")?;
+        if scope.is_none() {
+            return Err(PyTypeError::new_err(
+                "Retained queries require typed query_scope",
+            ));
+        }
+        return Ok(FeedRequest::Query(QueryRequest {
+            body,
+            partition_key: key,
+            feed_range: scope.getattr("feed_range")?.extract()?,
+            allow_cross_partition: scope.getattr("allow_cross_partition")?.extract()?,
+        }));
+    }
     match op.as_str() {
         "query_items_change_feed" => {
             serde_json::from_slice::<ChangeFeedRequest>(&body).map(|mut request| {
@@ -422,10 +449,6 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: PartitionKeyInput) -> PyResul
                 FeedRequest::ChangeFeed(request)
             })
         }
-        "query_items" => serde_json::from_slice::<QueryRequest>(&body).map(|mut request| {
-            request.partition_key = key;
-            FeedRequest::Query(request)
-        }),
         _ => return Err(PyValueError::new_err("Unsupported retained feed operation")),
     }
     .map_err(|error| PyValueError::new_err(format!("Invalid retained feed request: {error}")))
@@ -450,7 +473,7 @@ fn inputs(
     String,
     RequestHeadersAndOptions,
     Option<String>,
-    PartitionKeyInput,
+    BindingPartitionKey,
 )> {
     let (link, scope, modifiers) = extract_common_prepared_inputs(prepared)?;
     let continuation: Option<String> = prepared
@@ -628,14 +651,39 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            end_to_end_timeout: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(1))),
-            item_timeout: None,
+            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(1))),
+            operation_timeout: None,
             availability_strategy: None,
             custom_headers: HashMap::from([(
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),
             )]),
         }
+    }
+
+    #[tokio::test]
+    async fn cursor_properties_remain_readable_during_a_fetch() {
+        let (_emulator, driver) = setup(3).await;
+        let cursor = ItemFeedCursor::default();
+        assert!(!cursor.has_more());
+        assert!(cursor.continuation_supported());
+        let (rows, _) = fetch(&driver, &cursor.state, None).await;
+        assert!(rows.is_some());
+        let _in_flight = cursor.state.lock().await;
+        assert!(cursor.has_more());
+        assert!(cursor.continuation_supported());
+    }
+
+    #[test]
+    fn cursor_status_is_local_to_each_pager_and_reports_unsupported_continuations() {
+        let first = ItemFeedCursor::default();
+        let second = ItemFeedCursor::default();
+        first.published_status.store(3, Ordering::Release);
+        let _in_flight = first.state.try_lock().unwrap();
+        assert!(first.has_more());
+        assert!(!first.continuation_supported());
+        assert!(!second.has_more());
+        assert!(second.continuation_supported());
     }
 
     async fn fetch(
@@ -696,11 +744,108 @@ mod tests {
 
     fn query_request(sql: &str) -> FeedRequest {
         FeedRequest::Query(QueryRequest {
-            query: serde_json::json!({"query": sql}),
+            body: serde_json::to_vec(&serde_json::json!({"query": sql})).unwrap(),
             partition_key: None,
             feed_range: None,
             allow_cross_partition: true,
         })
+    }
+
+    #[test]
+    fn query_inputs_preserve_body_bytes_and_read_scope_separately() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let namespace = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap();
+            let prepared = namespace.call0().unwrap();
+            let scope = namespace.call0().unwrap();
+            let body = br#"{ "parameters": [{"name":"@p","value":[null,true,9007199254740993,1e+02,"\u0041"]}], "query": "SELECT VALUE @p" }"#;
+            prepared.setattr("op", "query_items").unwrap();
+            prepared
+                .setattr("body_bytes", pyo3::types::PyBytes::new_bound(py, body))
+                .unwrap();
+            prepared.setattr("query_scope", &scope).unwrap();
+            scope.setattr("feed_range", ("00", "AA")).unwrap();
+            scope.setattr("allow_cross_partition", false).unwrap();
+            let FeedRequest::Query(query) =
+                feed_inputs(&prepared, BindingPartitionKey::CrossPartition).unwrap()
+            else {
+                panic!("expected retained query");
+            };
+            assert_eq!(query.body, body);
+            assert_eq!(query.feed_range, Some(("00".into(), "AA".into())));
+            assert!(!query.allow_cross_partition);
+            assert!(query.partition_key.is_none());
+
+            prepared.setattr("query_scope", py.None()).unwrap();
+            let error = match feed_inputs(&prepared, BindingPartitionKey::CrossPartition) {
+                Err(error) => error,
+                Ok(_) => panic!("query without typed scope was accepted"),
+            };
+            assert!(error.is_instance_of::<PyTypeError>(py));
+            assert!(error.to_string().contains("query_scope"));
+        });
+    }
+
+    #[tokio::test]
+    async fn retained_query_rejects_changed_body_or_scope_and_cannot_be_reused_afterward() {
+        let (_emulator, driver) = setup(12).await;
+        let original = query_request("SELECT * FROM c");
+        for change in [
+            "body",
+            "feed_range",
+            "allow_cross_partition",
+            "partition_key",
+        ] {
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let (page, token) = query_page(&driver, &state, &original, None).await;
+            assert!(page.is_some());
+            let mut changed = original.clone();
+            let FeedRequest::Query(ref mut query) = changed else {
+                unreachable!();
+            };
+            match change {
+                "body" => query.body = br#"{"query":"SELECT c.id FROM c"}"#.to_vec(),
+                "feed_range" => query.feed_range = Some(("00".into(), "AA".into())),
+                "allow_cross_partition" => query.allow_cross_partition = false,
+                "partition_key" => query.partition_key = Some(PartitionKey::from("key-5")),
+                _ => unreachable!(),
+            }
+            let error = next_plan_page(
+                driver.clone(),
+                state.clone(),
+                ("query-test".into(), "dbs/db/colls/c".into()),
+                token.clone(),
+                modifiers(),
+                changed,
+            )
+            .await
+            .err()
+            .expect("changed query must be rejected");
+            assert!(
+                error.to_string().contains("does not match"),
+                "{change}: {error}"
+            );
+            assert!(state.lock().await.progress.is_none());
+            let error = next_plan_page(
+                driver.clone(),
+                state.clone(),
+                ("query-test".into(), "dbs/db/colls/c".into()),
+                token,
+                modifiers(),
+                original.clone(),
+            )
+            .await
+            .err()
+            .expect("failed cursor must not be reused");
+            assert!(
+                error.to_string().contains("Feed cursor failed"),
+                "{change}: {error}"
+            );
+        }
     }
 
     async fn query_page(
@@ -804,7 +949,11 @@ mod tests {
         }
         let mut request = query_request("SELECT * FROM c WHERE c.id = @id");
         if let FeedRequest::Query(ref mut query) = request {
-            query.query["parameters"] = serde_json::json!([{"name":"@id","value":"5"}]);
+            query.body = serde_json::to_vec(&serde_json::json!({
+                "query": "SELECT * FROM c WHERE c.id = @id",
+                "parameters": [{"name":"@id","value":"5"}]
+            }))
+            .unwrap();
         }
         let rows = query_drain(&driver, &request, None).await;
         assert_eq!(rows.len(), 1);
@@ -819,7 +968,7 @@ mod tests {
             .await
             .unwrap();
         let mut request = QueryRequest {
-            query: serde_json::json!({"query":"SELECT * FROM c"}),
+            body: br#"{"query":"SELECT * FROM c"}"#.to_vec(),
             partition_key: Some(legacy_partition_key_header(r#"["key-5"]"#).unwrap()),
             feed_range: None,
             allow_cross_partition: false,
@@ -872,7 +1021,7 @@ mod tests {
         .unwrap();
         let (_emulator, driver) = setup_with_definition(18, definition).await;
         let mut request = QueryRequest {
-            query: serde_json::json!({"query":"SELECT * FROM c"}),
+            body: br#"{"query":"SELECT * FROM c"}"#.to_vec(),
             partition_key: Some(legacy_partition_key_header(r#"["tenant-1"]"#).unwrap()),
             feed_range: None,
             allow_cross_partition: true,
@@ -910,7 +1059,9 @@ mod tests {
                 FeedRequest::ChangeFeed(request),
             )
             .await;
-            assert!(matches!(error, Err(ref error) if error.to_string().contains("gap 12")));
+            assert!(
+                matches!(error, Err(ref error) if error.to_string().contains("binding does not support multi-partition"))
+            );
             assert!(state.lock().await.progress.is_none());
         }
     }

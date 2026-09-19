@@ -100,7 +100,7 @@ def test_legacy_only_ranges_are_selected_before_execution(parent, async_mode):
     import asyncio
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
     from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
-    from azure.cosmos._helpers.feed_range_helper import (
+    from azure.cosmos._helpers._feed_range_operations import (
         is_feed_range_subset,
         is_feed_range_subset_async,
     )

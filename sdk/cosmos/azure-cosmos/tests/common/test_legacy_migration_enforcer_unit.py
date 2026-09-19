@@ -17,9 +17,9 @@ rot silently:
   deleted. Nobody notices until someone tries to re-derive the copy by
   hand and can't find what it came from.
 
-This test makes both loud. It does no network I/O and never constructs a
-``CosmosClient`` -- it parses the legacy files (and the sources they cite)
-with ``ast`` and checks five invariants:
+These checks parse the copies and their cited sources, then perform an
+isolated collection-only run. They do not execute service tests or fixtures.
+They check six invariants:
 
 1. Every ``legacy/`` folder is an importable package (has ``__init__.py``).
 2. Every ``test_*`` method carries a ``# Source:`` comment naming the
@@ -31,13 +31,18 @@ with ``ast`` and checks five invariants:
    ``_backend="rust"``.
 5. No test in a legacy folder is skipped without a structured reason, so
    every skip names a category a reviewer can act on.
+6. Every copied test is selected by ``-m cosmosEmulator`` without relying on
+   shared conftest hooks to add the marker.
 
-Runs in milliseconds as a normal unit test.
+The collection check runs pytest in a subprocess without shared conftest files.
 """
 from __future__ import annotations
 
 import ast
+import os
 import pathlib
+import subprocess
+import sys
 import unittest
 
 
@@ -167,7 +172,7 @@ def _class_method_exists(src_tree, class_name, method_name):
 
 
 class LegacyMigrationEnforcerTests(unittest.TestCase):
-    """Parses the legacy/ copies with ``ast`` and enforces their shape."""
+    """Check the copies' source structure and marker-based collection."""
 
     def test_legacy_folders_discovered(self):
         """Sanity: the walk finds legacy folders, so the checks below
@@ -277,6 +282,46 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             violations, [],
             "legacy/ skips whose reason does not start with a structured tag "
             "({}):\n  - ".format(", ".join(_STRUCTURED_SKIP_TAGS)) + "\n  - ".join(violations),
+        )
+
+    def test_every_legacy_test_is_selected_by_emulator_marker(self):
+        """Marker-filtered collection must retain every copied parameter case."""
+        files = _legacy_test_files()
+        expected = set()
+        for path in files:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+            for class_name, method in _iter_test_functions(tree):
+                parts = [_rel(path), method.name]
+                if class_name is not None:
+                    parts.insert(1, class_name)
+                expected.add("::".join(parts))
+        self.assertTrue(expected, "No legacy-copy test definitions found.")
+
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(_TESTS_DIR) + os.pathsep + env.get("PYTHONPATH", "")
+        env.pop("COSMOS_PARITY_CAPTURE_OP", None)
+        env.pop("PYTEST_ADDOPTS", None)
+
+        def collect(extra_args):
+            result = subprocess.run(
+                [sys.executable, "-m", "pytest", "--noconftest", "--import-mode=importlib",
+                 "--collect-only", "-q", *extra_args, *map(str, files)],
+                cwd=_PKG_ROOT, env=env, capture_output=True, text=True, timeout=60, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            return {
+                line for line in result.stdout.splitlines()
+                if line.startswith("tests/") and "::test_" in line
+            }
+
+        unfiltered = collect([])
+        self.assertSetEqual(
+            {nodeid.split("[", 1)[0] for nodeid in unfiltered}, expected,
+            "Unfiltered collection must include all legacy-copy test definitions.",
+        )
+        self.assertSetEqual(
+            collect(["-m", "cosmosEmulator"]), unfiltered,
+            "Marker-filtered collection must retain every test, including parameter cases.",
         )
 
 

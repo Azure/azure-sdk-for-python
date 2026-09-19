@@ -21,7 +21,7 @@ Which path a client uses was settled earlier, up in the container class.
 By the time this helper exists the choice is made, so nothing here inspects
 it, and there is no route back to the legacy Python code from this file.
 
-The async version in azure/cosmos/aio/_helpers/item_helper.py makes the
+The async version in azure/cosmos/aio/_helpers/_item_operations.py makes the
 same decisions in the same order, and imports steps 1 to 3 from here rather
 than repeating them.
 """

@@ -37,8 +37,8 @@ import uuid
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_READ_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.partition_key import PartitionKeyInput
-from azure.cosmos._backend.rust import RustBackend
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
+from azure.cosmos._backend.binding import RustBinding
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -82,7 +82,7 @@ def main() -> int:
     # stale ``_rust.pyd`` built before the lib.rs change will be
     # importable but missing the new entry point -- catch that explicitly
     # so the message is actionable rather than a generic AttributeError
-    # from inside RustBackend.execute.
+    # from inside RustBinding.execute.
     if not hasattr(_rust, "read_item"):
         print("FAIL: _rust module does not export `read_item`.", file=sys.stderr)
         print("Rebuild with `maturin develop` after lib.rs changes.", file=sys.stderr)
@@ -100,9 +100,9 @@ def main() -> int:
 
     item_id = f"smoke-read-{uuid.uuid4()}"
     container_link = f"dbs/{DB}/colls/{COLL}"
-    partition_key = PartitionKeyInput("components", ("smokeA",))
+    partition_key = BindingPartitionKey("components", ("smokeA",))
 
-    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
 
     # ---- create a row to read ------------------------------------------
     create_prepared = PreparedRequest(
@@ -114,7 +114,7 @@ def main() -> int:
     )
 
     print(f"Item id  : {item_id}")
-    print("Calling RustBackend.execute(create) ...", flush=True)
+    print("Calling RustBinding.execute(create) ...", flush=True)
     try:
         create_resp = backend.execute(create_prepared)
     except Exception as e:  # pylint: disable=broad-except
@@ -139,7 +139,7 @@ def main() -> int:
         item_id=item_id,
     )
 
-    print("Calling RustBackend.execute(read) ...", flush=True)
+    print("Calling RustBinding.execute(read) ...", flush=True)
     try:
         read_resp = backend.execute(read_prepared)
     except Exception as e:  # pylint: disable=broad-except

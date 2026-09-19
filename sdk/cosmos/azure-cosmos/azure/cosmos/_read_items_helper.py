@@ -30,8 +30,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import _base, exceptions
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos._helpers.legacy_item_helper import LegacyItemHelper
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos._helpers._legacy_item_operations import LegacyItemHelper
 from azure.cosmos._helpers._read_items import (
     ReadItemsHeaders, complete_read_items_response, index_query_results, index_requested_items,
     normalize_read_items, partition_key_identity, validate_concurrency,

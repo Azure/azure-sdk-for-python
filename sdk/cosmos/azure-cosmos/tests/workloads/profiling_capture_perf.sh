@@ -18,7 +18,7 @@ if [[ ! "${WORKLOAD_PID:-}" =~ ^[0-9]+$ ]]; then
   echo "ERROR: WORKLOAD_PID is missing or invalid." >&2
   echo "       First run: source ./profiling_capture_py_spy.sh" >&2
   _perf_failed=1
-elif ! kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
+elif ! declare -F workload_is_running >/dev/null || ! workload_is_running; then
   echo "ERROR: workload PID ${WORKLOAD_PID} is not running." >&2
   _perf_failed=1
 fi
@@ -32,7 +32,7 @@ elif [[ ! -s "${ARTIFACTS}/smaps-before.txt" ]]; then
   _perf_failed=1
 fi
 
-if [[ ! "${PROFILE_STAMP:-}" =~ ^[0-9]{8}-[0-9]{6}$ ]]; then
+if [[ ! "${PROFILE_STAMP:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]]; then
   echo "ERROR: PROFILE_STAMP is missing or invalid." >&2
   echo "       Source profiling_capture_py_spy.sh in this terminal first." >&2
   _perf_failed=1
@@ -86,20 +86,21 @@ fi
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Recording all workload threads for ${PERF_CAPTURE_DURATION}s ==="
   sudo perf record \
+    --event cpu-clock \
     --pid "${WORKLOAD_PID}" \
     --freq "${PERF_SAMPLE_FREQUENCY}" \
     --call-graph dwarf \
     --output "${ARTIFACTS}/perf.data" \
     -- sleep "${PERF_CAPTURE_DURATION}" \
     2>&1 | tee "${ARTIFACTS}/perf-record.log"
-  _perf_record_rc=${PIPESTATUS[0]}
-  if [[ "${_perf_record_rc}" -ne 0 ]]; then
-    echo "ERROR: perf record exited ${_perf_record_rc}." >&2
+  _perf_record_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_record_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: perf record or its log write failed: ${_perf_record_rc[*]}." >&2
     _perf_failed=1
   elif [[ ! -s "${ARTIFACTS}/perf.data" ]]; then
     echo "ERROR: perf record produced no data." >&2
     _perf_failed=1
-  elif ! kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
+  elif ! workload_is_running; then
     echo "ERROR: the workload stopped during perf record." >&2
     _perf_failed=1
   fi
@@ -136,9 +137,9 @@ if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
     --output "${ARTIFACTS}/perf-sched.data" \
     -- sleep "${PERF_SCHED_DURATION}" \
     2>&1 | tee "${ARTIFACTS}/perf-sched-record.log"
-  _perf_sched_record_rc=${PIPESTATUS[0]}
-  if [[ "${_perf_sched_record_rc}" -ne 0 ]]; then
-    echo "ERROR: perf sched record exited ${_perf_sched_record_rc}." >&2
+  _perf_sched_record_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_sched_record_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: scheduler capture or its log write failed: ${_perf_sched_record_rc[*]}." >&2
     _perf_failed=1
   elif ! sudo perf sched timehist \
     --input "${ARTIFACTS}/perf-sched.data" \
@@ -150,7 +151,7 @@ if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
   elif [[ ! -s "${ARTIFACTS}/perf-sched-timehist.txt" ]]; then
     echo "ERROR: perf sched produced no workload scheduling timeline." >&2
     _perf_failed=1
-  elif ! kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
+  elif ! workload_is_running; then
     echo "ERROR: the workload stopped during perf sched." >&2
     _perf_failed=1
   fi
@@ -160,14 +161,14 @@ if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Recording whole-process CPU, memory, disk, fault, and switch measurements for ${SYSTEM_CAPTURE_DURATION}s ==="
   pidstat -rudw -p "${WORKLOAD_PID}" 1 "${SYSTEM_CAPTURE_DURATION}" \
     | tee "${ARTIFACTS}/pidstat.txt"
-  _perf_pidstat_rc=${PIPESTATUS[0]}
-  if [[ "${_perf_pidstat_rc}" -ne 0 ]]; then
-    echo "ERROR: pidstat exited ${_perf_pidstat_rc}." >&2
+  _perf_pidstat_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_pidstat_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: pidstat or its log write failed: ${_perf_pidstat_rc[*]}." >&2
     _perf_failed=1
   elif [[ ! -s "${ARTIFACTS}/pidstat.txt" ]]; then
     echo "ERROR: pidstat produced no whole-process measurements." >&2
     _perf_failed=1
-  elif ! kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
+  elif ! workload_is_running; then
     echo "ERROR: the workload stopped during pidstat." >&2
     _perf_failed=1
   elif ! cat "/proc/${WORKLOAD_PID}/smaps_rollup" >"${ARTIFACTS}/smaps-after.txt"; then
@@ -185,6 +186,10 @@ fi
 if declare -F cleanup_workload >/dev/null 2>&1; then
   cleanup_workload
 fi
+if [[ "${WORKLOAD_RC:-unknown}" != "0" ]]; then
+  echo "ERROR: workload did not stop cleanly: ${WORKLOAD_RC:-unknown}" >&2
+  _perf_failed=1
+fi
 trap - EXIT INT TERM
 
 if [[ -n "${ARTIFACTS:-}" && -d "${ARTIFACTS}" ]]; then
@@ -194,17 +199,16 @@ fi
 
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Checking completed reads, errors, 429 responses, and Rust retries ==="
-  python3 latency_report.py --prefix profile- --run-id "${PROFILE_STAMP}" \
+  python3 latency_report.py --prefix profile- --run-id "${PROFILE_STAMP}" --workload-health \
     | tee "${ARTIFACTS}/profile-health.txt"
-  _perf_health_rc=${PIPESTATUS[0]}
-  if [[ "${_perf_health_rc}" -ne 0 ]]; then
-    echo "ERROR: latency_report.py exited ${_perf_health_rc}." >&2
-    _perf_failed=1
-  elif ! grep -Eq 'count= *[1-9][0-9]*.*err= *0.*429= *0.*retries= *0' \
-    "${ARTIFACTS}/profile-health.txt"; then
-    echo "ERROR: workload health gate failed; see profile-health.txt." >&2
+  _perf_health_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_health_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: health report or its log write failed: ${_perf_health_rc[*]}." >&2
     _perf_failed=1
   fi
+  python3 perf_validate.py --prefix profile- --run-id "${PROFILE_STAMP}" \
+    --required-backends rust --log-dir "${ARTIFACTS}" \
+    >"${ARTIFACTS}/profile-integrity.txt" 2>&1 || _perf_failed=1
 fi
 
 if [[ "${_perf_failed}" -ne 0 ]]; then

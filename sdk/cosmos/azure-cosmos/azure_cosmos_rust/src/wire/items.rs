@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::partition_key::PartitionKeyInput;
-use std::sync::atomic::Ordering;
+use super::partition_key_input::BindingPartitionKey;
 use std::sync::Arc;
 
-use pyo3::exceptions::{PyRuntimeError, PyTimeoutError};
+use pyo3::exceptions::PyTimeoutError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
@@ -18,14 +17,14 @@ use azure_data_cosmos_driver::{
 };
 
 use super::container_metadata::metadata_error;
-use super::deadline::with_item_timeout;
-use super::diagnostics::BINDING_OP_COUNT;
+use super::deadline::with_operation_timeout;
+use super::driver_runner::{
+    run_prepared_driver_operation_async, run_prepared_driver_operation_sync,
+};
 use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
 use super::response::tuple_from_result;
-use super::{lookup_driver, AbortOnDrop};
-use crate::runtime::require_runtime_context;
 
-/// Sync runner shared by all six point operations (`documents/items.rs` sync entries).
+/// Sync runner shared by all six point operations (`ffi/items.rs` sync entries).
 /// Steps: increment the binding-invocation counter, look up the rust driver by handle,
 /// parse the container link and any explicit key, then -- with the GIL released --
 /// block the calling thread on the shared Tokio runtime until the driver resolves
@@ -41,7 +40,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     item_id: String,
     body_bytes: Vec<u8>,
@@ -49,35 +48,31 @@ pub(crate) fn execute_item_operation_sync<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    // Count runner entry, before driver lookup or execution can fail.
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key = partition_key_input.into_item_key()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    // Sync path: block the calling thread on the shared runtime until the driver
-    // finishes. (The async sibling below spawns the very same future instead, so
-    // both paths run identical driver work.)
-    let timeout = modifiers.item_timeout;
-    let response_result = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(with_item_timeout(
-            timeout,
-            execute_item_on_driver(
-                driver,
-                database_name,
-                container_name,
-                partition_key,
-                item_id,
-                body_bytes,
-                modifiers,
-                honor_content_response,
-                build_op,
-            ),
-        ))
-    })??;
-
-    tuple_from_result(py, response_result)
+    run_prepared_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let partition_key = partition_key_input.into_item_key()?;
+            let future = with_operation_timeout(
+                modifiers.operation_timeout,
+                execute_item_on_driver(
+                    driver,
+                    database_name,
+                    container_name,
+                    partition_key,
+                    item_id,
+                    body_bytes,
+                    modifiers,
+                    honor_content_response,
+                    build_op,
+                ),
+            );
+            Ok(async move { future.await? })
+        },
+        |py, result| tuple_from_result(py, result?),
+    )
 }
 
 /// Async sibling of `execute_item_operation_sync`, using the same driver future.
@@ -92,7 +87,7 @@ pub(crate) fn execute_item_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     item_id: String,
     body_bytes: Vec<u8>,
@@ -100,54 +95,31 @@ pub(crate) fn execute_item_operation_async<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
-    // Count runner entry, not completion or a network attempt.
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    // Synchronous extraction (GIL held) -- identical to the sync path. Errors
-    // here appear when the coroutine is created, before it is awaited.
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key = partition_key_input.into_item_key()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    // Spawn the driver work on the shared runtime; `join` is a cheap handle the
-    // bridge below awaits without holding the GIL for the wait.
-    let timeout = modifiers.item_timeout;
-    let join = runtime_ctx.tokio_rt.spawn(with_item_timeout(
-        timeout,
-        execute_item_on_driver(
-            driver,
-            database_name,
-            container_name,
-            partition_key,
-            item_id,
-            body_bytes,
-            modifiers,
-            honor_content_response,
-            build_op,
-        ),
-    ));
-
-    // Request cancellation when the bridge future is dropped rather than only
-    // dropping the JoinHandle, which would detach the task.
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    // Bridge the Rust JoinHandle to a Python asyncio awaitable. The response
-    // tuple is built under the GIL after the future resolves, exactly like the
-    // sync path's `tuple_from_result`.
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        // Keep the guard until the bridge completes or is dropped.
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })???;
-        Python::with_gil(|py| {
-            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    run_prepared_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let partition_key = partition_key_input.into_item_key()?;
+            let future = with_operation_timeout(
+                modifiers.operation_timeout,
+                execute_item_on_driver(
+                    driver,
+                    database_name,
+                    container_name,
+                    partition_key,
+                    item_id,
+                    body_bytes,
+                    modifiers,
+                    honor_content_response,
+                    build_op,
+                ),
+            );
+            Ok(async move { future.await? })
+        },
+        |py, result| tuple_from_result(py, result?),
+    )
 }
 
 /// The driver work shared by both runners -- the sync runner
@@ -169,14 +141,14 @@ fn execute_item_on_driver(
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> impl std::future::Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> + Send {
     let deadline = modifiers
-        .item_timeout
+        .operation_timeout
         .map(|timeout| tokio::time::Instant::now() + timeout);
     async move {
-        let resolution_options = if modifiers.item_timeout.is_some() {
+        let resolution_options = if modifiers.operation_timeout.is_some() {
             build_operation_options(
                 None,
                 None,
-                modifiers.end_to_end_timeout.clone(),
+                modifiers.driver_timeout_policy.clone(),
                 None,
                 Default::default(),
             )
@@ -220,7 +192,7 @@ fn execute_item_on_driver(
         let options = build_operation_options(
             content_response,
             modifiers.excluded_regions_value,
-            modifiers.end_to_end_timeout,
+            modifiers.driver_timeout_policy,
             modifiers.availability_strategy,
             modifiers.custom_headers,
         );
@@ -369,7 +341,7 @@ mod tests {
         .unwrap();
 
         let mut timed = modifiers();
-        timed.item_timeout = Some(std::time::Duration::from_millis(1));
+        timed.operation_timeout = Some(std::time::Duration::from_millis(1));
         let pending = execute_item_on_driver(
             driver.clone(),
             "db".into(),
@@ -429,7 +401,7 @@ mod tests {
         .unwrap_err();
         Python::with_gil(|py| {
             assert!(
-                missing_container.is_instance_of::<super::super::errors::DriverResponseError>(py)
+                missing_container.is_instance_of::<super::super::errors::_DriverResponseError>(py)
             );
             let response = missing_container
                 .value_bound(py)

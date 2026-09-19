@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """The Rust backend routes ``patch_item`` through the compiled binding.
 
-``RustBackend.execute`` dispatches an ``OP_PATCH_ITEM`` request to the
+``RustBinding.execute`` dispatches an ``OP_PATCH_ITEM`` request to the
 binding's ``patch_item`` entry point and wraps the returned tuple as a
 ``BackendResponse``.
 
@@ -23,8 +23,8 @@ import pytest
 
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.rust import RustBackend
-from azure.cosmos.aio._backend.rust import AsyncRustBackend
+from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos.aio._backend.binding import AsyncRustBinding
 
 
 def _patch_prepared() -> PreparedRequest:
@@ -48,9 +48,9 @@ def test_sync_rust_backend_dispatches_patch_to_binding(monkeypatch):
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.patch_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
-    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
-    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
     prepared = _patch_prepared()
     resp = backend.execute(prepared)
 
@@ -72,9 +72,9 @@ def test_sync_rust_backend_patch_surfaces_404(monkeypatch):
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.patch_item.return_value = (404, 0, {}, b'{"message":"not found"}')
-    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
-    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
     resp = backend.execute(_patch_prepared())
 
     assert resp.status_code == 404
@@ -90,10 +90,10 @@ def test_async_rust_backend_dispatches_patch_to_binding(monkeypatch):
     fake_module.patch_item_async = AsyncMock(
         return_value=(200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
     )
-    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", fake_module)
 
     async def _run():
-        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        backend = AsyncRustBinding(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = _patch_prepared()
         resp = await backend.execute(prepared)
         fake_module.patch_item_async.assert_awaited_once_with("handle-1", prepared)
@@ -110,18 +110,18 @@ def test_sync_rust_backend_patch_raises_when_binding_not_built(monkeypatch):
     """Before ``maturin develop`` builds ``_rust.pyd``, a patch on the Rust
     backend raises the same clear ``NotImplementedError`` every other op
     raises -- never a silent wrong-op dispatch."""
-    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)
-    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", None)
+    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
     with pytest.raises(NotImplementedError, match="not present"):
         backend.execute(_patch_prepared())
 
 
 def test_async_rust_backend_patch_raises_when_binding_not_built(monkeypatch):
     """Async sibling of the not-built guard."""
-    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", None)
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", None)
 
     async def _run():
-        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        backend = AsyncRustBinding(endpoint="https://x.documents.azure.com", master_key="k")
         with pytest.raises(NotImplementedError, match="not present"):
             await backend.execute(_patch_prepared())
 

@@ -139,7 +139,7 @@ class TestFaultInjectionTransport:
                 )
 
             assert error.value.status_code == 502
-            assert client._backend.fault_injection_rule_hit_count(rule_id) > 0
+            assert client._backend._debug_fault_injection_rule_hit_count(rule_id) > 0
         finally:
             client.close()
 

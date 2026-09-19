@@ -17,11 +17,11 @@ from azure.cosmos import CosmosClient
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import BackendResponse, PreparedRequest, PreparedQuery, QueryScope
 from azure.cosmos._backend.capabilities import OperationRouting
-from azure.cosmos._backend.partition_key import PartitionKeyInput
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos._helpers.legacy_item_helper import LegacyItemHelper
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos._helpers._legacy_item_operations import LegacyItemHelper
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
@@ -29,8 +29,8 @@ from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as AsyncCosmosClientConnection
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 
 
 def check_client_propagation(client: CosmosClient, async_client: AsyncCosmosClient) -> None:
@@ -91,7 +91,7 @@ async def check_request_builder_types(backend: CosmosBackend, async_backend: Asy
     def build_request() -> PreparedRequest:
         return PreparedRequest(
             op="read_item", container_link="dbs/d/colls/c", body_bytes=b"",
-            partition_key=PartitionKeyInput("components", ("p",)), item_id="item",
+            partition_key=BindingPartitionKey("components", ("p",)), item_id="item",
         )
 
     async def build_request_awaitable() -> PreparedRequest:

@@ -32,19 +32,19 @@ pub(crate) static BINDING_ATTEMPT_COUNT: AtomicU64 = AtomicU64::new(0);
 pub(crate) static BINDING_RETRY_COUNT: AtomicU64 = AtomicU64::new(0);
 
 /// Return this process's instrumented runner-entry count.
-#[pyfunction]
+#[pyfunction(name = "_debug_operation_count")]
 pub(crate) fn operation_count() -> u64 {
     BINDING_OP_COUNT.load(Ordering::Relaxed)
 }
 
 /// Return summed attempt counts from the diagnostics recorded by this binding.
-#[pyfunction]
+#[pyfunction(name = "_debug_attempt_count")]
 pub(crate) fn attempt_count() -> u64 {
     BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
 }
 
 /// Return the count of retained non-`initial` records from recorded diagnostics.
-#[pyfunction]
+#[pyfunction(name = "_debug_retry_count")]
 pub(crate) fn retry_count() -> u64 {
     BINDING_RETRY_COUNT.load(Ordering::Relaxed)
 }

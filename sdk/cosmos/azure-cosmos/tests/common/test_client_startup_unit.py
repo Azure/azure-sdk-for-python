@@ -23,8 +23,8 @@ from azure.core.credentials import AccessToken
 import azure.cosmos.cosmos_client as sync_client
 import azure.cosmos.aio._cosmos_client as async_client
 from azure.cosmos._backend import _driver_registry as registry
-from azure.cosmos._backend import rust as sync_backend
-from azure.cosmos.aio._backend import rust as async_backend
+from azure.cosmos._backend import binding as sync_backend
+from azure.cosmos.aio._backend import binding as async_backend
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._retry_options import RetryOptions
@@ -73,6 +73,80 @@ def close_backend(backend):
     result = backend.close()
     if inspect.isawaitable(result):
         asyncio.run(result)
+
+
+@pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
+def test_factory_forwards_every_declared_option_to_shared_construction(monkeypatch, async_mode):
+    from azure.cosmos._backend import factory as sync_factory
+    from azure.cosmos.aio._backend import factory as async_factory
+
+    module = async_factory if async_mode else sync_factory
+    factory = module.make_async_backend if async_mode else module.make_backend
+    sync_parameters = inspect.signature(sync_factory.make_backend).parameters
+    assert sync_parameters == inspect.signature(async_factory.make_async_backend).parameters
+    shared_parameters = inspect.signature(sync_factory._make_backend).parameters
+    assert set(shared_parameters) == set(sync_parameters) | {"rust_backend_type", "legacy_backend"}
+    options = {name: object() for name in sync_parameters if name != "explicit"}
+    shared = MagicMock(return_value=object())
+    monkeypatch.setattr(module, "_make_backend", shared)
+
+    assert factory("rust", **options) is shared.return_value
+    shared.assert_called_once_with(
+        "rust",
+        rust_backend_type=module.AsyncRustBinding if async_mode else module.RustBinding,
+        legacy_backend=module.ASYNC_LEGACY_BACKEND if async_mode else module.LEGACY_BACKEND,
+        **options,
+    )
+
+
+@pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("failure_stage", [None, "config", "isolation", "constructor"])
+def test_factory_keeps_credential_guard_active_through_construction(
+    monkeypatch, async_mode, failure_stage
+):
+    from contextlib import contextmanager
+    from azure.cosmos._backend import factory as sync_factory
+    from azure.cosmos.aio._backend import factory as async_factory
+
+    module = async_factory if async_mode else sync_factory
+    factory = module.make_async_backend if async_mode else module.make_backend
+    events = []
+    credential, result = object(), object()
+    error = RuntimeError("construction failed")
+
+    @contextmanager
+    def guard(value):
+        assert value is credential
+        events.append("enter")
+        try:
+            yield "master-key", None
+        finally:
+            events.append("exit")
+
+    def stage(name, value):
+        def run(*args, **kwargs):
+            assert events[0] == "enter" and "exit" not in events
+            events.append(name)
+            if name == failure_stage:
+                raise error
+            return value
+        return run
+
+    monkeypatch.setattr(sync_factory, "resolved_credential", guard)
+    monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
+    monkeypatch.setattr(sync_factory, "resolve_strict_isolation", stage("isolation", False))
+    monkeypatch.setattr(
+        module, "AsyncRustBinding" if async_mode else "RustBinding", stage("constructor", result)
+    )
+    if failure_stage is None:
+        assert factory("rust", url="https://startup.invalid", credential=credential) is result
+        assert events == ["enter", "config", "isolation", "constructor", "exit"]
+    else:
+        with pytest.raises(RuntimeError) as caught:
+            factory("rust", url="https://startup.invalid", credential=credential)
+        assert caught.value is error
+        stages = ["config", "isolation", "constructor"]
+        assert events == ["enter", *stages[:stages.index(failure_stage) + 1], "exit"]
 
 
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
@@ -169,7 +243,7 @@ def test_failed_constructor_unwinds_backend_and_reservations(module, monkeypatch
     assert len(retained) == 1
     assert retained[0]._closing and retained[0]._config_released
     assert registry._live_client_count("https://startup.invalid") == 0
-    replacement = sync_backend.RustBackend(
+    replacement = sync_backend.RustBinding(
         "https://startup.invalid", master_key="ZmFrZQ==",
         client_config=PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=3,
                                           read_timeout_seconds=30),
@@ -193,27 +267,27 @@ def test_timeout_conflict_does_not_leave_a_proxy_reservation():
     closed, the setting is free again and the last client takes the very
     combination that was refused at the start.
     """
-    first = sync_backend.RustBackend(
+    first = sync_backend.RustBinding(
         "https://first.invalid", master_key="key",
         client_config=PreparedClientConfig(read_timeout_seconds=20),
     )
     with pytest.raises(registry.TransportTimeoutPolicyConflictError):
-        sync_backend.RustBackend(
+        sync_backend.RustBinding(
             "https://failed.invalid", master_key="key",
             client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=30),
         )
-    other = sync_backend.RustBackend(
+    other = sync_backend.RustBinding(
         "https://other.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=20),
     )
     first.close()
     with pytest.raises(registry.ProxyPolicyConflictError):
-        sync_backend.RustBackend(
+        sync_backend.RustBinding(
             "https://conflict.invalid", master_key="key",
             client_config=PreparedClientConfig(proxy_allowed=False),
         )
     other.close()
-    replacement = sync_backend.RustBackend(
+    replacement = sync_backend.RustBinding(
         "https://replacement.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=30),
     )
@@ -236,14 +310,14 @@ def test_strict_isolation_failure_rolls_back_new_runtime_reservations():
     A rule that leaked state each time it fired would punish exactly the people
     who opted into it.
     """
-    first = sync_backend.RustBackend("https://account.invalid", master_key="key")
-    with pytest.raises(registry.StrictDriverIsolationError):
-        sync_backend.RustBackend(
+    first = sync_backend.RustBinding("https://account.invalid", master_key="key")
+    with pytest.raises(registry._StrictDriverIsolationError):
+        sync_backend.RustBinding(
             "https://account.invalid", master_key="key", strict_isolation=True,
             client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=25),
         )
     assert registry._live_client_count("https://account.invalid") == 1
-    other = sync_backend.RustBackend(
+    other = sync_backend.RustBinding(
         "https://other.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=30),
     )
@@ -271,7 +345,7 @@ def test_close_during_initialization_retains_inflight_reservation(monkeypatch, f
     binding = SimpleNamespace(acquire_driver_handle=initialize, release_driver_handle=MagicMock())
     monkeypatch.setattr(async_backend, "_rust_module", binding)
     monkeypatch.setattr(async_backend, "_runtime_configuration", lambda: state.settings)
-    backend = async_backend.AsyncRustBackend(
+    backend = async_backend.AsyncRustBinding(
         "https://account.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True),
     )
@@ -281,7 +355,7 @@ def test_close_during_initialization_retains_inflight_reservation(monkeypatch, f
             assert started.wait(10)
             close_backend(backend)
             with pytest.raises(registry.ProxyPolicyConflictError):
-                sync_backend.RustBackend(
+                sync_backend.RustBinding(
                     "https://other.invalid", master_key="key",
                     client_config=PreparedClientConfig(proxy_allowed=False),
                 )
@@ -293,12 +367,12 @@ def test_close_during_initialization_retains_inflight_reservation(monkeypatch, f
     assert registry._live_client_count("https://account.invalid") == 0
     if frozen:
         with pytest.raises(registry.ProxyPolicyConflictError):
-            sync_backend.RustBackend(
+            sync_backend.RustBinding(
                 "https://other.invalid", master_key="key",
                 client_config=PreparedClientConfig(proxy_allowed=False),
             )
     else:
-        replacement = sync_backend.RustBackend(
+        replacement = sync_backend.RustBinding(
             "https://other.invalid", master_key="key",
             client_config=PreparedClientConfig(proxy_allowed=False),
         )
@@ -316,7 +390,7 @@ def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch,
         acquire_driver_handle=MagicMock(side_effect=RuntimeError("driver failed")),
     ))
     monkeypatch.setattr(sync_backend, "_runtime_configuration", lambda: settings)
-    backend = sync_backend.RustBackend("https://account.invalid", master_key="key")
+    backend = sync_backend.RustBinding("https://account.invalid", master_key="key")
     with pytest.raises(RuntimeError, match="driver failed"):
         backend._ensure_driver_handle()
     backend.close()
@@ -326,7 +400,7 @@ def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch,
         PreparedClientConfig(read_timeout_seconds=30),
     ):
         with pytest.raises((registry.ProxyPolicyConflictError, registry.TransportTimeoutPolicyConflictError)):
-            sync_backend.RustBackend("https://other.invalid", master_key="key", client_config=config)
+            sync_backend.RustBinding("https://other.invalid", master_key="key", client_config=config)
 
 
 class AsyncCredential:
@@ -447,7 +521,7 @@ def test_frozen_timeout_compares_native_nanosecond_precision():
     This exercises the registry's comparison, not actual native duration storage.
     """
     registry.freeze_runtime_policy((None, 2.123456789, 25.123456789))
-    backend = sync_backend.RustBackend(
+    backend = sync_backend.RustBinding(
         "https://account.invalid", master_key="key",
         client_config=PreparedClientConfig(
             connection_timeout_seconds=2.1234567891, read_timeout_seconds=25.1234567891
@@ -455,7 +529,7 @@ def test_frozen_timeout_compares_native_nanosecond_precision():
     )
     backend.close()
     with pytest.raises(registry.TransportTimeoutPolicyConflictError):
-        sync_backend.RustBackend(
+        sync_backend.RustBinding(
             "https://other.invalid", master_key="key",
             client_config=PreparedClientConfig(connection_timeout_seconds=2.1234567896),
         )

@@ -81,7 +81,7 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
     leave the body alone.
     """
 
-    def test_missing_id_mints_uuid_and_mutates_body(self):
+    def test_missing_id_is_generated_and_added_to_body(self):
         """No ``id`` key at all: a UUID4 is generated, written into the body, and returned."""
         body = {"total": 99.5}
         returned = ensure_item_id(body)
@@ -95,7 +95,7 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         self.assertRegex(returned, _UUID4_PATTERN)
         self.assertEqual(uuid.UUID(returned).version, 4)
 
-    def test_empty_string_id_treated_as_missing_and_minted(self):
+    def test_empty_string_id_is_replaced_with_generated_id(self):
         """``id=""`` is falsy, so it is replaced with a freshly generated UUID4."""
         body = {"id": "", "v": 1}
         returned = ensure_item_id(body)
@@ -103,7 +103,7 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         self.assertEqual(body["id"], returned)
         self.assertRegex(returned, _UUID4_PATTERN)
 
-    def test_none_id_treated_as_missing_and_minted(self):
+    def test_none_id_is_replaced_with_generated_id(self):
         """``id=None`` is falsy, so it is replaced with a freshly generated UUID4."""
         body = {"id": None, "v": 1}
         returned = ensure_item_id(body)
@@ -111,14 +111,14 @@ class TestEnsureItemIdWhenIdMissing(unittest.TestCase):
         self.assertEqual(body["id"], returned)
         self.assertRegex(returned, _UUID4_PATTERN)
 
-    def test_zero_id_treated_as_missing_and_minted(self):
+    def test_zero_id_is_replaced_with_generated_id(self):
         """``id=0`` is falsy in Python and is therefore replaced with a UUID4 (legacy parity)."""
         body = {"id": 0}
         returned = ensure_item_id(body)
         self.assertIsNotNone(returned)
         self.assertEqual(body["id"], returned)
 
-    def test_false_id_treated_as_missing_and_minted(self):
+    def test_false_id_is_replaced_with_generated_id(self):
         """``id=False`` is falsy and is therefore replaced with a UUID4 (legacy parity)."""
         body = {"id": False}
         returned = ensure_item_id(body)
@@ -153,13 +153,13 @@ class TestEnsureItemIdProperties(unittest.TestCase):
     shared default, a global counter, or a switch to ``uuid1``/``uuid5``.
     """
 
-    def test_each_call_mints_a_distinct_uuid(self):
+    def test_two_calls_generate_different_ids(self):
         """Two empty bodies must end up with two different generated ids."""
         first = ensure_item_id({})
         second = ensure_item_id({})
         self.assertNotEqual(first, second)
 
-    def test_minted_id_round_trips_through_uuid_parser(self):
+    def test_generated_id_is_a_version_4_uuid(self):
         """The generated id parses back as a UUID with version == 4."""
         minted = ensure_item_id({})
         self.assertEqual(uuid.UUID(minted).version, 4)

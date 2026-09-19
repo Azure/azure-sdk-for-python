@@ -38,7 +38,7 @@ import sys
 import uuid
 
 from azure.cosmos import CosmosClient, PartitionKey
-from azure.cosmos._backend.partition_key import PartitionKeyInput
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -66,7 +66,7 @@ def main() -> int:
 
     from azure.cosmos._backend.operations import OP_CREATE_ITEM
     from azure.cosmos._backend.contracts import PreparedRequest
-    from azure.cosmos._backend.rust import RustBackend
+    from azure.cosmos._backend.binding import RustBinding
 
     # 2. Make sure the target db + container exist (created via the legacy
     #    backend), then build a PreparedRequest by hand (one create,
@@ -81,7 +81,7 @@ def main() -> int:
         op=OP_CREATE_ITEM,
         container_link=f"dbs/{DB}/colls/{COLL}",
         body_bytes=f'{{"id":"{item_id}","pk":"smokeA","value":42}}'.encode(),
-        partition_key=PartitionKeyInput("components", ("smokeA",)),
+        partition_key=BindingPartitionKey("components", ("smokeA",)),
         headers={},
     )
 
@@ -89,9 +89,9 @@ def main() -> int:
     print(f"Endpoint : {ENDPOINT}")
     print(f"Container: dbs/{DB}/colls/{COLL}")
     print(f"Item id  : {item_id}")
-    print("Calling RustBackend.execute ...", flush=True)
+    print("Calling RustBinding.execute ...", flush=True)
 
-    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
     try:
         resp = backend.execute(prepared)
     except Exception as e:  # pylint: disable=broad-except

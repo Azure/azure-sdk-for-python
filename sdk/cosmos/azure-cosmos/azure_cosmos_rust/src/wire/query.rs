@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::partition_key::PartitionKeyInput;
-use std::sync::atomic::Ordering;
+use super::partition_key_input::BindingPartitionKey;
 use std::sync::Arc;
 
-use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
@@ -15,11 +13,12 @@ use azure_data_cosmos_driver::{
     models::{ActivityId, CosmosOperation, CosmosResponse, FeedRange, PartitionKey, SessionToken},
 };
 
-use super::diagnostics::BINDING_OP_COUNT;
+use super::deadline::{parse_remaining_timeout, with_page_timeout};
+use super::driver_runner::{
+    run_prepared_driver_operation_async, run_prepared_driver_operation_sync,
+};
 use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
 use super::response::tuple_from_feed_result;
-use super::{lookup_driver, AbortOnDrop};
-use crate::runtime::require_runtime_context;
 
 const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
 
@@ -67,29 +66,34 @@ pub(crate) fn run_query_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = partition_key_input.into_query_target()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_query_future(
-            driver,
-            database_name,
-            container_name,
-            query_target,
-            modifiers,
-            body_bytes,
-        ))
-    });
-
-    tuple_from_feed_result(py, response_result)
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
+    run_prepared_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let query_target = partition_key_input.into_query_target()?;
+            Ok(with_page_timeout(
+                timeout,
+                run_query_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    query_target,
+                    modifiers,
+                    body_bytes,
+                ),
+            ))
+        },
+        |py, result| tuple_from_feed_result(py, result?),
+    )
 }
 
 /// Async sibling of `run_query_operation`.
@@ -97,69 +101,68 @@ pub(crate) fn run_query_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = partition_key_input.into_query_target()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_query_future(
-        driver,
-        database_name,
-        container_name,
-        query_target,
-        modifiers,
-        body_bytes,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
+    run_prepared_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let query_target = partition_key_input.into_query_target()?;
+            Ok(with_page_timeout(
+                timeout,
+                run_query_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    query_target,
+                    modifiers,
+                    body_bytes,
+                ),
+            ))
+        },
+        |py, result| tuple_from_feed_result(py, result?),
+    )
 }
 
 /// Entry point the binding calls to run one `read_all_items` page and wait for it.
-/// Typed `PartitionKeyInput` selects a full-container query or partition read-feed.
+/// Typed `BindingPartitionKey` selects a full-container query or partition read-feed.
 pub(crate) fn run_read_all_items_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     op_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = partition_key_input.into_query_target()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_read_all_items_future(
-            driver,
-            database_name,
-            container_name,
-            query_target,
-            modifiers,
-        ))
-    });
-
-    tuple_from_feed_result(py, response_result)
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
+    run_prepared_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let query_target = partition_key_input.into_query_target()?;
+            Ok(with_page_timeout(
+                timeout,
+                run_read_all_items_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    query_target,
+                    modifiers,
+                ),
+            ))
+        },
+        |py, result| tuple_from_feed_result(py, result?),
+    )
 }
 
 /// Async sibling of `run_read_all_items_operation`.
@@ -167,38 +170,32 @@ pub(crate) fn run_read_all_items_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     container_link: &str,
-    partition_key_input: PartitionKeyInput,
+    partition_key_input: BindingPartitionKey,
     modifiers: RequestHeadersAndOptions,
     op_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = partition_key_input.into_query_target()?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_read_all_items_future(
-        driver,
-        database_name,
-        container_name,
-        query_target,
-        modifiers,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
+    run_prepared_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let (database_name, container_name) = parse_container_link(container_link)?;
+            let query_target = partition_key_input.into_query_target()?;
+            Ok(with_page_timeout(
+                timeout,
+                run_read_all_items_future(
+                    driver,
+                    database_name,
+                    container_name,
+                    query_target,
+                    modifiers,
+                ),
+            ))
+        },
+        |py, result| tuple_from_feed_result(py, result?),
+    )
 }
 /// The actual driver work for one query page. Resolves the container, builds a
 /// `FeedRange` that limits the search to one partition or opens it to the whole
@@ -234,7 +231,7 @@ async fn run_query_future(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );
@@ -275,7 +272,7 @@ async fn run_read_all_items_future(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );

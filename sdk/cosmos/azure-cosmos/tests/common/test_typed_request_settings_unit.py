@@ -25,10 +25,10 @@ import pytest
 from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
 from azure.cosmos._backend.request_settings import (
     RequestSettings, ItemSettings, QuerySettings, HedgingSettings,
-    native_settings_contract_error, request_settings_schema,
+    native_settings_contract_error, _request_settings_schema,
 )
-from azure.cosmos._backend.rust import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.rust import build_binding_request_from_page as async_page
+from azure.cosmos._backend.binding import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.binding import build_binding_request_from_page as async_page
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 
 
@@ -75,12 +75,12 @@ def test_incompatible_schema_fails_before_driver_acquisition(monkeypatch, async_
     and the asynchronous backend.
     """
     import asyncio
-    from azure.cosmos._backend import rust as sync_rust
-    from azure.cosmos.aio._backend import rust as async_rust
+    from azure.cosmos._backend import binding as sync_rust
+    from azure.cosmos.aio._backend import binding as async_rust
 
     module = async_rust if async_mode else sync_rust
     monkeypatch.setattr(module, "_REQUEST_CONTRACT_ERROR", "Rebuild for typed settings")
-    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
+    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
     backend = backend_type("https://unused.invalid", master_key="ZmFrZQ==")
 
     async def check_async():
@@ -123,12 +123,12 @@ import sys
 spec = importlib.util.spec_from_file_location("azure.cosmos._rust", sys.argv[1])
 native = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(native)
-del native.request_settings_schema
+del native._request_settings_schema
 sys.modules["azure.cosmos._rust"] = native
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from azure.cosmos._backend import rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as rust
+from azure.cosmos.aio._backend import binding as async_rust
 assert "rebuild" in rust._REQUEST_CONTRACT_ERROR
 assert "rebuild" in async_rust._REQUEST_CONTRACT_ERROR
 """, native.__file__],
@@ -310,11 +310,11 @@ def test_native_schema_has_no_unconsumed_python_fields():
     """
     native = pytest.importorskip("azure.cosmos._rust")
     assert native_settings_contract_error(native) is None
-    expected = request_settings_schema()
-    assert {k: set(v) for k, v in native.request_settings_schema().items()} == {k: set(v) for k, v in expected.items()}
+    expected = _request_settings_schema()
+    assert {k: set(v) for k, v in native._request_settings_schema().items()} == {k: set(v) for k, v in expected.items()}
     assert native_settings_contract_error(SimpleNamespace()) is not None
     expected["RequestSettings"] += ("new_unconsumed_field",)
-    assert native_settings_contract_error(SimpleNamespace(request_settings_schema=lambda: expected)) is not None
+    assert native_settings_contract_error(SimpleNamespace(_request_settings_schema=lambda: expected)) is not None
 
 
 @pytest.mark.parametrize("method", [

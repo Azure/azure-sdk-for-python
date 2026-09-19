@@ -40,7 +40,7 @@ from azure.cosmos import exceptions
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos._backend.contracts import QueryPage
-from azure.cosmos._backend.errors import PageNotSupportedByBackendError
+from azure.cosmos._backend.errors import PagePreflightError
 from azure.cosmos._backend.operations import OP_LIST_CONTAINERS
 from azure.cosmos._query_rust_routing import can_use_rust_backend_for_query_containers_page
 from azure.cosmos.http_constants import ResourceType
@@ -358,7 +358,7 @@ def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
 
 
 @pytest.mark.parametrize("error", [
-    ValueError("hook failed"), PageNotSupportedByBackendError("hook failed"),
+    ValueError("hook failed"), PagePreflightError("hook failed"),
     exceptions.CosmosResourceNotFoundError(status_code=404),
     exceptions.CosmosHttpResponseError(status_code=429),
     exceptions.CosmosHttpResponseError(status_code=500),
@@ -409,7 +409,7 @@ def test_error_page_does_not_invoke_success_hook(listing_case, status):
 
 
 @pytest.mark.parametrize("error", [
-    PageNotSupportedByBackendError("unsupported page"), ValueError("binding failure"), asyncio.CancelledError(),
+    PagePreflightError("unsupported page"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
 def test_binding_failures_are_not_replayed(listing_case, error):
     """A failure inside the Rust engine, including cancellation, ends the walk after

@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 
 import threading
 import time
@@ -48,7 +48,7 @@ def validate_bookmark(token: Optional[str], rust: bool) -> None:
 
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 
 class ReadAllConfig:
@@ -149,7 +149,7 @@ class ReadAllConfig:
         return None if self.timeout is None else time.monotonic() + self.timeout
 
     def prepared(
-        self, token: Optional[str], cursor: Optional[ItemFeedCursor], deadline: Optional[float]
+        self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
     ) -> PreparedQuery:
         if cursor is None:
             raise RuntimeError("Retained paging requires a pager-owned cursor.")
@@ -166,7 +166,7 @@ class ReadAllConfig:
         return PreparedQuery(
             op=OP_READ_ALL_ITEMS,
             container_link=self.proxy.container_link,
-            partition_key=PartitionKeyInput("cross_partition"),
+            partition_key=BindingPartitionKey("cross_partition"),
             continuation=token,
             max_item_count=self.options.get("maxItemCount"),
             headers=headers,
@@ -184,7 +184,7 @@ class ReadAllPageState:
         self.config = config
         self.headers = headers
         self.token = token
-        self.cursor: Optional[ItemFeedCursor] = None
+        self.cursor: Optional[_ItemFeedCursor] = None
         self.failed = False
         self.done = False
         self.legacy_options: dict[str, Any] = {}

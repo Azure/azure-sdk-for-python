@@ -14,6 +14,7 @@ pub(crate) fn read_feed_ranges<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_feed_ranges")?;
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
     run_read_feed_ranges_operation(
         py,
@@ -34,6 +35,7 @@ pub(crate) fn feed_range_from_partition_key<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "feed_range_from_partition_key")?;
     let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
     run_feed_range_from_partition_key_operation(
         py,
@@ -56,6 +58,7 @@ pub(crate) fn is_feed_range_subset<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "is_feed_range_subset")?;
     let _ = driver_handle;
     crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
@@ -69,6 +72,7 @@ pub(crate) fn read_feed_ranges_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_feed_ranges")?;
     let (container_link, force_refresh) = extract_read_feed_ranges_inputs(prepared)?;
     run_read_feed_ranges_operation_async(
         py,
@@ -86,6 +90,7 @@ pub(crate) fn feed_range_from_partition_key_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "feed_range_from_partition_key")?;
     let (container_link, partition_key) = extract_feed_range_from_partition_key_inputs(prepared)?;
     run_feed_range_from_partition_key_operation_async(
         py,
@@ -103,6 +108,7 @@ pub(crate) fn is_feed_range_subset_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "is_feed_range_subset")?;
     let _ = driver_handle;
     crate::wire::settings::validate_request_protocol(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;

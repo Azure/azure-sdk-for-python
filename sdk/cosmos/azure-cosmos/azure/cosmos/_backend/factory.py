@@ -3,61 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The single entry point for backend selection.
+"""Temporary migration selection and shared sync/async construction.
 
-Consistent terms used throughout this file:
+``_backend``, ``COSMOS_BACKEND`` and ``COSMOS_RUST_STRICT_ISOLATION`` are
+internal migration/test controls, not supported customer switches. LR-09 in
+LEGACY_CODE_RETIREMENT.md owns their removal before the Rust-only release.
 
-* **client** -- the ``CosmosClient`` object a customer creates in their code.
-* **backend** -- the Python dispatch object: ``core-python`` uses the temporary
-  legacy pipeline; ``rust`` hands the work to a Rust driver.
-* **rust driver** -- the native ``CosmosDriver``; it owns the network connection pool, the
-  auth (request signing), and region routing. The **binding** is the compiled
-  ``azure.cosmos._rust`` layer Python calls into to reach it (the compiled file
-  holds both). The binding keeps one rust driver per distinct ``(endpoint,
-  credential, config)`` and reference-counts it, so same-settings clients share
-  one; the **driver handle** is the string that names which rust driver a client
-  uses.
-* **credential** -- how the customer proves who they are (a master key, or a
-  token from ``azure-identity``).
-
-High-level view -- what this file does
---------------------------------------
-
-When a customer writes ``CosmosClient(url, credential, _backend="rust")``,
-something has to (1) decide which backend that client will use, and (2) if it is
-the Rust backend, validate the supported startup options and repackage them for
-native initialization. Per-call options and token/service failures are checked later.
-That is this file's whole job. The client calls :func:`make_backend` once, at
-construction, and stores the concrete backend it returns: a
-:class:`RustBackend` when Rust was chosen, or the shared
-:class:`~azure.cosmos._backend.legacy.LegacyBackend` when core-python was chosen.
-
-If this file didn't exist: that decide-and-check-and-repackage logic would have
-to live inside ``CosmosClient`` itself -- and be duplicated in both the sync and
-async clients. The moment those two copies diverged, bugs would appear on one
-side only. Worse, without the up-front checks, a customer who passed something Rust
-can't do yet (say, a custom proxy, or Bounded Staleness consistency) wouldn't
-find out at ``CosmosClient(...)``. It would appear to work, then fail on their
-first database call with a confusing low-level error far from the real cause.
-This file's core value is failing early and clearly, at construction, with a
-message that says exactly what to do instead.
-
-Selection precedence (highest wins): the ``_backend=`` kwarg, then the
-``COSMOS_BACKEND`` environment variable, then the ``core-python`` default. An
-invalid value raises ``ValueError`` at construction time.
-
-The three checking steps :func:`make_backend` combines each live in their own
-module, so the async factory can reuse them without importing this one:
-
-* :mod:`~azure.cosmos._backend.credentials` -- sorting the credential.
-* :mod:`~azure.cosmos._backend.transport_settings` -- rejecting network and TLS
-  settings the driver cannot honor.
-* :mod:`~azure.cosmos._backend.client_config` -- gathering the tuning options.
+Selection precedence is explicit keyword, environment, then core-python.
+Both factories use ``_make_backend`` to preserve validation order and credential
+ownership. Rust selection creates a ``RustBinding`` or ``AsyncRustBinding``;
+native driver acquisition remains lazy.
 """
 from __future__ import annotations
 
 import os
-from typing import Any, Optional, Sequence
+from typing import Any, Callable, Optional, Sequence, TypeVar
 
 from .cosmos_backend import CosmosBackend
 from .client_config import build_client_config
@@ -72,8 +32,10 @@ from .constants import (
 )
 from .credentials import resolved_credential
 from .legacy import LEGACY_BACKEND
-from .rust import RustBackend
+from .binding import RustBinding
 from .transport_settings import reject_unsupported_transport_settings
+
+_BackendT = TypeVar("_BackendT")
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
     """Select the backend name from the ``_backend=`` argument, else the
@@ -132,7 +94,7 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
 
     When on, a second ``CosmosClient`` to an account whose config differs from the
     first live client's raises
-    :class:`~azure.cosmos._backend._driver_registry.StrictDriverIsolationError` at
+    :class:`~azure.cosmos._backend._driver_registry._StrictDriverIsolationError` at
     construction instead of silently building a second isolated driver.
     """
     if explicit is not None:
@@ -168,6 +130,79 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
     )
 
 
+def _make_backend(
+    explicit: Optional[str],
+    *,
+    rust_backend_type: Callable[..., _BackendT],
+    legacy_backend: _BackendT,
+    url: Optional[str] = None,
+    credential: Any = None,
+    preferred_locations: Optional[Sequence[str]] = None,
+    excluded_locations: Optional[Sequence[str]] = None,
+    throttling_max_retry_count: Optional[int] = None,
+    throttling_max_retry_wait_time_seconds: Optional[float] = None,
+    availability_strategy: Any = None,
+    user_agent_suffix: Optional[str] = None,
+    consistency_level: Optional[str] = None,
+    proxy_allowed: Optional[bool] = None,
+    connection_timeout_seconds: Optional[float] = None,
+    read_timeout_seconds: Optional[float] = None,
+    fault_injection_rules: Any = None,
+    strict_isolation: Optional[bool] = None,
+    proxy_config: Any = None,
+    proxies: Any = None,
+    connection_verify: Any = None,
+    connection_cert: Any = None,
+    ssl_config: Any = None,
+    transport: Any = None,
+) -> _BackendT:
+    """Select and construct either backend under the same credential cleanup guard.
+
+    Legacy selection does not validate Rust-only settings. On the Rust path,
+    validate the endpoint and transport before resolving credentials, then keep
+    their ownership guard active through config validation and construction.
+    """
+    name = resolve_backend_name(explicit)
+    if name == BACKEND_NAME_RUST:
+        if not url:
+            raise ValueError(
+                "The Rust binding requires the account endpoint URL."
+            )
+        reject_unsupported_transport_settings(
+            proxy_config=proxy_config,
+            proxies=proxies,
+            connection_verify=connection_verify,
+            connection_cert=connection_cert,
+            ssl_config=ssl_config,
+            transport=transport,
+        )
+        # Sort the credential inside the guard: an async credential becomes a
+        # bridge holding a background thread, and everything below can still raise
+        # (config validation, process-wide policy conflicts, strict isolation), which
+        # would otherwise strand that thread with no owner left to close it.
+        with resolved_credential(credential) as (master_key, token_credential):
+            return rust_backend_type(
+                endpoint=url,
+                master_key=master_key,
+                token_credential=token_credential,
+                client_config=build_client_config(
+                    preferred_locations,
+                    excluded_locations=excluded_locations,
+                    throttling_max_retry_count=throttling_max_retry_count,
+                    throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+                    availability_strategy=availability_strategy,
+                    user_agent_suffix=user_agent_suffix,
+                    consistency_level=consistency_level,
+                    proxy_allowed=proxy_allowed,
+                    connection_timeout_seconds=connection_timeout_seconds,
+                    read_timeout_seconds=read_timeout_seconds,
+                    fault_injection_rules=fault_injection_rules,
+                ),
+                strict_isolation=resolve_strict_isolation(strict_isolation),
+            )
+    return legacy_backend
+
+
 def make_backend(
     explicit: Optional[str],
     *,
@@ -192,65 +227,29 @@ def make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> CosmosBackend:
-    """The one public entry point that combines the rest of this file: build
-    the backend instance a sync ``CosmosClient`` will hold.
-
-    Without it: the client constructor would have to do all of the below itself,
-    in two places (sync and async), which invites one-sided bugs when the two
-    copies diverge. So this resolves the name; if Rust, requires the endpoint URL,
-    rejects unsupported transport settings, sorts the credential, combines the
-    tuning into a config, resolves the isolation switch, and returns a
-    :class:`RustBackend`. If core-python, it returns the shared
-    :class:`~azure.cosmos._backend.legacy.LegacyBackend`.
-
-    The keyword settings are only consulted for the Rust branch, where they are
-    combined into the client config the backend carries to the driver.
-    ``strict_isolation`` (kwarg > the ``COSMOS_RUST_STRICT_ISOLATION`` env var >
-    off) controls whether a second client to an account with a different config
-    raises instead of silently getting its own isolated driver. The transport/TLS
-    settings (``proxy_config`` / ``proxies`` / ``connection_verify`` /
-    ``connection_cert`` / ``ssl_config`` / ``transport``) are not combined into the
-    config -- the Rust path still can't honor explicit proxy/transport objects, so
-    they are rejected here; they are ignored entirely on the core-python branch,
-    which honors them as before. ``proxy_allowed`` is the Rust-path proxy switch
-    carried into the driver runtime.
-    """
-    name = resolve_backend_name(explicit)
-    if name == BACKEND_NAME_RUST:
-        if not url:
-            raise ValueError(
-                "_backend='rust' requires the account endpoint URL."
-            )
-        reject_unsupported_transport_settings(
-            proxy_config=proxy_config,
-            proxies=proxies,
-            connection_verify=connection_verify,
-            connection_cert=connection_cert,
-            ssl_config=ssl_config,
-            transport=transport,
-        )
-        # Sort the credential inside the guard: an async credential becomes a
-        # bridge holding a background thread, and everything below can still raise
-        # (config validation, process-wide policy conflicts, strict isolation), which
-        # would otherwise strand that thread with no owner left to close it.
-        with resolved_credential(credential) as (master_key, token_credential):
-            return RustBackend(
-                endpoint=url,
-                master_key=master_key,
-                token_credential=token_credential,
-                client_config=build_client_config(
-                    preferred_locations,
-                    excluded_locations=excluded_locations,
-                    throttling_max_retry_count=throttling_max_retry_count,
-                    throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
-                    availability_strategy=availability_strategy,
-                    user_agent_suffix=user_agent_suffix,
-                    consistency_level=consistency_level,
-                    proxy_allowed=proxy_allowed,
-                    connection_timeout_seconds=connection_timeout_seconds,
-                    read_timeout_seconds=read_timeout_seconds,
-                    fault_injection_rules=fault_injection_rules,
-                ),
-                strict_isolation=resolve_strict_isolation(strict_isolation),
-            )
-    return LEGACY_BACKEND
+    """Build a synchronous backend using the shared selection and startup policy."""
+    return _make_backend(
+        explicit,
+        rust_backend_type=RustBinding,
+        legacy_backend=LEGACY_BACKEND,
+        url=url,
+        credential=credential,
+        preferred_locations=preferred_locations,
+        excluded_locations=excluded_locations,
+        throttling_max_retry_count=throttling_max_retry_count,
+        throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+        availability_strategy=availability_strategy,
+        user_agent_suffix=user_agent_suffix,
+        consistency_level=consistency_level,
+        proxy_allowed=proxy_allowed,
+        connection_timeout_seconds=connection_timeout_seconds,
+        read_timeout_seconds=read_timeout_seconds,
+        fault_injection_rules=fault_injection_rules,
+        strict_isolation=strict_isolation,
+        proxy_config=proxy_config,
+        proxies=proxies,
+        connection_verify=connection_verify,
+        connection_cert=connection_cert,
+        ssl_config=ssl_config,
+        transport=transport,
+    )

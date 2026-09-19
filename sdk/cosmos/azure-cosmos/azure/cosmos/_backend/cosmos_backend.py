@@ -31,10 +31,10 @@ from .contracts import (
     PreparedRequest,
     QueryPage,
 )
-from .errors import BackendProtocolError, PageNotSupportedByBackendError
+from .errors import BindingProtocolError, PagePreflightError
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 
 class CosmosBackend(abc.ABC):
@@ -44,14 +44,14 @@ class CosmosBackend(abc.ABC):
     The migration dispatch methods below remain for other families.
 
     A still-migrating family coordinator (the throughput functions in
-    :mod:`~azure.cosmos._helpers.container_throughput_helper` and
-    :mod:`~azure.cosmos._helpers.database_throughput_helper`, and the feed-range
-    functions in :mod:`~azure.cosmos._helpers.feed_range_helper`) holds one of
+    :mod:`~azure.cosmos._helpers._container_throughput` and
+    :mod:`~azure.cosmos._helpers._database_throughput`, and the feed-range
+    functions in :mod:`~azure.cosmos._helpers._feed_range_operations`) holds one of
     these by interface and drives its operations through :meth:`run_operation`
     or :meth:`run_page_operation` without knowing which concrete backend it
     has. Driver selection and legacy fallback happen behind this interface: a
     rust-backed client holds a
-    :class:`RustBackend` and a core-python client holds a
+    :class:`RustBinding` and a core-python client holds a
     :class:`~azure.cosmos._backend.legacy.LegacyBackend`, and every coordinator
     treats both the same -- none of them branch on ``None``, on which concrete
     backend they hold, or on a wire primitive returning ``None``. The operation
@@ -112,14 +112,14 @@ class CosmosBackend(abc.ABC):
         """Apply migration policy before dispatch; never replay execution or parsing errors."""
         if routing.uses_legacy():
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
             return legacy_call()
         prepared = build_request()
         if prepared.op != routing.op:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
         response = self.execute(prepared, deadline=deadline)
@@ -137,27 +137,27 @@ class CosmosBackend(abc.ABC):
         """Apply migration policy before dispatch; never replay execution or parsing errors."""
         if routing.uses_legacy():
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
             return legacy_call()
         prepared = build_request()
         if prepared.op != routing.op:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
         try:
             self.validate_page_request(prepared)
-        except PageNotSupportedByBackendError as error:
+        except PagePreflightError as error:
             if (
-                type(error) is not PageNotSupportedByBackendError
+                type(error) is not PagePreflightError
                 or not routing.policy.fallback_allowed
                 or prepared.continuation is not None
             ):
                 raise
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
@@ -166,7 +166,7 @@ class CosmosBackend(abc.ABC):
         try:
             page = next(pages)
         except StopIteration as error:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"{type(self).__name__} returned no page for {routing.op!r}"
             ) from error
         finally:
@@ -180,7 +180,7 @@ class CosmosBackend(abc.ABC):
     ) -> Iterator[QueryPage]:
         """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
-        The default here raises; :class:`~azure.cosmos._backend.rust.RustBackend`
+        The default here raises; :class:`~azure.cosmos._backend.binding.RustBinding`
         overrides it using the stateless or retained-cursor dispatch table. A backend
         that does not implement this -- ``LegacyBackend`` never reaches it, since
         :meth:`run_page_operation` invokes the legacy call directly -- keeps
@@ -195,7 +195,7 @@ class CosmosBackend(abc.ABC):
     def validate_page_request(self, prepared: PreparedQuery) -> None:
         """Validate static page capability before execution; no I/O or driver acquisition."""
 
-    def create_item_feed_cursor(self) -> ItemFeedCursor:
+    def create_item_feed_cursor(self) -> _ItemFeedCursor:
         """Create local native cursor state, without acquiring a driver."""
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"

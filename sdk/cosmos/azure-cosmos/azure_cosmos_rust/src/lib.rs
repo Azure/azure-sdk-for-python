@@ -21,35 +21,35 @@
 //! function for its execution and return-value contract.
 //!
 //! Driver lifecycle (`runtime.rs`):
-//!   `acquire_driver_handle`, `release_driver_handle`, `runtime_configuration`,
-//!   `fault_injection_rule_hit_count`
+//!   `_driver_identity`, `acquire_driver_handle`, `release_driver_handle`, `_runtime_configuration`,
+//!   `_debug_fault_injection_rule_hit_count`
 //!
-//! Items (`documents/items.rs`):
+//! Items (`ffi/items.rs`):
 //!   `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`,
 //!   `patch_item`
 //!
-//! Queries and feeds (`documents/query.rs`, `wire/item_feed.rs`):
+//! Queries and feeds (`ffi/query.rs`, `wire/item_feed.rs`):
 //!   `query_items`, `read_all_items`, `fetch_page_with_cursor`, and the
-//!   `ItemFeedCursor` class
+//!   `_ItemFeedCursor` class
 //!
-//! Feed ranges (`documents/feed_range.rs`, `feed_range_subset.rs`):
+//! Feed ranges (`ffi/feed_range.rs`, `feed_range_subset.rs`):
 //!   `read_feed_ranges`, `feed_range_from_partition_key`, `is_feed_range_subset`
 //!
-//! Throughput offers (`documents/offers.rs`):
+//! Throughput offers (`ffi/offers.rs`):
 //!   `read_offer`, `replace_offer`
 //!
-//! Databases (`documents/databases.rs`):
+//! Databases (`ffi/databases.rs`):
 //!   `create_database`, `read_database`, `delete_database`, `list_databases`,
 //!   `query_databases`
 //!
-//! Containers (`documents/containers.rs`):
+//! Containers (`ffi/containers.rs`):
 //!   `create_container`, `read_container`, `replace_container`,
 //!   `delete_container`, `list_containers`, `query_containers`,
 //!   `get_container_metadata`
 //!
 //! Diagnostics and settings (`wire/`):
-//!   `operation_count`, `attempt_count`, `retry_count`,
-//!   `request_settings_schema`
+//!   `_debug_operation_count`, `_debug_attempt_count`, `_debug_retry_count`,
+//!   `_request_settings_schema`
 //!
 //! `wire/settings.rs` validates the request protocol and combines typed settings
 //! with prepared headers. Activity/session values become typed operation fields;
@@ -59,7 +59,7 @@
 //! consume headers, such as PATCH's If-Match precondition.
 
 mod credential;
-mod documents;
+mod ffi;
 mod feed_range_subset;
 #[cfg(test)]
 #[path = "../query_plan_binary.rs"]
@@ -81,66 +81,67 @@ macro_rules! add_pyfn {
 
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    add_pyfn!(m, wire::settings::request_settings_schema);
+    add_pyfn!(m, wire::settings::_request_settings_schema);
     m.add_class::<wire::item_feed::ItemFeedCursor>()?;
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor_async);
     add_pyfn!(m, runtime::acquire_driver_handle);
+    add_pyfn!(m, runtime::driver_identity);
     add_pyfn!(m, runtime::runtime_configuration);
     add_pyfn!(m, runtime::release_driver_handle);
-    add_pyfn!(m, runtime::fault_injection_rule_hit_count);
-    add_pyfn!(m, documents::create_item);
-    add_pyfn!(m, documents::upsert_item);
-    add_pyfn!(m, documents::replace_item);
-    add_pyfn!(m, documents::delete_item);
-    add_pyfn!(m, documents::read_item);
-    add_pyfn!(m, documents::patch_item);
-    add_pyfn!(m, documents::query_items);
-    add_pyfn!(m, documents::read_all_items);
-    add_pyfn!(m, documents::read_feed_ranges);
-    add_pyfn!(m, documents::feed_range_from_partition_key);
-    add_pyfn!(m, documents::is_feed_range_subset);
-    add_pyfn!(m, documents::read_offer);
-    add_pyfn!(m, documents::replace_offer);
-    add_pyfn!(m, documents::create_database);
-    add_pyfn!(m, documents::read_database);
-    add_pyfn!(m, documents::delete_database);
-    add_pyfn!(m, documents::list_databases);
-    add_pyfn!(m, documents::query_databases);
-    add_pyfn!(m, documents::create_container);
-    add_pyfn!(m, documents::list_containers);
-    add_pyfn!(m, documents::query_containers);
-    add_pyfn!(m, documents::read_container);
-    add_pyfn!(m, documents::delete_container);
-    add_pyfn!(m, documents::replace_container);
-    add_pyfn!(m, documents::get_container_metadata);
+    add_pyfn!(m, runtime::_debug_fault_injection_rule_hit_count);
+    add_pyfn!(m, ffi::create_item);
+    add_pyfn!(m, ffi::upsert_item);
+    add_pyfn!(m, ffi::replace_item);
+    add_pyfn!(m, ffi::delete_item);
+    add_pyfn!(m, ffi::read_item);
+    add_pyfn!(m, ffi::patch_item);
+    add_pyfn!(m, ffi::query_items);
+    add_pyfn!(m, ffi::read_all_items);
+    add_pyfn!(m, ffi::read_feed_ranges);
+    add_pyfn!(m, ffi::feed_range_from_partition_key);
+    add_pyfn!(m, ffi::is_feed_range_subset);
+    add_pyfn!(m, ffi::read_offer);
+    add_pyfn!(m, ffi::replace_offer);
+    add_pyfn!(m, ffi::create_database);
+    add_pyfn!(m, ffi::read_database);
+    add_pyfn!(m, ffi::delete_database);
+    add_pyfn!(m, ffi::list_databases);
+    add_pyfn!(m, ffi::query_databases);
+    add_pyfn!(m, ffi::create_container);
+    add_pyfn!(m, ffi::list_containers);
+    add_pyfn!(m, ffi::query_containers);
+    add_pyfn!(m, ffi::read_container);
+    add_pyfn!(m, ffi::delete_container);
+    add_pyfn!(m, ffi::replace_container);
+    add_pyfn!(m, ffi::get_container_metadata);
     // Async siblings return Python awaitables. Driver-backed paths spawn work
     // rather than reserving a Python worker thread for the full operation.
-    add_pyfn!(m, documents::create_item_async);
-    add_pyfn!(m, documents::upsert_item_async);
-    add_pyfn!(m, documents::replace_item_async);
-    add_pyfn!(m, documents::delete_item_async);
-    add_pyfn!(m, documents::read_item_async);
-    add_pyfn!(m, documents::patch_item_async);
-    add_pyfn!(m, documents::query_items_async);
-    add_pyfn!(m, documents::read_all_items_async);
-    add_pyfn!(m, documents::read_feed_ranges_async);
-    add_pyfn!(m, documents::feed_range_from_partition_key_async);
-    add_pyfn!(m, documents::is_feed_range_subset_async);
-    add_pyfn!(m, documents::read_offer_async);
-    add_pyfn!(m, documents::replace_offer_async);
-    add_pyfn!(m, documents::create_database_async);
-    add_pyfn!(m, documents::read_database_async);
-    add_pyfn!(m, documents::delete_database_async);
-    add_pyfn!(m, documents::list_databases_async);
-    add_pyfn!(m, documents::query_databases_async);
-    add_pyfn!(m, documents::create_container_async);
-    add_pyfn!(m, documents::list_containers_async);
-    add_pyfn!(m, documents::query_containers_async);
-    add_pyfn!(m, documents::read_container_async);
-    add_pyfn!(m, documents::delete_container_async);
-    add_pyfn!(m, documents::replace_container_async);
-    add_pyfn!(m, documents::get_container_metadata_async);
+    add_pyfn!(m, ffi::create_item_async);
+    add_pyfn!(m, ffi::upsert_item_async);
+    add_pyfn!(m, ffi::replace_item_async);
+    add_pyfn!(m, ffi::delete_item_async);
+    add_pyfn!(m, ffi::read_item_async);
+    add_pyfn!(m, ffi::patch_item_async);
+    add_pyfn!(m, ffi::query_items_async);
+    add_pyfn!(m, ffi::read_all_items_async);
+    add_pyfn!(m, ffi::read_feed_ranges_async);
+    add_pyfn!(m, ffi::feed_range_from_partition_key_async);
+    add_pyfn!(m, ffi::is_feed_range_subset_async);
+    add_pyfn!(m, ffi::read_offer_async);
+    add_pyfn!(m, ffi::replace_offer_async);
+    add_pyfn!(m, ffi::create_database_async);
+    add_pyfn!(m, ffi::read_database_async);
+    add_pyfn!(m, ffi::delete_database_async);
+    add_pyfn!(m, ffi::list_databases_async);
+    add_pyfn!(m, ffi::query_databases_async);
+    add_pyfn!(m, ffi::create_container_async);
+    add_pyfn!(m, ffi::list_containers_async);
+    add_pyfn!(m, ffi::query_containers_async);
+    add_pyfn!(m, ffi::read_container_async);
+    add_pyfn!(m, ffi::delete_container_async);
+    add_pyfn!(m, ffi::replace_container_async);
+    add_pyfn!(m, ffi::get_container_metadata_async);
     // Counts instrumented runner entries, not successful operations or network
     // requests. Not every entry point increments it; metadata lookup does not.
     add_pyfn!(m, wire::operation_count);
@@ -150,19 +151,19 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, wire::attempt_count);
     add_pyfn!(m, wire::retry_count);
     // Typed transport error the Python backend maps to azure-core's
-    // ServiceResponseError (see wire::DriverTransportError).
+    // ServiceResponseError (see wire::_DriverTransportError).
     m.add(
-        "DriverTransportError",
-        m.py().get_type_bound::<wire::DriverTransportError>(),
+        "_DriverTransportError",
+        m.py().get_type_bound::<wire::_DriverTransportError>(),
     )?;
     m.add(
-        "DriverResponseError",
-        m.py().get_type_bound::<wire::DriverResponseError>(),
+        "_DriverResponseError",
+        m.py().get_type_bound::<wire::_DriverResponseError>(),
     )?;
     m.add(
-        "UnsupportedQueryFeatureError",
+        "_UnsupportedQueryFeatureError",
         m.py()
-            .get_type_bound::<wire::UnsupportedQueryFeatureError>(),
+            .get_type_bound::<wire::_UnsupportedQueryFeatureError>(),
     )?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add(

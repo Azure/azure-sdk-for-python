@@ -26,9 +26,11 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
+perf_single_operation_shape
 
 DURATION_SECONDS="${1:-7200}"
 REPEATS="${2:-2}"
+perf_require_positive "${DURATION_SECONDS}" "${REPEATS}"
 
 OPERATIONS=(read create upsert replace delete patch)
 BACKENDS=(core-python rust)
@@ -41,8 +43,13 @@ _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/latency-${STAMP}"
-mkdir -p "${LOG_DIR}"
+perf_create_log_dir "${LOG_DIR}" || exit 2
 write_run_manifest "${LOG_DIR}" "${STAMP}" "A-latency-matrix"
+for (( r=1; r<=REPEATS; r++ )); do
+  for op in "${OPERATIONS[@]}"; do
+    for bk in "${BACKENDS[@]}"; do printf 'lat-%s-%s-r%s-%s\n' "$op" "$bk" "$r" "$STAMP"; done
+  done
+done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Phase A: latency matrix ==="
 echo "    per-run = ${DURATION_SECONDS}s, repeats = ${REPEATS}, ops = ${OPERATIONS[*]}"
@@ -96,7 +103,7 @@ for (( r=1; r<=REPEATS; r++ )); do
       # The loop always CONTINUES; flagging just makes a bad cell visible.
       case "${rc}" in
         0)   ;;  # graceful clean stop, the expected outcome
-        130) echo "    !! run exited 130 (SIGINT fell back to KeyboardInterrupt; graceful handler did not engage -- data OK, check workload.py is current); see ${log}" >&2 ;;
+        130) echo "    !! interrupted; final data is not confirmed; see ${log}" >&2; overall_rc=1 ;;
         137) echo "    !! run KILLED after 120s grace (cell hung on stop); see ${log}" >&2; overall_rc=1 ;;
         124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2; overall_rc=1 ;;
         *)   echo "    !! run exited rc=${rc}; see ${log}" >&2; overall_rc=1 ;;
@@ -116,7 +123,7 @@ echo
 # the reporter logged no failed writes. It never aborts the matrix; it just prints
 # PASS/FAIL so an unattended run cannot pass unnoticed.
 echo "=== Running post-run integrity gate ==="
-if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "lat-"; then
+if perf_check_run "${LOG_DIR}" "${STAMP}" "lat-" "core-python,rust"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2

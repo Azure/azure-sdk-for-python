@@ -15,7 +15,7 @@ account-level headers.
 """
 from __future__ import annotations
 
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 
 from typing import Any, Mapping, Optional, Union
 
@@ -134,7 +134,7 @@ def build_create_container_prepared(
         op=OP_CREATE_CONTAINER,
         container_link="",
         body_bytes=serialize_body_to_bytes(container_definition),
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
         item_id=_database_id_from_link(database_link),
@@ -165,7 +165,7 @@ def build_read_container_prepared(
         op=OP_READ_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=b"",
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
     )
@@ -204,7 +204,7 @@ def build_delete_container_prepared(
         op=OP_DELETE_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=b"",
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
     )
@@ -234,7 +234,7 @@ def build_replace_container_prepared(
         op=OP_REPLACE_CONTAINER,
         container_link=_normalized_container_link(container_link),
         body_bytes=serialize_body_to_bytes(container_definition),
-        partition_key=PartitionKeyInput("cross_partition"),
+        partition_key=BindingPartitionKey("cross_partition"),
         headers=headers,
         settings=settings,
     )

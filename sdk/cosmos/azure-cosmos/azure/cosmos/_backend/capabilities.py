@@ -137,8 +137,8 @@ CAPABILITIES: dict[str, OpCapability] = {
             "CosmosClient. The request will not be sent through legacy Python."
         ),
     ),
-    ops.OP_QUERY_CHANGE_FEED: OpCapability(
-        frozenset({ops.OP_QUERY_CHANGE_FEED}),
+    ops.OP_QUERY_ITEMS_CHANGE_FEED: OpCapability(
+        frozenset({ops.OP_QUERY_ITEMS_CHANGE_FEED}),
     ),
     ops.OP_READ_OFFER: OpCapability(
         frozenset({ops.OP_READ_OFFER}),

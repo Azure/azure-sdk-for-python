@@ -9,7 +9,7 @@
 ``CosmosOperation::upsert_item``, and the binding's ``upsert_item`` entry
 point maps to it (the driver sets ``x-ms-documentdb-is-upsert`` and
 POSTs to the collection feed, so an existing ``(partition_key, id)`` is
-replaced rather than rejected with 409). ``RustBackend.execute`` therefore
+replaced rather than rejected with 409). ``RustBinding.execute`` therefore
 dispatches an ``OP_UPSERT_ITEM`` request to ``_rust_module.upsert_item`` --
 the same dispatch shape create / read / delete use -- and wraps the
 returned 4-tuple as a ``BackendResponse``.
@@ -26,8 +26,8 @@ import pytest
 
 from azure.cosmos._backend.operations import OP_UPSERT_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.rust import RustBackend
-from azure.cosmos.aio._backend.rust import AsyncRustBackend
+from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos.aio._backend.binding import AsyncRustBinding
 
 
 def _upsert_prepared() -> PreparedRequest:
@@ -48,9 +48,9 @@ def test_sync_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.upsert_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
-    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
-    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
     prepared = _upsert_prepared()
     resp = backend.execute(prepared)
 
@@ -70,10 +70,10 @@ def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
     fake_module.upsert_item_async = AsyncMock(
         return_value=(201, 0, {"etag": "v1"}, b'{"id":"order-42"}')
     )
-    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", fake_module)
 
     async def _run():
-        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        backend = AsyncRustBinding(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = _upsert_prepared()
         resp = await backend.execute(prepared)
         fake_module.upsert_item_async.assert_awaited_once_with("handle-1", prepared)
@@ -89,8 +89,8 @@ def test_sync_rust_backend_upsert_raises_when_binding_not_built(monkeypatch):
     """Before ``maturin develop``, an upsert on the Rust backend raises
     the same clear ``NotImplementedError`` every other op raises --
     upsert is no longer special-cased to silently defer to legacy."""
-    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)
-    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", None)
+    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
     with pytest.raises(NotImplementedError, match="not present"):
         backend.execute(_upsert_prepared())
 

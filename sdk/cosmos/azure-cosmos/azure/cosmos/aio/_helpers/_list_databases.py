@@ -6,7 +6,7 @@ from typing import Any, Optional
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.utils import CaseInsensitiveDict
 
-from ..._backend.errors import BackendProtocolError
+from ..._backend.errors import BindingProtocolError
 from ..._helpers._list_databases import ListDatabasesConfig, ListDatabasesPageState
 from ..._operation_deadline import remaining_timeout, run_with_deadline
 
@@ -48,7 +48,7 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
             try:
                 page = await pages.__anext__()
             except StopAsyncIteration as error:
-                raise BackendProtocolError("Rust backend returned no list_databases page.") from error
+                raise BindingProtocolError("Rust backend returned no list_databases page.") from error
             finally:
                 await pages.aclose()
             return state.parse(page)

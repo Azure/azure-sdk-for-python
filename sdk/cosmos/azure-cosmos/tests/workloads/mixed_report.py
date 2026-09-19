@@ -17,6 +17,7 @@ import argparse
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import add_histogram, split_workload_id, summary_rows, window_key
 from latency_report import (
     HdrHistogram,
     MAX_US,
@@ -63,22 +64,29 @@ def _new_cell():
         "ru_count": 0,
         "hist": HdrHistogram(MIN_US, MAX_US, 3),
         "no_hist_windows": 0,
+        "windows": {},
     }
 
 
 def _add_row(cell, r, c):
     cell["count"] += c
     cell["errors"] += int(r.get("errors", 0) or 0)
-    cell["throttled_429"] += int(r.get("throttled_429", 0) or 0)
-    cell["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
-    mr = float(r.get("mean_ru", 0.0) or 0.0)
-    if mr:
-        cell["ru_weighted"] += mr * c
-        cell["ru_count"] += c
-    hb = r.get("hist_b64")
-    if hb:
-        cell["hist"].decode_and_add(hb)
+    throttled = r.get("throttled_429")
+    if throttled is None or throttled < 0 or cell["throttled_429"] is None:
+        cell["throttled_429"] = None
     else:
+        cell["throttled_429"] += int(throttled)
+    key = window_key(r)
+    duration = r["window_seconds"]
+    if key not in cell["windows"]:
+        cell["window_s"] += duration
+        cell["windows"][key] = duration
+    elif cell["windows"][key] != duration:
+        raise ValueError("Conflicting durations for one process window")
+    cell["ru_weighted"] += r.get("ru_sum", 0.0) or 0.0
+    cell["ru_count"] += r.get("ru_count", 0) or 0
+    hb = r.get("hist_b64")
+    if not add_histogram(cell["hist"], hb, c):
         cell["no_hist_windows"] += 1
 
 
@@ -90,8 +98,7 @@ def _aggregate(container, prefix, stamp):
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.operation, c.count, c.errors, c.throttled_429, "
-            "c.window_seconds, c.hist_b64, c.mean_ru, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
@@ -103,17 +110,17 @@ def _aggregate(container, prefix, stamp):
     )
     per_op, blended = {}, {}
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in rows:
+    for r in summary_rows(rows):
         # backend comes from the workload_id; the real operation comes from the row.
-        _wop, backend, _ = _split_wid(r["workload_id"])
+        _wop, backend, _ = split_workload_id(r["workload_id"], prefix)
         op = _canon_op(r.get("operation"))
-        if not backend or not op:
+        if not backend or op not in _OP_ORDER:
             continue
         c = int(r.get("count", 0) or 0)
         if backend and "rust" in backend.lower():
             prov_rust += 1
             _dc = str(r.get("driver_commit") or "").strip()
-            if _dc:
+            if _driver_gate.is_stamped_commit(_dc):
                 prov_commits.add(_dc)
             else:
                 prov_missing += 1
@@ -129,20 +136,20 @@ def _aggregate(container, prefix, stamp):
 
 
 def _pctile_ms(cell, q):
-    if cell["count"] <= 0:
+    if cell["count"] <= 0 or cell["no_hist_windows"]:
         return float("nan")
     return cell["hist"].get_value_at_percentile(q) / 1000.0
 
 
 def _fmt(label, cell):
     rps = cell["count"] / cell["window_s"] if cell["window_s"] else 0.0
-    ru = cell["ru_weighted"] / cell["ru_count"] if cell["ru_count"] else 0.0
+    ru = cell["ru_weighted"] / cell["ru_count"] if cell["ru_count"] else float("nan")
     note = "" if cell["no_hist_windows"] == 0 else (
-        f"  [!] {cell['no_hist_windows']} window(s) lacked hist_b64 (approx)"
+        f"  [!] {cell['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
     )
     return (
         f"  {label:16s} count={cell['count']:>10d} err={cell['errors']:>5d} "
-        f"429={cell['throttled_429']:>5d} rps={rps:>8.1f} "
+        f"429={str(cell['throttled_429']):>5s} rps={rps:>8.1f} "
         f"p50={_pctile_ms(cell,50):>6.2f} p90={_pctile_ms(cell,90):>6.2f} "
         f"p99={_pctile_ms(cell,99):>6.2f} p99.9={_pctile_ms(cell,99.9):>7.2f} "
         f"RU/op={ru:>6.2f}{note}"
@@ -172,7 +179,7 @@ def main():
     backends = sorted(blended)
     print(f"=== Mixed/blended workload (prefix {args.prefix}, stamp {stamp}) ===")
     print("    One process issues a weighted BLEND of ops; percentiles are POOLED")
-    print("    across windows from merged HdrHistograms (exact).")
+    print("    across complete success histograms, with one denominator per process window.")
     print()
 
     for backend in backends:
@@ -181,13 +188,13 @@ def main():
             cell = per_op.get((backend, op))
             if cell:
                 print(_fmt(op, cell))
-        # The blended line is the headline SLA number for the mix.
+        # Retain per-operation results: the blend can hide an infrequent slow operation.
         print(_fmt("BLENDED (all)", blended[backend]))
         print()
 
     if "core-python" in backends and "rust" in backends:
         py, ru = blended["core-python"], blended["rust"]
-        print("-- blended p99 head to head (the SLA number for the mix) --")
+        print("-- blended p99 head to head (observed successful-operation mix) --")
         print(
             f"  core-python p99={_pctile_ms(py,99):.2f}ms p99.9={_pctile_ms(py,99.9):.2f}ms  |  "
             f"rust p99={_pctile_ms(ru,99):.2f}ms p99.9={_pctile_ms(ru,99.9):.2f}ms"
@@ -201,7 +208,8 @@ def main():
     for _l in commit_lines:
         print(_l)
     print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
-    sys.exit(0 if commit_ok else 1)
+    measurements_ok = all(c["count"] > 0 and not c["no_hist_windows"] for c in blended.values())
+    sys.exit(0 if commit_ok and measurements_ok else 1)
 
 
 if __name__ == "__main__":

@@ -52,6 +52,11 @@ if [[ -z "${ARTIFACTS:-}" || ! -d "${ARTIFACTS}" ]]; then
 fi
 
 OUT="${ARTIFACTS}/thin-client-topology.txt"
+if [[ -e "${OUT}" ]]; then
+  echo "ERROR: topology proof already exists; start a new session to preserve prior evidence." >&2
+  exit 2
+fi
+profiling_load_session "${ARTIFACTS}" || exit 2
 
 echo "=== Account topology: does this account advertise Gateway V2? ==="
 echo "    account : ${COSMOS_URI}"
@@ -63,6 +68,7 @@ echo
 COSMOS_BACKEND=core-python python3 - <<'PY' 2>&1 | tee "${OUT}"
 import os
 import sys
+from urllib.parse import urlparse
 
 # A failed import must not be mistaken for "the account said no". Python would
 # exit 1 on an uncaught ImportError, which is this script's "not advertised"
@@ -109,6 +115,19 @@ finally:
 
 readable = captured.get("thinClientReadableLocations") or []
 writable = captured.get("thinClientWritableLocations") or []
+def valid_location(location):
+    endpoint = location.get("databaseAccountEndpoint") if isinstance(location, dict) else None
+    if not isinstance(endpoint, str):
+        return False
+    parsed = urlparse(endpoint)
+    return parsed.scheme == "https" and bool(parsed.hostname)
+
+if not captured or any(
+    not isinstance(locations, list) or any(not valid_location(location) for location in locations)
+    for locations in (readable, writable)
+):
+    print("TOPOLOGY VERDICT: could not ask -- missing or malformed account description")
+    sys.exit(2)
 
 print("thin client readable count:", len(readable))
 for location in readable:
@@ -131,7 +150,9 @@ if readable or writable:
 print("TOPOLOGY VERDICT: not advertised -- no ThinClient URLs were returned")
 sys.exit(1)
 PY
-rc=${PIPESTATUS[0]}
+proof_status=("${PIPESTATUS[@]}")
+rc=${proof_status[0]}
+if [[ "${proof_status[1]}" -ne 0 ]]; then exit 2; fi
 
 # The exit code alone is not trusted. If the interpreter died before reaching a
 # verdict -- a crash, a kill, an exception in an unexpected place -- rc could
@@ -160,8 +181,8 @@ else
     echo >&2
     echo "!! The printed verdict and the exit code disagree: verdict" >&2
     echo "   '${verdict_word}' implies ${expected_rc}, but the process exited ${rc}." >&2
-    echo "   Something ran after the decision was made. Trusting the verdict text." >&2
-    rc=${expected_rc}
+    echo "   The sample is inconsistent; refusing a successful verdict." >&2
+    rc=2
   fi
 fi
 

@@ -11,6 +11,7 @@ the extension's build provenance, so a passing gate is not build attestation.
 label problems to warnings for historical or intentionally unstamped runs.
 """
 import os
+import re
 
 HEADER = "### Rust driver commit (azure-sdk-for-rust) ###"
 
@@ -35,7 +36,7 @@ def is_stamped_commit(value):
 
     This does not verify that it names a commit or the loaded driver build.
     """
-    return _clean(value).lower() not in UNSTAMPED_COMMIT_VALUES
+    return re.fullmatch(r"[0-9a-fA-F]{7,40}", _clean(value)) is not None
 
 
 def collect(rows):
@@ -61,6 +62,9 @@ def decide(commits, missing, rust_rows, strict=True):
     Rust-row count. Returns (ok, lines). In non-strict mode problems are reported
     but ok stays True.
     """
+    invalid = [c for c in commits if not is_stamped_commit(c)]
+    missing += len(invalid)
+    commits = [c for c in commits if is_stamped_commit(c)]
     lines = [HEADER]
     if rust_rows == 0:
         lines.append("  no rust rows in this set -- no driver commit to check.")
@@ -83,7 +87,7 @@ def decide(commits, missing, rust_rows, strict=True):
             ok = False
     if len(commits) == 1 and not missing:
         lines.append(
-            f"  commit {commits[0]} -- single rust driver build across all "
+            f"  commit {commits[0]} -- consistent declared driver label across all "
             f"{rust_rows} rust row(s) (OK)."
         )
     elif len(commits) == 1 and missing:

@@ -13,8 +13,8 @@
 #     ARTIFACTS into their terminal. A child process cannot export variables
 #     back to the shell that started it, hence the printed 'source' line.
 #
-# RUN_ID is used both as the artifacts directory name and as the tail of every
-# workload_id written to Cosmos DB, so rows and local files can be matched:
+# RUN_ID names the session and baseline. CPU/memory captures mint separate stamps
+# and append them to run.txt so their rows can be matched to the session:
 #
 #   RUN_ID     20260810-180432717
 #   directory  artifacts/point-read-profile-20260810-180432717/
@@ -27,9 +27,9 @@
 # rows are still written but no report can ever match them.
 #
 # Preparation fails here when the manifest is missing, unparseable, has no
-# commit hashes, or either repository has uncommitted changes, because the
-# recorded commits would not describe the code that ran. PROFILING_ALLOW_DIRTY=1
-# allows a dirty tree; the manifest still records dirty=true.
+# build labels, or the Python checkout has uncommitted changes by default.
+# PROFILING_ALLOW_DIRTY=1 allows local edits; the manifest retains the dirty flag
+# and source fingerprint. A fingerprint does not preserve the source contents.
 #
 # Usage:
 #   ./profiling_start_session.sh                      # phase: point-read-profile
@@ -55,13 +55,14 @@ _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 RUN_ID="$(date -u +%Y%m%d-%H%M%S)${_ns:0:3}"
 ARTIFACTS="$PWD/artifacts/${PHASE}-${RUN_ID}"
-mkdir -p "$ARTIFACTS" || { echo "ERROR: cannot create ${ARTIFACTS}" >&2; exit 1; }
+mkdir -p "$PWD/artifacts" || exit 1
+mkdir "$ARTIFACTS" || { echo "ERROR: cannot create a fresh ${ARTIFACTS}" >&2; exit 1; }
 
 # One JSON record of the build/host/account/load behind everything in this
-# directory. Defined in perf_env.sh; best-effort, never writes secrets.
+# directory. Defined in perf_env.sh; required, never writes keys.
 # RUN_ID is passed as its "stamp" argument, so the manifest's "stamp" field and
 # RUN_ID are the same value under the two names the suite already uses.
-write_run_manifest "$ARTIFACTS" "$RUN_ID" "$PHASE"
+write_run_manifest "$ARTIFACTS" "$RUN_ID" "$PHASE" || exit 1
 
 MANIFEST="${ARTIFACTS}/manifest-${RUN_ID}.json"
 

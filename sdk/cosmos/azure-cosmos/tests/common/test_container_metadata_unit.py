@@ -19,15 +19,15 @@ import pytest
 from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._backend._binding_conversions import build_container_metadata
 from azure.cosmos._backend.contracts import ContainerMetadata
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos._helpers._pk_extract import extract_partition_key_value
-from azure.cosmos._helpers.item_helper import ItemHelper
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 from azure.cosmos.partition_key import _Empty, _Undefined
 
@@ -65,7 +65,7 @@ def test_invalid_native_metadata_is_a_protocol_error(raw):
     Note that no paths at all is refused here in combination with a kind, while
     genuinely absent metadata is handled separately below.
     """
-    with pytest.raises(BackendProtocolError):
+    with pytest.raises(BindingProtocolError):
         build_container_metadata(raw)
 
 
@@ -218,7 +218,7 @@ def metadata_case(request, monkeypatch):
         binding, "create_item_async" if asynchronous else "create_item"
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    backend = (async_rust.AsyncRustBackend if asynchronous else sync_rust.RustBackend)(
+    backend = (async_rust.AsyncRustBinding if asynchronous else sync_rust.RustBinding)(
         "https://metadata.invalid",
         master_key="ZmFrZQ==",
     )

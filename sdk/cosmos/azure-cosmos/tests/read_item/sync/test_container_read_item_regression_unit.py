@@ -112,7 +112,7 @@ class TestContainerReadItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertEqual(forwarded_options["customKey"], "customValue")
         self.assertEqual(forwarded_options["partitionKey"], "a")
 
-    def test_cache_hit_path_stamps_rid_into_options(self):
+    def test_cached_container_resource_id_is_added_to_options(self):
         """When the container is already cached, its resource id is added
         to the options, so the service can reject the read if the container
         was dropped and recreated under the same name."""

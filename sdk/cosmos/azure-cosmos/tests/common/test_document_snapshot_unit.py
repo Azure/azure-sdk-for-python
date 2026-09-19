@@ -25,15 +25,15 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.cosmos import _synchronized_request
-from azure.cosmos._helpers import _document, _item_prep, legacy_item_helper
+from azure.cosmos._helpers import _document, _item_prep, _legacy_item_operations
 from azure.cosmos._helpers._document import SerializedDocument, serialize_document
 from azure.cosmos._helpers._item_context import ItemClientDefaults
-from azure.cosmos._helpers.item_helper import (
+from azure.cosmos._helpers._item_operations import (
     ItemHelper,
     build_item_request,
     normalize_item_arguments,
 )
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from common.test_connection_free_items_unit import AsyncBackend, Backend
 
 from common.request_preparation import call_item_helper
@@ -285,7 +285,7 @@ def test_wrapper_does_not_deepcopy_documents_or_call_legacy(operation, monkeypat
     forbidden = MagicMock(side_effect=AssertionError("legacy preparation was called"))
     monkeypatch.setattr(_synchronized_request, "_request_body_from_data", forbidden)
     monkeypatch.setattr(
-        legacy_item_helper, "_prepare_legacy_create_item_body", forbidden
+        _legacy_item_operations, "_prepare_legacy_create_item_body", forbidden
     )
     body = NoDeepcopy(id="item", value=NoDeepcopy(nested=[1, 2, 3]))
     backend = Backend()

@@ -21,10 +21,10 @@ from typing import TYPE_CHECKING, Any, ClassVar, Mapping, Optional, Union
 
 from azure.core.utils import CaseInsensitiveDict
 from .request_settings import RequestSettings
-from .partition_key import PartitionKeyInput
+from .partition_key_input import BindingPartitionKey
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 
 @dataclass(frozen=True)
@@ -68,7 +68,7 @@ class PreparedRequest:
 
     #: The partition key for this request, broken into its parts, along with
     #: where each part came from and how it was worked out.
-    partition_key: PartitionKeyInput
+    partition_key: BindingPartitionKey
 
     #: Actual HTTP request headers only, including customer headers.
     headers: Mapping[str, str] = field(default_factory=dict)
@@ -83,9 +83,14 @@ class PreparedRequest:
     #: leave it unset, in which case the binding reads the body itself.
     item_id: Optional[str] = None
 
+    #: Retained SQL-query scope, separate from the service's JSON request body.
+    query_scope: Optional[QueryScope] = None
+
     def __post_init__(self) -> None:
-        if not isinstance(self.partition_key, PartitionKeyInput):
-            raise TypeError("PreparedRequest requires a typed PartitionKeyInput")
+        if not isinstance(self.partition_key, BindingPartitionKey):
+            raise TypeError("PreparedRequest requires a typed BindingPartitionKey")
+        if self.query_scope is not None and not isinstance(self.query_scope, QueryScope):
+            raise TypeError("PreparedRequest requires a typed QueryScope")
 
 
 @dataclass(frozen=True)
@@ -118,7 +123,7 @@ class PreparedClientConfig:
     credential. A differing identity can select a separate driver, subject to
     process-wide policy checks and successful native initialization. Opting
     into strict isolation (see
-    :class:`~azure.cosmos._backend._driver_registry.StrictDriverIsolationError`)
+    :class:`~azure.cosmos._backend._driver_registry._StrictDriverIsolationError`)
     instead rejects a new credential/config identity when other identities are
     already registered for that endpoint; matching any existing identity is allowed.
     """
@@ -280,8 +285,8 @@ class PreparedQuery:
     parameters: tuple = ()
 
     #: Typed scope; default is a cross-partition query.
-    partition_key: PartitionKeyInput = field(
-        default_factory=lambda: PartitionKeyInput("cross_partition")
+    partition_key: BindingPartitionKey = field(
+        default_factory=lambda: BindingPartitionKey("cross_partition")
     )
 
     #: Page-size hint (``x-ms-max-item-count``); ``None`` keeps the default.
@@ -297,16 +302,22 @@ class PreparedQuery:
 
     #: The cursor the pager owns. ``None`` selects stateless dispatch for
     #: this request; the operation may also support a cursor-based path.
-    cursor: Optional[ItemFeedCursor] = None
+    cursor: Optional[_ItemFeedCursor] = None
     #: Normalized change-feed mode, start marker and scope; never SQL.
     change_feed: Optional[Mapping[str, Any]] = None
     #: Query scope, and whether a cross-partition query is allowed, for paging
     #: a query through a pager that keeps its cursor across pages.
     query_scope: Optional[QueryScope] = None
 
+    #: Immutable service JSON prepared once by a retained pager. When supplied,
+    #: these bytes, rather than query/parameters, are the binding's query payload.
+    query_body: Optional[bytes] = None
+
     def __post_init__(self) -> None:
-        if not isinstance(self.partition_key, PartitionKeyInput):
-            raise TypeError("PreparedQuery requires a typed PartitionKeyInput")
+        if not isinstance(self.partition_key, BindingPartitionKey):
+            raise TypeError("PreparedQuery requires a typed BindingPartitionKey")
+        if self.query_body is not None and not isinstance(self.query_body, bytes):
+            raise TypeError("PreparedQuery.query_body must be immutable bytes")
         if self.query_scope is not None and not isinstance(
             self.query_scope, QueryScope
         ):

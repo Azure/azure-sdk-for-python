@@ -12,7 +12,7 @@ supply ordinary keyword arguments and still see what the code under test would s
 """
 from functools import partial
 
-from azure.cosmos._helpers.item_helper import normalize_item_arguments, build_item_request
+from azure.cosmos._helpers._item_operations import normalize_item_arguments, build_item_request
 from azure.cosmos._helpers._item_context import ItemClientDefaults
 from azure.cosmos._helpers._item_prep import prepare_create_item_kwargs
 

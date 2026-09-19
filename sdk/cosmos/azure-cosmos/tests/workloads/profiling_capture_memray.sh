@@ -56,6 +56,7 @@ if [[ "${_memray_failed}" -ne 0 ]]; then
 fi
 
 export COSMOS_BACKEND=rust
+perf_single_operation_shape
 export WORKLOAD_OPERATIONS=read
 export COSMOS_CONCURRENT_REQUESTS=1
 export WORKLOAD_NUM_CLIENTS=1
@@ -64,9 +65,9 @@ export WORKLOAD_USE_PROXY=false
 export WORKLOAD_USE_SYNC=false
 export WORKLOAD_LOOP_LAG_MONITOR=false
 export WORKLOAD_GC_FREEZE=false
-export PERF_REPORT_INTERVAL=3600
+export PERF_REPORT_INTERVAL=$((MEMRAY_DURATION + MEMRAY_KILL_AFTER + 60))
 
-MEMRAY_STAMP="$(date -u +%Y%m%d-%H%M%S)"
+MEMRAY_STAMP="$(date -u +%Y%m%d-%H%M%S%3N)"
 export PERF_WORKLOAD_ID="memray-read-rust-${MEMRAY_STAMP}"
 MEMRAY_FILE="${ARTIFACTS}/memray-read-r${MEMRAY_ARRIVAL_RATE}.bin"
 MEMRAY_LOG="${ARTIFACTS}/memray-workload.log"
@@ -75,8 +76,8 @@ MEMRAY_INTEGRITY="${ARTIFACTS}/memray-integrity.txt"
 export MEMRAY_STAMP MEMRAY_FILE MEMRAY_LOG MEMRAY_DURATION MEMRAY_KILL_AFTER \
   MEMRAY_ARRIVAL_RATE MEMRAY_HEALTH MEMRAY_INTEGRITY
 
-if [[ -e "${MEMRAY_FILE}" ]]; then
-  echo "ERROR: ${MEMRAY_FILE} already exists." >&2
+if [[ -e "${MEMRAY_FILE}" || -e "${MEMRAY_LOG}" ]]; then
+  echo "ERROR: Memray artifacts already exist in ${ARTIFACTS}." >&2
   echo "       Start a new profiling session or move the existing capture first." >&2
   unset _memray_here _memray_command _memray_failed _memray_value_name _memray_value
   return 1
@@ -87,14 +88,14 @@ printf 'memray_stamp=%s\nmemray_workload_id=%s\nmemray_arrival_rate=%s\nmemray_d
   "${MEMRAY_DURATION}" "${MEMRAY_FILE}" | tee -a "${ARTIFACTS}/run.txt"
 
 echo "=== Recording the Rust point-read workload with Memray for ${MEMRAY_DURATION}s ==="
+MEMRAY_RC=0
 timeout \
   --signal=INT \
   --kill-after="${MEMRAY_KILL_AFTER}s" \
   --preserve-status \
   "${MEMRAY_DURATION}s" \
   python3 -m memray run --native --output "${MEMRAY_FILE}" workload.py \
-  >"${MEMRAY_LOG}" 2>&1
-MEMRAY_RC=$?
+  >"${MEMRAY_LOG}" 2>&1 || MEMRAY_RC=$?
 export MEMRAY_RC
 printf 'memray_workload_rc=%s\n' "${MEMRAY_RC}" | tee -a "${ARTIFACTS}/run.txt"
 
@@ -111,15 +112,11 @@ fi
 
 echo "=== Checking completed reads, errors, 429 responses, retries, and driver build ==="
 PERF_ALLOW_MISSING_DRIVER_COMMIT=0 \
-  python3 latency_report.py --prefix memray- --run-id "${MEMRAY_STAMP}" \
+  python3 latency_report.py --prefix memray- --run-id "${MEMRAY_STAMP}" --workload-health \
   | tee "${MEMRAY_HEALTH}"
-_memray_health_rc=${PIPESTATUS[0]}
-if [[ "${_memray_health_rc}" -ne 0 ]]; then
+_memray_health_rc=("${PIPESTATUS[@]}")
+if [[ "${_memray_health_rc[*]}" != "0 0" ]]; then
   echo "ERROR: latency_report.py rejected the Memray workload; see ${MEMRAY_HEALTH}." >&2
-  _memray_failed=1
-elif ! grep -Eq 'count= *[1-9][0-9]*.*err= *0.*429= *0.*retries= *0' \
-  "${MEMRAY_HEALTH}"; then
-  echo "ERROR: workload health gate failed; see ${MEMRAY_HEALTH}." >&2
   _memray_failed=1
 fi
 if grep -Eq 'PerfReporter (upsert failed|error upsert failed)' "${MEMRAY_LOG}"; then
@@ -133,15 +130,11 @@ PERF_ALLOW_MISSING_LOGS=0 PERF_ALLOW_UNKNOWN_BINDING=0 \
     --prefix memray- \
     --run-id "${MEMRAY_STAMP}" \
     --required-backends rust \
-    --allow-missing-logs \
+    --log-dir "${ARTIFACTS}" \
   | tee "${MEMRAY_INTEGRITY}"
-_memray_integrity_rc=${PIPESTATUS[0]}
-if [[ "${_memray_integrity_rc}" -ne 0 ]]; then
+_memray_integrity_rc=("${PIPESTATUS[@]}")
+if [[ "${_memray_integrity_rc[*]}" != "0 0" ]]; then
   echo "ERROR: workload integrity gate failed; see ${MEMRAY_INTEGRITY}." >&2
-  _memray_failed=1
-elif ! grep -Eq 'backend=rust runtime=AsyncRustBackend .*binding_calls=[1-9][0-9]* .*rust_execute_calls=[1-9][0-9]*' \
-  "${MEMRAY_INTEGRITY}"; then
-  echo "ERROR: the integrity report does not prove the expected Rust runtime and binding activity." >&2
   _memray_failed=1
 fi
 

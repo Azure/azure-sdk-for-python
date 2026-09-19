@@ -3,22 +3,9 @@
 # Phase B -- Memory-leak sweep (sdkdev-dikshi drill).
 #
 # WHAT IT DOES, AND WHY THIS SHAPE:
-#   A memory leak shows up as a process's resident memory (RSS) creeping upward
-#   over a long run and never coming back down after warmup. Because RSS is
-#   measured PER PROCESS, and the Rust driver's allocator arenas are per process
-#   too, several processes running at once do NOT corrupt each other's memory
-#   reading. So -- unlike the latency phase -- we can legitimately run all six
-#   operations IN PARALLEL, one operation per process, and learn which specific
-#   operation (if any) leaks. That turns a 6x24h sequential slog into a single
-#   ~24h wall-clock sweep per backend.
-#
-#   Everything runs CLOSED-LOOP here (WORKLOAD_ARRIVAL_RATE=0) so all six ops --
-#   including create and delete, which open-loop does not support -- behave the
-#   same way. We are watching the RSS slope, not the latency tail, so closed-loop
-#   steady load is exactly right.
-#
-#   The verdict (SLA gate 4) needs HOURS -- a full day for confidence -- because
-#   a slow leak only becomes visible against the noise over a long soak.
+#   Record separate process RSS trends for selected operations under closed-loop
+#   load. Processes run concurrently and can contend for the host and service.
+#   Growth is an investigation signal, not proof of a leak or its code owner.
 #
 # USAGE:
 #   source ./your-private-keys.sh      # exports COSMOS_KEY (+ RESULTS_COSMOS_KEY)
@@ -31,6 +18,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
+perf_single_operation_shape
+export WORKLOAD_ARRIVAL_RATE=0
 
 # Phase B canonical target for this drill:
 # - VM: vm-python-dr-drill
@@ -77,14 +66,18 @@ _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/leak-${STAMP}"
-mkdir -p "${LOG_DIR}"
+perf_require_positive "${DURATION_SECONDS}"
+perf_create_log_dir "${LOG_DIR}" || exit 2
 write_run_manifest "${LOG_DIR}" "${STAMP}" "B-leak-sweep"
+for op in "${OPERATIONS[@]}"; do
+  for bk in "${BACKENDS[@]}"; do printf 'leak-%s-%s-%s\n' "$op" "$bk" "$STAMP"; done
+done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Phase B: memory-leak sweep ==="
 echo "    soak = ${DURATION_SECONDS}s (~$(( DURATION_SECONDS / 3600 )) h) per backend batch"
 echo "    host = ${host_name}"
 echo "    target = ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
-echo "    backends = ${BACKENDS[*]} (each batch = 6 ops in PARALLEL)"
+echo "    backends = ${BACKENDS[*]} (each batch = ${#OPERATIONS[@]} selected ops in parallel)"
 echo "    ops = ${OPERATIONS[*]} (closed-loop, one op per process)"
 echo "    logs -> ${LOG_DIR}"
 echo
@@ -126,11 +119,9 @@ for bk in "${BACKENDS[@]}"; do
     rc=0
     wait "${pid}" || rc=$?
     if [[ "${rc}" != "0" ]]; then
-      # 130 = SIGINT fell back to KeyboardInterrupt (handler did not engage; data
-      # OK), or a real failure (137 hung-and-killed, 124, other).
-      # Treat 130 as a soft warning; everything else fails the batch.
+      fail=1
       if [[ "${rc}" == "130" ]]; then
-        echo "    !! pid=${pid} exited 130 (graceful handler did not engage; data OK)" >&2
+        echo "    !! pid=${pid} exited 130; orderly reporting completion is unconfirmed" >&2
       else
         echo "    !! pid=${pid} exited rc=${rc}" >&2
         fail=1
@@ -169,7 +160,8 @@ echo "=== Running post-run integrity gate (Phase B) ==="
 # dropped (a dropped BAD window could hide a leak step) and that every "rust" row
 # actually ran on Rust (binding_calls check, --prefix leak-). A failure here
 # fails the sweep so a mislabeled/incomplete run cannot pass unnoticed.
-if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "leak-"; then
+BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
+if perf_check_run "${LOG_DIR}" "${STAMP}" "leak-" "${BACKEND_CSV}"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting the leak verdict." >&2

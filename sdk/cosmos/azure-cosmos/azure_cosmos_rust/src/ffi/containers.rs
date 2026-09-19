@@ -52,6 +52,7 @@ pub(crate) fn create_container<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "create_container")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, CREATE_CONTAINER_DATABASE_REQUIRED)?;
     let body_bytes = extract_body_bytes(prepared)?;
@@ -72,6 +73,7 @@ pub(crate) fn create_container_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "create_container")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, CREATE_CONTAINER_DATABASE_REQUIRED)?;
     let body_bytes = extract_body_bytes(prepared)?;
@@ -92,6 +94,7 @@ pub(crate) fn read_container<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "read_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_read_container_operation(
         py,
@@ -110,6 +113,7 @@ pub(crate) fn read_container_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "read_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_read_container_operation_async(
         py,
@@ -128,6 +132,7 @@ pub(crate) fn delete_container<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_delete_container_operation(
         py,
@@ -146,6 +151,7 @@ pub(crate) fn delete_container_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     run_delete_container_operation_async(
         py,
@@ -164,6 +170,7 @@ pub(crate) fn replace_container<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "replace_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation(
@@ -184,6 +191,7 @@ pub(crate) fn replace_container_async<'py>(
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "replace_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation_async(
@@ -199,33 +207,56 @@ pub(crate) fn replace_container_async<'py>(
 
 /// Read one page of containers in a database.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_containers<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "list_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
-    run_list_containers_operation(py, driver_handle, modifiers, database_id, "list_containers")
+    run_list_containers_operation(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "list_containers",
+        timeout_seconds,
+    )
 }
 
 /// Return an awaitable that reads one page of containers.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn list_containers_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "list_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
-    run_list_containers_operation_async(py, driver_handle, modifiers, database_id, "list_containers_async")
+    run_list_containers_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "list_containers_async",
+        timeout_seconds,
+    )
 }
 
 /// Run a container query and return one page of matching containers.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_containers<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    super::validate_prepared_operation(prepared, "query_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_query_containers_operation(
@@ -235,16 +266,20 @@ pub(crate) fn query_containers<'py>(
         database_id,
         body_bytes,
         "query_containers",
+        timeout_seconds,
     )
 }
 
 /// Return an awaitable that runs one page of a container query.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn query_containers_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    super::validate_prepared_operation(prepared, "query_containers")?;
     let (database_id, modifiers) = extract_container_feed_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_query_containers_operation_async(
@@ -254,5 +289,6 @@ pub(crate) fn query_containers_async<'py>(
         database_id,
         body_bytes,
         "query_containers_async",
+        timeout_seconds,
     )
 }

@@ -12,8 +12,8 @@
 # WHY IT CHECKS THE WHOLE RANGE: an interior item can be missing while both
 # ends are present -- a single delete, or a seeding run that failed partway.
 # Sampling the endpoints would call that container ready. The range is 1,001
-# items, so verifying all of them costs about 1,001 RU once, against a 400 RU/s
-# container: a few seconds, run once per environment rather than per session.
+# items by default. Verification consumes service capacity; its actual charge
+# and duration depend on the target and responses.
 #
 # WHY ONLY "NOT FOUND" COUNTS AS MISSING: a timeout, 403, 429, DNS or TLS
 # failure means the probe could not answer the question. Treating those as
@@ -59,16 +59,19 @@ max_index = int(os.environ["COSMOS_MAX_ITEM_INDEX"])
 # partition key VALUE is the id itself. Using the wrong field would make every
 # read miss and trigger a pointless reseed.
 pk_field = os.environ.get("COSMOS_PARTITION_KEY", "id")
+if pk_field not in {"id", "pk"} or max_index < 0:
+    raise SystemExit("Expected a nonnegative item index and partition field id or pk")
 
 
 def probe_ids(index):
     fields = {"id": f"test-{index}", "pk": f"pk-{index}"}
-    return fields["id"], fields.get(pk_field, fields["id"])
+    return fields["id"], fields[pk_field]
 
 
 try:
+    client = CosmosClient(uri, key, _backend="core-python")
     container = (
-        CosmosClient(uri, key)
+        client
         .get_database_client(database)
         .get_container_client(container_name)
     )
@@ -78,16 +81,18 @@ except Exception as exc:
 
 missing = []
 total = max_index + 1
-for index in range(total):
-    item_id, pk_value = probe_ids(index)
-    try:
-        container.read_item(item_id, partition_key=pk_value)
-    except CosmosResourceNotFoundError:
-        missing.append(item_id)
-    except Exception as exc:
-        # Not an answer to "does this item exist?". Stop rather than reseed.
-        print(f"    probe failed on {item_id}: {type(exc).__name__}: {exc}")
-        sys.exit(3)
+try:
+    for index in range(total):
+        item_id, pk_value = probe_ids(index)
+        try:
+            container.read_item(item_id, partition_key=pk_value)
+        except CosmosResourceNotFoundError:
+            missing.append(item_id)
+        except Exception as exc:
+            print(f"    probe failed on {item_id}: {type(exc).__name__}: {exc}")
+            sys.exit(3)
+finally:
+    client.close()
 
 if missing:
     shown = ", ".join(missing[:10])

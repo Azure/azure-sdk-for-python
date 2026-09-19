@@ -34,11 +34,11 @@
 //! `rust driver -> PyTokenCredential (binding) -> the bridge (Python) -> the
 //! async credential's coroutine`.
 //!
-//! The driver's async token method calls a synchronous helper here. On a cache
-//! miss, that helper acquires the Python global interpreter lock (GIL) and calls
-//! `get_token` on the thread polling it. Sync operation runners release the GIL
-//! while waiting; async runners spawn driver work and bridge its result to Python.
-//! Neither path makes the credential callback itself asynchronous.
+//! Async bridges supply a cancellable Python future. Native work awaits its
+//! completion without blocking a Tokio worker; dropping the native wait (including
+//! an operation timeout) cancels that Python future. Ordinary synchronous
+//! credentials run on Tokio's blocking pool; their Python code cannot be forcibly
+//! interrupted when the enclosing operation stops waiting.
 //!
 //! This adapter expects a token object, not a coroutine, from `get_token`.
 //! Python's credential preparation supplies the bridge for async credentials;
@@ -51,7 +51,42 @@ use pyo3::types::PyTuple;
 use azure_core::credentials::{AccessToken, TokenCredential, TokenRequestOptions};
 use azure_core::error::{Error as AzureError, ErrorKind as AzureErrorKind};
 use azure_core::time::{Duration, OffsetDateTime};
-use parking_lot::RwLock;
+use parking_lot::{Mutex, RwLock};
+use std::sync::Arc;
+use tokio::sync::oneshot;
+
+struct CachedToken {
+    scopes: Vec<String>,
+    token: AccessToken,
+}
+
+#[pyclass]
+struct TokenResultSender {
+    sender: Mutex<Option<oneshot::Sender<PyResult<Py<PyAny>>>>>,
+}
+
+#[pymethods]
+impl TokenResultSender {
+    fn __call__(&self, future: &Bound<'_, PyAny>) {
+        let result = future.call_method0("result").map(Bound::unbind);
+        if let Some(sender) = self.sender.lock().take() {
+            // A dropped receiver means the native operation has already ended.
+            let _ = sender.send(result);
+        }
+    }
+}
+
+struct CancelTokenRequest(Py<PyAny>);
+
+impl Drop for CancelTokenRequest {
+    fn drop(&mut self) {
+        Python::with_gil(|py| {
+            if let Err(error) = self.0.bind(py).call_method0("cancel") {
+                error.print(py);
+            }
+        });
+    }
+}
 
 /// The binding-side adapter that lets the rust driver fetch an Entra/AAD token
 /// from the customer's Python credential. It implements the rust driver's
@@ -64,8 +99,9 @@ pub(crate) struct PyTokenCredential {
     // A strong reference that keeps the Python credential alive for as long as
     // the rust driver (and thus this credential) lives. `Py<PyAny>` is Send + Sync.
     credential: Py<PyAny>,
-    // One cached token per adapter, not keyed by scopes or request options.
-    cached_token: RwLock<Option<AccessToken>>,
+    // Keep one scope-qualified entry rather than an unbounded scope cache.
+    cached_token: Arc<RwLock<Option<CachedToken>>>,
+    refresh: Arc<tokio::sync::Mutex<()>>,
 }
 
 impl PyTokenCredential {
@@ -75,7 +111,8 @@ impl PyTokenCredential {
     pub(crate) fn new(credential: Py<PyAny>) -> Self {
         Self {
             credential,
-            cached_token: RwLock::new(None),
+            cached_token: Arc::new(RwLock::new(None)),
+            refresh: Arc::new(tokio::sync::Mutex::new(())),
         }
     }
 
@@ -84,12 +121,19 @@ impl PyTokenCredential {
     /// Reject empty tokens and unrepresentable expiry timestamps, mapping these
     /// and Python extraction/call errors to credential errors. A newly fetched
     /// token is not checked for expiry against the current time here.
-    fn fetch_token(&self, py: Python<'_>, scopes: &[&str]) -> azure_core::Result<AccessToken> {
-        let credential = self.credential.bind(py);
+    fn fetch_token(
+        credential: &Bound<'_, PyAny>,
+        scopes: &[&str],
+    ) -> azure_core::Result<AccessToken> {
+        let py = credential.py();
         let scopes_arg = PyTuple::new_bound(py, scopes);
         let token_obj = credential
             .call_method1("get_token", scopes_arg)
             .map_err(|e| credential_error(format!("token credential get_token() failed: {e}")))?;
+        Self::parse_token(&token_obj)
+    }
+
+    fn parse_token(token_obj: &Bound<'_, PyAny>) -> azure_core::Result<AccessToken> {
         let token: String = token_obj
             .getattr("token")
             .and_then(|value| value.extract())
@@ -118,26 +162,104 @@ impl PyTokenCredential {
     /// Return the cached token only if it still has more than 5 minutes of life
     /// left. This margin limits cache reuse; it does not guarantee that a token
     /// remains valid for the duration of a request.
-    fn cached_fresh_token(&self) -> Option<AccessToken> {
+    fn cached_fresh_token(&self, scopes: &[&str]) -> Option<AccessToken> {
         let cached = self.cached_token.read();
         cached
             .as_ref()
-            .filter(|token| token.expires_on > OffsetDateTime::now_utc() + Duration::minutes(5))
-            .cloned()
+            .filter(|entry| {
+                entry
+                    .scopes
+                    .iter()
+                    .map(String::as_str)
+                    .eq(scopes.iter().copied())
+                    && entry.token.expires_on > OffsetDateTime::now_utc() + Duration::minutes(5)
+            })
+            .map(|entry| entry.token.clone())
     }
 
-    /// The synchronous entry the rust driver's `get_token` calls into: serve the
-    /// cached token if it is still fresh, otherwise fetch a new one from Python
-    /// and cache it. The callback acquires the GIL and can block the calling
-    /// thread. Fetching occurs outside the cache write lock, so concurrent misses
-    /// can fetch more than once.
+    /// Test-only synchronous path for token validation and cache behavior.
+    #[cfg(test)]
     fn get_token_sync(&self, scopes: &[&str]) -> azure_core::Result<AccessToken> {
-        if let Some(token) = self.cached_fresh_token() {
+        if let Some(token) = self.cached_fresh_token(scopes) {
             return Ok(token);
         }
 
-        let fresh = Python::with_gil(|py| self.fetch_token(py, scopes))?;
-        *self.cached_token.write() = Some(fresh.clone());
+        let fresh = Python::with_gil(|py| Self::fetch_token(self.credential.bind(py), scopes))?;
+        *self.cached_token.write() = Some(CachedToken {
+            scopes: scopes.iter().map(|scope| (*scope).to_owned()).collect(),
+            token: fresh.clone(),
+        });
+        Ok(fresh)
+    }
+
+    async fn get_token_async(&self, scopes: &[&str]) -> azure_core::Result<AccessToken> {
+        if let Some(token) = self.cached_fresh_token(scopes) {
+            return Ok(token);
+        }
+        let refresh = self.refresh.clone().lock_owned().await;
+        if let Some(token) = self.cached_fresh_token(scopes) {
+            return Ok(token);
+        }
+        let pending = Python::with_gil(|py| -> PyResult<_> {
+            let credential = self.credential.bind(py);
+            if !credential.hasattr("_start_token_request")? {
+                return Ok(None);
+            }
+            let future =
+                credential.call_method1("_start_token_request", PyTuple::new_bound(py, scopes))?;
+            let guard = CancelTokenRequest(future.unbind());
+            let (sender, receiver) = oneshot::channel();
+            let callback = Py::new(
+                py,
+                TokenResultSender {
+                    sender: Mutex::new(Some(sender)),
+                },
+            )?;
+            guard
+                .0
+                .bind(py)
+                .call_method1("add_done_callback", (callback,))?;
+            Ok(Some((guard, receiver)))
+        })
+        .map_err(|error| {
+            credential_error(format!("token credential scheduling failed: {error}"))
+        })?;
+
+        let fresh = match pending {
+            Some((_guard, receiver)) => {
+                let result = receiver
+                    .await
+                    .map_err(|_| credential_error("token result sender was dropped".to_string()))?
+                    .map_err(|error| {
+                        credential_error(format!("token credential get_token() failed: {error}"))
+                    })?;
+                Python::with_gil(|py| Self::parse_token(result.bind(py)))?
+            }
+            None => {
+                let credential = Python::with_gil(|py| self.credential.clone_ref(py));
+                let scopes: Vec<String> = scopes.iter().map(|scope| (*scope).to_string()).collect();
+                let cache = self.cached_token.clone();
+                return tokio::task::spawn_blocking(move || {
+                    // Cancellation stops waiting, not synchronous Python code. Keep
+                    // the refresh lock until that code finishes and publishes its token.
+                    let _refresh = refresh;
+                    let scope_refs: Vec<&str> = scopes.iter().map(String::as_str).collect();
+                    let fresh =
+                        Python::with_gil(|py| Self::fetch_token(credential.bind(py), &scope_refs))?;
+                    *cache.write() = Some(CachedToken {
+                        scopes,
+                        token: fresh.clone(),
+                    });
+                    Ok(fresh)
+                })
+                .await
+                .map_err(|error| credential_error(format!("token worker failed: {error}")))?;
+            }
+        };
+        *self.cached_token.write() = Some(CachedToken {
+            scopes: scopes.iter().map(|scope| (*scope).to_owned()).collect(),
+            token: fresh.clone(),
+        });
         Ok(fresh)
     }
 }
@@ -153,19 +275,18 @@ impl std::fmt::Debug for PyTokenCredential {
 /// The rust driver's view of this type. The driver holds a `TokenCredential`
 /// trait object and calls `get_token` on it during request signing, unaware that
 /// the implementation crosses back into Python. This method is the top of the
-/// callback: `rust driver -> get_token (here) -> get_token_sync -> fetch_token ->
-/// Python credential`.
+/// callback: `rust driver -> get_token (here) -> Python credential`.
 #[async_trait::async_trait]
 impl TokenCredential for PyTokenCredential {
-    // Only scopes are forwarded to Python. Request options are ignored; this
-    // adapter has no claims-challenge handling or response-driven cache
-    // invalidation. This method alone does not establish how a 401 is retried.
     async fn get_token(
         &self,
         scopes: &[&str],
-        _options: Option<TokenRequestOptions<'_>>,
+        options: Option<TokenRequestOptions<'_>>,
     ) -> azure_core::Result<AccessToken> {
-        self.get_token_sync(scopes)
+        // azure_core 1.1.0 exposes native method context only, not claims or CAE.
+        // Exhaustive destructuring makes added authentication options a compile-time review.
+        let TokenRequestOptions { method_options: _ } = options.unwrap_or_default();
+        self.get_token_async(scopes).await
     }
 }
 
@@ -256,6 +377,339 @@ class Credential:
                 err.to_string().contains("empty `token`"),
                 "unexpected error: {err}"
             );
+        });
+    }
+
+    #[tokio::test]
+    async fn concurrent_refresh_is_single_flight_and_cache_is_scope_qualified() {
+        use azure_core::credentials::TokenCredential;
+        use std::sync::Arc;
+        pyo3::prepare_freethreaded_python();
+        for async_bridge in [false, true] {
+            let object = Python::with_gil(|py| {
+                let object = make_python_credential(
+                    py,
+                    r#"
+import time
+import threading
+from concurrent.futures import Future
+from types import SimpleNamespace
+class Credential:
+    def __init__(self):
+        self.calls = 0
+    def get_token(self, *scopes):
+        self.calls += 1
+        time.sleep(0.03)
+        return SimpleNamespace(token=",".join(scopes), expires_on=4102444800)
+    def _start_token_request(self, *scopes):
+        self.calls += 1
+        future = Future()
+        token = SimpleNamespace(token=",".join(scopes), expires_on=4102444800)
+        threading.Timer(0.03, lambda: future.set_result(token)).start()
+        return future
+"#,
+                )
+                .unwrap();
+                if !async_bridge {
+                    object
+                        .bind(py)
+                        .get_type()
+                        .delattr("_start_token_request")
+                        .unwrap();
+                }
+                object
+            });
+            let credential = Arc::new(Python::with_gil(|py| {
+                PyTokenCredential::new(object.clone_ref(py))
+            }));
+            let mut tasks = tokio::task::JoinSet::new();
+            for _ in 0..12 {
+                let credential = credential.clone();
+                tasks.spawn(async move { credential.get_token_async(&["scope-a"]).await });
+            }
+            while let Some(result) = tasks.join_next().await {
+                assert_eq!(result.unwrap().unwrap().token.secret(), "scope-a");
+            }
+            Python::with_gil(|py| {
+                assert_eq!(
+                    object
+                        .bind(py)
+                        .getattr("calls")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
+                    1
+                );
+            });
+            let token = credential
+                .get_token(&["scope-b"], Some(Default::default()))
+                .await
+                .unwrap();
+            assert_eq!(token.token.secret(), "scope-b");
+            assert!(credential.cached_fresh_token(&["scope-a"]).is_none());
+            assert!(credential.cached_fresh_token(&["scope-b"]).is_some());
+            Python::with_gil(|py| {
+                assert_eq!(
+                    object
+                        .bind(py)
+                        .getattr("calls")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
+                    2
+                );
+            });
+        }
+    }
+
+    #[tokio::test]
+    async fn cancelled_blocking_refresh_keeps_ownership_until_python_finishes() {
+        use std::sync::Arc;
+        pyo3::prepare_freethreaded_python();
+        let object = Python::with_gil(|py| {
+            make_python_credential(
+                py,
+                r#"
+import threading
+from types import SimpleNamespace
+class Credential:
+    def __init__(self):
+        self.calls = 0
+        self.started = threading.Event()
+        self.release = threading.Event()
+    def get_token(self, *scopes):
+        self.calls += 1
+        self.started.set()
+        if not self.release.wait(2):
+            raise RuntimeError("test did not release credential")
+        return SimpleNamespace(token="one-refresh", expires_on=4102444800)
+"#,
+            )
+            .unwrap()
+        });
+        let credential = Arc::new(Python::with_gil(|py| {
+            PyTokenCredential::new(object.clone_ref(py))
+        }));
+        let first = {
+            let credential = credential.clone();
+            tokio::spawn(async move { credential.get_token_async(&["scope"]).await })
+        };
+        let started = Python::with_gil(|py| object.bind(py).getattr("started").unwrap().unbind());
+        assert!(tokio::task::spawn_blocking(move || Python::with_gil(|py| {
+            started
+                .bind(py)
+                .call_method1("wait", (2.0,))
+                .unwrap()
+                .extract::<bool>()
+                .unwrap()
+        }))
+        .await
+        .unwrap());
+        first.abort();
+        assert!(first.await.unwrap_err().is_cancelled());
+        let mut second = {
+            let credential = credential.clone();
+            tokio::spawn(async move { credential.get_token_async(&["scope"]).await })
+        };
+        assert!(
+            tokio::time::timeout(std::time::Duration::from_millis(30), &mut second)
+                .await
+                .is_err()
+        );
+        Python::with_gil(|py| {
+            assert_eq!(
+                object
+                    .bind(py)
+                    .getattr("calls")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap(),
+                1
+            );
+            object
+                .bind(py)
+                .getattr("release")
+                .unwrap()
+                .call_method0("set")
+                .unwrap();
+        });
+        assert_eq!(second.await.unwrap().unwrap().token.secret(), "one-refresh");
+        Python::with_gil(|py| {
+            assert_eq!(
+                object
+                    .bind(py)
+                    .getattr("calls")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap(),
+                1
+            );
+        });
+    }
+
+    #[tokio::test]
+    async fn operation_deadline_cancels_async_token_future() {
+        pyo3::prepare_freethreaded_python();
+        let object = Python::with_gil(|py| {
+            make_python_credential(
+                py,
+                r#"
+from concurrent.futures import Future
+class Credential:
+    def __init__(self):
+        self.future = Future()
+    def _start_token_request(self, *scopes):
+        return self.future
+"#,
+            )
+            .unwrap()
+        });
+        let credential = Python::with_gil(|py| PyTokenCredential::new(object.clone_ref(py)));
+        assert!(tokio::time::timeout(
+            std::time::Duration::from_millis(20),
+            credential.get_token_async(&["scope"]),
+        )
+        .await
+        .is_err());
+        Python::with_gil(|py| {
+            assert!(object
+                .bind(py)
+                .getattr("future")
+                .unwrap()
+                .call_method0("cancelled")
+                .unwrap()
+                .extract::<bool>()
+                .unwrap());
+        });
+        assert!(credential.cached_fresh_token(&["scope"]).is_none());
+    }
+
+    #[tokio::test]
+    async fn async_token_completion_converts_and_caches_result() {
+        pyo3::prepare_freethreaded_python();
+        let object = Python::with_gil(|py| {
+            make_python_credential(
+                py,
+                r#"
+from concurrent.futures import Future
+from types import SimpleNamespace
+class Credential:
+    def __init__(self):
+        self.calls = 0
+    def _start_token_request(self, *scopes):
+        self.calls += 1
+        future = Future()
+        future.set_result(SimpleNamespace(token="async-token", expires_on=4102444800))
+        return future
+"#,
+            )
+            .unwrap()
+        });
+        let credential = Python::with_gil(|py| PyTokenCredential::new(object.clone_ref(py)));
+        assert_eq!(
+            credential
+                .get_token_async(&["scope"])
+                .await
+                .unwrap()
+                .token
+                .secret(),
+            "async-token"
+        );
+        assert_eq!(
+            credential
+                .get_token_async(&["scope"])
+                .await
+                .unwrap()
+                .token
+                .secret(),
+            "async-token"
+        );
+        Python::with_gil(|py| {
+            assert_eq!(
+                object
+                    .bind(py)
+                    .getattr("calls")
+                    .unwrap()
+                    .extract::<u32>()
+                    .unwrap(),
+                1
+            );
+        });
+    }
+
+    #[tokio::test]
+    async fn native_cancellation_reaches_real_async_credential_bridge() {
+        pyo3::prepare_freethreaded_python();
+        let (bridge, customer) = Python::with_gil(|py| {
+            let customer = make_python_credential(
+                py,
+                r#"
+import asyncio
+import threading
+class Credential:
+    def __init__(self):
+        self.started = threading.Event()
+        self.cancelled = threading.Event()
+    async def get_token(self, *scopes):
+        self.started.set()
+        try:
+            await asyncio.Event().wait()
+        finally:
+            self.cancelled.set()
+"#,
+            )
+            .unwrap();
+            let module = PyModule::from_code_bound(
+                py,
+                include_str!("../../azure/cosmos/_backend/_async_credential_bridge.py"),
+                "credential_bridge_test.py",
+                "credential_bridge_test",
+            )
+            .unwrap();
+            let bridge = module
+                .getattr("AsyncTokenCredentialBridge")
+                .unwrap()
+                .call1((customer.bind(py),))
+                .unwrap()
+                .unbind();
+            (bridge, customer)
+        });
+        let credential = Python::with_gil(|py| PyTokenCredential::new(bridge.clone_ref(py)));
+        let task = tokio::spawn(async move { credential.get_token_async(&["scope"]).await });
+        let started = Python::with_gil(|py| customer.bind(py).getattr("started").unwrap().unbind());
+        assert!(tokio::task::spawn_blocking(move || Python::with_gil(|py| {
+            started
+                .bind(py)
+                .call_method1("wait", (2.0,))
+                .unwrap()
+                .extract::<bool>()
+                .unwrap()
+        }))
+        .await
+        .unwrap());
+        task.abort();
+        assert!(task.await.unwrap_err().is_cancelled());
+        Python::with_gil(|py| {
+            assert!(customer
+                .bind(py)
+                .getattr("cancelled")
+                .unwrap()
+                .call_method1("wait", (2.0,))
+                .unwrap()
+                .extract::<bool>()
+                .unwrap());
+            bridge
+                .bind(py)
+                .call_method0("_close_cosmos_async_bridge")
+                .unwrap();
+            assert!(!bridge
+                .bind(py)
+                .getattr("_thread")
+                .unwrap()
+                .call_method0("is_alive")
+                .unwrap()
+                .extract::<bool>()
+                .unwrap());
         });
     }
 }

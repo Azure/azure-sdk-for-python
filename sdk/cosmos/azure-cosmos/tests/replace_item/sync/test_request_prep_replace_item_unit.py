@@ -118,10 +118,11 @@ def test_body_bytes_round_trip_to_the_same_dict():
 # ---------------------------------------------------------------------------
 
 
-def test_missing_body_id_is_not_minted_and_body_is_not_mutated():
-    """A replace never adds an id to the body (it overwrites the existing
-    item named by ``item``). A body without one is serialised as-is and
-    the server rejects it -- the prep must not invent one."""
+def test_missing_id_is_not_generated_or_added_to_input_body():
+    """The input body and encoded replacement body both remain without an id.
+
+    This preparation-only test does not check the service's response.
+    """
     body = {"pk": "customerA", "total": 129.0}
     prepared = prepare_replace_item_request(
         container_link="dbs/d/colls/c",

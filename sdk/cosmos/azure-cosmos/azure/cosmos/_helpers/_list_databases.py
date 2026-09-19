@@ -13,7 +13,7 @@ from azure.core.paging import ItemPaged, PageIterator
 from azure.core.utils import CaseInsensitiveDict
 
 from .. import http_constants
-from .._backend.errors import BackendProtocolError
+from .._backend.errors import BindingProtocolError
 from .._backend.contracts import PreparedQuery, QueryPage
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
@@ -118,7 +118,7 @@ class ListDatabasesPageState:
         )
         rows = result.get("Databases")
         if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
-            raise BackendProtocolError("list_databases received an invalid Databases response.")
+            raise BindingProtocolError("list_databases received an invalid Databases response.")
         return rows, CaseInsensitiveDict(result.get_response_headers())
 
     def accept(
@@ -135,7 +135,7 @@ class ListDatabasesPageState:
             except (StopIteration, StopAsyncIteration) as error:
                 raise RuntimeError("list_databases response_hook raised an iteration-stop exception.") from error
         if not rows and not self.done and self.token == previous:
-            raise BackendProtocolError("list_databases returned an empty page without continuation progress.")
+            raise BindingProtocolError("list_databases returned an empty page without continuation progress.")
         return rows
 
     def acquire(self) -> None:
@@ -179,7 +179,7 @@ class ListDatabasesPageIterator(PageIterator):
                 try:
                     page = next(pages)
                 except StopIteration as error:
-                    raise BackendProtocolError("Rust backend returned no list_databases page.") from error
+                    raise BindingProtocolError("Rust backend returned no list_databases page.") from error
                 finally:
                     pages.close()
                 response = state.parse(page)

@@ -24,7 +24,7 @@ use super::feed_range::FeedRangePartitionKeySource;
 use super::legacy_partition_key::{
     legacy_feed_range_partition_key_header, legacy_partition_key_header, legacy_query_target_header,
 };
-use super::partition_key::{extract_partition_key, PartitionKeyInput};
+use super::partition_key_input::{extract_partition_key, BindingPartitionKey};
 #[cfg(test)]
 use super::query::QueryTarget;
 
@@ -49,8 +49,10 @@ pub(crate) struct RequestHeadersAndOptions {
     // reads / deletes. This option controls write responses, not read payloads.
     pub(crate) content_response_on_write: ContentResponseOnWrite,
     pub(crate) excluded_regions_value: Option<ExcludedRegions>,
-    pub(crate) end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
-    pub(crate) item_timeout: Option<Duration>,
+    // Driver execution policy, whose minimum duration need not equal our budget.
+    pub(crate) driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
+    // Remaining binding budget including metadata work, preserving subsecond limits.
+    pub(crate) operation_timeout: Option<Duration>,
     // Per-request cross-region hedging control pulled out of the
     // typed ``settings.hedging`` field. ``Disabled`` turns hedging off for
     // this request (the ``availability_strategy=False`` case); ``Hedging(..)``
@@ -63,7 +65,7 @@ pub(crate) struct RequestHeadersAndOptions {
 /// Read container-scoped fields and request settings from a prepared request.
 pub(crate) fn extract_common_prepared_inputs<'py>(
     prepared: &Bound<'py, PyAny>,
-) -> PyResult<(String, PartitionKeyInput, RequestHeadersAndOptions)> {
+) -> PyResult<(String, BindingPartitionKey, RequestHeadersAndOptions)> {
     let container_link: String = prepared.getattr("container_link")?.extract()?;
     let partition_key = extract_partition_key(prepared)?;
     let modifiers = super::settings::extract_settings(prepared)?;
@@ -140,7 +142,7 @@ pub(crate) fn extract_required_item_id<'py>(
 pub(super) fn build_operation_options(
     content_response: Option<ContentResponseOnWrite>,
     excluded_regions: Option<ExcludedRegions>,
-    end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
+    driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
     availability_strategy: Option<AvailabilityStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
@@ -153,7 +155,7 @@ pub(super) fn build_operation_options(
     if let Some(regions) = excluded_regions {
         builder = builder.with_excluded_regions(regions);
     }
-    if let Some(policy) = end_to_end_timeout {
+    if let Some(policy) = driver_timeout_policy {
         builder = builder.with_end_to_end_latency_policy(policy);
     }
     if let Some(strategy) = availability_strategy {

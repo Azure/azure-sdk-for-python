@@ -20,6 +20,7 @@ import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import OPERATIONS, add_histogram, split_workload_id, summary_rows
 
 try:
     from azure.cosmos import CosmosClient
@@ -99,8 +100,7 @@ def _aggregate(container, prefix: str, run_id: str):
     """
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.count, c.errors, c.window_seconds, "
-            "c.hist_b64, c.server_hist_b64, c.server_count, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @run_id)",
             parameters=[
@@ -112,15 +112,15 @@ def _aggregate(container, prefix: str, run_id: str):
     )
     agg = {}
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in rows:
-        op, backend, _ = _split_wid(r["workload_id"])
-        if op is None:
+    for r in summary_rows(rows):
+        op, backend, _ = split_workload_id(r["workload_id"], prefix)
+        if r.get("operation") != OPERATIONS.get(op):
             continue
         key = (op, backend)
         if backend and "rust" in backend.lower():
             prov_rust += 1
             _dc = str(r.get("driver_commit") or "").strip()
-            if _dc:
+            if _driver_gate.is_stamped_commit(_dc):
                 prov_commits.add(_dc)
             else:
                 prov_missing += 1
@@ -141,26 +141,22 @@ def _aggregate(container, prefix: str, run_id: str):
         a["server_count"] += int(r.get("server_count", 0) or 0)
         a["window_s"] += float(r.get("window_seconds", 0.0) or 0.0)
         cb = r.get("hist_b64")
-        if cb:
-            a["client"].decode_and_add(cb)
-        else:
+        if not add_histogram(a["client"], cb, r["count"]):
             a["no_client_windows"] += 1
         sb = r.get("server_hist_b64")
-        if sb:
-            a["server"].decode_and_add(sb)
-        else:
+        if not add_histogram(a["server"], sb, r.get("server_count", 0) or 0):
             a["no_server_windows"] += 1
     return agg, (sorted(prov_commits), prov_missing, prov_rust)
 
 
 def _c(a, q):
-    return a["client"].get_value_at_percentile(q) / 1000.0 if a["count"] else float("nan")
+    return a["client"].get_value_at_percentile(q) / 1000.0 if a["count"] and not a["no_client_windows"] else float("nan")
 
 
 def _s(a, q):
     return (
         a["server"].get_value_at_percentile(q) / 1000.0
-        if a["server_count"]
+        if a["server_count"] and not a["no_server_windows"]
         else float("nan")
     )
 
@@ -186,7 +182,7 @@ def main():
 
     print(f"=== Client-vs-server latency split (prefix {args.prefix}, run id {run_id}) ===")
     print("    CLIENT = wall clock at caller; SERVER = x-ms-request-duration-ms.")
-    print("    gap = CLIENT - SERVER = network + transport + binding bridge (client-side).")
+    print("    gap is a difference of independent percentiles, NOT per-call overhead or attribution.")
     print()
     backends = sorted({b for (_, b) in agg})
     for backend in backends:
@@ -209,7 +205,7 @@ def main():
             # are both worth flagging, and they are different problems.
             if a["server_count"] == 0:
                 note = "  [!] no server header (old harness / header absent)"
-            elif a["server_count"] < a["count"]:
+            elif a["server_count"] != a["count"]:
                 pct = 100.0 * a["server_count"] / a["count"]
                 note = (
                     f"  [!] server header on {pct:.1f}% of requests; server"
@@ -227,7 +223,7 @@ def main():
     # Compare differences between independently computed percentiles.
     # This is not the percentile of per-call overhead or a causal attribution.
     if "core-python" in backends and "rust" in backends:
-        print("-- rust vs core-python: client-side excess = cli_999 - srv_999 --")
+        print("-- rust vs core-python: independent percentile difference = cli_999 - srv_999 --")
         print(f"  {'op':8s} {'py_excess':>10s} {'ru_excess':>10s} {'ru-py':>8s}")
         for op in _OP_ORDER:
             py = agg.get((op, "core-python"))
@@ -240,7 +236,7 @@ def main():
             # either side makes the difference between the two excesses an
             # apples-to-oranges number rather than a client-side finding.
             flag = ""
-            if py["server_count"] < py["count"] or ru["server_count"] < ru["count"]:
+            if py["server_count"] != py["count"] or ru["server_count"] != ru["count"]:
                 flag = "  [!] partial server coverage; excess is not comparable"
             print(f"  {op:8s} {pe:>10.2f} {re:>10.2f} {re-pe:>8.2f}{flag}")
 

@@ -90,7 +90,8 @@ def _start_reporter():
     reporting is disabled or has no results endpoint configured.
     """
     if get_perf_config is None:
-        logging.getLogger(__name__).info("Perf reporting disabled: %s", _PERF_IMPORT_ERROR)
+        if os.environ.get("PERF_ENABLED", "true").lower() == "true":
+            raise RuntimeError("Performance reporting dependencies are missing") from _PERF_IMPORT_ERROR
         return None, None
     perf_config = get_perf_config()
     if perf_config["enabled"] and perf_config["results_endpoint"]:
@@ -98,6 +99,8 @@ def _start_reporter():
         reporter = PerfReporter(stats, perf_config)
         reporter.start()
         return stats, reporter
+    if perf_config["enabled"]:
+        raise ValueError("PERF_ENABLED=true requires RESULTS_COSMOS_URI")
     return None, None
 
 
@@ -192,7 +195,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
     use_proxy = WORKLOAD_USE_PROXY
 
     owns_reporter = False
-    if stats is None:
+    if stats is None and stop_event is None:
         stats, reporter = _start_reporter()
         owns_reporter = stats is not None
 
@@ -299,9 +302,9 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                                         await query_items_concurrently(
                                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
                                         )
-                            except Exception as e:
-                                client_logger.info("Exception in application layer")
-                                client_logger.error(e)
+                            except Exception:
+                                client_logger.exception("Workload scheduling failed")
+                                raise
                     except KeyboardInterrupt:
                         client_logger.info("Stop signal received; shutting down cleanly.")
             finally:
@@ -315,13 +318,12 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             if not WORKLOAD_SKIP_CLOSE:
                 await client.__aexit__(None, None, None)
     finally:
-        if reporter and owns_reporter:
-            try:
+        try:
+            if reporter and owns_reporter:
                 reporter.stop()
-            except Exception:
-                pass
-        if session:
-            await session.close()
+        finally:
+            if session:
+                await session.close()
 
 
 def run_workload_sync(client_id, client_logger):
@@ -376,6 +378,7 @@ def run_workload_sync(client_id, client_logger):
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
             _wrap_backend_for_counting(client, is_async=False, client_logger=client_logger)
+            _maybe_freeze_gc(client_logger)
 
             # Sync mode is fully serial: each op runs its CONCURRENT_REQUESTS calls
             # one at a time, so real concurrency is 1 and throughput is about
@@ -410,15 +413,12 @@ def run_workload_sync(client_id, client_logger):
                         query_items(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
                         )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
+                except Exception:
+                    client_logger.exception("Workload scheduling failed")
+                    raise
     finally:
         if reporter:
-            try:
-                reporter.stop()
-            except Exception:
-                pass
+            reporter.stop()
 
 
 async def run_multi_client_async(prefix, client_logger):
@@ -474,10 +474,7 @@ async def run_multi_client_async(prefix, client_logger):
                     pass
     finally:
         if reporter:
-            try:
-                reporter.stop()
-            except Exception:
-                pass
+            reporter.stop()
 
 
 if __name__ == "__main__":

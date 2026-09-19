@@ -24,7 +24,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
-import azure.cosmos.aio._backend.rust as async_rust_module
+import azure.cosmos.aio._backend.binding as async_rust_module
 from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_RUST
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -484,7 +484,8 @@ async def test_async_close_preserves_logged_native_and_bridge_errors(
     with caplog.at_level(logging.DEBUG):
         assert await client.close() is None
 
-    assert "native cleanup failed" in caplog.text
+    assert "Failed releasing native resources" in caplog.text
+    assert "native cleanup failed" not in caplog.text
     assert "bridge cleanup failed" in caplog.text
     binding.release_driver_handle.assert_called_once()
     credential._close_cosmos_async_bridge.assert_called_once()

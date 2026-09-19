@@ -1,6 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
+import math
+from collections import Counter
 import logging
 import os
 import random
@@ -10,7 +12,6 @@ import uuid
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from aiohttp import ClientSession
-from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 from custom_tcp_connector import ProxiedTCPConnector
@@ -58,13 +59,15 @@ def _extra_kwargs(excluded_locations):
 def _record_error(stats, operation, error):
     """Extract Cosmos status codes and record the error in stats."""
     if not stats:
+        logging.getLogger(__name__).error("%s failed: %s", operation, error, exc_info=error)
         return
     status_code = sub_status_code = None
     if isinstance(error, CosmosHttpResponseError):
         status_code = error.status_code
         sub_status_code = getattr(error, "sub_status", None)
     stats.record_error(
-        operation, str(error), traceback.format_exc(), status_code, sub_status_code
+        operation, str(error), "".join(traceback.format_exception(type(error), error, error.__traceback__)),
+        status_code, sub_status_code
     )
 
 
@@ -89,14 +92,14 @@ def _make_ru_hook(op_name, stats):
         if charge is not None:
             try:
                 stats.record_ru(op_name, float(charge))
-            except (TypeError, ValueError):
-                pass
+            except (TypeError, ValueError) as exc:
+                logging.getLogger(__name__).warning("Invalid request-charge measurement: %s", exc)
         server_ms = headers.get(_SERVER_DURATION_HEADER)
         if server_ms is not None:
             try:
                 stats.record_server_ms(op_name, float(server_ms))
-            except (TypeError, ValueError):
-                pass
+            except (TypeError, ValueError) as exc:
+                logging.getLogger(__name__).warning("Invalid request-duration measurement: %s", exc)
 
     return _hook
 
@@ -157,11 +160,14 @@ def get_user_agent(client_id):
     return prefix + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
 
-def get_existing_random_item():
+def get_existing_random_keys():
     random_int = random.randint(0, MAX_ITEM_INDEX)
+    return {"id": f"test-{random_int}", "pk": f"pk-{random_int}"}
+
+
+def get_existing_random_item():
     item = create_random_item()
-    item["id"] = "test-" + str(random_int)
-    item["pk"] = "pk-" + str(random_int)
+    item.update(get_existing_random_keys())
     return item
 
 
@@ -227,7 +233,7 @@ def upsert_item(container, excluded_locations, num_upserts, stats=None):
 def read_item(container, excluded_locations, num_reads, stats=None):
     extra = _extra_kwargs(excluded_locations)
     for _ in range(num_reads):
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         _timed_call(
             "ReadItem", stats,
             container.read_item, item["id"], item[PARTITION_KEY],
@@ -264,7 +270,8 @@ def delete_item(container, excluded_locations, num_deletes, stats=None):
         # Create the item first (not timed) so each delete has something to remove.
         try:
             container.create_item(item, **extra)
-        except Exception:
+        except Exception as exc:
+            _record_error(stats, "DeleteSetupCreate", exc)
             continue
         _timed_call("DeleteItem", stats, container.delete_item, item["id"], item[PARTITION_KEY], **extra)
 
@@ -272,7 +279,7 @@ def delete_item(container, excluded_locations, num_deletes, stats=None):
 def patch_item(container, excluded_locations, num_patches, stats=None):
     extra = _extra_kwargs(excluded_locations)
     for _ in range(num_patches):
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
         _timed_call(
             "PatchItem", stats,
@@ -283,7 +290,7 @@ def patch_item(container, excluded_locations, num_patches, stats=None):
 def query_items(container, excluded_locations, num_queries, stats=None):
     extra = _extra_kwargs(excluded_locations)
     for _ in range(num_queries):
-        random_item = get_existing_random_item()
+        random_item = get_existing_random_keys()
 
         def _do_query(ri=random_item, **call_kwargs):
             results = container.query_items(
@@ -314,20 +321,20 @@ async def upsert_item_concurrently(container, excluded_locations, num_upserts, s
             "UpsertItem", stats,
             container.upsert_item, item, etag=None, match_condition=None, **extra,
         ))
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 async def read_item_concurrently(container, excluded_locations, num_reads, stats=None):
     extra = _extra_kwargs(excluded_locations)
     tasks = []
     for _ in range(num_reads):
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         tasks.append(_timed_call_async(
             "ReadItem", stats,
             container.read_item, item["id"], item[PARTITION_KEY],
             etag=None, match_condition=None, **extra,
         ))
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 async def create_item_concurrently(container, excluded_locations, num_creates, stats=None):
@@ -338,7 +345,7 @@ async def create_item_concurrently(container, excluded_locations, num_creates, s
         item = create_random_item()
         created.append(item)
         tasks.append(_timed_call_async("CreateItem", stats, container.create_item, item, **extra))
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
     # Delete the new items again (not timed) so the container does not grow
     # without bound over a long run.
     cleanup = [container.delete_item(it["id"], it[PARTITION_KEY], **extra) for it in created]
@@ -356,7 +363,7 @@ async def replace_item_concurrently(container, excluded_locations, num_replaces,
         tasks.append(
             _timed_call_async("ReplaceItem", stats, container.replace_item, item["id"], item, **extra)
         )
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 async def delete_item_concurrently(container, excluded_locations, num_deletes, stats=None):
@@ -364,21 +371,27 @@ async def delete_item_concurrently(container, excluded_locations, num_deletes, s
     items = [create_random_item() for _ in range(num_deletes)]
     # Create the items first (not timed) so each delete has something to remove.
     setup = [container.create_item(it, **extra) for it in items]
-    await asyncio.gather(*setup, return_exceptions=True)
+    setup_results = await asyncio.gather(*setup, return_exceptions=True)
+    ready = []
+    for item, result in zip(items, setup_results):
+        if isinstance(result, BaseException):
+            _record_error(stats, "DeleteSetupCreate", result)
+        else:
+            ready.append(item)
     tasks = [
         _timed_call_async(
             "DeleteItem", stats, container.delete_item, it["id"], it[PARTITION_KEY], **extra
         )
-        for it in items
+        for it in ready
     ]
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 async def patch_item_concurrently(container, excluded_locations, num_patches, stats=None):
     extra = _extra_kwargs(excluded_locations)
     tasks = []
     for _ in range(num_patches):
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
         tasks.append(
             _timed_call_async(
@@ -386,14 +399,14 @@ async def patch_item_concurrently(container, excluded_locations, num_patches, st
                 container.patch_item, item["id"], item[PARTITION_KEY], operations, **extra,
             )
         )
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 async def query_items_concurrently(container, excluded_locations, num_queries, stats=None):
     extra = _extra_kwargs(excluded_locations)
     tasks = []
     for _ in range(num_queries):
-        random_item = get_existing_random_item()
+        random_item = get_existing_random_keys()
 
         async def _do_query(ri=random_item, **call_kwargs):
             results = container.query_items(
@@ -409,7 +422,7 @@ async def query_items_concurrently(container, excluded_locations, num_queries, s
             return [item async for item in results]
 
         tasks.append(_timed_call_async("QueryItems", stats, _do_query))
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.gather(*tasks)
 
 
 # ---------------------------------------------------------------------------
@@ -427,23 +440,11 @@ _ASYNC_OP_FUNCS = {
 
 
 def _mix_counts(weights, concurrency):
-    """Split ``concurrency`` op-slots across weighted ops (largest-remainder), so a
-    wave's op proportions match ``weights`` as closely as an integer split allows.
-    ``query`` is not part of a latency blend and is ignored.
-    """
-    w = {op: v for op, v in weights.items() if op in _ASYNC_OP_FUNCS and v > 0}
-    total = sum(w.values())
-    if total <= 0 or concurrency <= 0:
-        return {}
-    raw = {op: concurrency * v / total for op, v in w.items()}
-    counts = {op: int(x) for op, x in raw.items()}
-    rem = concurrency - sum(counts.values())
-    for op, _frac in sorted(raw.items(), key=lambda kv: kv[1] - int(kv[1]), reverse=True):
-        if rem <= 0:
-            break
-        counts[op] += 1
-        rem -= 1
-    return {op: c for op, c in counts.items() if c > 0}
+    """Sample the requested mix without permanently rounding rare operations away."""
+    if (concurrency <= 0 or not weights or
+            any(op not in _ASYNC_OP_FUNCS or not math.isfinite(w) or w <= 0 for op, w in weights.items())):
+        raise ValueError("Mixed load requires supported operations, positive weights and concurrency")
+    return dict(Counter(random.choices(list(weights), weights=list(weights.values()), k=concurrency)))
 
 
 async def mixed_wave_concurrently(container, excluded_locations, concurrency, weights, stats=None):
@@ -458,7 +459,6 @@ async def mixed_wave_concurrently(container, excluded_locations, concurrency, we
     await asyncio.gather(
         *[_ASYNC_OP_FUNCS[op](container, excluded_locations, n, stats)
           for op, n in counts.items()],
-        return_exceptions=True,
     )
 
 
@@ -471,7 +471,7 @@ async def _loop_lag_monitor(stats, interval_s=0.05):
 
     Sleeps ``interval_s`` then measures how much longer than that the wake-up took.
     That excess is time the loop thread was busy and could not service the timer on
-    schedule. A large value means the loop is the bottleneck, not the SDK. Runs
+    schedule. A large value does not identify whether SDK or other work caused it. Runs
     until cancelled; a no-op when there is no ``stats`` to record into.
     """
     if stats is None:
@@ -504,7 +504,7 @@ _OPEN_LOOP_SUPPORTED = ("read", "upsert", "replace", "patch")
 def _build_open_loop_call(container, op, extra):
     """Return ``(op_label, fn, args, kwargs)`` for ONE operation of kind ``op``."""
     if op == "read":
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         return (
             "ReadItem", container.read_item,
             (item["id"], item[PARTITION_KEY]),
@@ -520,7 +520,7 @@ def _build_open_loop_call(container, op, extra):
         item = get_existing_random_item()
         return ("ReplaceItem", container.replace_item, (item["id"], item), dict(extra))
     if op == "patch":
-        item = get_existing_random_item()
+        item = get_existing_random_keys()
         operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
         return (
             "PatchItem", container.patch_item,
@@ -554,19 +554,15 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     work so a stall cannot run the process out of memory. On stop it drains the
     in-flight tasks so their latencies are recorded and the client closes cleanly.
     """
-    op_list = [o for o in sorted(ops) if o != "query"]  # query has no latency target
+    op_list = sorted(ops)
+    weights = None
     if WORKLOAD_MIX:
-        # Weighted round-robin: expand each op to an integer number of slots
-        # proportional to its weight, so open-loop arrivals follow the blend.
-        weighted = []
-        for o, wv in sorted(WORKLOAD_MIX.items()):
-            if o == "query":
-                continue
-            weighted.extend([o] * max(1, int(round(wv))))
-        if weighted:
-            op_list = weighted
+        op_list = sorted(WORKLOAD_MIX)
+        weights = [WORKLOAD_MIX[op] for op in op_list]
     if not op_list:
-        return
+        raise ValueError("Fixed-rate load needs at least one operation")
+    if not math.isfinite(rate) or not rate > 0 or max_inflight <= 0:
+        raise ValueError("Fixed-rate load needs a positive rate and in-flight limit")
     for o in op_list:
         if o not in _OPEN_LOOP_SUPPORTED:
             raise ValueError(
@@ -580,27 +576,40 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     start_ns = time.perf_counter_ns()
     seq = 0
     inflight = set()
+    fatal_error = None
 
     async def _one(op_label, scheduled_ns, fn, args, kwargs):
+        nonlocal fatal_error
         try:
             await _open_loop_call_async(op_label, stats, scheduled_ns, fn, *args, **kwargs)
+        except Exception as exc:
+            fatal_error = exc
+            if stop_event is not None:
+                stop_event.set()
         finally:
             sem.release()
 
     try:
-        while stop_event is None or not stop_event.is_set():
+        while fatal_error is None and (stop_event is None or not stop_event.is_set()):
             scheduled_ns = start_ns + seq * interval_ns
             now_ns = time.perf_counter_ns()
             if scheduled_ns > now_ns:
-                await asyncio.sleep((scheduled_ns - now_ns) / 1_000_000_000)
-            elif now_ns - scheduled_ns > 5_000_000_000:
-                # More than 5 s behind: rebase the schedule so the backlog cannot
-                # grow forever. The lateness was already recorded as latency.
-                start_ns = now_ns - seq * interval_ns
-                scheduled_ns = now_ns
-            op = op_list[seq % len(op_list)]
+                delay = (scheduled_ns - now_ns) / 1_000_000_000
+                if stop_event is None:
+                    await asyncio.sleep(delay)
+                else:
+                    try:
+                        await asyncio.wait_for(stop_event.wait(), timeout=delay)
+                        break
+                    except asyncio.TimeoutError:
+                        pass
+            op = (random.choices(op_list, weights=weights, k=1)[0]
+                  if weights else op_list[seq % len(op_list)])
             op_label, fn, args, kwargs = _build_open_loop_call(container, op, extra)
             await sem.acquire()
+            if stop_event is not None and stop_event.is_set():
+                sem.release()
+                break
             task = loop.create_task(_one(op_label, scheduled_ns, fn, args, kwargs))
             inflight.add(task)
             task.add_done_callback(inflight.discard)
@@ -611,7 +620,9 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
         # Drain whatever is still in flight so their latencies are recorded and
         # nothing is left pending when the client closes.
         if inflight:
-            await asyncio.gather(*inflight, return_exceptions=True)
+            await asyncio.gather(*inflight)
+        if fatal_error is not None:
+            raise RuntimeError("Fixed-rate workload instrumentation failed") from fatal_error
 
 
 # ---------------------------------------------------------------------------
@@ -633,6 +644,7 @@ def create_custom_session():
 def create_logger(file_name):
     logger = logging.getLogger()
     if APP_INSIGHTS_CONNECTION_STRING:
+        from azure.monitor.opentelemetry import configure_azure_monitor
         configure_azure_monitor(
             logger_name="azure.cosmos",
             connection_string=APP_INSIGHTS_CONNECTION_STRING,
@@ -647,6 +659,10 @@ def create_logger(file_name):
     workload_logger_filter = WorkloadLoggerFilter()
     handler.addFilter(workload_logger_filter)
     logger.addHandler(handler)
+    # Cell launchers capture stderr; keep harness failures visible there too.
+    console = logging.StreamHandler()
+    console.setLevel(logging.WARNING)
+    logger.addHandler(console)
     return prefix, logger
 
 

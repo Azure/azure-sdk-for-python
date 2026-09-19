@@ -184,7 +184,7 @@ def test_offer_read_preparation_never_uses_legacy_transport(monkeypatch, resourc
     assert settings_options(prepared) == {"excludedLocations": ["West US"], "timeout_seconds": 7}
 
 
-def test_offer_builder_does_not_mint_activity_or_session_headers():
+def test_offer_builder_does_not_generate_activity_or_session_headers():
     """With nothing supplied, the builder generates no headers of its own.
 
     No options and no default headers must produce an empty header set. In
@@ -249,6 +249,24 @@ def test_offer_parser_preserves_records(offers):
     must not be treated as a malformed payload.
     """
     assert parse_read_offer_payload({"Offers": offers}) == offers
+
+
+def test_offer_headers_belong_to_response_not_later_client_diagnostics():
+    from types import SimpleNamespace
+    from azure.cosmos._backend.contracts import BackendResponse
+    from azure.cosmos._offer_rust_routing import process_read_offer_response, offer_response_headers
+
+    connection = SimpleNamespace(last_response_headers={})
+    result = process_read_offer_response(
+        BackendResponse(status_code=200, headers={"etag": "offer-response"}, body=b'{"Offers":[]}'),
+        client_connection=connection,
+    )
+    connection.last_response_headers = {"etag": "another-operation"}
+    headers = offer_response_headers(result, connection)
+    assert headers["etag"] == "offer-response"
+    headers.clear()
+    assert result.get_response_headers()["etag"] == "offer-response"
+    assert connection.last_response_headers["etag"] == "another-operation"
 
 
 @pytest.mark.parametrize("is_async", [False, True])

@@ -37,6 +37,8 @@ fi
 : "${ARTIFACTS:?no complete profiling session found; run profiling_start_session.sh first}"
 
 DURATION="${1:-480}"
+perf_require_positive "${DURATION}" || exit 2
+perf_single_operation_shape
 OPERATIONS=(${BASELINE_OPERATIONS:-read})
 BACKENDS=(${BASELINE_BACKENDS:-core-python rust})
 BASELINE_READ_RPS="${BASELINE_READ_RPS:-250}"
@@ -52,7 +54,7 @@ if ! [[ "${BASELINE_READ_RPS}" =~ ^[0-9]+([.][0-9]+)?$ ]] ||
 fi
 
 LOG_DIR="${ARTIFACTS}/light-load-baseline-${RUN_ID}"
-mkdir -p "$LOG_DIR"
+perf_create_log_dir "$LOG_DIR" || exit 2
 RUN_LOG="${LOG_DIR}/baseline-run.log"
 REPORT_FILE="${LOG_DIR}/latency-report.txt"
 exec > >(tee "${RUN_LOG}") 2>&1
@@ -103,7 +105,10 @@ BASELINE_TARGET_FILE="${LOG_DIR}/baseline-target.env"
   printf 'BASELINE_CONTAINER=%q\n' "${BASELINE_CONTAINER}"
   printf 'BASELINE_PARTITION_KEY=%q\n' "${COSMOS_PARTITION_KEY:-id}"
 } >"${BASELINE_TARGET_FILE}"
-write_run_manifest "${LOG_DIR}" "${RUN_ID}" "light-load-baseline"
+write_run_manifest "${LOG_DIR}" "${RUN_ID}" "light-load-baseline" || exit 2
+for bk in "${BACKENDS[@]}"; do
+  printf 'baseline-read-%s-%s\n' "${bk}" "${RUN_ID}"
+done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Rate-limited point-read latency baseline ==="
 echo "    run_id=${RUN_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
@@ -129,7 +134,7 @@ for op in "${OPERATIONS[@]}"; do
     echo "    rc=${rc}  log=${log}"
     case "${rc}" in
       0)   ;;
-      130) echo "    !! run exited 130 (SIGINT fell back to KeyboardInterrupt; data likely OK but handler did not engage)" >&2 ;;
+      130) echo "    !! interrupted; final data is not confirmed" >&2; overall_rc=1 ;;
       137|124) overall_rc=1 ;;
       *)   overall_rc=1 ;;
     esac
@@ -138,8 +143,7 @@ done
 echo "=== Light-load baseline complete. run_id=${RUN_ID} ==="
 echo "=== Checking the light-load baseline results ==="
 BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
-if python3 perf_validate.py --run-id "${RUN_ID}" --log-dir "${LOG_DIR}" \
-  --prefix "baseline-" --required-backends "${BACKEND_CSV}"; then
+if perf_check_run "${LOG_DIR}" "${RUN_ID}" "baseline-" "${BACKEND_CSV}"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect rows/logs before trusting the baseline." >&2

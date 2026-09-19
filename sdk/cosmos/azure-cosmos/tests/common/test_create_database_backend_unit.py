@@ -85,7 +85,7 @@ from azure.cosmos._helpers._request_database import (
     build_read_database_prepared,
     is_read_database_rust_eligible,
 )
-from azure.cosmos._helpers.database_helper import DatabaseHelper
+from azure.cosmos._helpers._database_operations import DatabaseHelper
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._cosmos_client_connection_async import (
@@ -93,7 +93,7 @@ from azure.cosmos.aio._cosmos_client_connection_async import (
 )
 from azure.cosmos.aio._cosmos_client import CosmosClient as AsyncCosmosClient
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos.aio._helpers.database_helper import AsyncDatabaseHelper
+from azure.cosmos.aio._helpers._database_operations import AsyncDatabaseHelper
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceExistsError, CosmosResourceNotFoundError
@@ -2176,8 +2176,8 @@ def test_create_hook_uses_result_not_latest_client_headers(create_database_clien
     shared across threads or tasks; reading a shared field instead would
     attribute one caller's charge to another.
     """
-    from azure.cosmos._helpers import database_helper as sync_helper
-    from azure.cosmos.aio._helpers import database_helper as async_helper
+    from azure.cosmos._helpers import _database_operations as sync_helper
+    from azure.cosmos.aio._helpers import _database_operations as async_helper
     client = create_database_client
     module = async_helper if isinstance(client, AsyncCosmosClient) else sync_helper
     original = module.process_backend_response
@@ -2280,8 +2280,8 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
     Without this, a one second timeout could take two seconds or more: one spent
     on setup and the full second again on the request.
     """
-    from azure.cosmos._backend import rust as sync_rust
-    from azure.cosmos.aio._backend import rust as async_rust
+    from azure.cosmos._backend import binding as sync_rust
+    from azure.cosmos.aio._backend import binding as async_rust
     from azure.cosmos._helpers import _request_database
     from azure.cosmos.exceptions import CosmosClientTimeoutError
     client = create_database_client
@@ -2303,10 +2303,10 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
     if is_async:
         async def execute(prepared, *, deadline=None):
-            return await async_rust.AsyncRustBackend.execute(backend, prepared, deadline=deadline)
+            return await async_rust.AsyncRustBinding.execute(backend, prepared, deadline=deadline)
     else:
         def execute(prepared, *, deadline=None):
-            return sync_rust.RustBackend.execute(backend, prepared, deadline=deadline)
+            return sync_rust.RustBinding.execute(backend, prepared, deadline=deadline)
     backend.execute = execute
     hook = MagicMock()
     if setup_seconds > 1:
@@ -2776,7 +2776,7 @@ def test_public_create_database_does_not_select_backend(client_type):
     That keeps engine selection entirely behind the coordinator, so the public method
     stays a thin delegate."""
     source = inspect.getsource(client_type.create_database)
-    assert "RustBackend" not in source
+    assert "RustBinding" not in source
     assert "can_use_rust" not in source
     assert "CreateDatabase(" not in source
 
@@ -2788,7 +2788,7 @@ def test_public_create_database_if_not_exists_does_not_orchestrate_backends(clie
     CreateDatabase call, so the read-then-create and the engine choice live entirely in
     the coordinator."""
     source = inspect.getsource(client_type.create_database_if_not_exists)
-    assert "RustBackend" not in source
+    assert "RustBinding" not in source
     assert "ReadDatabase(" not in source
     assert "CreateDatabase(" not in source
 
@@ -3257,8 +3257,8 @@ def test_if_not_exists_hook_has_independent_final_response(create_database_clien
     original nested value and the real activity id, and the proxy still points
     at the database the customer asked for rather than the name the hook wrote.
     """
-    from azure.cosmos._helpers import database_helper as sync_helper
-    from azure.cosmos.aio._helpers import database_helper as async_helper
+    from azure.cosmos._helpers import _database_operations as sync_helper
+    from azure.cosmos.aio._helpers import _database_operations as async_helper
     client = create_database_client
     client._backend.responses = _get_or_create_responses(statuses)
     module = async_helper if isinstance(client, AsyncCosmosClient) else sync_helper
@@ -3385,8 +3385,8 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     Handing five seconds to each leg would let a three-step workflow run for
     fifteen seconds after the customer asked for five.
     """
-    from azure.cosmos._backend import rust as sync_rust
-    from azure.cosmos.aio._backend import rust as async_rust
+    from azure.cosmos._backend import binding as sync_rust
+    from azure.cosmos.aio._backend import binding as async_rust
     from azure.cosmos._helpers import _request_database
     client = create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
@@ -3417,10 +3417,10 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
 
     def sync_execute(prepared, *, deadline=None):
-        return sync_rust.RustBackend.execute(backend, prepared, deadline=deadline)
+        return sync_rust.RustBinding.execute(backend, prepared, deadline=deadline)
 
     async def async_execute(prepared, *, deadline=None):
-        return await async_rust.AsyncRustBackend.execute(backend, prepared, deadline=deadline)
+        return await async_rust.AsyncRustBinding.execute(backend, prepared, deadline=deadline)
 
     backend.execute = async_execute if is_async else sync_execute
     _call_create_database(client, "db1", method_name="create_database_if_not_exists", timeout=5)

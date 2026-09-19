@@ -415,8 +415,8 @@ def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str
         return consistency_level
     if consistency_level in _ALL_CONSISTENCY_LEVELS:
         raise ValueError(
-            "consistency_level {!r} is not yet supported on the Rust backend "
-            "(_backend='rust'); supported levels are {}. Use the core-python "
+            "consistency_level {!r} is not yet supported by the Rust binding; "
+            "supported levels are {}. Use the core-python "
             "backend if you need {!r}.".format(
                 consistency_level,
                 ", ".join(_RUST_SUPPORTED_CONSISTENCY_LEVELS),

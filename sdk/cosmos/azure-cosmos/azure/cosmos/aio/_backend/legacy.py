@@ -11,7 +11,7 @@ executing a prepared request. Point parity uses the separate legacy item helper.
 from __future__ import annotations
 
 from azure.cosmos._backend.capabilities import OperationRouting
-from azure.cosmos._backend.errors import BackendProtocolError
+from azure.cosmos._backend.errors import BindingProtocolError
 
 from typing import Awaitable, Any, Callable, Optional
 
@@ -63,7 +63,7 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
     ) -> Any:
         """Run the explicitly selected legacy callable without building a Rust request."""
         if legacy_call is None:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
             )
         return await legacy_call()
@@ -79,7 +79,7 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
     ) -> Any:
         """Run the explicitly selected legacy callable without building a Rust request."""
         if legacy_call is None:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
             )
         return await legacy_call()

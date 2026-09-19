@@ -16,7 +16,7 @@ import json
 
 from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
 from azure.cosmos._backend.request_settings import RequestSettings, HedgingSettings
-from azure.cosmos._backend.partition_key import PartitionKeyInput, UNDEFINED_PARTITION_KEY
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey, UNDEFINED_PARTITION_KEY
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings, _HEADER_FIELDS
 
 
@@ -98,7 +98,7 @@ def legacy_preparation(options):
     back what it put in has proved the split loses nothing.
     """
     headers, settings = build_request_headers_and_settings(options)
-    request = PreparedRequest("test", "", b"", PartitionKeyInput("cross_partition"), headers=headers, settings=settings)
+    request = PreparedRequest("test", "", b"", BindingPartitionKey("cross_partition"), headers=headers, settings=settings)
     return wire_headers(request), settings_options(request)
 
 
@@ -119,15 +119,15 @@ def key_from_legacy_header(header, *, extract=True, feed_range=False):
     Production code never reads a key back from text.
     """
     if header is None:
-        return PartitionKeyInput("extract" if extract else "cross_partition")
+        return BindingPartitionKey("extract" if extract else "cross_partition")
     if header == "":
-        return PartitionKeyInput("cross_partition")
+        return BindingPartitionKey("cross_partition")
     values = json.loads(header)
     if not values:
-        return PartitionKeyInput("empty_sentinel" if feed_range else "cross_partition")
+        return BindingPartitionKey("empty_sentinel" if feed_range else "cross_partition")
     if values == [[]]:
-        return PartitionKeyInput("empty_sequence")
-    return PartitionKeyInput("components", tuple(
+        return BindingPartitionKey("empty_sequence")
+    return BindingPartitionKey("components", tuple(
         UNDEFINED_PARTITION_KEY if value == {} else value for value in values
     ))
 
@@ -144,7 +144,7 @@ def legacy_partition_key_from_request(request):
     this direction is only safe in a test that already knows which it meant.
     """
     key = getattr(request, "partition_key", None)
-    if not isinstance(key, PartitionKeyInput):
+    if not isinstance(key, BindingPartitionKey):
         return request.partition_key_header
     if key.kind == "extract":
         return None

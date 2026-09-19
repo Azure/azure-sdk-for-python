@@ -18,7 +18,7 @@ PartitionKeyKind = Literal[
 
 
 @dataclass(frozen=True, eq=False)
-class PartitionKeyInput:
+class BindingPartitionKey:
     kind: PartitionKeyKind
     values: tuple[PartitionKeyComponent, ...] = ()
 
@@ -66,7 +66,7 @@ class PartitionKeyInput:
         )
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, PartitionKeyInput):
+        if not isinstance(other, BindingPartitionKey):
             return NotImplemented
         return self._identity() == other._identity()
 

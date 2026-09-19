@@ -23,7 +23,7 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import _base, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._backend.contracts import PreparedQuery, QueryPage
-from .._backend.operations import OP_QUERY_CHANGE_FEED
+from .._backend.operations import OP_QUERY_ITEMS_CHANGE_FEED
 from .._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from .._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 from .._constants import _Constants as Constants
@@ -40,7 +40,7 @@ from ..partition_key import (
 )
 from ._legacy_partition_key import legacy_partition_key_header
 from ._partition_key import normalize_partition_key, query_partition_key_components, partition_key_bookmark_value
-from .._backend.partition_key import PartitionKeyInput
+from .._backend.partition_key_input import BindingPartitionKey
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._response_parse import process_backend_response
 
@@ -190,7 +190,7 @@ class ChangeFeedConfig(ReadAllConfig):
                     DeprecationWarning,
                     stacklevel=4,
                 )
-        super().__init__(proxy, kwargs, operation=OP_QUERY_CHANGE_FEED)
+        super().__init__(proxy, kwargs, operation=OP_QUERY_ITEMS_CHANGE_FEED)
         self.path = _base.GetPathFromLink(
             proxy.container_link, http_constants.ResourceType.Document
         )
@@ -338,15 +338,15 @@ class ChangeFeedPageState(ReadAllPageState):
     def prepared_page(self, deadline: Optional[float]) -> PreparedQuery:
         return replace(
             self.config.prepared(self.inner_token, self.cursor, deadline),
-            op=OP_QUERY_CHANGE_FEED,
+            op=OP_QUERY_ITEMS_CHANGE_FEED,
             change_feed={key: value for key, value in self.settings.items() if key != "partition_key"},
-            partition_key=self.settings["partition_key"] or PartitionKeyInput("cross_partition"),
+            partition_key=self.settings["partition_key"] or BindingPartitionKey("cross_partition"),
         )
 
     def bookmark(self, inner: str) -> str:
         persisted_settings = dict(self.settings)
         key = persisted_settings["partition_key"]
-        if isinstance(key, PartitionKeyInput):
+        if isinstance(key, BindingPartitionKey):
             persisted_settings["partition_key"] = partition_key_bookmark_value(key)
         payload = {
             "backend": "rust" if self.config.rust else "core-python",

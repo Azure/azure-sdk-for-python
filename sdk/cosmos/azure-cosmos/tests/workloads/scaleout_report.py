@@ -41,10 +41,12 @@ EXIT CODE:
 """
 
 import argparse
+import math
 import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
+from perf_results import EXPECTED_RUNTIME, OPERATIONS, post_warmup, summary_rows
 
 try:
     from azure.cosmos import CosmosClient
@@ -57,7 +59,7 @@ MAX_ERR_PCT = 0.5       # a point above this error fraction is not a clean data 
 MAX_SYS_CPU = 85.0      # system CPU above this means host-bound, not account-bound.
 
 # runtime_backend (live class) each config_backend label must resolve to.
-_EXPECTED_RUNTIME = {"core-python": {"core-python"}, "rust": {"AsyncRustBackend"}}
+_EXPECTED_RUNTIME = EXPECTED_RUNTIME
 
 
 def parse_wid(wid, prefix="scaleout-"):
@@ -117,6 +119,8 @@ def main():
                     help=f"drop windows with elapsed_seconds <= this (default {WARMUP_S:.0f})")
     _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()
+    if not math.isfinite(args.warmup) or args.warmup < 0:
+        ap.error("Warmup must be finite and nonnegative")
 
     container = _connect()
     stamp = args.stamp or _latest_stamp(container, args.prefix)
@@ -128,9 +132,7 @@ def main():
 
     rows = list(
         container.query_items(
-            "SELECT c.workload_id, c.config_backend, c.operation, c.runtime_backend, "
-            "c.elapsed_seconds, c.window_seconds, c.count, c.errors, "
-            "c.ru_sum, c.ru_count, c.system_cpu_percent, c.driver_commit "
+            "SELECT * "
             "FROM c WHERE STARTSWITH(c.workload_id, @p) AND ENDSWITH(c.workload_id, @s)",
             parameters=[
                 {"name": "@p", "value": args.prefix},
@@ -145,20 +147,30 @@ def main():
 
     # (op, bk, N, rep, pidx) -> pooled per-process post-warmup measurement.
     procs = {}
+    concs = {}
     labels = {}                               # (op, bk) -> {runtime_backend: count}
-    for r in rows:
+    for r in summary_rows(rows):
         wid = r.get("workload_id") or ""
         try:
             op, bk, conc, nprocs, rep, pidx = parse_wid(wid, args.prefix)
         except (ValueError, IndexError):
             continue
+        if r.get("operation") != OPERATIONS.get(op):
+            continue
+        if r.get("config_backend") != bk or r.get("config_concurrency") != conc:
+            raise ValueError(f"Workload label and recorded configuration disagree: {wid}")
+        if nprocs <= 0 or not 1 <= pidx <= nprocs:
+            raise ValueError(f"Invalid process index: {wid}")
+        concs.setdefault((op, bk), set()).add(conc)
+        if len(concs[(op, bk)]) != 1:
+            raise ValueError("Do not pool scale-out runs with different per-process concurrency")
         # Only rows that actually did work carry a meaningful engine label; empty
         # windows legitimately record runtime_backend=None and must not trip the gate.
         if r.get("count"):
             labels.setdefault((op, bk), {})
             rb = r.get("runtime_backend")
             labels[(op, bk)][rb] = labels[(op, bk)].get(rb, 0) + 1
-        if (r.get("elapsed_seconds") or 0) <= args.warmup:
+        if not post_warmup(r, args.warmup):
             continue
         d = procs.setdefault((op, bk, nprocs, rep, pidx),
                              {"cnt": 0, "wsec": 0.0, "err": 0, "ru": 0.0,
@@ -172,7 +184,7 @@ def main():
 
     # ---- backend match check (enforced) ----
     print("\n### GATE: backend purity per (op, backend) ###")
-    gate_fail = False
+    gate_fail = not bool(labels) or not bool(procs)
     for (op, bk), seen in sorted(labels.items()):
         expected = _EXPECTED_RUNTIME.get(bk)
         if expected is None or any(rb not in expected for rb in seen):
@@ -191,19 +203,26 @@ def main():
     # Point throughput per (op, bk, N, rep) = SUM of the N processes' throughputs.
     point = {}
     for (op, bk, nprocs, rep, pidx), d in procs.items():
-        if d["wsec"] <= 0:
+        if d["wsec"] <= 0 or d["cnt"] <= 0:
+            gate_fail = True
             continue
         p = point.setdefault((op, bk, nprocs, rep),
                              {"thr": 0.0, "rups": 0.0, "cnt": 0, "err": 0,
                               "ru": 0.0, "ruc": 0, "syscpu": 0.0, "nseen": 0})
         p["thr"] += d["cnt"] / d["wsec"]
-        p["rups"] += d["ru"] / d["wsec"]
+        p["rups"] += d["ru"] / d["wsec"] if d["ruc"] else float("nan")
         p["cnt"] += d["cnt"]
         p["err"] += d["err"]
         p["ru"] += d["ru"]
         p["ruc"] += d["ruc"]
         p["syscpu"] = max(p["syscpu"], d["syscpu"])
         p["nseen"] += 1
+    for (op, bk, nprocs, rep), p in point.items():
+        if p["nseen"] != nprocs:
+            gate_fail = True
+            print(f"  FAIL {op} {bk} N={nprocs} repeat={rep}: only {p['nseen']} processes have post-warmup measurements")
+    if not point:
+        gate_fail = True
 
     ops = sorted({k[0] for k in point})
     for op in ops:
@@ -226,12 +245,12 @@ def main():
                     "thr_max": max(thrs),
                     "rups": sum(p["rups"] for p in reps) / len(reps),
                     "ru_op": (sum(p["ru"] for p in reps) / sum(p["ruc"] for p in reps))
-                             if sum(p["ruc"] for p in reps) else 0.0,
+                             if sum(p["ruc"] for p in reps) else float("nan"),
                     "err_pct": (100.0 * sum(p["err"] for p in reps)
                                 / max(1, sum(p["cnt"] + p["err"] for p in reps))),
                     "syscpu": max(p["syscpu"] for p in reps),
                     "reps": len(reps),
-                    "procs": max(p["nseen"] for p in reps),
+                    "procs": min(p["nseen"] for p in reps),
                     "expected_procs": n,
                 }
             base = pooled.get(1, {}).get("thr")

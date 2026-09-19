@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, Optional, Type, TypeVar
 from .._constants import _Constants as Constants
 from .._base import _build_properties_cache
 from .._operation_deadline import remaining_timeout
-from .item_helper import normalize_item_partition_key
+from ._item_operations import normalize_item_partition_key
 from ._document import build_create_document
 from ._wire_encoding import serialize_body_to_bytes
 from .._backend.constants import BACKEND_NAME_CORE_PYTHON

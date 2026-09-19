@@ -33,7 +33,7 @@ import pytest
 from azure.cosmos import exceptions
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos._backend.errors import PageNotSupportedByBackendError
+from azure.cosmos._backend.errors import PagePreflightError
 from azure.cosmos._backend.operations import OP_LIST_CONTAINERS, OP_QUERY_CONTAINERS
 from .test_list_containers_backend_unit import listing_case, _page, _drain, _run
 
@@ -344,7 +344,7 @@ def test_invalid_queries_preserve_errors_without_requests(query_case, query, kwa
 
 
 @pytest.mark.parametrize("error", [
-    ValueError("hook failed"), PageNotSupportedByBackendError("hook failed"),
+    ValueError("hook failed"), PagePreflightError("hook failed"),
     exceptions.CosmosResourceNotFoundError(status_code=404),
     exceptions.CosmosHttpResponseError(status_code=429),
     exceptions.CosmosHttpResponseError(status_code=500),
@@ -390,7 +390,7 @@ def test_service_error_does_not_call_success_hook(query_case, status):
 
 
 @pytest.mark.parametrize("error", [
-    PageNotSupportedByBackendError("unsupported"), ValueError("binding failure"), asyncio.CancelledError(),
+    PagePreflightError("unsupported"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
 def test_binding_failure_never_replays_on_legacy(query_case, error):
     """A failure inside the Rust engine, including cancellation, ends the walk after

@@ -14,7 +14,8 @@ they keep a cursor between pages.
 
 These tables hold names and data only. They say nothing about which operations
 are allowed to fall back to the legacy path, so adding an operation here does
-not mean writing a new method on the backend."""
+not mean writing a new method on the backend.
+"""
 
 from __future__ import annotations
 
@@ -37,7 +38,7 @@ OP_QUERY_DATABASES = "query_databases"
 OP_LIST_CONTAINERS = "list_containers"
 OP_QUERY_CONTAINERS = "query_containers"
 OP_READ_ALL_ITEMS = "read_all_items"
-OP_QUERY_CHANGE_FEED = "query_items_change_feed"
+OP_QUERY_ITEMS_CHANGE_FEED = "query_items_change_feed"
 OP_LIST_DATABASES = "list_databases"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
@@ -92,7 +93,7 @@ STATELESS_QUERY_TO_BINDING_METHOD = {
 CURSOR_QUERY_TO_BINDING_METHOD = {
     OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
     OP_QUERY_ITEMS: "fetch_page_with_cursor",
-    OP_QUERY_CHANGE_FEED: "fetch_page_with_cursor",
+    OP_QUERY_ITEMS_CHANGE_FEED: "fetch_page_with_cursor",
 }
 
 

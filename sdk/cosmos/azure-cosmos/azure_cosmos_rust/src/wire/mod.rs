@@ -20,7 +20,7 @@
 //! as metadata tuples and retained-cursor continuation headers remains separate.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `documents/`, `runtime.rs`, and the Python `_backend` / `_helpers`
+//! `ffi/`, `runtime.rs`, and the Python `_backend` / `_helpers`
 //! package docs):
 //!
 //!   * binding = this compiled `_rust` extension.
@@ -58,14 +58,14 @@ mod request;
 mod response;
 
 // Public-facing exception re-exports (lib.rs registers these) ------------
-pub use errors::{DriverResponseError, DriverTransportError, UnsupportedQueryFeatureError};
+pub use errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
 
 // Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
 pub(crate) use container_metadata::{get_container_metadata, get_container_metadata_async};
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // Request-side re-exports ------------------------------------------------
-// pub(crate): documents/mod.rs imports these by explicit crate::wire:: path.
+// pub(crate): ffi/mod.rs imports these by explicit crate::wire:: path.
 pub(crate) use request::{
     extract_account_prepared_modifiers, extract_body_bytes, extract_common_prepared_inputs,
     extract_container_feed_prepared_inputs, extract_container_point_prepared_inputs,
@@ -96,9 +96,9 @@ fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
         .get(driver_handle)
         .map(|entry| Arc::clone(&entry.driver))
         .ok_or_else(|| {
-            PyRuntimeError::new_err(format!(
-                "no driver registered for handle {driver_handle:?}; call acquire_driver_handle first"
-            ))
+            PyRuntimeError::new_err(
+                "no driver registered for handle; call acquire_driver_handle first",
+            )
         })
 }
 
@@ -256,4 +256,4 @@ mod tests {
 
 #[cfg(test)]
 mod legacy_partition_key;
-pub(crate) mod partition_key;
+pub(crate) mod partition_key_input;

@@ -35,9 +35,9 @@ from azure.cosmos import _base as base_helpers
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrategy
 from azure.cosmos._backend.errors import (
-    BackendProtocolError,
-    PageNotSupportedByBackendError,
-    QueryNotSupportedByBackendError,
+    BindingProtocolError,
+    PagePreflightError,
+    UnsupportedQueryError,
 )
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.contracts import BackendResponse, PreparedQuery, QueryPage
@@ -47,8 +47,8 @@ from azure.cosmos._backend.operations import (
 )
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
-from azure.cosmos._backend.rust import build_binding_request_from_page as _sync_binding_request_from_page
-from azure.cosmos.aio._backend.rust import (
+from azure.cosmos._backend.binding import build_binding_request_from_page as _sync_binding_request_from_page
+from azure.cosmos.aio._backend.binding import (
     build_binding_request_from_page as _async_binding_request_from_page,
 )
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -428,7 +428,7 @@ async def test_database_feed_hook_not_called_on_failed_page(listing_client, data
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("error_type", [ValueError, PageNotSupportedByBackendError, asyncio.CancelledError])
+@pytest.mark.parametrize("error_type", [ValueError, PagePreflightError, asyncio.CancelledError])
 async def test_database_feed_hook_errors_propagate_without_replay(listing_client, database_feed, error_type):
     """A failing hook is never treated as a reason to retry on the legacy path.
 
@@ -506,7 +506,7 @@ def test_list_databases_settings_are_keyword_only(listing_client, args):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("later_page", [False, True])
-@pytest.mark.parametrize("error_type", [PageNotSupportedByBackendError, QueryNotSupportedByBackendError])
+@pytest.mark.parametrize("error_type", [PagePreflightError, UnsupportedQueryError])
 async def test_database_feed_capability_errors_never_replay(
     listing_client, database_feed, later_page, error_type
 ):
@@ -1399,7 +1399,7 @@ async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_as
     if route != "legacy":
         conn._backend = backend
     if route == "capability-fallback":
-        backend.validate_page_request = MagicMock(side_effect=PageNotSupportedByBackendError("unsupported test shape"))
+        backend.validate_page_request = MagicMock(side_effect=PagePreflightError("unsupported test shape"))
     headers_spy = MagicMock(wraps=base_helpers.GetHeaders)
     monkeypatch.setattr(base_helpers, "GetHeaders", headers_spy)
     session_spy = AsyncMock() if is_async else MagicMock()
@@ -1755,12 +1755,11 @@ def test_async_query_backend_eligibility_honors_unsupported_request_options():
     )
 
 
-def test_sync_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
-    """Sync read_all_items eligibility gate. A plain document read-feed is eligible,
-    but unsupported options each fall back to legacy: a custom user agent header,
-    query metrics, ``availability_strategy``, ``read_timeout``, change-feed state,
-    a ``feed_range``, a specific partition-key-range id, query-plan calls, and
-    resources that are not documents.
+def test_sync_read_all_marks_unsupported_options_as_rust_ineligible():
+    """Check which sync read-all inputs the Rust eligibility function accepts.
+
+    A plain document read-feed is eligible; the listed unsupported options and
+    resource kinds are not. This tests selection, not execution of a fallback.
     """
     eligibility = can_use_rust_backend_for_read_all_items_page
 
@@ -1836,7 +1835,7 @@ def test_sync_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
     )
 
 
-def test_async_read_all_backend_eligibility_falls_back_for_unsupported_knobs():
+def test_async_read_all_marks_unsupported_options_as_rust_ineligible():
     """Async twin of the read_all_items eligibility gate."""
     eligibility = can_use_rust_backend_for_read_all_items_page
 
@@ -2475,7 +2474,7 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
         def execute_pages(self, prepared, *, deadline=None):
             if len(self.prepared) + 1 == fail_on_page:
                 self.prepared.append(prepared)
-                raise PageNotSupportedByBackendError("unsupported database page")
+                raise PagePreflightError("unsupported database page")
             yield from super().execute_pages(prepared)
 
     conn = _new_sync_connection()
@@ -2491,7 +2490,7 @@ def test_sync_list_databases_capability_error_never_replays_legacy(monkeypatch, 
     items = iter(client.list_databases(max_item_count=1))
     if fail_on_page == 2:
         assert next(items) == {"id": "db-1"}
-    with pytest.raises(PageNotSupportedByBackendError, match="unsupported database page"):
+    with pytest.raises(PagePreflightError, match="unsupported database page"):
         next(items)
     assert len(conn._backend.prepared) == fail_on_page
     if fail_on_page == 2:
@@ -2517,7 +2516,7 @@ def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch,
         async def execute_pages(self, prepared, *, deadline=None):
             if len(self.prepared) + 1 == fail_on_page:
                 self.prepared.append(prepared)
-                raise PageNotSupportedByBackendError("unsupported database page")
+                raise PagePreflightError("unsupported database page")
             async for page in super().execute_pages(prepared):
                 yield page
 
@@ -2535,7 +2534,7 @@ def test_async_list_databases_capability_error_never_replays_legacy(monkeypatch,
         items = client.list_databases(max_item_count=1).__aiter__()
         if fail_on_page == 2:
             assert await items.__anext__() == {"id": "db-1"}
-        with pytest.raises(PageNotSupportedByBackendError, match="unsupported database page"):
+        with pytest.raises(PagePreflightError, match="unsupported database page"):
             await items.__anext__()
         assert len(conn._backend.prepared) == fail_on_page
         if fail_on_page == 2:
@@ -2843,7 +2842,7 @@ def test_sync_driver_unsupported_query_never_replays():
 
         def execute_pages(self, prepared, *, deadline=None):
             del prepared
-            raise QueryNotSupportedByBackendError("unsupported query plan")
+            raise UnsupportedQueryError("unsupported query plan")
             yield  # pragma: no cover
 
     prepared = PreparedQuery(
@@ -2854,7 +2853,7 @@ def test_sync_driver_unsupported_query_never_replays():
 
     fallback_count_before = rust_compatibility_fallback_count()
     legacy = MagicMock(side_effect=AssertionError("legacy replay"))
-    with pytest.raises(QueryNotSupportedByBackendError, match="unsupported query plan"):
+    with pytest.raises(UnsupportedQueryError, match="unsupported query plan"):
         _UnsupportedBackend().run_page_operation(
             build_request=lambda: prepared,
             routing=OperationRouting(OP_QUERY_ITEMS),
@@ -2874,7 +2873,7 @@ def test_async_driver_unsupported_query_never_replays():
 
         async def execute_pages(self, prepared, *, deadline=None):
             del prepared
-            raise QueryNotSupportedByBackendError("unsupported query plan")
+            raise UnsupportedQueryError("unsupported query plan")
             yield  # pragma: no cover
 
     async def _run():
@@ -2891,7 +2890,7 @@ def test_async_driver_unsupported_query_never_replays():
 
         fallback_count_before = rust_compatibility_fallback_count()
         with pytest.raises(
-            QueryNotSupportedByBackendError, match="unsupported query plan"
+            UnsupportedQueryError, match="unsupported query plan"
         ):
             await _UnsupportedBackend().run_page_operation(
                 build_request=_prepare_request,
@@ -2983,7 +2982,7 @@ def test_sync_empty_page_iterator_is_not_replayed():
             return iter(())
 
     legacy_calls = []
-    with pytest.raises(BackendProtocolError, match="returned no page"):
+    with pytest.raises(BindingProtocolError, match="returned no page"):
         _EmptyBackend().run_page_operation(
             build_request=lambda: PreparedQuery(
                 op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c"
@@ -3015,7 +3014,7 @@ def test_async_empty_page_iterator_is_not_replayed():
         async def _run_legacy():
             legacy_calls.append(1)
 
-        with pytest.raises(BackendProtocolError, match="returned no page"):
+        with pytest.raises(BindingProtocolError, match="returned no page"):
             await _EmptyBackend().run_page_operation(
                 build_request=_prepare_request,
                 routing=OperationRouting(OP_QUERY_ITEMS, True),

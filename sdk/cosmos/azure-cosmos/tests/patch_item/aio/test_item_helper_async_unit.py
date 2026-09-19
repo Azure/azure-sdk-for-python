@@ -33,8 +33,8 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
-from azure.cosmos.aio._helpers.legacy_item_helper import AsyncLegacyItemHelper
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
+from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 
 
 _OPERATIONS = [
@@ -185,7 +185,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertNotIn("if-match", prepared.headers)
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_cache_miss_awaits_refresh_and_stamps_rid(self):
+    def test_async_cache_miss_awaits_refresh_and_adds_container_resource_id(self):
         """Async cache miss: ``_refresh_container_properties_cache`` is
         awaited and the refreshed rid is written into the options."""
         cc = MagicMock()

@@ -23,10 +23,13 @@
 from __future__ import annotations
 
 from typing import Any, Mapping, cast
+from copy import deepcopy
+from azure.core.utils import CaseInsensitiveDict
 
 from ._backend.constants import is_rust_backend
 from ._backend.contracts import PreparedRequest
 from ._constants import _Constants as Constants
+from ._cosmos_responses import CosmosDict, CosmosList
 from ._helpers._request_settings import overrides_driver_owned_header
 from ._helpers._request_offer import build_read_offer_request, build_replace_offer_request
 from ._helpers._response_parse import process_backend_response
@@ -70,7 +73,17 @@ def process_read_offer_response(backend_response: Any, *, client_connection: Any
         client_connection=client_connection,
         response_hook=None,
     )
-    return parse_read_offer_payload(cast(Mapping[str, Any], parsed))
+    return CosmosList(
+        parse_read_offer_payload(cast(Mapping[str, Any], parsed)),
+        response_headers=parsed.get_response_headers(),
+    )
+
+
+def offer_response_headers(result: Any, client_connection: Any) -> CaseInsensitiveDict:
+    """Use operation-owned headers; retain the legacy plain-list fallback."""
+    if isinstance(result, (CosmosDict, CosmosList)):
+        return deepcopy(result.get_response_headers())
+    return CaseInsensitiveDict(deepcopy(client_connection.last_response_headers))
 
 
 def parse_read_offer_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:

@@ -3,17 +3,10 @@
 # Phase C SCALE-OUT -- how far does the account scale PAST one process?
 #
 # WHAT IT DOES, AND WHY THIS SHAPE:
-#   run_throughput_sweep.sh finds each engine's SINGLE-process ceiling and knee
-#   concurrency C*. One Python process is GIL- and single-connection-pool-bound,
-#   so its ceiling is NOT the account's ceiling. This script pins concurrency at
-#   C* and fans OUT: for each process count N in a ladder it launches N copies of
-#   the workload IN PARALLEL, each writing its own rows, and scaleout_report.py
-#   SUMS their achieved req/s. The output is the aggregate throughput curve vs N
-#   and the scaling efficiency (how close to linear the account stays).
-#
-#   Each N-point runs ALONE (points are sequential): the N processes of one point
-#   are the only load on the box, so their summed req/s is a clean measurement and
-#   two points never contend. Within a point the N processes run concurrently.
+#   Hold per-process wave size fixed while changing the number of processes.
+#   Points are sequential; processes within a point run concurrently. Other host
+#   traffic is not controlled by this script. The report sums per-process average
+#   rates, which need aligned intervals before claiming exact account throughput.
 #
 # REPEATABILITY (why the rep loop and ABBA order):
 #   A single pass can be fooled by time drift (a quieter minute on Cosmos) or by
@@ -23,13 +16,9 @@
 #   than one backend is swept, the backend ORDER is flipped every other rep (ABBA:
 #   A B / B A / A B ...) so engine and running-order are decorrelated.
 #
-# RU BUDGET (accurate write scale-out):
-#   Writes cost ~10x a read in RU. To scale writes out without the account's RU
-#   ceiling (429s) masquerading as a scaling limit, raise scale_cont throughput
-#   for the write block and drop it back afterward:
-#     az cosmosdb sql container throughput update -g SDKDEV-DIKSHI-RG \
-#       -a sdkdev-dikshi -d scale_db -n scale_cont --throughput 1000000
-#   scaleout_report.py surfaces the 429 rate so an RU ceiling is visible, not silent.
+# RU BUDGET:
+#   Inspect actual returned charges and throttling before attributing low gains
+#   to the SDK. Capacity changes are an operator decision, not an automatic step.
 #
 # USAGE:
 #   source ./your-private-keys.sh      # exports COSMOS_KEY (+ RESULTS_COSMOS_KEY)
@@ -49,6 +38,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
+perf_single_operation_shape
+export WORKLOAD_ARRIVAL_RATE=0
 
 # Phase C scale-out uses the same canonical rig as the single-process Phase C run.
 # Keep caller override support (`SCALE_COSMOS_DATABASE` / `SCALE_COSMOS_CONTAINER`)
@@ -81,13 +72,25 @@ CONC="${SCALEOUT_CONCURRENCY:-256}"
 read -r -a N_LEVELS <<< "${SCALEOUT_N_LEVELS:-1 2 4 8 12 16}"
 read -r -a BACKENDS <<< "${SCALEOUT_BACKENDS:-rust}"
 REPEATS="${SCALEOUT_REPEATS:-1}"
+perf_require_positive "${DURATION_SECONDS}" "${REPEATS}" "${CONC}" "${N_LEVELS[@]}"
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
 STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/scaleout-${STAMP}"
-mkdir -p "${LOG_DIR}"
+perf_create_log_dir "${LOG_DIR}" || exit 2
 write_run_manifest "${LOG_DIR}" "${STAMP}" "C-scaleout-sweep"
+for (( rep=1; rep<=REPEATS; rep++ )); do
+  for op in "${OPERATIONS[@]}"; do
+    for bk in "${BACKENDS[@]}"; do
+      for n in "${N_LEVELS[@]}"; do
+        for (( i=1; i<=n; i++ )); do
+          printf 'scaleout-%s-%s-c%s-N%s-r%s-p%s-%s\n' "$op" "$bk" "$CONC" "$n" "$rep" "$i" "$STAMP"
+        done
+      done
+    done
+  done
+done >"${LOG_DIR}/expected-workloads.txt"
 
 # Rough peak process fan-out, for the reader's situational awareness.
 max_n=0; for n in "${N_LEVELS[@]}"; do (( n > max_n )) && max_n="${n}"; done
@@ -137,7 +140,7 @@ for (( rep=1; rep<=REPEATS; rep++ )); do
           rc=0
           wait "${pid}" || rc=$?
           case "${rc}" in
-            0|130) ;;   # 0 clean; 130 = SIGINT->KeyboardInterrupt, data OK
+            0) ;;
             *) echo "    !! pid=${pid} (op=${op} bk=${bk} N=${n}) exited rc=${rc}" >&2
                overall_rc=1 ;;
           esac
@@ -152,6 +155,8 @@ echo "=== Scale-out sweep complete. Raw rows in ${RESULTS_COSMOS_DATABASE}/${RES
 echo "    workload_id LIKE 'scaleout-%-${STAMP}'."
 echo
 echo "=== Running scale-out report (Phase C) ==="
+BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
+perf_check_run "${LOG_DIR}" "${STAMP}" "scaleout-" "${BACKEND_CSV}" || overall_rc=1
 if python3 scaleout_report.py --stamp "${STAMP}" --prefix "scaleout-"; then
   echo "=== scale-out backend check PASSED ==="
 else

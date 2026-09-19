@@ -125,6 +125,9 @@ check_value "COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS" "${COSMOS_USE_MULTIPLE_WRIT
 check_value "COSMOS_CLIENT_EXCLUDED_LOCATIONS" "${COSMOS_CLIENT_EXCLUDED_LOCATIONS:-}" "${EXPECT_CLIENT_EXCLUDED_LOCATIONS}"
 check_value "COSMOS_REQUEST_EXCLUDED_LOCATIONS" "${COSMOS_REQUEST_EXCLUDED_LOCATIONS:-}" "${EXPECT_REQUEST_EXCLUDED_LOCATIONS}"
 check_value "PERF_REPORT_INTERVAL"       "${PERF_REPORT_INTERVAL:-}"       "${EXPECT_REPORT_INTERVAL}"
+check_value "PERF_ENABLED" "${PERF_ENABLED:-true}" "true"
+check_value "WORKLOAD_SKIP_CLOSE" "${WORKLOAD_SKIP_CLOSE:-false}" "false"
+check_value "WORKLOAD_MIX" "${WORKLOAD_MIX:-}" ""
 
 echo
 echo "=== Where results are written ==="
@@ -137,6 +140,11 @@ echo "=== Credentials present ==="
 check_present "COSMOS_KEY"         "${COSMOS_KEY:-}"
 check_present "RESULTS_COSMOS_KEY" "${RESULTS_COSMOS_KEY:-}"
 
+if [[ ${failures} -ne 0 ]]; then
+  echo "ERROR: configuration mismatch; no live target will be contacted." >&2
+  exit 1
+fi
+
 echo
 echo "=== Live container configuration ==="
 python3 - "${EXPECT_PARTITION_KEY}" "${EXPECT_THROUGHPUT}" <<'PY'
@@ -146,7 +154,7 @@ import sys
 from azure.cosmos import CosmosClient
 
 expected_pk, expected_throughput = sys.argv[1], int(sys.argv[2])
-client = CosmosClient(os.environ["COSMOS_URI"], os.environ["COSMOS_KEY"])
+client = CosmosClient(os.environ["COSMOS_URI"], os.environ["COSMOS_KEY"], _backend="core-python")
 try:
     container = (
         client.get_database_client(os.environ["COSMOS_DATABASE"])

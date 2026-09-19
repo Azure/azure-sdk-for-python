@@ -37,6 +37,7 @@ to ``client_connection.last_response_headers``). Both branches --
 with and without that side effect -- are covered.
 """
 import json
+import threading
 import unittest
 from typing import Any, cast
 
@@ -45,6 +46,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._response_parse import process_backend_response
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos.exceptions import (
     CosmosHttpResponseError,
     CosmosResourceExistsError,
@@ -148,6 +150,44 @@ class TestSuccessWithBody(unittest.TestCase):
     def test_no_response_hook_supplied_does_not_raise(self):
         """The ``response_hook`` parameter is optional; omitting it must not raise."""
         process_backend_response(_make_response(status_code=201, body=b'{"id":"x"}'))
+
+    def test_concurrent_publication_and_hook_mutation_do_not_change_result_headers(self):
+        state = ClientLastResponseHeaders()
+        incoming = CaseInsensitiveDict({"etag": "first", "nested": {"value": "original"}})
+
+        def hook(headers, body):
+            worker = threading.Thread(
+                target=process_backend_response,
+                args=(_make_response(headers={"etag": "second"}),),
+                kwargs={"response_state": state},
+            )
+            worker.start()
+            worker.join(2)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(headers["etag"], "first")
+            headers["nested"]["value"] = "hook mutation"
+            headers["etag"] = "hook mutation"
+
+        result = process_backend_response(
+            BackendResponse(status_code=200, headers=incoming, body=b"{}"),
+            response_state=state,
+            response_hook=hook,
+        )
+        self.assertEqual(state.last_response_headers["etag"], "second")
+        self.assertEqual(result.get_response_headers()["etag"], "first")
+        self.assertEqual(result.get_response_headers()["nested"]["value"], "original")
+        self.assertEqual(incoming["nested"]["value"], "original")
+
+    def test_diagnostic_header_mutation_does_not_change_retained_result(self):
+        state = ClientLastResponseHeaders()
+        result = process_backend_response(
+            _make_response(headers={"etag": "first", "nested": {"value": "original"}}),
+            response_state=state,
+        )
+        state.last_response_headers["etag"] = "diagnostic mutation"
+        state.last_response_headers["nested"]["value"] = "diagnostic mutation"
+        self.assertEqual(result.get_response_headers()["etag"], "first")
+        self.assertEqual(result.get_response_headers()["nested"]["value"], "original")
 
     def test_backend_diagnostics_are_exposed_via_response_headers(self):
         """Diagnostics payload from backend is surfaced via response headers and hooks."""
@@ -423,26 +463,17 @@ class TestHeaderNormalization(unittest.TestCase):
         # Kept exactly as the request-byte string -- including any trailing zero.
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "2.50")
 
-    def test_case_insensitive_input_reused_in_place_not_recopied(self):
-        """Hot-path: an already-``CaseInsensitiveDict`` header map is reused
-        directly, not copied into a second dict.
-
-        The Rust backend always hands back a freshly-built
-        ``CaseInsensitiveDict`` belonging to a single-use
-        ``BackendResponse``, so the parser must not pay a second
-        per-response header construction on top of it. This is pinned via
-        ``last_response_headers`` -- the exact object the parser settled on
-        (``get_response_headers`` deliberately returns a *copy*). If a
-        future change re-introduces the defensive re-copy in
-        ``_take_response_headers``, this identity check fails.
-        """
+    def test_case_insensitive_input_is_not_shared_with_client_diagnostics(self):
+        """Client diagnostic mutations must not modify the binding's response."""
         incoming = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
         cc = _FakeClientConnection()
         process_backend_response(
             BackendResponse(status_code=201, headers=incoming, body=b"{}"),
             client_connection=cc,
         )
-        self.assertIs(cc.last_response_headers, incoming)
+        self.assertIsNot(cc.last_response_headers, incoming)
+        cc.last_response_headers["x-ms-request-charge"] = "99"
+        self.assertEqual(incoming["x-ms-request-charge"], "1.0")
 
     def test_numeric_charge_fix_does_not_leak_into_a_plain_mapping_caller(self):
         """When headers arrive as a non-``CaseInsensitiveDict`` mapping, the

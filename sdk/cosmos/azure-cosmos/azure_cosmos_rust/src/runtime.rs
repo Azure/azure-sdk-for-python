@@ -10,8 +10,8 @@
 //!
 //! Three "runtime"-ish things live here; keep them distinct:
 //!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the binding-owned
-//!     executor for driver work, distinct from Python's event loop and the
-//!     `pyo3-async-runtimes` bridge.
+//!     executor shared by driver work and the `pyo3-async-runtimes` bridge,
+//!     distinct from Python's event loop.
 //!   * driver runtime (`CosmosDriverRuntime`) -- the *factory* that builds rust
 //!     drivers and carries the process-wide connection-pool config. Also one per
 //!     process. It is built *on* the Tokio runtime.
@@ -27,27 +27,25 @@
 //! and reference-counts. Concurrent cache misses can build surplus drivers before
 //! one is selected for the cache. Runtime initialization errors are cached too.
 //!
-//! `acquire_driver_handle` returns the cache key. Its credential and config
-//! fingerprints are described below; the 64-bit hashes are not collision-free.
+//! `acquire_driver_handle` returns an opaque SHA-256 cache key. Identity uses the
+//! parsed endpoint, process-salted credentials, and typed configuration values.
 //! A balanced final release evicts the entry, but active operations can retain
 //! their own `Arc` references to the driver after eviction.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `documents/`): client = the `CosmosClient`; binding = this compiled `_rust`
+//! `ffi/`): client = the `CosmosClient`; binding = this compiled `_rust`
 //! extension; rust driver / driver runtime / shared Tokio runtime as above;
 //! driver handle = the cache key string; credential = how the customer proves who
 //! they are.
 
-use std::collections::hash_map::RandomState;
 use std::collections::HashMap;
-use std::hash::{BuildHasher, Hash, Hasher};
 use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 
 use parking_lot::RwLock;
 use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::PyStringMethods;
+use sha2::{Digest, Sha256};
 
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
@@ -74,7 +72,7 @@ use crate::credential::PyTokenCredential;
 /// Bundles the process-wide Tokio runtime, driver factory, and the runtime
 /// settings that later clients must match. Built once by `runtime_context`.
 pub(crate) struct RuntimeContext {
-    pub(crate) tokio_rt: TokioRuntime,
+    pub(crate) tokio_rt: &'static TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
     settings: RuntimeSettings,
 }
@@ -115,33 +113,37 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 // Cache key: (endpoint, credential, config)
 // ---------------------------------------------------------------------------
 //
-// * A master key becomes a randomized 64-bit hash, not plaintext in the handle.
-//   This is an internal cache fingerprint, not encryption or a collision-free
-//   identity. Handles should not be logged.
+// * Master keys use process-salted SHA-256. Handles remain private identifiers,
+//   not authorization tokens or a reason to log credential-derived values.
 // * A token credential is keyed by its Python object identity. The cache holds a
 //   reference to it, so its address can't be reused by another live credential while
 //   cached. The token value is never read.
-// * A config is keyed by the hash of its Python repr after lossy string conversion,
-//   not by a structural comparison of its fields.
-//
-// Tags (`mk:` / `tc:` / `cfg:`) distinguish fingerprint kinds, not hash collisions.
+// * Config identity includes the typed fields consumed here, never Python repr().
+static IDENTITY_SALT: OnceLock<Result<[u8; 32], String>> = OnceLock::new();
 
-// Reuse one RandomState so fingerprints stay stable within this process.
-static SALTED_HASHER: OnceLock<RandomState> = OnceLock::new();
-
-/// Randomized 64-bit cache fingerprint for a master key or config repr.
-fn salted_hash(value: &str) -> u64 {
-    let state = SALTED_HASHER.get_or_init(RandomState::new);
-    let mut hasher = state.build_hasher();
-    value.hash(&mut hasher);
-    hasher.finish()
+fn fingerprint(parts: &[&[u8]]) -> String {
+    let mut hash = Sha256::new();
+    for part in parts {
+        hash.update((part.len() as u64).to_be_bytes());
+        hash.update(part);
+    }
+    format!("{:x}", hash.finalize())
 }
 
-/// Fingerprint a master-key credential as an `mk:`-tagged salted hash so the
-/// plaintext key is not stored. The fingerprint is still part of the internal
-/// driver identity and should not be logged.
-fn master_key_fingerprint(master_key: &str) -> String {
-    format!("mk:{:016x}", salted_hash(master_key))
+fn master_key_fingerprint(master_key: &str) -> PyResult<String> {
+    let salt = IDENTITY_SALT
+        .get_or_init(|| {
+            let mut bytes = [0; 32];
+            getrandom::fill(&mut bytes)
+                .map_err(|error| format!("driver identity entropy failed: {error}"))?;
+            Ok(bytes)
+        })
+        .as_ref()
+        .map_err(|error| PyRuntimeError::new_err(error.clone()))?;
+    Ok(format!(
+        "mk:{}",
+        fingerprint(&[salt, master_key.as_bytes()])
+    ))
 }
 
 /// Fingerprint a token credential by its Python object identity, tagged `tc:`. The
@@ -150,33 +152,101 @@ fn token_credential_fingerprint(object_id: usize) -> String {
     format!("tc:{object_id:x}")
 }
 
-/// Fingerprint a config from its repr: a `cfg:`-tagged salted hash, or `cfg:none`
-/// when no config was given. Equal repr strings produce equal fingerprints.
-fn config_fingerprint_from_repr(repr: Option<&str>) -> String {
-    match repr {
-        Some(repr) => format!("cfg:{:016x}", salted_hash(repr)),
-        None => "cfg:none".to_string(),
-    }
+fn config_fingerprint_from_value(value: &serde_json::Value) -> String {
+    format!("cfg:{}", fingerprint(&[value.to_string().as_bytes()]))
 }
 
-/// Read the config's `repr()` (a Python object, so under the GIL) and hash it into a
-/// `cfg:` fingerprint. An absent config yields `cfg:none`.
+/// Explicit fields keep identity independent of object representation and field order.
 fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
-    match config {
-        None => Ok(config_fingerprint_from_repr(None)),
-        Some(cfg) => {
-            // Hash the lossy Rust string returned from the Python repr.
-            let repr = cfg.repr()?;
-            let repr_str = repr.to_string_lossy();
-            Ok(config_fingerprint_from_repr(Some(repr_str.as_ref())))
+    macro_rules! field {
+        ($name:literal, $kind:ty) => {
+            match config {
+                Some(config) => get_config_opt::<$kind>(config, $name)?,
+                None => None,
+            }
+        };
+    }
+    let finite = |value: Option<f64>, name: &str| -> PyResult<Option<f64>> {
+        if value.is_some_and(|value| !value.is_finite()) {
+            return Err(PyValueError::new_err(format!("{name} must be finite")));
+        }
+        Ok(value.map(|value| if value == 0.0 { 0.0 } else { value }))
+    };
+    let mut rules = Vec::new();
+    if let Some((config, items)) = config.zip(field!("fault_injection_rules", Vec<PyObject>)) {
+        let py = config.py();
+        for item in items {
+            let item = item.bind(py);
+            let probability: f32 = item.getattr("probability")?.extract()?;
+            if !probability.is_finite() {
+                return Err(PyValueError::new_err("fault probability must be finite"));
+            }
+            rules.push(serde_json::json!({
+                "id": item.getattr("id")?.extract::<String>()?,
+                "operation_type": item.getattr("operation_type")?.extract::<String>()?,
+                "status_code": item.getattr("status_code")?.extract::<u16>()?,
+                "sub_status": item.getattr("sub_status")?.extract::<u16>()?,
+                "container_id": item.getattr("container_id")?.extract::<Option<String>>()?,
+                "region": item.getattr("region")?.extract::<Option<String>>()?,
+                "delay_ms": item.getattr("delay_ms")?.extract::<u64>()?,
+                "probability": probability,
+                "hit_limit": item.getattr("hit_limit")?.extract::<Option<u32>>()?,
+                "enabled": item.getattr("enabled")?.extract::<bool>()?,
+            }));
         }
     }
+    let value = serde_json::json!({
+        "preferred_locations": field!("preferred_locations", Vec<String>).unwrap_or_default(),
+        "excluded_locations": field!("excluded_locations", Vec<String>).unwrap_or_default(),
+        "throttling_max_retry_count": field!("throttling_max_retry_count", u32),
+        "throttling_max_retry_wait_time_seconds": finite(field!("throttling_max_retry_wait_time_seconds", f64), "throttling_max_retry_wait_time_seconds")?,
+        "hedging_threshold_ms": field!("hedging_threshold_ms", u64),
+        "user_agent_suffix": field!("user_agent_suffix", String).filter(|value| !value.is_empty()),
+        "consistency_level": field!("consistency_level", String),
+        "proxy_allowed": field!("proxy_allowed", bool),
+        "connection_timeout_seconds": finite(field!("connection_timeout_seconds", f64), "connection_timeout_seconds")?,
+        "read_timeout_seconds": finite(field!("read_timeout_seconds", f64), "read_timeout_seconds")?,
+        "fault_injection_rules": rules,
+    });
+    Ok(config_fingerprint_from_value(&value))
 }
 
-/// Join the endpoint and tagged fingerprints with unit separators. Distinct
-/// credentials or configs can still have the same 64-bit fingerprint.
+/// Length-prefix each part and expose only the final opaque digest.
 fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> String {
-    format!("{endpoint}\u{1f}{credential_fp}\u{1f}{config_fp}")
+    format!(
+        "driver:{}",
+        fingerprint(&[
+            endpoint.as_bytes(),
+            credential_fp.as_bytes(),
+            config_fp.as_bytes()
+        ])
+    )
+}
+
+/// Compute the same identity used by acquisition, without starting the runtime,
+/// acquiring a driver reference, or calling a credential.
+#[pyfunction(name = "_driver_identity")]
+#[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
+pub(crate) fn driver_identity(
+    endpoint: &str,
+    master_key: Option<&str>,
+    config: Option<&Bound<'_, PyAny>>,
+    credential: Option<&Bound<'_, PyAny>>,
+) -> PyResult<String> {
+    validate_auth_inputs(master_key, credential)?;
+    let endpoint = Url::parse(endpoint)
+        .map_err(|error| PyValueError::new_err(format!("invalid endpoint URL: {error}")))?;
+    let credential_fp = match credential {
+        Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
+        None => master_key_fingerprint(
+            master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?,
+        )?,
+    };
+    Ok(compose_cache_key(
+        endpoint.as_str(),
+        &credential_fp,
+        &config_fingerprint(config)?,
+    ))
 }
 
 /// The driver runtime and its connection pool are process-global, so a later
@@ -255,10 +325,11 @@ fn runtime_context(
     py: Python<'_>,
     requested_settings: RuntimeSettings,
 ) -> PyResult<&'static RuntimeContext> {
-    let ctx_or_error = RUNTIME_CONTEXT.get_or_init(|| {
-        py.allow_threads(|| {
-            let tokio_rt =
-                TokioRuntime::new().map_err(|e| format!("failed to start tokio runtime: {e}"))?;
+    // Waiting for another initializer must also release the GIL; otherwise that
+    // initializer cannot reacquire it to finish while this thread waits on OnceLock.
+    let ctx_or_error = py.allow_threads(|| {
+        RUNTIME_CONTEXT.get_or_init(|| {
+            let tokio_rt = pyo3_async_runtimes::tokio::get_runtime();
             let mut runtime_builder = CosmosDriverRuntime::builder();
             if let Some(connection_pool) = connection_pool_from_settings(requested_settings)? {
                 runtime_builder = runtime_builder.with_connection_pool(connection_pool);
@@ -332,7 +403,7 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // acquire_driver_handle
 // ---------------------------------------------------------------------------
 //
-#[pyfunction]
+#[pyfunction(name = "_runtime_configuration")]
 pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Option<f64>)> {
     match RUNTIME_CONTEXT.get() {
         Some(Ok(ctx)) => Some((
@@ -377,19 +448,7 @@ pub(crate) fn acquire_driver_handle(
     let requested_settings = runtime_settings_from_config(config)?;
     let runtime_ctx = runtime_context(py, requested_settings)?;
 
-    // Include the credential fingerprint without embedding the master key or
-    // fetching a token. Auth input presence/exclusivity was validated above.
-    let credential_fp = match credential {
-        Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
-        None => {
-            let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
-            master_key_fingerprint(key)
-        }
-    };
-    // Fingerprint the config so it joins the key too. Read here under the GIL, since
-    // config is a Python object. An absent config maps to `cfg:none`.
-    let config_fp = config_fingerprint(config)?;
-    let driver_handle = compose_cache_key(endpoint, &credential_fp, &config_fp);
+    let driver_handle = driver_identity(endpoint, master_key, config, credential)?;
 
     // Fast path: reuse the matching cache entry and add one acquisition.
     // This changes the count, so it requires a write lock.
@@ -502,12 +561,14 @@ fn runtime_settings_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<R
     let Some(client_config) = config else {
         return Ok(RuntimeSettings::default());
     };
-    let read_timeout = timeout_from_config(client_config, "read_timeout_seconds")?;
+    // Compatibility mapping: the driver exposes complete HTTP-attempt caps,
+    // not the customer's socket-read inactivity timer (driver parity gap 17).
+    let http_attempt_cap = timeout_from_config(client_config, "read_timeout_seconds")?;
     Ok(RuntimeSettings {
         proxy_allowed: get_config_opt::<bool>(client_config, "proxy_allowed")?,
         max_connect_timeout: timeout_from_config(client_config, "connection_timeout_seconds")?,
-        max_dataplane_request_timeout: read_timeout,
-        max_metadata_request_timeout: read_timeout,
+        max_dataplane_request_timeout: http_attempt_cap,
+        max_metadata_request_timeout: http_attempt_cap,
     })
 }
 
@@ -813,7 +874,7 @@ pub(crate) fn release_driver_handle(driver_handle: &str) -> PyResult<()> {
 }
 
 #[pyfunction]
-pub(crate) fn fault_injection_rule_hit_count(driver_handle: &str, rule_id: &str) -> PyResult<u32> {
+pub(crate) fn _debug_fault_injection_rule_hit_count(driver_handle: &str, rule_id: &str) -> PyResult<u32> {
     let cache = drivers().read();
     let entry = cache
         .get(driver_handle)
@@ -827,7 +888,7 @@ pub(crate) fn fault_injection_rule_hit_count(driver_handle: &str, rule_id: &str)
 #[cfg(test)]
 mod tests {
     use super::{
-        apply_close, compose_cache_key, config_fingerprint_from_repr,
+        apply_close, compose_cache_key, config_fingerprint_from_value,
         connection_pool_from_settings, get_config_opt, master_key_fingerprint,
         operation_options_from_config, read_consistency_from_str, runtime_settings_conflict,
         runtime_settings_from_config, token_credential_fingerprint, validate_auth_inputs,
@@ -1176,15 +1237,15 @@ class Config:
     // ---- Cache-key / credential-fingerprint isolation -------------------------
     //
     // Exercise the endpoint/credential/config key helpers on selected inputs.
-    // Different sample hashes are not proof that 64-bit fingerprints cannot
-    // collide. These tests do not construct drivers or verify auth isolation.
+    // Different sample digests are not proof of collision impossibility.
+    // These tests do not construct drivers or verify service authentication.
 
     #[test]
     fn master_key_fingerprint_is_stable_for_equal_keys() {
         // Equal key strings produce the same fingerprint within this process.
         assert_eq!(
-            master_key_fingerprint("secret-key"),
-            master_key_fingerprint("secret-key")
+            master_key_fingerprint("secret-key").unwrap(),
+            master_key_fingerprint("secret-key").unwrap()
         );
     }
 
@@ -1192,8 +1253,8 @@ class Config:
     fn master_key_fingerprint_differs_for_different_keys() {
         // These two sample keys produce different fingerprints.
         assert_ne!(
-            master_key_fingerprint("key-a"),
-            master_key_fingerprint("key-b")
+            master_key_fingerprint("key-a").unwrap(),
+            master_key_fingerprint("key-b").unwrap()
         );
     }
 
@@ -1202,8 +1263,9 @@ class Config:
         // The sample key is not embedded verbatim. This is not a guarantee that
         // a credential-derived handle is safe to log.
         let key = "super-secret-master-key";
-        let fp = master_key_fingerprint(key);
+        let fp = master_key_fingerprint(key).unwrap();
         assert!(fp.starts_with("mk:"));
+        assert_eq!(fp.len(), 3 + 64);
         assert!(!fp.contains(key));
     }
 
@@ -1211,7 +1273,7 @@ class Config:
     fn master_key_and_token_fingerprints_never_collide() {
         // Distinct namespaces (mk: vs tc:) guarantee a master key and a token
         // credential can never produce the same fingerprint, even by chance.
-        let master = master_key_fingerprint("anything");
+        let master = master_key_fingerprint("anything").unwrap();
         let token = token_credential_fingerprint(0xDEAD_BEEF);
         assert!(master.starts_with("mk:"));
         assert!(token.starts_with("tc:"));
@@ -1234,23 +1296,15 @@ class Config:
 
     #[test]
     fn config_fingerprint_is_stable_and_distinguishes() {
-        // Check stability, separation of these two sample reprs, and the
-        // absent-config sentinel. This is not an exhaustive collision check.
-        let a = "PreparedClientConfig(preferred_locations=('West US',))";
-        let b = "PreparedClientConfig(preferred_locations=('East US',))";
+        let a = serde_json::json!({"preferred_locations": ["West US"]});
+        let b = serde_json::json!({"preferred_locations": ["East US"]});
         assert_eq!(
-            config_fingerprint_from_repr(Some(a)),
-            config_fingerprint_from_repr(Some(a))
+            config_fingerprint_from_value(&a),
+            config_fingerprint_from_value(&a)
         );
         assert_ne!(
-            config_fingerprint_from_repr(Some(a)),
-            config_fingerprint_from_repr(Some(b))
-        );
-        assert_eq!(config_fingerprint_from_repr(None), "cfg:none");
-        // A present config never collides with the no-config sentinel.
-        assert_ne!(
-            config_fingerprint_from_repr(Some(a)),
-            config_fingerprint_from_repr(None)
+            config_fingerprint_from_value(&a),
+            config_fingerprint_from_value(&b)
         );
     }
 
@@ -1258,7 +1312,7 @@ class Config:
     fn config_and_credential_fingerprints_never_collide() {
         // The cfg: namespace keeps a config fingerprint from ever matching a
         // credential one, so the three key parts stay independent.
-        let cfg = config_fingerprint_from_repr(Some("PreparedClientConfig()"));
+        let cfg = config_fingerprint_from_value(&serde_json::json!({}));
         assert!(cfg.starts_with("cfg:"));
         assert!(!cfg.starts_with("mk:"));
         assert!(!cfg.starts_with("tc:"));
@@ -1267,10 +1321,10 @@ class Config:
     #[test]
     fn cache_key_separates_endpoint_credential_and_config() {
         let endpoint = "https://acct.documents.azure.com";
-        let cred_a = master_key_fingerprint("key-a");
-        let cred_b = master_key_fingerprint("key-b");
-        let cfg_a = config_fingerprint_from_repr(Some("cfg-a"));
-        let cfg_b = config_fingerprint_from_repr(Some("cfg-b"));
+        let cred_a = master_key_fingerprint("key-a").unwrap();
+        let cred_b = master_key_fingerprint("key-b").unwrap();
+        let cfg_a = config_fingerprint_from_value(&serde_json::json!({"value": "a"}));
+        let cfg_b = config_fingerprint_from_value(&serde_json::json!({"value": "b"}));
 
         // Equal endpoint and fingerprint strings produce an equal cache key.
         assert_eq!(
@@ -1295,9 +1349,7 @@ class Config:
     }
 
     #[test]
-    fn cache_key_delimiter_prevents_aliasing() {
-        // These triples would alias under plain concatenation. Separators keep
-        // the sample strings distinct; they do not prevent upstream hash collisions.
+    fn cache_key_length_prefix_prevents_component_aliasing() {
         assert_ne!(
             compose_cache_key("ab", "c", "d"),
             compose_cache_key("a", "bc", "d")
@@ -1306,5 +1358,74 @@ class Config:
             compose_cache_key("a", "b", "cd"),
             compose_cache_key("a", "bc", "d")
         );
+        assert_ne!(
+            compose_cache_key("a\u{1f}b", "c", "d"),
+            compose_cache_key("a", "b\u{1f}c", "d")
+        );
+    }
+
+    #[test]
+    fn driver_identity_canonicalizes_endpoint_without_erasing_path_or_query() {
+        let base = super::driver_identity("https://acct.example", Some("key"), None, None).unwrap();
+        assert_eq!(base.len(), "driver:".len() + 64);
+        assert!(!base.contains("acct") && !base.contains("key"));
+        for endpoint in ["https://acct.example/", "https://ACCT.example:443"] {
+            assert_eq!(
+                base,
+                super::driver_identity(endpoint, Some("key"), None, None).unwrap()
+            );
+        }
+        for endpoint in [
+            "https://acct.example/path",
+            "https://acct.example?route=other",
+        ] {
+            assert_ne!(
+                base,
+                super::driver_identity(endpoint, Some("key"), None, None).unwrap()
+            );
+        }
+    }
+
+    #[test]
+    fn concurrent_runtime_initializers_release_the_python_lock_while_waiting() {
+        pyo3::prepare_freethreaded_python();
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(4));
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let mut workers = Vec::new();
+        for _ in 0..4 {
+            let barrier = barrier.clone();
+            let sender = sender.clone();
+            workers.push(std::thread::spawn(move || {
+                barrier.wait();
+                let address = Python::with_gil(|py| {
+                    super::runtime_context(py, RuntimeSettings::default())
+                        .unwrap()
+                        .tokio_rt as *const tokio::runtime::Runtime as usize
+                });
+                sender.send(address).unwrap();
+            }));
+        }
+        let first = receiver.recv_timeout(Duration::from_secs(5)).unwrap();
+        for _ in 1..4 {
+            assert_eq!(
+                first,
+                receiver.recv_timeout(Duration::from_secs(5)).unwrap()
+            );
+        }
+        for worker in workers {
+            worker.join().unwrap();
+        }
+    }
+
+    #[test]
+    fn driver_work_uses_the_async_bridge_executor() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let context = super::runtime_context(py, RuntimeSettings::default()).unwrap();
+            assert!(std::ptr::eq(
+                context.tokio_rt,
+                pyo3_async_runtimes::tokio::get_runtime()
+            ));
+        });
     }
 }

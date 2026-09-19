@@ -43,11 +43,6 @@ impl WireValue for i64 {
         self.to_string()
     }
 }
-impl WireValue for bool {
-    fn wire(self) -> String {
-        if self { "True" } else { "False" }.to_owned()
-    }
-}
 impl WireValue for Vec<String> {
     fn wire(self) -> String {
         self.join(",")
@@ -68,12 +63,20 @@ impl WireValue for IndexingValue {
     }
 }
 
+// Boolean casing is a per-header Cosmos contract, not a universal HTTP rule.
+// A bool without an explicit encoding fails to compile (no WireValue impl).
+macro_rules! header_text {
+    ($value:expr, lowercase) => { $value.to_string() };
+    ($value:expr, pascal_case) => { (if $value { "True" } else { "False" }).to_owned() };
+    ($value:expr) => { $value.wire() };
+}
+
 macro_rules! header_group {
-    ($reader:ident, $names:ident, {$($field:ident : $ty:ty => $wire:literal),* $(,)?}) => {
+    ($reader:ident, $names:ident, {$($field:ident : $ty:ty => $wire:literal $([$encoding:ident])?),* $(,)?}) => {
         const $names: &[&str] = &[$(stringify!($field)),*];
         fn $reader(obj: &Bound<'_, PyAny>, headers: &mut HashMap<HeaderName, HeaderValue>) -> PyResult<()> {
             $(if let Some(value) = optional::<$ty>(obj, stringify!($field))? {
-                headers.insert(HeaderName::from_static($wire), HeaderValue::from(value.wire()));
+                headers.insert(HeaderName::from_static($wire), HeaderValue::from(header_text!(value $(, $encoding)?)));
             })*
             Ok(())
         }
@@ -91,13 +94,13 @@ header_group!(item_headers, ITEM_FIELDS, {
 header_group!(query_headers, QUERY_FIELDS, {
     max_item_count: i64 => "x-ms-max-item-count",
     continuation: String => "x-ms-continuation",
-    is_query: bool => "x-ms-documentdb-isquery",
-    enable_cross_partition: bool => "x-ms-documentdb-query-enablecrosspartition",
-    enable_scan: bool => "x-ms-documentdb-query-enable-scan",
-    populate_index_metrics: bool => "x-ms-cosmos-populateindexmetrics",
-    populate_query_metrics: bool => "x-ms-documentdb-populatequerymetrics",
-    populate_query_advice: bool => "x-ms-cosmos-populatequeryadvice",
-    is_query_plan: bool => "x-ms-cosmos-is-query-plan-request",
+    is_query: bool => "x-ms-documentdb-isquery" [lowercase],
+    enable_cross_partition: bool => "x-ms-documentdb-query-enablecrosspartition" [pascal_case],
+    enable_scan: bool => "x-ms-documentdb-query-enable-scan" [pascal_case],
+    populate_index_metrics: bool => "x-ms-cosmos-populateindexmetrics" [pascal_case],
+    populate_query_metrics: bool => "x-ms-documentdb-populatequerymetrics" [pascal_case],
+    populate_query_advice: bool => "x-ms-cosmos-populatequeryadvice" [pascal_case],
+    is_query_plan: bool => "x-ms-cosmos-is-query-plan-request" [pascal_case],
     supported_features: String => "x-ms-cosmos-supported-query-features",
     version: String => "x-ms-cosmos-query-version",
     continuation_limit_kb: i64 => "x-ms-documentdb-responsecontinuationtokenlimitinkb",
@@ -108,11 +111,11 @@ header_group!(resource_headers, RESOURCE_FIELDS, {
     autoscale_settings: String => "x-ms-cosmos-offer-autopilot-settings",
     offer_type: String => "x-ms-offer-type",
     resource_token_expiry_seconds: i64 => "x-ms-documentdb-expiry-seconds",
-    enable_ru_per_minute: bool => "x-ms-offer-is-ru-per-minute-throughput-enabled",
-    disable_ru_per_minute: bool => "x-ms-documentdb-disable-ru-per-minute-usage",
-    enable_script_logging: bool => "x-ms-documentdb-script-enable-logging",
-    populate_partition_statistics: bool => "x-ms-documentdb-populatepartitionstatistics",
-    populate_quota_info: bool => "x-ms-documentdb-populatequotainfo",
+    enable_ru_per_minute: bool => "x-ms-offer-is-ru-per-minute-throughput-enabled" [pascal_case],
+    disable_ru_per_minute: bool => "x-ms-documentdb-disable-ru-per-minute-usage" [pascal_case],
+    enable_script_logging: bool => "x-ms-documentdb-script-enable-logging" [pascal_case],
+    populate_partition_statistics: bool => "x-ms-documentdb-populatepartitionstatistics" [pascal_case],
+    populate_quota_info: bool => "x-ms-documentdb-populatequotainfo" [pascal_case],
     content_type: String => "content-type",
 });
 
@@ -133,14 +136,14 @@ const CORE_FIELDS: &[&str] = &[
 ];
 
 #[pyfunction]
-pub(crate) fn request_settings_schema() -> HashMap<String, Vec<String>> {
+pub(crate) fn _request_settings_schema() -> HashMap<String, Vec<String>> {
     [
         ("RequestSettings", CORE_FIELDS),
         ("ItemSettings", ITEM_FIELDS),
         ("QuerySettings", QUERY_FIELDS),
         ("ResourceSettings", RESOURCE_FIELDS),
         ("HedgingSettings", &["enabled", "threshold_ms"][..]),
-        ("PartitionKeyInput", &["kind", "values"][..]),
+        ("BindingPartitionKey", &["kind", "values"][..]),
     ]
     .into_iter()
     .map(|(name, fields)| {
@@ -195,13 +198,6 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
     }
     item_headers(&settings.getattr("item")?, &mut custom_headers)?;
     query_headers(&settings.getattr("query")?, &mut custom_headers)?;
-    // The is-query marker has always used lowercase on compatibility query routes.
-    if let Some(is_query) = optional::<bool>(&settings.getattr("query")?, "is_query")? {
-        custom_headers.insert(
-            HeaderName::from_static("x-ms-documentdb-isquery"),
-            HeaderValue::from(is_query.to_string()),
-        );
-    }
     resource_headers(&settings.getattr("resource")?, &mut custom_headers)?;
     for (field, wire) in [
         ("priority", "x-ms-cosmos-priority-level"),
@@ -265,8 +261,8 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
             ContentResponseOnWrite::Enabled
         },
         excluded_regions_value: excluded.map(|regions| regions.into_iter().collect()),
-        end_to_end_timeout: timeout,
-        item_timeout: None,
+        driver_timeout_policy: timeout,
+        operation_timeout: None,
         availability_strategy,
         custom_headers,
     })
@@ -279,7 +275,7 @@ pub(crate) fn test_settings(py: Python<'_>) -> Bound<'_, PyAny> {
         .unwrap()
         .getattr("SimpleNamespace")
         .unwrap();
-    let groups = request_settings_schema();
+    let groups = _request_settings_schema();
     let root = PyDict::new_bound(py);
     for name in CORE_FIELDS {
         root.set_item(name, py.None()).unwrap();
@@ -315,6 +311,33 @@ mod tests {
             .unwrap()
             .call((), Some(&kwargs))
             .unwrap()
+    }
+
+    #[test]
+    fn boolean_header_casing_and_override_are_field_specific() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for value in [false, true] {
+                let request = prepared(py);
+                let query = request.getattr("settings").unwrap().getattr("query").unwrap();
+                query.setattr("is_query", value).unwrap();
+                query.setattr("enable_cross_partition", value).unwrap();
+                request.getattr("headers").unwrap().set_item("X-MS-DOCUMENTDB-ISQUERY", "caller").unwrap();
+                let result = extract_settings(&request).unwrap();
+                assert_eq!(
+                    result.custom_headers[&HeaderName::from_static("x-ms-documentdb-isquery")].as_str(),
+                    if value { "true" } else { "false" }
+                );
+                assert_eq!(
+                    result.custom_headers[&HeaderName::from_static("x-ms-documentdb-query-enablecrosspartition")].as_str(),
+                    if value { "True" } else { "False" }
+                );
+                assert_eq!(result.custom_headers.len(), 2);
+                query.setattr("is_query", 1).unwrap();
+                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+            }
+            assert!(extract_settings(&prepared(py)).unwrap().custom_headers.is_empty());
+        });
     }
 
     #[test]
@@ -377,7 +400,7 @@ mod tests {
             assert_eq!(result.activity_header.as_deref(), Some("activity"));
             assert_eq!(result.session_header.as_deref(), Some("token"));
             assert!(result.excluded_regions_value.is_some());
-            assert!(result.end_to_end_timeout.is_some());
+            assert!(result.driver_timeout_policy.is_some());
             assert_eq!(
                 result.content_response_on_write,
                 ContentResponseOnWrite::Disabled

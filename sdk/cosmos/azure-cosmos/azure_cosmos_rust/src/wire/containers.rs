@@ -182,13 +182,20 @@ pub(crate) fn run_list_containers_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_list_containers_future(driver, modifiers, database_id),
-        tuple_from_container_feed_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_list_containers_future(driver, modifiers, database_id),
+            )
+        },
+        |py, result| tuple_from_container_feed_result(py, result?),
     )
 }
 
@@ -199,13 +206,20 @@ pub(crate) fn run_list_containers_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_list_containers_future(driver, modifiers, database_id),
-        tuple_from_container_feed_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_list_containers_future(driver, modifiers, database_id),
+            )
+        },
+        |py, result| tuple_from_container_feed_result(py, result?),
     )
 }
 
@@ -217,13 +231,20 @@ pub(crate) fn run_query_containers_operation<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_query_containers_future(driver, modifiers, database_id, body_bytes),
-        tuple_from_query_containers_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_query_containers_future(driver, modifiers, database_id, body_bytes),
+            )
+        },
+        |py, result| tuple_from_query_containers_result(py, result?),
     )
 }
 
@@ -235,13 +256,20 @@ pub(crate) fn run_query_containers_operation_async<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = super::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_query_containers_future(driver, modifiers, database_id, body_bytes),
-        tuple_from_query_containers_result,
+        move |driver| {
+            super::deadline::with_page_timeout(
+                timeout,
+                run_query_containers_future(driver, modifiers, database_id, body_bytes),
+            )
+        },
+        |py, result| tuple_from_query_containers_result(py, result?),
     )
 }
 
@@ -260,7 +288,7 @@ fn prepare_container_operation(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
+        modifiers.driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.custom_headers,
     );
@@ -299,7 +327,7 @@ fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> Operati
     build_operation_options(
         None,
         modifiers.excluded_regions_value.clone(),
-        modifiers.end_to_end_timeout.clone(),
+        modifiers.driver_timeout_policy.clone(),
         modifiers.availability_strategy.clone(),
         Default::default(),
     )
@@ -332,7 +360,7 @@ async fn run_delete_container_future(
     container_id: String,
 ) -> Result<CosmosResponse, CosmosError> {
     let timeout = modifiers
-        .end_to_end_timeout
+        .driver_timeout_policy
         .as_ref()
         .map(|policy| policy.timeout());
     let resolution_options = container_resolution_options(&modifiers);
@@ -363,7 +391,7 @@ async fn run_replace_container_future(
     body_bytes: Vec<u8>,
 ) -> Result<CosmosResponse, CosmosError> {
     let timeout = modifiers
-        .end_to_end_timeout
+        .driver_timeout_policy
         .as_ref()
         .map(|policy| policy.timeout());
     let resolution_options = container_resolution_options(&modifiers);
@@ -433,8 +461,8 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            end_to_end_timeout: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2))),
-            item_timeout: None,
+            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2))),
+            operation_timeout: None,
             availability_strategy: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),

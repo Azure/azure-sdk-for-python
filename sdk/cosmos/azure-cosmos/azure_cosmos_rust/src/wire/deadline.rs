@@ -44,7 +44,7 @@ pub(super) fn with_timeout<T>(
     }
 }
 
-pub(super) fn with_item_timeout<T>(
+pub(super) fn with_operation_timeout<T>(
     timeout: Option<Duration>,
     operation: impl Future<Output = T>,
 ) -> impl Future<Output = PyResult<T>> {
@@ -55,6 +55,18 @@ pub(super) fn with_item_timeout<T>(
                 "Item operation timed out during metadata resolution or execution: {error}"
             ))
         })
+    }
+}
+
+pub(super) fn with_page_timeout<T>(
+    timeout: Option<Duration>,
+    operation: impl Future<Output = T>,
+) -> impl Future<Output = PyResult<T>> {
+    let timed = with_timeout(timeout, operation);
+    async move {
+        timed
+            .await
+            .map_err(|error| PyTimeoutError::new_err(format!("Page operation timed out: {error}")))
     }
 }
 
@@ -140,5 +152,20 @@ mod tests {
             parse_remaining_timeout(Some(0.125)).unwrap(),
             Some(Duration::from_millis(125))
         );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn page_deadline_returns_python_timeout_and_drops_pending_work() {
+        pyo3::prepare_freethreaded_python();
+        let dropped = Arc::new(AtomicBool::new(false));
+        let guard = Dropped(dropped.clone());
+        let error = with_page_timeout(Some(Duration::from_millis(5)), async move {
+            let _guard = guard;
+            std::future::pending::<()>().await;
+        })
+        .await
+        .unwrap_err();
+        assert!(dropped.load(Ordering::SeqCst));
+        pyo3::Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
     }
 }

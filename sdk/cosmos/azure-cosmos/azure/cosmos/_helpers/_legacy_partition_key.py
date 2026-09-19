@@ -21,7 +21,7 @@ Input value                                         On-wire header value
 ==================================================  =================================
 
 Legacy pipeline/parity oracle. Rust-bound preparation uses typed
-``PartitionKeyInput`` instead; this helper must not be used for native dispatch.
+``BindingPartitionKey`` instead; this helper must not be used for native dispatch.
 """
 from __future__ import annotations
 

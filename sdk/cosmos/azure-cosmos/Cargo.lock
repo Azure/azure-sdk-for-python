@@ -136,11 +136,13 @@ dependencies = [
  "async-trait",
  "azure_core",
  "azure_data_cosmos_driver",
+ "getrandom 0.3.4",
  "parking_lot",
  "pyo3",
  "pyo3-async-runtimes",
  "serde",
  "serde_json",
+ "sha2",
  "tokio",
  "url",
 ]

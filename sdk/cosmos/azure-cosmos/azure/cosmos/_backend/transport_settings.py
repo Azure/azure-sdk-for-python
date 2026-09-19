@@ -78,10 +78,8 @@ def reject_unsupported_transport_settings(
     def _fail(setting: str, detail: str) -> None:
         """Raise a customer-facing error for one unsupported setting."""
         raise ValueError(
-            "_backend='rust' cannot honor {setting}= yet: {detail}. The Rust "
-            "driver owns its own HTTP/TLS stack. Remove the setting (for proxy, "
-            "use proxy_allowed= with environment variables), or use the "
-            "core-python backend.".format(
+            "The Rust binding cannot honor {setting}= yet: {detail}. "
+            "This network/TLS configuration is not supported by this build.".format(
                 setting=setting, detail=detail
             )
         )

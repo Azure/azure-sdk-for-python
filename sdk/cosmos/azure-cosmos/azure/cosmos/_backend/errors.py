@@ -8,11 +8,11 @@
 These types separate the three ways a backend can decline to produce a normal
 reply, which would otherwise be indistinguishable to the caller:
 
-* :class:`PageNotSupportedByBackendError` can allow compatibility routing only
+* :class:`PagePreflightError` can allow compatibility routing only
   during static preflight, when the operation policy permits it.
-* :class:`QueryNotSupportedByBackendError` is a query-planning failure. Like
+* :class:`UnsupportedQueryError` is a query-planning failure. Like
   all execution failures, it propagates without legacy replay.
-* :class:`BackendProtocolError` means a backend broke its own reply-shape
+* :class:`BindingProtocolError` means a backend broke its own reply-shape
   contract. That is a bug on our side, so it is never retried and never falls
   back.
 * :func:`raise_account_read_unsupported` refuses a client-level call the Rust
@@ -26,7 +26,7 @@ from typing import Any
 from .constants import is_rust_backend
 
 
-class PageNotSupportedByBackendError(RuntimeError):
+class PagePreflightError(RuntimeError):
     """Raised before dispatch when a backend cannot execute a paged operation.
 
     Only a static preflight refusal is eligible for migration fallback.
@@ -34,11 +34,11 @@ class PageNotSupportedByBackendError(RuntimeError):
     """
 
 
-class QueryNotSupportedByBackendError(PageNotSupportedByBackendError):
+class UnsupportedQueryError(RuntimeError):
     """Raised when the selected backend cannot execute a planned query."""
 
 
-class BackendProtocolError(RuntimeError):
+class BindingProtocolError(RuntimeError):
     """Raised when a backend violates the reply-shape contract.
 
     A bug on our side, not a customer error, so it is never retried or fallen
@@ -70,7 +70,7 @@ def raise_account_read_unsupported(backend: Any) -> None:
     if not is_rust_backend(backend):
         return
     raise NotImplementedError(
-        "get_database_account() is not yet available on the Rust backend "
-        "(_backend='rust'). The rust driver reads account metadata internally for "
+        "get_database_account() is not yet available through the Rust binding. "
+        "The rust driver reads account metadata internally for "
         "routing but does not yet expose it across the binding."
     )

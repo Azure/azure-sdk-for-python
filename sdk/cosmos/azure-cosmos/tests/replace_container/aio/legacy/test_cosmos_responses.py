@@ -4,11 +4,14 @@
 
 import uuid
 
+import pytest
+
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from replace_container._legacy_setup import AsyncReplacementCase
 
 
+@pytest.mark.cosmosEmulator
 class TestCosmosResponsesAsync(AsyncReplacementCase):
     def _create_key_client(self):
         return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)

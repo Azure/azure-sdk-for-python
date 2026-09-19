@@ -15,6 +15,8 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey, http_constants
 
@@ -35,6 +37,7 @@ def request_raw_response_hook(response):
             == str(request_throughput_bucket_number))
 
 
+@pytest.mark.cosmosEmulator
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
@@ -68,4 +71,3 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             body={'id': '2' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-

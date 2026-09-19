@@ -25,8 +25,8 @@ import json
 import pytest
 
 from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
-from azure.cosmos._backend.partition_key import (
-    PartitionKeyInput,
+from azure.cosmos._backend.partition_key_input import (
+    BindingPartitionKey,
     UNDEFINED_PARTITION_KEY,
 )
 from azure.cosmos._backend.request_settings import RequestSettings
@@ -68,7 +68,7 @@ def test_point_and_feed_range_normalization_preserves_source(value, kind, values
     components becomes nothing. That is exactly what the old header rules did, so it is
     preserved rather than tidied up.
     """
-    assert normalize_partition_key(value) == PartitionKeyInput(kind, values)
+    assert normalize_partition_key(value) == BindingPartitionKey(kind, values)
 
 
 def test_query_components_do_not_erase_undefined():
@@ -299,7 +299,7 @@ def test_invalid_private_shapes_are_rejected(kind, values):
     re-checking it.
     """
     with pytest.raises((ValueError, TypeError)):
-        PartitionKeyInput(kind, values)
+        BindingPartitionKey(kind, values)
 
 
 @pytest.mark.parametrize(
@@ -332,7 +332,7 @@ def test_read_preparation_does_not_encode_or_decode_partition_json(
         container_rid=None,
         request_options={},
     )
-    assert prepared.partition_key == PartitionKeyInput("components", (expected,))
+    assert prepared.partition_key == BindingPartitionKey("components", (expected,))
     assert not hasattr(prepared, "partition_key_header")
 
 
@@ -346,7 +346,7 @@ def test_customer_header_is_decoded_only_at_the_external_input_boundary():
     An empty list here means search every partition, not a container without a key. That
     is the reading that matches what a caller writing the header by hand means by it.
     """
-    assert parse_customer_partition_key_header("[null,true,{}]") == PartitionKeyInput(
+    assert parse_customer_partition_key_header("[null,true,{}]") == BindingPartitionKey(
         "components", (None, True, UNDEFINED_PARTITION_KEY)
     )
     assert parse_customer_partition_key_header("[]").kind == "cross_partition"
@@ -358,10 +358,10 @@ def test_customer_header_is_decoded_only_at_the_external_input_boundary():
         (
             "docs",
             {"partitionKey": "explicit"},
-            PartitionKeyInput("components", ("explicit",)),
+            BindingPartitionKey("components", ("explicit",)),
         ),
-        ("dbs", {}, PartitionKeyInput("cross_partition")),
-        ("colls", {}, PartitionKeyInput("cross_partition")),
+        ("dbs", {}, BindingPartitionKey("cross_partition")),
+        ("colls", {}, BindingPartitionKey("cross_partition")),
     ],
 )
 def test_unused_raw_headers_are_not_parsed(resource, options, expected):
@@ -475,48 +475,49 @@ def test_prepared_records_require_typed_keys():
     could coexist and every reader would have to handle both, which is the situation this
     work set out to end.
     """
-    with pytest.raises(TypeError, match="PartitionKeyInput"):
+    with pytest.raises(TypeError, match="BindingPartitionKey"):
         PreparedRequest("read_item", "dbs/d/colls/c", b"", '["tenant"]')
-    with pytest.raises(TypeError, match="PartitionKeyInput"):
+    with pytest.raises(TypeError, match="BindingPartitionKey"):
         PreparedQuery("query_items", "dbs/d/colls/c", partition_key='["tenant"]')
 
 
 @pytest.mark.parametrize(
-    "op,payload",
+    "op,payload,error,message",
     [
         (
             "query_items",
             {"query": {"query": "SELECT * FROM c"}, "allow_cross_partition": True},
+            TypeError,
+            "typed query_scope",
         ),
-        ("query_items_change_feed", {"mode": "LatestVersion", "start": "Now"}),
+        (
+            "query_items_change_feed", {"mode": "LatestVersion", "start": "Now"},
+            ValueError, "Invalid retained feed request",
+        ),
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_retained_native_readers_reject_embedded_legacy_key_strings(
-    op, payload, async_mode
+def test_retained_native_readers_reject_old_body_scope_contract(
+    op, payload, error, message, async_mode
 ):
-    """A key hidden inside the request body is caught too, not just one in the usual place.
+    """Neither feed accepts the old body as a substitute for typed routing.
 
-    These two feed operations carry their details as a body rather than as named fields,
-    which leaves room for an old-style key to be tucked inside where the checks above
-    would never look. The Rust side rejects the whole thing.
-
-    Without this the body would be a way around every rule in this file: the record would
-    say no key while the body quietly supplied one, and which of the two won would depend
-    on what read it.
+    Retained SQL now requires query_scope outside its service body. Change feed
+    still decodes its mode/start body and rejects an embedded legacy key.
+    Both failures occur before driver lookup.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     request = PreparedRequest(
         op,
         "dbs/d/colls/c",
         json.dumps({**payload, "partition_key": '["tenant"]'}).encode(),
-        PartitionKeyInput("cross_partition"),
+        BindingPartitionKey("cross_partition"),
     )
     method = (
         native.fetch_page_with_cursor_async if async_mode else native.fetch_page_with_cursor
     )
-    with pytest.raises(ValueError, match="Invalid retained feed request"):
-        method("unused-handle", request, native.ItemFeedCursor())
+    with pytest.raises(error, match=message):
+        method("unused-handle", request, native._ItemFeedCursor())
 
 
 @pytest.mark.parametrize(

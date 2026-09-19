@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional
 
 from ..._constants import _Constants as Constants
 from ..._base import _build_properties_cache
-from ..._helpers.legacy_item_helper import (
+from ..._helpers._legacy_item_operations import (
     LegacyItemHelper, legacy_item_call, prepare_legacy_item_arguments,
     prepare_legacy_item_metadata, set_legacy_item_timeout, legacy_item_metadata_options,
 )

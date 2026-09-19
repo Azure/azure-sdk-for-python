@@ -70,7 +70,7 @@ from azure.cosmos._helpers._request_container import (
     is_create_container_rust_eligible,
     is_read_container_rust_eligible,
 )
-from azure.cosmos._helpers.container_helper import ContainerHelper
+from azure.cosmos._helpers._container_operations import ContainerHelper
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
@@ -79,7 +79,7 @@ from azure.cosmos._query_rust_routing import (
     can_use_rust_backend_for_list_containers_page,
     can_use_rust_backend_for_query_containers_page,
 )
-from azure.cosmos.aio._helpers.container_helper import AsyncContainerHelper
+from azure.cosmos.aio._helpers._container_operations import AsyncContainerHelper
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
@@ -1330,7 +1330,7 @@ def test_list_containers_sends_no_query_body():
     """A read feed has no SQL. The page adapter refuses a feed op that is not on its
     parameterless list, so leaving ``list_containers`` off it makes every
     ``list_containers`` call fail once it reaches the binding."""
-    from azure.cosmos._backend.rust import build_binding_request_from_page
+    from azure.cosmos._backend.binding import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_list_containers_prepared_query(
@@ -1346,7 +1346,7 @@ def test_list_containers_sends_no_query_body():
 
 def test_query_containers_sends_the_query_body():
     """The query payload must arrive as JSON in ``body_bytes``, not as a URL parameter."""
-    from azure.cosmos._backend.rust import build_binding_request_from_page
+    from azure.cosmos._backend.binding import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_query_containers_prepared_query(

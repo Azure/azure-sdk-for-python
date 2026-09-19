@@ -3,42 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Factory that picks which async backend a single async client will use.
+"""Select async implementations using the shared backend construction policy.
 
-The async counterpart of ``azure.cosmos._backend.factory``. Same terms:
-**client** = the ``CosmosClient`` the customer makes; **backend** =
-``core-python`` (original all-Python) or ``rust`` (hands work to a rust driver);
-**rust driver** = the driver the binding builds (connection pool, request
-signing, region routing), one per ``(endpoint, credential, config)`` and shared
-across same-settings clients; **binding** = the compiled ``azure.cosmos._rust``
-layer Python calls into.
-
-Same precedence and validation as the sync factory (constructor kwarg
-> ``COSMOS_BACKEND`` env var > default ``core-python``). The precedence
-and validation logic itself is in
-``azure.cosmos._backend.factory.resolve_backend_name`` so the sync and
-async factories cannot drift apart.
-
-When ``core-python`` is selected the factory returns the shared
-``AsyncLegacyBackend``. Every client therefore stores one concrete backend
-object regardless of which implementation was selected.
+``azure.cosmos._backend.factory._make_backend`` owns selection precedence,
+startup validation and credential cleanup. This module chooses only the async
+Rust backend type and the async legacy singleton.
 """
 from __future__ import annotations
 
 from typing import Any, Optional, Sequence
 
-from azure.cosmos._backend.client_config import build_client_config
-from azure.cosmos._backend.constants import BACKEND_NAME_RUST
-from azure.cosmos._backend.credentials import resolved_credential
-from azure.cosmos._backend.factory import (
-    resolve_backend_name,
-    resolve_strict_isolation,
-)
-from azure.cosmos._backend.transport_settings import reject_unsupported_transport_settings
+from azure.cosmos._backend.factory import _make_backend
 
 from .cosmos_backend import AsyncCosmosBackend
 from .legacy import ASYNC_LEGACY_BACKEND
-from .rust import AsyncRustBackend
+from .binding import AsyncRustBinding
 
 
 def make_async_backend(
@@ -65,61 +44,29 @@ def make_async_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> AsyncCosmosBackend:
-    """The one public entry point that builds the backend instance an async
-    ``CosmosClient`` will hold -- the async twin of :func:`make_backend`.
-
-    Returns an :class:`AsyncRustBackend` when Rust is selected, or the shared
-    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend` when
-    core-python is selected. If Rust: it requires the endpoint URL, rejects
-    unsupported transport settings, sorts the credential, folds the tuning into a
-    config, resolves the isolation switch, and hands back the backend. The keyword
-    settings are only consulted for the Rust branch, where they are folded into the
-    client config (via the shared :func:`build_client_config`) the backend carries
-    to the rust driver. ``strict_isolation`` (kwarg > the
-    ``COSMOS_RUST_STRICT_ISOLATION`` env var > off) controls whether a second
-    client to an account with a different config raises instead of silently getting
-    its own isolated rust driver. The transport/TLS settings the Rust path can't
-    honor yet are rejected here, exactly as in the sync factory; ``proxy_allowed``
-    is the Rust-path proxy switch carried into the driver runtime. All of this
-    reuses the sync factory's functions, so the sync and async paths cannot drift.
-    """
-    name = resolve_backend_name(explicit)
-    if name == BACKEND_NAME_RUST:
-        if not url:
-            raise ValueError(
-                "_backend='rust' requires the account endpoint URL."
-            )
-        reject_unsupported_transport_settings(
-            proxy_config=proxy_config,
-            proxies=proxies,
-            connection_verify=connection_verify,
-            connection_cert=connection_cert,
-            ssl_config=ssl_config,
-            transport=transport,
-        )
-        # Sort the credential inside the guard, exactly as the sync factory does:
-        # an async credential becomes a bridge holding a background thread, and
-        # everything below can still raise (config validation, process-wide policy
-        # conflicts, strict isolation), which would otherwise strand that thread
-        # with no owner left to close it.
-        with resolved_credential(credential) as (master_key, token_credential):
-            return AsyncRustBackend(
-                endpoint=url,
-                master_key=master_key,
-                token_credential=token_credential,
-                client_config=build_client_config(
-                    preferred_locations,
-                    excluded_locations=excluded_locations,
-                    throttling_max_retry_count=throttling_max_retry_count,
-                    throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
-                    availability_strategy=availability_strategy,
-                    user_agent_suffix=user_agent_suffix,
-                    consistency_level=consistency_level,
-                    proxy_allowed=proxy_allowed,
-                    connection_timeout_seconds=connection_timeout_seconds,
-                    read_timeout_seconds=read_timeout_seconds,
-                    fault_injection_rules=fault_injection_rules,
-                ),
-                strict_isolation=resolve_strict_isolation(strict_isolation),
-            )
-    return ASYNC_LEGACY_BACKEND
+    """Build an asynchronous backend using the shared selection and startup policy."""
+    return _make_backend(
+        explicit,
+        rust_backend_type=AsyncRustBinding,
+        legacy_backend=ASYNC_LEGACY_BACKEND,
+        url=url,
+        credential=credential,
+        preferred_locations=preferred_locations,
+        excluded_locations=excluded_locations,
+        throttling_max_retry_count=throttling_max_retry_count,
+        throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+        availability_strategy=availability_strategy,
+        user_agent_suffix=user_agent_suffix,
+        consistency_level=consistency_level,
+        proxy_allowed=proxy_allowed,
+        connection_timeout_seconds=connection_timeout_seconds,
+        read_timeout_seconds=read_timeout_seconds,
+        fault_injection_rules=fault_injection_rules,
+        strict_isolation=strict_isolation,
+        proxy_config=proxy_config,
+        proxies=proxies,
+        connection_verify=connection_verify,
+        connection_cert=connection_cert,
+        ssl_config=ssl_config,
+        transport=transport,
+    )

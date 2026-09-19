@@ -10,8 +10,8 @@ and each page is fetched through the compiled driver behind a fake binding.
 
 The recurring themes:
 
-* **Laziness and per-iterator state.** Building a pager, or calling
-  ``by_page`` on it, must allocate nothing. Two page iterators from the same
+* **Laziness and per-iterator state.** Building a pager snapshots its query
+  but does not acquire a driver or native cursor. Two page iterators from the same
   pager are independent and each gets its own cursor, released when it runs
   out.
 * **Continuation tokens are bound to a query.** A token records the endpoint,
@@ -43,8 +43,8 @@ import pytest
 from common.typed_requests import legacy_partition_key_from_request
 
 from azure.cosmos import _operation_deadline
-from azure.cosmos._backend import rust as sync_rust
-from azure.cosmos.aio._backend import rust as async_rust
+from azure.cosmos._backend import binding as sync_rust
+from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._helpers import _read_all_items
@@ -126,14 +126,14 @@ def query(request, monkeypatch):
 
     module = async_rust if async_mode else sync_rust
     binding = SimpleNamespace(
-        ItemFeedCursor=MagicMock(side_effect=cursor),
+        _ItemFeedCursor=MagicMock(side_effect=cursor),
         query_items=MagicMock(),
         query_items_async=AsyncMock(),
         fetch_page_with_cursor=MagicMock(side_effect=page),
         fetch_page_with_cursor_async=AsyncMock(side_effect=page),
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    cls = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
+    cls = async_rust.AsyncRustBinding if async_mode else sync_rust.RustBinding
     backend = cls("https://queries.invalid", master_key="ZmFrZQ==")
     monkeypatch.setattr(
         backend,
@@ -180,7 +180,7 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
 
     Two page iterators are taken from one pager. Before anything is iterated
     neither has a cursor, and neither the driver handle nor a cursor has been
-    created -- building a pager costs nothing.
+    created -- building a pager only prepares its Python-side query state.
 
     Taking a page from each creates exactly two cursors, one per iterator. If
     they shared one, two loops over the same pager would consume each other's
@@ -194,7 +194,7 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
     pager = query.proxy.query_items("SELECT * FROM c")
     first, second = pager.by_page(), pager.by_page()
     assert first.state.cursor is second.state.cursor is None
-    query.binding.ItemFeedCursor.assert_not_called()
+    query.binding._ItemFeedCursor.assert_not_called()
     query.backend._ensure_driver_handle.assert_not_called()
 
     query.next_page(first)
@@ -202,7 +202,7 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
     query.next_page(second)
     assert second.state.cursor is not cursor
     assert cursor is not None
-    assert query.binding.ItemFeedCursor.call_count == 2
+    assert query.binding._ItemFeedCursor.call_count == 2
     query.next_page(first)
     assert first.state.cursor is cursor
     assert query.calls[-1][1] is cursor
@@ -210,7 +210,7 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
         query.next_page(first)
     assert first.state.cursor is None
     assert second.state.cursor is not None
-    assert query.binding.ItemFeedCursor.call_count == 2
+    assert query.binding._ItemFeedCursor.call_count == 2
 
 
 @pytest.mark.parametrize("interval", [None, ("00", "FF")])
@@ -256,7 +256,7 @@ def test_typed_scope_keeps_the_previous_bookmark_identity(query, interval):
     ).hexdigest()
     assert config.identity == expected
     assert config.scope.feed_range == interval
-    query.binding.ItemFeedCursor.assert_not_called()
+    query.binding._ItemFeedCursor.assert_not_called()
 
 
 def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
@@ -273,7 +273,7 @@ def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
     """
     pager = query.proxy.query_items("SELECT VALUE c.value FROM c", max_item_count=1)
     assert query.calls == []
-    query.binding.ItemFeedCursor.assert_not_called()
+    query.binding._ItemFeedCursor.assert_not_called()
     assert query.collect(pager) == [
         {"id": "a", "nested": [1]},
         7,
@@ -411,6 +411,95 @@ def test_existing_query_bookmark_identity_is_unchanged(query, key, wire):
     assert config.identity == hashlib.sha256(original).hexdigest()
 
 
+@pytest.mark.parametrize(
+    "parameters",
+    [
+        None,
+        [],
+        [
+            {"name": "@p", "value": {
+                "nested": [None, True, False, -2, 0.125, 9007199254740993, "\u4e2d\U0001f600"],
+            }},
+            {"name": "@second", "value": "parameter order is preserved"},
+        ],
+    ],
+    ids=["omitted", "empty", "nested-values"],
+)
+def test_query_body_is_serialized_once_and_reused_without_freezing_page_settings(
+    query, monkeypatch, parameters
+):
+    """Cache only the immutable SQL body; continuation and timeout remain per-page."""
+    from copy import deepcopy
+
+    from azure.cosmos._backend import _binding_conversions
+    from azure.cosmos._helpers import _query_items
+
+    parameters = deepcopy(parameters)
+    serialize = MagicMock(wraps=_query_items.serialize_body_to_bytes)
+    monkeypatch.setattr(_query_items, "serialize_body_to_bytes", serialize)
+    page_serialize = MagicMock(side_effect=AssertionError("Query body was serialized again"))
+    monkeypatch.setattr(_binding_conversions, "json", SimpleNamespace(dumps=page_serialize))
+    sql = "SELECT VALUE @p"
+    expected: dict[str, object] = {"query": sql}
+    if parameters:
+        expected["parameters"] = deepcopy(parameters)
+    query.delay = 0.25
+    pager = query.proxy.query_items(
+        sql, parameters=parameters, max_item_count=2, timeout=10,
+        feed_range={"Range": {"min": "", "max": "AA"}},
+    )
+    serialize.assert_called_once_with(expected, allow_nan=False)
+    if parameters:
+        parameters[0]["value"]["nested"].append("changed after pager construction")
+    if parameters is not None:
+        parameters.append({"name": "@later", "value": "not part of this query"})
+    query.collect(pager)
+
+    assert len(query.calls) == 4
+    body = query.calls[0][0].body_bytes
+    assert json.loads(body) == expected
+    assert all(prepared.body_bytes is body for prepared, _, _ in query.calls)
+    assert all(prepared.query_scope.feed_range == ("", "AA") for prepared, _, _ in query.calls)
+    assert [
+        wire_headers(prepared).get("x-ms-continuation")
+        for prepared, _, _ in query.calls
+    ] == [None, "c1.1", "c1.2", "c1.3"]
+    assert all(prepared.settings.query.max_item_count == 2 for prepared, _, _ in query.calls)
+    # Fetching past an empty response shares one page budget; delivered pages reset it.
+    assert [timeout for _, _, timeout in query.calls] == [10, 10, 9.75, 10]
+    serialize.assert_called_once()
+    page_serialize.assert_not_called()
+
+
+@pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
+def test_native_query_accepts_service_body_and_requires_separate_scope(async_mode):
+    """Exercise the installed binding without acquiring a driver or sending a request."""
+    from dataclasses import replace
+
+    from azure.cosmos._backend.contracts import PreparedQuery, QueryScope
+
+    native = pytest.importorskip("azure.cosmos._rust")
+    cursor = native._ItemFeedCursor()
+    body = b'{"query":"SELECT VALUE @p","parameters":[{"name":"@p","value":1}]}'
+    prepared = PreparedQuery(
+        op="query_items", container_link="dbs/db/colls/c",
+        query="SELECT VALUE @p", parameters=({"name": "@p", "value": 1},),
+        query_body=body, cursor=cursor, query_scope=QueryScope(("", "AA")),
+    )
+    module = async_rust if async_mode else sync_rust
+    request = module.build_binding_request_from_page(prepared)
+    dispatch = native.fetch_page_with_cursor_async if async_mode else native.fetch_page_with_cursor
+    assert request.body_bytes is body
+    with pytest.raises(RuntimeError, match="no driver registered"):
+        dispatch("query-body-contract-unregistered", request, cursor)
+    with pytest.raises(TypeError, match="typed query_scope"):
+        dispatch("query-body-contract-unregistered", replace(request, query_scope=None), cursor)
+    with pytest.raises(TypeError, match="typed QueryScope"):
+        replace(request, query_scope={"feed_range": ["", "AA"]})
+    with pytest.raises(TypeError, match="immutable bytes"):
+        replace(prepared, query_body=bytearray(body))
+
+
 def test_query_body_scope_options_and_client_defaults_are_preserved(query):
     """A fully loaded query is snapshotted at the call and every option lands in the right place.
 
@@ -450,8 +539,9 @@ def test_query_body_scope_options_and_client_defaults_are_preserved(query):
     query.collect(pager)
     prepared = query.calls[0][0]
     body = json.loads(prepared.body_bytes)
-    assert body["query"]["parameters"] == [{"name": "@v", "value": [1, 2]}]
-    assert body["feed_range"] == ["", "AA"]
+    assert body["parameters"] == [{"name": "@v", "value": [1, 2]}]
+    assert "feed_range" not in body
+    assert prepared.query_scope.feed_range == ("", "AA")
     assert wire_headers(prepared)["x-custom-request"] == "before"
     assert wire_headers(prepared)["x-ms-documentdb-populatequerymetrics"] == "True"
     assert "x-ms-cosmos-populateindexmetrics" not in wire_headers(prepared)

@@ -19,9 +19,6 @@ Missing-extension errors are raised by the selected operation's lookup/preflight
 legacy migration routing, where allowed, is decided separately.
 """
 from __future__ import annotations
-from dataclasses import replace
-
-import json
 import logging
 from typing import TYPE_CHECKING, Any, Iterator, Optional
 
@@ -31,45 +28,40 @@ from ..exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import CosmosBackend
 from .operations import (
-    OP_LIST_CONTAINERS,
-    OP_LIST_DATABASES,
-    OP_READ_ALL_ITEMS,
-    OP_QUERY_CHANGE_FEED,
-    OP_QUERY_ITEMS,
     OP_TO_BINDING_METHOD,
     get_page_binding_method,
 )
-from .errors import BackendProtocolError, PageNotSupportedByBackendError, QueryNotSupportedByBackendError
+from .errors import BindingProtocolError, PagePreflightError
 from .contracts import BackendResponse, ContainerMetadata, PreparedClientConfig, PreparedQuery, PreparedRequest, QueryPage
-from ._binding_conversions import build_backend_response, build_container_metadata, metadata_exception_from_binding
+from ._binding_conversions import (
+    build_backend_response, build_binding_request_from_page,
+    build_container_metadata, metadata_exception_from_binding,
+    build_query_page, page_dispatch_arguments,
+)
 from ._shared import (
-    RustBackendShared,
+    RustBindingShared,
     _binding_error_type,
-    configure_packaged_query_plan_interop,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
+    page_dispatch_errors,
+    validate_page_request,
 )
 from .constants import BACKEND_NAME_RUST
 from .request_settings import native_settings_contract_error
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 _LOGGER = logging.getLogger(__name__)
-
-# Paged feeds that take no SQL, so their binding request carries an empty body.
-# Change feed carries mode/start/scope data; the remaining page operations carry SQL.
-_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 # Imported once when this module loads; not changed afterwards.
 _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
     _rust_module = _rust
-    configure_packaged_query_plan_interop(_rust_module)
 except ImportError:
     _LOGGER.debug(
-        "_rust module not available; RustBackend operations "
+        "_rust module not available; RustBinding operations "
         "will raise NotImplementedError until the Rust module is built."
     )
 
@@ -78,7 +70,7 @@ except ImportError:
 # raises this; we re-raise it as azure-core's ServiceResponseError (see
 # driver_transport_error_type).
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
-_DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "DriverResponseError")
+_DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 _native_runtime_module = _rust_module
 _REQUEST_CONTRACT_ERROR = native_settings_contract_error(_rust_module) if _rust_module is not None else None
@@ -103,52 +95,13 @@ def _get_page_dispatch(method: Optional[str]) -> Optional[Any]:
     return getattr(_rust_module, method, None)
 
 
-def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
-    """Adapt the page contract to the binding's current request object.
-
-    ``query_items`` and ``query_containers`` carry their SQL and parameters as a
-    JSON body; parameterless feeds send none, and change feed carries its
-    mode/start/scope mapping. Continuation and page size replace the corresponding
-    typed query settings and remove matching lowercase header keys when supplied.
-    """
-    if prepared.op == OP_QUERY_CHANGE_FEED:
-        body = json.dumps(prepared.change_feed, separators=(",", ":")).encode("utf-8")
-    elif prepared.op in _PARAMETERLESS_FEED_OPS:
-        body = b""
-    else:
-        if prepared.query is None:
-            raise ValueError("{} requires PreparedQuery.query.".format(prepared.op))
-        payload: dict[str, Any] = {"query": prepared.query}
-        if prepared.parameters:
-            payload["parameters"] = list(prepared.parameters)
-        if prepared.op == OP_QUERY_ITEMS and prepared.cursor is not None:
-            payload = {"query": payload, **(prepared.query_scope.as_dict() if prepared.query_scope is not None else {})}
-        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
-    headers = dict(prepared.headers)
-    query_settings = prepared.settings.query
-    if prepared.continuation is not None:
-        headers.pop("x-ms-continuation", None)
-        query_settings = replace(query_settings, continuation=prepared.continuation)
-    if prepared.max_item_count is not None:
-        headers.pop("x-ms-max-item-count", None)
-        query_settings = replace(query_settings, max_item_count=prepared.max_item_count)
-    return PreparedRequest(
-        op=prepared.op,
-        container_link=prepared.container_link,
-        body_bytes=body,
-        partition_key=prepared.partition_key,
-        headers=headers,
-        settings=replace(prepared.settings, query=query_settings),
-    )
-
-
 def _runtime_configuration() -> Optional[tuple[Optional[bool], Optional[float], Optional[float]]]:
     if _native_runtime_module is None:
         return None
-    return _native_runtime_module.runtime_configuration()
+    return _native_runtime_module._runtime_configuration()
 
 
-class RustBackend(RustBackendShared, CosmosBackend):
+class RustBinding(RustBindingShared, CosmosBackend):
     """Sends operations from one ``CosmosClient`` to a shared rust driver.
 
     The **driver handle** ``acquire_driver_handle`` returns is built on the first operation
@@ -160,9 +113,9 @@ class RustBackend(RustBackendShared, CosmosBackend):
     drops this client's reference. Active operations can keep the driver alive
     after the last client closes.
     Missing compiled exports fail at lookup or preflight. Page paths use
-    ``PageNotSupportedByBackendError`` rather than ``NotImplementedError``.
+    ``PagePreflightError`` rather than ``NotImplementedError``.
 
-    :class:`~azure.cosmos._backend._shared.RustBackendShared` stores common client
+    :class:`~azure.cosmos._backend._shared.RustBindingShared` stores common client
     state and registrations. This class builds the driver, sends synchronous
     operations, and releases this client's resources.
     """
@@ -180,7 +133,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         """Store client settings and register process-wide Rust configuration."""
         # The sync backend has no fields beyond the shared ones, so initialize shared
         # state directly. This also registers against the endpoint and, in strict
-        # isolation mode, may raise StrictDriverIsolationError for a config conflict.
+        # isolation mode, may raise _StrictDriverIsolationError for a config conflict.
         self._init_shared(
             endpoint, master_key, client_config, token_credential, strict_isolation
         )
@@ -204,7 +157,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             return driver_handle
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend: the compiled azure.cosmos._rust "
+                "RustBinding: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it with "
                 "`maturin develop` from the repo root."
             )
@@ -216,7 +169,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             # reference -- an operation on a closed client would appear to succeed.
             # The async backend refuses the same way.
             if self._closing:
-                raise RuntimeError("RustBackend: the client is closed.")
+                raise RuntimeError("RustBinding: the client is closed.")
             if self._driver_handle is None:
                 self._driver_handle = self._initialize_driver(_rust_module, _runtime_configuration)
             return self._driver_handle
@@ -242,7 +195,8 @@ class RustBackend(RustBackendShared, CosmosBackend):
         try:
             release_driver_handle(driver_handle)
         except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("RustBackend.close failed for handle=%s", driver_handle, exc_info=True)
+            # The exception can also contain the handle; do not log its text or traceback.
+            _LOGGER.debug("RustBinding.close failed while releasing native resources")
 
     def __del__(self) -> None:
         """Release resources if the client was not closed explicitly."""
@@ -260,7 +214,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             raise TypeError("execute requires a PreparedRequest")
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend.execute: the compiled "
+                "RustBinding.execute: the compiled "
                 "azure.cosmos._rust module is not present in "
                 "this environment. Build it with `maturin develop` from "
                 "the repo root."
@@ -271,7 +225,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         binding_function = _get_binding_function(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
-                "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
+                "RustBinding.execute does not yet support op={!r}.".format(prepared.op)
             )
         # Record the selected dispatch before calling it; this is not proof of
         # native execution or service I/O. Omit the credential-bearing handle.
@@ -299,17 +253,17 @@ class RustBackend(RustBackendShared, CosmosBackend):
         except _DRIVER_RESPONSE_ERROR as exc:
             raise metadata_exception_from_binding(exc) from exc
         if raw_response is None:
-            raise BackendProtocolError(f"The binding returned no response for {prepared.op!r}")
+            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         return build_backend_response(*raw_response)
 
-    def fault_injection_rule_hit_count(self, rule_id: str) -> int:
+    def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
         """Return how many Rust transport attempts applied one configured rule."""
         if _rust_module is None:
             raise NotImplementedError(
                 "Rust fault injection requires the compiled azure.cosmos._rust module."
             )
         return int(
-            _rust_module.fault_injection_rule_hit_count(
+            _rust_module._debug_fault_injection_rule_hit_count(
                 self._ensure_driver_handle(),
                 rule_id,
             )
@@ -321,7 +275,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         """Get routing facts from the driver's cache, fetching on a miss."""
         if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend.get_container_metadata: the compiled "
+                "RustBinding.get_container_metadata: the compiled "
                 "azure.cosmos._rust module is not present in this environment."
             )
         dispatch = getattr(_rust_module, "get_container_metadata", None)
@@ -354,7 +308,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
         )
         dispatch = _get_page_dispatch(method)
         if dispatch is None:
-            raise BackendProtocolError("Validated page dispatch is no longer available")
+            raise BindingProtocolError("Validated page dispatch is no longer available")
         driver_handle = self._ensure_driver_handle()
         binding_request = build_binding_request_from_page(prepared)
         _LOGGER.debug(
@@ -363,82 +317,24 @@ class RustBackend(RustBackendShared, CosmosBackend):
             prepared.op,
             method,
         )
-        try:
-            if prepared.cursor is not None:
-                result = dispatch(
-                    driver_handle,
-                    binding_request,
-                    prepared.cursor,
-                    timeout_seconds=remaining_timeout(deadline),
-                )
-            elif prepared.op == OP_LIST_DATABASES and deadline is not None:
-                result = dispatch(
-                    driver_handle, binding_request, timeout_seconds=remaining_timeout(deadline),
-                )
-            else:
-                result = dispatch(driver_handle, binding_request)
+        with page_dispatch_errors(deadline, _UNSUPPORTED_QUERY_ERROR, _DRIVER_TRANSPORT_ERROR):
+            args, kwargs = page_dispatch_arguments(driver_handle, binding_request, prepared, deadline)
+            result = dispatch(*args, **kwargs)
             response = build_backend_response(*result)
-        except TimeoutError as exc:
-            if deadline is None:
-                raise
-            raise CosmosClientTimeoutError(error=exc) from exc
-        except _UNSUPPORTED_QUERY_ERROR as exc:
-            raise QueryNotSupportedByBackendError(str(exc)) from exc
-        except _DRIVER_TRANSPORT_ERROR as exc:
-            raise ServiceResponseError(message=str(exc)) from exc
-        continuation = (
-            response.headers.get("x-ms-continuation") if response.headers else None
-        )
-        yield QueryPage(
-            status_code=response.status_code,
-            continuation=continuation,
-            sub_status=response.sub_status,
-            headers=response.headers,
-            body=response.body,
-            diagnostics=response.diagnostics,
-            has_more=(
-                prepared.cursor.has_more
-                if prepared.op == OP_QUERY_ITEMS and prepared.cursor is not None
-                else None
-            ),
-            continuation_supported=(
-                prepared.cursor.continuation_supported
-                if prepared.op == OP_QUERY_ITEMS and prepared.cursor is not None
-                else True
-            ),
-        )
+        yield build_query_page(prepared, response)
 
     def validate_page_request(self, prepared: PreparedQuery) -> None:
         """Check module/export availability without acquiring a driver."""
-        if _rust_module is None:
-            raise PageNotSupportedByBackendError(
-                "RustBackend.execute_pages: the compiled azure.cosmos._rust "
-                "module is not present in this environment. Build it with "
-                "`maturin develop` from the repo root."
-            )
-        uses_cursor = prepared.cursor is not None
-        method = get_page_binding_method(prepared.op, uses_cursor=uses_cursor)
-        dispatch = _get_page_dispatch(method)
-        if uses_cursor and method is not None and dispatch is None:
-            raise RuntimeError(
-                f"The compiled azure.cosmos._rust extension does not export {method}; "
-                "rebuild it from the current source."
-            )
-        if dispatch is None:
-            raise PageNotSupportedByBackendError(
-                "RustBackend.execute_pages does not yet support op={!r}.".format(
-                    prepared.op
-                )
-            )
+        validate_page_request(prepared, _rust_module, _get_page_dispatch, "RustBinding")
 
-    def create_item_feed_cursor(self) -> ItemFeedCursor:
+    def create_item_feed_cursor(self) -> _ItemFeedCursor:
         """Create pager-owned state without acquiring a driver."""
         if _rust_module is None:
-            raise PageNotSupportedByBackendError(
+            raise PagePreflightError(
                 "The compiled azure.cosmos._rust module is not present."
             )
-        if not hasattr(_rust_module, "ItemFeedCursor"):
+        if not hasattr(_rust_module, "_ItemFeedCursor"):
             raise RuntimeError(
-                "The compiled extension lacks ItemFeedCursor; rebuild it from the current source."
+                "The compiled extension lacks _ItemFeedCursor; rebuild it from the current source."
             )
-        return _rust_module.ItemFeedCursor()
+        return _rust_module._ItemFeedCursor()

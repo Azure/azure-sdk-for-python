@@ -93,7 +93,7 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
     cache-refresh read, and lock acquisition during cache populate.
     """
 
-    def test_cache_hit_path_still_stamps_rid_into_options(self):
+    def test_cached_container_resource_id_is_added_to_options(self):
         """Cache hit: the cached ``_rid`` ends up in the options dict sent to ``CreateItem``.
 
         The rid tells the service which container the caller believed it was

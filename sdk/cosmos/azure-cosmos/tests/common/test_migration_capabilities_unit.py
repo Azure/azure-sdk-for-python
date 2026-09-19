@@ -35,9 +35,9 @@ from azure.cosmos._backend.contracts import (
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._backend.errors import (
-    BackendProtocolError,
-    PageNotSupportedByBackendError,
-    QueryNotSupportedByBackendError,
+    BindingProtocolError,
+    PagePreflightError,
+    UnsupportedQueryError,
 )
 from azure.cosmos._backend.operations import (
     OP_TO_BINDING_METHOD,
@@ -206,8 +206,8 @@ def test_workflow_policy_cannot_authorize_an_unrelated_operation(dispatch):
     "error_type",
     [
         ValueError,
-        PageNotSupportedByBackendError,
-        QueryNotSupportedByBackendError,
+        PagePreflightError,
+        UnsupportedQueryError,
         TimeoutError,
         asyncio.CancelledError,
     ],
@@ -264,13 +264,13 @@ def test_only_static_preflight_can_fall_back(dispatch, op, allowed):
     fall back and does. The second is not, and raises instead, keeping the original
     error. In both cases nothing was sent and no reply was read.
     """
-    error = PageNotSupportedByBackendError("missing export")
+    error = PagePreflightError("missing export")
     dispatch.preflight_error = error
     if allowed:
         assert dispatch.run(op, paged=True) == "legacy"
         dispatch.legacy.assert_called_once()
     else:
-        with pytest.raises(PageNotSupportedByBackendError) as failure:
+        with pytest.raises(PagePreflightError) as failure:
             dispatch.run(op, paged=True)
         assert failure.value is error
         dispatch.legacy.assert_not_called()
@@ -290,7 +290,7 @@ def test_mismatched_prepared_operation_is_a_protocol_error(dispatch):
     writing.
     """
     dispatch.build.side_effect = lambda: SimpleNamespace(op="replace_offer")
-    with pytest.raises(BackendProtocolError, match="does not match"):
+    with pytest.raises(BindingProtocolError, match="does not match"):
         dispatch.run("read_offer")
     assert dispatch.executed == 0
     dispatch.legacy.assert_not_called()
@@ -307,11 +307,11 @@ def test_preflight_failure_cannot_switch_a_resumed_page(dispatch):
 
     So the refusal is raised, and the sequence ends where it stopped.
     """
-    dispatch.preflight_error = PageNotSupportedByBackendError("missing export")
+    dispatch.preflight_error = PagePreflightError("missing export")
     dispatch.build.side_effect = lambda: PreparedQuery(
         op="query_items", container_link="c", continuation="existing-bookmark"
     )
-    with pytest.raises(PageNotSupportedByBackendError):
+    with pytest.raises(PagePreflightError):
         dispatch.run("query_items", paged=True)
     dispatch.legacy.assert_not_called()
     assert dispatch.executed == 0
@@ -328,8 +328,8 @@ def test_planning_failures_are_not_static_preflight_refusals(dispatch):
     Treating the second as the first would turn any query the planner disliked into a
     silent switch of paths, with different behavior and no sign that it happened.
     """
-    dispatch.preflight_error = QueryNotSupportedByBackendError("unsupported plan")
-    with pytest.raises(QueryNotSupportedByBackendError):
+    dispatch.preflight_error = UnsupportedQueryError("unsupported plan")
+    with pytest.raises(UnsupportedQueryError):
         dispatch.run("query_items", paged=True)
     dispatch.legacy.assert_not_called()
 

@@ -157,7 +157,7 @@ def test_patch_preparation_accepts_if_match():
     valid for a patch and translate it into the internal ``accessCondition``
     shape that the prep then renders as ``If-Match``.
     """
-    from azure.cosmos._helpers.item_helper import normalize_item_arguments, validate_rust_item_options
+    from azure.cosmos._helpers._item_operations import normalize_item_arguments, validate_rust_item_options
 
     args, options = normalize_item_arguments("patch_item", {
         "container_link": "dbs/d/colls/c",
@@ -252,7 +252,7 @@ def test_compose_consumes_recognised_kwargs():
 # ---------------------------------------------------------------------------
 
 
-def test_request_options_set_disable_auto_id_and_no_metrics_knob():
+def test_request_options_disable_id_generation_and_omit_query_metrics():
     """``build_patch_item_request_options`` sets
     ``disableAutomaticIdGeneration`` (matching the legacy ``patch_item``) and
     -- unlike create / upsert -- never writes a ``populateQueryMetrics``

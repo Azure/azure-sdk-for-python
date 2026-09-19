@@ -24,8 +24,8 @@ from typing import TYPE_CHECKING, Awaitable, Any, AsyncIterator, Callable, Optio
 
 from azure.cosmos._backend.capabilities import OperationRouting
 from azure.cosmos._backend.errors import (
-    BackendProtocolError,
-    PageNotSupportedByBackendError,
+    BindingProtocolError,
+    PagePreflightError,
 )
 
 from azure.cosmos._backend.contracts import (
@@ -41,7 +41,7 @@ __all__ = ["AsyncCosmosBackend"]
 
 
 if TYPE_CHECKING:
-    from azure.cosmos._rust import ItemFeedCursor
+    from azure.cosmos._rust import _ItemFeedCursor
 
 
 class AsyncCosmosBackend(abc.ABC):
@@ -55,7 +55,7 @@ class AsyncCosmosBackend(abc.ABC):
     operations through :meth:`run_operation` or :meth:`run_page_operation`
     without knowing which concrete backend it has. Driver selection and legacy
     fallback happen behind this
-    interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
+    interface: a rust-backed client holds an :class:`AsyncRustBinding` and a
     core-python client holds an
     :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend`, and every
     coordinator treats both the same -- none of them branch on ``None``, on
@@ -121,14 +121,14 @@ class AsyncCosmosBackend(abc.ABC):
         """Apply migration policy before dispatch; never replay execution or parsing errors."""
         if routing.uses_legacy():
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
             return await legacy_call()
         prepared = build_request()
         if prepared.op != routing.op:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
         response = await self.execute(prepared, deadline=deadline)
@@ -146,27 +146,27 @@ class AsyncCosmosBackend(abc.ABC):
         """Apply migration policy before dispatch; never replay execution or parsing errors."""
         if routing.uses_legacy():
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
             return await legacy_call()
         prepared = build_request()
         if prepared.op != routing.op:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
         try:
             self.validate_page_request(prepared)
-        except PageNotSupportedByBackendError as error:
+        except PagePreflightError as error:
             if (
-                type(error) is not PageNotSupportedByBackendError
+                type(error) is not PagePreflightError
                 or not routing.policy.fallback_allowed
                 or prepared.continuation is not None
             ):
                 raise
             if legacy_call is None:
-                raise BackendProtocolError(
+                raise BindingProtocolError(
                     f"No legacy callable supplied for {routing.op!r}"
                 )
             record_rust_compatibility_fallback()
@@ -175,7 +175,7 @@ class AsyncCosmosBackend(abc.ABC):
         try:
             page = await pages.__anext__()
         except StopAsyncIteration as error:
-            raise BackendProtocolError(
+            raise BindingProtocolError(
                 f"{type(self).__name__} returned no page for {routing.op!r}"
             ) from error
         finally:
@@ -189,7 +189,7 @@ class AsyncCosmosBackend(abc.ABC):
     ) -> AsyncIterator[QueryPage]:
         """Return a paged query or read-feed result one ``QueryPage`` at a time.
 
-        The default here raises; ``AsyncRustBackend`` overrides it using the
+        The default here raises; ``AsyncRustBinding`` overrides it using the
         stateless or retained-cursor dispatch table. A
         backend that does not implement this -- ``AsyncLegacyBackend`` never
         reaches it, since :meth:`run_page_operation` invokes the legacy call
@@ -204,7 +204,7 @@ class AsyncCosmosBackend(abc.ABC):
     def validate_page_request(self, prepared: PreparedQuery) -> None:
         """Validate static page capability before execution; no I/O or driver acquisition."""
 
-    def create_item_feed_cursor(self) -> ItemFeedCursor:
+    def create_item_feed_cursor(self) -> _ItemFeedCursor:
         """Create local native cursor state, without acquiring a driver."""
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"
