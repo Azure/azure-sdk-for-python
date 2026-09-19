@@ -40,10 +40,10 @@ USAGE:
        conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
        holds one short realtime text turn to produce one; see
        voice_sample_util.py in this folder and
-       sample_voice_agent_live_text_conversation.py for a full interactive
+       sample_voice_agent_realtime_text_conversation.py for a full interactive
        version.
-    4) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name,
-       used only when creating the temporary agent. Defaults to "gpt-realtime".
+    4) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
+       identifier, used only when creating the temporary agent. Defaults to "gpt-realtime".
 """
 
 import os
@@ -67,7 +67,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME")
 conversation_id = os.environ.get("FOUNDRY_VOICE_CONVERSATION_ID")
-model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
+model = os.environ.get("FOUNDRY_VOICE_AGENT_MODEL") or "gpt-realtime"
 # Only create (and later clean up) a temporary agent when the caller didn't name their own --
 # creating a version on someone's existing agent could unexpectedly mutate it, and deleting that
 # version afterward could delete the agent entirely if it was the agent's only version.

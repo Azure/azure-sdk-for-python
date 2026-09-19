@@ -38,7 +38,7 @@ def hold_sample_conversation(
     samples can run without requiring a conversation id up front. The agent named ``agent_name``
     must already exist (see sample_voice_agent_basic.py) and be configured with ``store=True`` so
     its conversations are persisted. For a full interactive conversation and a fuller explanation
-    of the realtime event flow used here, see sample_voice_agent_live_text_conversation.py.
+    of the realtime event flow used here, see sample_voice_agent_realtime_text_conversation.py.
 
     :param project_client: The Foundry project client.
     :param agent_name: The name of an existing voice agent, configured with ``store=True``.
