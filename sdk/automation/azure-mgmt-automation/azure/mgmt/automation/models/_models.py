@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Activity(_Model):
+class Activity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the activity.
 
     :ivar id: Gets or sets the id of the resource.
@@ -83,7 +83,7 @@ class Activity(_Model):
             super().__setattr__(key, value)
 
 
-class ActivityOutputType(_Model):
+class ActivityOutputType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the activity output type.
 
     :ivar name: Gets or sets the name of the activity output type.
@@ -116,7 +116,7 @@ class ActivityOutputType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityParameter(_Model):
+class ActivityParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the activity parameter.
 
     :ivar name: Gets or sets the name of the activity parameter.
@@ -218,7 +218,7 @@ class ActivityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityParameterSet(_Model):
+class ActivityParameterSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the activity parameter set.
 
     :ivar name: Gets or sets the name of the activity parameter set.
@@ -253,7 +253,7 @@ class ActivityParameterSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityParameterValidationSet(_Model):
+class ActivityParameterValidationSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the activity parameter validation set.
 
     :ivar member_value: Gets or sets the name of the activity parameter validation set member.
@@ -283,7 +283,7 @@ class ActivityParameterValidationSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityProperties(_Model):
+class ActivityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the activity.
 
     :ivar definition: Gets or sets the user name of the activity.
@@ -344,7 +344,7 @@ class ActivityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedSchedule(_Model):
+class AdvancedSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create Advanced Schedule.
 
     :ivar week_days: Days of the week that the job should execute on.
@@ -389,7 +389,7 @@ class AdvancedSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedScheduleMonthlyOccurrence(_Model):
+class AdvancedScheduleMonthlyOccurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create advanced schedule monthly occurrence.
 
     :ivar occurrence: Occurrence of the week within the month. Must be between 1 and 5.
@@ -428,7 +428,7 @@ class AdvancedScheduleMonthlyOccurrence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentRegistration(_Model):
+class AgentRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the agent registration information type.
 
     :ivar dsc_meta_configuration: Gets or sets the dsc meta configuration.
@@ -475,7 +475,7 @@ class AgentRegistration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentRegistrationKeys(_Model):
+class AgentRegistrationKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the agent registration keys.
 
     :ivar primary: Gets or sets the primary key.
@@ -508,7 +508,7 @@ class AgentRegistrationKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentRegistrationRegenerateKeyParameter(_Model):
+class AgentRegistrationRegenerateKeyParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the regenerate keys operation.
 
     :ivar key_name: Gets or sets the agent registration key name - primary or secondary. Required.
@@ -568,7 +568,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -612,7 +612,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AutomationAccount(TrackedResource):
+class AutomationAccount(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the automation account type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -701,7 +701,9 @@ class AutomationAccount(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AutomationAccountCreateOrUpdateParameters(_Model):  # pylint: disable=name-too-long
+class AutomationAccountCreateOrUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update automation account operation.
 
     :ivar properties: Gets or sets account create or update properties.
@@ -771,7 +773,9 @@ class AutomationAccountCreateOrUpdateParameters(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class AutomationAccountCreateOrUpdateProperties(_Model):  # pylint: disable=name-too-long
+class AutomationAccountCreateOrUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update account properties.
 
     :ivar sku: Gets or sets account SKU.
@@ -822,7 +826,7 @@ class AutomationAccountCreateOrUpdateProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class AutomationAccountProperties(_Model):
+class AutomationAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the account property.
 
     :ivar sku: Gets or sets the SKU of account.
@@ -916,7 +920,7 @@ class AutomationAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationAccountUpdateParameters(_Model):
+class AutomationAccountUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update automation account operation.
 
     :ivar properties: Gets or sets account update properties.
@@ -986,7 +990,7 @@ class AutomationAccountUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class AutomationAccountUpdateProperties(_Model):
+class AutomationAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update account properties.
 
     :ivar sku: Gets or sets account SKU.
@@ -1037,7 +1041,7 @@ class AutomationAccountUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationErrorResponse(_Model):
+class AutomationErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response of an operation failure.
 
     :ivar code: Error code.
@@ -1070,7 +1074,7 @@ class AutomationErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureQueryProperties(_Model):
+class AzureQueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure query for the update configuration.
 
     :ivar scope: List of Subscription or Resource Group ARM Ids.
@@ -1127,7 +1131,7 @@ class ProxyResource(Resource):
     """
 
 
-class Certificate(ProxyResource):
+class Certificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the certificate.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1195,7 +1199,7 @@ class Certificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CertificateCreateOrUpdateParameters(_Model):
+class CertificateCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update or replace certificate operation.
 
     :ivar name: Gets or sets the name of the certificate. Required.
@@ -1250,7 +1254,7 @@ class CertificateCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CertificateCreateOrUpdateProperties(_Model):
+class CertificateCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create certificate operation.
 
     :ivar base64_value: Gets or sets the base64 encoded value of the certificate. Required.
@@ -1295,7 +1299,7 @@ class CertificateCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProperties(_Model):
+class CertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the certificate.
 
     :ivar thumbprint: Gets the thumbprint of the certificate.
@@ -1345,7 +1349,7 @@ class CertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateUpdateParameters(_Model):
+class CertificateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update certificate operation.
 
     :ivar name: Gets or sets the name of the certificate.
@@ -1400,7 +1404,7 @@ class CertificateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CertificateUpdateProperties(_Model):
+class CertificateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update certificate operation.
 
     :ivar description: Gets or sets the description of the certificate.
@@ -1428,7 +1432,7 @@ class CertificateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Connection(ProxyResource):
+class Connection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1495,7 +1499,7 @@ class Connection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConnectionCreateOrUpdateParameters(_Model):
+class ConnectionCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update connection operation.
 
     :ivar name: Gets or sets the name of the connection. Required.
@@ -1550,7 +1554,7 @@ class ConnectionCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ConnectionCreateOrUpdateProperties(_Model):
+class ConnectionCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create connection properties.
 
     :ivar description: Gets or sets the description of the connection.
@@ -1592,7 +1596,7 @@ class ConnectionCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionProperties(_Model):
+class ConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the connection properties.
 
     :ivar connection_type: Gets or sets the connectionType of the connection.
@@ -1641,7 +1645,7 @@ class ConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionType(ProxyResource):
+class ConnectionType(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the connection type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1702,7 +1706,7 @@ class ConnectionType(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConnectionTypeAssociationProperty(_Model):
+class ConnectionTypeAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connection type property associated with the entity.
 
     :ivar name: Gets or sets the name of the connection type.
@@ -1730,7 +1734,7 @@ class ConnectionTypeAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionTypeCreateOrUpdateParameters(_Model):
+class ConnectionTypeCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update connection type operation.
 
     :ivar name: Gets or sets the name of the connection type. Required.
@@ -1785,7 +1789,7 @@ class ConnectionTypeCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ConnectionTypeCreateOrUpdateProperties(_Model):
+class ConnectionTypeCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create connection type.
 
     :ivar is_global: Gets or sets a Boolean value to indicate if the connection type is global.
@@ -1820,7 +1824,7 @@ class ConnectionTypeCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionTypeProperties(_Model):
+class ConnectionTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the connection type.
 
     :ivar is_global: Gets or sets a Boolean value to indicate if the connection type is global.
@@ -1870,7 +1874,7 @@ class ConnectionTypeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionUpdateParameters(_Model):
+class ConnectionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update connection operation.
 
     :ivar name: Gets or sets the name of the connection.
@@ -1925,7 +1929,7 @@ class ConnectionUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ConnectionUpdateProperties(_Model):
+class ConnectionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update connection operation.
 
     :ivar description: Gets or sets the description of the connection.
@@ -1960,7 +1964,7 @@ class ConnectionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentHash(_Model):
+class ContentHash(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the runbook property type.
 
     :ivar algorithm: Gets or sets the content hash algorithm used to hash the content. Required.
@@ -1993,7 +1997,7 @@ class ContentHash(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentLink(_Model):
+class ContentLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the content link.
 
     :ivar uri: Gets or sets the uri of content.
@@ -2033,7 +2037,7 @@ class ContentLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentSource(_Model):
+class ContentSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the content source.
 
     :ivar hash: Gets or sets the hash.
@@ -2079,7 +2083,7 @@ class ContentSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Credential(ProxyResource):
+class Credential(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the credential.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2140,7 +2144,7 @@ class Credential(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CredentialCreateOrUpdateParameters(_Model):
+class CredentialCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update credential operation.
 
     :ivar name: Gets or sets the name of the credential. Required.
@@ -2195,7 +2199,7 @@ class CredentialCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CredentialCreateOrUpdateProperties(_Model):
+class CredentialCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create credential operation.
 
     :ivar user_name: Gets or sets the user name of the credential. Required.
@@ -2233,7 +2237,7 @@ class CredentialCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialProperties(_Model):
+class CredentialProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the credential properties.
 
     :ivar user_name: Gets the user name of the credential.
@@ -2275,7 +2279,7 @@ class CredentialProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialUpdateParameters(_Model):
+class CredentialUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the Update credential operation.
 
     :ivar name: Gets or sets the name of the credential.
@@ -2330,7 +2334,7 @@ class CredentialUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class CredentialUpdateProperties(_Model):
+class CredentialUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Update credential.
 
     :ivar user_name: Gets or sets the user name of the credential.
@@ -2368,7 +2372,7 @@ class CredentialUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedAutomationAccount(_Model):
+class DeletedAutomationAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the deleted automation account type.
 
     :ivar properties: Gets or sets the automation account properties.
@@ -2438,7 +2442,7 @@ class DeletedAutomationAccount(_Model):
             super().__setattr__(key, value)
 
 
-class DeletedAutomationAccountListResult(_Model):
+class DeletedAutomationAccountListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response model for the list deleted automation account.
 
     :ivar value: Gets or sets the list of deleted automation accounts.
@@ -2468,7 +2472,7 @@ class DeletedAutomationAccountListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedAutomationAccountProperties(_Model):
+class DeletedAutomationAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the deleted automation account properties.
 
     :ivar automation_account_resource_id: Gets or sets the Automation Account Resource Id.
@@ -2514,7 +2518,7 @@ class DeletedAutomationAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedRunbook(_Model):
+class DeletedRunbook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of deleted runbook.
 
     :ivar properties: Gets or sets the runbook properties.
@@ -2586,7 +2590,7 @@ class DeletedRunbook(_Model):
             super().__setattr__(key, value)
 
 
-class DeletedRunbookProperties(_Model):
+class DeletedRunbookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the deleted runbook property.
 
     :ivar runbook_id: Gets or sets the Runbook Id.
@@ -2647,7 +2651,7 @@ class DeletedRunbookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dimension of the metric.
 
     :ivar name: The name of the dimension.
@@ -2682,7 +2686,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscConfiguration(TrackedResource):
+class DscConfiguration(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the configuration type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2765,7 +2769,7 @@ class DscConfiguration(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DscConfigurationAssociationProperty(_Model):
+class DscConfigurationAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Dsc configuration property associated with the entity.
 
     :ivar name: Gets or sets the name of the Dsc configuration.
@@ -2793,7 +2797,7 @@ class DscConfigurationAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscConfigurationCreateOrUpdateParameters(_Model):
+class DscConfigurationCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update configuration operation.
 
     :ivar properties: Gets or sets configuration create or update properties. Required.
@@ -2858,7 +2862,7 @@ class DscConfigurationCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class DscConfigurationCreateOrUpdateProperties(_Model):
+class DscConfigurationCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties to create or update configuration.
 
     :ivar log_verbose: Gets or sets verbose log option.
@@ -2912,7 +2916,7 @@ class DscConfigurationCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscConfigurationParameter(_Model):
+class DscConfigurationParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the configuration parameter type.
 
     :ivar type: Gets or sets the type of the parameter.
@@ -2960,7 +2964,7 @@ class DscConfigurationParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscConfigurationProperties(_Model):
+class DscConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the configuration property type.
 
     :ivar provisioning_state: Gets or sets the provisioning state of the configuration. Default
@@ -3050,7 +3054,7 @@ class DscConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscConfigurationUpdateParameters(_Model):
+class DscConfigurationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update configuration operation.
 
     :ivar properties: Gets or sets configuration create or update properties.
@@ -3110,7 +3114,7 @@ class DscConfigurationUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class DscMetaConfiguration(_Model):
+class DscMetaConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the DSC Meta Configuration.
 
     :ivar configuration_mode_frequency_mins: Gets or sets the ConfigurationModeFrequencyMins value
@@ -3186,7 +3190,7 @@ class DscMetaConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscNode(ProxyResource):
+class DscNode(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of a DscNode.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3227,7 +3231,7 @@ class DscNode(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DscNodeConfiguration(ProxyResource):
+class DscNodeConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the dsc node configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3295,7 +3299,7 @@ class DscNodeConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DscNodeConfigurationAssociationProperty(_Model):
+class DscNodeConfigurationAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The dsc node configuration property associated with the entity.
 
     :ivar name: Gets or sets the name of the dsc node configuration.
@@ -3323,7 +3327,9 @@ class DscNodeConfigurationAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscNodeConfigurationCreateOrUpdateParameters(_Model):  # pylint: disable=name-too-long
+class DscNodeConfigurationCreateOrUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update node configuration operation.
 
     :ivar properties: Node configuration properties.
@@ -3384,7 +3390,9 @@ class DscNodeConfigurationCreateOrUpdateParameters(_Model):  # pylint: disable=n
             super().__setattr__(key, value)
 
 
-class DscNodeConfigurationCreateOrUpdateParametersProperties(_Model):  # pylint: disable=name-too-long
+class DscNodeConfigurationCreateOrUpdateParametersProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameter properties supplied to the create or update node configuration operation.
 
     :ivar source: Gets or sets the source. Required.
@@ -3427,7 +3435,7 @@ class DscNodeConfigurationCreateOrUpdateParametersProperties(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class DscNodeConfigurationProperties(_Model):
+class DscNodeConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for the DscNodeConfiguration.
 
     :ivar last_modified_time: Gets or sets the last modified time.
@@ -3489,7 +3497,9 @@ class DscNodeConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscNodeExtensionHandlerAssociationProperty(_Model):  # pylint: disable=name-too-long
+class DscNodeExtensionHandlerAssociationProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The dsc extensionHandler property associated with the node.
 
     :ivar name: Gets or sets the name of the extension handler.
@@ -3522,7 +3532,7 @@ class DscNodeExtensionHandlerAssociationProperty(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class DscNodeProperties(_Model):
+class DscNodeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a DscNode.
 
     :ivar last_seen: Gets or sets the last seen time of the node.
@@ -3627,7 +3637,7 @@ class DscNodeProperties(_Model):
             super().__setattr__(key, value)
 
 
-class DscNodeReport(_Model):
+class DscNodeReport(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the dsc node report type.
 
     :ivar end_time: Gets or sets the end time of the node report.
@@ -3772,7 +3782,7 @@ class DscNodeReport(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscNodeUpdateParameters(_Model):
+class DscNodeUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update dsc node operation.
 
     :ivar node_id: Gets or sets the id of the dsc node.
@@ -3806,7 +3816,7 @@ class DscNodeUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscNodeUpdateParametersProperties(_Model):
+class DscNodeUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DscNodeUpdateParametersProperties.
 
     :ivar node_configuration: Gets or sets the configuration of the node.
@@ -3857,7 +3867,7 @@ class DscNodeUpdateParametersProperties(_Model):
             super().__setattr__(key, value)
 
 
-class DscReportError(_Model):
+class DscReportError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the dsc node report error type.
 
     :ivar error_source: Gets or sets the source of the error.
@@ -3918,7 +3928,7 @@ class DscReportError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscReportResource(_Model):
+class DscReportResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the DSC Report Resource.
 
     :ivar resource_id: Gets or sets the ID of the resource.
@@ -4008,7 +4018,7 @@ class DscReportResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DscReportResourceNavigation(_Model):
+class DscReportResourceNavigation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Navigation for DSC Report Resource.
 
     :ivar resource_id: Gets or sets the ID of the resource to navigate to.
@@ -4038,7 +4048,7 @@ class DscReportResourceNavigation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProperties(_Model):
+class EncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The encryption settings for automation account.
 
     :ivar key_vault_properties: Key vault properties.
@@ -4083,7 +4093,7 @@ class EncryptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionPropertiesIdentity(_Model):
+class EncryptionPropertiesIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User identity used for CMK.
 
     :ivar user_assigned_identity: The user identity used for CMK. It will be an ARM resource id in
@@ -4160,7 +4170,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -4188,7 +4198,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FieldDefinition(_Model):
+class FieldDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the connection fields.
 
     :ivar is_encrypted: Gets or sets the isEncrypted flag of the connection field definition.
@@ -4230,7 +4240,7 @@ class FieldDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GraphicalRunbookContent(_Model):
+class GraphicalRunbookContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Graphical Runbook Content.
 
     :ivar raw_content: Raw graphical Runbook content.
@@ -4267,7 +4277,7 @@ class GraphicalRunbookContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridRunbookWorker(TrackedResource):
+class HybridRunbookWorker(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of hybrid runbook worker.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4341,7 +4351,9 @@ class HybridRunbookWorker(TrackedResource):
             super().__setattr__(key, value)
 
 
-class HybridRunbookWorkerCreateOrUpdateParameters(_Model):  # pylint: disable=name-too-long
+class HybridRunbookWorkerCreateOrUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update hybrid runbook worker operation.
 
     :ivar vm_resource_id: Azure Resource Manager Id for a virtual machine.
@@ -4371,7 +4383,7 @@ class HybridRunbookWorkerCreateOrUpdateParameters(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class HybridRunbookWorkerCreateParameters(_Model):
+class HybridRunbookWorkerCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create hybrid runbook worker operation.
 
     :ivar properties: Gets or sets hybrid runbook worker group create or update properties.
@@ -4425,7 +4437,7 @@ class HybridRunbookWorkerCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class HybridRunbookWorkerGroup(TrackedResource):
+class HybridRunbookWorkerGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of hybrid runbook worker group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4492,7 +4504,9 @@ class HybridRunbookWorkerGroup(TrackedResource):
             super().__setattr__(key, value)
 
 
-class HybridRunbookWorkerGroupCreateOrUpdateParameters(_Model):  # pylint: disable=name-too-long
+class HybridRunbookWorkerGroupCreateOrUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create hybrid runbook worker group operation.
 
     :ivar properties: Gets or sets hybrid runbook worker group create or update properties.
@@ -4548,7 +4562,9 @@ class HybridRunbookWorkerGroupCreateOrUpdateParameters(_Model):  # pylint: disab
             super().__setattr__(key, value)
 
 
-class HybridRunbookWorkerGroupCreateOrUpdateProperties(_Model):  # pylint: disable=name-too-long
+class HybridRunbookWorkerGroupCreateOrUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The hybrid runbook worker group properties.
 
     :ivar credential: Sets the credential of a worker group.
@@ -4578,7 +4594,7 @@ class HybridRunbookWorkerGroupCreateOrUpdateProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class HybridRunbookWorkerGroupProperties(_Model):
+class HybridRunbookWorkerGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of hybrid runbook worker group property.
 
     :ivar group_type: Type of the HybridWorkerGroup. Known values are: "User" and "System".
@@ -4615,7 +4631,7 @@ class HybridRunbookWorkerGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridRunbookWorkerMoveParameters(_Model):
+class HybridRunbookWorkerMoveParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to move hybrid worker operation.
 
     :ivar hybrid_runbook_worker_group_name: Gets or sets the target hybrid runbook worker group.
@@ -4645,7 +4661,7 @@ class HybridRunbookWorkerMoveParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridRunbookWorkerProperties(_Model):
+class HybridRunbookWorkerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of hybrid runbook worker property.
 
     :ivar ip: Gets or sets the assigned machine IP address.
@@ -4708,7 +4724,7 @@ class HybridRunbookWorkerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
@@ -4760,7 +4776,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4837,7 +4853,7 @@ class Job(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobCollectionItem(ProxyResource):
+class JobCollectionItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job collection item properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4910,7 +4926,7 @@ class JobCollectionItem(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobCollectionItemProperties(_Model):
+class JobCollectionItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job collection item properties.
 
     :ivar runbook: The runbook association.
@@ -4987,7 +5003,7 @@ class JobCollectionItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobCreateParameters(_Model):
+class JobCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create job operation.
 
     :ivar properties: Gets or sets the list of job properties. Required.
@@ -5035,7 +5051,7 @@ class JobCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class JobCreateProperties(_Model):
+class JobCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JobCreateProperties.
 
     :ivar runbook: Gets or sets the runbook.
@@ -5087,7 +5103,7 @@ class JobNavigation(_Model):
     """Id of the job associated with the software update configuration run."""
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of job properties.
 
     :ivar runbook: Gets or sets the runbook.
@@ -5211,7 +5227,7 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobRuntimeEnvironment(_Model):
+class JobRuntimeEnvironment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The runbook property associated with the entity.
 
     :ivar runtime_environment_name: Name of Runtime Environment.
@@ -5241,7 +5257,7 @@ class JobRuntimeEnvironment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobSchedule(ProxyResource):
+class JobSchedule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the job schedule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5302,7 +5318,7 @@ class JobSchedule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobScheduleCreateParameters(_Model):
+class JobScheduleCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create job schedule operation.
 
     :ivar properties: Gets or sets the list of job schedule properties. Required.
@@ -5352,7 +5368,7 @@ class JobScheduleCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class JobScheduleCreateProperties(_Model):
+class JobScheduleCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create job schedule operation.
 
     :ivar schedule: Gets or sets the schedule. Required.
@@ -5399,7 +5415,7 @@ class JobScheduleCreateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobScheduleProperties(_Model):
+class JobScheduleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of job schedule parameters.
 
     :ivar job_schedule_id: Gets or sets the id of job schedule.
@@ -5453,7 +5469,7 @@ class JobScheduleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStream(_Model):
+class JobStream(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the job stream.
 
     :ivar id: Gets or sets the id of the resource.
@@ -5508,7 +5524,7 @@ class JobStream(_Model):
             super().__setattr__(key, value)
 
 
-class JobStreamProperties(_Model):
+class JobStreamProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the job stream.
 
     :ivar job_stream_id: Gets or sets the id of the job stream.
@@ -5592,7 +5608,7 @@ class Key(_Model):
     """Value of the Automation Key used for registration."""
 
 
-class KeyListResult(_Model):
+class KeyListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyListResult.
 
     :ivar keys_property: Lists the automation keys.
@@ -5622,7 +5638,7 @@ class KeyListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings concerning key vault encryption for a configuration store.
 
     :ivar keyvault_uri: The URI of the key vault key used to encrypt data.
@@ -5675,7 +5691,7 @@ class LinkedWorkspace(_Model):
     """Gets the id of the linked workspace."""
 
 
-class LinuxProperties(_Model):
+class LinuxProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Linux specific update configuration.
 
     :ivar included_package_classifications: Update classifications included in the software update
@@ -5729,7 +5745,7 @@ class LinuxProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of logging specification.
 
     :ivar name: The name of the specification.
@@ -5771,7 +5787,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of metrics specification.
 
     :ivar name: The name of the metric.
@@ -5832,7 +5848,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Module(TrackedResource):
+class Module(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the module type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5916,7 +5932,7 @@ class Module(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ModuleCreateOrUpdateParameters(_Model):
+class ModuleCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update module operation.
 
     :ivar properties: Gets or sets the module create properties. Required.
@@ -5981,7 +5997,7 @@ class ModuleCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ModuleCreateOrUpdateProperties(_Model):
+class ModuleCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update module properties.
 
     :ivar content_link: Gets or sets the module content link. Required.
@@ -6011,7 +6027,7 @@ class ModuleCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModuleErrorInfo(_Model):
+class ModuleErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the module error info type.
 
     :ivar code: Gets or sets the error code.
@@ -6044,7 +6060,7 @@ class ModuleErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModuleProperties(_Model):
+class ModuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the module property type.
 
     :ivar is_global: Gets or sets the isGlobal flag of the module.
@@ -6144,7 +6160,7 @@ class ModuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModuleUpdateParameters(_Model):
+class ModuleUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update module operation.
 
     :ivar properties: Gets or sets the module update properties.
@@ -6207,7 +6223,7 @@ class ModuleUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ModuleUpdateProperties(_Model):
+class ModuleUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update properties.
 
     :ivar content_link: Gets or sets the module content link.
@@ -6237,7 +6253,7 @@ class ModuleUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeCount(_Model):
+class NodeCount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Number of nodes based on the Filter.
 
     :ivar name: Gets the name of a count type.
@@ -6271,7 +6287,7 @@ class NodeCount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeCountProperties(_Model):
+class NodeCountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NodeCountProperties.
 
     :ivar count: Gets the count for the name.
@@ -6299,7 +6315,7 @@ class NodeCountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeCounts(_Model):
+class NodeCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets the count of nodes by count type.
 
     :ivar value: Gets an array of counts.
@@ -6334,7 +6350,7 @@ class NodeCounts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NonAzureQueryProperties(_Model):
+class NonAzureQueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Non Azure query for the update configuration.
 
     :ivar function_alias: Log Analytics Saved Search name.
@@ -6371,7 +6387,7 @@ class NonAzureQueryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automation REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -6438,7 +6454,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider, Resource and Operation values.
 
     :ivar provider: Service provider: Microsoft.Automation.
@@ -6481,7 +6497,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationPropertiesFormat(_Model):
+class OperationPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of operation properties format.
 
     :ivar service_specification: Specification of the service.
@@ -6512,7 +6528,9 @@ class OperationPropertiesFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationPropertiesFormatServiceSpecification(_Model):  # pylint: disable=name-too-long
+class OperationPropertiesFormatServiceSpecification(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Specification of the service.
 
     :ivar metric_specifications: Operation service specification.
@@ -6549,7 +6567,7 @@ class OperationPropertiesFormatServiceSpecification(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class Package(TrackedResource):
+class Package(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the Package type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6616,7 +6634,7 @@ class Package(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PackageCreateOrUpdateParameters(_Model):
+class PackageCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update package operation.
 
     :ivar properties: Gets or sets the package create properties. Required.
@@ -6675,7 +6693,7 @@ class PackageCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PackageCreateOrUpdateProperties(_Model):
+class PackageCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update package properties.
 
     :ivar content_link: Gets or sets the package content link. Required.
@@ -6705,7 +6723,7 @@ class PackageCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PackageErrorInfo(_Model):
+class PackageErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the package error info type.
 
     :ivar code: Package import error code.
@@ -6738,7 +6756,7 @@ class PackageErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PackageProperties(_Model):
+class PackageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the package property type.
 
     :ivar default: Gets or sets the isGlobal flag of the package.
@@ -6811,7 +6829,7 @@ class PackageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PackageUpdateParameters(_Model):
+class PackageUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update package operation.
 
     :ivar properties: Gets or sets the package update properties.
@@ -6870,7 +6888,7 @@ class PackageUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PackageUpdateProperties(_Model):
+class PackageUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update properties.
 
     :ivar content_link: Gets or sets the package content link.
@@ -6900,7 +6918,7 @@ class PackageUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6961,7 +6979,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
@@ -7007,7 +7025,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointProperty(_Model):
+class PrivateEndpointProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint which the connection belongs to.
 
     :ivar id: Resource id of the private endpoint.
@@ -7035,7 +7053,7 @@ class PrivateEndpointProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7111,7 +7129,9 @@ class PrivateLinkResourceProperties(_Model):
     """The private link resource required member names."""
 
 
-class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name-too-long
+class PrivateLinkServiceConnectionStateProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Connection State of the Private Endpoint Connection.
 
     :ivar status: The private link service connection status.
@@ -7149,7 +7169,7 @@ class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class PythonPackageCreateParameters(_Model):
+class PythonPackageCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update module operation.
 
     :ivar properties: Gets or sets the module create properties. Required.
@@ -7204,7 +7224,7 @@ class PythonPackageCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PythonPackageCreateProperties(_Model):
+class PythonPackageCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update module properties.
 
     :ivar content_link: Gets or sets the module content link. Required.
@@ -7234,7 +7254,7 @@ class PythonPackageCreateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PythonPackageUpdateParameters(_Model):
+class PythonPackageUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update module operation.
 
     :ivar tags: Gets or sets the tags attached to the resource.
@@ -7262,7 +7282,7 @@ class PythonPackageUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RawGraphicalRunbookContent(_Model):
+class RawGraphicalRunbookContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Raw Graphical Runbook content.
 
     :ivar schema_version: Schema version of the serializer.
@@ -7307,7 +7327,7 @@ class RawGraphicalRunbookContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunAsCredentialAssociationProperty(_Model):
+class RunAsCredentialAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of RunAs credential to use for hybrid worker.
 
     :ivar name: Gets or sets the name of the credential.
@@ -7335,7 +7355,7 @@ class RunAsCredentialAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Runbook(TrackedResource):
+class Runbook(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the runbook type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7424,7 +7444,7 @@ class Runbook(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RunbookAssociationProperty(_Model):
+class RunbookAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The runbook property associated with the entity.
 
     :ivar name: Gets or sets the name of the runbook.
@@ -7452,7 +7472,7 @@ class RunbookAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookCreateOrUpdateParameters(_Model):
+class RunbookCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update runbook operation.
 
     :ivar properties: Gets or sets runbook create or update properties. Required.
@@ -7526,7 +7546,7 @@ class RunbookCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RunbookCreateOrUpdateProperties(_Model):
+class RunbookCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update runbook properties.
 
     :ivar log_verbose: Gets or sets verbose log option.
@@ -7605,7 +7625,7 @@ class RunbookCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookDraft(_Model):
+class RunbookDraft(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RunbookDraft.
 
     :ivar in_edit: Gets or sets whether runbook is in edit mode.
@@ -7668,7 +7688,7 @@ class RunbookDraft(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookDraftUndoEditResult(_Model):
+class RunbookDraftUndoEditResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response model for the undo edit runbook operation.
 
     :ivar status_code: Known values are: "Continue", "SwitchingProtocols", "OK", "Created",
@@ -7721,7 +7741,7 @@ class RunbookDraftUndoEditResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookParameter(_Model):
+class RunbookParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the runbook parameter type.
 
     :ivar type: Gets or sets the type of the parameter.
@@ -7769,7 +7789,7 @@ class RunbookParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookProperties(_Model):
+class RunbookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the runbook property type.
 
     :ivar runtime_environment: Runtime Environment of the runbook execution.
@@ -7904,7 +7924,7 @@ class RunbookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunbookUpdateParameters(_Model):
+class RunbookUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update runbook operation.
 
     :ivar properties: Gets or sets the runbook update properties.
@@ -7969,7 +7989,7 @@ class RunbookUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RunbookUpdateProperties(_Model):
+class RunbookUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update runbook properties.
 
     :ivar description: Gets or sets the description of the runbook.
@@ -8018,7 +8038,7 @@ class RunbookUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeEnvironment(TrackedResource):
+class RuntimeEnvironment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the Runtime Environment type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8065,7 +8085,7 @@ class RuntimeEnvironment(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeEnvironmentProperties(_Model):
+class RuntimeEnvironmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Runtime Environment properties.
 
     :ivar runtime: Runtime properties.
@@ -8127,7 +8147,7 @@ class RuntimeEnvironmentProperties(_Model):
             super().__setattr__(key, value)
 
 
-class RuntimeEnvironmentUpdateParameters(_Model):
+class RuntimeEnvironmentUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update automation account operation.
 
     :ivar properties: Gets or sets Runtime update properties.
@@ -8184,7 +8204,7 @@ class RuntimeEnvironmentUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class RuntimeEnvironmentUpdateProperties(_Model):
+class RuntimeEnvironmentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gets or sets Runtime update properties.
 
     :ivar default_packages: List of Default packages for Environment.
@@ -8214,7 +8234,7 @@ class RuntimeEnvironmentUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeProperties(_Model):
+class RuntimeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Runtime properties.
 
     :ivar language: Language of Runtime Environment.
@@ -8247,7 +8267,7 @@ class RuntimeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Schedule(ProxyResource):
+class Schedule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the schedule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8323,7 +8343,7 @@ class Schedule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScheduleAssociationProperty(_Model):
+class ScheduleAssociationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The schedule property associated with the entity.
 
     :ivar name: Gets or sets the name of the Schedule.
@@ -8351,7 +8371,7 @@ class ScheduleAssociationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleCreateOrUpdateParameters(_Model):
+class ScheduleCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update schedule operation.
 
     :ivar name: Gets or sets the name of the Schedule. Required.
@@ -8414,7 +8434,7 @@ class ScheduleCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ScheduleCreateOrUpdateProperties(_Model):
+class ScheduleCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update schedule operation.
 
     :ivar description: Gets or sets the description of the schedule.
@@ -8482,7 +8502,7 @@ class ScheduleCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleProperties(_Model):
+class ScheduleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of schedule parameters.
 
     :ivar start_time: Gets or sets the start time of the schedule.
@@ -8596,7 +8616,7 @@ class ScheduleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduleUpdateParameters(_Model):
+class ScheduleUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update schedule operation.
 
     :ivar name: Gets or sets the name of the Schedule.
@@ -8651,7 +8671,7 @@ class ScheduleUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ScheduleUpdateProperties(_Model):
+class ScheduleUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update schedule operation.
 
     :ivar description: Gets or sets the description of the schedule.
@@ -8686,7 +8706,7 @@ class ScheduleUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The account SKU.
 
     :ivar name: Gets or sets the SKU name of the account. Required. Known values are: "Free" and
@@ -8725,7 +8745,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfiguration(ProxyResource):
+class SoftwareUpdateConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8796,7 +8816,9 @@ class SoftwareUpdateConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SoftwareUpdateConfigurationCollectionItem(_Model):  # pylint: disable=name-too-long
+class SoftwareUpdateConfigurationCollectionItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Software update configuration collection item properties.
 
     :ivar name: Name of the software update configuration.
@@ -8864,7 +8886,9 @@ class SoftwareUpdateConfigurationCollectionItem(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class SoftwareUpdateConfigurationCollectionItemProperties(_Model):  # pylint: disable=name-too-long
+class SoftwareUpdateConfigurationCollectionItemProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Software update configuration collection item properties.
 
     :ivar update_configuration: Update specific properties of the software update configuration.
@@ -8941,7 +8965,7 @@ class SoftwareUpdateConfigurationCollectionItemProperties(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationListResult(_Model):
+class SoftwareUpdateConfigurationListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """result of listing all software update configuration.
 
     :ivar value: outer object returned when listing all software update configurations.
@@ -8971,7 +8995,7 @@ class SoftwareUpdateConfigurationListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationMachineRun(_Model):
+class SoftwareUpdateConfigurationMachineRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration machine run model.
 
     :ivar name: Name of the software update configuration machine run.
@@ -9046,7 +9070,9 @@ class SoftwareUpdateConfigurationMachineRun(_Model):
             super().__setattr__(key, value)
 
 
-class SoftwareUpdateConfigurationMachineRunListResult(_Model):  # pylint: disable=name-too-long
+class SoftwareUpdateConfigurationMachineRunListResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """result of listing all software update configuration machine runs.
 
     :ivar value: The softwareUpdateConfigurationMachineRun items on this page. Required.
@@ -9081,7 +9107,7 @@ class SoftwareUpdateConfigurationMachineRunListResult(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationProperties(_Model):
+class SoftwareUpdateConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration properties.
 
     :ivar update_configuration: update specific properties for the Software update configuration.
@@ -9156,7 +9182,7 @@ class SoftwareUpdateConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationRun(_Model):
+class SoftwareUpdateConfigurationRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration Run properties.
 
     :ivar name: Name of the software update configuration run.
@@ -9228,7 +9254,7 @@ class SoftwareUpdateConfigurationRun(_Model):
             super().__setattr__(key, value)
 
 
-class SoftwareUpdateConfigurationRunListResult(_Model):
+class SoftwareUpdateConfigurationRunListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """result of listing all software update configuration runs.
 
     :ivar value: The softwareUpdateConfigurationRun items on this page. Required.
@@ -9263,7 +9289,7 @@ class SoftwareUpdateConfigurationRunListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationRunProperties(_Model):
+class SoftwareUpdateConfigurationRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration properties.
 
     :ivar software_update_configuration: software update configuration triggered this run.
@@ -9347,7 +9373,9 @@ class SoftwareUpdateConfigurationRunProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationRunTaskProperties(_Model):  # pylint: disable=name-too-long
+class SoftwareUpdateConfigurationRunTaskProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Task properties of the software update configuration.
 
     :ivar status: The status of the task.
@@ -9385,7 +9413,7 @@ class SoftwareUpdateConfigurationRunTaskProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationRunTasks(_Model):
+class SoftwareUpdateConfigurationRunTasks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration run tasks model.
 
     :ivar pre_task: Pre task properties.
@@ -9422,7 +9450,7 @@ class SoftwareUpdateConfigurationRunTasks(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftwareUpdateConfigurationTasks(_Model):
+class SoftwareUpdateConfigurationTasks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task properties of the software update configuration.
 
     :ivar pre_task: Pre task properties.
@@ -9459,7 +9487,7 @@ class SoftwareUpdateConfigurationTasks(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControl(ProxyResource):
+class SourceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9530,7 +9558,7 @@ class SourceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SourceControlCreateOrUpdateParameters(_Model):
+class SourceControlCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update source control operation.
 
     :ivar properties: The properties of the source control. Required.
@@ -9589,7 +9617,7 @@ class SourceControlCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlCreateOrUpdateProperties(_Model):
+class SourceControlCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create source control operation.
 
     :ivar repo_url: The repo url of the source control.
@@ -9663,7 +9691,7 @@ class SourceControlCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlProperties(_Model):
+class SourceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control properties.
 
     :ivar repo_url: The repo url of the source control.
@@ -9744,7 +9772,7 @@ class SourceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSecurityTokenProperties(_Model):
+class SourceControlSecurityTokenProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SourceControlSecurityTokenProperties.
 
     :ivar access_token: The access token.
@@ -9790,7 +9818,7 @@ class SourceControlSecurityTokenProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSyncJob(_Model):
+class SourceControlSyncJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control sync job.
 
     :ivar name: Resource name.
@@ -9859,7 +9887,7 @@ class SourceControlSyncJob(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlSyncJobById(_Model):
+class SourceControlSyncJobById(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control sync job.
 
     :ivar id: The id of the job.
@@ -9922,7 +9950,7 @@ class SourceControlSyncJobById(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlSyncJobByIdProperties(_Model):
+class SourceControlSyncJobByIdProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of source control sync job properties.
 
     :ivar source_control_sync_job_id: The source control sync job id.
@@ -9985,7 +10013,7 @@ class SourceControlSyncJobByIdProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSyncJobCreateParameters(_Model):
+class SourceControlSyncJobCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create source control sync job operation.
 
     :ivar properties: The properties of the source control sync job. Required.
@@ -10035,7 +10063,7 @@ class SourceControlSyncJobCreateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlSyncJobCreateProperties(_Model):
+class SourceControlSyncJobCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of create source control sync job properties.
 
     :ivar commit_id: The commit id of the source control sync job. If not syncing to a commitId,
@@ -10065,7 +10093,7 @@ class SourceControlSyncJobCreateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSyncJobProperties(_Model):
+class SourceControlSyncJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of source control sync job properties.
 
     :ivar source_control_sync_job_id: The source control sync job id.
@@ -10123,7 +10151,7 @@ class SourceControlSyncJobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSyncJobStream(_Model):
+class SourceControlSyncJobStream(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control sync job stream.
 
     :ivar id: Resource id.
@@ -10177,7 +10205,7 @@ class SourceControlSyncJobStream(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlSyncJobStreamById(_Model):
+class SourceControlSyncJobStreamById(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the source control sync job stream by id.
 
     :ivar id: Resource id.
@@ -10231,7 +10259,7 @@ class SourceControlSyncJobStreamById(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlSyncJobStreamByIdProperties(_Model):
+class SourceControlSyncJobStreamByIdProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of source control sync job stream by id properties.
 
     :ivar source_control_sync_job_stream_id: The sync job stream id.
@@ -10289,7 +10317,7 @@ class SourceControlSyncJobStreamByIdProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlSyncJobStreamProperties(_Model):
+class SourceControlSyncJobStreamProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of source control sync job stream properties.
 
     :ivar source_control_sync_job_stream_id: The sync job stream id.
@@ -10335,7 +10363,7 @@ class SourceControlSyncJobStreamProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceControlUpdateParameters(_Model):
+class SourceControlUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update source control operation.
 
     :ivar properties: The value of the source control.
@@ -10385,7 +10413,7 @@ class SourceControlUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SourceControlUpdateProperties(_Model):
+class SourceControlUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update source control.
 
     :ivar branch: The repo branch of the source control.
@@ -10471,7 +10499,7 @@ class Statistics(_Model):
     """Gets the id."""
 
 
-class SUCScheduleProperties(_Model):
+class SUCScheduleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of schedule parameters.
 
     :ivar start_time: Gets or sets the start time of the schedule.
@@ -10585,7 +10613,7 @@ class SUCScheduleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10652,7 +10680,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagSettingsProperties(_Model):
+class TagSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag filter information for the VM.
 
     :ivar tags: Dictionary of tags with its list of values.
@@ -10688,7 +10716,7 @@ class TagSettingsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetProperties(_Model):
+class TargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group specific to the update configuration.
 
     :ivar azure_queries: List of Azure queries in the software update configuration.
@@ -10725,7 +10753,7 @@ class TargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskProperties(_Model):
+class TaskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task properties of the software update configuration.
 
     :ivar parameters: Gets or sets the parameters of the task.
@@ -10758,7 +10786,7 @@ class TaskProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestJob(_Model):
+class TestJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the test job.
 
     :ivar creation_time: Gets or sets the creation time of the test job.
@@ -10851,7 +10879,7 @@ class TestJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestJobCreateParameters(_Model):
+class TestJobCreateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create test job operation.
 
     :ivar parameters: Gets or sets the parameters of the test job.
@@ -10892,7 +10920,7 @@ class TestJobCreateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TypeField(_Model):
+class TypeField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a field of a type.
 
     :ivar name: Gets or sets the name of the field.
@@ -10925,7 +10953,7 @@ class TypeField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateConfiguration(_Model):
+class UpdateConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update specific properties of the software update configuration.
 
     :ivar operating_system: operating system of target machines. Required. Known values are:
@@ -10999,7 +11027,7 @@ class UpdateConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateConfigurationMachineRunProperties(_Model):
+class UpdateConfigurationMachineRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Software update configuration machine run properties.
 
     :ivar target_computer: name of the updated computer.
@@ -11108,7 +11136,7 @@ class UpdateConfigurationNavigation(_Model):
     """Name of the software update configuration triggered the software update configuration run."""
 
 
-class Usage(_Model):
+class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of Usage.
 
     :ivar id: Gets or sets the id of the resource.
@@ -11165,7 +11193,7 @@ class Usage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsageCounterName(_Model):
+class UsageCounterName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of usage counter name.
 
     :ivar value: Gets or sets the usage counter name.
@@ -11215,7 +11243,7 @@ class UserAssignedIdentitiesProperties(_Model):
     """The client id of user assigned identity."""
 
 
-class Variable(ProxyResource):
+class Variable(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the variable.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11276,7 +11304,7 @@ class Variable(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VariableCreateOrUpdateParameters(_Model):
+class VariableCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update variable operation.
 
     :ivar name: Gets or sets the name of the variable. Required.
@@ -11331,7 +11359,7 @@ class VariableCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class VariableCreateOrUpdateProperties(_Model):
+class VariableCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create variable operation.
 
     :ivar value: Gets or sets the value of the variable.
@@ -11371,7 +11399,7 @@ class VariableCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VariableProperties(_Model):
+class VariableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the variable properties.
 
     :ivar value: Gets or sets the value of the variable.
@@ -11425,7 +11453,7 @@ class VariableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VariableUpdateParameters(_Model):
+class VariableUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update variable operation.
 
     :ivar name: Gets or sets the name of the variable.
@@ -11480,7 +11508,7 @@ class VariableUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class VariableUpdateProperties(_Model):
+class VariableUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update variable.
 
     :ivar value: Gets or sets the value of the variable.
@@ -11513,7 +11541,7 @@ class VariableUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Watcher(ProxyResource):
+class Watcher(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the watcher type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11599,7 +11627,7 @@ class Watcher(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WatcherProperties(_Model):
+class WatcherProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the watcher properties.
 
     :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
@@ -11676,7 +11704,7 @@ class WatcherProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WatcherUpdateParameters(_Model):
+class WatcherUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WatcherUpdateParameters.
 
     :ivar properties: Gets or sets the watcher update properties.
@@ -11731,7 +11759,7 @@ class WatcherUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WatcherUpdateProperties(_Model):
+class WatcherUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update watcher operation.
 
     :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
@@ -11762,7 +11790,7 @@ class WatcherUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Webhook(ProxyResource):
+class Webhook(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the webhook type.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11835,7 +11863,7 @@ class Webhook(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WebhookCreateOrUpdateParameters(_Model):
+class WebhookCreateOrUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the create or update webhook operation.
 
     :ivar name: Gets or sets the name of the webhook. Required.
@@ -11890,7 +11918,7 @@ class WebhookCreateOrUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WebhookCreateOrUpdateProperties(_Model):
+class WebhookCreateOrUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the create webhook operation.
 
     :ivar is_enabled: Gets or sets the value of the enabled flag of webhook.
@@ -11949,7 +11977,7 @@ class WebhookCreateOrUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookProperties(_Model):
+class WebhookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of the webhook properties.
 
     :ivar is_enabled: Gets or sets the value of the enabled flag of the webhook.
@@ -12043,7 +12071,7 @@ class WebhookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookUpdateParameters(_Model):
+class WebhookUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters supplied to the update webhook operation.
 
     :ivar name: Gets or sets the name of the webhook.
@@ -12098,7 +12126,7 @@ class WebhookUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WebhookUpdateProperties(_Model):
+class WebhookUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the update webhook.
 
     :ivar is_enabled: Gets or sets the value of the enabled flag of webhook.
@@ -12143,7 +12171,7 @@ class WebhookUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsProperties(_Model):
+class WindowsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Windows specific update configuration.
 
     :ivar included_update_classifications: Update classification included in the software update

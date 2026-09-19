@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.Automation": "2024-10-23"
   },
-  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
+  "commit": "b05ec1fd11430d6bbbdaf4980fd3bdecafaad986",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/automation/Automation.Management",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "typespec_src": "specification/automation/resource-manager/Microsoft.Automation/Automation",
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "^0.37.3"
 }

@@ -11967,11 +11967,8 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.AdvancedSchedule(TypedDict, total=False):
         monthDays: list[int]
-        month_days: list[int]
         monthlyOccurrences: list[AdvancedScheduleMonthlyOccurrence]
-        monthly_occurrences: list[AdvancedScheduleMonthlyOccurrence]
         weekDays: list[str]
-        week_days: list[str]
 
 
     class azure.mgmt.automation.types.AdvancedScheduleMonthlyOccurrence(TypedDict, total=False):
@@ -11983,7 +11980,7 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.AgentRegistrationRegenerateKeyParameter(TypedDict, total=False):
         key "keyName": Required[Union[str, AgentRegistrationKeyName]]
-        key_name: Union[str, AgentRegistrationKeyName]
+        keyName: Union[str, AgentRegistrationKeyName]
 
 
     class azure.mgmt.automation.types.AutomationAccountCreateOrUpdateParameters(TypedDict, total=False):
@@ -12003,9 +12000,9 @@ namespace azure.mgmt.automation.types
         key "encryption": ForwardRef('EncryptionProperties', module='types')
         key "publicNetworkAccess": bool
         key "sku": ForwardRef('Sku', module='types')
-        disable_local_auth: bool
+        disableLocalAuth: bool
         encryption: EncryptionProperties
-        public_network_access: bool
+        publicNetworkAccess: bool
         sku: Sku
 
 
@@ -12026,9 +12023,9 @@ namespace azure.mgmt.automation.types
         key "encryption": ForwardRef('EncryptionProperties', module='types')
         key "publicNetworkAccess": bool
         key "sku": ForwardRef('Sku', module='types')
-        disable_local_auth: bool
+        disableLocalAuth: bool
         encryption: EncryptionProperties
-        public_network_access: bool
+        publicNetworkAccess: bool
         sku: Sku
 
 
@@ -12043,7 +12040,7 @@ namespace azure.mgmt.automation.types
         key "tagSettings": ForwardRef('TagSettingsProperties', module='types')
         locations: list[str]
         scope: list[str]
-        tag_settings: TagSettingsProperties
+        tagSettings: TagSettingsProperties
 
 
     class azure.mgmt.automation.types.CertificateCreateOrUpdateParameters(TypedDict, total=False):
@@ -12058,9 +12055,9 @@ namespace azure.mgmt.automation.types
         key "description": str
         key "isExportable": bool
         key "thumbprint": str
-        base64_value: str
+        base64Value: str
         description: str
-        is_exportable: bool
+        isExportable: bool
         thumbprint: str
 
 
@@ -12086,10 +12083,9 @@ namespace azure.mgmt.automation.types
     class azure.mgmt.automation.types.ConnectionCreateOrUpdateProperties(TypedDict, total=False):
         key "connectionType": Required[ConnectionTypeAssociationProperty]
         key "description": str
-        connection_type: ConnectionTypeAssociationProperty
+        connectionType: ConnectionTypeAssociationProperty
         description: str
         fieldDefinitionValues: dict[str, str]
-        field_definition_values: dict[str, str]
 
 
     class azure.mgmt.automation.types.ConnectionTypeAssociationProperty(TypedDict, total=False):
@@ -12107,8 +12103,8 @@ namespace azure.mgmt.automation.types
     class azure.mgmt.automation.types.ConnectionTypeCreateOrUpdateProperties(TypedDict, total=False):
         key "fieldDefinitions": Required[dict[str, FieldDefinition]]
         key "isGlobal": bool
-        field_definitions: dict[str, FieldDefinition]
-        is_global: bool
+        fieldDefinitions: dict[str, FieldDefinition]
+        isGlobal: bool
 
 
     class azure.mgmt.automation.types.ConnectionUpdateParameters(TypedDict, total=False):
@@ -12122,7 +12118,6 @@ namespace azure.mgmt.automation.types
         key "description": str
         description: str
         fieldDefinitionValues: dict[str, str]
-        field_definition_values: dict[str, str]
 
 
     class azure.mgmt.automation.types.ContentHash(TypedDict, total=False):
@@ -12136,7 +12131,7 @@ namespace azure.mgmt.automation.types
         key "contentHash": ForwardRef('ContentHash', module='types')
         key "uri": str
         key "version": str
-        content_hash: ContentHash
+        contentHash: ContentHash
         uri: str
         version: str
 
@@ -12165,7 +12160,7 @@ namespace azure.mgmt.automation.types
         key "userName": Required[str]
         description: str
         password: str
-        user_name: str
+        userName: str
 
 
     class azure.mgmt.automation.types.CredentialUpdateParameters(TypedDict, total=False):
@@ -12181,7 +12176,7 @@ namespace azure.mgmt.automation.types
         key "userName": str
         description: str
         password: str
-        user_name: str
+        userName: str
 
 
     class azure.mgmt.automation.types.DscConfigurationAssociationProperty(TypedDict, total=False):
@@ -12205,8 +12200,8 @@ namespace azure.mgmt.automation.types
         key "logVerbose": bool
         key "source": Required[ContentSource]
         description: str
-        log_progress: bool
-        log_verbose: bool
+        logProgress: bool
+        logVerbose: bool
         parameters: dict[str, DscConfigurationParameter]
         source: ContentSource
 
@@ -12216,8 +12211,8 @@ namespace azure.mgmt.automation.types
         key "isMandatory": bool
         key "position": int
         key "type": str
-        default_value: str
-        is_mandatory: bool
+        defaultValue: str
+        isMandatory: bool
         position: int
         type: str
 
@@ -12248,20 +12243,20 @@ namespace azure.mgmt.automation.types
         key "incrementNodeConfigurationBuild": bool
         key "source": Required[ContentSource]
         configuration: DscConfigurationAssociationProperty
-        increment_node_configuration_build: bool
+        incrementNodeConfigurationBuild: bool
         source: ContentSource
 
 
     class azure.mgmt.automation.types.DscNodeUpdateParameters(TypedDict, total=False):
         key "nodeId": str
         key "properties": ForwardRef('DscNodeUpdateParametersProperties', module='types')
-        node_id: str
+        nodeId: str
         properties: DscNodeUpdateParametersProperties
 
 
     class azure.mgmt.automation.types.DscNodeUpdateParametersProperties(TypedDict, total=False):
         key "nodeConfiguration": ForwardRef('DscNodeConfigurationAssociationProperty', module='types')
-        node_configuration: DscNodeConfigurationAssociationProperty
+        nodeConfiguration: DscNodeConfigurationAssociationProperty
 
 
     class azure.mgmt.automation.types.EncryptionProperties(TypedDict, total=False):
@@ -12269,34 +12264,34 @@ namespace azure.mgmt.automation.types
         key "keySource": Union[str, EncryptionKeySourceType]
         key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
         identity: EncryptionPropertiesIdentity
-        key_source: Union[str, EncryptionKeySourceType]
-        key_vault_properties: KeyVaultProperties
+        keySource: Union[str, EncryptionKeySourceType]
+        keyVaultProperties: KeyVaultProperties
 
 
     class azure.mgmt.automation.types.EncryptionPropertiesIdentity(TypedDict, total=False):
         key "userAssignedIdentity": Any
-        user_assigned_identity: Any
+        userAssignedIdentity: Any
 
 
     class azure.mgmt.automation.types.FieldDefinition(TypedDict, total=False):
         key "isEncrypted": bool
         key "isOptional": bool
         key "type": Required[str]
-        is_encrypted: bool
-        is_optional: bool
+        isEncrypted: bool
+        isOptional: bool
         type: str
 
 
     class azure.mgmt.automation.types.GraphicalRunbookContent(TypedDict, total=False):
         key "graphRunbookJson": Optional[str]
         key "rawContent": Optional[RawGraphicalRunbookContent]
-        graph_runbook_json: str
-        raw_content: RawGraphicalRunbookContent
+        graphRunbookJson: str
+        rawContent: RawGraphicalRunbookContent
 
 
     class azure.mgmt.automation.types.HybridRunbookWorkerCreateOrUpdateParameters(TypedDict, total=False):
         key "vmResourceId": str
-        vm_resource_id: str
+        vmResourceId: str
 
 
     class azure.mgmt.automation.types.HybridRunbookWorkerCreateParameters(TypedDict, total=False):
@@ -12320,18 +12315,17 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.HybridRunbookWorkerMoveParameters(TypedDict, total=False):
         key "hybridRunbookWorkerGroupName": str
-        hybrid_runbook_worker_group_name: str
+        hybridRunbookWorkerGroupName: str
 
 
     class azure.mgmt.automation.types.Identity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ResourceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentitiesProperties]
-        user_assigned_identities: dict[str, UserAssignedIdentitiesProperties]
 
 
     class azure.mgmt.automation.types.JobCreateParameters(TypedDict, total=False):
@@ -12343,7 +12337,7 @@ namespace azure.mgmt.automation.types
         key "runOn": str
         key "runbook": ForwardRef('RunbookAssociationProperty', module='types')
         parameters: dict[str, str]
-        run_on: str
+        runOn: str
         runbook: RunbookAssociationProperty
 
 
@@ -12357,7 +12351,7 @@ namespace azure.mgmt.automation.types
         key "runbook": Required[RunbookAssociationProperty]
         key "schedule": Required[ScheduleAssociationProperty]
         parameters: dict[str, str]
-        run_on: str
+        runOn: str
         runbook: RunbookAssociationProperty
         schedule: ScheduleAssociationProperty
 
@@ -12366,20 +12360,18 @@ namespace azure.mgmt.automation.types
         key "keyName": str
         key "keyVersion": str
         key "keyvaultUri": str
-        key_name: str
-        key_version: str
-        keyvault_uri: str
+        keyName: str
+        keyVersion: str
+        keyvaultUri: str
 
 
     class azure.mgmt.automation.types.LinuxProperties(TypedDict, total=False):
         key "includedPackageClassifications": Union[str, LinuxUpdateClasses]
         key "rebootSetting": str
         excludedPackageNameMasks: list[str]
-        excluded_package_name_masks: list[str]
+        includedPackageClassifications: Union[str, LinuxUpdateClasses]
         includedPackageNameMasks: list[str]
-        included_package_classifications: Union[str, LinuxUpdateClasses]
-        included_package_name_masks: list[str]
-        reboot_setting: str
+        rebootSetting: str
 
 
     class azure.mgmt.automation.types.ModuleCreateOrUpdateParameters(TypedDict, total=False):
@@ -12394,7 +12386,7 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.ModuleCreateOrUpdateProperties(TypedDict, total=False):
         key "contentLink": Required[ContentLink]
-        content_link: ContentLink
+        contentLink: ContentLink
 
 
     class azure.mgmt.automation.types.ModuleUpdateParameters(TypedDict, total=False):
@@ -12409,38 +12401,38 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.ModuleUpdateProperties(TypedDict, total=False):
         key "contentLink": ForwardRef('ContentLink', module='types')
-        content_link: ContentLink
+        contentLink: ContentLink
 
 
     class azure.mgmt.automation.types.NonAzureQueryProperties(TypedDict, total=False):
         key "functionAlias": str
         key "workspaceId": str
-        function_alias: str
-        workspace_id: str
+        functionAlias: str
+        workspaceId: str
 
 
     class azure.mgmt.automation.types.PackageCreateOrUpdateParameters(TypedDict, total=False):
         key "allOf": ForwardRef('TrackedResource', module='types')
         key "properties": Required[PackageCreateOrUpdateProperties]
-        all_of: TrackedResource
+        allOf: TrackedResource
         properties: PackageCreateOrUpdateProperties
 
 
     class azure.mgmt.automation.types.PackageCreateOrUpdateProperties(TypedDict, total=False):
         key "contentLink": Required[ContentLink]
-        content_link: ContentLink
+        contentLink: ContentLink
 
 
     class azure.mgmt.automation.types.PackageUpdateParameters(TypedDict, total=False):
         key "allOf": ForwardRef('TrackedResource', module='types')
         key "properties": ForwardRef('PackageUpdateProperties', module='types')
-        all_of: TrackedResource
+        allOf: TrackedResource
         properties: PackageUpdateProperties
 
 
     class azure.mgmt.automation.types.PackageUpdateProperties(TypedDict, total=False):
         key "contentLink": ForwardRef('ContentLink', module='types')
-        content_link: ContentLink
+        contentLink: ContentLink
 
 
     class azure.mgmt.automation.types.PrivateEndpointConnection(ProxyResource):
@@ -12452,7 +12444,7 @@ namespace azure.mgmt.automation.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -12460,9 +12452,8 @@ namespace azure.mgmt.automation.types
         key "privateEndpoint": ForwardRef('PrivateEndpointProperty', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionStateProperty', module='types')
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpointProperty
-        private_link_service_connection_state: PrivateLinkServiceConnectionStateProperty
+        privateEndpoint: PrivateEndpointProperty
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionStateProperty
 
 
     class azure.mgmt.automation.types.PrivateEndpointProperty(TypedDict, total=False):
@@ -12474,7 +12465,7 @@ namespace azure.mgmt.automation.types
         key "actionsRequired": str
         key "description": str
         key "status": str
-        actions_required: str
+        actionsRequired: str
         description: str
         status: str
 
@@ -12486,7 +12477,7 @@ namespace azure.mgmt.automation.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -12498,7 +12489,7 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.PythonPackageCreateProperties(TypedDict, total=False):
         key "contentLink": Required[ContentLink]
-        content_link: ContentLink
+        contentLink: ContentLink
 
 
     class azure.mgmt.automation.types.PythonPackageUpdateParameters(TypedDict, total=False):
@@ -12509,9 +12500,9 @@ namespace azure.mgmt.automation.types
         key "runbookDefinition": str
         key "runbookType": Union[str, GraphRunbookType]
         key "schemaVersion": str
-        runbook_definition: str
-        runbook_type: Union[str, GraphRunbookType]
-        schema_version: str
+        runbookDefinition: str
+        runbookType: Union[str, GraphRunbookType]
+        schemaVersion: str
 
 
     class azure.mgmt.automation.types.Resource(TypedDict, total=False):
@@ -12521,7 +12512,7 @@ namespace azure.mgmt.automation.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -12556,12 +12547,12 @@ namespace azure.mgmt.automation.types
         key "runtimeEnvironment": str
         description: str
         draft: RunbookDraft
-        log_activity_trace: int
-        log_progress: bool
-        log_verbose: bool
-        publish_content_link: ContentLink
-        runbook_type: Union[str, RunbookTypeEnum]
-        runtime_environment: str
+        logActivityTrace: int
+        logProgress: bool
+        logVerbose: bool
+        publishContentLink: ContentLink
+        runbookType: Union[str, RunbookTypeEnum]
+        runtimeEnvironment: str
 
 
     class azure.mgmt.automation.types.RunbookDraft(TypedDict, total=False):
@@ -12569,12 +12560,11 @@ namespace azure.mgmt.automation.types
         key "draftContentLink": ForwardRef('ContentLink', module='types')
         key "inEdit": bool
         key "lastModifiedTime": str
-        creation_time: str
-        draft_content_link: ContentLink
-        in_edit: bool
-        last_modified_time: str
+        creationTime: str
+        draftContentLink: ContentLink
+        inEdit: bool
+        lastModifiedTime: str
         outputTypes: list[str]
-        output_types: list[str]
         parameters: dict[str, RunbookParameter]
 
 
@@ -12583,8 +12573,8 @@ namespace azure.mgmt.automation.types
         key "isMandatory": bool
         key "position": int
         key "type": str
-        default_value: str
-        is_mandatory: bool
+        defaultValue: str
+        isMandatory: bool
         position: int
         type: str
 
@@ -12605,9 +12595,9 @@ namespace azure.mgmt.automation.types
         key "logProgress": bool
         key "logVerbose": bool
         description: str
-        log_activity_trace: int
-        log_progress: bool
-        log_verbose: bool
+        logActivityTrace: int
+        logProgress: bool
+        logVerbose: bool
 
 
     class azure.mgmt.automation.types.RuntimeEnvironment(TrackedResource):
@@ -12621,7 +12611,7 @@ namespace azure.mgmt.automation.types
         location: str
         name: str
         properties: RuntimeEnvironmentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -12630,7 +12620,6 @@ namespace azure.mgmt.automation.types
         key "description": str
         key "runtime": ForwardRef('RuntimeProperties', module='types')
         defaultPackages: dict[str, str]
-        default_packages: dict[str, str]
         description: str
         runtime: RuntimeProperties
 
@@ -12639,12 +12628,11 @@ namespace azure.mgmt.automation.types
         key "properties": ForwardRef('RuntimeEnvironmentUpdateProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         properties: RuntimeEnvironmentUpdateProperties
-        system_data: SystemData
+        systemData: SystemData
 
 
     class azure.mgmt.automation.types.RuntimeEnvironmentUpdateProperties(TypedDict, total=False):
         defaultPackages: dict[str, str]
-        default_packages: dict[str, str]
 
 
     class azure.mgmt.automation.types.RuntimeProperties(TypedDict, total=False):
@@ -12669,20 +12657,20 @@ namespace azure.mgmt.automation.types
         key "startTime": str
         key "startTimeOffsetMinutes": float
         key "timeZone": str
-        advanced_schedule: AdvancedSchedule
-        creation_time: str
+        advancedSchedule: AdvancedSchedule
+        creationTime: str
         description: str
-        expiry_time: str
-        expiry_time_offset_minutes: float
+        expiryTime: str
+        expiryTimeOffsetMinutes: float
         frequency: Union[str, ScheduleFrequency]
         interval: int
-        is_enabled: bool
-        last_modified_time: str
-        next_run: str
-        next_run_offset_minutes: float
-        start_time: str
-        start_time_offset_minutes: float
-        time_zone: str
+        isEnabled: bool
+        lastModifiedTime: str
+        nextRun: str
+        nextRunOffsetMinutes: float
+        startTime: str
+        startTimeOffsetMinutes: float
+        timeZone: str
 
 
     class azure.mgmt.automation.types.ScheduleAssociationProperty(TypedDict, total=False):
@@ -12705,13 +12693,13 @@ namespace azure.mgmt.automation.types
         key "interval": Any
         key "startTime": Required[str]
         key "timeZone": str
-        advanced_schedule: AdvancedSchedule
+        advancedSchedule: AdvancedSchedule
         description: str
-        expiry_time: str
+        expiryTime: str
         frequency: Union[str, ScheduleFrequency]
         interval: Any
-        start_time: str
-        time_zone: str
+        startTime: str
+        timeZone: str
 
 
     class azure.mgmt.automation.types.ScheduleUpdateParameters(TypedDict, total=False):
@@ -12725,7 +12713,7 @@ namespace azure.mgmt.automation.types
         key "description": str
         key "isEnabled": bool
         description: str
-        is_enabled: bool
+        isEnabled: bool
 
 
     class azure.mgmt.automation.types.Sku(TypedDict, total=False):
@@ -12746,7 +12734,7 @@ namespace azure.mgmt.automation.types
         id: str
         name: str
         properties: SoftwareUpdateConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -12760,22 +12748,22 @@ namespace azure.mgmt.automation.types
         key "scheduleInfo": Required[SUCScheduleProperties]
         key "tasks": ForwardRef('SoftwareUpdateConfigurationTasks', module='types')
         key "updateConfiguration": Required[UpdateConfiguration]
-        created_by: str
-        creation_time: str
+        createdBy: str
+        creationTime: str
         error: AutomationErrorResponse
-        last_modified_by: str
-        last_modified_time: str
-        provisioning_state: str
-        schedule_info: SUCScheduleProperties
+        lastModifiedBy: str
+        lastModifiedTime: str
+        provisioningState: str
+        scheduleInfo: SUCScheduleProperties
         tasks: SoftwareUpdateConfigurationTasks
-        update_configuration: UpdateConfiguration
+        updateConfiguration: UpdateConfiguration
 
 
     class azure.mgmt.automation.types.SoftwareUpdateConfigurationTasks(TypedDict, total=False):
         key "postTask": ForwardRef('TaskProperties', module='types')
         key "preTask": ForwardRef('TaskProperties', module='types')
-        post_task: TaskProperties
-        pre_task: TaskProperties
+        postTask: TaskProperties
+        preTask: TaskProperties
 
 
     class azure.mgmt.automation.types.SourceControlCreateOrUpdateParameters(TypedDict, total=False):
@@ -12792,23 +12780,23 @@ namespace azure.mgmt.automation.types
         key "repoUrl": str
         key "securityToken": ForwardRef('SourceControlSecurityTokenProperties', module='types')
         key "sourceType": Union[str, SourceType]
-        auto_sync: bool
+        autoSync: bool
         branch: str
         description: str
-        folder_path: str
-        publish_runbook: bool
-        repo_url: str
-        security_token: SourceControlSecurityTokenProperties
-        source_type: Union[str, SourceType]
+        folderPath: str
+        publishRunbook: bool
+        repoUrl: str
+        securityToken: SourceControlSecurityTokenProperties
+        sourceType: Union[str, SourceType]
 
 
     class azure.mgmt.automation.types.SourceControlSecurityTokenProperties(TypedDict, total=False):
         key "accessToken": str
         key "refreshToken": str
         key "tokenType": Union[str, TokenType]
-        access_token: str
-        refresh_token: str
-        token_type: Union[str, TokenType]
+        accessToken: str
+        refreshToken: str
+        tokenType: Union[str, TokenType]
 
 
     class azure.mgmt.automation.types.SourceControlSyncJobCreateParameters(TypedDict, total=False):
@@ -12818,7 +12806,7 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.SourceControlSyncJobCreateProperties(TypedDict, total=False):
         key "commitId": Required[str]
-        commit_id: str
+        commitId: str
 
 
     class azure.mgmt.automation.types.SourceControlUpdateParameters(TypedDict, total=False):
@@ -12833,12 +12821,12 @@ namespace azure.mgmt.automation.types
         key "folderPath": str
         key "publishRunbook": bool
         key "securityToken": ForwardRef('SourceControlSecurityTokenProperties', module='types')
-        auto_sync: bool
+        autoSync: bool
         branch: str
         description: str
-        folder_path: str
-        publish_runbook: bool
-        security_token: SourceControlSecurityTokenProperties
+        folderPath: str
+        publishRunbook: bool
+        securityToken: SourceControlSecurityTokenProperties
 
 
     class azure.mgmt.automation.types.SystemData(TypedDict, total=False):
@@ -12848,25 +12836,23 @@ namespace azure.mgmt.automation.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.automation.types.TagSettingsProperties(TypedDict, total=False):
         key "filterOperator": Union[str, TagOperators]
-        filter_operator: Union[str, TagOperators]
+        filterOperator: Union[str, TagOperators]
         tags: dict[str, list[str]]
 
 
     class azure.mgmt.automation.types.TargetProperties(TypedDict, total=False):
         azureQueries: list[AzureQueryProperties]
-        azure_queries: list[AzureQueryProperties]
         nonAzureQueries: list[NonAzureQueryProperties]
-        non_azure_queries: list[NonAzureQueryProperties]
 
 
     class azure.mgmt.automation.types.TaskProperties(TypedDict, total=False):
@@ -12879,8 +12865,8 @@ namespace azure.mgmt.automation.types
         key "runOn": str
         key "runtimeEnvironment": str
         parameters: dict[str, str]
-        run_on: str
-        runtime_environment: str
+        runOn: str
+        runtimeEnvironment: str
 
 
     class azure.mgmt.automation.types.TrackedResource(Resource):
@@ -12892,7 +12878,7 @@ namespace azure.mgmt.automation.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -12904,12 +12890,10 @@ namespace azure.mgmt.automation.types
         key "targets": ForwardRef('TargetProperties', module='types')
         key "windows": ForwardRef('WindowsProperties', module='types')
         azureVirtualMachines: list[str]
-        azure_virtual_machines: list[str]
         duration: str
         linux: LinuxProperties
         nonAzureComputerNames: list[str]
-        non_azure_computer_names: list[str]
-        operating_system: Union[str, OperatingSystemType]
+        operatingSystem: Union[str, OperatingSystemType]
         targets: TargetProperties
         windows: WindowsProperties
 
@@ -12917,8 +12901,8 @@ namespace azure.mgmt.automation.types
     class azure.mgmt.automation.types.UserAssignedIdentitiesProperties(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.automation.types.VariableCreateOrUpdateParameters(TypedDict, total=False):
@@ -12933,7 +12917,7 @@ namespace azure.mgmt.automation.types
         key "isEncrypted": bool
         key "value": str
         description: str
-        is_encrypted: bool
+        isEncrypted: bool
         value: str
 
 
@@ -12964,7 +12948,7 @@ namespace azure.mgmt.automation.types
         location: str
         name: str
         properties: WatcherProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -12978,15 +12962,14 @@ namespace azure.mgmt.automation.types
         key "scriptName": str
         key "scriptRunOn": str
         key "status": str
-        creation_time: str
+        creationTime: str
         description: str
-        execution_frequency_in_seconds: int
-        last_modified_by: str
-        last_modified_time: str
+        executionFrequencyInSeconds: int
+        lastModifiedBy: str
+        lastModifiedTime: str
+        scriptName: str
         scriptParameters: dict[str, str]
-        script_name: str
-        script_parameters: dict[str, str]
-        script_run_on: str
+        scriptRunOn: str
         status: str
 
 
@@ -12999,7 +12982,7 @@ namespace azure.mgmt.automation.types
 
     class azure.mgmt.automation.types.WatcherUpdateProperties(TypedDict, total=False):
         key "executionFrequencyInSeconds": int
-        execution_frequency_in_seconds: int
+        executionFrequencyInSeconds: int
 
 
     class azure.mgmt.automation.types.WebhookCreateOrUpdateParameters(TypedDict, total=False):
@@ -13015,10 +12998,10 @@ namespace azure.mgmt.automation.types
         key "runOn": str
         key "runbook": ForwardRef('RunbookAssociationProperty', module='types')
         key "uri": str
-        expiry_time: str
-        is_enabled: bool
+        expiryTime: str
+        isEnabled: bool
         parameters: dict[str, str]
-        run_on: str
+        runOn: str
         runbook: RunbookAssociationProperty
         uri: str
 
@@ -13035,20 +13018,18 @@ namespace azure.mgmt.automation.types
         key "isEnabled": bool
         key "runOn": str
         description: str
-        is_enabled: bool
+        isEnabled: bool
         parameters: dict[str, str]
-        run_on: str
+        runOn: str
 
 
     class azure.mgmt.automation.types.WindowsProperties(TypedDict, total=False):
         key "includedUpdateClassifications": Union[str, WindowsUpdateClasses]
         key "rebootSetting": str
         excludedKbNumbers: list[str]
-        excluded_kb_numbers: list[str]
         includedKbNumbers: list[str]
-        included_kb_numbers: list[str]
-        included_update_classifications: Union[str, WindowsUpdateClasses]
-        reboot_setting: str
+        includedUpdateClassifications: Union[str, WindowsUpdateClasses]
+        rebootSetting: str
 
 
 ```

@@ -34,12 +34,12 @@ if TYPE_CHECKING:
 class AdvancedSchedule(TypedDict, total=False):
     """The properties of the create Advanced Schedule.
 
-    :ivar week_days: Days of the week that the job should execute on.
-    :vartype week_days: list[str]
-    :ivar month_days: Days of the month that the job should execute on. Must be between 1 and 31.
-    :vartype month_days: list[int]
-    :ivar monthly_occurrences: Occurrences of days within a month.
-    :vartype monthly_occurrences: list["AdvancedScheduleMonthlyOccurrence"]
+    :ivar weekDays: Days of the week that the job should execute on.
+    :vartype weekDays: list[str]
+    :ivar monthDays: Days of the month that the job should execute on. Must be between 1 and 31.
+    :vartype monthDays: list[int]
+    :ivar monthlyOccurrences: Occurrences of days within a month.
+    :vartype monthlyOccurrences: list["AdvancedScheduleMonthlyOccurrence"]
     """
 
     weekDays: list[str]
@@ -72,9 +72,9 @@ class AdvancedScheduleMonthlyOccurrence(TypedDict, total=False):
 class AgentRegistrationRegenerateKeyParameter(TypedDict, total=False):
     """The parameters supplied to the regenerate keys operation.
 
-    :ivar key_name: Gets or sets the agent registration key name - primary or secondary. Required.
+    :ivar keyName: Gets or sets the agent registration key name - primary or secondary. Required.
      Known values are: "primary" and "secondary".
-    :vartype key_name: Union[str, "AgentRegistrationKeyName"]
+    :vartype keyName: Union[str, "AgentRegistrationKeyName"]
     """
 
     keyName: Required[Union[str, "AgentRegistrationKeyName"]]
@@ -93,9 +93,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -121,9 +121,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -170,11 +170,11 @@ class AutomationAccountCreateOrUpdateProperties(TypedDict, total=False):  # pyli
     :vartype sku: "Sku"
     :ivar encryption: Set the encryption properties for the automation account.
     :vartype encryption: "EncryptionProperties"
-    :ivar public_network_access: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent)
-     is allowed from the public internet.
-    :vartype public_network_access: bool
-    :ivar disable_local_auth: Indicates whether requests using non-AAD authentication are blocked.
-    :vartype disable_local_auth: bool
+    :ivar publicNetworkAccess: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent) is
+     allowed from the public internet.
+    :vartype publicNetworkAccess: bool
+    :ivar disableLocalAuth: Indicates whether requests using non-AAD authentication are blocked.
+    :vartype disableLocalAuth: bool
     """
 
     sku: "Sku"
@@ -222,11 +222,11 @@ class AutomationAccountUpdateProperties(TypedDict, total=False):
     :vartype sku: "Sku"
     :ivar encryption: Set the encryption properties for the automation account.
     :vartype encryption: "EncryptionProperties"
-    :ivar public_network_access: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent)
-     is allowed from the public internet.
-    :vartype public_network_access: bool
-    :ivar disable_local_auth: Indicates whether requests using non-AAD authentication are blocked.
-    :vartype disable_local_auth: bool
+    :ivar publicNetworkAccess: Indicates whether traffic on the non-ARM endpoint (Webhook/Agent) is
+     allowed from the public internet.
+    :vartype publicNetworkAccess: bool
+    :ivar disableLocalAuth: Indicates whether requests using non-AAD authentication are blocked.
+    :vartype disableLocalAuth: bool
     """
 
     sku: "Sku"
@@ -262,8 +262,8 @@ class AzureQueryProperties(TypedDict, total=False):
     :vartype scope: list[str]
     :ivar locations: List of locations to scope the query to.
     :vartype locations: list[str]
-    :ivar tag_settings: Tag settings for the VM.
-    :vartype tag_settings: "TagSettingsProperties"
+    :ivar tagSettings: Tag settings for the VM.
+    :vartype tagSettings: "TagSettingsProperties"
     """
 
     scope: list[str]
@@ -285,9 +285,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -309,14 +309,14 @@ class CertificateCreateOrUpdateParameters(TypedDict, total=False):
 class CertificateCreateOrUpdateProperties(TypedDict, total=False):
     """The properties of the create certificate operation.
 
-    :ivar base64_value: Gets or sets the base64 encoded value of the certificate. Required.
-    :vartype base64_value: str
+    :ivar base64Value: Gets or sets the base64 encoded value of the certificate. Required.
+    :vartype base64Value: str
     :ivar description: Gets or sets the description of the certificate.
     :vartype description: str
     :ivar thumbprint: Gets or sets the thumbprint of the certificate.
     :vartype thumbprint: str
-    :ivar is_exportable: Gets or sets the is exportable flag of the certificate.
-    :vartype is_exportable: bool
+    :ivar isExportable: Gets or sets the is exportable flag of the certificate.
+    :vartype isExportable: bool
     """
 
     base64Value: Required[str]
@@ -375,10 +375,10 @@ class ConnectionCreateOrUpdateProperties(TypedDict, total=False):
 
     :ivar description: Gets or sets the description of the connection.
     :vartype description: str
-    :ivar connection_type: Gets or sets the connectionType of the connection. Required.
-    :vartype connection_type: "ConnectionTypeAssociationProperty"
-    :ivar field_definition_values: Gets or sets the field definition properties of the connection.
-    :vartype field_definition_values: dict[str, str]
+    :ivar connectionType: Gets or sets the connectionType of the connection. Required.
+    :vartype connectionType: "ConnectionTypeAssociationProperty"
+    :ivar fieldDefinitionValues: Gets or sets the field definition properties of the connection.
+    :vartype fieldDefinitionValues: dict[str, str]
     """
 
     description: str
@@ -418,10 +418,10 @@ class ConnectionTypeCreateOrUpdateParameters(TypedDict, total=False):
 class ConnectionTypeCreateOrUpdateProperties(TypedDict, total=False):
     """The properties of the create connection type.
 
-    :ivar is_global: Gets or sets a Boolean value to indicate if the connection type is global.
-    :vartype is_global: bool
-    :ivar field_definitions: Gets or sets the field definitions of the connection type. Required.
-    :vartype field_definitions: dict[str, "FieldDefinition"]
+    :ivar isGlobal: Gets or sets a Boolean value to indicate if the connection type is global.
+    :vartype isGlobal: bool
+    :ivar fieldDefinitions: Gets or sets the field definitions of the connection type. Required.
+    :vartype fieldDefinitions: dict[str, "FieldDefinition"]
     """
 
     isGlobal: bool
@@ -450,8 +450,8 @@ class ConnectionUpdateProperties(TypedDict, total=False):
 
     :ivar description: Gets or sets the description of the connection.
     :vartype description: str
-    :ivar field_definition_values: Gets or sets the field definition values of the connection.
-    :vartype field_definition_values: dict[str, str]
+    :ivar fieldDefinitionValues: Gets or sets the field definition values of the connection.
+    :vartype fieldDefinitionValues: dict[str, str]
     """
 
     description: str
@@ -480,8 +480,8 @@ class ContentLink(TypedDict, total=False):
 
     :ivar uri: Gets or sets the uri of content.
     :vartype uri: str
-    :ivar content_hash: Gets or sets the hash.
-    :vartype content_hash: "ContentHash"
+    :ivar contentHash: Gets or sets the hash.
+    :vartype contentHash: "ContentHash"
     :ivar version: Gets or sets the version of the content.
     :vartype version: str
     """
@@ -536,8 +536,8 @@ class CredentialCreateOrUpdateParameters(TypedDict, total=False):
 class CredentialCreateOrUpdateProperties(TypedDict, total=False):
     """The properties of the create credential operation.
 
-    :ivar user_name: Gets or sets the user name of the credential. Required.
-    :vartype user_name: str
+    :ivar userName: Gets or sets the user name of the credential. Required.
+    :vartype userName: str
     :ivar password: Gets or sets the password of the credential. Required.
     :vartype password: str
     :ivar description: Gets or sets the description of the credential.
@@ -570,8 +570,8 @@ class CredentialUpdateParameters(TypedDict, total=False):
 class CredentialUpdateProperties(TypedDict, total=False):
     """The properties of the Update credential.
 
-    :ivar user_name: Gets or sets the user name of the credential.
-    :vartype user_name: str
+    :ivar userName: Gets or sets the user name of the credential.
+    :vartype userName: str
     :ivar password: Gets or sets the password of the credential.
     :vartype password: str
     :ivar description: Gets or sets the description of the credential.
@@ -623,10 +623,10 @@ class DscConfigurationCreateOrUpdateParameters(TypedDict, total=False):
 class DscConfigurationCreateOrUpdateProperties(TypedDict, total=False):
     """The properties to create or update configuration.
 
-    :ivar log_verbose: Gets or sets verbose log option.
-    :vartype log_verbose: bool
-    :ivar log_progress: Gets or sets progress log option.
-    :vartype log_progress: bool
+    :ivar logVerbose: Gets or sets verbose log option.
+    :vartype logVerbose: bool
+    :ivar logProgress: Gets or sets progress log option.
+    :vartype logProgress: bool
     :ivar source: Gets or sets the source. Required.
     :vartype source: "ContentSource"
     :ivar parameters: Gets or sets the configuration parameters.
@@ -652,13 +652,13 @@ class DscConfigurationParameter(TypedDict, total=False):
 
     :ivar type: Gets or sets the type of the parameter.
     :vartype type: str
-    :ivar is_mandatory: Gets or sets a Boolean value to indicate whether the parameter is mandatory
+    :ivar isMandatory: Gets or sets a Boolean value to indicate whether the parameter is mandatory
      or not.
-    :vartype is_mandatory: bool
+    :vartype isMandatory: bool
     :ivar position: Get or sets the position of the parameter.
     :vartype position: int
-    :ivar default_value: Gets or sets the default value of parameter.
-    :vartype default_value: str
+    :ivar defaultValue: Gets or sets the default value of parameter.
+    :vartype defaultValue: str
     """
 
     type: str
@@ -727,9 +727,8 @@ class DscNodeConfigurationCreateOrUpdateParametersProperties(TypedDict, total=Fa
     :vartype source: "ContentSource"
     :ivar configuration: Gets or sets the configuration of the node. Required.
     :vartype configuration: "DscConfigurationAssociationProperty"
-    :ivar increment_node_configuration_build: If a new build version of NodeConfiguration is
-     required.
-    :vartype increment_node_configuration_build: bool
+    :ivar incrementNodeConfigurationBuild: If a new build version of NodeConfiguration is required.
+    :vartype incrementNodeConfigurationBuild: bool
     """
 
     source: Required["ContentSource"]
@@ -743,8 +742,8 @@ class DscNodeConfigurationCreateOrUpdateParametersProperties(TypedDict, total=Fa
 class DscNodeUpdateParameters(TypedDict, total=False):
     """The parameters supplied to the update dsc node operation.
 
-    :ivar node_id: Gets or sets the id of the dsc node.
-    :vartype node_id: str
+    :ivar nodeId: Gets or sets the id of the dsc node.
+    :vartype nodeId: str
     :ivar properties:
     :vartype properties: "DscNodeUpdateParametersProperties"
     """
@@ -757,8 +756,8 @@ class DscNodeUpdateParameters(TypedDict, total=False):
 class DscNodeUpdateParametersProperties(TypedDict, total=False):
     """DscNodeUpdateParametersProperties.
 
-    :ivar node_configuration: Gets or sets the configuration of the node.
-    :vartype node_configuration: "DscNodeConfigurationAssociationProperty"
+    :ivar nodeConfiguration: Gets or sets the configuration of the node.
+    :vartype nodeConfiguration: "DscNodeConfigurationAssociationProperty"
     """
 
     nodeConfiguration: "DscNodeConfigurationAssociationProperty"
@@ -768,11 +767,11 @@ class DscNodeUpdateParametersProperties(TypedDict, total=False):
 class EncryptionProperties(TypedDict, total=False):
     """The encryption settings for automation account.
 
-    :ivar key_vault_properties: Key vault properties.
-    :vartype key_vault_properties: "KeyVaultProperties"
-    :ivar key_source: Encryption Key Source. Known values are: "Microsoft.Automation" and
+    :ivar keyVaultProperties: Key vault properties.
+    :vartype keyVaultProperties: "KeyVaultProperties"
+    :ivar keySource: Encryption Key Source. Known values are: "Microsoft.Automation" and
      "Microsoft.Keyvault".
-    :vartype key_source: Union[str, "EncryptionKeySourceType"]
+    :vartype keySource: Union[str, "EncryptionKeySourceType"]
     :ivar identity: User identity used for CMK.
     :vartype identity: "EncryptionPropertiesIdentity"
     """
@@ -788,10 +787,10 @@ class EncryptionProperties(TypedDict, total=False):
 class EncryptionPropertiesIdentity(TypedDict, total=False):
     """User identity used for CMK.
 
-    :ivar user_assigned_identity: The user identity used for CMK. It will be an ARM resource id in
+    :ivar userAssignedIdentity: The user identity used for CMK. It will be an ARM resource id in
      the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identity: Any
+    :vartype userAssignedIdentity: Any
     """
 
     userAssignedIdentity: Any
@@ -802,10 +801,10 @@ class EncryptionPropertiesIdentity(TypedDict, total=False):
 class FieldDefinition(TypedDict, total=False):
     """Definition of the connection fields.
 
-    :ivar is_encrypted: Gets or sets the isEncrypted flag of the connection field definition.
-    :vartype is_encrypted: bool
-    :ivar is_optional: Gets or sets the isOptional flag of the connection field definition.
-    :vartype is_optional: bool
+    :ivar isEncrypted: Gets or sets the isEncrypted flag of the connection field definition.
+    :vartype isEncrypted: bool
+    :ivar isOptional: Gets or sets the isOptional flag of the connection field definition.
+    :vartype isOptional: bool
     :ivar type: Gets or sets the type of the connection field definition. Required.
     :vartype type: str
     """
@@ -821,10 +820,10 @@ class FieldDefinition(TypedDict, total=False):
 class GraphicalRunbookContent(TypedDict, total=False):
     """Graphical Runbook Content.
 
-    :ivar raw_content: Raw graphical Runbook content.
-    :vartype raw_content: "RawGraphicalRunbookContent"
-    :ivar graph_runbook_json: Graphical Runbook content as JSON.
-    :vartype graph_runbook_json: str
+    :ivar rawContent: Raw graphical Runbook content.
+    :vartype rawContent: "RawGraphicalRunbookContent"
+    :ivar graphRunbookJson: Graphical Runbook content as JSON.
+    :vartype graphRunbookJson: str
     """
 
     rawContent: Optional["RawGraphicalRunbookContent"]
@@ -836,8 +835,8 @@ class GraphicalRunbookContent(TypedDict, total=False):
 class HybridRunbookWorkerCreateOrUpdateParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """The parameters supplied to the create or update hybrid runbook worker operation.
 
-    :ivar vm_resource_id: Azure Resource Manager Id for a virtual machine.
-    :vartype vm_resource_id: str
+    :ivar vmResourceId: Azure Resource Manager Id for a virtual machine.
+    :vartype vmResourceId: str
     """
 
     vmResourceId: str
@@ -888,8 +887,8 @@ class HybridRunbookWorkerGroupCreateOrUpdateProperties(TypedDict, total=False): 
 class HybridRunbookWorkerMoveParameters(TypedDict, total=False):
     """Parameters supplied to move hybrid worker operation.
 
-    :ivar hybrid_runbook_worker_group_name: Gets or sets the target hybrid runbook worker group.
-    :vartype hybrid_runbook_worker_group_name: str
+    :ivar hybridRunbookWorkerGroupName: Gets or sets the target hybrid runbook worker group.
+    :vartype hybridRunbookWorkerGroupName: str
     """
 
     hybridRunbookWorkerGroupName: str
@@ -899,17 +898,17 @@ class HybridRunbookWorkerMoveParameters(TypedDict, total=False):
 class Identity(TypedDict, total=False):
     """Identity for the resource.
 
-    :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
+    :ivar principalId: The principal ID of resource identity. The value must be an UUID.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of resource.
+    :vartype tenantId: str
     :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
      "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "ResourceIdentityType"]
-    :ivar user_assigned_identities: The list of user identities associated with the resource. The
+    :ivar userAssignedIdentities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentitiesProperties"]
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentitiesProperties"]
     """
 
     principalId: str
@@ -943,9 +942,9 @@ class JobCreateProperties(TypedDict, total=False):
     :vartype runbook: "RunbookAssociationProperty"
     :ivar parameters: Gets or sets the parameters of the job.
     :vartype parameters: dict[str, str]
-    :ivar run_on: Gets or sets the runOn which specifies the group name where the job is to be
+    :ivar runOn: Gets or sets the runOn which specifies the group name where the job is to be
      executed.
-    :vartype run_on: str
+    :vartype runOn: str
     """
 
     runbook: "RunbookAssociationProperty"
@@ -974,8 +973,8 @@ class JobScheduleCreateProperties(TypedDict, total=False):
     :vartype schedule: "ScheduleAssociationProperty"
     :ivar runbook: Gets or sets the runbook. Required.
     :vartype runbook: "RunbookAssociationProperty"
-    :ivar run_on: Gets or sets the hybrid worker group that the scheduled job should run on.
-    :vartype run_on: str
+    :ivar runOn: Gets or sets the hybrid worker group that the scheduled job should run on.
+    :vartype runOn: str
     :ivar parameters: Gets or sets a list of job properties.
     :vartype parameters: dict[str, str]
     """
@@ -993,12 +992,12 @@ class JobScheduleCreateProperties(TypedDict, total=False):
 class KeyVaultProperties(TypedDict, total=False):
     """Settings concerning key vault encryption for a configuration store.
 
-    :ivar keyvault_uri: The URI of the key vault key used to encrypt data.
-    :vartype keyvault_uri: str
-    :ivar key_name: The name of key used to encrypt data.
-    :vartype key_name: str
-    :ivar key_version: The key version of the key used to encrypt data.
-    :vartype key_version: str
+    :ivar keyvaultUri: The URI of the key vault key used to encrypt data.
+    :vartype keyvaultUri: str
+    :ivar keyName: The name of key used to encrypt data.
+    :vartype keyName: str
+    :ivar keyVersion: The key version of the key used to encrypt data.
+    :vartype keyVersion: str
     """
 
     keyvaultUri: str
@@ -1012,15 +1011,15 @@ class KeyVaultProperties(TypedDict, total=False):
 class LinuxProperties(TypedDict, total=False):
     """Linux specific update configuration.
 
-    :ivar included_package_classifications: Update classifications included in the software update
+    :ivar includedPackageClassifications: Update classifications included in the software update
      configuration. Known values are: "Unclassified", "Critical", "Security", and "Other".
-    :vartype included_package_classifications: Union[str, "LinuxUpdateClasses"]
-    :ivar excluded_package_name_masks: packages excluded from the software update configuration.
-    :vartype excluded_package_name_masks: list[str]
-    :ivar included_package_name_masks: packages included from the software update configuration.
-    :vartype included_package_name_masks: list[str]
-    :ivar reboot_setting: Reboot setting for the software update configuration.
-    :vartype reboot_setting: str
+    :vartype includedPackageClassifications: Union[str, "LinuxUpdateClasses"]
+    :ivar excludedPackageNameMasks: packages excluded from the software update configuration.
+    :vartype excludedPackageNameMasks: list[str]
+    :ivar includedPackageNameMasks: packages included from the software update configuration.
+    :vartype includedPackageNameMasks: list[str]
+    :ivar rebootSetting: Reboot setting for the software update configuration.
+    :vartype rebootSetting: str
     """
 
     includedPackageClassifications: Union[str, "LinuxUpdateClasses"]
@@ -1060,8 +1059,8 @@ class ModuleCreateOrUpdateParameters(TypedDict, total=False):
 class ModuleCreateOrUpdateProperties(TypedDict, total=False):
     """The parameters supplied to the create or update module properties.
 
-    :ivar content_link: Gets or sets the module content link. Required.
-    :vartype content_link: "ContentLink"
+    :ivar contentLink: Gets or sets the module content link. Required.
+    :vartype contentLink: "ContentLink"
     """
 
     contentLink: Required["ContentLink"]
@@ -1094,8 +1093,8 @@ class ModuleUpdateParameters(TypedDict, total=False):
 class ModuleUpdateProperties(TypedDict, total=False):
     """The parameters supplied to the update properties.
 
-    :ivar content_link: Gets or sets the module content link.
-    :vartype content_link: "ContentLink"
+    :ivar contentLink: Gets or sets the module content link.
+    :vartype contentLink: "ContentLink"
     """
 
     contentLink: "ContentLink"
@@ -1105,10 +1104,10 @@ class ModuleUpdateProperties(TypedDict, total=False):
 class NonAzureQueryProperties(TypedDict, total=False):
     """Non Azure query for the update configuration.
 
-    :ivar function_alias: Log Analytics Saved Search name.
-    :vartype function_alias: str
-    :ivar workspace_id: Workspace Id for Log Analytics in which the saved Search is resided.
-    :vartype workspace_id: str
+    :ivar functionAlias: Log Analytics Saved Search name.
+    :vartype functionAlias: str
+    :ivar workspaceId: Workspace Id for Log Analytics in which the saved Search is resided.
+    :vartype workspaceId: str
     """
 
     functionAlias: str
@@ -1122,9 +1121,9 @@ class PackageCreateOrUpdateParameters(TypedDict, total=False):
 
     :ivar properties: Gets or sets the package create properties. Required.
     :vartype properties: "PackageCreateOrUpdateProperties"
-    :ivar all_of: The resource model definition for an Azure Resource Manager tracked top level
+    :ivar allOf: The resource model definition for an Azure Resource Manager tracked top level
      resource which has 'tags' and a 'location'.
-    :vartype all_of: "TrackedResource"
+    :vartype allOf: "TrackedResource"
     """
 
     properties: Required["PackageCreateOrUpdateProperties"]
@@ -1137,8 +1136,8 @@ class PackageCreateOrUpdateParameters(TypedDict, total=False):
 class PackageCreateOrUpdateProperties(TypedDict, total=False):
     """The parameters supplied to the create or update package properties.
 
-    :ivar content_link: Gets or sets the package content link. Required.
-    :vartype content_link: "ContentLink"
+    :ivar contentLink: Gets or sets the package content link. Required.
+    :vartype contentLink: "ContentLink"
     """
 
     contentLink: Required["ContentLink"]
@@ -1150,9 +1149,9 @@ class PackageUpdateParameters(TypedDict, total=False):
 
     :ivar properties: Gets or sets the package update properties.
     :vartype properties: "PackageUpdateProperties"
-    :ivar all_of: The resource model definition for an Azure Resource Manager tracked top level
+    :ivar allOf: The resource model definition for an Azure Resource Manager tracked top level
      resource which has 'tags' and a 'location'.
-    :vartype all_of: "TrackedResource"
+    :vartype allOf: "TrackedResource"
     """
 
     properties: "PackageUpdateProperties"
@@ -1165,8 +1164,8 @@ class PackageUpdateParameters(TypedDict, total=False):
 class PackageUpdateProperties(TypedDict, total=False):
     """The parameters supplied to the update properties.
 
-    :ivar content_link: Gets or sets the package content link.
-    :vartype content_link: "ContentLink"
+    :ivar contentLink: Gets or sets the package content link.
+    :vartype contentLink: "ContentLink"
     """
 
     contentLink: "ContentLink"
@@ -1184,9 +1183,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -1198,13 +1197,12 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of a private endpoint connection.
 
-    :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: "PrivateEndpointProperty"
-    :ivar group_ids: Gets the groupIds.
-    :vartype group_ids: list[str]
-    :ivar private_link_service_connection_state: Connection State of the Private Endpoint
-     Connection.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionStateProperty"
+    :ivar privateEndpoint: Private endpoint which the connection belongs to.
+    :vartype privateEndpoint: "PrivateEndpointProperty"
+    :ivar groupIds: Gets the groupIds.
+    :vartype groupIds: list[str]
+    :ivar privateLinkServiceConnectionState: Connection State of the Private Endpoint Connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionStateProperty"
     """
 
     privateEndpoint: "PrivateEndpointProperty"
@@ -1233,9 +1231,9 @@ class PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):  # pyli
     :vartype status: str
     :ivar description: The private link service connection description.
     :vartype description: str
-    :ivar actions_required: Any action that is required beyond basic workflow (approve/ reject/
+    :ivar actionsRequired: Any action that is required beyond basic workflow (approve/ reject/
      disconnect).
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: str
@@ -1264,8 +1262,8 @@ class PythonPackageCreateParameters(TypedDict, total=False):
 class PythonPackageCreateProperties(TypedDict, total=False):
     """The parameters supplied to the create or update module properties.
 
-    :ivar content_link: Gets or sets the module content link. Required.
-    :vartype content_link: "ContentLink"
+    :ivar contentLink: Gets or sets the module content link. Required.
+    :vartype contentLink: "ContentLink"
     """
 
     contentLink: Required["ContentLink"]
@@ -1286,13 +1284,13 @@ class PythonPackageUpdateParameters(TypedDict, total=False):
 class RawGraphicalRunbookContent(TypedDict, total=False):
     """Raw Graphical Runbook content.
 
-    :ivar schema_version: Schema version of the serializer.
-    :vartype schema_version: str
-    :ivar runbook_definition: Serialized Graphical runbook.
-    :vartype runbook_definition: str
-    :ivar runbook_type: Runbook Type. Known values are: "GraphPowerShell" and
+    :ivar schemaVersion: Schema version of the serializer.
+    :vartype schemaVersion: str
+    :ivar runbookDefinition: Serialized Graphical runbook.
+    :vartype runbookDefinition: str
+    :ivar runbookType: Runbook Type. Known values are: "GraphPowerShell" and
      "GraphPowerShellWorkflow".
-    :vartype runbook_type: Union[str, "GraphRunbookType"]
+    :vartype runbookType: Union[str, "GraphRunbookType"]
     """
 
     schemaVersion: str
@@ -1351,24 +1349,24 @@ class RunbookCreateOrUpdateParameters(TypedDict, total=False):
 class RunbookCreateOrUpdateProperties(TypedDict, total=False):
     """The parameters supplied to the create or update runbook properties.
 
-    :ivar log_verbose: Gets or sets verbose log option.
-    :vartype log_verbose: bool
-    :ivar log_progress: Gets or sets progress log option.
-    :vartype log_progress: bool
-    :ivar runtime_environment: Environment of the runbook.
-    :vartype runtime_environment: str
-    :ivar runbook_type: Gets or sets the type of the runbook. Required. Known values are: "Script",
+    :ivar logVerbose: Gets or sets verbose log option.
+    :vartype logVerbose: bool
+    :ivar logProgress: Gets or sets progress log option.
+    :vartype logProgress: bool
+    :ivar runtimeEnvironment: Environment of the runbook.
+    :vartype runtimeEnvironment: str
+    :ivar runbookType: Gets or sets the type of the runbook. Required. Known values are: "Script",
      "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell",
      "Python2", "Python3", "Python", and "PowerShell72".
-    :vartype runbook_type: Union[str, "RunbookTypeEnum"]
+    :vartype runbookType: Union[str, "RunbookTypeEnum"]
     :ivar draft: Gets or sets the draft runbook properties.
     :vartype draft: "RunbookDraft"
-    :ivar publish_content_link: Gets or sets the published runbook content link.
-    :vartype publish_content_link: "ContentLink"
+    :ivar publishContentLink: Gets or sets the published runbook content link.
+    :vartype publishContentLink: "ContentLink"
     :ivar description: Gets or sets the description of the runbook.
     :vartype description: str
-    :ivar log_activity_trace: Gets or sets the activity-level tracing options of the runbook.
-    :vartype log_activity_trace: int
+    :ivar logActivityTrace: Gets or sets the activity-level tracing options of the runbook.
+    :vartype logActivityTrace: int
     """
 
     logVerbose: bool
@@ -1394,18 +1392,18 @@ class RunbookCreateOrUpdateProperties(TypedDict, total=False):
 class RunbookDraft(TypedDict, total=False):
     """RunbookDraft.
 
-    :ivar in_edit: Gets or sets whether runbook is in edit mode.
-    :vartype in_edit: bool
-    :ivar draft_content_link: Gets or sets the draft runbook content link.
-    :vartype draft_content_link: "ContentLink"
-    :ivar creation_time: Gets or sets the creation time of the runbook draft.
-    :vartype creation_time: str
-    :ivar last_modified_time: Gets or sets the last modified time of the runbook draft.
-    :vartype last_modified_time: str
+    :ivar inEdit: Gets or sets whether runbook is in edit mode.
+    :vartype inEdit: bool
+    :ivar draftContentLink: Gets or sets the draft runbook content link.
+    :vartype draftContentLink: "ContentLink"
+    :ivar creationTime: Gets or sets the creation time of the runbook draft.
+    :vartype creationTime: str
+    :ivar lastModifiedTime: Gets or sets the last modified time of the runbook draft.
+    :vartype lastModifiedTime: str
     :ivar parameters: Gets or sets the runbook draft parameters.
     :vartype parameters: dict[str, "RunbookParameter"]
-    :ivar output_types: Gets or sets the runbook output types.
-    :vartype output_types: list[str]
+    :ivar outputTypes: Gets or sets the runbook output types.
+    :vartype outputTypes: list[str]
     """
 
     inEdit: bool
@@ -1427,13 +1425,13 @@ class RunbookParameter(TypedDict, total=False):
 
     :ivar type: Gets or sets the type of the parameter.
     :vartype type: str
-    :ivar is_mandatory: Gets or sets a Boolean value to indicate whether the parameter is mandatory
+    :ivar isMandatory: Gets or sets a Boolean value to indicate whether the parameter is mandatory
      or not.
-    :vartype is_mandatory: bool
+    :vartype isMandatory: bool
     :ivar position: Get or sets the position of the parameter.
     :vartype position: int
-    :ivar default_value: Gets or sets the default value of parameter.
-    :vartype default_value: str
+    :ivar defaultValue: Gets or sets the default value of parameter.
+    :vartype defaultValue: str
     """
 
     type: str
@@ -1474,12 +1472,12 @@ class RunbookUpdateProperties(TypedDict, total=False):
 
     :ivar description: Gets or sets the description of the runbook.
     :vartype description: str
-    :ivar log_verbose: Gets or sets verbose log option.
-    :vartype log_verbose: bool
-    :ivar log_progress: Gets or sets progress log option.
-    :vartype log_progress: bool
-    :ivar log_activity_trace: Gets or sets the activity-level tracing options of the runbook.
-    :vartype log_activity_trace: int
+    :ivar logVerbose: Gets or sets verbose log option.
+    :vartype logVerbose: bool
+    :ivar logProgress: Gets or sets progress log option.
+    :vartype logProgress: bool
+    :ivar logActivityTrace: Gets or sets the activity-level tracing options of the runbook.
+    :vartype logActivityTrace: int
     """
 
     description: str
@@ -1503,9 +1501,9 @@ class RuntimeEnvironment(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1523,8 +1521,8 @@ class RuntimeEnvironmentProperties(TypedDict, total=False):
 
     :ivar runtime: Runtime properties.
     :vartype runtime: "RuntimeProperties"
-    :ivar default_packages: List of Default packages for Environment.
-    :vartype default_packages: dict[str, str]
+    :ivar defaultPackages: List of Default packages for Environment.
+    :vartype defaultPackages: dict[str, str]
     :ivar description: Gets or sets the description.
     :vartype description: str
     """
@@ -1542,8 +1540,8 @@ class RuntimeEnvironmentUpdateParameters(TypedDict, total=False):
 
     :ivar properties: Gets or sets Runtime update properties.
     :vartype properties: "RuntimeEnvironmentUpdateProperties"
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: "SystemData"
+    :ivar systemData: Metadata pertaining to creation and last modification of the resource.
+    :vartype systemData: "SystemData"
     """
 
     properties: "RuntimeEnvironmentUpdateProperties"
@@ -1555,8 +1553,8 @@ class RuntimeEnvironmentUpdateParameters(TypedDict, total=False):
 class RuntimeEnvironmentUpdateProperties(TypedDict, total=False):
     """Gets or sets Runtime update properties.
 
-    :ivar default_packages: List of Default packages for Environment.
-    :vartype default_packages: dict[str, str]
+    :ivar defaultPackages: List of Default packages for Environment.
+    :vartype defaultPackages: dict[str, str]
     """
 
     defaultPackages: dict[str, str]
@@ -1609,19 +1607,19 @@ class ScheduleCreateOrUpdateProperties(TypedDict, total=False):
 
     :ivar description: Gets or sets the description of the schedule.
     :vartype description: str
-    :ivar start_time: Gets or sets the start time of the schedule. Required.
-    :vartype start_time: str
-    :ivar expiry_time: Gets or sets the end time of the schedule.
-    :vartype expiry_time: str
+    :ivar startTime: Gets or sets the start time of the schedule. Required.
+    :vartype startTime: str
+    :ivar expiryTime: Gets or sets the end time of the schedule.
+    :vartype expiryTime: str
     :ivar interval: Gets or sets the interval of the schedule.
     :vartype interval: Any
     :ivar frequency: Gets or sets the frequency of the schedule. Required. Known values are:
      "OneTime", "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: Union[str, "ScheduleFrequency"]
-    :ivar time_zone: Gets or sets the time zone of the schedule.
-    :vartype time_zone: str
-    :ivar advanced_schedule: Gets or sets the AdvancedSchedule.
-    :vartype advanced_schedule: "AdvancedSchedule"
+    :ivar timeZone: Gets or sets the time zone of the schedule.
+    :vartype timeZone: str
+    :ivar advancedSchedule: Gets or sets the AdvancedSchedule.
+    :vartype advancedSchedule: "AdvancedSchedule"
     """
 
     description: str
@@ -1661,8 +1659,8 @@ class ScheduleUpdateProperties(TypedDict, total=False):
 
     :ivar description: Gets or sets the description of the schedule.
     :vartype description: str
-    :ivar is_enabled: Gets or sets a value indicating whether this schedule is enabled.
-    :vartype is_enabled: bool
+    :ivar isEnabled: Gets or sets a value indicating whether this schedule is enabled.
+    :vartype isEnabled: bool
     """
 
     description: str
@@ -1702,9 +1700,9 @@ class SoftwareUpdateConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Software update configuration properties. Required.
     :vartype properties: "SoftwareUpdateConfigurationProperties"
     """
@@ -1716,24 +1714,24 @@ class SoftwareUpdateConfiguration(ProxyResource):
 class SoftwareUpdateConfigurationProperties(TypedDict, total=False):
     """Software update configuration properties.
 
-    :ivar update_configuration: update specific properties for the Software update configuration.
+    :ivar updateConfiguration: update specific properties for the Software update configuration.
      Required.
-    :vartype update_configuration: "UpdateConfiguration"
-    :ivar schedule_info: Schedule information for the Software update configuration. Required.
-    :vartype schedule_info: "SUCScheduleProperties"
-    :ivar provisioning_state: Provisioning state for the software update configuration, which only
+    :vartype updateConfiguration: "UpdateConfiguration"
+    :ivar scheduleInfo: Schedule information for the Software update configuration. Required.
+    :vartype scheduleInfo: "SUCScheduleProperties"
+    :ivar provisioningState: Provisioning state for the software update configuration, which only
      appears in the response.
-    :vartype provisioning_state: str
+    :vartype provisioningState: str
     :ivar error: Details of provisioning error.
     :vartype error: "AutomationErrorResponse"
-    :ivar creation_time: Creation time of the resource, which only appears in the response.
-    :vartype creation_time: str
-    :ivar created_by: CreatedBy property, which only appears in the response.
-    :vartype created_by: str
-    :ivar last_modified_time: Last time resource was modified, which only appears in the response.
-    :vartype last_modified_time: str
-    :ivar last_modified_by: LastModifiedBy property, which only appears in the response.
-    :vartype last_modified_by: str
+    :ivar creationTime: Creation time of the resource, which only appears in the response.
+    :vartype creationTime: str
+    :ivar createdBy: CreatedBy property, which only appears in the response.
+    :vartype createdBy: str
+    :ivar lastModifiedTime: Last time resource was modified, which only appears in the response.
+    :vartype lastModifiedTime: str
+    :ivar lastModifiedBy: LastModifiedBy property, which only appears in the response.
+    :vartype lastModifiedBy: str
     :ivar tasks: Tasks information for the Software update configuration.
     :vartype tasks: "SoftwareUpdateConfigurationTasks"
     """
@@ -1761,10 +1759,10 @@ class SoftwareUpdateConfigurationProperties(TypedDict, total=False):
 class SoftwareUpdateConfigurationTasks(TypedDict, total=False):
     """Task properties of the software update configuration.
 
-    :ivar pre_task: Pre task properties.
-    :vartype pre_task: "TaskProperties"
-    :ivar post_task: Post task properties.
-    :vartype post_task: "TaskProperties"
+    :ivar preTask: Pre task properties.
+    :vartype preTask: "TaskProperties"
+    :ivar postTask: Post task properties.
+    :vartype postTask: "TaskProperties"
     """
 
     preTask: "TaskProperties"
@@ -1787,22 +1785,22 @@ class SourceControlCreateOrUpdateParameters(TypedDict, total=False):
 class SourceControlCreateOrUpdateProperties(TypedDict, total=False):
     """The properties of the create source control operation.
 
-    :ivar repo_url: The repo url of the source control.
-    :vartype repo_url: str
+    :ivar repoUrl: The repo url of the source control.
+    :vartype repoUrl: str
     :ivar branch: The repo branch of the source control. Include branch as empty string for
      VsoTfvc.
     :vartype branch: str
-    :ivar folder_path: The folder path of the source control. Path must be relative.
-    :vartype folder_path: str
-    :ivar auto_sync: The auto async of the source control. Default is false.
-    :vartype auto_sync: bool
-    :ivar publish_runbook: The auto publish of the source control. Default is true.
-    :vartype publish_runbook: bool
-    :ivar source_type: The source type. Must be one of VsoGit, VsoTfvc, GitHub, case sensitive.
+    :ivar folderPath: The folder path of the source control. Path must be relative.
+    :vartype folderPath: str
+    :ivar autoSync: The auto async of the source control. Default is false.
+    :vartype autoSync: bool
+    :ivar publishRunbook: The auto publish of the source control. Default is true.
+    :vartype publishRunbook: bool
+    :ivar sourceType: The source type. Must be one of VsoGit, VsoTfvc, GitHub, case sensitive.
      Known values are: "VsoGit", "VsoTfvc", and "GitHub".
-    :vartype source_type: Union[str, "SourceType"]
-    :ivar security_token: The authorization token for the repo of the source control.
-    :vartype security_token: "SourceControlSecurityTokenProperties"
+    :vartype sourceType: Union[str, "SourceType"]
+    :ivar securityToken: The authorization token for the repo of the source control.
+    :vartype securityToken: "SourceControlSecurityTokenProperties"
     :ivar description: The user description of the source control.
     :vartype description: str
     """
@@ -1829,13 +1827,13 @@ class SourceControlCreateOrUpdateProperties(TypedDict, total=False):
 class SourceControlSecurityTokenProperties(TypedDict, total=False):
     """SourceControlSecurityTokenProperties.
 
-    :ivar access_token: The access token.
-    :vartype access_token: str
-    :ivar refresh_token: The refresh token.
-    :vartype refresh_token: str
-    :ivar token_type: The token type. Must be either PersonalAccessToken or Oauth. Known values
-     are: "PersonalAccessToken" and "Oauth".
-    :vartype token_type: Union[str, "TokenType"]
+    :ivar accessToken: The access token.
+    :vartype accessToken: str
+    :ivar refreshToken: The refresh token.
+    :vartype refreshToken: str
+    :ivar tokenType: The token type. Must be either PersonalAccessToken or Oauth. Known values are:
+     "PersonalAccessToken" and "Oauth".
+    :vartype tokenType: Union[str, "TokenType"]
     """
 
     accessToken: str
@@ -1861,9 +1859,9 @@ class SourceControlSyncJobCreateParameters(TypedDict, total=False):
 class SourceControlSyncJobCreateProperties(TypedDict, total=False):
     """Definition of create source control sync job properties.
 
-    :ivar commit_id: The commit id of the source control sync job. If not syncing to a commitId,
+    :ivar commitId: The commit id of the source control sync job. If not syncing to a commitId,
      enter an empty string. Required.
-    :vartype commit_id: str
+    :vartype commitId: str
     """
 
     commitId: Required[str]
@@ -1887,14 +1885,14 @@ class SourceControlUpdateProperties(TypedDict, total=False):
 
     :ivar branch: The repo branch of the source control.
     :vartype branch: str
-    :ivar folder_path: The folder path of the source control. Path must be relative.
-    :vartype folder_path: str
-    :ivar auto_sync: The auto sync of the source control. Default is false.
-    :vartype auto_sync: bool
-    :ivar publish_runbook: The auto publish of the source control. Default is true.
-    :vartype publish_runbook: bool
-    :ivar security_token: The authorization token for the repo of the source control.
-    :vartype security_token: "SourceControlSecurityTokenProperties"
+    :ivar folderPath: The folder path of the source control. Path must be relative.
+    :vartype folderPath: str
+    :ivar autoSync: The auto sync of the source control. Default is false.
+    :vartype autoSync: bool
+    :ivar publishRunbook: The auto publish of the source control. Default is true.
+    :vartype publishRunbook: bool
+    :ivar securityToken: The authorization token for the repo of the source control.
+    :vartype securityToken: "SourceControlSecurityTokenProperties"
     :ivar description: The user description of the source control.
     :vartype description: str
     """
@@ -1916,33 +1914,33 @@ class SourceControlUpdateProperties(TypedDict, total=False):
 class SUCScheduleProperties(TypedDict, total=False):
     """Definition of schedule parameters.
 
-    :ivar start_time: Gets or sets the start time of the schedule.
-    :vartype start_time: str
-    :ivar start_time_offset_minutes: Gets the start time's offset in minutes.
-    :vartype start_time_offset_minutes: float
-    :ivar expiry_time: Gets or sets the end time of the schedule.
-    :vartype expiry_time: str
-    :ivar expiry_time_offset_minutes: Gets or sets the expiry time's offset in minutes.
-    :vartype expiry_time_offset_minutes: float
-    :ivar is_enabled: Gets or sets a value indicating whether this schedule is enabled.
-    :vartype is_enabled: bool
-    :ivar next_run: Gets or sets the next run time of the schedule.
-    :vartype next_run: str
-    :ivar next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
-    :vartype next_run_offset_minutes: float
+    :ivar startTime: Gets or sets the start time of the schedule.
+    :vartype startTime: str
+    :ivar startTimeOffsetMinutes: Gets the start time's offset in minutes.
+    :vartype startTimeOffsetMinutes: float
+    :ivar expiryTime: Gets or sets the end time of the schedule.
+    :vartype expiryTime: str
+    :ivar expiryTimeOffsetMinutes: Gets or sets the expiry time's offset in minutes.
+    :vartype expiryTimeOffsetMinutes: float
+    :ivar isEnabled: Gets or sets a value indicating whether this schedule is enabled.
+    :vartype isEnabled: bool
+    :ivar nextRun: Gets or sets the next run time of the schedule.
+    :vartype nextRun: str
+    :ivar nextRunOffsetMinutes: Gets or sets the next run time's offset in minutes.
+    :vartype nextRunOffsetMinutes: float
     :ivar interval: Gets or sets the interval of the schedule.
     :vartype interval: int
     :ivar frequency: Gets or sets the frequency of the schedule. Known values are: "OneTime",
      "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: Union[str, "ScheduleFrequency"]
-    :ivar time_zone: Gets or sets the time zone of the schedule.
-    :vartype time_zone: str
-    :ivar advanced_schedule: Gets or sets the advanced schedule.
-    :vartype advanced_schedule: "AdvancedSchedule"
-    :ivar creation_time: Gets or sets the creation time.
-    :vartype creation_time: str
-    :ivar last_modified_time: Gets or sets the last modified time.
-    :vartype last_modified_time: str
+    :ivar timeZone: Gets or sets the time zone of the schedule.
+    :vartype timeZone: str
+    :ivar advancedSchedule: Gets or sets the advanced schedule.
+    :vartype advancedSchedule: "AdvancedSchedule"
+    :ivar creationTime: Gets or sets the creation time.
+    :vartype creationTime: str
+    :ivar lastModifiedTime: Gets or sets the last modified time.
+    :vartype lastModifiedTime: str
     :ivar description: Gets or sets the description.
     :vartype description: str
     """
@@ -1981,20 +1979,20 @@ class SUCScheduleProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2018,9 +2016,9 @@ class TagSettingsProperties(TypedDict, total=False):
 
     :ivar tags: Dictionary of tags with its list of values.
     :vartype tags: dict[str, list[str]]
-    :ivar filter_operator: Filter VMs by Any or All specified tags. Known values are: "All" and
+    :ivar filterOperator: Filter VMs by Any or All specified tags. Known values are: "All" and
      "Any".
-    :vartype filter_operator: Union[str, "TagOperators"]
+    :vartype filterOperator: Union[str, "TagOperators"]
     """
 
     tags: dict[str, list[str]]
@@ -2032,10 +2030,10 @@ class TagSettingsProperties(TypedDict, total=False):
 class TargetProperties(TypedDict, total=False):
     """Group specific to the update configuration.
 
-    :ivar azure_queries: List of Azure queries in the software update configuration.
-    :vartype azure_queries: list["AzureQueryProperties"]
-    :ivar non_azure_queries: List of non Azure queries in the software update configuration.
-    :vartype non_azure_queries: list["NonAzureQueryProperties"]
+    :ivar azureQueries: List of Azure queries in the software update configuration.
+    :vartype azureQueries: list["AzureQueryProperties"]
+    :ivar nonAzureQueries: List of non Azure queries in the software update configuration.
+    :vartype nonAzureQueries: list["NonAzureQueryProperties"]
     """
 
     azureQueries: list["AzureQueryProperties"]
@@ -2064,11 +2062,11 @@ class TestJobCreateParameters(TypedDict, total=False):
 
     :ivar parameters: Gets or sets the parameters of the test job.
     :vartype parameters: dict[str, str]
-    :ivar run_on: Gets or sets the runOn which specifies the group name where the job is to be
+    :ivar runOn: Gets or sets the runOn which specifies the group name where the job is to be
      executed.
-    :vartype run_on: str
-    :ivar runtime_environment: The runtime Environment Name on which job needs to be tested.
-    :vartype runtime_environment: str
+    :vartype runOn: str
+    :ivar runtimeEnvironment: The runtime Environment Name on which job needs to be tested.
+    :vartype runtimeEnvironment: str
     """
 
     parameters: dict[str, str]
@@ -2082,9 +2080,9 @@ class TestJobCreateParameters(TypedDict, total=False):
 class UpdateConfiguration(TypedDict, total=False):
     """Update specific properties of the software update configuration.
 
-    :ivar operating_system: operating system of target machines. Required. Known values are:
+    :ivar operatingSystem: operating system of target machines. Required. Known values are:
      "Windows" and "Linux".
-    :vartype operating_system: Union[str, "OperatingSystemType"]
+    :vartype operatingSystem: Union[str, "OperatingSystemType"]
     :ivar windows: Windows specific update configuration.
     :vartype windows: "WindowsProperties"
     :ivar linux: Linux specific update configuration.
@@ -2092,12 +2090,12 @@ class UpdateConfiguration(TypedDict, total=False):
     :ivar duration: Maximum time allowed for the software update configuration run. Duration needs
      to be specified using the format PT[n]H[n]M[n]S as per ISO8601.
     :vartype duration: str
-    :ivar azure_virtual_machines: List of azure resource Ids for azure virtual machines targeted by
+    :ivar azureVirtualMachines: List of azure resource Ids for azure virtual machines targeted by
      the software update configuration.
-    :vartype azure_virtual_machines: list[str]
-    :ivar non_azure_computer_names: List of names of non-azure machines targeted by the software
+    :vartype azureVirtualMachines: list[str]
+    :ivar nonAzureComputerNames: List of names of non-azure machines targeted by the software
      update configuration.
-    :vartype non_azure_computer_names: list[str]
+    :vartype nonAzureComputerNames: list[str]
     :ivar targets: Group targets for the software update configuration.
     :vartype targets: "TargetProperties"
     """
@@ -2123,10 +2121,10 @@ class UpdateConfiguration(TypedDict, total=False):
 class UserAssignedIdentitiesProperties(TypedDict, total=False):
     """UserAssignedIdentitiesProperties.
 
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2157,8 +2155,8 @@ class VariableCreateOrUpdateProperties(TypedDict, total=False):
     :vartype value: str
     :ivar description: Gets or sets the description of the variable.
     :vartype description: str
-    :ivar is_encrypted: Gets or sets the encrypted flag of the variable.
-    :vartype is_encrypted: bool
+    :ivar isEncrypted: Gets or sets the encrypted flag of the variable.
+    :vartype isEncrypted: bool
     """
 
     value: str
@@ -2210,9 +2208,9 @@ class Watcher(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Gets or sets the watcher properties.
     :vartype properties: "WatcherProperties"
     :ivar etag: Gets or sets the etag of the resource.
@@ -2236,24 +2234,23 @@ class Watcher(ProxyResource):
 class WatcherProperties(TypedDict, total=False):
     """Definition of the watcher properties.
 
-    :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
-     invoked.
-    :vartype execution_frequency_in_seconds: int
-    :ivar script_name: Gets or sets the name of the script the watcher is attached to, i.e. the
-     name of an existing runbook.
-    :vartype script_name: str
-    :ivar script_parameters: Gets or sets the parameters of the script.
-    :vartype script_parameters: dict[str, str]
-    :ivar script_run_on: Gets or sets the name of the hybrid worker group the watcher will run on.
-    :vartype script_run_on: str
+    :ivar executionFrequencyInSeconds: Gets or sets the frequency at which the watcher is invoked.
+    :vartype executionFrequencyInSeconds: int
+    :ivar scriptName: Gets or sets the name of the script the watcher is attached to, i.e. the name
+     of an existing runbook.
+    :vartype scriptName: str
+    :ivar scriptParameters: Gets or sets the parameters of the script.
+    :vartype scriptParameters: dict[str, str]
+    :ivar scriptRunOn: Gets or sets the name of the hybrid worker group the watcher will run on.
+    :vartype scriptRunOn: str
     :ivar status: Gets the current status of the watcher.
     :vartype status: str
-    :ivar creation_time: Gets or sets the creation time.
-    :vartype creation_time: str
-    :ivar last_modified_time: Gets or sets the last modified time.
-    :vartype last_modified_time: str
-    :ivar last_modified_by: Details of the user who last modified the watcher.
-    :vartype last_modified_by: str
+    :ivar creationTime: Gets or sets the creation time.
+    :vartype creationTime: str
+    :ivar lastModifiedTime: Gets or sets the last modified time.
+    :vartype lastModifiedTime: str
+    :ivar lastModifiedBy: Details of the user who last modified the watcher.
+    :vartype lastModifiedBy: str
     :ivar description: Gets or sets the description.
     :vartype description: str
     """
@@ -2297,9 +2294,8 @@ class WatcherUpdateParameters(TypedDict, total=False):
 class WatcherUpdateProperties(TypedDict, total=False):
     """The properties of the update watcher operation.
 
-    :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
-     invoked.
-    :vartype execution_frequency_in_seconds: int
+    :ivar executionFrequencyInSeconds: Gets or sets the frequency at which the watcher is invoked.
+    :vartype executionFrequencyInSeconds: int
     """
 
     executionFrequencyInSeconds: int
@@ -2324,18 +2320,18 @@ class WebhookCreateOrUpdateParameters(TypedDict, total=False):
 class WebhookCreateOrUpdateProperties(TypedDict, total=False):
     """The properties of the create webhook operation.
 
-    :ivar is_enabled: Gets or sets the value of the enabled flag of webhook.
-    :vartype is_enabled: bool
+    :ivar isEnabled: Gets or sets the value of the enabled flag of webhook.
+    :vartype isEnabled: bool
     :ivar uri: Gets or sets the uri.
     :vartype uri: str
-    :ivar expiry_time: Gets or sets the expiry time.
-    :vartype expiry_time: str
+    :ivar expiryTime: Gets or sets the expiry time.
+    :vartype expiryTime: str
     :ivar parameters: Gets or sets the parameters of the job.
     :vartype parameters: dict[str, str]
     :ivar runbook: Gets or sets the runbook.
     :vartype runbook: "RunbookAssociationProperty"
-    :ivar run_on: Gets or sets the name of the hybrid worker group the webhook job will run on.
-    :vartype run_on: str
+    :ivar runOn: Gets or sets the name of the hybrid worker group the webhook job will run on.
+    :vartype runOn: str
     """
 
     isEnabled: bool
@@ -2370,10 +2366,10 @@ class WebhookUpdateParameters(TypedDict, total=False):
 class WebhookUpdateProperties(TypedDict, total=False):
     """The properties of the update webhook.
 
-    :ivar is_enabled: Gets or sets the value of the enabled flag of webhook.
-    :vartype is_enabled: bool
-    :ivar run_on: Gets or sets the name of the hybrid worker group the webhook job will run on.
-    :vartype run_on: str
+    :ivar isEnabled: Gets or sets the value of the enabled flag of webhook.
+    :vartype isEnabled: bool
+    :ivar runOn: Gets or sets the name of the hybrid worker group the webhook job will run on.
+    :vartype runOn: str
     :ivar parameters: Gets or sets the parameters of the job.
     :vartype parameters: dict[str, str]
     :ivar description: Gets or sets the description of the webhook.
@@ -2393,17 +2389,17 @@ class WebhookUpdateProperties(TypedDict, total=False):
 class WindowsProperties(TypedDict, total=False):
     """Windows specific update configuration.
 
-    :ivar included_update_classifications: Update classification included in the software update
+    :ivar includedUpdateClassifications: Update classification included in the software update
      configuration. A comma separated string with required values. Known values are: "Unclassified",
      "Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools",
      and "Updates".
-    :vartype included_update_classifications: Union[str, "WindowsUpdateClasses"]
-    :ivar excluded_kb_numbers: KB numbers excluded from the software update configuration.
-    :vartype excluded_kb_numbers: list[str]
-    :ivar included_kb_numbers: KB numbers included from the software update configuration.
-    :vartype included_kb_numbers: list[str]
-    :ivar reboot_setting: Reboot setting for the software update configuration.
-    :vartype reboot_setting: str
+    :vartype includedUpdateClassifications: Union[str, "WindowsUpdateClasses"]
+    :ivar excludedKbNumbers: KB numbers excluded from the software update configuration.
+    :vartype excludedKbNumbers: list[str]
+    :ivar includedKbNumbers: KB numbers included from the software update configuration.
+    :vartype includedKbNumbers: list[str]
+    :ivar rebootSetting: Reboot setting for the software update configuration.
+    :vartype rebootSetting: str
     """
 
     includedUpdateClassifications: Union[str, "WindowsUpdateClasses"]
