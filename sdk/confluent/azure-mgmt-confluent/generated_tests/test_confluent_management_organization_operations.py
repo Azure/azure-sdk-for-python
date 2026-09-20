@@ -118,6 +118,39 @@ class TestConfluentManagementOrganizationOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_organization_begin_link_saa_s(self, resource_group):
+        response = self.client.organization.begin_link_saa_s(
+            resource_group_name=resource_group.name,
+            organization_name="str",
+            body={"saaSResourceId": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_organization_latest_linked_saa_s(self, resource_group):
+        response = self.client.organization.latest_linked_saa_s(
+            resource_group_name=resource_group.name,
+            organization_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_organization_begin_activate_resource(self, resource_group):
+        response = self.client.organization.begin_activate_resource(
+            body={"saasGuid": "str", "publisherId": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_organization_get_environment_by_id(self, resource_group):
         response = self.client.organization.get_environment_by_id(
             resource_group_name=resource_group.name,
