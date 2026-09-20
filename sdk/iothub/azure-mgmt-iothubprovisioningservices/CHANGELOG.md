@@ -1,6 +1,6 @@
 # Release History
 
-## 2.1.0 (2026-09-18)
+## 2.1.0 (2026-09-20)
 
 tool can't generate changelog for this release, please update manually.
 
