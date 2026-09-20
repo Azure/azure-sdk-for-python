@@ -106,22 +106,11 @@
   - Method `ConfigTemplatesOperations.update` changed type of its parameter `properties` from `ConfigTemplate` to `ConfigTemplateUpdate`
   - Method `ContextsOperations.begin_update` changed type of its parameter `properties` from `Context` to `ContextUpdate`
   - Method `DiagnosticsOperations.begin_update` changed type of its parameter `properties` from `Diagnostic` to `DiagnosticUpdate`
-  - Method `DynamicSchemaVersionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `dynamic_schema_version_name`
-  - Method `DynamicSchemaVersionsOperations.begin_create_or_update` deleted or renamed its parameter `schema_version_name` of kind `positional_or_keyword`
-  - Method `DynamicSchemaVersionsOperations.begin_delete` inserted a `positional_or_keyword` parameter `dynamic_schema_version_name`
-  - Method `DynamicSchemaVersionsOperations.begin_delete` deleted or renamed its parameter `schema_version_name` of kind `positional_or_keyword`
-  - Method `DynamicSchemaVersionsOperations.get` inserted a `positional_or_keyword` parameter `dynamic_schema_version_name`
-  - Method `DynamicSchemaVersionsOperations.get` deleted or renamed its parameter `schema_version_name` of kind `positional_or_keyword`
-  - Method `DynamicSchemaVersionsOperations.update` inserted a `positional_or_keyword` parameter `dynamic_schema_version_name`
-  - Method `DynamicSchemaVersionsOperations.update` deleted or renamed its parameter `schema_version_name` of kind `positional_or_keyword`
   - Method `SchemasOperations.update` changed type of its parameter `properties` from `Schema` to `SchemaUpdate`
   - Method `SolutionTemplatesOperations.update` changed type of its parameter `properties` from `SolutionTemplate` to `SolutionTemplateUpdate`
   - Method `SolutionsOperations.begin_update` changed type of its parameter `properties` from `Solution` to `SolutionUpdate`
   - Method `TargetsOperations.begin_update` changed type of its parameter `properties` from `Target` to `TargetUpdate`
-  - Method `DynamicSchemaVersionsOperations.update` re-ordered its parameters from `['self', 'content_type', 'dynamic_schema_name', 'properties', 'resource_group_name', 'schema_name', 'schema_version_name', 'kwargs']` to `['self', 'content_type', 'dynamic_schema_name', 'dynamic_schema_version_name', 'properties', 'resource_group_name', 'schema_name', 'kwargs']`
-  - Method `DynamicSchemaVersionsOperations.begin_delete` re-ordered its parameters from `['self', 'dynamic_schema_name', 'resource_group_name', 'schema_name', 'schema_version_name', 'kwargs']` to `['self', 'dynamic_schema_name', 'dynamic_schema_version_name', 'resource_group_name', 'schema_name', 'kwargs']`
-  - Method `DynamicSchemaVersionsOperations.get` re-ordered its parameters from `['self', 'dynamic_schema_name', 'resource_group_name', 'schema_name', 'schema_version_name', 'kwargs']` to `['self', 'dynamic_schema_name', 'dynamic_schema_version_name', 'resource_group_name', 'schema_name', 'kwargs']`
-  - Method `DynamicSchemaVersionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'dynamic_schema_name', 'resource', 'resource_group_name', 'schema_name', 'schema_version_name', 'kwargs']` to `['self', 'content_type', 'dynamic_schema_name', 'dynamic_schema_version_name', 'resource', 'resource_group_name', 'schema_name', 'kwargs']`
+  - Method `DynamicSchemaVersionsOperations.begin_create_or_update`/`DynamicSchemaVersionsOperations.begin_delete`/`DynamicSchemaVersionsOperations.get`/`DynamicSchemaVersionsOperations.update` renamed their parameter `schema_version_name` to `dynamic_schema_version_name`
 
 ## 1.0.0b1 (2025-08-18)
 
