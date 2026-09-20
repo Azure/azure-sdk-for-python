@@ -3,7 +3,7 @@
 # Phase B -- Memory-leak sweep (sdkdev-dikshi drill).
 #
 # WHAT IT DOES, AND WHY THIS SHAPE:
-#   Record separate process RSS trends for selected operations under closed-loop
+#   Record separate process RSS trends for selected operations under send-and-wait
 #   load. Processes run concurrently and can contend for the host and service.
 #   Growth is an investigation signal, not proof of a leak or its code owner.
 #
@@ -78,7 +78,7 @@ echo "    soak = ${DURATION_SECONDS}s (~$(( DURATION_SECONDS / 3600 )) h) per ba
 echo "    host = ${host_name}"
 echo "    target = ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    backends = ${BACKENDS[*]} (each batch = ${#OPERATIONS[@]} selected ops in parallel)"
-echo "    ops = ${OPERATIONS[*]} (closed-loop, one op per process)"
+echo "    ops = ${OPERATIONS[*]} (send-and-wait, one op per process)"
 echo "    logs -> ${LOG_DIR}"
 echo
 

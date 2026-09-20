@@ -4203,7 +4203,7 @@ def test_resolve_credential_rejects_non_string_master_key_in_dict(bad_master_key
 def test_resolve_credential_rejects_empty_master_key_string():
     """An empty master-key string is rejected up front rather than accepted and
     failing later."""
-    with pytest.raises(ValueError, match="non-empty master-key string"):
+    with pytest.raises(ValueError, match=r"^The account key must be a non-empty string\.$"):
         resolve_credential("")
 
 

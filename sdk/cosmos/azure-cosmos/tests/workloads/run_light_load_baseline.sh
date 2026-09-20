@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Rate-limited point-read latency baseline. One client, 250 reads/s by default,
 # no proxy. The fixed arrival rate keeps this 1-RU read workload below the
-# dedicated probe container's 400-RU/s budget. An unpaced closed loop is not a
+# dedicated probe container's 400-RU/s budget. An unpaced send-and-wait is not a
 # low-load test: it sends the next read immediately and can saturate the account.
 #
 # Purpose: validate the test environment before any A/B claim. A point-op baseline
@@ -84,7 +84,7 @@ export COSMOS_DATABASE="${BASELINE_DATABASE}"
 export COSMOS_CONTAINER="${BASELINE_CONTAINER}"
 export COSMOS_CONCURRENT_REQUESTS=1
 export WORKLOAD_NUM_CLIENTS=1
-# The pacing this baseline depends on lives only in the async open-loop path
+# The pacing this baseline depends on lives only in the async fixed-rate path
 # (workload.py). The sync client ignores WORKLOAD_ARRIVAL_RATE and runs a closed
 # loop, yet the reporter still stamps config_arrival_rate from the environment --
 # so an inherited WORKLOAD_USE_SYNC=true would publish an unpaced run labelled as

@@ -22,6 +22,7 @@ from .contracts import (
     PreparedQuery, PreparedRequest, QueryPage, QueryScope,
 )
 from .errors import BindingProtocolError
+from ._immutable import json_mapping
 from .operations import (
     OP_LIST_CONTAINERS, OP_LIST_DATABASES, OP_READ_ALL_ITEMS,
     OP_QUERY_ITEMS_CHANGE_FEED, OP_QUERY_ITEMS,
@@ -41,7 +42,9 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
     between fetches; change-feed and parameterless-feed bodies keep their shape.
     """
     if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
-        body = json.dumps(prepared.change_feed, separators=(",", ":")).encode("utf-8")
+        body = json.dumps(
+            prepared.change_feed, separators=(",", ":"), default=json_mapping
+        ).encode("utf-8")
     elif prepared.op in _PARAMETERLESS_FEED_OPS:
         body = b""
     elif prepared.query_body is not None:
@@ -52,7 +55,9 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
         payload: dict[str, Any] = {"query": prepared.query}
         if prepared.parameters:
             payload["parameters"] = list(prepared.parameters)
-        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+        body = json.dumps(
+            payload, separators=(",", ":"), default=json_mapping
+        ).encode("utf-8")
     headers = dict(prepared.headers)
     query_settings = prepared.settings.query
     if prepared.continuation is not None:

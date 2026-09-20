@@ -319,17 +319,17 @@ def test_fractional_mix_is_sampled_without_rounding_rare_operation_away(modules,
 
 def test_fixed_rate_instrumentation_failure_propagates(modules):
     utils = modules["workload_utils"]
-    class BrokenStats:
-        def record(self, *args):
+    class BrokenStats(modules["perf_stats"].Stats):
+        def record(self, *args, **kwargs):
             raise ValueError("cannot record latency")
-        def record_error(self, *args):
+        def record_error(self, *args, **kwargs):
             raise ValueError("cannot record errors")
     async def run():
         stop = asyncio.Event()
         class Container:
             async def read_item(self, *args, **kwargs):
                 return {}
-        await utils.run_open_loop(Container(), [], BrokenStats(), ["read"], 1000, 1, stop)
+        await utils.run_fixed_rate(Container(), [], BrokenStats(), ["read"], 1000, 1, stop)
     with pytest.raises(RuntimeError, match="instrumentation"):
         asyncio.run(run())
 
@@ -512,7 +512,7 @@ def test_read_preparation_does_not_generate_write_body(modules, monkeypatch):
     assert set(keys) == {"id", "pk"}
 
 
-def test_open_loop_keeps_lateness_over_five_seconds(modules, monkeypatch):
+def test_fixed_rate_keeps_lateness_over_five_seconds(modules, monkeypatch):
     utils = modules["workload_utils"]
     monkeypatch.setattr(utils, "WORKLOAD_MIX", {})
     clock_reads = iter([0])
@@ -524,9 +524,317 @@ def test_open_loop_keeps_lateness_over_five_seconds(modules, monkeypatch):
             async def read_item(self, *args, **kwargs):
                 stop.set()
                 return {}
-        await utils.run_open_loop(Container(), [], stats, ["read"], 1, 1, stop)
+        await utils.run_fixed_rate(Container(), [], stats, ["read"], 1, 1, stop)
     asyncio.run(run())
     assert stats.first_ms_snapshot()["ReadItem"] == [6000]
+
+
+def fixed_rate_row(modules, *, delay_ms=20, sdk_ms=5, failed=False, **changes):
+    stats = modules["perf_stats"].Stats()
+    if failed:
+        stats.record_error("ReadItem", "failed", "", 503,
+                           delay_before_call_ms=delay_ms, sdk_call_ms=sdk_ms)
+    else:
+        stats.record("ReadItem", delay_ms + sdk_ms,
+                     delay_before_call_ms=delay_ms, sdk_call_ms=sdk_ms)
+    summary = stats.drain_all()[0][0]
+    return measurement(modules, **{
+        **summary, "measurement_version": 2, "duration_kind": "total",
+        "config_max_inflight": 10, "window_seconds": 0.004,
+        **changes,
+    })
+
+
+def schedule_record(**changes):
+    return {
+        "schedule_id": "schedule-1", "rate": 250, "max_inflight": 10,
+        "peak_inflight": 1, "scheduled_count": 1, "launched_count": 1,
+        "not_launched_count": 0, "limit_wait_count": 0, "limit_wait_ms": 0.0,
+        "scheduling_seconds": 0.004, **changes,
+    }
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_fixed_rate_records_delay_sdk_and_total_per_outcome(modules, monkeypatch, failed):
+    utils = modules["workload_utils"]
+    times = iter([60_000_000, 65_000_000])
+    monkeypatch.setattr(utils.time, "perf_counter_ns", lambda: next(times))
+    stats = modules["perf_stats"].Stats()
+
+    async def call(**kwargs):
+        if failed:
+            raise RuntimeError("injected")
+        return {"id": "test-42"}
+
+    result = asyncio.run(utils._fixed_rate_call_async("ReadItem", stats, 40_000_000, call))
+    assert result == (None if failed else {"id": "test-42"})
+    row = stats.drain_all()[0][0]
+    outcome = "failure" if failed else "success"
+    assert row["count"] == int(not failed) and row["errors"] == int(failed)
+    assert set(row["fixed_rate_timings"]) == {outcome}
+    for name, value in (("delay_before_call", 20), ("sdk_call", 5), ("total", 25)):
+        series = row["fixed_rate_timings"][outcome][name]
+        assert series["count"] == 1 and series["max_observed_ms"] == value
+        hist = modules["latency_report"].HdrHistogram.decode(series["hist_b64"])
+        assert hist.get_value_at_percentile(99) / 1000 == pytest.approx(value, rel=0.001)
+    assert stats.drain_all() == ([], [])
+
+
+def test_total_histogram_is_not_sum_of_component_percentiles(modules):
+    stats = modules["perf_stats"].Stats()
+    stats.record("ReadItem", 100, delay_before_call_ms=95, sdk_call_ms=5)
+    stats.record("ReadItem", 100, delay_before_call_ms=5, sdk_call_ms=95)
+    group = stats.drain_all()[0][0]["fixed_rate_timings"]["success"]
+    tails = {name: modules["latency_report"].HdrHistogram.decode(series["hist_b64"]).get_value_at_percentile(99)
+             / 1000 for name, series in group.items()}
+    assert tails["total"] == pytest.approx(100, rel=0.001)
+    assert tails["delay_before_call"] + tails["sdk_call"] > 180
+
+
+def test_fixed_rate_timing_and_schedule_survive_reporter_persistence(modules, monkeypatch):
+    monkeypatch.setenv("WORKLOAD_ARRIVAL_RATE", "250")
+    monkeypatch.setenv("WORKLOAD_MAX_INFLIGHT", "10")
+    monkeypatch.setenv("WORKLOAD_NUM_CLIENTS", "1")
+    monkeypatch.setenv("WORKLOAD_USE_SYNC", "false")
+    stats = modules["perf_stats"].Stats()
+    reporter = modules["perf_reporter"].PerfReporter(
+        stats, {"report_interval": 60, "workload_id": f"baseline-read-rust-{STAMP}",
+                "commit_sha": "b" * 40, "driver_commit": "a" * 40})
+    reporter._container = Rows()
+    stats.record("ReadItem", 25, delay_before_call_ms=20, sdk_call_ms=5)
+    stats.record_schedule(schedule_record())
+    reporter.stop()
+    row, done = reporter._container.rows
+    assert row["duration_kind"] == "total"
+    assert row["fixed_rate_timings"]["success"]["sdk_call"]["max_observed_ms"] == 5
+    assert done["fixed_rate_schedules"] == [schedule_record()]
+    assert modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)[0]
+
+
+def test_ten_slots_hold_eleventh_call_and_stop_drains_only_launched_work(modules, monkeypatch):
+    utils = modules["workload_utils"]
+    monkeypatch.setattr(utils, "WORKLOAD_MIX", {})
+    clock = {"now": 20_000_000, "first": True}
+
+    def now():
+        if clock["first"]:
+            clock["first"] = False
+            return 0
+        return clock["now"]
+
+    monkeypatch.setattr(utils.time, "perf_counter_ns", now)
+    stats = modules["perf_stats"].Stats()
+    launched = []
+
+    async def run():
+        stop = asyncio.Event()
+        release = asyncio.Event()
+        ten_started = asyncio.Event()
+
+        class Container:
+            async def read_item(self, *args, **kwargs):
+                launched.append(1)
+                if len(launched) == 10:
+                    ten_started.set()
+                await release.wait()
+                clock["now"] = 100_000_000
+                return {}
+
+        async def stop_at_limit(slots, stop_event):
+            await ten_started.wait()
+            clock["now"] = 40_000_000
+            stop.set()
+            release.set()
+            return False
+
+        monkeypatch.setattr(utils, "_wait_for_launch_slot", stop_at_limit)
+        await utils.run_fixed_rate(Container(), [], stats, ["read"], 1000, 10, stop)
+
+    asyncio.run(run())
+    schedule = stats.schedule_snapshot()[0]
+    assert len(launched) == schedule["launched_count"] == schedule["peak_inflight"] == 10
+    assert schedule["scheduled_count"] == 40
+    assert schedule["not_launched_count"] == 30
+    assert schedule["limit_wait_count"] == 1
+    assert schedule["limit_wait_ms"] == 20
+    assert schedule["scheduling_seconds"] == 0.04  # excludes the 100-ms drain endpoint
+    assert stats.drain_all()[0][0]["count"] == 10
+
+
+@pytest.mark.parametrize("cancel", [False, True])
+def test_waiting_for_capacity_stops_without_leaking_slot_or_task(modules, cancel):
+    utils = modules["workload_utils"]
+
+    async def run():
+        slots = asyncio.Semaphore(1)
+        await slots.acquire()
+        stop = asyncio.Event()
+        waiter = asyncio.create_task(utils._wait_for_launch_slot(slots, stop))
+        await asyncio.sleep(0)
+        if cancel:
+            waiter.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await waiter
+        else:
+            stop.set()
+            assert await waiter is False
+        slots.release()
+        await asyncio.wait_for(slots.acquire(), timeout=1)
+        assert slots.locked()
+        assert len(asyncio.all_tasks()) == 1
+
+    asyncio.run(run())
+
+
+def test_slot_is_returned_when_stop_and_capacity_arrive_together(modules):
+    async def run():
+        slots = asyncio.Semaphore(1)
+        stop = asyncio.Event()
+        stop.set()
+        assert await modules["workload_utils"]._wait_for_launch_slot(slots, stop) is False
+        assert not slots.locked()
+    asyncio.run(run())
+
+
+def test_overflow_is_reported_instead_of_a_clipped_p99(modules, capsys):
+    row = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=5)
+    report = modules["latency_report"]
+    cells, _ = report._aggregate(Rows([row]), "baseline-", STAMP)
+    cell = cells[("read", "rust")]
+    assert math.isnan(report._pctile_ms(cell, 99))
+    report._print_fixed_rate_details(cell)
+    output = capsys.readouterr().out
+    assert "max_observed=70005.000" in output and "overflow=1" in output
+    assert "p99=nan" in output
+
+
+def test_unknown_old_overflow_evidence_cannot_hide_known_clipping(modules):
+    old = measurement(modules)
+    del old["latency_overflow_count"]
+    clipped = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=1)
+    report = modules["latency_report"]
+    for rows in ([old, clipped], [clipped, old]):
+        cell = report._aggregate(Rows(rows), "baseline-", STAMP)[0][("read", "rust")]
+        assert cell["latency_overflow_unknown"] and cell["latency_overflow_count"] == 1
+        assert math.isnan(report._pctile_ms(cell, 99))
+
+
+def test_component_histograms_pool_across_reporting_windows(modules):
+    first = fixed_rate_row(modules, delay_ms=1, sdk_ms=2)
+    second = fixed_rate_row(modules, delay_ms=20, sdk_ms=5,
+                            window_index=2, window_id="window-2", elapsed_seconds=120)
+    done = completion(first, window_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
+        schedule_record(scheduled_count=2, launched_count=2)])
+    cell = modules["latency_report"]._aggregate(Rows([first, second, done]), "baseline-", STAMP)[0][("read", "rust")]
+    for name in ("delay_before_call", "sdk_call", "total"):
+        assert cell["timings"]["success"][name]["hist"].total_count == 2
+    assert cell["schedule"]["launched_count"] == 2
+
+
+def test_missing_one_clients_schedule_is_rejected(modules):
+    row = fixed_rate_row(modules, config_num_clients=2)
+    done = completion(row, fixed_rate_schedules=[schedule_record()])
+    with pytest.raises(ValueError, match="client schedules"):
+        modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
+
+
+def test_multiple_clients_schedules_reconcile_with_process_totals(modules):
+    first = fixed_rate_row(modules, config_num_clients=2)
+    second = {**first, "window_id": "window-2", "window_index": 2, "elapsed_seconds": 120}
+    done = completion(first, window_count=2, summary_count=2, total_count=2, fixed_rate_schedules=[
+        schedule_record(), schedule_record(schedule_id="schedule-2")])
+    assert modules["perf_validate"].check_completion(Rows([first, second, done]), "baseline-", STAMP)[0]
+    cell = modules["latency_report"]._aggregate(Rows([first, second, done]), "baseline-", STAMP)[0][("read", "rust")]
+    assert cell["schedule"]["scheduled_count"] == 2
+
+
+def test_waiting_for_capacity_resumes_and_releases_exactly_one_slot(modules):
+    async def run():
+        slots = asyncio.Semaphore(1)
+        await slots.acquire()
+        waiter = asyncio.create_task(modules["workload_utils"]._wait_for_launch_slot(slots, asyncio.Event()))
+        await asyncio.sleep(0)
+        slots.release()
+        assert await waiter is True
+        assert slots.locked()
+        slots.release()
+        await slots.acquire()
+        assert slots.locked()
+        assert len(asyncio.all_tasks()) == 1
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("missing", ["timings", "schedule", "overflow"])
+def test_older_rows_never_invent_new_measurements(modules, missing, capsys):
+    row = fixed_rate_row(modules)
+    done = completion(row, fixed_rate_schedules=[schedule_record()])
+    if missing == "timings":
+        del row["fixed_rate_timings"]
+    elif missing == "schedule":
+        del done["fixed_rate_schedules"]
+    else:
+        del row["latency_overflow_count"]
+    report = modules["latency_report"]
+    cell = report._aggregate(Rows([row, done]), "baseline-", STAMP)[0][("read", "rust")]
+    print(report._fmt_cell("read", "rust", cell))
+    report._print_fixed_rate_details(cell)
+    output = capsys.readouterr().out
+    assert "unavailable" in output or "incomplete" in output
+
+
+@pytest.mark.parametrize("issue", ["none", "wait", "unlaunched", "missing", "overflow"])
+def test_point_read_gate_requires_unconstrained_complete_timing(modules, monkeypatch, issue):
+    row = fixed_rate_row(modules, delay_ms=1, sdk_ms=1)
+    schedule = schedule_record()
+    if issue == "wait":
+        schedule.update(limit_wait_count=1, limit_wait_ms=0.5)
+    elif issue == "unlaunched":
+        schedule.update(scheduled_count=2, not_launched_count=1)
+    elif issue == "overflow":
+        row = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=1)
+    done = completion(row, fixed_rate_schedules=[schedule])
+    if issue == "missing":
+        del done["fixed_rate_schedules"]
+    report = modules["latency_report"]
+    monkeypatch.setattr(report, "_connect", lambda: Rows([row, done]))
+    monkeypatch.setattr(sys, "argv", [
+        "latency_report", "--run-id", STAMP, "--point-read-gate", "--gate-backends", "rust"])
+    with pytest.raises(SystemExit) as result:
+        report.main()
+    assert result.value.code == (0 if issue == "none" else 1)
+
+
+def test_mixed_fixed_rate_schedule_is_counted_once(modules):
+    read = fixed_rate_row(modules, workload_id=f"mixed-blend-rust-{STAMP}")
+    patch = {**read, "operation": "PatchItem"}
+    done = completion(read, summary_count=2, total_count=2, fixed_rate_schedules=[
+        schedule_record(scheduled_count=2, launched_count=2)])
+    per_op, blended, _ = modules["mixed_report"]._aggregate(Rows([read, patch, done]), "mixed-", STAMP)
+    assert blended["rust"]["schedule"]["launched_count"] == 2
+    assert blended["rust"]["window_s"] == read["window_seconds"]
+    assert blended["rust"]["timings"]["success"]["sdk_call"]["hist"].total_count == 2
+    assert per_op[("rust", "read")]["timings"]["success"]["sdk_call"]["hist"].total_count == 1
+
+
+def test_timing_population_mismatch_is_rejected(modules):
+    row = fixed_rate_row(modules)
+    row["fixed_rate_timings"]["success"]["sdk_call"]["count"] = 2
+    with pytest.raises(ValueError, match="population"):
+        modules["latency_report"]._aggregate(Rows([row]), "baseline-", STAMP)
+
+
+def test_schedule_population_mismatch_is_rejected(modules):
+    row = fixed_rate_row(modules)
+    done = completion(row, fixed_rate_schedules=[schedule_record(scheduled_count=2, launched_count=2)])
+    with pytest.raises(ValueError, match="Launched"):
+        modules["perf_validate"].check_completion(Rows([row, done]), "baseline-", STAMP)
+
+
+def test_total_and_sdk_call_durations_cannot_be_pooled(modules):
+    fixed = fixed_rate_row(modules)
+    waiting = measurement(modules, config_arrival_rate=0)
+    with pytest.raises(ValueError, match="Cannot combine"):
+        modules["latency_report"]._aggregate(Rows([fixed, waiting]), "baseline-", STAMP)
 
 
 def test_delete_setup_failure_is_not_a_successful_delete(modules):

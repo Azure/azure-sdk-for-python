@@ -56,7 +56,7 @@ def _extra_kwargs(excluded_locations):
     return extra
 
 
-def _record_error(stats, operation, error):
+def _record_error(stats, operation, error, **timing):
     """Extract Cosmos status codes and record the error in stats."""
     if not stats:
         logging.getLogger(__name__).error("%s failed: %s", operation, error, exc_info=error)
@@ -67,7 +67,7 @@ def _record_error(stats, operation, error):
         sub_status_code = getattr(error, "sub_status", None)
     stats.record_error(
         operation, str(error), "".join(traceback.format_exception(type(error), error, error.__traceback__)),
-        status_code, sub_status_code
+        status_code, sub_status_code, **timing
     )
 
 
@@ -488,20 +488,20 @@ async def _loop_lag_monitor(stats, interval_s=0.05):
 
 
 # ---------------------------------------------------------------------------
-# Open-loop (constant-arrival) async driver
+# Fixed-rate (constant-arrival) async driver
 # ---------------------------------------------------------------------------
 #
-# The default driver is closed-loop: it fires a wave and waits for it before the
+# The default driver uses send-and-wait: it fires a wave and waits for it before the
 # next. When the system stalls it stops issuing requests, so the stall is under-
 # sampled and the measured tail looks better than a real client would see. This
 # driver issues at a fixed rate and times each operation from its intended start,
 # so time spent waiting to be issued lands in the latency. Only the single-call
-# point ops are supported; run create/delete closed-loop.
+# point ops are supported; run create/delete with send-and-wait.
 
-_OPEN_LOOP_SUPPORTED = ("read", "upsert", "replace", "patch")
+_FIXED_RATE_SUPPORTED = ("read", "upsert", "replace", "patch")
 
 
-def _build_open_loop_call(container, op, extra):
+def _build_fixed_rate_call(container, op, extra):
     """Return ``(op_label, fn, args, kwargs)`` for ONE operation of kind ``op``."""
     if op == "read":
         item = get_existing_random_keys()
@@ -527,27 +527,53 @@ def _build_open_loop_call(container, op, extra):
             (item["id"], item[PARTITION_KEY], operations), dict(extra),
         )
     raise ValueError(
-        "Open-loop mode (WORKLOAD_ARRIVAL_RATE>0) supports only "
-        f"{_OPEN_LOOP_SUPPORTED}; got {op!r}. Run create/delete closed-loop."
+        "Fixed-rate mode (WORKLOAD_ARRIVAL_RATE>0) supports only "
+        f"{_FIXED_RATE_SUPPORTED}; got {op!r}. Run create/delete with send-and-wait."
     )
 
 
-async def _open_loop_call_async(op_name, stats, scheduled_ns, fn, *args, **kwargs):
-    """Like ``_timed_call_async`` but times from ``scheduled_ns`` (the intended
-    arrival), so the recorded latency includes any time the op waited to be issued.
-    """
+async def _fixed_rate_call_async(op_name, stats, scheduled_ns, fn, *args, **kwargs):
+    """Record pre-call delay, SDK-call duration and total duration by outcome."""
     _with_ru_hook(op_name, stats, kwargs)
+    call_start_ns = time.perf_counter_ns()
+    delay_ms = (call_start_ns - scheduled_ns) / 1_000_000
     try:
         result = await fn(*args, **kwargs)
-        if stats:
-            stats.record(op_name, (time.perf_counter_ns() - scheduled_ns) / 1_000_000)
-        return result
     except Exception as e:
-        _record_error(stats, op_name, e)
+        end_ns = time.perf_counter_ns()
+        _record_error(stats, op_name, e, delay_before_call_ms=delay_ms,
+                      sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
         return None
+    end_ns = time.perf_counter_ns()
+    if stats is not None:
+        stats.record(op_name, (end_ns - scheduled_ns) / 1_000_000,
+                     delay_before_call_ms=delay_ms,
+                     sdk_call_ms=(end_ns - call_start_ns) / 1_000_000)
+    return result
 
 
-async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inflight, stop_event=None):
+async def _wait_for_launch_slot(slots, stop_event):
+    """Acquire capacity, or stop without leaving a pending slot acquisition."""
+    if stop_event is None:
+        await slots.acquire()
+        return True
+    acquire = asyncio.create_task(slots.acquire())
+    stopped = asyncio.create_task(stop_event.wait())
+    accepted = False
+    try:
+        await asyncio.wait((acquire, stopped), return_when=asyncio.FIRST_COMPLETED)
+        accepted = acquire.done() and not stop_event.is_set()
+        return accepted
+    finally:
+        for task in (acquire, stopped):
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(acquire, stopped, return_exceptions=True)
+        if not accepted and not acquire.cancelled() and acquire.exception() is None:
+            slots.release()
+
+
+async def run_fixed_rate(container, excluded_locations, stats, ops, rate, max_inflight, stop_event=None):
     """Constant-arrival async driver. Fires ``ops`` round-robin at ``rate`` ops/sec
     without waiting for each wave, timing each from its intended start. Runs until
     ``stop_event`` is set or the task is cancelled; a semaphore bounds in-flight
@@ -564,10 +590,10 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     if not math.isfinite(rate) or not rate > 0 or max_inflight <= 0:
         raise ValueError("Fixed-rate load needs a positive rate and in-flight limit")
     for o in op_list:
-        if o not in _OPEN_LOOP_SUPPORTED:
+        if o not in _FIXED_RATE_SUPPORTED:
             raise ValueError(
-                "Open-loop mode supports only "
-                f"{_OPEN_LOOP_SUPPORTED}; got {o!r}. Run create/delete closed-loop."
+                "Fixed-rate mode supports only "
+                f"{_FIXED_RATE_SUPPORTED}; got {o!r}. Run create/delete with send-and-wait."
             )
     extra = _extra_kwargs(excluded_locations)
     sem = asyncio.Semaphore(max_inflight)
@@ -577,16 +603,21 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     seq = 0
     inflight = set()
     fatal_error = None
+    limit_wait_count = 0
+    limit_wait_ns = 0
+    active = 0
+    peak_active = 0
 
     async def _one(op_label, scheduled_ns, fn, args, kwargs):
-        nonlocal fatal_error
+        nonlocal fatal_error, active
         try:
-            await _open_loop_call_async(op_label, stats, scheduled_ns, fn, *args, **kwargs)
+            await _fixed_rate_call_async(op_label, stats, scheduled_ns, fn, *args, **kwargs)
         except Exception as exc:
             fatal_error = exc
             if stop_event is not None:
                 stop_event.set()
         finally:
+            active -= 1
             sem.release()
 
     try:
@@ -605,11 +636,23 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
                         pass
             op = (random.choices(op_list, weights=weights, k=1)[0]
                   if weights else op_list[seq % len(op_list)])
-            op_label, fn, args, kwargs = _build_open_loop_call(container, op, extra)
-            await sem.acquire()
+            op_label, fn, args, kwargs = _build_fixed_rate_call(container, op, extra)
+            if sem.locked():
+                limit_wait_count += 1
+                wait_start_ns = time.perf_counter_ns()
+                try:
+                    acquired = await _wait_for_launch_slot(sem, stop_event)
+                finally:
+                    limit_wait_ns += time.perf_counter_ns() - wait_start_ns
+                if not acquired:
+                    break
+            else:
+                await sem.acquire()
             if stop_event is not None and stop_event.is_set():
                 sem.release()
                 break
+            active += 1
+            peak_active = max(peak_active, active)
             task = loop.create_task(_one(op_label, scheduled_ns, fn, args, kwargs))
             inflight.add(task)
             task.add_done_callback(inflight.discard)
@@ -617,12 +660,28 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     except asyncio.CancelledError:
         raise
     finally:
-        # Drain whatever is still in flight so their latencies are recorded and
-        # nothing is left pending when the client closes.
+        scheduling_end_ns = time.perf_counter_ns()
+        duration_ns = max(0, scheduling_end_ns - start_ns)
+        # Count starts in [start, scheduling stop), excluding the drain period.
+        scheduled_count = max(seq, (duration_ns + interval_ns - 1) // interval_ns)
+        # Finish launched calls even if reporting later rejects the schedule.
         if inflight:
             await asyncio.gather(*inflight)
         if fatal_error is not None:
             raise RuntimeError("Fixed-rate workload instrumentation failed") from fatal_error
+        if stats is not None:
+            stats.record_schedule({
+                "schedule_id": str(uuid.uuid4()),
+                "rate": rate,
+                "max_inflight": max_inflight,
+                "peak_inflight": peak_active,
+                "scheduled_count": scheduled_count,
+                "launched_count": seq,
+                "not_launched_count": scheduled_count - seq,
+                "limit_wait_count": limit_wait_count,
+                "limit_wait_ms": limit_wait_ns / 1_000_000,
+                "scheduling_seconds": duration_ns / 1_000_000_000,
+            })
 
 
 # ---------------------------------------------------------------------------

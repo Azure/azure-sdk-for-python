@@ -15,6 +15,70 @@ OPERATIONS = {
     "replace": "ReplaceItem", "delete": "DeleteItem", "patch": "PatchItem",
     "query": "QueryItems",
 }
+TIMING_COMPONENTS = ("delay_before_call", "sdk_call", "total")
+
+
+def fixed_rate_timing(row, outcome):
+    """Return a validated timing group, or None when the evidence is absent."""
+    group = row.get("fixed_rate_timings", {}).get(outcome)
+    if group is None:
+        return None
+    expected = row["count"] if outcome == "success" else row["errors"]
+    for name in TIMING_COMPONENTS:
+        series = group.get(name)
+        if (not isinstance(series, dict) or type(series.get("count")) is not int
+                or series["count"] != expected):
+            raise ValueError(f"Incomplete {outcome} {name} timing population")
+        overflow = series.get("overflow_count")
+        maximum = series.get("max_observed_ms")
+        if (type(overflow) is not int or not 0 <= overflow <= expected
+                or isinstance(maximum, bool) or not isinstance(maximum, (int, float))
+                or not math.isfinite(maximum) or maximum < 0
+                or (maximum > 60_000) != (overflow > 0)):
+            raise ValueError(f"Invalid {outcome} {name} timing bounds")
+    return group
+
+
+def fixed_rate_schedule_totals(summaries, completion):
+    """Validate final per-client schedules against completed calls in one process."""
+    schedules = completion.get("fixed_rate_schedules") if completion else None
+    if not schedules:
+        return None
+    count_fields = ("scheduled_count", "launched_count", "not_launched_count", "limit_wait_count")
+    totals = {field: 0 for field in count_fields}
+    totals["limit_wait_ms"] = 0.0
+    ids = set()
+    for schedule in schedules:
+        identifier = schedule.get("schedule_id")
+        if not isinstance(identifier, str) or not identifier or identifier in ids:
+            raise ValueError("Missing or duplicate fixed-rate schedule ID")
+        ids.add(identifier)
+        for field in (*count_fields, "max_inflight", "peak_inflight"):
+            value = schedule.get(field)
+            if type(value) is not int or value < 0:
+                raise ValueError(f"Invalid schedule {field}")
+        for field in ("rate", "limit_wait_ms", "scheduling_seconds"):
+            value = schedule.get(field)
+            if (isinstance(value, bool) or not isinstance(value, (int, float))
+                    or not math.isfinite(value) or value < 0):
+                raise ValueError(f"Invalid schedule {field}")
+        if (schedule["rate"] <= 0 or schedule["max_inflight"] <= 0
+                or schedule["peak_inflight"] > schedule["max_inflight"]
+                or schedule["scheduled_count"] != schedule["launched_count"] + schedule["not_launched_count"]
+                or schedule["limit_wait_count"] > schedule["launched_count"] + 1):
+            raise ValueError("Inconsistent fixed-rate schedule counts")
+        for row in summaries:
+            if (row.get("config_arrival_rate") != schedule["rate"]
+                    or row.get("config_max_inflight") != schedule["max_inflight"]):
+                raise ValueError("Schedule disagrees with recorded workload configuration")
+        for field in count_fields:
+            totals[field] += schedule[field]
+        totals["limit_wait_ms"] += schedule["limit_wait_ms"]
+    if any(row.get("config_num_clients") != len(schedules) for row in summaries):
+        raise ValueError("Missing or unexpected client schedules")
+    if totals["launched_count"] != sum(row["count"] + row["errors"] for row in summaries):
+        raise ValueError("Launched calls disagree with persisted successes and failures")
+    return totals
 
 
 def summary_rows(rows):

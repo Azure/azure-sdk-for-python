@@ -26,6 +26,7 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import _utils, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._backend.contracts import QueryScope, PreparedQuery, QueryPage
+from .._backend._immutable import freeze_json
 from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
@@ -216,6 +217,7 @@ class QueryConfig(ReadAllConfig):
         if self.parameters:
             payload["parameters"] = list(self.parameters)
         self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
+        self.parameters = freeze_json(self.parameters)
         self.decode(self.options.get("continuation"))
 
     def decode(self, token: Optional[str]) -> Optional[str]:

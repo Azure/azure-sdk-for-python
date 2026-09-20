@@ -132,12 +132,12 @@ if _unknown_ops:
 WORKLOAD_USE_PROXY = os.environ.get("WORKLOAD_USE_PROXY", "false").lower() == "true"
 WORKLOAD_USE_SYNC = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
 
-# Open-loop arrival rate (ops/sec). Default 0 uses the closed-loop wave driver.
+# Fixed-rate arrival rate (ops/sec). Default 0 uses the send-and-wait wave driver.
 # When > 0, the async driver fires operations at this fixed rate without waiting
 # for each wave, and times each from its intended start, so the tail includes
 # time a request waited to be issued. Async path only.
 WORKLOAD_ARRIVAL_RATE = _safe_float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0"), 0.0)
-# Cap on in-flight operations in open-loop mode, so a stalled service cannot grow
+# Cap on in-flight operations in fixed-rate mode, so a stalled service cannot grow
 # the backlog without bound and run the generator out of memory. The backlog still
 # shows up as rising latency; this only bounds memory.
 WORKLOAD_MAX_INFLIGHT = _safe_int(os.environ.get("WORKLOAD_MAX_INFLIGHT", "10000"), 10000)
@@ -187,7 +187,7 @@ if _raw_mix:
             WORKLOAD_MIX[_k] = WORKLOAD_MIX.get(_k, 0.0) + _w
     # "query" carries no latency target and is not runnable in a blended wave, so a
     # mix of only query (or only zero-weight entries) has nothing to run. Reject it
-    # up front: otherwise the closed-loop blended path would spin with no work and
+    # up front: otherwise the send-and-wait blended path would spin with no work and
     # record nothing.
     if _raw_mix and not any(_k != "query" for _k in WORKLOAD_MIX):
         raise ValueError(

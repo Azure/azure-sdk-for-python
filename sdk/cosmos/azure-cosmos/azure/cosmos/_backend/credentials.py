@@ -119,7 +119,7 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     if isinstance(credential, str):
         if not credential:
             raise ValueError(
-                "The Rust binding requires a non-empty master-key string."
+                "The account key must be a non-empty string."
             )
         return credential, None
     if isinstance(credential, Mapping) and "masterKey" in credential:

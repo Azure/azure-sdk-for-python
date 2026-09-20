@@ -21,7 +21,10 @@ import glob
 import os
 import re
 import sys
-from perf_results import EXPECTED_RUNTIME, summary_rows, window_key
+from perf_results import (
+    EXPECTED_RUNTIME, TIMING_COMPONENTS, summary_rows, window_key,
+    fixed_rate_timing, fixed_rate_schedule_totals, add_histogram,
+)
 
 try:
     from azure.cosmos import CosmosClient
@@ -324,7 +327,7 @@ def check_backend_execution(container, prefix: str, run_id: str, allow_unknown_b
 
     lines = []
     all_ok = bool(agg)
-    # Slack: the closed-loop wave still in flight at the final flush can leave a
+    # Slack: the send-and-wait wave still in flight at the final flush can leave a
     # few ops uncounted on one side; tolerate a small fraction so a healthy run
     # never trips, while a wholesale mismatch (mislabeled engine) still fails.
     for wid in sorted(agg):
@@ -440,6 +443,26 @@ def check_completion(container, prefix, run_id, expected_workloads=None):
             and record.get("total_errors") == sum(r["errors"] for r in summaries)
             and windows == set(range(1, record.get("window_count", 0) + 1))
         )
+        if any(r.get("measurement_version", 0) >= 2 and r.get("config_arrival_rate", 0) > 0
+               and r.get("config_use_sync") is False for r in summaries):
+            schedule = fixed_rate_schedule_totals(summaries, record)
+            valid = valid and schedule is not None
+            for summary in summaries:
+                for outcome, expected_count in (("success", summary["count"]), ("failure", summary["errors"])):
+                    group = fixed_rate_timing(summary, outcome)
+                    if expected_count and group is None:
+                        valid = False
+                    if group is not None:
+                        from hdrh.histogram import HdrHistogram
+                        for name in TIMING_COMPONENTS:
+                            valid = add_histogram(
+                                HdrHistogram(1, 60_000_000, 3), group[name].get("hist_b64"), expected_count
+                            ) and valid
+            if schedule is not None:
+                lines.append(f"  [INFO] {key[0]} scheduled={schedule['scheduled_count']} "
+                             f"launched={schedule['launched_count']} "
+                             f"not_launched={schedule['not_launched_count']} "
+                             f"limit_waits={schedule['limit_wait_count']}")
         ok = ok and valid
         lines.append(f"  [{'OK ' if valid else 'BAD'}] {key[0]} process={key[1]} complete summaries={len(summaries)}")
     if not measurements:

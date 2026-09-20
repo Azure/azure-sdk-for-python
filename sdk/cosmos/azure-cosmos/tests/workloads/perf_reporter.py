@@ -229,6 +229,8 @@ class PerfReporter:
             "summary_count": self._summary_count,
             "total_count": self._total_count,
             "total_errors": self._total_errors,
+            "measurement_version": 2,
+            "fixed_rate_schedules": self._stats.schedule_snapshot(),
         })
 
     def _ensure_container(self):
@@ -271,7 +273,7 @@ class PerfReporter:
         excluded = os.environ.get("COSMOS_CLIENT_EXCLUDED_LOCATIONS", "")
         # Record the per-op timeout and arrival mode on every row, so two rows can
         # be checked for the same policy later. arrival_rate == 0.0 means
-        # closed-loop; > 0 means open-loop at that ops/sec per client.
+        # send-and-wait; > 0 means fixed-rate at that ops/sec per client.
         request_timeout = float(os.environ.get("COSMOS_REQUEST_TIMEOUT", "0"))
         try:
             arrival_rate = float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0") or "0")
@@ -281,7 +283,7 @@ class PerfReporter:
         # How many client processes shared this workload, and whether the run
         # used the sync client. Both are recorded because arrival_rate alone
         # does not describe the arrival process: the sync client ignores
-        # WORKLOAD_ARRIVAL_RATE and runs a closed loop, so a row with
+        # WORKLOAD_ARRIVAL_RATE and runs a send-and-wait, so a row with
         # use_sync == True was unpaced no matter what arrival_rate says.
         num_clients = _safe_int_env("WORKLOAD_NUM_CLIENTS", 1)
         use_sync = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
@@ -407,6 +409,10 @@ class PerfReporter:
                 # Lets an offline analyzer merge every window of a point for a true
                 # pooled p50/p99/p99.9, which the per-window scalars cannot give.
                 "hist_b64": s.get("hist_b64"),
+                "measurement_version": 2,
+                "duration_kind": "total" if arrival_rate > 0 and not use_sync else "sdk_call",
+                "fixed_rate_timings": s["fixed_rate_timings"],
+                "latency_overflow_count": s["latency_overflow_count"],
                 # Cold-start sample: the very first call's latency (ms) for this op
                 # since process start, and the earliest calls as a warm-up curve.
                 # Not reset per window, so short one-flush processes each contribute

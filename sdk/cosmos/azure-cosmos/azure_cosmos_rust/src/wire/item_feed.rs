@@ -427,7 +427,7 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
         }
         return Ok(FeedRequest::ReadAll);
     }
-    let body: Vec<u8> = prepared.getattr("body_bytes")?.extract()?;
+    let body = super::request::extract_body_bytes(prepared)?;
     if op == "query_items" {
         let scope = prepared.getattr("query_scope")?;
         if scope.is_none() {

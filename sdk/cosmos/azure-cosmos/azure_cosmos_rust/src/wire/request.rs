@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use pyo3::types::{PyBytes, PyBytesMethods};
 
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
@@ -95,7 +96,12 @@ pub(crate) fn extract_account_prepared_modifiers<'py>(
 
 /// Copy the prepared request body into Rust-owned bytes.
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
-    prepared.getattr("body_bytes")?.extract()
+    // Vec<u8>::extract walks a Python sequence one element at a time.
+    Ok(prepared
+        .getattr("body_bytes")?
+        .downcast::<PyBytes>()?
+        .as_bytes()
+        .to_vec())
 }
 
 #[derive(Deserialize)]
@@ -413,6 +419,45 @@ mod tests {
     use azure_core::http::headers::HeaderName;
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
+
+    #[test]
+    fn body_snapshot_is_copied_as_bytes_not_iterated_as_a_sequence() {
+        pyo3::prepare_freethreaded_python();
+        let owned = Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                "class Body(bytes):\n    def __iter__(self):\n        raise AssertionError('must copy bytes directly')\n",
+                "body_snapshot_test.py",
+                "body_snapshot_test",
+            ).unwrap();
+            let body = module.getattr("Body").unwrap()
+                .call1((pyo3::types::PyBytes::new_bound(py, b"\0\xff{}"),)).unwrap();
+            let request = py.import_bound("types").unwrap()
+                .getattr("SimpleNamespace").unwrap().call0().unwrap();
+            request.setattr("body_bytes", body).unwrap();
+            super::extract_body_bytes(&request).unwrap()
+        });
+        assert_eq!(owned, b"\0\xff{}");
+    }
+
+    #[test]
+    fn body_snapshot_rejects_mutable_sequences() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let request = py.import_bound("types").unwrap()
+                .getattr("SimpleNamespace").unwrap().call0().unwrap();
+            for value in [
+                vec![1u8, 2u8].into_py(py),
+                pyo3::types::PyByteArray::new_bound(py, b"{}").into_any().unbind(),
+            ] {
+                request.setattr("body_bytes", value).unwrap();
+                assert!(super::extract_body_bytes(&request).unwrap_err()
+                    .is_instance_of::<pyo3::exceptions::PyTypeError>(py));
+            }
+            request.setattr("body_bytes", pyo3::types::PyBytes::new_bound(py, b"")).unwrap();
+            assert!(super::extract_body_bytes(&request).unwrap().is_empty());
+        });
+    }
 
     #[test]
     fn operation_options_preserve_the_python_text_json_contract() {

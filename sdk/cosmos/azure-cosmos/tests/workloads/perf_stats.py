@@ -59,6 +59,47 @@ class Stats:
         # can see the very first calls (startup penalty) even after warm windows have
         # flushed. The reporter repeats these snapshots on result rows.
         self._first_ms: dict[str, list] = {}
+        self._timings: dict[tuple[str, str], dict] = {}
+        self._latency_overflows: dict[str, int] = {}
+        self._fixed_rate_schedules: list[dict] = []
+
+    def record_schedule(self, schedule: dict):
+        """Keep one completed scheduling interval per client, not per result row."""
+        with self._lock:
+            self._fixed_rate_schedules.append(dict(schedule))
+
+    def schedule_snapshot(self) -> list[dict]:
+        with self._lock:
+            return [dict(schedule) for schedule in self._fixed_rate_schedules]
+
+    @staticmethod
+    def _validate_timing(delay_before_call_ms, sdk_call_ms):
+        if delay_before_call_ms is None and sdk_call_ms is None:
+            return
+        if any(value is None or not math.isfinite(value) or value < 0
+               for value in (delay_before_call_ms, sdk_call_ms)):
+            raise ValueError("Both timing components must be finite and nonnegative")
+
+    def _record_timing(self, operation, outcome, delay_before_call_ms, sdk_call_ms):
+        # Called under the same lock as the corresponding success/error count.
+        if delay_before_call_ms is None:
+            return
+        key = (operation, outcome)
+        if key not in self._timings:
+            self._timings[key] = {
+                name: {"hist": HdrHistogram(_MIN_VALUE_US, _MAX_VALUE_US, 3),
+                       "overflow_count": 0, "max_observed_ms": 0.0}
+                for name in ("delay_before_call", "sdk_call", "total")
+            }
+        for name, value in (
+            ("delay_before_call", delay_before_call_ms),
+            ("sdk_call", sdk_call_ms),
+            ("total", delay_before_call_ms + sdk_call_ms),
+        ):
+            series = self._timings[key][name]
+            series["hist"].record_value(max(_MIN_VALUE_US, min(int(value * 1000), _MAX_VALUE_US)))
+            series["overflow_count"] += int(value > _MAX_VALUE_US / 1000)
+            series["max_observed_ms"] = max(series["max_observed_ms"], value)
 
     def first_ms_snapshot(self):
         """Return a copy of the earliest-N durations (ms) per op since process start.
@@ -69,10 +110,15 @@ class Stats:
         with self._lock:
             return {op: list(vals) for op, vals in self._first_ms.items()}
 
-    def record(self, operation: str, duration_ms: float):
+    def record(self, operation: str, duration_ms: float, *,
+               delay_before_call_ms=None, sdk_call_ms=None):
         """Record a successful operation with its duration in milliseconds."""
         if not math.isfinite(duration_ms) or duration_ms < 0:
             raise ValueError("Duration must be finite and nonnegative")
+        self._validate_timing(delay_before_call_ms, sdk_call_ms)
+        if delay_before_call_ms is not None and not math.isclose(
+                duration_ms, delay_before_call_ms + sdk_call_ms, rel_tol=1e-9, abs_tol=1e-6):
+            raise ValueError("Total duration must equal delay before call plus SDK-call duration")
         with self._lock:
             if operation not in self._histograms:
                 self._histograms[operation] = HdrHistogram(
@@ -82,6 +128,9 @@ class Stats:
             # Clamp to histogram range to prevent crashes on very slow operations
             value_us = max(_MIN_VALUE_US, min(int(duration_ms * 1000), _MAX_VALUE_US))
             self._histograms[operation].record_value(value_us)
+            self._latency_overflows[operation] = self._latency_overflows.get(operation, 0) + int(
+                duration_ms > _MAX_VALUE_US / 1000)
+            self._record_timing(operation, "success", delay_before_call_ms, sdk_call_ms)
             first = self._first_ms.get(operation)
             if first is None:
                 first = self._first_ms[operation] = []
@@ -145,8 +194,12 @@ class Stats:
         traceback_str: str,
         status_code: int = None,
         sub_status_code: int = None,
+        *,
+        delay_before_call_ms=None,
+        sdk_call_ms=None,
     ):
         """Record a failed operation with error details."""
+        self._validate_timing(delay_before_call_ms, sdk_call_ms)
         with self._lock:
             if operation not in self._error_counts:
                 self._error_counts[operation] = 0
@@ -154,6 +207,7 @@ class Stats:
                     _MIN_VALUE_US, _MAX_VALUE_US, 3
                 )
             self._error_counts[operation] += 1
+            self._record_timing(operation, "failure", delay_before_call_ms, sdk_call_ms)
             if status_code == 429:
                 self._throttled[operation] = self._throttled.get(operation, 0) + 1
             self._errors.append(
@@ -281,6 +335,20 @@ class Stats:
                 op = summary["operation"]
                 summary["throttled_429"] = self._throttled.get(op, 0)
                 summary["cold_first_n_ms"] = list(self._first_ms.get(op, []))[:50]
+                summary["latency_overflow_count"] = self._latency_overflows.get(op, 0)
+                summary["fixed_rate_timings"] = {}
+                for outcome in ("success", "failure"):
+                    series = self._timings.get((op, outcome))
+                    if series is not None:
+                        summary["fixed_rate_timings"][outcome] = {
+                            name: {
+                                "count": value["hist"].total_count,
+                                "hist_b64": value["hist"].encode().decode("ascii"),
+                                "overflow_count": value["overflow_count"],
+                                "max_observed_ms": value["max_observed_ms"],
+                            }
+                            for name, value in series.items()
+                        }
             # Reset for next interval
             self._histograms.clear()
             self._server_histograms.clear()
@@ -288,6 +356,8 @@ class Stats:
             self._throttled.clear()
             self._ru_sums.clear()
             self._ru_counts.clear()
+            self._timings.clear()
+            self._latency_overflows.clear()
             # Copy into a list so the caller gets a stable copy and the return
             # type matches the annotation, not the internal deque.
             error_details: list[dict] = list(self._errors)

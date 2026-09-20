@@ -20,7 +20,10 @@ import os
 import sys
 
 import perf_driver_commit_gate as _driver_gate
-from perf_results import OPERATIONS, add_histogram, split_workload_id, summary_rows
+from perf_results import (
+    OPERATIONS, TIMING_COMPONENTS, add_histogram, split_workload_id, summary_rows,
+    fixed_rate_timing, fixed_rate_schedule_totals,
+)
 
 try:
     from azure.cosmos import CosmosClient
@@ -91,6 +94,77 @@ def _latest_run_id(container, prefix: str) -> str:
     return max(run_ids) if run_ids else ""
 
 
+def _new_timing_fields():
+    return {
+        "duration_kinds": set(),
+        "latency_overflow_count": 0,
+        "latency_overflow_unknown": False,
+        "missing_timing_windows": 0,
+        "timings": {
+            outcome: {name: {"hist": HdrHistogram(MIN_US, MAX_US, 3),
+                             "overflow_count": 0, "max_observed_ms": 0.0}
+                      for name in TIMING_COMPONENTS}
+            for outcome in ("success", "failure")
+        },
+        "schedule": None,
+    }
+
+
+def _add_timing_row(cell, row):
+    count = int(row["count"])
+    fixed_rate = float(row.get("config_arrival_rate", 0) or 0) > 0 and row.get("config_use_sync") is False
+    kind = "total" if fixed_rate else "sdk_call"
+    if row.get("duration_kind", kind) != kind:
+        raise ValueError("Duration kind disagrees with workload configuration")
+    cell["duration_kinds"].add(kind)
+    if len(cell["duration_kinds"]) > 1:
+        raise ValueError("Cannot combine total duration and SDK-call duration in one cell")
+    overflow = row.get("latency_overflow_count")
+    if overflow is not None and (type(overflow) is not int or not 0 <= overflow <= count):
+        raise ValueError("Invalid latency overflow count")
+    if overflow is None:
+        cell["latency_overflow_unknown"] = True
+    else:
+        cell["latency_overflow_count"] += overflow
+    if fixed_rate:
+        for outcome, expected in (("success", count), ("failure", int(row["errors"]))):
+            group = fixed_rate_timing(row, outcome)
+            if expected and group is None:
+                cell["missing_timing_windows"] += 1
+                continue
+            if group is not None:
+                for name in TIMING_COMPONENTS:
+                    target, source = cell["timings"][outcome][name], group[name]
+                    if not add_histogram(target["hist"], source.get("hist_b64"), expected):
+                        raise ValueError(f"Missing {outcome} {name} histogram")
+                    target["overflow_count"] += source["overflow_count"]
+                    target["max_observed_ms"] = max(target["max_observed_ms"], source["max_observed_ms"])
+
+
+def _attach_schedule(cell, measurements, rows):
+    """Attach process-wide schedule totals once, never once per mixed-operation row."""
+    if cell["duration_kinds"] != {"total"}:
+        return
+    process_rows = {}
+    for row in measurements:
+        process_rows.setdefault((row["workload_id"], row.get("process_id")), []).append(row)
+    totals = None
+    for (wid, pid), selected in process_rows.items():
+        completed = [r for r in rows if r.get("record_type") == "completion"
+                     and r.get("workload_id") == wid and r.get("process_id") == pid]
+        if len(completed) > 1:
+            raise ValueError("Duplicate fixed-rate completion record")
+        schedule = fixed_rate_schedule_totals(selected, completed[0] if completed else None)
+        if schedule is None:
+            totals = None
+            break
+        if totals is None:
+            totals = {field: 0 for field in schedule}
+        for field, value in schedule.items():
+            totals[field] += value
+    cell["schedule"] = totals
+
+
 def _aggregate(container, prefix: str, run_id: str):
     """Merge all windows of each (op, backend) cell into one pooled histogram.
 
@@ -116,7 +190,8 @@ def _aggregate(container, prefix: str, run_id: str):
     )
     agg = {}
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in summary_rows(rows):
+    measurements = list(summary_rows(rows))
+    for r in measurements:
         op, backend, _ = split_workload_id(r["workload_id"], prefix)
         if r.get("operation") != OPERATIONS.get(op):
             continue
@@ -147,6 +222,7 @@ def _aggregate(container, prefix: str, run_id: str):
                 "proxy_values": set(),
                 "attempt_calls": 0,
                 "retry_calls": 0,
+                **_new_timing_fields(),
             }
         c = int(r.get("count", 0) or 0)
         a["count"] += c
@@ -158,6 +234,7 @@ def _aggregate(container, prefix: str, run_id: str):
             else:
                 a[field] += int(value)
         a["arrival_rates"].add(float(r.get("config_arrival_rate", 0.0) or 0.0))
+        _add_timing_row(a, r)
         a["concurrencies"].add(int(r.get("config_concurrency", 0) or 0))
         # -1 / None mean the field was absent, i.e. an older harness wrote the
         # row. That is distinct from a recorded value and must not read as one.
@@ -173,19 +250,22 @@ def _aggregate(container, prefix: str, run_id: str):
         if not add_histogram(a["hist"], hb, c):
             a["no_hist_windows"] += 1
             a["scalar_p999_weighted"] += float(r.get("p99_9_ms", 0.0) or 0.0) * c
+    for (op, backend), cell in agg.items():
+        selected = [r for r in measurements if split_workload_id(r["workload_id"], prefix)[:2] == (op, backend)]
+        _attach_schedule(cell, selected, rows)
     return agg, (sorted(prov_commits), prov_missing, prov_rust)
 
 
 def _pctile_ms(a, q):
     """Pooled percentile in ms from the merged histogram (values are in µs)."""
-    if a["count"] <= 0 or a["no_hist_windows"]:
+    if a["count"] <= 0 or a["no_hist_windows"] or a["latency_overflow_count"]:
         return float("nan")
     return a["hist"].get_value_at_percentile(q) / 1000.0
 
 
 def _mean_ms(a):
     """Pooled arithmetic mean in ms from the merged histogram."""
-    if a["count"] <= 0 or a["no_hist_windows"]:
+    if a["count"] <= 0 or a["no_hist_windows"] or a["latency_overflow_count"]:
         return float("nan")
     return a["hist"].get_mean_value() / 1000.0
 
@@ -195,14 +275,46 @@ def _fmt_cell(op, backend, a):
     ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else float("nan")
     exact = a["no_hist_windows"] == 0
     note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
+    if a["latency_overflow_unknown"]:
+        note += " [!] histogram overflow evidence unavailable"
+    if a["latency_overflow_count"]:
+        note += f" [!] {a['latency_overflow_count']} durations exceeded histogram range; pooled latency unavailable"
     return (
         f"  {op:8s} {backend:11s} count={a['count']:>9d} err={a['errors']:>4d} "
         f"429={str(a['throttled_429']):>4s} retries={str(a['retry_calls']):>4s} rps={rps:>8.1f} "
         f"mean={_mean_ms(a):>6.2f} p50={_pctile_ms(a,50):>6.2f} "
         f"p90={_pctile_ms(a,90):>6.2f} "
         f"p99={_pctile_ms(a,99):>6.2f} p99.9={_pctile_ms(a,99.9):>7.2f} "
-        f"RU/op={ru:>6.2f}{note}"
+        f"RU/op={ru:>6.2f} duration={next(iter(a['duration_kinds'])).replace('_', '-')}{note}"
     )
+
+
+def _print_fixed_rate_details(a, *, include_schedule=True):
+    if a["duration_kinds"] != {"total"}:
+        return
+    if a["missing_timing_windows"]:
+        print("    [!] Separate timing measurements incomplete; component percentiles unavailable.")
+    else:
+        for outcome in ("success", "failure"):
+            for name in TIMING_COMPONENTS:
+                series = a["timings"][outcome][name]
+                hist = series["hist"]
+                p99 = (hist.get_value_at_percentile(99) / 1000
+                       if hist.total_count and not series["overflow_count"] else float("nan"))
+                label = {"delay_before_call": "delay before SDK call", "sdk_call": "SDK-call duration",
+                         "total": "total duration"}[name]
+                print(f"    {outcome} {label}: samples={hist.total_count} p99={p99:.3f} ms "
+                      f"max_observed={series['max_observed_ms']:.3f} ms "
+                      f"overflow={series['overflow_count']}")
+    if not include_schedule:
+        return
+    schedule = a["schedule"]
+    if schedule is None:
+        print("    [!] Final scheduling/backlog evidence unavailable.")
+    else:
+        print(f"    scheduled={schedule['scheduled_count']} launched={schedule['launched_count']} "
+              f"not_launched={schedule['not_launched_count']} "
+              f"limit_waits={schedule['limit_wait_count']} limit_wait_ms={schedule['limit_wait_ms']:.3f}")
 
 
 def main():
@@ -259,7 +371,7 @@ def main():
 
     backends = sorted({b for (_, b) in agg})
     print(f"=== Low-load latency baseline (prefix {args.prefix}, run id {run_id}) ===")
-    print("    Timing follows each row's load mode: scheduled arrival or SDK-call start.")
+    print("    Fixed-rate: total duration from scheduled start. Send-and-wait: SDK-call duration.")
     print("    Percentiles merge recorded success histograms; missing samples remain unavailable.")
     print()
 
@@ -269,6 +381,7 @@ def main():
             a = agg.get((op, backend))
             if a:
                 print(_fmt_cell(op, backend, a))
+                _print_fixed_rate_details(a)
         print()
 
     # Side-by-side mean/p50/p99/p99.9 when both engines are present, so a reader can
@@ -311,6 +424,8 @@ def main():
             a["count"] > 0 and a["errors"] == 0 and a["no_hist_windows"] == 0
             and a["throttled_429"] == 0
             and ("rust" not in backend or a["retry_calls"] == 0)
+            and a["latency_overflow_count"] == 0
+            and not a["latency_overflow_unknown"]
             for (_, backend), a in agg.items()
         )
         print("### WORKLOAD HEALTH:", "PASS" if latency_ok else "FAIL", "###")
@@ -330,6 +445,16 @@ def main():
             checks.extend([
                 (row["count"] > 0, f"{backend}: successful reads > 0 ({row['count']})"),
                 (row["errors"] == 0, f"{backend}: errors = 0 ({row['errors']})"),
+                (row["latency_overflow_count"] == 0 and not row["latency_overflow_unknown"],
+                 f"{backend}: no clipped successful durations ({row['latency_overflow_count']})"),
+                (row["missing_timing_windows"] == 0,
+                 f"{backend}: separate timing measurements complete"),
+                (row["schedule"] is not None,
+                 f"{backend}: final scheduling/backlog evidence present"),
+                (row["schedule"] is not None and row["schedule"]["limit_wait_count"] == 0,
+                 f"{backend}: in-flight limit did not block launches"),
+                (row["schedule"] is not None and row["schedule"]["not_launched_count"] == 0,
+                 f"{backend}: no scheduled work left unlaunched at shutdown"),
                 (
                     row["throttled_429"] == 0,
                     f"{backend}: terminal 429 responses = 0 ({row['throttled_429']})",
@@ -359,11 +484,11 @@ def main():
                 ),
                 # config_arrival_rate is copied from the environment whether or
                 # not anything paced the run. The sync client ignores it and
-                # runs a closed loop, so this is the check that makes the
+                # runs a send-and-wait, so this is the check that makes the
                 # recorded rate mean what the report says it means.
                 (
                     row["sync_values"] == {False},
-                    f"{backend}: async open-loop client, so the arrival rate was "
+                    f"{backend}: async fixed-rate client, so the arrival rate was "
                     f"actually scheduled (config_use_sync="
                     f"{[str(v) for v in row['sync_values']]})",
                 ),

@@ -34,10 +34,10 @@ perf_require_positive "${DURATION_SECONDS}" "${REPEATS}"
 
 OPERATIONS=(read create upsert replace delete patch)
 BACKENDS=(core-python rust)
-# Operations the harness accepts in open-loop mode. create/delete are NOT
+# Operations the harness accepts in fixed-rate mode. create/delete are NOT
 # supported there (each does an extra untimed step), so they always run
-# closed-loop regardless of WORKLOAD_ARRIVAL_RATE.
-OPENLOOP_OK=" read upsert replace patch "
+# send-and-wait regardless of WORKLOAD_ARRIVAL_RATE.
+FIXED_RATE_OK=" read upsert replace patch "
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
@@ -62,10 +62,10 @@ overall_rc=0
 for (( r=1; r<=REPEATS; r++ )); do
   for op in "${OPERATIONS[@]}"; do
     for bk in "${BACKENDS[@]}"; do
-      # Decide the arrival mode for THIS op. Open-loop only if the user asked for
-      # it (rate > 0) AND the op supports it; otherwise closed-loop.
+      # Decide the arrival mode for THIS op. Fixed-rate only if the user asked for
+      # it (rate > 0) AND the op supports it; otherwise send-and-wait.
       run_arrival="${WORKLOAD_ARRIVAL_RATE}"
-      if [[ "${OPENLOOP_OK}" != *" ${op} "* ]]; then
+      if [[ "${FIXED_RATE_OK}" != *" ${op} "* ]]; then
         run_arrival="0"
       fi
 

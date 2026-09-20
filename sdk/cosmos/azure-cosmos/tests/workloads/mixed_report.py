@@ -25,6 +25,10 @@ from latency_report import (
     _connect,
     _latest_run_id,
     _split_wid,
+    _new_timing_fields,
+    _add_timing_row,
+    _attach_schedule,
+    _print_fixed_rate_details,
 )
 
 _OP_ORDER = ["read", "create", "upsert", "replace", "delete", "patch"]
@@ -65,10 +69,12 @@ def _new_cell():
         "hist": HdrHistogram(MIN_US, MAX_US, 3),
         "no_hist_windows": 0,
         "windows": {},
+        **_new_timing_fields(),
     }
 
 
 def _add_row(cell, r, c):
+    _add_timing_row(cell, r)
     cell["count"] += c
     cell["errors"] += int(r.get("errors", 0) or 0)
     throttled = r.get("throttled_429")
@@ -110,7 +116,8 @@ def _aggregate(container, prefix, stamp):
     )
     per_op, blended = {}, {}
     prov_commits, prov_missing, prov_rust = set(), 0, 0
-    for r in summary_rows(rows):
+    measurements = list(summary_rows(rows))
+    for r in measurements:
         # backend comes from the workload_id; the real operation comes from the row.
         _wop, backend, _ = split_workload_id(r["workload_id"], prefix)
         op = _canon_op(r.get("operation"))
@@ -132,11 +139,14 @@ def _aggregate(container, prefix, stamp):
         if bcell is None:
             bcell = blended[backend] = _new_cell()
         _add_row(bcell, r, c)
+    for backend, cell in blended.items():
+        selected = [r for r in measurements if split_workload_id(r["workload_id"], prefix)[1] == backend]
+        _attach_schedule(cell, selected, rows)
     return per_op, blended, (sorted(prov_commits), prov_missing, prov_rust)
 
 
 def _pctile_ms(cell, q):
-    if cell["count"] <= 0 or cell["no_hist_windows"]:
+    if cell["count"] <= 0 or cell["no_hist_windows"] or cell["latency_overflow_count"]:
         return float("nan")
     return cell["hist"].get_value_at_percentile(q) / 1000.0
 
@@ -147,12 +157,16 @@ def _fmt(label, cell):
     note = "" if cell["no_hist_windows"] == 0 else (
         f"  [!] {cell['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
     )
+    if cell["latency_overflow_unknown"]:
+        note += " [!] histogram overflow evidence unavailable"
+    if cell["latency_overflow_count"]:
+        note += " [!] durations exceeded histogram range; pooled latency unavailable"
     return (
         f"  {label:16s} count={cell['count']:>10d} err={cell['errors']:>5d} "
         f"429={str(cell['throttled_429']):>5s} rps={rps:>8.1f} "
         f"p50={_pctile_ms(cell,50):>6.2f} p90={_pctile_ms(cell,90):>6.2f} "
         f"p99={_pctile_ms(cell,99):>6.2f} p99.9={_pctile_ms(cell,99.9):>7.2f} "
-        f"RU/op={ru:>6.2f}{note}"
+        f"RU/op={ru:>6.2f} duration={next(iter(cell['duration_kinds'])).replace('_', '-')}{note}"
     )
 
 
@@ -188,8 +202,10 @@ def main():
             cell = per_op.get((backend, op))
             if cell:
                 print(_fmt(op, cell))
+                _print_fixed_rate_details(cell, include_schedule=False)
         # Retain per-operation results: the blend can hide an infrequent slow operation.
         print(_fmt("BLENDED (all)", blended[backend]))
+        _print_fixed_rate_details(blended[backend])
         print()
 
     if "core-python" in backends and "rust" in backends:
@@ -208,7 +224,8 @@ def main():
     for _l in commit_lines:
         print(_l)
     print("\n### GATE:", "FAIL" if not commit_ok else "PASS", "(rust driver commit) ###")
-    measurements_ok = all(c["count"] > 0 and not c["no_hist_windows"] for c in blended.values())
+    measurements_ok = all(c["count"] > 0 and not c["no_hist_windows"]
+                          and not c["latency_overflow_count"] for c in blended.values())
     sys.exit(0 if commit_ok and measurements_ok else 1)
 
 

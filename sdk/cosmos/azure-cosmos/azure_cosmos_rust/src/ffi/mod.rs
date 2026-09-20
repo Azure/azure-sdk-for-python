@@ -39,6 +39,9 @@ use crate::wire::partition_key_input::{extract_partition_key, BindingPartitionKe
 use pyo3::types::PyTuple;
 use pyo3::{exceptions::PyValueError, prelude::*};
 
+#[cfg(test)]
+mod request_boundary_benchmark;
+
 use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{

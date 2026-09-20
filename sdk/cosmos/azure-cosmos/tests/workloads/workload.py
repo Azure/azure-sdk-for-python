@@ -63,7 +63,7 @@ from workload_utils import (
     read_item_concurrently,
     replace_item,
     replace_item_concurrently,
-    run_open_loop,
+    run_fixed_rate,
     upsert_item,
     upsert_item_concurrently,
 )
@@ -244,15 +244,15 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
 
             try:
                 if WORKLOAD_ARRIVAL_RATE > 0:
-                    # Open-loop load at WORKLOAD_ARRIVAL_RATE ops/sec per client. It
+                    # Fixed-rate load at WORKLOAD_ARRIVAL_RATE ops/sec per client. It
                     # does not wait between waves and times each op from its intended
                     # start, so the tail includes time spent waiting to be issued.
-                    await run_open_loop(
+                    await run_fixed_rate(
                         cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
                         WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT, stop_event,
                     )
                 else:
-                    # Closed-loop load: each op launches CONCURRENT_REQUESTS calls and
+                    # Send-and-wait load: each op launches CONCURRENT_REQUESTS calls and
                     # waits for the whole wave before the next op runs. A wave does not
                     # refill as calls finish, so in-flight decays from N toward 0, and
                     # the enabled ops run one phase at a time. Read achieved req/s from

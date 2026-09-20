@@ -10,8 +10,10 @@ use azure_data_cosmos_driver::options::{
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
     prelude::*,
-    types::{PyBool, PyDict},
+    types::PyBool,
 };
+#[cfg(test)]
+use pyo3::types::PyDict;
 use std::{collections::HashMap, time::Duration};
 
 fn optional<'py, T: FromPyObject<'py>>(obj: &Bound<'py, PyAny>, name: &str) -> PyResult<Option<T>> {
@@ -185,9 +187,9 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
     let mut custom_headers = HashMap::new();
     let mut raw_activity = None;
     let mut raw_session = None;
-    for (key, value) in prepared.getattr("headers")?.downcast::<PyDict>()?.iter() {
-        let name = key.extract::<String>()?.to_ascii_lowercase();
-        let value = value.extract::<String>()?;
+    for pair in prepared.getattr("headers")?.call_method0("items")?.iter()? {
+        let (key, value) = pair?.extract::<(String, String)>()?;
+        let name = key.to_ascii_lowercase();
         if name == "x-ms-activity-id" {
             raw_activity = Some(value.clone());
         }
@@ -311,6 +313,33 @@ mod tests {
             .unwrap()
             .call((), Some(&kwargs))
             .unwrap()
+    }
+
+    #[test]
+    fn readonly_mappings_preserve_header_values_and_typed_precedence() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let request = prepared(py);
+            let headers = PyDict::new_bound(py);
+            headers.set_item("X-CUSTOM", "True").unwrap();
+            headers.set_item("X-MS-SESSION-TOKEN", "raw").unwrap();
+            headers.set_item("X-MS-ACTIVITY-ID", "activity").unwrap();
+            headers.set_item("X-MS-MAX-ITEM-COUNT", "1").unwrap();
+            let readonly = py.import_bound("types").unwrap()
+                .getattr("MappingProxyType").unwrap().call1((&headers,)).unwrap();
+            request.setattr("headers", readonly).unwrap();
+            let settings = request.getattr("settings").unwrap();
+            settings.setattr("session_token", "typed").unwrap();
+            settings.getattr("query").unwrap().setattr("max_item_count", 2).unwrap();
+            let result = extract_settings(&request).unwrap();
+            assert_eq!(result.session_header.as_deref(), Some("typed"));
+            assert_eq!(result.activity_header.as_deref(), Some("activity"));
+            assert_eq!(result.custom_headers[&HeaderName::from_static("x-custom")].as_str(), "True");
+            assert_eq!(result.custom_headers[&HeaderName::from_static("x-ms-max-item-count")].as_str(), "2");
+            assert_eq!(result.custom_headers.len(), 2);
+            headers.set_item("x-invalid", 3).unwrap();
+            assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+        });
     }
 
     #[test]

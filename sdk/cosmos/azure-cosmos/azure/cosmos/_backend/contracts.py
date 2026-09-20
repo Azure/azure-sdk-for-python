@@ -9,8 +9,8 @@ PreparedRequest/BackendResponse describe single replies; PreparedQuery/QueryPage
 describe pages. PreparedClientConfig carries construction settings. Invocation
 deadlines and legacy callables are deliberately outside these wire records.
 
-Frozen fields cannot be reassigned. Settings, partition inputs and query scope
-are immutable; header maps and nested query data remain read-only by convention.
+Frozen fields cannot be reassigned. Headers and nested query data are owned
+immutable snapshots; settings, partition inputs and query scope are immutable.
 A cursor field references pager-owned mutable native execution state, not a
 mapping the backend may rewrite."""
 
@@ -20,8 +20,9 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar, Mapping, Optional, Union
 
 from azure.core.utils import CaseInsensitiveDict
-from .request_settings import RequestSettings
+from .request_settings import RequestSettings, _ValidatedSettings
 from .partition_key_input import BindingPartitionKey
+from ._immutable import freeze_headers, freeze_json
 
 if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
@@ -87,15 +88,24 @@ class PreparedRequest:
     query_scope: Optional[QueryScope] = None
 
     def __post_init__(self) -> None:
+        if not isinstance(self.body_bytes, bytes):
+            raise TypeError("PreparedRequest.body_bytes must be immutable bytes")
+        if not isinstance(self.settings, RequestSettings):
+            raise TypeError("PreparedRequest requires typed RequestSettings")
+        if not isinstance(self.op, str) or not isinstance(self.container_link, str):
+            raise TypeError("PreparedRequest operation and container_link must be strings")
+        if self.item_id is not None and not isinstance(self.item_id, str):
+            raise TypeError("PreparedRequest.item_id must be a string or None")
         if not isinstance(self.partition_key, BindingPartitionKey):
             raise TypeError("PreparedRequest requires a typed BindingPartitionKey")
         if self.query_scope is not None and not isinstance(self.query_scope, QueryScope):
             raise TypeError("PreparedRequest requires a typed QueryScope")
+        object.__setattr__(self, "headers", freeze_headers(self.headers))
 
 
 @dataclass(frozen=True)
-class PreparedFaultInjectionRule:
-    """Internal fault-rule values; validation is performed by the config builder."""
+class PreparedFaultInjectionRule(_ValidatedSettings):
+    """Immutable typed fault-rule values; policy validation belongs to the builder."""
 
     id: str
     operation_type: str
@@ -110,7 +120,7 @@ class PreparedFaultInjectionRule:
 
 
 @dataclass(frozen=True)
-class PreparedClientConfig:
+class PreparedClientConfig(_ValidatedSettings):
     """Client-construction settings carried to the rust driver at
     ``acquire_driver_handle`` time -- the startup-time analog of :class:`PreparedRequest`.
 
@@ -203,6 +213,14 @@ class PreparedClientConfig:
     #: Internal test-only Rust fault rules. Each rule is immutable so it safely
     #: participates in the binding's driver-cache identity.
     fault_injection_rules: tuple[PreparedFaultInjectionRule, ...] = ()
+
+    def __post_init__(self) -> None:
+        for name in ("preferred_locations", "excluded_locations", "fault_injection_rules"):
+            value = getattr(self, name)
+            if not isinstance(value, (list, tuple)):
+                raise TypeError(f"PreparedClientConfig.{name} must be a list or tuple")
+            object.__setattr__(self, name, tuple(value))
+        super().__post_init__()
 
 
 @dataclass(frozen=True)
@@ -314,6 +332,21 @@ class PreparedQuery:
     query_body: Optional[bytes] = None
 
     def __post_init__(self) -> None:
+        if not isinstance(self.settings, RequestSettings):
+            raise TypeError("PreparedQuery requires typed RequestSettings")
+        for name in ("op", "container_link"):
+            if not isinstance(getattr(self, name), str):
+                raise TypeError(f"PreparedQuery.{name} must be a string")
+        for name in ("query", "continuation"):
+            value = getattr(self, name)
+            if value is not None and not isinstance(value, str):
+                raise TypeError(f"PreparedQuery.{name} must be a string or None")
+        if self.max_item_count is not None and type(self.max_item_count) is not int:
+            raise TypeError("PreparedQuery.max_item_count must be an integer or None")
+        if not isinstance(self.parameters, (tuple, list)):
+            raise TypeError("PreparedQuery.parameters must be a list or tuple")
+        if self.change_feed is not None and not isinstance(self.change_feed, Mapping):
+            raise TypeError("PreparedQuery.change_feed must be a mapping or None")
         if not isinstance(self.partition_key, BindingPartitionKey):
             raise TypeError("PreparedQuery requires a typed BindingPartitionKey")
         if self.query_body is not None and not isinstance(self.query_body, bytes):
@@ -322,6 +355,9 @@ class PreparedQuery:
             self.query_scope, QueryScope
         ):
             raise TypeError("PreparedQuery requires a typed QueryScope")
+        object.__setattr__(self, "headers", freeze_headers(self.headers))
+        object.__setattr__(self, "parameters", freeze_json(self.parameters))
+        object.__setattr__(self, "change_feed", freeze_json(self.change_feed))
 
 
 @dataclass(frozen=True)
