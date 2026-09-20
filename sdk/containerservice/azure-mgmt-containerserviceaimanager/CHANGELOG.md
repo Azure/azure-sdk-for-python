@@ -22,7 +22,6 @@
 
   - Deleted or renamed model `CalculateCostRequest`
   - Method `AIModelsOperations.calculate_cost` deleted or renamed its parameter `body` of kind `positional_or_keyword`
-  - `AIModelsOperations.calculate_cost` had all overloads removed
 
 ## 1.0.0b1 (2026-08-05)
 
