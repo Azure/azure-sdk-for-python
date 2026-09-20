@@ -30,10 +30,10 @@
   - Deleted or renamed model `PolicyVariableValueProperties`
   - Deleted or renamed model `Variable`
   - Deleted or renamed model `VariableValue`
-  - Deleted or renamed model `PolicyEnrollmentsOperations`
-  - Deleted or renamed model `PolicyExemptionsOperations`
-  - Deleted or renamed model `VariableValuesOperations`
-  - Deleted or renamed model `VariablesOperations`
+  - Deleted or renamed operation group `PolicyEnrollmentsOperations`
+  - Deleted or renamed operation group `PolicyExemptionsOperations`
+  - Deleted or renamed operation group `VariableValuesOperations`
+  - Deleted or renamed operation group `VariablesOperations`
 
 ## 1.0.0b4 (2026-08-31)
 
