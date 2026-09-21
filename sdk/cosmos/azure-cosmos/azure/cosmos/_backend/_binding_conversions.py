@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Conversions between the Rust binding's plain values and our typed objects.
+"""Prepare arguments for the Rust binding and convert its returned values.
 
-The binding speaks in tuples and plain dicts. These helpers convert in both
-directions -- arguments on the way in, responses on the way out -- providing
-shared conversions for the synchronous and asynchronous backends.
+The binding is the compiled extension Python uses to call the Rust driver.
+It receives prepared request objects and returns tuples containing status,
+headers, body bytes, and diagnostics. Both synchronous and asynchronous
+backends use these conversions.
 """
 from __future__ import annotations
 
@@ -35,11 +36,12 @@ _PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LI
 
 
 def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
-    """Adapt sync/async page requests to the binding's request object.
+    """Build the binding request for one page fetch.
 
-    Reuse the pager's serialized service query body when available. Retained
-    query scope travels separately. Only headers and typed page settings change
-    between fetches; change-feed and parameterless-feed bodies keep their shape.
+    Reuse query_body when the pager has already converted the SQL and parameters
+    to JSON bytes. Listing requests need no body; change-feed requests use their
+    own settings instead of SQL. Copy headers before applying the page size and
+    continuation token, so the original prepared query is not changed.
     """
     if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
         body = json.dumps(
@@ -86,7 +88,7 @@ def page_dispatch_arguments(
     prepared: PreparedQuery,
     deadline: Optional[float],
 ) -> tuple[tuple[Any, ...], dict[str, Optional[float]]]:
-    """Compute the remaining budget immediately before sync or async dispatch."""
+    """Pass the driver handle, request, optional cursor, and remaining seconds."""
     args: tuple[Any, ...] = (driver_handle, request)
     if prepared.cursor is not None:
         args += (prepared.cursor,)
@@ -99,7 +101,7 @@ def page_dispatch_arguments(
 
 
 def build_query_page(prepared: PreparedQuery, response: BackendResponse) -> QueryPage:
-    """Attach continuation and retained-query cursor state to one response."""
+    """Add the next-page token and any item-query cursor progress to a response."""
     cursor = prepared.cursor if prepared.op == OP_QUERY_ITEMS else None
     return QueryPage(
         status_code=response.status_code,
@@ -114,7 +116,11 @@ def build_query_page(prepared: PreparedQuery, response: BackendResponse) -> Quer
 
 
 def build_container_metadata(raw: Any) -> ContainerMetadata:
-    """Validate the native metadata contract once, without JSON or response state."""
+    """Check the binding's container ID and partition-key definition.
+
+    This returns container properties, not a service response, and does not
+    change the client's saved response headers.
+    """
     if not isinstance(raw, tuple) or len(raw) != 4:
         raise BindingProtocolError("The binding returned invalid container metadata")
     rid, paths, kind, system_key = raw
@@ -130,7 +136,11 @@ def build_container_metadata(raw: Any) -> ContainerMetadata:
 
 
 def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseError:
-    """Convert an actual metadata failure without publishing response headers."""
+    """Convert a failed container-property lookup to an SDK exception.
+
+    Keep its headers on the exception without replacing the client's saved
+    response headers.
+    """
     from .._helpers._exceptions import extract_message_from_body, map_backend_response_to_exception
     from .._helpers._response_parse import apply_response_diagnostics, apply_request_charge_format
 
@@ -146,15 +156,6 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     return map_backend_response_to_exception(response, message=extract_message_from_body(response.body))
 
 
-# ---------------------------------------------------------------------------
-# Response-header normalisation (binding dict -> CaseInsensitiveDict)
-# ---------------------------------------------------------------------------
-#
-# Convert the binding's header mapping to case-insensitive lookup. Its values
-# come from native response conversion and may include synthesized headers;
-# this conversion does not establish parity with raw HTTP or legacy headers.
-
-
 def normalize_response_headers(
     headers: Optional[Mapping[str, Any]],
 ) -> Optional[CaseInsensitiveDict]:
@@ -162,7 +163,7 @@ def normalize_response_headers(
 
     Copy entries into a new mapping. Names that differ only in case can collapse
     to one entry, with the later assignment winning. ``None`` or empty input
-    returns ``None``.
+    returns ``None``. This cannot recover service headers omitted by the driver.
     """
     if not headers:
         return None
@@ -178,16 +179,11 @@ def acquire_driver_handle_args(
     client_config: Optional[PreparedClientConfig],
     token_credential: Optional[Any],
 ) -> tuple[Any, ...]:
-    """Build the positional args for the Rust ``acquire_driver_handle`` call.
+    """Build arguments for the binding's ``acquire_driver_handle`` function.
 
-    A token credential rides as the 4th argument; master-key auth uses the
-    3-argument form. ``credentials.resolve_credential`` is contracted to set
-    exactly one of the two. Shared by both backends so the call shape lives in
-    one place.
-
-    This helper rejects both credentials being set. If neither is supplied, it
-    still builds the three-argument form; the native acquisition function rejects
-    the missing credential.
+    A token credential is the fourth argument, with None in the master-key
+    position. A master key uses the three-argument form. Supplying both raises
+    here; supplying neither is rejected by the binding.
     """
     if master_key is not None and token_credential is not None:
         raise ValueError(
@@ -209,10 +205,10 @@ def build_backend_response(
 ) -> BackendResponse:
     """Wrap the binding's response tuple as a ``BackendResponse``.
 
-    The native response serializer returns five elements:
+    The binding returns five elements:
     ``(status, sub_status, headers, body, diagnostics_or_none)``. The default
-    diagnostics argument also accepts four-element test doubles; it does not
-    establish compatibility with an older binding's request protocol.
+    diagnostics argument also allows tests to supply only four values. It does
+    not make an older compiled extension compatible with current requests.
     """
     return BackendResponse(
         status_code=int(status_code),

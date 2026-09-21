@@ -3,16 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Temporary migration selection and shared sync/async construction.
+"""Choose and construct a backend using the same rules for both client types.
 
-``_backend`` and ``COSMOS_BACKEND`` are
-internal migration/test controls, not supported customer switches. LR-09 in
-LEGACY_CODE_RETIREMENT.md owns their removal before the Rust-only release.
+The private _backend argument wins over COSMOS_BACKEND; otherwise use
+core-python. These are migration and test controls, not supported customer
+options, and are intended for removal before a Rust-only release.
 
-Selection precedence is explicit keyword, environment, then core-python.
-Both factories use ``_make_backend`` to preserve validation order and credential
-ownership. Rust selection creates a ``RustBinding`` or ``AsyncRustBinding``;
-native driver acquisition remains lazy.
+Rust selection validates settings and prepares the credential. It creates a
+RustBinding or AsyncRustBinding, but driver creation waits until first use.
+If construction fails, release any async-credential bridge acquired here.
 """
 from __future__ import annotations
 
@@ -36,27 +35,16 @@ _BackendT = TypeVar("_BackendT")
 _LegacyBackendT = TypeVar("_LegacyBackendT")
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
-    """Select the backend name from the ``_backend=`` argument, else the
-    ``COSMOS_BACKEND`` environment variable, else the ``core-python`` default,
-    and return a name in ``VALID_BACKEND_NAMES``.
+    """Resolve the private backend choice and reject unknown names.
 
-    Without it: a stray trailing newline or ``"RUST"`` in caps from a
-    copy-pasted env var would be treated as a typo and rejected; and a real typo
-    would silently fall back to the wrong backend instead of telling the customer.
-    So surrounding whitespace and case are tolerated (``RUST``, `` rust`` all
-    work), an empty or whitespace-only value counts as "not specified" and uses
-    ``DEFAULT_BACKEND_NAME``, but a non-empty value that is not a known backend
-    (a genuine typo) raises ``ValueError`` loudly. There are no aliases: one
-    canonical spelling per backend.
-
-    Shared between the sync and async factories so the rules, valid
-    values, and error message live in one place.
+    Read the environment only when explicit is None. Strip surrounding spaces
+    and ignore case, so " RUST " selects rust. A blank value selects the default,
+    even if it was an explicit argument. Other unknown names or non-string
+    arguments raise ValueError rather than selecting another backend silently.
     """
     raw = explicit if explicit is not None else os.environ.get(BACKEND_ENV_VAR)
     if raw is not None and not isinstance(raw, str):
-        # The env var is always a string; only the constructor kwarg can be a
-        # non-string. Raise the same clear ValueError the typo path raises, rather
-        # than letting .strip() throw an opaque AttributeError.
+        # Reject a non-string argument before strip() raises an unrelated error.
         raise ValueError(
             "Invalid backend {!r}. Expected one of {} as a string. "
             "Set the constructor kwarg _backend=, or the {} environment variable.".format(
@@ -101,11 +89,11 @@ def _make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
-    """Select and construct either backend under the same credential cleanup guard.
+    """Select the implementation and clean up credentials if construction fails.
 
-    Legacy selection does not validate Rust-only settings. On the Rust path,
-    validate the endpoint and transport before resolving credentials, then keep
-    their ownership guard active through config validation and construction.
+    Core-python skips Rust-only validation. Rust requires a nonempty endpoint
+    and supported network settings before preparing credentials. The binding
+    checks URL syntax later, when a driver is acquired.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -121,10 +109,8 @@ def _make_backend(
             ssl_config=ssl_config,
             transport=transport,
         )
-        # Sort the credential inside the guard: an async credential becomes a
-        # bridge holding a background thread, and everything below can still raise
-        # (config validation or initialized runtime conflicts), which
-        # would otherwise strand that thread with no owner left to close it.
+        # Release the async-credential bridge if later validation or construction
+        # fails. Its thread may not have started, but it already holds the credential.
         with resolved_credential(credential) as (master_key, token_credential):
             return rust_backend_type(
                 endpoint=url,
@@ -170,7 +156,7 @@ def make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> CosmosBackend:
-    """Build a synchronous backend using the shared selection and startup policy."""
+    """Build a synchronous backend with the shared selection and validation rules."""
     return _make_backend(
         explicit,
         rust_backend_type=RustBinding,

@@ -3,21 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Errors raised by the backend layer, and the guards that raise them.
+"""Report unsupported requests and unexpected binding inputs or results.
 
-These types separate the three ways a backend can decline to produce a normal
-reply, which would otherwise be indistinguishable to the caller:
-
-* :class:`PagePreflightError` can allow compatibility routing only
-  during static preflight, when the operation policy permits it.
-* :class:`UnsupportedQueryError` is a query-planning failure. Like
-  all execution failures, it propagates without legacy replay.
-* :class:`BindingProtocolError` means a backend broke its own reply-shape
-  contract. That is a bug on our side, so it is never retried and never falls
-  back.
-* :func:`raise_account_read_unsupported` refuses a client-level call the Rust
-  path does not implement yet, instead of letting it quietly borrow the
-  core-python connection.
+A check before execution may allow a request to use the existing Python
+implementation. A failure after execution starts must reach the caller,
+without repeating the operation through Python. Separate exception types
+keep those cases distinct.
 """
 from __future__ import annotations
 
@@ -27,45 +18,33 @@ from .constants import is_rust_backend
 
 
 class PagePreflightError(RuntimeError):
-    """Raised before dispatch when a backend cannot execute a paged operation.
+    """Report that the binding lacks the requested page-fetch function.
 
-    Only a static preflight refusal is eligible for migration fallback.
-    An error of this type raised during execution or processing is not replayed.
+    The migration wrapper may use Python only when this error comes from its
+    check before execution and the operation allows fallback. The same error
+    raised during execution or response processing does not allow a retry.
     """
 
 
 class UnsupportedQueryError(RuntimeError):
-    """Raised when the selected backend cannot execute a planned query."""
+    """Report a query the Rust driver could not execute; do not retry in Python."""
 
 
 class BindingProtocolError(RuntimeError):
-    """Raised when a backend violates the reply-shape contract.
+    """Report unexpected SDK request data or binding results.
 
-    A bug on our side, not a customer error, so it is never retried or fallen
-    back from. Without it a malformed reply would be silently retried on the
-    legacy path and the underlying defect would go unnoticed.
+    For example, a prepared operation may not match the requested operation,
+    or the binding may return no page. Report the mismatch rather than hiding
+    it by trying the existing Python implementation.
     """
 
 
-# ---------------------------------------------------------------------------
-# Client-level operations the Rust path does not implement yet
-# ---------------------------------------------------------------------------
-#
-# A few public methods are *client-level* (not per-item), so they are not routed
-# through the backend's ``execute`` dispatch the way point operations are. On a
-# Rust-backed client they would otherwise fall straight through to the legacy
-# core-python connection. The migration goal is for the Rust path to stand on its
-# own, so rather than quietly borrowing core-python we raise.
-# ``get_database_account`` is the one such method today.
-
-
 def raise_account_read_unsupported(backend: Any) -> None:
-    """Raise ``NotImplementedError`` for ``get_database_account`` on a Rust-backed
-    client; do nothing on the core-python selection.
+    """Reject get_database_account on Rust instead of calling Python silently.
 
-    :param backend: The client's concrete chosen backend. The Rust backend raises
-        because this call has no Rust implementation yet; the explicit legacy
-        backend is a no-op so core-python keeps working unchanged.
+    The binding has no function for this public account read. An explicitly
+    selected core-python client can still perform it, so this check returns
+    without raising for that client.
     """
     if not is_rust_backend(backend):
         return

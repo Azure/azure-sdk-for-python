@@ -3,16 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Frozen request/reply records shared by sync and async backends.
+"""Keep request and response data separate from the code that sends a request.
 
-PreparedRequest/BackendResponse describe single replies; PreparedQuery/QueryPage
-describe pages. PreparedClientConfig carries construction settings. Invocation
-deadlines and legacy callables are deliberately outside these wire records.
+Both client types use PreparedRequest and BackendResponse for single results,
+and PreparedQuery and QueryPage for pages. PreparedClientConfig holds client
+settings. Absolute deadlines and functions that call the legacy Python code
+are passed separately.
 
-Frozen fields cannot be reassigned. Headers and nested query data are owned
-immutable snapshots; settings, partition inputs and query scope are immutable.
-A cursor field references pager-owned mutable native execution state, not a
-mapping the backend may rewrite."""
+Fields cannot be reassigned after construction. Request headers and nested
+query values are also copied into read-only objects, so caller edits cannot
+change a pending request. Response headers can still be edited. A query cursor
+is a Rust object whose progress changes as the pager fetches results.
+"""
 
 from __future__ import annotations
 
@@ -30,10 +32,11 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class ContainerMetadata:
-    """Immutable routing facts, not a service response or a Python cache.
+    """Container ID and partition-key definition returned by the binding.
 
-    ``partition_key_kind=None`` with no paths means no definition. An unknown
-    system-key flag is distinct from False; the current driver does not retain it.
+    No paths and partition_key_kind=None mean no partition-key definition was
+    supplied. system_key=None means the flag is unknown, not False. This object
+    has no service response headers and does not cache container properties.
     """
 
     rid: str
@@ -44,15 +47,13 @@ class ContainerMetadata:
 
 @dataclass(frozen=True)
 class PreparedRequest:
-    """Wire-shaped input for a single-response operation.
+    """Inputs ready to pass to the Rust binding for one operation.
 
-    Backend/native validation, metadata lookup, and routing may still be needed.
+    The binding may still validate values or fetch container properties before
+    sending the request. This is not an HTTP request already sent to the service.
 
-    The Rust backend receives this object. The current core-Python backend
-    receives a separate legacy callable built from the original Python
-    arguments because those arguments cannot always be reconstructed from this
-    wire-shaped record. On a Rust-selected client, that operation is also the
-    temporary fallback for request shapes that have not been migrated yet.
+    The legacy Python backend uses a separate function with the original call
+    arguments; those cannot always be reconstructed from this object.
     """
 
     protocol_version: ClassVar[int] = 3
@@ -67,24 +68,25 @@ class PreparedRequest:
     #: send no body, such as ``delete_item``.
     body_bytes: bytes
 
-    #: The partition key for this request, broken into its parts, along with
-    #: where each part came from and how it was worked out.
+    #: Supplied partition-key values, or an instruction such as extracting the
+    #: key from the item. BindingPartitionKey keeps those cases distinct.
     partition_key: BindingPartitionKey
 
     #: Actual HTTP request headers only, including customer headers.
     headers: Mapping[str, str] = field(default_factory=dict)
 
-    #: Typed settings; headers contain only caller/default header overrides.
+    #: Named operation settings, separate from raw header overrides.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: Target identifier consumed by the operation's adapter, such as an item
+    #: Target identifier used by the binding function, such as an item
     #: id or a database name. Create and upsert also carry the id already read out
     #: of the body when it is a non-empty string, which saves the binding
     #: parsing the JSON a second time. Callers that have not been updated may
     #: leave it unset, in which case the binding reads the body itself.
     item_id: Optional[str] = None
 
-    #: Retained SQL-query scope, separate from the service's JSON request body.
+    #: Limits on which partition keys a cursor-based SQL query may search,
+    #: separate from the SQL and parameters sent in the JSON body.
     query_scope: Optional[QueryScope] = None
 
     def __post_init__(self) -> None:
@@ -105,7 +107,11 @@ class PreparedRequest:
 
 @dataclass(frozen=True)
 class PreparedFaultInjectionRule(_ValidatedSettings):
-    """Immutable typed fault-rule values; policy validation belongs to the builder."""
+    """Test settings for making selected requests fail or wait.
+
+    The builder checks allowed operations and value ranges. This object checks
+    field types and keeps the resulting rule from being edited.
+    """
 
     id: str
     operation_type: str
@@ -121,93 +127,62 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class PreparedClientConfig(_ValidatedSettings):
-    """Client-construction settings carried to the rust driver at
-    ``acquire_driver_handle`` time -- the startup-time analog of :class:`PreparedRequest`.
+    """Client settings passed to the binding when acquiring a Rust driver.
 
-    ``build_client_config`` validates and normalizes these frozen values.
-    Routing and operation defaults are distinct from the proxy and transport
-    timeout settings, which configure a shared process-wide runtime. Some
-    mappings are approximate; field comments describe the relevant limits.
-
-    Config participates in native driver identity together with endpoint and
-    credential. A differing identity can select a separate driver, subject to
-    binding-owned runtime compatibility checks and successful native initialization.
+    build_client_config checks the options and converts them to these fields.
+    The binding uses them with the endpoint and credential to choose a shared
+    driver or create one. Proxy and connection/read timeout settings still
+    apply to the whole process, even when clients use different drivers.
     """
 
-    #: Ordered preferred region names exactly as the customer passed them
-    #: (e.g. ``("West US", "East US")``), forwarded to the driver's
-    #: preferred-region routing (which normalizes each name). An empty tuple
-    #: means "no preference" -- the driver keeps its default endpoint ordering.
+    #: Regions in the customer's preferred order, such as ("West US", "East US").
+    #: An empty tuple leaves the order to the driver.
     preferred_locations: tuple[str, ...] = ()
 
-    #: Region names to keep out of routing entirely (the ``excluded_locations``
-    #: kwarg, e.g. ``("Central US",)``). The counterpart of ``preferred_locations``;
-    #: an empty tuple means "no exclusions". Carried to the driver's
-    #: ``OperationOptions.excluded_regions`` at the account level.
+    #: Regions excluded from this client's operations, such as ("Central US",).
+    #: An empty tuple excludes none through this setting.
     excluded_locations: tuple[str, ...] = ()
 
-    #: Max number of service-throttle (HTTP 429) retries -- the customer's
-    #: ``retry_throttle_total`` (preferred) or ``retry_total``. ``None`` means
-    #: "not tuned", so the driver keeps its own default (9), which matches
-    #: the core-python default. Maps to ``ThrottlingRetryOptions.max_retry_count``.
+    #: Maximum retries after HTTP 429, when the service asks the client to slow
+    #: down. Comes from retry_throttle_total or retry_total. None uses the driver default.
     throttling_max_retry_count: Optional[int] = None
 
-    #: Cumulative cap, in seconds, on time spent waiting across throttle retries
-    #: -- the customer's ``retry_throttle_backoff_max`` (preferred) or
-    #: ``retry_backoff_max``. ``None`` keeps the driver default (30 s), which
-    #: matches core-python. Maps to ``ThrottlingRetryOptions.max_retry_wait_time``.
+    #: Maximum total seconds spent waiting between HTTP 429 retries. Comes from
+    #: retry_throttle_backoff_max or retry_backoff_max. None uses the driver default.
     throttling_max_retry_wait_time_seconds: Optional[float] = None
 
-    #: Cross-region hedging threshold in milliseconds (the ``threshold_ms`` of
-    #: the ``availability_strategy`` kwarg) when the customer *enabled* hedging
-    #: (``availability_strategy=True`` or a dict). ``Some`` maps to
-    #: ``AvailabilityStrategy::Hedging``. ``None`` means the customer did not
-    #: enable hedging, so the binding sets ``AvailabilityStrategy::Disabled``,
-    #: including when the complete client config is absent.
-    #: (Python's ``threshold_steps_ms`` has no driver equivalent -- the
-    #: driver models only a single threshold -- so it is intentionally dropped.)
+    #: Delay before the driver may send another request to a different region
+    #: while the first is still pending. This is called cross-region hedging.
+    #: None disables it, including when the whole config is absent. The Python
+    #: threshold_steps_ms setting is not passed because the driver has one threshold.
     hedging_threshold_ms: Optional[int] = None
 
-    #: User-agent suffix label (the ``user_agent_suffix`` kwarg, e.g.
-    #: ``"checkout-westus2"``) forwarded for native User-Agent construction.
-    #: It does not itself enable a service metric dimension. ``None`` -- and an
-    #: empty string, which ``build_client_config`` normalizes to ``None`` -- carries nothing, so
-    #: the driver keeps its default SDK User-Agent. The driver's suffix type is
-    #: stricter than the legacy path: at most 25 header-safe characters
-    #: (alphanumeric, ``-``, ``_``, ``.``, ``~``). A value that violates that is
-    #: rejected loudly on the Rust path rather than silently dropped.
+    #: Optional label added to the User-Agent header, such as "orders-westus".
+    #: The builder turns an empty string into None. The binding checks the
+    #: driver's limit of 25 characters: letters, digits, "-", "_", ".", or "~".
     user_agent_suffix: Optional[str] = None
 
-    #: Client-level consistency level the customer chose at construction (the
-    #: ``consistency_level`` kwarg, e.g. ``"Eventual"``), carried so the chosen
-    #: level actually reaches the driver instead of every read falling back to the
-    #: account default. ``None`` carries nothing, leaving the driver at the
-    #: account default. Only the levels the driver can honor are carried --
-    #: ``"Eventual"`` and ``"Session"`` map directly and ``"Strong"`` maps to the
-    #: driver's ``GlobalStrong`` in the binding; ``build_client_config`` rejects
-    #: ``"BoundedStaleness"`` / ``"ConsistentPrefix"`` (no driver equivalent yet)
-    #: rather than silently dropping them.
+    #: Requested read consistency: Eventual, Session, or Strong. The binding
+    #: maps Strong to the driver's GlobalStrong. None keeps the account default.
+    #: The builder rejects BoundedStaleness and ConsistentPrefix.
     consistency_level: Optional[str] = None
 
-    #: Runtime-level proxy switch for the rust driver. ``True`` lets the driver
-    #: use proxy settings from environment variables (such as ``HTTPS_PROXY`` /
-    #: ``HTTP_PROXY``); ``False`` forces a direct connection (no proxy); ``None``
-    #: carries nothing, so the runtime keeps its existing env/default behavior.
+    #: Whether the shared Rust runtime may use environment proxy settings:
+    #: True allows them, False requires a direct connection, and None requests no change.
     proxy_allowed: Optional[bool] = None
 
-    #: Effective client connection timeout in seconds. The binding applies this
-    #: to the Rust driver's process-wide ``max_connect_timeout``. ``None`` leaves
-    #: the driver default unchanged.
+    #: Requested seconds allowed to establish a connection. Applies to the
+    #: shared Rust runtime; None requests no override.
     connection_timeout_seconds: Optional[float] = None
 
-    #: Effective client socket-read timeout in seconds. The Rust transport has no
-    #: read-inactivity timeout, so the binding uses this as the process-wide cap
-    #: for one complete HTTP attempt (connect, send, and receive) on both the
-    #: data-plane and metadata transports. ``None`` leaves driver defaults unchanged.
+    #: Python's read_timeout, in seconds. Rust uses it to limit a complete HTTP
+    #: attempt: connecting, sending, and receiving, not just waiting for more
+    #: response data. Applies to both item and account/container-property
+    #: requests across the process. None requests no override.
     read_timeout_seconds: Optional[float] = None
 
-    #: Internal test-only Rust fault rules. Each rule is immutable so it safely
-    #: participates in the binding's driver-cache identity.
+    #: Internal test rules for failures and delays. Different rules prevent two
+    #: clients from sharing the same driver.
     fault_injection_rules: tuple[PreparedFaultInjectionRule, ...] = ()
 
     def __post_init__(self) -> None:
@@ -221,10 +196,10 @@ class PreparedClientConfig(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class BackendResponse:
-    """Single-response record consumed by the prepared-request parsers.
+    """Result of one Rust call, ready for the SDK's response helpers.
 
-    Rust dispatch produces this record. Legacy callable dispatch can return
-    its public result directly without constructing one.
+    A supplied legacy Python function can return its public result directly,
+    without creating this object.
     """
 
     #: HTTP status code.
@@ -233,20 +208,26 @@ class BackendResponse:
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
     sub_status: int = 0
 
-    #: Full response header map. Uncommon headers are kept, not filtered out.
+    #: Headers supplied by the binding, not necessarily the original service
+    #: header map. Headers discarded by the driver cannot be recovered here.
     headers: Optional[CaseInsensitiveDict] = None
 
     #: Raw response body bytes. May be empty for 204 / no-content.
     body: bytes = b""
 
-    #: Diagnostics from the backend. The helper passes this along without
-    #: looking inside it.
+    #: Driver request diagnostics. Response helpers expose a supplied value as
+    #: text in the SDK's diagnostics header.
     diagnostics: Any = None
 
 
 @dataclass(frozen=True)
 class QueryScope:
-    """Normalized query scope with a stable wire/bookmark representation."""
+    """Define which partition-key range a query may search.
+
+    feed_range contains lower and upper key-range bounds, or None for no such
+    restriction. allow_cross_partition records whether the query may search
+    across partitions. as_dict supplies these values for requests and bookmarks.
+    """
 
     feed_range: Optional[tuple[str, str]] = None
     allow_cross_partition: bool = True
@@ -273,16 +254,16 @@ class QueryScope:
 
 @dataclass(frozen=True)
 class PreparedQuery:
-    """Input for one paged query or read-feed dispatch.
+    """Inputs for fetching a page from a query or listing operation.
 
-    The backend returns results a page at a time (see ``execute_pages``).
-    Native validation, planning, and metadata discovery may still be required.
-    Non-streaming ranked plans may buffer their candidate window before emitting.
+    The driver may still validate the request, decide how to run the query,
+    or fetch container properties. Returning pages does not promise immediate
+    results: some queries need to collect results before returning the first page.
     """
 
     protocol_version: ClassVar[int] = 3
 
-    #: An operation that the page-dispatch tables support, whether it keeps a
+    #: An operation that the page-fetch tables support, whether it keeps a
     #: cursor between pages or not.
     op: str
 
@@ -292,13 +273,13 @@ class PreparedQuery:
     container_link: str
 
     #: Query text (``"SELECT * FROM c WHERE c.k = @k"``), or ``None`` for the
-    #: parameterless list-many ops (read-all-items, list-databases, …).
+    #: operations without SQL, such as read_all_items and list_databases.
     query: Optional[str] = None
 
-    #: Query parameters (``{"name": "@k", "value": …}`` entries), in order.
+    #: Query parameters, such as {"name": "@k", "value": "northwind"}, in order.
     parameters: tuple = ()
 
-    #: Typed scope; default is a cross-partition query.
+    #: Partition-key selection. The default does not restrict the query to one key.
     partition_key: BindingPartitionKey = field(
         default_factory=lambda: BindingPartitionKey("cross_partition")
     )
@@ -306,25 +287,26 @@ class PreparedQuery:
     #: Page-size hint (``x-ms-max-item-count``); ``None`` keeps the default.
     max_item_count: Optional[int] = None
 
-    #: Continuation token seeding the *first* page, or ``None`` to start fresh.
+    #: Bookmark used to request this page, or None to start at the beginning.
     continuation: Optional[str] = None
 
     #: Actual HTTP request headers only.
     headers: Mapping[str, str] = field(default_factory=dict)
-    #: Typed settings, preserved by the binding page adapter.
+    #: Operation settings passed to the binding with the page request.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: The cursor the pager owns. ``None`` selects stateless dispatch for
-    #: this request; the operation may also support a cursor-based path.
+    #: Rust object keeping progress between page fetches. None selects a
+    #: function that does not keep a cursor; a continuation token may still apply.
     cursor: Optional[_ItemFeedCursor] = None
-    #: Normalized change-feed mode, start marker and scope; never SQL.
+    #: Change-feed settings: which changes to read, where to start, and which
+    #: partition-key range to search. This is not SQL.
     change_feed: Optional[Mapping[str, Any]] = None
     #: Query scope, and whether a cross-partition query is allowed, for paging
     #: a query through a pager that keeps its cursor across pages.
     query_scope: Optional[QueryScope] = None
 
-    #: Immutable service JSON prepared once by a retained pager. When supplied,
-    #: these bytes, rather than query/parameters, are the binding's query payload.
+    #: SQL and parameters already converted to JSON bytes for reuse across pages.
+    #: For SQL requests, these bytes take precedence over query and parameters.
     query_body: Optional[bytes] = None
 
     def __post_init__(self) -> None:
@@ -358,12 +340,10 @@ class PreparedQuery:
 
 @dataclass(frozen=True)
 class QueryPage:
-    """One raw page of a query or read-feed result.
+    """One query or listing response, with information for the next fetch.
 
-    The caller parses ``body`` using the same response parser as other Cosmos
-    operations. Keeping the raw body here preserves existing error mapping and
-    response-envelope handling while giving paged operations their own backend
-    contract and explicit continuation token.
+    Keep the body as bytes so SDK response helpers can parse the returned rows
+    and turn service failures into the same exceptions used for other operations.
     """
 
     #: HTTP status code for the page fetch.
@@ -377,15 +357,15 @@ class QueryPage:
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
     sub_status: int = 0
 
-    #: Full response header map for this page. Uncommon headers are kept.
+    #: Headers supplied by the binding for this page. This is not a guarantee
+    #: that all original service headers are present.
     headers: Optional[CaseInsensitiveDict] = None
 
     #: Raw response body bytes. The response parser turns this into the result
     #: type for the resource, and turns failures into errors.
     body: bytes = b""
 
-    #: Diagnostics from the backend. The helper passes this along without
-    #: looking inside it.
+    #: Driver request diagnostics, exposed by response helpers as header text.
     diagnostics: Any = None
     #: A pager that keeps its cursor across pages may have more results even
     #: when the driver cannot produce a token, so this can still be true.

@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Immutable partition-key values and scope in the private native protocol."""
+"""Pass partition-key values or a key-selection instruction to the binding.
+
+For example, ``components`` carries supplied values, ``extract`` asks the
+binding to read the key from the item, and ``cross_partition`` does not select
+one partition key. Keep these cases distinct even when they carry no values.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +14,8 @@ import math
 from types import EllipsisType
 from typing import Literal, Union
 
-# Ellipsis is an immutable, natively recognizable marker, not a public key value.
+# Ellipsis marks an undefined partition-key component for the binding. It is
+# distinct from None, which represents a JSON null value.
 UNDEFINED_PARTITION_KEY = Ellipsis
 PartitionKeyComponent = Union[str, bool, int, float, None, EllipsisType]
 PartitionKeyKind = Literal[
@@ -59,7 +65,7 @@ class BindingPartitionKey:
             raise TypeError("Unsupported partition-key component type")
 
     def _identity(self) -> tuple:
-        # Scope/bookmark equality must not equate True with 1 or erase signed zero.
+        # A saved query must distinguish True from 1, and 0.0 from -0.0.
         return self.kind, tuple(
             (type(value), value.hex() if type(value) is float else value)
             for value in self.values

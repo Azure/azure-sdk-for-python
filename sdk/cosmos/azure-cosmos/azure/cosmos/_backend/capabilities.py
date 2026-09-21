@@ -1,10 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Temporary migration policy, independent of request builders and transports.
+"""Decide which operations may use Python when Rust cannot handle a request.
 
-Request compatibility is evaluated by the coordinator, once for a compound
-workflow. This table grants fallback only before dispatch. No execution,
-response processing, or customer callback failure is replayable.
+For a call with several steps, such as reading and then replacing throughput,
+the calling helper checks whether Rust supports the complete call. These rules
+allow Python fallback only before execution. A failure during execution,
+response processing, or a customer callback is not retried through Python.
 """
 
 from __future__ import annotations
@@ -192,11 +193,11 @@ CAPABILITIES: dict[str, OpCapability] = {
 
 @dataclass(frozen=True)
 class OperationRouting:
-    """A request's compatibility decision, separate from operation policy.
+    """Combine support for this request with the operation's fallback rule.
 
-    ``capability`` identifies a compound workflow when it is stricter than its
-    individual wire operations. Explicit legacy backends do not evaluate this
-    Rust migration decision and never build the prepared request.
+    ``capability`` can name a multi-step call whose rules differ from those of
+    one step. For example, get-or-create must support both reading and creating.
+    Explicit core-python selection skips this Rust check and request building.
     """
 
     op: str

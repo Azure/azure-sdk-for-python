@@ -3,20 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Sync backend that sends operations to the rust driver through the compiled binding.
+"""Send synchronous SDK operations through the compiled Rust binding.
 
-Terms, consistent across the backend layer: the **binding** is the compiled
-``azure.cosmos._rust`` extension Python calls into; the **rust driver** is the
-driver the binding builds (it owns the connection pool, request signing, and
-region routing); the **driver handle** is the string ``acquire_driver_handle`` returns -- a
-key made from ``(endpoint, credential, config)`` that names *which* rust driver a
-client uses. The compiled ``_rust`` file contains both the binding and the rust
-driver code.
+The binding, azure.cosmos._rust, lets Python call the Rust driver. The driver
+chooses a region and sends requests to the service backend. On first use,
+the binding returns a driver handle: a string identifying the driver for later
+calls. Clients with matching endpoints, credentials, and settings can share
+a driver. Closing one client releases its reference, not other clients' work.
 
-This module and its async counterpart load ``azure.cosmos._rust`` for dispatch.
-The import is guarded so the Python package can load without a built extension.
-Missing-extension errors are raised by the selected operation's lookup/preflight;
-legacy migration routing, where allowed, is decided separately.
+Importing this module tolerates an absent extension so core-python remains
+usable. Constructing a Rust backend still requires the extension to check
+shared runtime settings. Missing operation functions are checked before use.
 """
 from __future__ import annotations
 import logging
@@ -55,7 +52,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-# Imported once when this module loads; not changed afterwards.
+# Load once during normal use. Tests can replace this reference with a fake binding.
 _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
@@ -66,22 +63,16 @@ except ImportError:
         "will raise NotImplementedError until the Rust module is built."
     )
 
-# The binding's error for a failure that produced no HTTP response, captured
-# once at load. A driver operation that fails before any reply comes back
-# raises this; we re-raise it as azure-core's ServiceResponseError (see
-# driver_transport_error_type).
+# Save the binding exception classes used to convert failures to SDK exceptions.
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 _REQUEST_CONTRACT_ERROR = native_settings_contract_error(_rust_module) if _rust_module is not None else None
 
 
-# Look up the binding's function for an operation. Read live from ``_rust_module``
-# rather than cached at import, so the tests can swap in a fake binding; the extra
-# getattr per call is tiny next to the network round trip.
+# Look up functions on each call so tests can supply a replacement binding.
 def _get_binding_function(op: str) -> Optional[Any]:
-    """Return the binding's ``<op>`` function, or ``None`` if the op is unsupported
-    or the compiled module is absent."""
+    """Return the function for this operation, or None if unavailable."""
     method = OP_TO_BINDING_METHOD.get(op)
     if method is None or _rust_module is None:
         return None
@@ -89,29 +80,18 @@ def _get_binding_function(op: str) -> Optional[Any]:
 
 
 def _get_page_dispatch(method: Optional[str]) -> Optional[Any]:
-    """Look up the selected page binding without changing its execution mode."""
+    """Return the named page-fetch function, or None if unavailable."""
     if method is None or _rust_module is None:
         return None
     return getattr(_rust_module, method, None)
 
 
 class RustBinding(RustBindingShared, CosmosBackend):
-    """Sends operations from one ``CosmosClient`` to a shared rust driver.
+    """Send one CosmosClient's requests and release its resources on close.
 
-    The **driver handle** ``acquire_driver_handle`` returns is built on the first operation
-    and reused; every operation passes it back. The handle is not the
-    ``CosmosClient`` and not the rust driver itself -- it is the driver's key,
-    made from ``(endpoint, credential, config)``. The binding keeps one rust driver
-    per distinct ``(endpoint, credential, config)`` and reference-counts it, so
-    several clients with the same settings share a single rust driver; ``close``
-    drops this client's reference. Active operations can keep the driver alive
-    after the last client closes.
-    Missing compiled exports fail at lookup or preflight. Page paths use
-    ``PagePreflightError`` rather than ``NotImplementedError``.
-
-    :class:`~azure.cosmos._backend._shared.RustBindingShared` stores common client
-    state and registrations. This class builds the driver, sends synchronous
-    operations, and releases this client's resources.
+    RustBindingShared stores client settings and provides shared cleanup.
+    This class acquires the driver on first use, makes synchronous binding
+    calls, and converts their results to response objects for the SDK helpers.
     """
 
     name = BACKEND_NAME_RUST
@@ -129,17 +109,15 @@ class RustBinding(RustBindingShared, CosmosBackend):
         )
 
     def _ensure_driver_handle(self) -> str:
-        """Return this client's driver handle, building it once on first use.
+        """Acquire this client's driver handle once and reuse it.
 
-        On the first operation the binding's ``acquire_driver_handle`` either builds a new
-        rust driver for this ``(endpoint, credential, config)`` or, if one already
-        exists, bumps its reference count and returns the same handle. Without this,
-        each operation would acquire another native reference. The double-check
-        under the lock shares a successfully stored handle; an acquisition
-        that raises can be attempted again by a later call. The slow path
-        rejects a closed client but does not drain operations racing with close.
+        The binding either creates a driver or adds a reference to a matching
+        shared driver. The lock prevents concurrent first calls on this client
+        from acquiring separate references. Failed acquisition can be attempted
+        again later. Closing prevents new acquisition, but cannot stop a call
+        that already read the handle.
         """
-        # If the handle is already built, return it without locking.
+        # Reject incompatible request settings even if a driver was already acquired.
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
         driver_handle = self._driver_handle
@@ -151,13 +129,10 @@ class RustBinding(RustBindingShared, CosmosBackend):
                 "module is not present in this environment. Build it with "
                 "`maturin develop` from the repo root."
             )
-        # Build it once. The lock, with a second check inside, keeps
-        # concurrent first callers from each building one.
+        # Another thread may have acquired the handle while this one waited.
         with self._driver_handle_lock:
-            # close() clears the handle, so without this check a closed client would
-            # look exactly like a brand-new one and silently open a second driver
-            # reference -- an operation on a closed client would appear to succeed.
-            # The async backend refuses the same way.
+            # close() also clears the handle; do not mistake a closed client for
+            # one that has not acquired a driver yet.
             if self._closing:
                 raise RuntimeError("RustBinding: the client is closed.")
             if self._driver_handle is None:
@@ -165,7 +140,7 @@ class RustBinding(RustBindingShared, CosmosBackend):
             return self._driver_handle
 
     def close(self) -> None:
-        """Release this client's credential-bridge hold and Rust driver reference.
+        """Release this client's credential bridge and Rust driver reference.
 
         Mark the client closed and take its handle once, so repeated calls cannot
         release another client's reference. Other clients and operations can keep
@@ -213,24 +188,22 @@ class RustBinding(RustBindingShared, CosmosBackend):
                 "the repo root."
             )
 
-        # Look up the binding's function for this op; None if unsupported.
         binding_function = _get_binding_function(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
                 "RustBinding.execute does not yet support op={!r}.".format(prepared.op)
             )
         driver_handle = self._ensure_driver_handle()
-        # Record the selected dispatch before calling it; this is not proof of
-        # native execution or service I/O. Omit the credential-bearing handle.
+        # This records the chosen function, not proof that a request was sent.
+        # Do not include the driver handle in logs.
         _LOGGER.debug(
             "cosmos backend=%s op=%s dispatch=%s",
             BACKEND_NAME_RUST,
             prepared.op,
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
-        # Translate the binding's response-less error to ServiceResponseError.
-        # No returned response does not prove that nothing was sent or applied.
-        # This translation does not invoke legacy transport retry policies.
+        # No response does not prove the service backend did no work. Convert
+        # the error without retrying the operation through Python.
         try:
             raw_response = (
                 binding_function(driver_handle, prepared)
@@ -250,7 +223,7 @@ class RustBinding(RustBindingShared, CosmosBackend):
         return build_backend_response(*raw_response)
 
     def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
-        """Return how many Rust transport attempts applied one configured rule."""
+        """Return how many Rust request attempts applied the named test rule."""
         if _rust_module is None:
             raise NotImplementedError(
                 "Rust fault injection requires the compiled azure.cosmos._rust module."
@@ -265,7 +238,10 @@ class RustBinding(RustBindingShared, CosmosBackend):
     def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None
     ) -> ContainerMetadata:
-        """Get routing facts from the driver's cache, fetching on a miss."""
+        """Get the container ID and partition-key definition from the driver.
+
+        The driver may fetch these properties if they are not already cached.
+        """
         if _rust_module is None:
             raise NotImplementedError(
                 "RustBinding.get_container_metadata: the compiled "
@@ -294,7 +270,7 @@ class RustBinding(RustBindingShared, CosmosBackend):
     def execute_pages(
         self, prepared: PreparedQuery, *, deadline: Optional[float] = None
     ) -> Iterator[QueryPage]:
-        """Yield one page from the selected stateless or retained-cursor dispatch."""
+        """Fetch and yield one page, using the supplied cursor when present."""
         self.validate_page_request(prepared)
         method = get_page_binding_method(
             prepared.op, uses_cursor=prepared.cursor is not None
@@ -317,11 +293,11 @@ class RustBinding(RustBindingShared, CosmosBackend):
         yield build_query_page(prepared, response)
 
     def validate_page_request(self, prepared: PreparedQuery) -> None:
-        """Check module/export availability without acquiring a driver."""
+        """Check that the extension has the needed function, without a driver."""
         validate_page_request(prepared, _rust_module, _get_page_dispatch, "RustBinding")
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create pager-owned state without acquiring a driver."""
+        """Create a Rust cursor to keep page progress, without acquiring a driver."""
         if _rust_module is None:
             raise PagePreflightError(
                 "The compiled azure.cosmos._rust module is not present."

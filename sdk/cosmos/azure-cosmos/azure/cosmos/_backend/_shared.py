@@ -3,13 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Shared lifecycle and page-dispatch policy for sync and async Rust backends.
+"""Share driver setup, page checks, and cleanup between both Rust backends.
 
-A backend is the Python dispatch object; a driver is the native CosmosDriver
-identified by a driver handle; the runtime owns process-wide transport settings.
-Construction checks initialized runtime settings in the binding; native driver
-acquisition remains lazy. Python does not reserve runtime settings, compute
-driver identities, or keep an open-client registry.
+The binding is the compiled extension that Python uses to call Rust. It creates
+drivers and shares the runtime, the Rust resources used to run their work.
+Proxy and connection timeout settings apply to that shared runtime.
+
+Constructing a backend checks settings against an existing runtime without
+creating one or reserving settings. The first operation acquires a driver.
+The binding checks again then, because another client may have initialized
+the runtime in the meantime.
 """
 from __future__ import annotations
 
@@ -38,28 +41,16 @@ _QUERY_PLAN_INTEROP_CONFIG_LOCK = threading.Lock()
 
 
 def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
-    """Expose the wheel's QueryPlanInterop directory to the Rust driver.
+    """Let the driver find the query-planning library included in the package.
 
-    QueryPlanInterop is a separate compiled library that lets the Rust driver
-    work out a cross-partition query's plan locally instead of asking the
-    Cosmos DB gateway for it. Wheels ship it in ``azure/cosmos/.libs``, beside
-    the compiled extension.
+    QueryPlanInterop is a compiled library that helps the driver decide how to
+    run a query across partitions without asking the service backend for a plan.
+    It is packaged in .libs beside the Rust extension. Set the directory before
+    driver creation so the customer need not configure the packaged copy.
 
-    The driver discovers the library through
-    ``AZURE_COSMOS_QUERYPLANINTEROP_DIR``. It cannot infer the Python package's
-    private ``.libs`` directory. Lazy driver initialization calls this before
-    the first operation, not during package import. The pinned driver's loader
-    accepts only this process-wide setting or the OS library search path; it
-    has no per-client library-path option.
-
-    Without this call a customer would have to set an environment variable to
-    get a feature their wheel already contains -- and would have no way to know
-    that was the difference.
-
-    An explicit user setting wins. A source checkout with no ``.libs``
-    directory leaves native library discovery and any query-plan fallback to
-    the driver. This helper checks only the directory, not library loadability,
-    supported query shapes, or whether a fallback request will succeed.
+    An existing AZURE_COSMOS_QUERYPLANINTEROP_DIR setting wins. If .libs is
+    absent, leave discovery to the driver. Finding the directory does not prove
+    the library can load or handle a particular query.
     """
     if rust_module is None:
         return
@@ -83,16 +74,10 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
 def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorMatcher:
     """Return one binding exception class for use in an ``except`` clause.
 
-    Returns an empty tuple when there is no binding at all, which is a valid
-    ``except`` target that matches nothing, so a core-python client can share
-    this code without a branch.
-
-    A binding that is present but does not export ``name`` is a hard error
-    rather than a silent miss: the backends rely on catching these classes to
-    convert driver failures into the azure-core exceptions customers handle. An
-    missing exception class could bypass the intended Python error translation.
-    Failing at lookup time identifies an incompatible extension; translation
-    itself does not add a Python transport retry around the native operation.
+    An absent binding returns an empty tuple, which matches no exceptions.
+    A present binding missing the required exception class raises here. Without
+    that check, driver errors could bypass conversion to the SDK exceptions
+    the customer app expects.
     """
     if rust_module is None:
         return _NO_BINDING_ERRORS
@@ -109,8 +94,8 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatc
     """Return the binding's ``_DriverTransportError`` class for ``except`` use.
 
     The backends convert that error into azure-core's ``ServiceResponseError``.
-    This classification means no HTTP response was returned to this wrapper,
-    not that the request was never sent or that the service performed no work.
+    This means the wrapper received no HTTP response, not that the request was
+    never sent or that the service backend performed no work.
     """
     return _binding_error_type(rust_module, "_DriverTransportError")
 
@@ -119,8 +104,7 @@ def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingE
     """Return the binding class raised when the driver cannot finish a query.
 
     The Rust backends translate it to ``UnsupportedQueryError``.
-    It is an execution failure, not the static preflight signal that permits
-    selected migration paths to use legacy dispatch.
+    It is an execution failure, not permission to retry through Python.
     """
     return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
 
@@ -131,7 +115,7 @@ def page_dispatch_errors(
     unsupported_query_error: _BindingErrorMatcher,
     transport_error: _BindingErrorMatcher,
 ) -> Iterator[None]:
-    """Use identical page error mapping without intercepting async cancellation."""
+    """Convert page-fetch errors to SDK errors without catching cancellation."""
     try:
         yield
     except TimeoutError as exc:
@@ -151,7 +135,7 @@ def validate_page_request(
     backend_name: str,
     suffix: str = "",
 ) -> None:
-    """Check dispatch availability without acquiring either kind of driver handle."""
+    """Check for the required page-fetch function without creating a driver."""
     if binding is None:
         raise PagePreflightError(
             f"{backend_name}.execute_pages: the compiled azure.cosmos._rust "
@@ -173,11 +157,11 @@ def validate_page_request(
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
-    """Release an SDK credential-bridge hold, logging cleanup failures.
+    """Release this client's use of an async-credential bridge.
 
-    Only the bridge exposes this private release method. Do not call the
-    customer's credential.close(): the application owns that credential.
-    The last bridge holder requests shutdown of its background thread.
+    The bridge runs async token requests for the binding. Its last user requests
+    shutdown of the background thread. Log cleanup failures, and never close
+    the customer's credential: the customer app owns it.
     """
     closer = getattr(credential, "_close_cosmos_async_bridge", None)
     if callable(closer):
@@ -188,7 +172,11 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
 
 
 def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
-    """Release detached resources off the finalizing thread, without retaining the backend."""
+    """Clean up an unused backend's resources on a separate thread when possible.
+
+    Pass only the credential and driver handle to that thread, not the backend
+    object being deleted. If a thread cannot start, clean up on the calling thread.
+    """
     if credential is None and driver_handle is None:
         return
     release = getattr(binding, "release_driver_handle", None)
@@ -206,22 +194,16 @@ def finalize_backend_resources(credential: Optional[Any], driver_handle: Optiona
     try:
         threading.Thread(target=teardown, name="cosmos-rust-finalizer", daemon=True).start()
     except RuntimeError:
-        # At interpreter shutdown a worker may be unavailable; preserve cleanup.
+        # Python may refuse new threads during shutdown; still attempt cleanup.
         _LOGGER.warning("Could not start finalizer worker; cleaning up on the finalizing thread")
         teardown()
 
 
 class RustBindingShared:
-    """Mixin holding the state and lifecycle common to both Rust backends.
+    """Store client settings and provide cleanup used by both Rust backends.
 
-    Each backend calls ``_init_shared`` from its ``__init__`` to store the common fields
-    and validate initialized runtime settings, then adds its own logic to build and run the
-    driver handle (``self._driver_handle``) -- the one thing the sync and async paths do
-    differently.
-
-    ``_init_shared`` sets all the shared attributes: ``_endpoint``, ``_master_key``,
-    ``_token_credential``, ``_client_config``, ``_driver_handle``,
-    ``_driver_handle_lock``, and ``_closing``.
+    Each backend calls _init_shared during construction. The sync and async
+    classes separately decide how to wait for driver creation and operations.
     """
 
     def _init_shared(
@@ -233,29 +215,22 @@ class RustBindingShared:
     ) -> None:
         """Store client state and check initialized runtime settings.
 
-        The binding's check does not initialize or reserve a runtime. Acquisition
-        checks again because initialization can occur after construction.
+        This check does not create the shared Rust runtime or reserve its
+        settings. Driver creation checks again in case another client got there
+        first.
         """
         self._endpoint = endpoint
         self._master_key = master_key
-        # A token credential (e.g. from azure-identity), or None for master-key
-        # auth; credentials.resolve_credential sets exactly one. The driver calls
-        # get_token on it when signing requests. An async credential arrives wrapped
-        # as AsyncTokenCredentialBridge, which exposes a sync get_token.
+        # Async credentials arrive wrapped in a bridge that runs their token
+        # requests on its own thread. Master-key clients have no token credential.
         self._token_credential = token_credential
-        # Client settings (e.g. preferred_locations) passed to the first acquire_driver_handle
-        # call. None means there are none to pass.
+        # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
-        # The driver handle acquire_driver_handle returns: a key made from (endpoint,
-        # credential, config) that names which rust driver this client uses (the
-        # rust driver owns the connection pool, request signing, and region
-        # routing). Built on the first operation and reused; None until then. The
-        # lock guards reading and setting the handle.
+        # The binding returns a string identifying this client's driver on first
+        # use. Reuse it until close; the subclasses coordinate changes with this lock.
         self._driver_handle: Optional[str] = None
         self._driver_handle_lock = threading.Lock()
-        # Set by close() under _driver_handle_lock. Both backends check it before handing
-        # out a handle, so a closed client refuses further work instead of quietly
-        # building a second driver reference and carrying on as if it were open.
+        # Once close sets this flag, do not acquire another driver for the client.
         self._closing = False
         try:
             from azure.cosmos import _rust
@@ -268,27 +243,23 @@ class RustBindingShared:
                 )
             validate_runtime(client_config)
         except BaseException:
-            # The factory's resolved_credential scope still owns this hold.
+            # Construction failed; the factory will release the credential bridge.
             self._token_credential = None
             raise
 
     def abort_construction(self) -> None:
-        """Synchronously unwind a public constructor before native initialization."""
+        """Mark a failed client construction closed and release its credential bridge."""
         with self._driver_handle_lock:
             self._closing = True
         self._close_token_credential_bridge()
 
     def _initialize_driver(self, binding: Any) -> str:
-        """Acquire a driver; each backend protects publication against close."""
+        """Acquire a driver; the caller handles close racing with this call."""
         configure_packaged_query_plan_interop(binding)
         return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
-        """Return the arguments for the binding's ``acquire_driver_handle``, in one place.
-
-        Both backends use this conversion, so equal stored inputs produce the
-        same argument mapping. Driver identity and acquisition remain native concerns.
-        """
+        """Build the same driver-creation arguments for sync and async clients."""
         return acquire_driver_handle_args(
             self._endpoint,
             self._master_key,
@@ -297,7 +268,7 @@ class RustBindingShared:
         )
 
     def _close_token_credential_bridge(self) -> None:
-        """Release this client's bridge hold once, leaving the customer's credential open."""
+        """Release this client's bridge once, leaving the customer's credential open."""
         close_credential_bridge_quietly(self._take_token_credential_for_close())
 
     def _take_token_credential_for_close(self) -> Optional[Any]:

@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Validated, immutable values in the private Python/native request protocol."""
+"""Check request setting types before passing them to the Rust binding.
+
+Separate objects hold item, query, and resource settings. They cannot be edited
+after construction. For example, max_item_count must be an integer or None,
+not a Boolean. Individual settings also apply the range checks defined below;
+this module does not decide whether an option applies to a particular API.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields
@@ -124,7 +130,7 @@ class RequestSettings(_ValidatedSettings):
 
 
 def _request_settings_schema() -> dict[str, tuple[str, ...]]:
-    """Field inventory compared with the native reader before driver acquisition."""
+    """List setting fields so Python and the compiled binding can be compared."""
     return {
         cls.__name__: tuple(member.name for member in fields(cls))
         for cls in (RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings, BindingPartitionKey)
@@ -132,7 +138,11 @@ def _request_settings_schema() -> dict[str, tuple[str, ...]]:
 
 
 def native_settings_contract_error(native: Any) -> Optional[str]:
-    """Defer incompatibility until Rust is selected, without blocking legacy use."""
+    """Return an error message if the binding expects different setting fields.
+
+    The Rust backend saves this result and raises it when a driver is needed.
+    This function does not itself raise the returned compatibility error.
+    """
     exported = getattr(native, "_request_settings_schema", None)
     if exported is None:
         return "Incompatible native request protocol: rebuild azure.cosmos._rust for typed settings."

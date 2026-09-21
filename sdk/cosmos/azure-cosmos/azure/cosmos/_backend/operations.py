@@ -3,23 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Operation names, and the tables that map them to binding functions.
+"""Map SDK operation names to functions in the compiled Rust binding.
 
-Each operation has a name (the ``OP_*`` constants). Dispatch means looking up
-which binding function to call for one of those names.
+For example, OP_READ_ITEM selects the binding's read_item function. The async
+backend uses the same table and adds the _async suffix.
 
-Operations that return a single reply use ``OP_TO_BINDING_METHOD``. Operations
-that return pages use one of the two page tables instead, depending on whether
-they keep a cursor between pages.
+Page fetches use separate tables. A cursor is a Rust object that keeps progress
+between fetches; requests with a cursor use CURSOR_QUERY_TO_BINDING_METHOD.
+Requests without one use STATELESS_QUERY_TO_BINDING_METHOD and may pass a
+continuation token to request the next page.
 
-These tables hold names and data only. They say nothing about which operations
-are allowed to fall back to the legacy path, so adding an operation here does
-not mean writing a new method on the backend.
+These tables choose functions, not whether Python fallback is allowed. That
+decision belongs to capabilities.py.
 """
 
 from __future__ import annotations
 
-# Operation discriminator values for ``PreparedRequest.op``.
+# Operation names stored in PreparedRequest.op and PreparedQuery.op.
 OP_CREATE_DATABASE = "create_database"
 OP_CREATE_CONTAINER = "create_container"
 OP_READ_CONTAINER = "read_container"
@@ -79,8 +79,8 @@ OP_TO_BINDING_METHOD = {
 }
 
 
-# Stateless page operations use this table; retained item-feed cursors use the
-# next table. Neither page table controls migration fallback policy.
+# Requests without a Rust cursor use this table, even when they carry a
+# continuation token. Requests with a cursor use the next table.
 STATELESS_QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
@@ -98,7 +98,7 @@ CURSOR_QUERY_TO_BINDING_METHOD = {
 
 
 def get_page_binding_method(op: str, *, uses_cursor: bool) -> str | None:
-    """Select the binding name for one stateless or retained-cursor request."""
+    """Select the page-fetch function based on whether the request has a cursor."""
     methods = (
         CURSOR_QUERY_TO_BINDING_METHOD
         if uses_cursor

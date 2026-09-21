@@ -3,23 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Sorting the customer's credential into something the Rust driver can use.
+"""Prepare the customer's credential for the Rust binding.
 
-A customer proves who they are in one of several ways: a master key string, a
-dict holding one, an ``azure-identity`` token credential (sync or async), or a
-set of per-user resource tokens. This resolver accepts master-key shapes and
-token credentials, but rejects resource-token shapes. Async token methods need
-a bridge because the binding expects a synchronous ``get_token`` callback.
+Accept a master key or an object that obtains access tokens. An async token
+credential needs a bridge, an object that runs its token requests on a
+background thread and lets the binding wait for their results.
 
-:func:`resolve_credential` is the single place that sorts those shapes out. It
-returns exactly one of a master key or a synchronous token credential, wrapping
-an async credential in an :class:`AsyncTokenCredentialBridge` so it still works,
-and rejecting unsupported credential shapes at construction. It does not
-acquire a token or validate the key, token contents, or service permissions.
-
-Both the sync factory (:mod:`~azure.cosmos._backend.factory`) and the async one
-(:mod:`~azure.cosmos.aio._backend.factory`) call it, so the two clients accept
-and reject exactly the same credentials.
+Both client types use this resolver. Unsupported credential forms, including
+resource tokens that grant access to particular resources, fail during
+construction. Resolving a credential does not fetch a token, validate the key,
+or check permissions with the service backend.
 """
 from __future__ import annotations
 
@@ -35,16 +28,12 @@ from ._shared import close_credential_bridge_quietly
 
 
 def _is_async_credential(credential: Any) -> bool:
-    """Detect whether the customer's credential logs in asynchronously: its
-    ``get_token`` or ``get_token_info`` is a coroutine, or it is an
-    ``azure.identity.aio``-style async context manager.
+    """Detect credentials that need a background event loop for token requests.
 
-    Why it matters: the Rust driver calls ``get_token`` on a plain worker thread
-    that has no async event loop, so an async credential would crash there.
-    Detecting it lets the next step (:func:`resolve_credential`) wrap it safely
-    in an :class:`AsyncTokenCredentialBridge`, which supplies that event loop,
-    instead of calling it directly. The token method is unwrapped first in case
-    it is decorated.
+    Check for async get_token or get_token_info, including methods wrapped by
+    decorators that expose __wrapped__. Also recognize credentials supporting
+    async context entry. The resolver then wraps the credential rather than
+    passing an async method where a synchronous token result is expected.
     """
     for attr in ("get_token", "get_token_info"):
         method = getattr(credential, attr, None)
@@ -55,8 +44,7 @@ def _is_async_credential(credential: Any) -> bool:
         unwrapped = inspect.unwrap(method) if callable(method) else method
         if asyncio.iscoroutinefunction(unwrapped) or inspect.iscoroutinefunction(unwrapped):
             return True
-    # Async-only credentials are async context managers; treat that as async even
-    # if the token-method check above did not catch it.
+    # Also recognize async context entry when the method check did not detect it.
     if hasattr(credential, "__aenter__") and (
         hasattr(credential, "get_token") or hasattr(credential, "get_token_info")
     ):
@@ -65,56 +53,33 @@ def _is_async_credential(credential: Any) -> bool:
 
 
 def _is_resource_token_credential(credential: Any) -> bool:
-    """Detect the "per-user permission token" style of credential, rather than a
-    master key or a token credential.
+    """Identify inputs treated as unsupported resource-token credentials.
 
-    Why: the Rust driver has no code to log in that way yet, so this lets the
-    factory reject it clearly (in :func:`resolve_credential`) instead of failing
-    deep inside the driver later. These take the shape of a mapping of resource
-    link to token (without a ``masterKey`` entry, which is handled earlier), a
-    mapping with ``resourceTokens`` / ``permissionFeed`` keys, or a concrete
-    sequence (list / tuple) of permission entries.
+    These include dictionaries without masterKey and sequences such as lists
+    of permission entries. The resolver checks master keys and token methods
+    first, then uses this check to report why the remaining input is rejected.
     """
     if isinstance(credential, str):
         return False
     if isinstance(credential, Mapping):
-        # A master-key dict is resolved as a master key before this is reached;
-        # any other mapping shape is resource/permission tokens.
+        # The resolver already handled dictionaries containing masterKey.
         return "masterKey" not in credential
     if isinstance(credential, bytes):
         return False
-    # A permission feed is a concrete sequence (list / tuple) of permission
-    # entries. Restrict to Sequence rather than any Iterable so an unusual custom
-    # credential object that merely happens to be iterable is not mislabeled a
-    # resource-token credential -- it falls through to the generic
-    # "unsupported shape" message instead.
+    # Accept sequences for this check, not every iterable: a custom credential
+    # may support iteration without being a list of permission entries.
     return isinstance(credential, _AbcSequence)
 
 
 def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
-    """The credential sorter: turn whatever the customer passed into exactly one
-    of a master key or a synchronous token credential, or raise ``ValueError``.
+    """Return (master_key, token_credential) with exactly one entry set.
 
-    Without it: an unsupported login would blow up on the first request with an
-    opaque error, not at the line where the customer created the client. So this
-    rejects unsupported shapes at construction; token acquisition and service
-    authorization can still fail later. Returns
-    ``(master_key, token_credential)`` with exactly one entry set:
+    A nonempty string, or a dictionary with a nonempty masterKey string, selects
+    key authentication. An object with a synchronous get_token is passed through.
+    Async credentials are wrapped in AsyncTokenCredentialBridge instead.
 
-    * a ``str`` or a dict with a ``'masterKey'`` entry -> master key (rejected if
-      empty or, in the dict case, not a non-empty string);
-    * an object with a synchronous ``get_token`` (e.g. an ``azure-identity``
-      credential) -> token credential, forwarded to the driver, which calls
-      ``get_token`` during request signing;
-    * an *async* token credential (coroutine ``get_token`` / ``get_token_info``,
-      or the ``azure.identity.aio`` async-context-manager shape) is first wrapped
-      in an :class:`AsyncTokenCredentialBridge`, which drives its coroutine on a
-      dedicated event-loop thread and presents the synchronous ``get_token`` the
-      driver's worker thread calls -- so async credentials work on the Rust path
-      with no driver change;
-    * a resource-token / permission-feed credential (per-user scoped tokens) is
-      rejected: the Rust driver has no resource-token auth support yet;
-    * anything else (``None`` and unrecognized shapes) is rejected.
+    Resource-token forms and unrecognized inputs raise ValueError here.
+    Getting a token or using it with the service backend can still fail later.
     """
     if isinstance(credential, str):
         if not credential:
@@ -125,18 +90,12 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     if isinstance(credential, Mapping) and "masterKey" in credential:
         master_key = credential["masterKey"]
         if not isinstance(master_key, str) or not master_key:
-            # A non-string (or empty) masterKey would otherwise be accepted here and
-            # fail later in a murkier place (credential-key computation or the
-            # driver). Reject it at construction with a clear message.
+            # Report an invalid key at client construction, before driver creation.
             raise ValueError(
                 "The Rust binding requires the 'masterKey' entry to be a non-empty string."
             )
         return master_key, None
-    # Check async *before* the sync get_token acceptance, since an async
-    # credential also exposes a (coroutine) get_token. Wrap it rather than reject
-    # it: the bridge drives the coroutine on its own event-loop thread and exposes
-    # the synchronous get_token the driver calls, so async credentials work with no
-    # driver change.
+    # Async methods are callable too. Wrap them before accepting a plain get_token.
     if _is_async_credential(credential):
         return None, AsyncTokenCredentialBridge.acquire(credential)
     get_token = getattr(credential, "get_token", None)
@@ -149,7 +108,6 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
             "that isn't available. Use a master-key credential or a synchronous "
             "token credential, or the core-python backend."
         )
-    # Falls through for None and any other unrecognized shape.
     raise ValueError(
         "The Rust binding requires a master-key credential (a string, or a dict "
         "with a 'masterKey' entry) or a synchronous token credential. The Rust "
@@ -161,18 +119,12 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
 def resolved_credential(
     credential: Any,
 ) -> Iterator[Tuple[Optional[str], Optional[Any]]]:
-    """Sort the customer's credential as :func:`resolve_credential` does, and undo
-    the wrapping if the caller fails to finish building its backend.
+    """Prepare a credential and release its bridge if backend construction fails.
 
-    Resolving an async credential acquires a registry hold on a shared bridge.
-    Its thread starts only on the first token call. Configuration validation or
-    backend registration can fail before a backend takes ownership of that hold;
-    releasing it here avoids retaining a failed constructor's registry entry
-    and credential reference, even when no thread was started.
-
-    So the caller builds its backend inside this context manager. On success the
-    bridge is left open for the backend that now owns it; on any exception the hold
-    is released and the original error propagates unchanged.
+    An async bridge keeps a reference to the credential even before its thread
+    starts. On success, the backend becomes responsible for releasing its use
+    of that bridge. On failure, release it here and propagate the original error
+    without closing the customer's credential.
     """
     master_key, token_credential = resolve_credential(credential)
     try:

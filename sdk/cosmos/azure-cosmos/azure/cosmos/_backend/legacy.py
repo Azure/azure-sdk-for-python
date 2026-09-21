@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Explicit core-python selection for remaining migration coordinators.
+"""Run supplied Python calls for operations still using migration wrappers.
 
-This stateless backend invokes the supplied plain callable without building or
-executing a prepared request. Point parity uses the separate legacy item helper."""
+This backend does not build or send Rust requests. Item operations using the
+existing Python implementation are handled by the separate legacy item helper.
+"""
 
 from __future__ import annotations
 
@@ -23,9 +24,8 @@ from .constants import BACKEND_NAME_CORE_PYTHON
 class LegacyBackend(CosmosBackend):
     """Core-python backend: runs the legacy ``client_connection`` call.
 
-    Stateless -- it only forwards to the legacy callable
-    the coordinator supplies -- so :data:`LEGACY_BACKEND` is shared by every
-    core-python client instead of one instance per client.
+    Each caller supplies the function to run. No client settings or progress
+    are stored here, so all core-python clients can share LEGACY_BACKEND.
     """
 
     name = BACKEND_NAME_CORE_PYTHON
@@ -33,15 +33,11 @@ class LegacyBackend(CosmosBackend):
     def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Not supported: the legacy backend is not ``PreparedRequest``-driven.
+        """Reject prepared requests, which this backend does not send.
 
-        ``execute`` is the rust wire primitive (send a prepared request, return
-        the raw reply). The legacy path reconstructs its call from the original
-        public arguments, which a ``PreparedRequest`` does not carry, so there is
-        nothing meaningful to do here. Every coordinator drives this backend
-        through :meth:`run_operation` or :meth:`run_page_operation`, never
-        a wire primitive; this method exists
-        only to satisfy the abstract base and guards against a wrong call site.
+        Use run_operation or run_page_operation with a Python function that
+        has the original call arguments. A PreparedRequest does not contain
+        everything needed to reconstruct that call.
         """
         raise NotImplementedError(
             "LegacyBackend does not send prepared requests on the wire; the "
@@ -58,7 +54,7 @@ class LegacyBackend(CosmosBackend):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Run the explicitly selected legacy callable without building a Rust request."""
+        """Run the supplied Python function without building a Rust request."""
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
@@ -74,7 +70,7 @@ class LegacyBackend(CosmosBackend):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Run the explicitly selected legacy callable without building a Rust request."""
+        """Run the supplied Python page fetch without building a Rust request."""
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"

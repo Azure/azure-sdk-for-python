@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Owned immutable snapshots of request mappings and nested JSON values."""
+"""Copy request data so later caller edits cannot change a pending request."""
 
 from __future__ import annotations
 
@@ -12,7 +12,11 @@ from typing import Any, Optional
 
 @dataclass(frozen=True, slots=True, eq=False)
 class FrozenMapping(Mapping[Any, Any]):
-    """Immutable mapping with Mapping's value equality and unhashable contract."""
+    """Read-only copy that compares keys and values like a dictionary.
+
+    Nested dictionaries and lists are also made read-only. Like a dictionary,
+    this object cannot be used as a dictionary key.
+    """
 
     _values: Mapping[Any, Any]
     _parents: InitVar[Optional[set[int]]] = None
@@ -50,7 +54,11 @@ class FrozenMapping(Mapping[Any, Any]):
 
 
 def freeze_json(value: Any, parents: Optional[set[int]] = None) -> Any:
-    """Copy mutable containers; reuse only values already known to be immutable."""
+    """Make dictionaries and lists read-only, including their nested values.
+
+    For example, a caller's list becomes a tuple. Values already known to be
+    read-only can be reused. Circular references and unsupported value types raise.
+    """
     if value is None or type(value) in (str, int, float, bool, FrozenMapping):
         return value
     parents = set() if parents is None else parents
@@ -86,7 +94,7 @@ def freeze_headers(headers: Mapping[str, str]) -> Mapping[str, str]:
 
 
 def json_mapping(value: Any) -> dict[Any, Any]:
-    """JSON encoder callback: tuples remain arrays and frozen mappings become objects."""
+    """Let the JSON encoder write a FrozenMapping as a JSON object."""
     if type(value) is FrozenMapping:
         return dict(value.items())
     raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")

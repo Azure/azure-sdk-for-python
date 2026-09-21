@@ -5,19 +5,17 @@
 # -------------------------------------------------------------------------
 """Constants for selecting the backend.
 
-The backend names, the set of valid names, the default, and the
-``COSMOS_BACKEND`` environment variable live here and are imported by every
-module that needs them so the strings cannot drift. (The operation-kind
-constants and the dispatch types live with the contract in ``base``.)
+Keep names and selection defaults here so both client types use the same
+values. Operation names live in operations.py; request and response objects
+live in contracts.py.
 """
 from typing import Any
 
 #: Default backend; routes through the existing azure-core pipeline.
 BACKEND_NAME_CORE_PYTHON = "core-python"
 
-#: Opt-in Rust-driver path. Selecting it before the compiled binding is built
-#: does not fail at construction -- the first operation is what raises
-#: ``NotImplementedError``.
+#: Rust implementation. Constructing it requires the compiled extension for
+#: checking shared runtime settings, even though driver creation waits until use.
 BACKEND_NAME_RUST = "rust"
 
 #: Every accepted backend name. The factory validates against this.
@@ -32,5 +30,5 @@ BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
 
 def is_rust_backend(backend: Any) -> bool:
-    """Return whether ``backend`` is the concrete Rust implementation."""
+    """Return whether the backend identifies itself as the Rust implementation."""
     return getattr(backend, "name", None) == BACKEND_NAME_RUST

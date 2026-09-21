@@ -3,25 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Gathering a client's tuning options into one object the driver can read.
+"""Collect client options in one object for the Rust binding.
 
-A customer can tune a client in several independent ways -- preferred and
-excluded regions, retry caps, cross-region hedging, a user-agent label, a
-consistency level, whether proxies are allowed, and transport timeout caps. The
-driver wants all of that as a single value, not as a scattering of keyword
-arguments.
+For example, a customer app may prefer West US and limit retries after the
+service asks it to slow down. build_client_config checks those options and
+returns a PreparedClientConfig shared by the sync and async setup code.
+It returns None when no settings need to be passed.
 
-:func:`build_client_config` is that gathering step. It validates each option
-against what the Rust path can actually carry, and returns one
-:class:`~azure.cosmos._backend.contracts.PreparedClientConfig` -- or ``None``
-when the customer tuned nothing at all. The binding applies Python's disabled
-hedging default even when this config is absent.
-
-The private helpers below it do the per-option validation: rejecting a bare
-string where a list of regions was meant, a consistency level with no driver
-equivalent, or a timeout outside the connection pool's limits. Both the sync and
-async factories call :func:`build_client_config`, so a given set of keyword
-arguments produces the same config on either client.
+Python validates the fields handled below; the binding performs further
+checks when acquiring a driver. Those checks include the User-Agent label
+and agreement with network settings already chosen for the process.
 """
 from __future__ import annotations
 
@@ -35,19 +26,15 @@ from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_
 from ..documents import ConsistencyLevel
 from .contracts import PreparedClientConfig, PreparedFaultInjectionRule
 
-# Consistency levels the Rust path can carry today. They map to the driver's
-# ``ReadConsistencyStrategy`` in the binding (``"Eventual"`` / ``"Session"``
-# directly, ``"Strong"`` to the driver's ``GlobalStrong``). Bounded Staleness and
-# Consistent Prefix have no driver equivalent yet, so they are rejected (see
-# ``_resolve_consistency_level``) rather than silently dropped.
+# Levels this binding supports. Strong maps to the driver's GlobalStrong;
+# other recognized Cosmos levels are rejected rather than ignored.
 _RUST_SUPPORTED_CONSISTENCY_LEVELS = (
     ConsistencyLevel.Eventual,
     ConsistencyLevel.Session,
     ConsistencyLevel.Strong,
 )
 
-# Every consistency level the public API recognizes, used to tell an out-of-scope
-# (but valid) level apart from an outright-unknown string in the error messages.
+# Distinguish an unsupported Cosmos level from an unrecognized name.
 _ALL_CONSISTENCY_LEVELS = (
     ConsistencyLevel.Strong,
     ConsistencyLevel.BoundedStaleness,
@@ -78,14 +65,11 @@ _RUST_FAULT_RULE_FIELDS = frozenset(field.name for field in fields(PreparedFault
 def _normalize_locations(
     value: Optional[Sequence[str]], arg_name: str
 ) -> Tuple[str, ...]:
-    """Turn a locations argument into a tuple of region strings, or reject a bare
-    string/bytes.
+    """Copy a sequence of nonblank region names to a tuple.
 
-    A bare string like ``"West US"`` is iterable, so ``tuple("West US")`` would
-    silently become ``('W', 'e', 's', 't', ...)`` -- seven bogus one-character
-    "regions" the customer never meant, with no error. Reject that shape up front
-    and require a real sequence of region names (e.g. ``["West US"]``). An empty or
-    absent value means "no preference" and carries nothing.
+    Require ["West US"], not "West US": converting the latter directly to a
+    tuple would treat each character as a region. None or an empty sequence
+    supplies no preferred or excluded regions.
     """
     if value is None:
         return ()
@@ -118,44 +102,20 @@ def build_client_config(
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
 ) -> Optional[PreparedClientConfig]:
-    """Gather the tuning options the Rust path can carry (preferred/excluded
-    regions, retry caps, region-hedging, user-agent label, consistency level,
-    proxy on/off, and transport timeout caps) into one
-    :class:`PreparedClientConfig`, and return ``None``
-    when the customer tuned nothing.
+    """Validate and collect client settings, or return None if none are needed.
 
-    An untuned client takes the simplest path; the binding supplies Python's
-    disabled hedging default and keeps other driver defaults. Shared by the sync
-    and async factories so the kwarg-to-config mapping lives in exactly one place.
+    Preserve the difference between an explicit value and None. For example,
+    proxy_allowed=False requires a direct connection; None requests no override.
+    Region names become tuples, and an empty User-Agent suffix becomes None.
 
-    Settings are carried only when the customer actually expressed them:
+    Network settings apply to the shared Rust runtime. In particular, Rust
+    uses read_timeout to limit a whole HTTP attempt, not just pauses while
+    reading a response. This builder does not create that runtime or reserve
+    its settings.
 
-    * ``preferred_locations`` / ``excluded_locations`` -- empty means "no
-      preference / no exclusion".
-    * throttling caps -- ``None`` means "untuned"; the driver keeps its own
-      defaults (9 retries / 30 s), which match core-python's.
-    * ``availability_strategy`` -- ``None`` (absent) and ``False`` carry no
-      threshold, which the binding maps to ``AvailabilityStrategy::Disabled``.
-      ``True`` or a dict carries the enabled hedging threshold.
-    * ``user_agent_suffix`` -- ``None`` or an empty string carries nothing, so
-      the driver keeps its default SDK User-Agent; any non-empty label is carried
-      for native User-Agent construction.
-    * ``consistency_level`` -- ``None`` carries nothing, so the driver keeps the
-      account default; one of the supported levels (Eventual / Session / Strong)
-      is carried so the chosen level actually reaches the driver. Bounded
-      Staleness / Consistent Prefix (and any unrecognized value) are rejected
-      loudly rather than silently dropped (see :func:`_resolve_consistency_level`).
-    * ``proxy_allowed`` -- ``None`` carries nothing; ``True`` lets the Rust driver
-      use proxy settings from environment variables; ``False`` forces a direct
-      connection (no proxy).
-    * ``connection_timeout_seconds`` -- ``None`` carries nothing; a value maps
-      exactly to the driver's whole-process connection timeout.
-    * ``read_timeout_seconds`` -- ``None`` carries nothing; a value is
-      approximate, because Python treats it as socket-read inactivity while the
-      Rust transport caps the complete HTTP attempt on both data-plane and
-      metadata requests. The binding checks these against initialized runtime
-      settings; this builder does not reserve process-wide values.
-      Only explicitly requested timeouts are carried here.
+    Without an availability_strategy threshold, the binding disables sending
+    additional requests to other regions while a request is still pending.
+    Other unspecified options keep their driver or account defaults.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
         raise ValueError(
@@ -175,13 +135,12 @@ def build_client_config(
         isinstance(throttling_max_retry_wait_time_seconds, bool)
         or not isinstance(throttling_max_retry_wait_time_seconds, Real)
         or not 0 <= throttling_max_retry_wait_time_seconds < 2**64
-        # An in-range integer can round up to 2**64 at the native float boundary.
+        # Converting an integer to the binding's float can round it up to 2**64.
         or float(throttling_max_retry_wait_time_seconds) >= 2**64
     ):
         raise ValueError("retry_throttle_backoff_max must be finite nonnegative seconds below 2**64.")
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
-    # An empty string carries nothing, matching the "no preference" treatment of
-    # the location tuples; only a non-empty label is worth carrying to the driver.
+    # An empty label should not add anything to the User-Agent header.
     suffix = user_agent_suffix or None
     consistency = _resolve_consistency_level(consistency_level)
     connection_timeout = _normalize_transport_timeout(
@@ -226,7 +185,7 @@ def build_client_config(
 def _prepare_fault_injection_rules(
     rules: Optional[Sequence[Mapping[str, Any]]],
 ) -> tuple[PreparedFaultInjectionRule, ...]:
-    """Validate the internal test-only fault-rule dictionaries."""
+    """Check internal test rules that make selected requests fail or wait."""
     if rules is None:
         return ()
     if isinstance(rules, (str, bytes, bytearray)) or not isinstance(rules, Sequence):
@@ -373,7 +332,7 @@ def _normalize_transport_timeout(
     *,
     maximum: Optional[float] = None,
 ) -> Optional[float]:
-    """Validate a Python timeout against the Rust connection-pool limits."""
+    """Check that a timeout is finite and within the allowed range of seconds."""
     if value is None:
         return None
     if isinstance(value, bool) or not isinstance(value, Real):
@@ -397,18 +356,12 @@ def _normalize_transport_timeout(
 
 
 def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str]:
-    """Check the requested client consistency level for the Rust path and return
-    the level to carry, or ``None`` when the customer expressed none.
+    """Reject consistency choices the binding cannot honor rather than ignore them.
 
-    Without it: the customer would ask for one consistency guarantee and silently
-    get a different one -- a correctness problem they'd never see coming. So
-    ``None`` (or an empty string) carries nothing -- the driver keeps the account
-    default, so an untuned client is unchanged. Eventual, Session and Strong are
-    carried through as-is (the binding maps ``"Strong"`` to the driver's
-    ``GlobalStrong``). Bounded Staleness and Consistent Prefix have no Rust
-    equivalent yet and are rejected here with a clear message rather than silently
-    dropped. Any other value is not a recognized Cosmos consistency level and is
-    likewise rejected.
+    Eventual, Session, and Strong are passed to the binding; Strong maps to the
+    driver's GlobalStrong. BoundedStaleness and ConsistentPrefix are rejected,
+    as are unrecognized nonempty names. An absent or empty value leaves the
+    account default unchanged.
     """
     if not consistency_level:
         return None
@@ -433,19 +386,14 @@ def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str
 
 
 def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
-    """Translate the ``availability_strategy`` option into a single millisecond
-    threshold the driver understands, or ``None`` to carry nothing.
+    """Return the delay before another region may receive a pending request.
 
-    Why: it reuses the existing validator (:class:`CrossRegionHedgingStrategy`)
-    so a bad threshold fails the same way it always did, keeping old and new paths
-    consistent. Carries a threshold only when the customer *enabled* hedging:
-    ``True`` uses the default threshold and a dict uses its ``threshold_ms``
-    (validated ``> 0``). ``None`` (absent) and ``False`` carry nothing -- matching
-    core-python, where the client default is "no strategy" -- so sync (kwarg) and
-    async (an explicit ``False``-default parameter) behave identically.
-    The binding maps a missing threshold (including absent config) to the
-    driver's explicit Disabled strategy, not its default-enabled behavior.
-    Python's ``threshold_steps_ms`` has no driver equivalent and is intentionally dropped.
+    Sending another request while the first is still pending is called hedging.
+    True uses DEFAULT_THRESHOLD_MS. A dictionary is checked by the existing
+    CrossRegionHedgingStrategy validator and supplies threshold_ms.
+
+    Other values return None, which the binding uses to disable hedging.
+    threshold_steps_ms is not passed: the driver uses only one threshold.
     """
     if availability_strategy is True:
         return DEFAULT_THRESHOLD_MS
@@ -453,5 +401,5 @@ def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
         # Reuse the existing validator so an invalid threshold_ms raises the same
         # ValueError it would on the legacy path.
         return CrossRegionHedgingStrategy(availability_strategy).threshold_ms
-    # None, False, or an unrecognized shape: carry nothing.
+    # None, False, or an unrecognized input supplies no threshold.
     return None

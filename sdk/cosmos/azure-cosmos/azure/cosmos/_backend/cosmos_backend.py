@@ -3,18 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend dispatch. Two wire reply shapes: single responses and pages.
+"""Define how synchronous helpers call a backend and receive results.
 
-Migrated point and retained-feed helpers execute directly. Remaining migration
-coordinators pass an OperationRouting, a lazy builder, a response processor and
-an optional legacy callable. Policy is centralized in capabilities.py; request
-compatibility remains request-dependent. Explicit legacy selection skips request
-building. Only allowed ineligibility/static preflight can route to legacy;
-execution, parsing and callback failures never replay.
+Helpers that prepare Rust requests call execute or execute_pages directly.
+Operations still supporting migration fallback use run_operation or
+run_page_operation. These choose Rust or an allowed Python call before
+execution. They do not retry execution, parsing, or callback failures through
+the other implementation.
 
-Prepared records carry wire data, not invocation deadlines. Native item cursors
-are created lazily by their owning pagers through the backend factory. Client
-registration reservations and native driver references retain separate lifetimes.
+A single operation returns BackendResponse. A page fetch returns QueryPage,
+including a continuation token when available.
 """
 
 from __future__ import annotations
@@ -38,32 +36,11 @@ if TYPE_CHECKING:
 
 
 class CosmosBackend(abc.ABC):
-    """Abstract dispatch target for any Cosmos operation (sync).
+    """Base methods for synchronous Rust and legacy Python backends.
 
-    Migrated item helpers call ``execute`` directly, with no legacy port.
-    The migration dispatch methods below remain for other families.
-
-    A still-migrating family coordinator (the throughput functions in
-    :mod:`~azure.cosmos._helpers._container_throughput` and
-    :mod:`~azure.cosmos._helpers._database_throughput`, and the feed-range
-    functions in :mod:`~azure.cosmos._helpers._feed_range_operations`) holds one of
-    these by interface and drives its operations through :meth:`run_operation`
-    or :meth:`run_page_operation` without knowing which concrete backend it
-    has. Driver selection and legacy fallback happen behind this interface: a
-    rust-backed client holds a
-    :class:`RustBinding` and a core-python client holds a
-    :class:`~azure.cosmos._backend.legacy.LegacyBackend`, and every coordinator
-    treats both the same -- none of them branch on ``None``, on which concrete
-    backend they hold, or on a wire primitive returning ``None``. The operation
-    kind is on ``prepared.op``; the backend branches on it.
-
-    ``execute`` and ``execute_pages`` are the wire-level primitives used behind
-    those two coordinator methods. The core-python
-    :class:`~azure.cosmos._backend.legacy.LegacyBackend` is **not**
-    ``PreparedRequest``-driven -- its work is the original public call arguments,
-    not a wire request -- so it does not implement the wire primitives and
-    instead overrides :meth:`run_operation` and :meth:`run_page_operation` to
-    run the legacy operation.
+    RustBinding sends prepared requests. LegacyBackend instead runs a supplied
+    function using the original Python arguments; it overrides run_operation
+    and run_page_operation and does not send PreparedRequest objects.
     """
 
     #: Short identifier used in the startup INFO log line. Subclasses
@@ -73,31 +50,29 @@ class CosmosBackend(abc.ABC):
     def close(self) -> None:
         """Release resources owned by this backend.
 
-        Stateless backends have nothing to release. Backends that own resources
-        override this method.
+        Backends with no resources can keep this empty default.
         """
 
     @abc.abstractmethod
     def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Issue a single Cosmos operation on the wire and return the raw reply.
+        """Send one prepared operation and return status, headers, and body.
 
-        Dispatch on ``prepared.op`` and return a ``BackendResponse`` for the
-        caller to parse, including for an empty successful body. A missing
-        request is invalid; a missing native reply is a protocol error.
-        ``deadline`` is the caller's existing absolute monotonic budget,
-        converted to remaining time at dispatch.
-        This is the rust wire primitive; a backend that does
-        not send prepared requests (the core-python legacy backend) does not
-        implement it.
+        The caller parses BackendResponse, including successful empty bodies.
+        No response object is an error. The Rust implementation chooses a
+        binding function using prepared.op.
+
+        ``deadline`` is an absolute time from time.monotonic(), a clock
+        unaffected by wall-clock changes. Subtract the current reading before
+        the binding call to pass the remaining seconds.
         """
         ...
 
     def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None
     ) -> ContainerMetadata:
-        """Get immutable routing facts; unsupported backends must fail explicitly."""
+        """Get the container ID and partition-key definition, or raise if unsupported."""
         raise NotImplementedError("This backend does not provide container metadata")
 
     def run_operation(
@@ -109,7 +84,7 @@ class CosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        """Choose an allowed implementation before executing one operation."""
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -134,7 +109,7 @@ class CosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        """Choose an allowed implementation before fetching and processing a page."""
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -178,25 +153,20 @@ class CosmosBackend(abc.ABC):
     def execute_pages(
         self, prepared: PreparedQuery, *, deadline: Optional[float] = None
     ) -> Iterator[QueryPage]:
-        """Return a paged query or read-feed result one ``QueryPage`` at a time.
+        """Fetch results as QueryPage objects, or raise if unsupported.
 
-        The default here raises; :class:`~azure.cosmos._backend.binding.RustBinding`
-        overrides it using the stateless or retained-cursor dispatch table. A backend
-        that does not implement this -- ``LegacyBackend`` never reaches it, since
-        :meth:`run_page_operation` invokes the legacy call directly -- keeps
-        this raising default.
-
-        ``deadline`` supplies the existing monotonic budget to supported native
-        cursor execution and ``list_databases``. Other stateless feeds use
-        their prepared settings rather than this deadline argument.
+        RustBinding currently yields one page per call, with or without a Rust
+        cursor that keeps progress between fetches. When deadline is supplied,
+        it passes the remaining seconds to the selected binding function.
+        LegacyBackend uses its supplied Python function instead.
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 
     def validate_page_request(self, prepared: PreparedQuery) -> None:
-        """Validate static page capability before execution; no I/O or driver acquisition."""
+        """Check that a page fetch is supported without sending or creating a driver."""
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create local native cursor state, without acquiring a driver."""
+        """Create a Rust object to keep page progress, without acquiring a driver."""
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"
         )
