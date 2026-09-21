@@ -20,7 +20,7 @@ trigger:
 create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
-    runtime_version: "3.4"
+    runtime_version: "3.5"
   alert_notification:
     emails:
       - test@example.com
