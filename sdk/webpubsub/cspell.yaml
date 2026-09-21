@@ -4,6 +4,7 @@ import:
   - ../../.vscode/cspell.json
 words:
   - awps
+  - capsys
   - ctxt
   - deser
   - deseralize

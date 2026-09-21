@@ -126,6 +126,7 @@ async def test_async_token_credential_client_access_token_uses_generated_operati
         await client.close()
 
 
+# Keep the capsys name: pytest uses it to inject the fixture that captures stdout and stderr.
 @pytest.mark.asyncio
 async def test_async_client_access_sample_does_not_log_token(monkeypatch, capsys):
     monkeypatch.setenv("WPS_CHAT_CONNECTION_STRING", f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY}")

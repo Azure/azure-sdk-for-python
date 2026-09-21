@@ -249,6 +249,7 @@ def test_client_access_token_rejects_unsupported_endpoint(endpoint, use_key):
         generate.assert_not_called()
 
 
+# Keep the capsys name: pytest uses it to inject the fixture that captures stdout and stderr.
 def test_client_access_sample_does_not_log_token(monkeypatch, capsys):
     monkeypatch.setenv("WPS_CHAT_CONNECTION_STRING", f"Endpoint={ENDPOINT};AccessKey={ACCESS_KEY}")
     base_url = f"wss://example.webpubsub.azure.com/client/hubs/{HUB}"
