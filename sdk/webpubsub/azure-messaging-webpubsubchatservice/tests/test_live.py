@@ -39,15 +39,15 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
                 assert role.name == role_name
                 assert client.get_role(role_name).permissions == [ChatPermission.USER_CREATE_ROOM]
 
-            listed = list(client.list_roles(maxpagesize=1))
+            listed = list(client.list_roles(max_page_size=1))
             assert {role.name for role in listed}.issuperset(role_names)
 
-            page_iterator = client.list_roles(maxpagesize=1).by_page()
+            page_iterator = client.list_roles(max_page_size=1).by_page()
             first_page = list(next(page_iterator))
             assert len(first_page) == 1
             assert page_iterator.continuation_token
 
-            resumed_page_iterator = client.list_roles(maxpagesize=1).by_page(page_iterator.continuation_token)
+            resumed_page_iterator = client.list_roles(max_page_size=1).by_page(page_iterator.continuation_token)
             second_page = list(next(resumed_page_iterator))
             assert len(second_page) == 1
             assert second_page[0].name != first_page[0].name

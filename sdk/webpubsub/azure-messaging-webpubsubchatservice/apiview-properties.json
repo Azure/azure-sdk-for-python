@@ -46,5 +46,5 @@
         "azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient.delete_user": "WebPubSubChat.WebPubSubChatServiceClient.deleteUser",
         "azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient.delete_user": "WebPubSubChat.WebPubSubChatServiceClient.deleteUser"
     },
-    "CrossLanguageVersion": "c5f8f936d02a"
+    "CrossLanguageVersion": "dd550ec76602"
 }

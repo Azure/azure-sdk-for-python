@@ -6,7 +6,7 @@ import runpy
 import time
 from pathlib import Path
 from unittest.mock import Mock, patch
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import jwt
 import pytest
@@ -26,6 +26,22 @@ CHAT_ROLES = ["webpubsub.getGroupState", "webpubsub.setGroupState"]
 
 class RequestCaptured(Exception):
     pass
+
+
+@pytest.mark.parametrize(
+    "operation_name,arguments",
+    [("list_roles", ()), ("list_messages", ("conversation",)), ("list_room_members", ("room",))],
+)
+def test_max_page_size_uses_original_wire_name(operation_name, arguments):
+    def capture(pipeline_request):
+        query = parse_qs(urlparse(pipeline_request.http_request.url).query)
+        assert query["maxpagesize"] == ["7"]
+        assert "max_page_size" not in query
+        raise RequestCaptured()
+
+    with WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY)) as client:
+        with pytest.raises(RequestCaptured):
+            list(getattr(client, operation_name)(*arguments, max_page_size=7, raw_request_hook=capture))
 
 
 class FakeTokenCredential:

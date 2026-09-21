@@ -272,6 +272,7 @@ namespace azure.messaging.webpubsubchatservice
                 *,
                 earliest_message_id: Optional[str] = ...,
                 latest_message_id: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatMessage]: ...
 
@@ -280,6 +281,7 @@ namespace azure.messaging.webpubsubchatservice
                 self,
                 *,
                 continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRole]: ...
 
@@ -289,6 +291,7 @@ namespace azure.messaging.webpubsubchatservice
                 room_id: str,
                 *,
                 continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> ItemPaged[ChatRoomMember]: ...
 
@@ -607,6 +610,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 *,
                 earliest_message_id: Optional[str] = ...,
                 latest_message_id: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatMessage]: ...
 
@@ -615,6 +619,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self,
                 *,
                 continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRole]: ...
 
@@ -624,6 +629,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 room_id: str,
                 *,
                 continuation_token_parameter: Optional[str] = ...,
+                max_page_size: Optional[int] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[ChatRoomMember]: ...
 

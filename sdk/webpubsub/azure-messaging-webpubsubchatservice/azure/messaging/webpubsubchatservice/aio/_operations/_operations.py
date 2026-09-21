@@ -135,6 +135,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         *,
         latest_message_id: Optional[str] = None,
         earliest_message_id: Optional[str] = None,
+        max_page_size: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.ChatMessage"]:
         """Query messages in a conversation from latest to earliest.
@@ -149,6 +150,8 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :keyword earliest_message_id: Earliest message ID (exclusive) for pagination. Default value is
          None.
         :paramtype earliest_message_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :return: An iterator like instance of ChatMessage
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatMessage]
@@ -157,7 +160,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatMessage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -176,7 +178,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
                     hub=self._config.hub,
                     latest_message_id=latest_message_id,
                     earliest_message_id=earliest_message_id,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -528,12 +530,14 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
     @distributed_trace
     def list_roles(
-        self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.ChatRole"]:
         """Query roles in a hub.
 
         Query roles in a hub.
 
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :keyword continuation_token_parameter: Continuation token for pagination. Default value is
          None.
         :paramtype continuation_token_parameter: str
@@ -545,7 +549,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatRole]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -561,7 +564,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
                 _request = build_web_pub_sub_chat_service_list_roles_request(
                     hub=self._config.hub,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -1294,7 +1297,12 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
     @distributed_trace
     def list_room_members(
-        self, room_id: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        room_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.ChatRoomMember"]:
         """Get room members.
 
@@ -1302,6 +1310,8 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         :param room_id: Room identifier. Required.
         :type room_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :keyword continuation_token_parameter: Continuation token for pagination. Default value is
          None.
         :paramtype continuation_token_parameter: str
@@ -1313,7 +1323,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatRoomMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1330,7 +1339,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 _request = build_web_pub_sub_chat_service_list_room_members_request(
                     room_id=room_id,
                     hub=self._config.hub,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,

@@ -76,7 +76,7 @@ def build_web_pub_sub_chat_service_list_messages_request(  # pylint: disable=nam
     *,
     latest_message_id: Optional[str] = None,
     earliest_message_id: Optional[str] = None,
-    maxpagesize: Optional[int] = None,
+    max_page_size: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -100,8 +100,8 @@ def build_web_pub_sub_chat_service_list_messages_request(  # pylint: disable=nam
         _params["latestMessageId"] = _SERIALIZER.query("latest_message_id", latest_message_id, "str")
     if earliest_message_id is not None:
         _params["earliestMessageId"] = _SERIALIZER.query("earliest_message_id", earliest_message_id, "str")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -190,7 +190,7 @@ def build_web_pub_sub_chat_service_update_message_request(  # pylint: disable=na
 
 
 def build_web_pub_sub_chat_service_list_roles_request(  # pylint: disable=name-too-long
-    hub: str, *, maxpagesize: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    hub: str, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -208,8 +208,8 @@ def build_web_pub_sub_chat_service_list_roles_request(  # pylint: disable=name-t
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
     if continuation_token_parameter is not None:
         _params["continuationToken"] = _SERIALIZER.query(
             "continuation_token_parameter", continuation_token_parameter, "str"
@@ -431,7 +431,7 @@ def build_web_pub_sub_chat_service_list_room_members_request(  # pylint: disable
     room_id: str,
     hub: str,
     *,
-    maxpagesize: Optional[int] = None,
+    max_page_size: Optional[int] = None,
     continuation_token_parameter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -452,8 +452,8 @@ def build_web_pub_sub_chat_service_list_room_members_request(  # pylint: disable
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
     if continuation_token_parameter is not None:
         _params["continuationToken"] = _SERIALIZER.query(
             "continuation_token_parameter", continuation_token_parameter, "str"
@@ -760,6 +760,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         *,
         latest_message_id: Optional[str] = None,
         earliest_message_id: Optional[str] = None,
+        max_page_size: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.ChatMessage"]:
         """Query messages in a conversation from latest to earliest.
@@ -774,6 +775,8 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :keyword earliest_message_id: Earliest message ID (exclusive) for pagination. Default value is
          None.
         :paramtype earliest_message_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubchatservice.models.ChatMessage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -781,7 +784,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatMessage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -800,7 +802,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
                     hub=self._config.hub,
                     latest_message_id=latest_message_id,
                     earliest_message_id=earliest_message_id,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1152,12 +1154,14 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
     @distributed_trace
     def list_roles(
-        self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.ChatRole"]:
         """Query roles in a hub.
 
         Query roles in a hub.
 
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :keyword continuation_token_parameter: Continuation token for pagination. Default value is
          None.
         :paramtype continuation_token_parameter: str
@@ -1168,7 +1172,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatRole]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1184,7 +1187,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
                 _request = build_web_pub_sub_chat_service_list_roles_request(
                     hub=self._config.hub,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -1917,7 +1920,12 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
     @distributed_trace
     def list_room_members(
-        self, room_id: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+        self,
+        room_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.ChatRoomMember"]:
         """Get room members.
 
@@ -1925,6 +1933,8 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         :param room_id: Room identifier. Required.
         :type room_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
         :keyword continuation_token_parameter: Continuation token for pagination. Default value is
          None.
         :paramtype continuation_token_parameter: str
@@ -1936,7 +1946,6 @@ class _WebPubSubChatServiceClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[list[_models.ChatRoomMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1953,7 +1962,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
                 _request = build_web_pub_sub_chat_service_list_room_members_request(
                     room_id=room_id,
                     hub=self._config.hub,
-                    maxpagesize=maxpagesize,
+                    max_page_size=max_page_size,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
