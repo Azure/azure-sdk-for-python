@@ -122,22 +122,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-async def _flush_spans_async() -> None:
-    """Drain the bounded core flush off the event loop, even during cancellation."""
-    with CancelScope(shield=True):
-        flush_task = asyncio.create_task(asyncio.to_thread(flush_spans))
-        cancellation: asyncio.CancelledError | None = None
-        while not flush_task.done():
-            try:
-                await asyncio.shield(flush_task)
-            except asyncio.CancelledError as exc:
-                # A direct asyncio cancellation must not orphan the exporter.
-                cancellation = exc
-        flush_task.result()
-        if cancellation is not None:
-            raise cancellation
-
-
 class _CreateStreamingResponse(StreamingResponse):
     """Close request-owned iterators and flush before HTTP stream completion."""
 
@@ -174,7 +158,7 @@ class _CreateStreamingResponse(StreamingResponse):
                     try:
                         await self._source.aclose()
                     finally:
-                        await _flush_spans_async()
+                        await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
 
         async def send_with_flush(message: Message) -> None:
             if message["type"] == "http.response.body" and not message.get("more_body", False):
@@ -1070,9 +1054,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # ``_flush_spans_for_mode``); the default keeps the flush off the
                 # event loop without dropping telemetry.
                 if not stream_owns_flush:
-                    await _flush_spans_for_mode(
-                        os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE)
-                    )
+                    await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
             finally:
                 try:
                     _otel_context.detach(baggage_token)

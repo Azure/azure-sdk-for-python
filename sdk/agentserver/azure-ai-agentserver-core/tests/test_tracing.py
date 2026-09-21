@@ -5,6 +5,7 @@
 
 import asyncio
 import os
+from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from threading import Event, Thread
 from typing import Any, Optional
@@ -994,6 +995,55 @@ class TestFlushSpansAsync:
             provider.release.set()
             await flush_task
         assert provider.calls == [1234]  # timeout argument forwarded
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("queued", [False, True])
+    @pytest.mark.parametrize("exporter_fails", [False, True])
+    async def test_cancellation_drains_queued_or_running_flush(self, queued: bool, exporter_fails: bool) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        worker_started = Event()
+        release_worker = Event()
+        loop = asyncio.get_running_loop()
+
+        def occupy_worker() -> None:
+            worker_started.set()
+            assert release_worker.wait(5)
+
+        def force_flush(timeout_millis: int) -> None:
+            provider.force_flush(timeout_millis)
+            if exporter_fails:
+                raise RuntimeError("export failed during cancellation")
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            loop.set_default_executor(executor)
+            blocker = loop.run_in_executor(None, occupy_worker) if queued else None
+            with mock.patch.object(
+                _tracing.trace, "get_tracer_provider", return_value=mock.Mock(force_flush=force_flush)
+            ):
+                flush_task = asyncio.create_task(_tracing.flush_spans_async(1234))
+                try:
+                    await asyncio.sleep(0)
+                    if queued:
+                        await _wait_for(worker_started)
+                    else:
+                        await _wait_for(provider.started)
+                    for _ in range(2):
+                        flush_task.cancel()
+                        await asyncio.sleep(0)
+                    assert not flush_task.done()
+                    if queued:
+                        assert not provider.started.is_set()
+                    release_worker.set()
+                    await _wait_for(provider.started)
+                    assert not flush_task.done()
+                finally:
+                    release_worker.set()
+                    provider.release.set()
+                    if blocker is not None:
+                        await blocker
+                    result = (await asyncio.gather(flush_task, return_exceptions=True))[0]
+                assert isinstance(result, asyncio.CancelledError)
+                assert provider.calls == [1234]
 
     @pytest.mark.asyncio
     async def test_swallows_exceptions(self) -> None:

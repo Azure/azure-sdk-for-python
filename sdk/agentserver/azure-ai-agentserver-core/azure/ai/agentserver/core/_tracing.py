@@ -41,6 +41,7 @@ import os
 import threading
 from typing import Any, Optional
 
+from anyio import CancelScope
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
@@ -612,6 +613,9 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
     blocking call to the default thread pool so the event loop stays free to
     send the response and service other requests concurrently.
 
+    Cancellation is deferred until the flush completes, including when the
+    worker is still queued. Exporter failures are handled by :func:`flush_spans`.
+
     No-op when the OTel SDK is not installed or the provider does not support
     ``force_flush``.
 
@@ -619,15 +623,21 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
         Defaults to 5000 (5 seconds).
     :type timeout_millis: int
     """
-    provider = trace.get_tracer_provider()
-    flush = getattr(provider, "force_flush", None)
-    if flush is None:
-        return
+    cancellation: Optional[asyncio.CancelledError] = None
     try:
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, flush, timeout_millis)
+        with CancelScope(shield=True):
+            loop = asyncio.get_running_loop()
+            flush_future = loop.run_in_executor(None, flush_spans, timeout_millis)
+            while not flush_future.done():
+                try:
+                    await asyncio.shield(flush_future)
+                except asyncio.CancelledError as exc:
+                    cancellation = exc
+            flush_future.result()
     except Exception:  # pylint: disable=broad-exception-caught
         logger.debug("TracerProvider.force_flush() (async) failed", exc_info=True)
+    if cancellation is not None:
+        raise cancellation
 
 
 async def _coalesced_flush(timeout_millis: int) -> None:

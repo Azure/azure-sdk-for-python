@@ -10,7 +10,8 @@
   fire-and-forget helper that flushes in the background without delaying the
   caller. Background flushes are coalesced: at most one runs at a time and
   concurrent requests collapse into a single follow-up flush, so the work does
-  not grow with the request rate.
+  not grow with the request rate. Async flushes drain queued or running exports
+  before propagating request cancellation.
 
 ### Breaking Changes
 
