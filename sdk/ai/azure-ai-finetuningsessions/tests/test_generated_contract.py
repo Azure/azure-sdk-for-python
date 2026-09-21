@@ -18,7 +18,14 @@ from azure.ai import finetuningsessions as sdk
 from azure.ai.finetuningsessions import aio
 from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder, _deserialize
 from azure.ai.finetuningsessions._version import VERSION
-from azure.ai.finetuningsessions.models import FoundryFeaturesOptInKeys, _models as raw
+from azure.ai.finetuningsessions.models import (
+    FoundryFeaturesOptInKeys,
+    ImageFormat,
+    LossFn,
+    SessionType,
+    TrainingType,
+    _models as raw,
+)
 from azure.ai.finetuningsessions.operations import _operations as builders
 from conftest import FakeCredential, FakeTransport
 
@@ -48,6 +55,78 @@ _POLL_CASES = [
 
 def _json_value(value: Any) -> Any:
     return json.loads(json.dumps(value, cls=SdkJSONEncoder))
+
+
+@pytest.mark.parametrize(
+    "enum_type, members",
+    [
+        (SessionType, {"TRAINING": "training"}),
+        (
+            TrainingType,
+            {
+                "GLOBAL_STANDARD": "GlobalStandard",
+                "DATAZONE_STANDARD": "DatazoneStandard",
+                "DEVELOPER_TIER": "DeveloperTier",
+            },
+        ),
+        (ImageFormat, {"JPEG": "jpeg", "PNG": "png", "WEBP": "webp"}),
+        (
+            LossFn,
+            {
+                "CROSS_ENTROPY": "cross_entropy",
+                "IMPORTANCE_SAMPLING": "importance_sampling",
+                "PPO": "ppo",
+                "CISPO": "cispo",
+                "SAPO": "sapo",
+            },
+        ),
+    ],
+)
+def test_extensible_unions_preserve_existing_enum_members(enum_type, members) -> None:
+    assert {name: member.value for name, member in enum_type.__members__.items()} == members
+    for name, value in members.items():
+        assert enum_type(value) is getattr(enum_type, name)
+
+
+@pytest.mark.parametrize("future_value", [False, True])
+@pytest.mark.parametrize(
+    "model_type, field, required, known",
+    [
+        (
+            raw.CreateSessionRequest,
+            "type",
+            {"base_model": "model_test", "lora_config": {"rank": 16}},
+            SessionType.TRAINING,
+        ),
+        (
+            raw.CreateSessionRequest,
+            "training_type",
+            {"type": "training", "base_model": "model_test", "lora_config": {"rank": 16}},
+            TrainingType.DEVELOPER_TIER,
+        ),
+        (raw.ForwardInput, "loss_fn", {"data": []}, LossFn.PPO),
+        (raw.ForwardBackwardInput, "loss_fn", {"data": []}, LossFn.SAPO),
+        (raw.ImageChunk, "format", {"data": b"\xff\xd8\xffjpeg", "expected_tokens": 12}, ImageFormat.JPEG),
+    ],
+)
+def test_generated_extensible_union_round_trip(model_type, field, required, known, future_value) -> None:
+    # Raw generated models carry unknown strings; service and handwritten image validation remain separate.
+    value = "future_value" if future_value else known
+    model = model_type(**{**required, field: value})
+    payload = _json_value(model)
+    assert payload[field] == (value if future_value else known.value)
+    restored = _deserialize(model_type, payload)
+    assert getattr(restored, field) == value
+    assert _json_value(restored) == payload
+
+
+@pytest.mark.parametrize(
+    "value",
+    [_PREVIEW, _PREVIEW.value, "FineTuningSessions=V1Preview,FutureFeature=V1Preview"],
+)
+def test_generated_preview_header_preserves_extensible_strings(value) -> None:
+    request = builders.build_sessions_list_request(foundry_features=value)
+    assert request.headers["Foundry-Features"] == value
 
 
 def _assert_request(request: Any, method: str, url: str, **query: Any) -> None:

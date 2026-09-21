@@ -91,5 +91,5 @@
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.FineTuning.Sessions.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.FineTuning.Sessions.Operations.get"
     },
-    "CrossLanguageVersion": "0487fe2cbfd2"
+    "CrossLanguageVersion": "eaa1660bd45e"
 }

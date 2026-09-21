@@ -52,9 +52,10 @@ changes and still needs its own coordinated source/wheel migration.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
   It pins the immutable TypeSpec commit
-  `5507786d95dd56c5346cabb3d8b8fcf6282eaacc`, including the route restoration
-  and suppression cleanup while retaining the namespace migration and preview
-  error-model exports.
+  `db5d8fa85d9a9d40024e108a4c7da3f07b6fbf8d`, including extensible input and
+  feature-key unions with a scoped exception for the immutable page-order union.
+  The route restoration, namespace migration, and preview error-model exports
+  are retained.
   Generation was verified against
   that commit's exact source content; the fingerprint below identifies it.
 - The TypeSpec target incorporated is
@@ -216,8 +217,8 @@ distinct from the offline tests and successful emission comparisons.
 - The renamed TypeSpec input fingerprint is
   `0bfa77b361e2bb531a006c46766d9d2d93c816e8b283a0f58e03d637ba480b8d`.
 - The unused `no-unknown` linter disable was removed without changing generated
-  output. The closed-literal-union exception remains justified by existing
-  input/shared unions and still requires API reviewer approval.
+  output. The then-remaining broad closed-literal-union disable was subsequently
+  removed; the current extensible-union validation is documented below.
 - The API contains **13 paths / 15 methods**, now under `/fine_tuning/sessions`,
   matching HTTP 200 submissions and raw request-status envelopes. Package and
   Python namespace names remain `azure-ai-finetuningsessions` and
@@ -237,6 +238,55 @@ distinct from the offline tests and successful emission comparisons.
   is blocked by uncached dependencies (including the private ECS package).
   Heavy cookbook/service test environments and live GPU tests were not run.
   Loom's pre-existing missing changelog packaging warning remains unchanged.
+
+### Extensible-union update
+
+The four session input unions (loss function, session type, training tier, and
+image format) and the two shared feature-key unions now include `string`,
+following [Azure's extensible-union guidance](https://azure.github.io/typespec-azure/docs/libraries/azure-core/rules/no-closed-literal-union/).
+Every existing named value and versioned feature member is preserved. Server
+validation and the handwritten SDK image validation are unchanged.
+
+The SDK-specific project-wide `no-closed-literal-union` disable is removed.
+`PageOrder` remains the inherently binary `asc`/`desc` direction of ordering by
+`created_at`, with one declaration-level suppression explaining that invariant.
+This narrow exception still requires API reviewer approval; this change is not
+a claim that all CI suppression annotations have disappeared. Existing linter
+settings in other Foundry client projects are unchanged.
+
+- TypeSpec validation succeeded. Full Foundry OpenAPI compilation retained
+  **29 warnings**; the SDK-scoped check has **62 warnings**, including **zero
+  closed-union diagnostics**, with that rule enabled. Python emission retained
+  **66 warnings**.
+- Full OpenAPI comparisons for `v1` and `virtual-public-preview` show exactly
+  **five schema changes**: the four session unions and `AgentDefinitionOptInKeys`
+  become `anyOf` with `string` and the unchanged known enum values. The other
+  shared feature union is used through specific members/template constraints
+  and introduces no emitted REST delta. All paths, response codes, parameters,
+  headers, other schemas, and the closed `PageOrder` schema are unchanged.
+- MCP generation wrote the SDK, then reported a Windows file-lock failure
+  while cleaning its temporary dependencies. The output was independently
+  verified against **two fresh pinned emissions: all 22 generated files match**.
+  All generated and handwritten Python runtime files are identical to the
+  previous SDK commit; only the generated APIView `CrossLanguageVersion`
+  fingerprint changed, from `0487fe2cbfd2` to `eaa1660bd45e`.
+- **723 tests passed against both source and an isolated installed wheel**,
+  including 17 added cases for existing enum members, known/future string
+  round-trips in raw generated models, and extensible preview headers.
+  **20/20 paired Loom comparisons passed**, with
+  **134 requests and 2,246 checks per SDK**; the comparison boundaries above
+  remain unchanged.
+- The reviewed wheel contains exactly **29 source-identical Python modules**
+  and `py.typed`, with no shared Azure namespace initializers, old namespace,
+  tests, or build trees. Its SHA-256 is
+  `722ae7612a0985aa1f266cfeedeeac9144ee6f22cb1233fdb7f9bb9b75f5dc7f`.
+  A direct build initially hit a Windows temporary-directory cleanup lock;
+  the subsequent clean, isolated `pip wheel` build completed successfully.
+- The current TypeSpec input fingerprint is
+  `16fb33f06b94b2cbcaaac11d3f20ded03c54d993e2efdc3db9a8c51c6f5063ef`.
+
+Other language SDKs were not regenerated or certified by the Python checks;
+shared schema changes remain subject to the Foundry API review process.
 
 The original unrelated shared client-tool lockfile difference was removed during
 merge resolution, and the old wheel was removed from Git tracking (its local

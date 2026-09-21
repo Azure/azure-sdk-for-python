@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# TypeSpec commit including the route restoration and suppression cleanup.
-commit: 5507786d95dd56c5346cabb3d8b8fcf6282eaacc
+# TypeSpec commit including extensible input/feature unions and the scoped PageOrder exception.
+commit: db5d8fa85d9a9d40024e108a4c7da3f07b6fbf8d
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json
