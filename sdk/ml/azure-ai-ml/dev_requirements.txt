@@ -24,5 +24,4 @@ python-dotenv
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "CPython" and python_version < "3.13" and (sys_platform != "darwin" or platform_machine != "arm64")
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "PyPy" and python_version < "3.10"
 pip
-# Retain pkg_resources while including the fix for CVE-2025-47273.
 setuptools==78.1.1
