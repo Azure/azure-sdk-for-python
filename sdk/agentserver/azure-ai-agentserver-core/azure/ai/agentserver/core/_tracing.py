@@ -596,6 +596,10 @@ def flush_spans(timeout_millis: int = 5000) -> None:
 # to the event-loop thread, so no lock is required.
 _bg_flush_task: "Optional[asyncio.Task[None]]" = None
 _bg_flush_pending: bool = False
+# Aggregate timeout (ms) for the coalesced follow-up pass: the maximum
+# ``timeout_millis`` requested by any caller that coalesced while a flush was in
+# flight, so a small-timeout caller cannot shrink a concurrent caller's bound.
+_bg_flush_pending_timeout_millis: int = 0
 
 
 async def flush_spans_async(timeout_millis: int = 5000) -> None:
@@ -631,13 +635,18 @@ async def _coalesced_flush(timeout_millis: int) -> None:
 
     Because ``force_flush`` drains the provider globally, a single trailing
     flush captures the spans of every request that arrived while a flush was
-    already running -- no need for a task (or export) per request.
+    already running -- no need for a task (or export) per request. Each
+    follow-up pass uses the largest ``timeout_millis`` requested by the callers
+    that coalesced into it, so a small-timeout caller never shrinks another
+    caller's requested bound.
     """
-    global _bg_flush_pending  # pylint: disable=global-statement
+    global _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     await flush_spans_async(timeout_millis)
     while _bg_flush_pending:
         _bg_flush_pending = False
-        await flush_spans_async(timeout_millis)
+        pending_timeout_millis = _bg_flush_pending_timeout_millis
+        _bg_flush_pending_timeout_millis = 0
+        await flush_spans_async(pending_timeout_millis)
 
 
 def schedule_flush_spans(timeout_millis: int = 5000) -> None:
@@ -660,7 +669,7 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
         Defaults to 5000 (5 seconds).
     :type timeout_millis: int
     """
-    global _bg_flush_task, _bg_flush_pending  # pylint: disable=global-statement
+    global _bg_flush_task, _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
@@ -669,7 +678,9 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
     if _bg_flush_task is not None and not _bg_flush_task.done():
         # A flush is already draining the provider globally; record that more
         # spans arrived so the running task performs one more pass afterwards.
+        # Keep the largest requested timeout so this caller's bound is honoured.
         _bg_flush_pending = True
+        _bg_flush_pending_timeout_millis = max(_bg_flush_pending_timeout_millis, timeout_millis)
         return
     _bg_flush_task = loop.create_task(_coalesced_flush(timeout_millis))
 

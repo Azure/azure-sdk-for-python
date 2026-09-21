@@ -5,12 +5,12 @@
 
 import asyncio
 import os
-import pytest
 from functools import partial
 from threading import Event, Thread
 from typing import Any, Optional
 from unittest import mock
 
+import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
