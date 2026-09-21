@@ -202,9 +202,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     def visible_via_get(self) -> bool:
         """Non-streaming stored responses are retrievable via GET after completion.
 
-        For background non-stream responses, visibility is deferred until
-        ``response.created`` is processed (FR-001: response not accessible
-        before the handler emits ``response.created``).
+        For background responses (both stream and non-stream), visibility is
+        deferred until ``response.created`` is processed (FR-001: response
+        not accessible before the handler emits ``response.created``).
 
         For non-background responses (Row 3, both stream=F and stream=T),
         visibility is deferred until the handler reaches a terminal status
@@ -218,8 +218,8 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         if not self.mode_flags.store:
             return False
-        # FR-001: bg non-stream responses are not visible until response.created.
-        if self.mode_flags.background and not self.mode_flags.stream:
+        # FR-001: bg responses (stream or non-stream) are not visible until response.created.
+        if self.mode_flags.background:
             return self.response_created_signal.is_set()
         # B16: non-bg responses (stream OR non-stream) are visible only after terminal.
         if not self.mode_flags.background:

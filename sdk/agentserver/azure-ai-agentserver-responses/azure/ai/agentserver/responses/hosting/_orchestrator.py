@@ -1317,7 +1317,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
     return record
 
 
-class _PipelineState:
+class _PipelineState:  # pylint: disable=too-many-instance-attributes
     """Mutable in-flight state for a single create-response invocation.
 
     Intentionally separate from :class:`_ExecutionContext` (which is a pure
@@ -1325,7 +1325,10 @@ class _PipelineState:
     :meth:`_ResponseOrchestrator._live_stream` and
     :meth:`_ResponseOrchestrator.run_sync`, then threaded through every
     internal helper so that the helpers are side-effect-free with respect
-    to ``_ExecutionContext``.
+    to ``_ExecutionContext``. Each attribute tracks a distinct piece of
+    per-invocation bookkeeping (event buffering, deferred persistence,
+    recovery signalling, etc.) so the count intentionally exceeds the
+    default pylint threshold.
     """
 
     __slots__ = (
@@ -3240,12 +3243,17 @@ class _ResponseOrchestrator:
                 finally:
                     await self._finalize_stream(ctx, state)
                     await self._safe_close(wire_stream)
-                    if state.deferred_terminal_persist is not None:
-                        await state.deferred_terminal_persist()
+                    _deferred_persist = state.deferred_terminal_persist
+                    if _deferred_persist is not None:
+                        await _deferred_persist()
                         state.deferred_terminal_persist = None
                         state.defer_evict = False
                         terminal_record = await self._runtime_state.get(ctx.response_id)
-                        if terminal_record is not None and terminal_record.is_terminal and not terminal_record.persistence_failed:
+                        if (
+                            terminal_record is not None
+                            and terminal_record.is_terminal
+                            and not terminal_record.persistence_failed
+                        ):
                             await self._runtime_state.try_evict(ctx.response_id)
 
             # Minimal record only for ``_start_resilient_background``'s parameter
