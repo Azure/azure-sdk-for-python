@@ -82,13 +82,14 @@ function Write-ApprovalSummary([object] $Response) {
     Write-Host "  Reason: $reason"
 }
 
-function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [string] $ApiHash) {
+function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [string] $PackageType, [string] $ApiHash) {
     $arguments = @(
         "package",
         "get-approval-status",
         "--language", $LanguageShort,
         "--package-name", $PackageName,
         "--package-version", $PackageVersion,
+        "--package-type", $PackageType,
         "--output", "json"
     )
 
@@ -101,7 +102,7 @@ function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [
     }
 
     $hashDescription = if ([string]::IsNullOrWhiteSpace($ApiHash)) { "not provided" } else { $ApiHash }
-    Write-Host "Checking package approval: language=$LanguageShort, package=$PackageName, version=$PackageVersion, apiHash=$hashDescription"
+    Write-Host "Checking package approval: language=$LanguageShort, package=$PackageName, version=$PackageVersion, packageType=$PackageType, apiHash=$hashDescription"
     $formattedArguments = @($arguments | ForEach-Object { Format-CommandArgument $_ })
     Write-Host "Command: azsdk $($formattedArguments -join ' ')"
 
@@ -161,6 +162,7 @@ foreach ($packageInfoFile in $packageInfoPaths) {
         $packageInfo = Get-Content $packageInfoFile -Raw | ConvertFrom-Json -ErrorAction Stop
         $packageName = if ($packageInfo.PSObject.Properties["Name"]) { [string] $packageInfo.Name } else { "" }
         $packageVersion = if ($packageInfo.PSObject.Properties["Version"]) { [string] $packageInfo.Version } else { "" }
+        $packageType = if ($packageInfo.PSObject.Properties["SdkType"]) { [string] $packageInfo.SdkType } else { "" }
         $apiHash = if ($packageInfo.PSObject.Properties["ApiHash"]) { [string] $packageInfo.ApiHash } else { "" }
         $releaseStatus = if ($packageInfo.PSObject.Properties["ReleaseStatus"]) { [string] $packageInfo.ReleaseStatus } else { "" }
 
@@ -170,9 +172,8 @@ foreach ($packageInfoFile in $packageInfoPaths) {
         if ([string]::IsNullOrWhiteSpace($packageVersion)) {
             throw "Package-info file does not contain a package Version."
         }
-
         try {
-            Test-PackageApproval $packageName $packageVersion $apiHash
+            Test-PackageApproval $packageName $packageVersion $packageType $apiHash
         }
         catch {
             if ($releaseStatus -eq "Unreleased") {
