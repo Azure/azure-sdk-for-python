@@ -146,7 +146,7 @@ safe-outputs:
                 and len(cells(lines[1])) == columns
                 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells(lines[1]))
                 and all(len(cells(line)) == columns and all(
-                            substantive(cell) or (column == "Confidence" and cell.strip("\x60") == "N/A")
+                            substantive(cell) or (column == "Confidence" and comparison_text(cell) == "n/a")
                             for column, cell in zip(header, cells(line)))
                         for line in lines[2:])
             )
@@ -181,6 +181,20 @@ safe-outputs:
                 else:
                     require(table(evidence, ["Changelog entry", "Cause", "Evidence and explanation", "Confidence"]),
                             "Attribution requires a populated four-column table or an explicit incomplete-collection reason.")
+                    rows = [line.strip() for line in evidence.splitlines() if line.strip()][2:]
+                    for row in rows:
+                        _, cause, explanation, confidence = cells(row)
+                        cause, confidence = comparison_text(cause), comparison_text(confidence)
+                        if cause == "human review":
+                            reason = re.fullmatch(r"needs human review\b[\s:;-]*(.+)", comparison_text(explanation))
+                            require(confidence == "n/a" and reason and substantive(reason[1])
+                                    and len(reason[1].split()) >= 2,
+                                    "Human review requires N/A confidence and an entry-specific reason after Needs human review.")
+                        else:
+                            high = re.fullmatch(r"high(?:\s*[:(\-\u2013\u2014]\s*(.+))?", confidence)
+                            require(cause == "typespec/api" and high
+                                    and (high[1] is None or substantive(high[1])),
+                                    "TypeSpec/API requires High confidence, optionally followed by its rationale.")
             return packages
 
         def validate_summary(text, attributed_packages):
@@ -506,12 +520,12 @@ JSON through the permitted `jq` command and the safe-output CLI:
 <!-- cspell:ignore gsub -->
 
 ```bash
-jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|@(?<decorator>renamedFrom|typeChangedFrom|returnTypeChangedFrom|added|removed|madeOptional|madeRequired|versioned|useDependency)\\b"; .url // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
+jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|(?<![A-Za-z0-9_@./-])@(?<decorator>[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*)"; .url // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
 ```
 
-This removes only the `@` sigil from the listed TypeSpec decorators, preserving their names,
-arguments, and evidence links without counting them as GitHub mentions. Refer to other decorators
-by name without the `@` sigil as well. Do not mention GitHub users in the review.
+This removes standalone TypeSpec-style `@` sigils, including namespace-qualified decorator names,
+while preserving decorator identifiers, arguments, and HTTP/HTTPS evidence links. Embedded
+identifiers and email addresses are not rewritten. Do not mention GitHub users in the review.
 The final `.` reads a JSON object from stdin. Never use `--body -` or `@filename`: those submit
 literal placeholder text, not the file contents. Do not submit a test or placeholder comment;
 only one submission is allowed per run. If submission fails, use `report_incomplete` with the

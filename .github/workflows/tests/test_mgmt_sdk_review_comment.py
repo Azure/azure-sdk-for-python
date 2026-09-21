@@ -151,14 +151,16 @@ class ReviewCommentTests(unittest.TestCase):
             '`Widget._check()` returns `None` per **API documentation**, not a review placeholder; '
             '[source](https://github.com/Azure/example/blob/' + "a" * 40 + '/_widget.py#L42).'
         )
-        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Needs human review: baseline unavailable", evidence))
+        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
+            "Needs human review: baseline unavailable", "Needs human review: source unresolved; " + evidence
+        ))
         payload = {"items": [{"type": "add_comment", "body": body}]}
         self.run_guard(payload)
         self.assertEqual(body, payload["items"][0]["body"])
         for evidence in ("`<Widget>`", "<https://github.com/Azure/example>", "`value & other`"):
             with self.subTest(evidence=evidence):
                 body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
-                    "Needs human review: baseline unavailable", evidence
+                    "Needs human review: baseline unavailable", "Needs human review: source unresolved; " + evidence
                 ))
                 self.run_guard({"items": [{"type": "add_comment", "body": body}]})
 
@@ -237,6 +239,32 @@ class ReviewCommentTests(unittest.TestCase):
         ):
             with self.subTest(attribution=attribution):
                 self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, attribution)}]})
+
+    def test_attribution_cause_confidence_and_handoff_reason(self):
+        template = ATTRIBUTION.rsplit("\n", 1)[0] + "\n| Removed Widget | {} | {} | {} |"
+        invalid = (
+            ("Human review", "Needs human review", "N/A"),
+            ("Human review", "Needs human review: **None!**", "N/A"),
+            ("Human review", "Needs human review: baseline unavailable", "High"),
+            ("TypeSpec/API", "Explicit renamedFrom evidence", "N/A"),
+            ("Generator", "An emitter version changed", "High"),
+            ("TypeSpec/API", "Explicit renamedFrom evidence", "Low"),
+            ("Human review", "No baseline found", "N/A"),
+        )
+        for row in invalid:
+            with self.subTest(row=row):
+                body = REVIEW.replace(NO_ENTRIES, template.format(*row))
+                self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+        valid = (
+            ("`Human review`", "**Needs human review:** baseline unavailable", "**N/A**"),
+            ("Human review", "Needs human review - baseline unavailable", "`N/A`"),
+            ("`TypeSpec/API`", "Explicit renamedFrom evidence", "`High`"),
+            ("**TypeSpec/API**", "Explicit renamedFrom evidence", "**High**: directly mapped source"),
+            ("TypeSpec/API", "Explicit renamedFrom evidence", "High (directly mapped source)"),
+        )
+        for row in valid:
+            with self.subTest(row=row):
+                self.run_guard({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, template.format(*row))}]})
 
     def test_summary_requires_package_names_and_completed_checks(self):
         for summary in (
@@ -325,20 +353,24 @@ class ReviewCommentTests(unittest.TestCase):
         evidence = (
             "\n".join(
                 '`@renamedFrom(Versions.v1, "OldWidget")` and `@typeChangedFrom(Versions.v1, string)`'
+                ' with `@clientName("Widget")` and `@Azure.ClientGenerator.Core.clientName("Widget")`'
                 for _ in range(13)
             )
             + "\nhttps://github.com/Azure/example/blob/" + "a" * 40 + "/main.tsp#L42-L48"
             + "\nhttps://github.com/Azure/example/blob/" + "b" * 40 + "/@renamedFrom.tsp#L1"
+            + "\nhttps://github.com/Azure/example/blob/" + "c" * 40 + "/@clientName.tsp#L1"
+            + "\ncontact@example.com and identifier@clientName remain unchanged."
             + '\nQuoted "text", escaped \\ path, and Markdown | delimiters.'
         )
         body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
-            "Needs human review: baseline unavailable", evidence.replace("\n", "<br>").replace("|", "\\|")
+            "Needs human review: baseline unavailable",
+            "Needs human review: source unresolved; " + evidence.replace("\n", "<br>").replace("|", "\\|")
         ))
         result = subprocess.run(
             [jq, "-Rs", command[1]], input=body, text=True, capture_output=True, check=True
         )
         payload = json.loads(result.stdout)
-        self.assertEqual({"body": body.replace("`@renamedFrom", "`renamedFrom").replace("`@typeChangedFrom", "`typeChangedFrom")},
+        self.assertEqual({"body": body.replace("`@", "`")},
                          payload)
         self.assertNotIn("`@", payload["body"])
         self.run_guard({"items": [{"type": "add_comment", **payload}]})
