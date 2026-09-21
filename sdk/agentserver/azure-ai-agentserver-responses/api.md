@@ -506,8 +506,9 @@ namespace azure.ai.agentserver.responses
         def add_output_item_mcp_call(
                 self, 
                 server_label: str, 
-                name: str, 
-                *, 
+                name: str,
+                *,
+                approval_request_id: str | None = ...,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
@@ -923,8 +924,9 @@ namespace azure.ai.agentserver.responses.aio
         def add_output_item_mcp_call(
                 self, 
                 server_label: str, 
-                name: str, 
-                *, 
+                name: str,
+                *,
+                approval_request_id: str | None = ...,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
@@ -1273,7 +1275,9 @@ namespace azure.ai.agentserver.responses.aio.streaming
                 output_index: int, 
                 item_id: str, 
                 server_label: str, 
-                name: str
+                name: str,
+                *,
+                approval_request_id: str | None = ...
             ) -> None: ...
 
         async def arguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
@@ -1497,8 +1501,9 @@ namespace azure.ai.agentserver.responses.aio.streaming
         def add_output_item_mcp_call(
                 self, 
                 server_label: str, 
-                name: str, 
-                *, 
+                name: str,
+                *,
+                approval_request_id: str | None = ...,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
@@ -6424,7 +6429,9 @@ namespace azure.ai.agentserver.responses.streaming
                 output_index: int, 
                 item_id: str, 
                 server_label: str, 
-                name: str
+                name: str,
+                *,
+                approval_request_id: str | None = ...
             ) -> None: ...
 
         def arguments(self, args: str) -> Iterator[ResponseStreamEvent]: ...
@@ -6648,8 +6655,9 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_mcp_call(
                 self, 
                 server_label: str, 
-                name: str, 
-                *, 
+                name: str,
+                *,
+                approval_request_id: str | None = ...,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
