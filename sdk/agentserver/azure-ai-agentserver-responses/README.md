@@ -169,7 +169,7 @@ app.run()
 
 ### Multi-user session (per-request call ID)
 
-On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf — so user A's and user B's requests to the same session each get a user-scoped result. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `context.platform_context.user_id_key` only for the container's own per-user state.)
+With container protocol `2.0.0`, a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf — so user A's and user B's requests to the same session each get a user-scoped result. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `context.platform_context.user_id_key` only for the container's own per-user state.)
 
 ```python
 import asyncio
