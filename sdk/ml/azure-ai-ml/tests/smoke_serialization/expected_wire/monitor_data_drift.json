@@ -21,7 +21,7 @@
           },
           "computeType": "ServerlessSpark",
           "instanceType": "standard_e8s_v3",
-          "runtimeVersion": "3.4"
+          "runtimeVersion": "3.5"
         },
         "monitoringTarget": {
           "deploymentId": "fake_endpoint_id",
