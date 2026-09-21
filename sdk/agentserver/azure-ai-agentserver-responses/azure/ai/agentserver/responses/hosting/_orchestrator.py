@@ -3162,6 +3162,19 @@ class _ResponseOrchestrator:
                 # prevents the shutdown wait loop from returning before the
                 # deferred terminal write below completes.
                 state.execution_task = asyncio.current_task()
+                # Close the pre-first-event shutdown race: until the handler's
+                # first event triggers ``_register_bg_execution``, no record is
+                # published to runtime_state, so a shutdown that snapshots
+                # ``list_records()`` in this window would see no task and could
+                # cancel this fallback before the deferred terminal write below.
+                # Publish ``start_record`` (carrying this task) now so it is in
+                # that snapshot and shutdown waits for it. ``_register_bg_execution``
+                # later overwrites this id and copies ``state.execution_task`` onto
+                # the canonical record, so the live task is never dropped; the
+                # ``add`` here is idempotent-by-id, not a duplicate.
+                start_record.execution_task = state.execution_task
+                state.bg_record = start_record
+                await self._runtime_state.add(start_record)
                 try:
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass

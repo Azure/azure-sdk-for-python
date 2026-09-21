@@ -32,6 +32,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.store._base import ResponseProviderProtocol
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 from .test_persistence_failure import (
     _AsyncAsgiClient,
@@ -372,3 +373,74 @@ class TestAsyncTerminalPersist:
 
         assert failed_body.get("status") == "failed", f"GET never reflected failure: {failed_body}"
         assert failed_body.get("error", {}).get("code") == "storage_error"
+
+    @pytest.mark.asyncio
+    async def test_fallback_registers_drainable_record_before_first_event(self) -> None:
+        """The in-process fallback must publish a drainable record BEFORE the
+        handler's first event.
+
+        Until the first event triggers ``_register_bg_execution`` no record is
+        in runtime state, so a graceful shutdown that snapshots ``list_records()``
+        in this window would see no task and could cancel the fallback before its
+        deferred terminal write. The fallback therefore pre-registers a record
+        carrying its live ``execution_task`` up front."""
+        first_gate = asyncio.Event()
+
+        async def _gated_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+            async def _events():
+                # Block before the first event so the pre-registration window
+                # (fallback started; nothing published by _register_bg_execution
+                # yet) stays open for the assertions below.
+                await first_gate.wait()
+                stream = ResponseEventStream(
+                    response_id=context.response_id, model=getattr(request, "model", None)
+                )
+                yield stream.emit_created()
+                for evt in stream.output_item_message("Hello, world!"):
+                    yield evt
+                yield stream.emit_completed()
+
+            return _events()
+
+        provider = _ControllableProvider(InMemoryResponseProvider())
+        app = ResponsesAgentServerHost(store=provider)
+        app.response_handler(_gated_handler)
+        client = _AsyncAsgiClient(app)
+        orchestrator = app._endpoint._orchestrator  # pylint: disable=protected-access
+
+        # Drive the streaming POST concurrently; it blocks inside the handler on
+        # ``first_gate`` before any event is emitted.
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "model": "test-model",
+                    "input": [{"role": "user", "content": "hi"}],
+                    "stream": True,
+                    "store": True,
+                },
+            )
+        )
+        try:
+            record = None
+            for _ in range(200):
+                records = await orchestrator._runtime_state.list_records()  # pylint: disable=protected-access
+                if records:
+                    record = records[0]
+                    break
+                await asyncio.sleep(0.01)
+            # The handler is still gated, so no event has been emitted yet.
+            assert not first_gate.is_set()
+            assert record is not None, "fallback did not pre-register a drainable record before the first event"
+            assert record.status == "in_progress"
+            # The record carries the live fallback task, so ``handle_shutdown``
+            # drains it instead of racing loop teardown.
+            assert record.execution_task is not None, "pre-registered record has no execution_task"
+            assert not record.execution_task.done()
+        finally:
+            first_gate.set()
+
+        resp = await post_task
+        assert resp.status_code == 200
+        events = _parse_sse_bytes(resp.body)
+        assert "response.completed" in [e["type"] for e in events]
