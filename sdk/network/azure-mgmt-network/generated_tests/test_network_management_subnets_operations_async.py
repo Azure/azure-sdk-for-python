@@ -27,7 +27,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -672,6 +672,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -692,6 +693,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -895,6 +897,9 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -915,6 +920,9 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1421,6 +1429,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                             "id": "str",
                                             "name": "str",
                                             "properties": {
+                                                "approvalReference": {"privateEndpointId": "str"},
                                                 "groupIds": ["str"],
                                                 "privateLinkServiceConnectionState": {
                                                     "actionsRequired": "str",
@@ -2550,6 +2559,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                                             "id": "str",
                                             "name": "str",
                                             "properties": {
+                                                "approvalReference": {"privateEndpointId": "str"},
                                                 "groupIds": ["str"],
                                                 "privateLinkServiceConnectionState": {
                                                     "actionsRequired": "str",
@@ -2673,7 +2683,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2688,7 +2698,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_network_name="str",
                 subnet_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2701,7 +2711,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.subnets.list(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2731,7 +2741,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                     ],
                     "serviceName": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2747,7 +2757,7 @@ class TestNetworkManagementSubnetsOperationsAsync(AzureMgmtRecordedTestCase):
                 virtual_network_name="str",
                 subnet_name="str",
                 unprepare_network_policies_request_parameters={"serviceName": "str"},
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

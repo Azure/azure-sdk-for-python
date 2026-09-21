@@ -32,7 +32,7 @@ class TestNetworkManagementFirewallPolicyIdpsSignaturesOperationsAsync(AzureMgmt
                 "search": "str",
                 "skip": 0,
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
