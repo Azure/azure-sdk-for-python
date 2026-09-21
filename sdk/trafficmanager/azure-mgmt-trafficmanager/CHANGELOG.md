@@ -22,34 +22,11 @@
 
 ### Breaking Changes
 
-  - Model `Endpoint` deleted or renamed its instance variable `always_serve`
-  - Model `Endpoint` deleted or renamed its instance variable `custom_headers`
-  - Model `Endpoint` deleted or renamed its instance variable `endpoint_location`
-  - Model `Endpoint` deleted or renamed its instance variable `endpoint_monitor_status`
-  - Model `Endpoint` deleted or renamed its instance variable `endpoint_status`
-  - Model `Endpoint` deleted or renamed its instance variable `geo_mapping`
-  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints`
-  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints_i_pv4`
-  - Model `Endpoint` deleted or renamed its instance variable `min_child_endpoints_i_pv6`
-  - Model `Endpoint` deleted or renamed its instance variable `priority`
-  - Model `Endpoint` deleted or renamed its instance variable `subnets`
-  - Model `Endpoint` deleted or renamed its instance variable `target`
-  - Model `Endpoint` deleted or renamed its instance variable `target_resource_id`
-  - Model `Endpoint` deleted or renamed its instance variable `weight`
-  - Model `HeatMapModel` deleted or renamed its instance variable `end_time`
-  - Model `HeatMapModel` deleted or renamed its instance variable `endpoints`
-  - Model `HeatMapModel` deleted or renamed its instance variable `start_time`
-  - Model `HeatMapModel` deleted or renamed its instance variable `traffic_flows`
-  - Model `Profile` deleted or renamed its instance variable `allowed_endpoint_record_types`
-  - Model `Profile` deleted or renamed its instance variable `dns_config`
-  - Model `Profile` deleted or renamed its instance variable `endpoints`
-  - Model `Profile` deleted or renamed its instance variable `max_return`
-  - Model `Profile` deleted or renamed its instance variable `monitor_config`
-  - Model `Profile` deleted or renamed its instance variable `profile_status`
-  - Model `Profile` deleted or renamed its instance variable `traffic_routing_method`
-  - Model `Profile` deleted or renamed its instance variable `traffic_view_enrollment_status`
-  - Model `TrafficManagerGeographicHierarchy` deleted or renamed its instance variable `geographic_hierarchy`
-  - Model `UserMetricsModel` deleted or renamed its instance variable `key`
+  - Model `Endpoint` moved instance variable `always_serve`, `custom_headers`, `endpoint_location`, `endpoint_monitor_status`, `endpoint_status`, `geo_mapping`, `min_child_endpoints`, `min_child_endpoints_i_pv4`, `min_child_endpoints_i_pv6`, `priority`, `subnets`, `target`, `target_resource_id` and `weight` under property `properties` whose type is `EndpointProperties`
+  - Model `HeatMapModel` moved instance variable `end_time`, `endpoints`, `start_time` and `traffic_flows` under property `properties` whose type is `HeatMapProperties`
+  - Model `Profile` moved instance variable `allowed_endpoint_record_types`, `dns_config`, `endpoints`, `max_return`, `monitor_config`, `profile_status`, `traffic_routing_method` and `traffic_view_enrollment_status` under property `properties` whose type is `ProfileProperties`
+  - Model `TrafficManagerGeographicHierarchy` moved instance variable `geographic_hierarchy` under property `properties` whose type is `GeographicHierarchyProperties`
+  - Model `UserMetricsModel` moved instance variable `key` under property `properties` whose type is `UserMetricsProperties`
   - Deleted or renamed model `ProfileListResult`
   - Method `HeatMapOperations.get` changed type of its parameter `bot_right` from `List[float]` to `list[float]`
   - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
