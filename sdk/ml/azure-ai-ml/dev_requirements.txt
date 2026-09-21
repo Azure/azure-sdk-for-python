@@ -2,7 +2,7 @@
 ../../core/azure-core
 ../../identity/azure-identity
 marshmallow>=3.5,<4.0.0
-marshmallow-jsonschema==0.10.0
+marshmallow-jsonschema==0.14.0
 mock
 pytest-cov
 pytest-forked
