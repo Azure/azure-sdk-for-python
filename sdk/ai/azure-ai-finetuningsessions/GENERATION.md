@@ -52,8 +52,9 @@ changes and still needs its own coordinated source/wheel migration.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
   It pins the immutable TypeSpec commit
-  `5b2372a4f5063925b56783f088e577758736b297`, restoring the existing session
-  routes while retaining the namespace migration and preview error-model exports.
+  `5507786d95dd56c5346cabb3d8b8fcf6282eaacc`, including the route restoration
+  and suppression cleanup while retaining the namespace migration and preview
+  error-model exports.
   Generation was verified against
   that commit's exact source content; the fingerprint below identifies it.
 - The TypeSpec target incorporated is
@@ -213,7 +214,10 @@ distinct from the offline tests and successful emission comparisons.
 - **22 generated files** matched two independent pinned emissions; handwritten
   files and TypeSpec source were unchanged during verification.
 - The renamed TypeSpec input fingerprint is
-  `f75684047115c7d804f9929c3263501ad4ced9f7b41572aa4c4c116ac5467245`.
+  `0bfa77b361e2bb531a006c46766d9d2d93c816e8b283a0f58e03d637ba480b8d`.
+- The unused `no-unknown` linter disable was removed without changing generated
+  output. The closed-literal-union exception remains justified by existing
+  input/shared unions and still requires API reviewer approval.
 - The API contains **13 paths / 15 methods**, now under `/fine_tuning/sessions`,
   matching HTTP 200 submissions and raw request-status envelopes. Package and
   Python namespace names remain `azure-ai-finetuningsessions` and

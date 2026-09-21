@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# TypeSpec commit restoring the existing HTTP routes with the renamed namespace.
-commit: 5b2372a4f5063925b56783f088e577758736b297
+# TypeSpec commit including the route restoration and suppression cleanup.
+commit: 5507786d95dd56c5346cabb3d8b8fcf6282eaacc
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json
