@@ -156,8 +156,9 @@ safe-outputs:
             return bool(lines) and all(
                 line not in {
                     "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
+                    "unable to complete review because",
                 }
-                and not re.match(r"(?:full review pending|review pending)\b", line)
+                and not re.match(r"(?:(?:full )?review (?:is )?pending|pending review)\b", line)
                 for line in [comparison_text(text), *lines]
             ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
 

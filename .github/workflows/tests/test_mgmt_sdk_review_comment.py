@@ -236,6 +236,34 @@ class ReviewCommentTests(unittest.TestCase):
             handoff = "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:** " + reason
             self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
 
+    def test_pending_variants_are_not_evidence(self):
+        functions = self.comparison_functions()
+        for placeholder in ("Full review is pending", "pending review", "Unable to complete review because ..."):
+            with self.subTest(placeholder=placeholder):
+                self.assertFalse(functions["substantive"](placeholder))
+            for body in (
+                REVIEW.replace(NO_ENTRIES, "**Package: azure-mgmt-example | Release: unverified**\n\n"
+                               "**Needs human review:** " + placeholder),
+                REVIEW.replace("**Unverified checks:** None.",
+                               "| Check | Reason |\n| --- | --- |\n| Client signature | " + placeholder + " |"),
+                REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Removed Widget", placeholder)),
+                REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("baseline unavailable", placeholder)),
+            ):
+                with self.subTest(placeholder=placeholder, body=body):
+                    self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+
+    def test_concrete_failure_reasons_remain_valid_partial_evidence(self):
+        reason = "Unable to complete review because the pinned client file returned HTTP 404."
+        body = REVIEW.replace(
+            NO_ENTRIES, "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:** " + reason
+        ).replace(
+            "**Unverified checks:** None.",
+            "| Check | Reason |\n| --- | --- |\n| Client signature | " + reason + " |",
+        ).replace(CHECKS, "README snippets")
+        self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("baseline unavailable", reason))
+        self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+
     def test_handoff_label_soft_break_and_diagnostic_prefix(self):
         prefix = "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:**"
         for reason in (
