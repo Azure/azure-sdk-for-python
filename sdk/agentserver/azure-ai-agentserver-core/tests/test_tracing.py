@@ -1019,10 +1019,12 @@ class TestScheduleFlushSpans:
     def setup_method(self) -> None:
         _tracing._bg_flush_task = None
         _tracing._bg_flush_pending = False
+        _tracing._bg_flush_pending_timeout_millis = 0
 
     def teardown_method(self) -> None:
         _tracing._bg_flush_task = None
         _tracing._bg_flush_pending = False
+        _tracing._bg_flush_pending_timeout_millis = 0
 
     def test_falls_back_to_sync_without_running_loop(self) -> None:
         with mock.patch.object(_tracing, "flush_spans") as m_sync:
@@ -1049,6 +1051,27 @@ class TestScheduleFlushSpans:
             await task
         # Initial flush + one coalesced follow-up == 2 exports, not 51.
         assert len(provider.calls) == 2
+        assert _tracing._bg_flush_pending is False
+
+    @pytest.mark.asyncio
+    async def test_coalesced_followup_uses_max_requested_timeout(self) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+            # First caller starts the in-flight flush with its own timeout.
+            _tracing.schedule_flush_spans(10)
+            task = _tracing._bg_flush_task
+            assert task is not None
+            await _wait_for(provider.started)
+            # Two callers coalesce while the flush is in flight, requesting
+            # different bounds. The follow-up must honour the largest (5000) so
+            # the 1 ms caller cannot shrink the batch's timeout.
+            _tracing.schedule_flush_spans(1)
+            _tracing.schedule_flush_spans(5000)
+            assert _tracing._bg_flush_pending is True
+            provider.release.set()
+            await task
+        # First caller's own timeout, then the max of the coalesced batch.
+        assert provider.calls == [10, 5000]
         assert _tracing._bg_flush_pending is False
 
     @pytest.mark.asyncio
