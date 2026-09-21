@@ -131,7 +131,7 @@ safe-outputs:
                 line not in {
                     "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
                 }
-                for line in lines
+                for line in [comparison_text(text), *lines]
             ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
 
         def cells(line):
@@ -223,6 +223,9 @@ safe-outputs:
             require(isinstance(items, list) and len(items) == 1,
                     "Expected exactly one completed review; missing, duplicate, or diagnostic outputs cannot be published.")
             item = items[0]
+            require(not isinstance(item, dict) or item.get("type") != "report_incomplete",
+                    "Review reported incomplete. Inspect report_incomplete reason/details in the agent artifact; "
+                    "diagnostic handlers and comment publication are intentionally blocked.")
             require(isinstance(item, dict) and item.get("type") == "add_comment",
                     "Expected add_comment, not an incomplete review or diagnostic.")
             body = item.get("body")
@@ -256,6 +259,10 @@ safe-outputs:
             require(findings == "**Findings:** None." or table(findings,
                     ["Severity", "Finding", "Location", "Evidence", "Rule", "Remediation"]),
                     "Findings must contain the findings table with evidence or **Findings:** None.")
+            if findings != "**Findings:** None.":
+                rows = [line.strip() for line in findings.splitlines() if line.strip()][2:]
+                require(all(comparison_text(cells(row)[0]) in {"blocking", "warning", "suggestion"} for row in rows),
+                        "Finding severity must be Blocking, Warning, or Suggestion.")
             require(unverified == "**Unverified checks:** None." or table(unverified, ["Check", "Reason"]),
                     "Unverified checks must contain a populated table or **Unverified checks:** None.")
             validate_summary(summary, attribution_packages(attribution))
@@ -508,6 +515,9 @@ If no checks could be completed, report incomplete rather than claiming a comple
 The publication gate validates this structure and
 cross-checks attribution package names against the summary, not factual completeness against
 the collected context. You must still include every `affectedPackages` entry from the context.
+The safe-output job has no independently trusted copy of `affectedPackages`; it cannot enforce
+complete package coverage. The agent's workspace/artifact copy is not an authoritative boundary
+for that check. Enforcing coverage would require a separate trusted pre-agent context transfer.
 Placeholder comparison handles inline Markdown links/images, HTML formatting/entities, emphasis,
 inline code, and terminal ASCII punctuation without changing submitted evidence. It is not a
 general Markdown renderer or semantic verification of the review.
@@ -520,16 +530,21 @@ JSON through the permitted `jq` command and the safe-output CLI:
 <!-- cspell:ignore gsub -->
 
 ```bash
-jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|(?<![A-Za-z0-9_@./-])@(?<decorator>[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*)"; .url // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
+jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|(?<email>(?:[A-Za-z0-9][A-Za-z0-9.!#$%&*+/=?^_\\x60{|}~\\x27-]*|\"(?:[^\"\\\\\\r\\n]|\\\\.)+\")@[A-Za-z0-9.-]+\\.[A-Za-z]{2,})|(?<![A-Za-z0-9_@./-])@{1,2}(?<decorator>[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*)"; .url // .email // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
 ```
 
-This removes standalone TypeSpec-style `@` sigils, including namespace-qualified decorator names,
-while preserving decorator identifiers, arguments, and HTTP/HTTPS evidence links. Embedded
-identifiers and email addresses are not rewritten. Do not mention GitHub users in the review.
+This removes standalone TypeSpec-style `@` or augment-decorator `@@` sigils, including
+namespace-qualified names, while preserving decorator identifiers, arguments, and HTTP/HTTPS
+evidence links. The higher-priority email alternative preserves common ASCII addresses with
+alphanumeric-starting or quoted local parts, including punctuation-ending local parts. This is
+not full RFC email parsing. Embedded identifiers are not rewritten. Do not mention GitHub users.
 The final `.` reads a JSON object from stdin. Never use `--body -` or `@filename`: those submit
 literal placeholder text, not the file contents. Do not submit a test or placeholder comment;
 only one submission is allowed per run. If submission fails, use `report_incomplete` with the
 exact error rather than claiming the review was published.
+That diagnostic remains in the agent artifact for troubleshooting; the guard deliberately fails
+before all built-in output handlers, so it is not delivered as a comment or issue. A diagnostic
+combined with a comment also fails without publishing or hiding earlier reviews.
 
 The publisher independently rejects missing, placeholder, structurally incomplete, or diagnostic
 outputs before posting a comment or hiding earlier reviews. Keep the required sections and

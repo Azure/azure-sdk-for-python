@@ -196,6 +196,24 @@ class ReviewCommentTests(unittest.TestCase):
                 self.assert_rejected({"items": [{"type": "add_comment",
                                                 "body": REVIEW.replace(NO_ENTRIES, handoff + trailing)}]})
 
+    def test_wrapped_placeholder_handoff_is_rejected(self):
+        for reason in ("Full review\npending", "**Full** review\n_pending!_"):
+            handoff = "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:** " + reason
+            self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
+
+    def test_findings_require_documented_severity(self):
+        findings = (
+            "| Severity | Finding | Location | Evidence | Rule | Remediation |\n"
+            "| --- | --- | --- | --- | --- | --- |\n"
+            "| {} | Version mismatch | pyproject.toml | Version differs | Version consistency | Align versions |"
+        )
+        for severity in ("Critical", "Pending", "Anything"):
+            self.assert_rejected({"items": [{"type": "add_comment",
+                                            "body": REVIEW.replace("**Findings:** None.", findings.format(severity))}]})
+        for severity in ("`Blocking`", "**Warning**", "_Suggestion_"):
+            self.run_guard({"items": [{"type": "add_comment",
+                                      "body": REVIEW.replace("**Findings:** None.", findings.format(severity))}]})
+
     def test_completed_checks_use_positive_reporting_names(self):
         for checks in (
             "Unable to complete review because the evidence tool failed",
@@ -311,6 +329,13 @@ class ReviewCommentTests(unittest.TestCase):
                 self.assert_rejected({"items": [diagnostic]})
                 self.assert_rejected({"items": [comment, diagnostic]})
 
+    def test_incomplete_diagnostic_points_to_retained_artifact(self):
+        diagnostic = {"type": "report_incomplete", "reason": "submission failed", "details": "Exact tool error"}
+        with self.assertRaisesRegex(SystemExit, "report_incomplete reason/details in the agent artifact"):
+            self.run_guard({"items": [diagnostic]})
+        self.assertEqual("Exact tool error", diagnostic["details"])
+        self.assert_rejected({"items": [diagnostic, {"type": "add_comment", "body": REVIEW}]})
+
     def test_missing_or_invalid_artifact_fails_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "agent_output.json"
@@ -354,12 +379,15 @@ class ReviewCommentTests(unittest.TestCase):
             "\n".join(
                 '`@renamedFrom(Versions.v1, "OldWidget")` and `@typeChangedFrom(Versions.v1, string)`'
                 ' with `@clientName("Widget")` and `@Azure.ClientGenerator.Core.clientName("Widget")`'
+                ' plus `@@clientName(Widget, "NewWidget")` and `@@Azure.ClientGenerator.Core.clientName(Widget, "NewWidget")`'
                 for _ in range(13)
             )
             + "\nhttps://github.com/Azure/example/blob/" + "a" * 40 + "/main.tsp#L42-L48"
             + "\nhttps://github.com/Azure/example/blob/" + "b" * 40 + "/@renamedFrom.tsp#L1"
             + "\nhttps://github.com/Azure/example/blob/" + "c" * 40 + "/@clientName.tsp#L1"
             + "\ncontact@example.com and identifier@clientName remain unchanged."
+            + "\n" + " ".join("owner" + char + "@example.com" for char in "!#$%&'*+-/=?^_`{}~")
+            + '\n"owner +"@example.com and "owner \\"quoted\\""@example.com remain unchanged.'
             + '\nQuoted "text", escaped \\ path, and Markdown | delimiters.'
         )
         body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
@@ -370,11 +398,15 @@ class ReviewCommentTests(unittest.TestCase):
             [jq, "-Rs", command[1]], input=body, text=True, capture_output=True, check=True
         )
         payload = json.loads(result.stdout)
-        self.assertEqual({"body": body.replace("`@", "`")},
+        self.assertEqual({"body": re.sub(r"(?<=`)@{1,2}(?=(?:renamedFrom|typeChangedFrom|clientName|Azure)\b)", "", body)},
                          payload)
-        self.assertNotIn("`@", payload["body"])
+        self.assertNotRegex(payload["body"], r"`@{1,2}(?:clientName|Azure)\b")
         self.run_guard({"items": [{"type": "add_comment", **payload}]})
         self.assertIn('"jq"', SOURCE.split("safe-outputs:", 1)[0])
+        addresses = " ".join("owner" + char + "@example.com" for char in "!#$%&'*+-/=?^_`{|}~")
+        addresses += ' "owner +"@example.com "owner \\"quoted\\""@example.com'
+        result = subprocess.run([jq, "-Rs", command[1]], input=addresses, text=True, capture_output=True, check=True)
+        self.assertEqual({"body": addresses}, json.loads(result.stdout))
 
 
 if __name__ == "__main__":
