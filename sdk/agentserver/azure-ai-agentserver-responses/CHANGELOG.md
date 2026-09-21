@@ -16,6 +16,15 @@
 
 ### Other Changes
 
+- Optimized warm-path streaming last-byte latency: for in-process (non-resilient)
+  `store=true` streaming responses, the terminal `response.completed`/`response.failed`
+  event is now emitted to the client and the wire stream closed **before** the terminal
+  provider write, moving the terminal storage round-trip off the client's last-byte
+  path. A rare terminal-write failure now surfaces on a later GET (record stamped
+  `storage_error`) rather than on the stream. The resilient path is unchanged.
+  DELETE waits for pending execution and persistence before removing the response,
+  preventing deferred writes from recreating deleted data. Executions awaiting
+  their first event remain tracked for shutdown but are not publicly visible.
 - Reuse request-scoped history lookups and concurrent input-reference resolution without caching failed or cancelled reads.
 - Flush streaming telemetry after request-owned handler and iterator cleanup,
   including on disconnects, and before HTTP completion instead of delaying the first stream event.
