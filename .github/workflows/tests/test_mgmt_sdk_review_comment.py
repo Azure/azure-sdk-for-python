@@ -44,7 +44,9 @@ NOT_APPLICABLE = (
 
 
 class ReviewCommentTests(unittest.TestCase):
-    def run_guard(self, payload):
+    def run_guard(self, payload, canonical=True):
+        if canonical and isinstance(payload, dict):
+            payload = {"errors": [], **payload}
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "agent_output.json"
             output.write_text(json.dumps(payload), encoding="utf-8")
@@ -200,6 +202,32 @@ class ReviewCommentTests(unittest.TestCase):
         for reason in ("Full review\npending", "**Full** review\n_pending!_"):
             handoff = "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:** " + reason
             self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
+
+    def test_handoff_label_soft_break_and_diagnostic_prefix(self):
+        prefix = "**Package: azure-mgmt-example | Release: unverified**\n\n**Needs human review:**"
+        for reason in (
+            "Full review pending - see logs", "Review pending: see logs",
+            "<ul><li>Baseline evidence unavailable</li></ul>",
+            "Baseline unavailable <ol><li>See logs</li></ol>",
+        ):
+            with self.subTest(reason=reason):
+                self.assert_rejected({"items": [{"type": "add_comment",
+                                                "body": REVIEW.replace(NO_ENTRIES, prefix + " " + reason)}]})
+        body = REVIEW.replace(NO_ENTRIES, prefix + "\nThe changelog was truncated\nbefore its release heading.")
+        self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+        self.assert_rejected({"items": [{"type": "add_comment",
+                                        "body": REVIEW.replace(NO_ENTRIES, prefix + "\n\nA detached reason paragraph.")}]})
+
+    def test_collector_errors_fail_closed(self):
+        item = {"type": "add_comment", "body": REVIEW}
+        payload = {"items": [item], "errors": []}
+        self.run_guard(payload, canonical=False)
+        self.assertEqual({"items": [item], "errors": []}, payload)
+        for errors in (["Line 2: Invalid JSON"], None, "", {}, False, 0):
+            with self.subTest(errors=errors):
+                self.assert_rejected({"items": [item], "errors": errors})
+        with self.assertRaisesRegex(SystemExit, "collector errors"):
+            self.run_guard({"items": [item]}, canonical=False)
 
     def test_findings_require_documented_severity(self):
         findings = (

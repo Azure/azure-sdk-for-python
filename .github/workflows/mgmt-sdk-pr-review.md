@@ -131,6 +131,7 @@ safe-outputs:
                 line not in {
                     "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
                 }
+                and not re.match(r"(?:full review pending|review pending)\b", line)
                 for line in [comparison_text(text), *lines]
             ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
 
@@ -169,14 +170,19 @@ safe-outputs:
                 packages.add(package_name(package.strip()))
                 require(substantive(release), "Attribution release is missing or a placeholder; use unverified if unknown.")
                 evidence = evidence.strip()
-                if evidence.startswith("**Needs human review:** "):
-                    reason = evidence.removeprefix("**Needs human review:** ").strip()
+                if evidence.startswith("**Needs human review:**"):
+                    reason = evidence.removeprefix("**Needs human review:**")
+                    require(re.match(r"^(?:[ \t]+|[ \t]*\n(?![ \t]*\n))", reason)
+                            and not re.match(r"^[ \t]*\n[ \t]*\n", reason),
+                            "Incomplete collection requires a reason on the same or immediately following line.")
+                    reason = reason.strip()
                     require(
                         substantive(reason) and len(comparison_text(reason).split()) >= 3
                         and not re.search(r"\n\s*\n|(?<!\\)\|", reason)
                         and not re.search(
                             r"(?mi)^\s*(?:[#>]|[-+*]\s|\d+[.)]\s|[\x60~]{3}|[-=]{3,}\s*$|"
-                            r"<(?:table|h[1-6]|pre|div)\b)", reason),
+                            r"<(?:table|h[1-6]|pre|div)\b)", reason)
+                        and not re.search(r"(?i)</?(?:ul|ol|li|dl|dt|dd|table|h[1-6]|pre|div|blockquote)\b", reason),
                         "Incomplete collection requires one reason paragraph, without table or heading blocks.")
                 else:
                     require(table(evidence, ["Changelog entry", "Cause", "Evidence and explanation", "Confidence"]),
@@ -219,6 +225,9 @@ safe-outputs:
 
         def validate(payload):
             require(isinstance(payload, dict), "Expected an agent output object.")
+            # gh-aw v0.87.1 emits errors alongside items, including rejected entries.
+            require(isinstance(payload.get("errors"), list) and not payload["errors"],
+                    "Expected an empty collector errors list. Inspect errors in the agent artifact before retrying.")
             items = payload.get("items")
             require(isinstance(items, list) and len(items) == 1,
                     "Expected exactly one completed review; missing, duplicate, or diagnostic outputs cannot be published.")
@@ -493,7 +502,8 @@ entries.` Do not merge attribution rows into the findings table.
 If collection is incomplete and no entry rows can be produced for a package/release, retain its
 `**Package: azure-mgmt-example | Release: release heading**` group label (use `unverified` if the
 release is unknown), followed by `**Needs human review:**` and a specific missing-evidence reason.
-Use one prose paragraph (line wrapping and inline evidence links are allowed), not additional
+Use one prose paragraph, starting on the same line as the label or immediately after one soft
+line break (line wrapping and inline evidence links are allowed), not additional
 tables, headings, lists, or fenced blocks. Name the affected changelog when known.
 Do not imply that all introduced entries were checked.
 Do not add a separate attribution limitations table or repeat handoff reasons under unverified checks.
@@ -546,7 +556,7 @@ That diagnostic remains in the agent artifact for troubleshooting; the guard del
 before all built-in output handlers, so it is not delivered as a comment or issue. A diagnostic
 combined with a comment also fails without publishing or hiding earlier reviews.
 
-The publisher independently rejects missing, placeholder, structurally incomplete, or diagnostic
+The publisher independently rejects collector errors and missing, placeholder, structurally incomplete, or diagnostic
 outputs before posting a comment or hiding earlier reviews. Keep the required sections and
 explicit `None` statements even when there are no findings.
 
