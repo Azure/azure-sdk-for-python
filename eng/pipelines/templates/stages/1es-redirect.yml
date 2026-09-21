@@ -8,10 +8,14 @@ resources:
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
       ref: refs/tags/canary
-    - repository: azure-sdk-build-tools
-      type: git
-      name: internal/azure-sdk-build-tools
-      ref: refs/tags/azure-sdk-build-tools_20260702.2
+    # Only declared for internal, non-PR runs: signing never runs on PR builds (the public
+    # project cannot reach internal/azure-sdk-build-tools), matching the compile-time gate in
+    # archetype-python-release.yml that decides whether a Sign_* stage is even emitted.
+    - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+      - repository: azure-sdk-build-tools
+        type: git
+        name: internal/azure-sdk-build-tools
+        ref: refs/tags/azure-sdk-build-tools_20260702.2
 
 parameters:
 - name: stages
