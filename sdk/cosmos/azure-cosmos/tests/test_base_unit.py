@@ -23,3 +23,15 @@ class TestIdAndNameBased(unittest.TestCase):
         # incorrectly formatted link should raise ValueError
         with pytest.raises(ValueError):
             base.GetResourceIdOrFullNameFromLink("db/xjwmAA==/coll/")
+
+    def test_name_based_link_is_url_encoded(self):
+        # The signing link must be URL-encoded the same way GetPathFromLink encodes
+        # the request path, so the auth signature validates on the server
+        # (see https://github.com/Azure/azure-sdk-for-python/issues/47503)
+        assert base.GetResourceIdOrFullNameFromLink(
+            "dbs/paas_cmr/colls/spaced id") == "dbs/paas_cmr/colls/spaced%20id"
+        assert base.GetPathFromLink(
+            "dbs/paas_cmr/colls/spaced id").startswith("/dbs/paas_cmr/colls/spaced%20id/")
+        # links without URL-unsafe characters are unchanged
+        assert base.GetResourceIdOrFullNameFromLink(
+            "dbs/paas_cmr/colls/plain_id") == "dbs/paas_cmr/colls/plain_id"
