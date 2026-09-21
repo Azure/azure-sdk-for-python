@@ -96,6 +96,7 @@ safe-outputs:
         from pathlib import Path
         import re
         import string
+        import unicodedata
 
         def require(condition, message):
             if not condition:
@@ -104,7 +105,24 @@ safe-outputs:
         def comparison_text(text):
             # Bounded rendering of inline links, HTML, and formatting, for comparison only.
             text = re.sub(r"!?\[([^\]\n]*)\]\((?:[^()\n]|\([^()\n]*\))*\)", r"\1", text)
-            text = re.sub(r"(\x60+)(.*?)\1", lambda match: escape(match[2]), text)
+            # Match equal-length delimiter runs without backtracking over long backtick sequences.
+            runs = list(re.finditer(r"\x60+", text))
+            following, latest = {}, {}
+            for index in range(len(runs) - 1, -1, -1):
+                size = runs[index].end() - runs[index].start()
+                following[index] = latest.get(size)
+                latest[size] = index
+            parts, position, index = [], 0, 0
+            while index < len(runs):
+                end = following[index]
+                if end is None:
+                    index += 1
+                    continue
+                parts.extend((text[position:runs[index].start()], escape(text[runs[index].end():runs[end].start()])))
+                position = runs[end].end()
+                index = end + 1
+            parts.append(text[position:])
+            text = "".join(parts)
             text = re.sub(r"<(https?://[^<>\s]+)>", r"\1", text)
             class VisibleText(HTMLParser):
                 def __init__(self):
@@ -119,7 +137,15 @@ safe-outputs:
             parser.feed(text)
             parser.close()
             visible = re.sub(r"[*_\x60~]", "", "".join(parser.parts))
-            return " ".join(visible.lower().split()).strip(string.punctuation + " ")
+            visible = " ".join(visible.lower().split())
+            start, end = 0, len(visible)
+            def punctuation(char):
+                return char in string.punctuation + " " or unicodedata.category(char).startswith("P")
+            while start < end and punctuation(visible[start]):
+                start += 1
+            while end > start and punctuation(visible[end - 1]):
+                end -= 1
+            return visible[start:end]
 
         def substantive(text):
             lines = [
@@ -147,7 +173,8 @@ safe-outputs:
                 and len(cells(lines[1])) == columns
                 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells(lines[1]))
                 and all(len(cells(line)) == columns and all(
-                            substantive(cell) or (column == "Confidence" and comparison_text(cell) == "n/a")
+                            comparison_text(cell) != comparison_text(column) and (
+                                substantive(cell) or (column == "Confidence" and comparison_text(cell) == "n/a"))
                             for column, cell in zip(header, cells(line)))
                         for line in lines[2:])
             )
@@ -528,8 +555,14 @@ the collected context. You must still include every `affectedPackages` entry fro
 The safe-output job has no independently trusted copy of `affectedPackages`; it cannot enforce
 complete package coverage. The agent's workspace/artifact copy is not an authoritative boundary
 for that check. Enforcing coverage would require a separate trusted pre-agent context transfer.
+Likewise, this gate does not infer which authoritative rules apply to each package or reconcile
+all required checks against completed/unverified rows. That accounting requires trusted rule
+applicability and package identity for unverified rows, not a blanket requirement for every
+reporting label. The reviewer must still account for every applicable rule.
 Placeholder comparison handles inline Markdown links/images, HTML formatting/entities, emphasis,
-inline code, and terminal ASCII punctuation without changing submitted evidence. It is not a
+inline code, and terminal punctuation (including Unicode punctuation) without changing submitted evidence.
+Adjacent inline HTML elements do not introduce spaces that are absent from the rendered text.
+It is not a
 general Markdown renderer or semantic verification of the review.
 
 ### Submit the complete body

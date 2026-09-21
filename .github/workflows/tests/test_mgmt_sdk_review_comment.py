@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import textwrap
 import unittest
@@ -44,6 +45,38 @@ NOT_APPLICABLE = (
 
 
 class ReviewCommentTests(unittest.TestCase):
+    def comparison_functions(self):
+        namespace = {}
+        exec(compile(GUARD.split("\ntry:\n", 1)[0], "review-functions", "exec"), namespace)
+        return namespace
+
+    def test_unicode_punctuation_and_inline_html_boundaries(self):
+        functions = self.comparison_functions()
+        for placeholder in ("None\u2026", "N/A\u2026", "N<strong>one</strong>\u2026",
+                            "<strong>Full </strong><em>review</em> pending see logs"):
+            with self.subTest(placeholder=placeholder):
+                self.assertFalse(functions["substantive"](placeholder))
+        self.assertEqual("fullreview pending see logs", functions["comparison_text"](
+            "<strong>Full</strong><em>review</em> pending see logs"
+        ))
+        self.assertEqual("widget", functions["comparison_text"]("Wid<strong>get</strong>"))
+
+    def test_code_span_comparison_has_bounded_runtime(self):
+        code = GUARD.split("\ntry:\n", 1)[0] + "\n" + textwrap.dedent('''
+            assert comparison_text("`" * 65000) == ""
+            assert comparison_text("`" * 12000) == ""
+            assert comparison_text("`<Widget>`") == "widget"
+            assert comparison_text("``<Widget>`value``") == "widget>value"
+            assert comparison_text("`unclosed") == "unclosed"
+            assert len(comparison_text("`a` " * 16250)) > 0
+        ''')
+        subprocess.run([sys.executable, "-c", code], timeout=5, check=True, capture_output=True, text=True)
+
+    def test_repeated_table_headers_are_not_data(self):
+        for row in ("| Check | Reason |", "| **Check** | `Reason` |", "| README snippets | Reason |"):
+            body = REVIEW.replace("**Unverified checks:** None.", "| Check | Reason |\n| --- | --- |\n" + row)
+            self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+
     def run_guard(self, payload, canonical=True):
         if canonical and isinstance(payload, dict):
             payload = {"errors": [], **payload}
