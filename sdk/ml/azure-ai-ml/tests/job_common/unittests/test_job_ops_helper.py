@@ -8,18 +8,57 @@ from unittest.mock import Mock
 import pytest
 from mock import mock_open, patch
 
-from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._restclient.dataset_dataplane.models import BatchDataUriResponse, DataUriV2Response
+from azure.ai.ml._restclient.model_dataplane.models import BatchModelPathResponseDto, ModelPathResponseDto
+from azure.ai.ml._restclient.runhistory.models import (
+    GetRunDataResult,
+    Run,
+    RunDetails,
+    RunDetailsWarning,
+    TypedAssetReference,
+)
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.operations._dataset_dataplane_operations import DatasetDataplaneOperations
 from azure.ai.ml.operations._job_ops_helper import (
     _get_sorted_filtered_logs,
+    get_job_output_uris_from_dataplane,
     has_pat_token,
     _incremental_print,
     list_logs,
     stream_logs_until_completion,
 )
+from azure.ai.ml.operations._model_dataplane_operations import ModelDataplaneOperations
 from azure.ai.ml.operations._run_operations import RunOperations
 
 from .test_vcr_utils import before_record_cb
+
+
+DATA_OUTPUT_ASSET_ID = "azureml://locations/eastus/workspaces/00000/data/azureml_dummy_output_data/versions/1"
+MODEL_OUTPUT_ASSET_ID = "azureml://locations/eastus/workspaces/00000/models/azureml_dummy_output_model/versions/1"
+DATA_OUTPUT_URI = "azureml://datastores/workspaceblobstore/paths/azureml/dummy/forecast_data/"
+MODEL_OUTPUT_URI = "azureml://datastores/workspaceblobstore/paths/azureml/dummy/trained_model/"
+
+
+def build_run_operations(outputs: Dict[str, TypedAssetReference]) -> Mock:
+    run_operations = Mock()
+    run_operations.get_run_data.return_value = GetRunDataResult(run_metadata=Run(outputs=outputs))
+    return run_operations
+
+
+def build_dataset_dataplane_operations(uris: Dict[str, str]) -> Mock:
+    dataset_dataplane_operations = Mock()
+    dataset_dataplane_operations.get_batch_dataset_uris.return_value = BatchDataUriResponse(
+        values_property={asset_id: DataUriV2Response(uri=uri) for asset_id, uri in uris.items()}
+    )
+    return dataset_dataplane_operations
+
+
+def build_model_dataplane_operations(paths: Dict[str, str]) -> Mock:
+    model_dataplane_operations = Mock()
+    model_dataplane_operations.get_batch_model_uris.return_value = BatchModelPathResponseDto(
+        values_property={asset_id: ModelPathResponseDto(path=path) for asset_id, path in paths.items()}
+    )
+    return model_dataplane_operations
 
 
 class DummyJob:
@@ -65,6 +104,20 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
 
 
+@pytest.fixture
+def mock_dataset_dataplane_operations(
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig
+) -> DatasetDataplaneOperations:
+    yield DatasetDataplaneOperations(mock_workspace_scope, mock_operation_config, Mock())
+
+
+@pytest.fixture
+def mock_model_dataplane_operations(
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig
+) -> ModelDataplaneOperations:
+    yield ModelDataplaneOperations(mock_workspace_scope, mock_operation_config, Mock())
+
+
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestJobOpsHelper:
@@ -73,6 +126,105 @@ class TestJobOpsHelper:
         assert has_pat_token("https://mypattoken@dev.azure.com/<organization>/<project>/_git/<repo>")
         assert not has_pat_token("https://dev.azure.com/organization/project/_apis/pipelines/1/runs")
         assert not has_pat_token("https://learn.microsoft.com/en-us/ai/?tabs=developer")
+
+    @pytest.mark.parametrize(
+        "data_type,model_type",
+        [
+            # RunHistory reports the type of a job's outputs in PascalCase
+            ("UriFolder", "CustomModel"),
+            ("UriFile", "MLFlowModel"),
+            ("MLTable", "TritonModel"),
+            # while the control plane spells the same types in snake_case
+            ("uri_folder", "custom_model"),
+            ("uri_file", "mlflow_model"),
+            ("mltable", "triton_model"),
+        ],
+    )
+    def test_get_job_output_uris_from_dataplane(self, data_type: str, model_type: str) -> None:
+        run_operations = build_run_operations(
+            {
+                "forecast_data": TypedAssetReference(asset_id=DATA_OUTPUT_ASSET_ID, type=data_type),
+                "trained_model": TypedAssetReference(asset_id=MODEL_OUTPUT_ASSET_ID, type=model_type),
+            }
+        )
+
+        outputs = get_job_output_uris_from_dataplane(
+            "dummy",
+            run_operations,
+            build_dataset_dataplane_operations({DATA_OUTPUT_ASSET_ID: DATA_OUTPUT_URI}),
+            build_model_dataplane_operations({MODEL_OUTPUT_ASSET_ID: MODEL_OUTPUT_URI}),
+        )
+
+        assert outputs == {"forecast_data": DATA_OUTPUT_URI, "trained_model": MODEL_OUTPUT_URI}
+
+    def test_get_job_output_uris_from_dataplane_with_output_name(self) -> None:
+        run_operations = build_run_operations(
+            {"forecast_data": TypedAssetReference(asset_id=DATA_OUTPUT_ASSET_ID, type="UriFolder")}
+        )
+        dataset_dataplane_operations = build_dataset_dataplane_operations({DATA_OUTPUT_ASSET_ID: DATA_OUTPUT_URI})
+
+        outputs = get_job_output_uris_from_dataplane(
+            "dummy",
+            run_operations,
+            dataset_dataplane_operations,
+            None,
+            output_names="forecast_data",
+        )
+
+        assert outputs == {"forecast_data": DATA_OUTPUT_URI}
+        dataset_dataplane_operations.get_batch_dataset_uris.assert_called_once_with([DATA_OUTPUT_ASSET_ID])
+
+    def test_get_job_output_uris_from_dataplane_skips_unknown_types(self) -> None:
+        run_operations = build_run_operations(
+            {
+                "unknown_type": TypedAssetReference(asset_id=DATA_OUTPUT_ASSET_ID, type="SomethingElse"),
+                "no_type": TypedAssetReference(asset_id=MODEL_OUTPUT_ASSET_ID),
+            }
+        )
+        dataset_dataplane_operations = build_dataset_dataplane_operations({})
+        model_dataplane_operations = build_model_dataplane_operations({})
+
+        outputs = get_job_output_uris_from_dataplane(
+            "dummy",
+            run_operations,
+            dataset_dataplane_operations,
+            model_dataplane_operations,
+        )
+
+        assert outputs == {}
+        dataset_dataplane_operations.get_batch_dataset_uris.assert_not_called()
+        model_dataplane_operations.get_batch_model_uris.assert_not_called()
+
+    def test_get_job_output_uris_from_dataplane_requests_asset_ids(
+        self,
+        mock_dataset_dataplane_operations: DatasetDataplaneOperations,
+        mock_model_dataplane_operations: ModelDataplaneOperations,
+    ) -> None:
+        mock_dataset_dataplane_operations._operation.batch_get_resolved_uris.return_value = BatchDataUriResponse(
+            values_property={DATA_OUTPUT_ASSET_ID: DataUriV2Response(uri=DATA_OUTPUT_URI)}
+        )
+        mock_model_dataplane_operations._operation.batch_get_resolved_uris.return_value = BatchModelPathResponseDto(
+            values_property={MODEL_OUTPUT_ASSET_ID: ModelPathResponseDto(path=MODEL_OUTPUT_URI)}
+        )
+        run_operations = build_run_operations(
+            {
+                "forecast_data": TypedAssetReference(asset_id=DATA_OUTPUT_ASSET_ID, type="UriFolder"),
+                "trained_model": TypedAssetReference(asset_id=MODEL_OUTPUT_ASSET_ID, type="CustomModel"),
+            }
+        )
+
+        outputs = get_job_output_uris_from_dataplane(
+            "dummy",
+            run_operations,
+            mock_dataset_dataplane_operations,
+            mock_model_dataplane_operations,
+        )
+
+        assert outputs == {"forecast_data": DATA_OUTPUT_URI, "trained_model": MODEL_OUTPUT_URI}
+        dataset_request = mock_dataset_dataplane_operations._operation.batch_get_resolved_uris.call_args[1]["body"]
+        assert dataset_request.values_property == [DATA_OUTPUT_ASSET_ID]
+        model_request = mock_model_dataplane_operations._operation.batch_get_resolved_uris.call_args[1]["body"]
+        assert model_request.values_property == [MODEL_OUTPUT_ASSET_ID]
 
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
