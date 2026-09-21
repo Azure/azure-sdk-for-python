@@ -3,6 +3,7 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
 
