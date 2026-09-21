@@ -143,7 +143,7 @@ async def test_async_operation_timeline_includes_label_and_stable_fields(clock, 
             result = await _aio_mod._post_and_poll(
                 client,
                 "session_deadbeef",
-                "/fine_tuning_sessions/session_deadbeef/optim_step",
+                "/fine_tuning/sessions/session_deadbeef/optim_step",
                 {},
             )
     finally:
@@ -153,7 +153,7 @@ async def test_async_operation_timeline_includes_label_and_stable_fields(clock, 
     assert "submit_queued session_id=session_deadbeef op=optim_step" in caplog.text
     assert (
         "submit_started session_id=session_deadbeef op=optim_step "
-        "path=/fine_tuning_sessions/session_deadbeef/optim_step queue_wait_ms=0.0 "
+        "path=/fine_tuning/sessions/session_deadbeef/optim_step queue_wait_ms=0.0 "
         "label=step=4"
     ) in caplog.text
     assert (

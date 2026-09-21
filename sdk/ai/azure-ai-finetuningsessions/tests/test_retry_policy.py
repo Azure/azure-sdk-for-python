@@ -51,7 +51,7 @@ class TestAsyncPostRetryCap:
         mock_client.send_request = AsyncMock(return_value=mock_resp)
 
         with pytest.raises(NoCapacityError):
-            await _post(mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {})
+            await _post(mock_client, "/fine_tuning/sessions/session_deadbeef/forward_backward", {})
 
         # 2 consecutive same-status → classified as persistent, raised immediately
         assert mock_client.send_request.call_count == 2
@@ -79,7 +79,7 @@ class TestAsyncPostRetryCap:
 
         with patch("azure.ai.finetuningsessions.aio._patch.asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             request_id, op_type = await _post(
-                mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {}
+                mock_client, "/fine_tuning/sessions/session_deadbeef/forward_backward", {}
             )
 
         assert request_id == "req_123"
@@ -106,7 +106,7 @@ class TestAsyncPostRetryCap:
         mock_client.send_request = AsyncMock(return_value=mock_resp)
 
         with pytest.raises(NoCapacityError) as exc_info:
-            await _post(mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {})
+            await _post(mock_client, "/fine_tuning/sessions/session_deadbeef/forward_backward", {})
 
         # NoCapacityError should carry the reason
         assert exc_info.value.reason == "engine_busy"
@@ -127,7 +127,7 @@ class TestAsyncPostRetryCap:
         mock_client.send_request = AsyncMock(return_value=mock_resp)
 
         with pytest.raises(BatchTooLargeError):
-            await _post(mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {})
+            await _post(mock_client, "/fine_tuning/sessions/session_deadbeef/forward_backward", {})
 
         # Only one attempt — no retries for 413
         assert mock_client.send_request.call_count == 1
@@ -143,7 +143,7 @@ class TestAsyncPostRetryCap:
 
         with patch("azure.ai.finetuningsessions.aio._patch.asyncio.sleep", new_callable=AsyncMock):
             with pytest.raises(ServiceResponseError):
-                await _post(mock_client, "/fine_tuning_sessions/session_deadbeef/forward_backward", {})
+                await _post(mock_client, "/fine_tuning/sessions/session_deadbeef/forward_backward", {})
 
         # 3 total attempts (initial + 2 retries)
         assert mock_client.send_request.call_count == 3
@@ -209,7 +209,7 @@ class TestAsyncEngineDead409NonRetryable:
             with pytest.raises(TrainingEngineError) as exc_info:
                 await _post(
                     mock_client,
-                    "/fine_tuning_sessions/session_deadbeef/forward_backward",
+                    "/fine_tuning/sessions/session_deadbeef/forward_backward",
                     {},
                 )
 
@@ -232,7 +232,7 @@ class TestAsyncEngineDead409NonRetryable:
             with pytest.raises(TrainingEngineError) as exc_info:
                 await _post_sample(
                     mock_client,
-                    "/fine_tuning_sessions/session_deadbeef/sample",
+                    "/fine_tuning/sessions/session_deadbeef/sample",
                     {},
                 )
 
@@ -259,7 +259,7 @@ class TestAsyncEngineDead409NonRetryable:
             with pytest.raises(Exception):
                 await _post(
                     mock_client,
-                    "/fine_tuning_sessions/session_deadbeef/forward_backward",
+                    "/fine_tuning/sessions/session_deadbeef/forward_backward",
                     {},
                 )
 

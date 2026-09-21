@@ -213,7 +213,7 @@ class ApiErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class Checkpoint(_Model):
-    """A checkpoint item returned in GET /fine_tuning_sessions/{sessionId}/checkpoints.
+    """A checkpoint item returned in GET /fine_tuning/sessions/{sessionId}/checkpoints.
 
     :ivar checkpoint_id: Identifier of the saved checkpoint within the session. Required.
     :vartype checkpoint_id: str
@@ -379,7 +379,7 @@ class CompletedRequest(
 
 
 class CompleteResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from POST /fine_tuning_sessions/{sessionId}/complete.
+    """Response from POST /fine_tuning/sessions/{sessionId}/complete.
 
     :ivar session_id: Identifier of the session being unloaded. Required.
     :vartype session_id: str
@@ -413,7 +413,7 @@ class CompleteResponse(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions.
+    """Request body for POST /fine_tuning/sessions.
 
     :ivar type: The session type. Required. "training"
     :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
@@ -475,7 +475,7 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
 
 
 class CreateSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from POST /fine_tuning_sessions. Poll the returned request identifier to track session
+    """Response from POST /fine_tuning/sessions. Poll the returned request identifier to track session
     initialization.
 
     :ivar session_id: Identifier of the newly created fine-tuning session. Required.
@@ -617,7 +617,7 @@ class Datum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-o
 
 
 class DeleteSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from DELETE /fine_tuning_sessions/{sessionId}.
+    """Response from DELETE /fine_tuning/sessions/{sessionId}.
 
     :ivar session_id: Identifier of the session targeted for deletion. Required.
     :vartype session_id: str
@@ -865,7 +865,7 @@ class ForwardBackwardOperationResult(
 
 
 class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/forward_backward.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
@@ -939,7 +939,7 @@ class ForwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-ke
 
 
 class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
@@ -1001,7 +1001,7 @@ class FromCheckpoint(_Model):  # pylint: disable=docstring-keyword-should-match-
 
 
 class HeartbeatResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from POST /fine_tuning_sessions/{sessionId}/heartbeat.
+    """Response from POST /fine_tuning/sessions/{sessionId}/heartbeat.
 
     :ivar session_id: Identifier of the session whose heartbeat was refreshed. Required.
     :vartype session_id: str
@@ -1393,7 +1393,7 @@ class OptimStepOperationResult(
 
 
 class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
@@ -1575,7 +1575,7 @@ class SampleOperationResult(
 
 
 class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/sample.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/sample.
 
     :ivar num_samples: Number of independent completions to generate. Default 1.
     :vartype num_samples: int
@@ -1739,7 +1739,7 @@ class SaveCheckpointOperationResult(
 
 
 class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.
@@ -1824,7 +1824,7 @@ class SaveSamplerWeightsOperationResult(
 
 
 class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint_sample. Supply either path
+    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint_sample. Supply either path
     or both sampling_session_seq_id and seq_id. The service validates this requirement at runtime.
 
     :ivar path: Explicit sampler checkpoint identifier. Required unless both sequence identifiers
@@ -1876,7 +1876,7 @@ class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class Session(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from GET /fine_tuning_sessions/{sessionId}.
+    """Response from GET /fine_tuning/sessions/{sessionId}.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
     :vartype session_id: str
@@ -1990,7 +1990,7 @@ class SessionModelData(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class SessionSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Summary item returned in the paginated GET /fine_tuning_sessions list.
+    """Summary item returned in the paginated GET /fine_tuning/sessions list.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
     :vartype session_id: str

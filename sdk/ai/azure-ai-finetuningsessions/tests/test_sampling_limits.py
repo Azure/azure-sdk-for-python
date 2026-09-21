@@ -126,7 +126,7 @@ async def test_throttled_submit_retries_then_succeeds(clock):
     )
     request_id, _op = await _post_sample(
         client,
-        "/fine_tuning_sessions/session_deadbeef/sample",
+        "/fine_tuning/sessions/session_deadbeef/sample",
         _aio_mod.SamplingParams(),
     )
     assert request_id == "req-9"
@@ -141,7 +141,7 @@ async def test_throttled_submit_raises_rate_limited_past_deadline(clock, monkeyp
     with pytest.raises(RateLimitedError):
         await _post_sample(
             client,
-            "/fine_tuning_sessions/session_deadbeef/sample",
+            "/fine_tuning/sessions/session_deadbeef/sample",
             _aio_mod.SamplingParams(),
         )
 
@@ -161,7 +161,7 @@ async def test_throttle_sleep_clamped_to_remaining_deadline(clock, monkeypatch):
     with pytest.raises(RateLimitedError):
         await _post_sample(
             client,
-            "/fine_tuning_sessions/session_deadbeef/sample",
+            "/fine_tuning/sessions/session_deadbeef/sample",
             _aio_mod.SamplingParams(),
         )
     # The loop may sleep once (clamped to <= the 10s remaining budget) before the
@@ -175,7 +175,7 @@ async def test_non_sampling_429_is_not_held_in_place(clock):
     """On a non-sample endpoint, 429 is a normal fault (bounded retries)."""
     client = _FakeAsyncClient([_FakeResponse(429, {"reason": "budget"}) for _ in range(10)])
     with pytest.raises(RateLimitedError):
-        await _post(client, "/fine_tuning_sessions/session_deadbeef/optim_step", _aio_mod.SamplingParams())
+        await _post(client, "/fine_tuning/sessions/session_deadbeef/optim_step", _aio_mod.SamplingParams())
     # max_retries=2 -> at most 3 attempts before giving up (not held forever).
     assert client.calls <= 3
 
@@ -196,7 +196,7 @@ async def test_sample_submit_retries_transient_5xx_then_succeeds(clock):
     )
     request_id, _op = await _post_sample(
         client,
-        "/fine_tuning_sessions/session_deadbeef/sample",
+        "/fine_tuning/sessions/session_deadbeef/sample",
         _aio_mod.SamplingParams(),
     )
     assert request_id == "req-ok"
@@ -216,7 +216,7 @@ async def test_sample_submit_retries_transient_network_error_then_succeeds(clock
     )
     request_id, _op = await _post_sample(
         client,
-        "/fine_tuning_sessions/session_deadbeef/sample",
+        "/fine_tuning/sessions/session_deadbeef/sample",
         _aio_mod.SamplingParams(),
     )
     assert request_id == "req-net"

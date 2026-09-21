@@ -85,7 +85,7 @@ class TestFineTuningSessionDelete:
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning_sessions/model_abc12345" in req.url, f"Expected model_abc12345 in URL, got: {req.url}"
+        assert "/fine_tuning/sessions/model_abc12345" in req.url, f"Expected model_abc12345 in URL, got: {req.url}"
         # Headers include the foundry features opt-in.
         assert "Foundry-Features" in req.headers
         assert req.headers["Accept"] == "application/json"
@@ -97,7 +97,7 @@ class TestFineTuningSessionDelete:
         sess.delete()
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning_sessions/session_abc12345" in req.url
+        assert "/fine_tuning/sessions/session_abc12345" in req.url
 
     def test_delete_url_derivation_raw_id(self) -> None:
         """A bare old-server session ID preserves the legacy model resource."""
@@ -105,7 +105,7 @@ class TestFineTuningSessionDelete:
         sess = _make_session(client, session_id="ab12ef34")
         sess.delete()
         req = client.requests[0]
-        assert "/fine_tuning_sessions/model_ab12ef34" in req.url
+        assert "/fine_tuning/sessions/model_ab12ef34" in req.url
 
     def test_returns_none(self) -> None:
         client = _RecordingClient([_FakeResponse(200)])
@@ -207,7 +207,7 @@ class TestAsyncDeleteSession:
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning_sessions/session_abc12345" in req.url, f"Expected session_abc12345, got: {req.url}"
+        assert "/fine_tuning/sessions/session_abc12345" in req.url, f"Expected session_abc12345, got: {req.url}"
         assert "model_abc12345" not in req.url
         assert "Foundry-Features" in req.headers
 

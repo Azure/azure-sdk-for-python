@@ -8,7 +8,6 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import PipelineContext, PipelineRequest
 from azure.core.rest import HttpRequest
 
 from azure.ai.finetuningsessions import FineTuningSession, FineTuningSessionClient, aio
@@ -112,20 +111,19 @@ def test_error_models_remain_importable():
     assert response.as_dict()["error"]["additionalInfo"] == {"field": "data"}
 
 
-@pytest.mark.parametrize("legacy", [False, True])
-def test_sync_route_selection_applies_to_generated_and_convenience_requests(legacy, monkeypatch):
+@pytest.mark.parametrize("legacy", [None, False, True], ids=["default", "false", "true"])
+def test_sync_uses_existing_routes_with_or_without_compatibility_flag(legacy, monkeypatch):
     from test_legacy_polling import _SequenceTransport
 
     monkeypatch.setattr(FineTuningSession, "_start_heartbeat", lambda self: None)
     transport = _SequenceTransport(_CREATED, {"status": "completed", "result": {}}, {"session_id": "session_test"}, {})
     endpoint = "https://fake/api/projects/project_test"
-    with FineTuningSessionClient(
-        endpoint, AzureKeyCredential("key"), transport=transport, use_legacy_routes=legacy
-    ) as client:
+    options = {} if legacy is None else {"use_legacy_routes": legacy}
+    with FineTuningSessionClient(endpoint, AzureKeyCredential("key"), transport=transport, **options) as client:
         session = FineTuningSession.create(client, base_model="model_test")
         session.heartbeat()
         session.close()
-    prefix = "/fine_tuning/sessions" if legacy else "/fine_tuning_sessions"
+    prefix = "/fine_tuning/sessions"
     assert [request.method for request in transport.requests] == ["POST", "GET", "POST", "POST"]
     assert all(request.url.startswith(endpoint + prefix) for request in transport.requests)
     assert all("use_legacy_routes" not in options for options in transport.options)
@@ -133,29 +131,33 @@ def test_sync_route_selection_applies_to_generated_and_convenience_requests(lega
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("legacy", [False, True])
-async def test_async_route_selection_applies_to_convenience_and_begin_polling(legacy, monkeypatch):
+@pytest.mark.parametrize("legacy", [None, False, True], ids=["default", "false", "true"])
+async def test_async_uses_existing_routes_for_convenience_and_begin_polling(legacy, monkeypatch):
     from test_legacy_polling import _AsyncSequenceTransport
     from azure.ai.finetuningsessions.aio import _patch as async_patch
 
     monkeypatch.setattr(async_patch, "_start_heartbeat", lambda *args, **kwargs: None)
     transport = _AsyncSequenceTransport(
-        _CREATED, {"status": "completed", "result": {}},
-        {"request_id": "request_unload", "session_id": "raw_id"}, {"status": "completed", "result": {}},
+        _CREATED,
+        {"status": "completed", "result": {}},
+        {"request_id": "request_unload", "session_id": "raw_id"},
+        {"status": "completed", "result": {}},
     )
     endpoint = "https://fake/api/projects/project_test"
+    options = {} if legacy is None else {"use_legacy_routes": legacy}
     async with aio.FineTuningSessionClient(
-        endpoint, AzureKeyCredential("key"), transport=transport, use_legacy_routes=legacy
+        endpoint, AzureKeyCredential("key"), transport=transport, **options
     ) as client:
         await client.create_session(base_model="model_test")
         poller = await client.sessions.begin_unload("raw_id", api_version="v1", polling_interval=0)
         assert (await poller.result()).operation_id == "request_unload"
-    prefix = "/fine_tuning/sessions" if legacy else "/fine_tuning_sessions"
+    prefix = "/fine_tuning/sessions"
     assert [request.method for request in transport.requests] == ["POST", "GET", "POST", "GET"]
     assert all(request.url.startswith(endpoint + prefix) for request in transport.requests)
     assert all("use_legacy_routes" not in options for options in transport.options)
 
 
+@pytest.mark.parametrize("legacy", [False, True])
 @pytest.mark.parametrize(
     "url",
     [
@@ -166,10 +168,32 @@ async def test_async_route_selection_applies_to_convenience_and_begin_polling(le
         "https://fake/api/projects/p/fine_tuning/sessions/id",
     ],
 )
-def test_legacy_route_policy_does_not_rewrite_unrelated_requests(url):
-    from azure.ai.finetuningsessions._client_options import _LegacySessionRoutePolicy
+def test_compatibility_flag_does_not_rewrite_custom_requests(url, legacy):
+    from conftest import FakeTransport
 
-    policy = _LegacySessionRoutePolicy("https://fake/api/projects/p")
-    request = PipelineRequest(HttpRequest("GET", url), PipelineContext(None))
-    policy.on_request(request)
-    assert request.http_request.url == url
+    transport = FakeTransport()
+    with FineTuningSessionClient(
+        "https://fake/api/projects/p", AzureKeyCredential("key"), transport=transport, use_legacy_routes=legacy
+    ) as client:
+        client.send_request(HttpRequest("GET", url))
+    assert len(transport.requests) == 1
+    assert transport.requests[0].url == url
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+def test_compatibility_flag_preserves_custom_pipeline_and_policies(legacy):
+    from azure.ai.finetuningsessions._client_options import prepare_client_options
+
+    pipeline, policy = object(), object()
+    policies = [policy]
+    options = prepare_client_options(
+        "https://fake",
+        AzureKeyCredential("key"),
+        allow_insecure_http=False,
+        use_legacy_routes=legacy,
+        pipeline=pipeline,
+        per_call_policies=policies,
+    )
+    assert options["pipeline"] is pipeline
+    assert options["per_call_policies"] is policies and policies == [policy]
+    assert "use_legacy_routes" not in options

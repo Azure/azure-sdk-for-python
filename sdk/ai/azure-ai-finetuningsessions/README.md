@@ -35,8 +35,7 @@ or skip the reinstall. Do not rely on both preview distributions being installed
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A Foundry project with access to fine-tuning sessions and compatible model capacity.
-- A gateway supporting `/fine_tuning_sessions`, or explicit legacy-route
-    configuration for an existing Loom endpoint as described below.
+- A gateway or Loom endpoint supporting `/fine_tuning/sessions`.
 
 #### Authenticate with Microsoft Entra ID
 To use a [token credential][authenticate_with_token],
@@ -107,8 +106,9 @@ model rather than assuming a client-side default.
     retries, chunking, heartbeat, session-ID handling, and typed errors.
 - Session list results retain `data` and the explicit `cursor`; advance `offset`
     and `limit` yourself. Checkpoint lists return their complete envelope.
-- Public requests use `/fine_tuning_sessions` by default. Installing this package
-    does not deploy gateway rewrites or change an existing backend.
+- All generated and convenience requests use `/fine_tuning/sessions`, including
+    request polling. No route-selection flag or gateway rewrite is required to
+    select the existing route family.
 
 ## Compatibility with earlier previews
 
@@ -118,12 +118,12 @@ helpers, and environment-variable names remain available. In particular,
 omitting `lora_config` still omits it from the convenience request; a service
 that requires an explicit rank can reject that request as before.
 
-For an existing endpoint that serves `/fine_tuning/sessions`, pass
-`use_legacy_routes=True` to the synchronous or asynchronous
-`FineTuningSessionClient`. This explicitly rewrites the route **before** sending
-generated or convenience requests, including poll requests. The client never
-probes a second route or resubmits a POST merely because a route failed. The
-option cannot be combined with a prebuilt custom pipeline.
+The synchronous and asynchronous clients use `/fine_tuning/sessions` directly.
+The earlier `use_legacy_routes` constructor option remains accepted as a
+compatibility no-op: omitting it, setting `False`, and setting `True` all send
+the same routes. It does not install a rewrite policy or alter custom pipelines.
+The client never probes a second route or resubmits a POST merely because a
+route failed.
 
 Earlier operation keywords `body`, `operation_id`, and per-call `api_version`
 are accepted by handwritten adapters. Per-call API versions do not mutate the

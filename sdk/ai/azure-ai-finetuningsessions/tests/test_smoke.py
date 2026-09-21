@@ -19,4 +19,4 @@ def test_training_and_sampling_loop(session, batch, transport):
     )
     assert isinstance(result, OperationResult)
     session.close()
-    assert all("/fine_tuning_sessions/" in request.url for request in transport.requests)
+    assert all("/fine_tuning/sessions/" in request.url for request in transport.requests)

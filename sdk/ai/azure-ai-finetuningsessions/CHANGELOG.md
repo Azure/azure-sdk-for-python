@@ -12,13 +12,13 @@
 ### Breaking Changes
 
 - The distribution is named `azure-ai-finetuningsessions` and Python imports now use `azure.ai.finetuningsessions`. Remove older preview installations and update imports/dependency files before installing this build.
-- Public requests use `/fine_tuning_sessions` by default. Existing Loom endpoints can be selected explicitly with `use_legacy_routes=True`; there is no automatic route fallback.
 - Generated operations use the actual HTTP 200 submission and request-status protocol instead of Azure LRO polling.
 - Generated create responses expose a string `session_id` and `request_id`; raw request statuses are `pending`, `completed`, and `failed`.
 - The generated optimizer operation is `training.optimizer_step`; the convenience `optim_step` API remains available.
 
 ### Other Changes
 
+- Restored `/fine_tuning/sessions` for generated operations, convenience methods, and polling to match the existing Loom API. `use_legacy_routes` remains accepted as a no-op; no route flag, rewrite policy, or automatic fallback is required.
 - Regenerated from the public Foundry TypeSpec using pinned tooling and kept custom behavior in handwritten modules.
 - Preserved explicit offset-page responses rather than introducing an incomplete generated iterator.
 - Imported current SDK regressions and added raw sync/async contract tests.

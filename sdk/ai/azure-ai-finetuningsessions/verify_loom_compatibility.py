@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Offline, side-by-side Loom compatibility proof using unmodified SDK sources.
@@ -10,7 +11,7 @@ must already be installed):
 The parent imports neither SDK. Two fresh, isolated Python subprocesses import
 azure.ai.finetuningsessions from their respective source roots, run the same 20
 cases with real clients and buffered fake transports, and return JSON snapshots.
-Only the public worker receives use_legacy_routes=True. URLs are checked at the
+Both workers use their default routes without a route-selection flag. URLs are checked at the
 transport boundary, NEVER rewritten by this verifier. No install, generation,
 temporary source copy, package alias, test-module import, or service is involved.
 
@@ -50,7 +51,6 @@ from typing import Any, Callable
 from urllib.parse import urlencode
 from uuid import UUID
 
-
 PACKAGE = Path(__file__).resolve().parent
 MODULE = Path("azure/ai/finetuningsessions")
 NAMESPACE = "azure.ai.finetuningsessions"
@@ -63,13 +63,18 @@ KEY = "offline-verifier-key-not-a-secret"
 TOKEN = "offline-verifier-token-not-a-secret"
 IMAGE = b"\xff\xd8\xffoffline-jpeg"
 IMAGE_WIRE = {
-    "type": "image", "data": base64.b64encode(IMAGE).decode("ascii"),
-    "format": "jpeg", "expected_tokens": 2,
+    "type": "image",
+    "data": base64.b64encode(IMAGE).decode("ascii"),
+    "format": "jpeg",
+    "expected_tokens": 2,
 }
 METADATA = {"enabled": True, "nested": {"values": [1, 0.5, None, False, "caf\u00e9"]}}
 LORA = {
-    "rank": 16, "alpha": 32.0, "seed": 7,
-    "freeze_vision_tower": False, "freeze_multi_modal_projector": True,
+    "rank": 16,
+    "alpha": 32.0,
+    "seed": 7,
+    "freeze_vision_tower": False,
+    "freeze_multi_modal_projector": True,
 }
 ADAM = {"learning_rate": 0.0001, "beta1": 0.9, "beta2": 0.999, "eps": 1e-8, "weight_decay": 0.01}
 SAMPLING = {"max_tokens": 8, "temperature": 0.7, "top_p": 0.9, "top_k": -1, "seed": 17, "stop_criteria": [0]}
@@ -85,13 +90,18 @@ BATCH = [
     {
         "model_input": {"chunks": [{"tokens": [1, 2, 3]}]},
         "loss_fn_inputs": {
-            "target_tokens": {"data": [2.0, 3.0, 4.0]}, "weights": {"data": [0.0, 1.0, 1.0]},
-            "advantages": {"data": [0.0, 0.5, 1.0]}, "logprobs": {"data": [-0.1, -0.2, -0.3]},
+            "target_tokens": {"data": [2.0, 3.0, 4.0]},
+            "weights": {"data": [0.0, 1.0, 1.0]},
+            "advantages": {"data": [0.0, 0.5, 1.0]},
+            "logprobs": {"data": [-0.1, -0.2, -0.3]},
         },
     },
     {
         "model_input": MIXED_INPUT,
-        "loss_fn_inputs": {"target_tokens": {"data": [2.0, 0.0, 0.0, 3.0, 4.0]}, "weights": {"data": [0.0, 0.0, 0.0, 1.0, 1.0]}},
+        "loss_fn_inputs": {
+            "target_tokens": {"data": [2.0, 0.0, 0.0, 3.0, 4.0]},
+            "weights": {"data": [0.0, 0.0, 0.0, 1.0, 1.0]},
+        },
     },
 ]
 FORWARD = {
@@ -105,7 +115,10 @@ BACKWARD = {**FORWARD, "metrics": {**FORWARD["metrics"], "total_loss:sum": 1.25}
 # conceal the legacy dict[str, float] versus regenerated JSON annotation change.
 OPTIMIZER = {"metrics": {"skyrl.ai/grad_norm": 0.75, "step_count": 3.0}}
 SAMPLES = {
-    "sequences": [{"tokens": [31, 32], "text": "caf\u00e9", "logprobs": [-0.5, -1.0]}, {"tokens": [33], "text": None, "logprobs": None}],
+    "sequences": [
+        {"tokens": [31, 32], "text": "caf\u00e9", "logprobs": [-0.5, -1.0]},
+        {"tokens": [33], "text": None, "logprobs": None},
+    ],
     "prompt_logprobs": [None, -0.25],
     "topk_prompt_logprobs": [None, [[31, -0.5], [32, -1.25]]],
     "metrics": {"sample_tokens": 3, "sample_duration_s": 0.25, **METADATA},
@@ -116,7 +129,7 @@ NORMALIZATIONS = [
     "x-ms-client-request-id must be a UUID on every request; only its random value is omitted.",
     "User-Agent must have the expected SDK moniker/version; only the exact Python/platform suffix is removed.",
     "JSON object ordering/whitespace and Python tuple/list JSON encoding are not wire differences; scalar numeric types are preserved.",
-    "Package origins/source hashes differ by design; public use_legacy_routes=True versus Loom's absent option is verified separately.",
+    "Package origins/source hashes differ by design; both SDKs use their default routes without rewriting or selection flags.",
     "Signature annotations are not compared; parameter names, kinds, defaults, binding, and selected real calls are checked.",
 ]
 LIMITATIONS = [
@@ -127,31 +140,79 @@ LIMITATIONS = [
     "Generated-only types/annotations and internal class locations are not whole-schema parity claims; exercised model JSON/attributes are exact.",
     "Immediate fixture completion proves client behavior, not service/GPU correctness, retry timing, multi-chunk concurrency, or background heartbeats.",
 ]
-MODEL_ADDITIONS = frozenset({
-    "ActionOperation", "CompleteResponse", "CompletedRequest", "CreateSessionResponse", "DeleteSessionResponse",
-    "FailedRequest", "ImageFormat", "MisalignmentErrorDetailsResource", "PendingOperation", "PendingRequest",
-    "RequestStatus", "TrainingType", "_MisalignmentErrorType", "_MisalignmentSteer",
-})
+MODEL_ADDITIONS = frozenset(
+    {
+        "ActionOperation",
+        "CompleteResponse",
+        "CompletedRequest",
+        "CreateSessionResponse",
+        "DeleteSessionResponse",
+        "FailedRequest",
+        "ImageFormat",
+        "MisalignmentErrorDetailsResource",
+        "PendingOperation",
+        "PendingRequest",
+        "RequestStatus",
+        "TrainingType",
+        "_MisalignmentErrorType",
+        "_MisalignmentSteer",
+    }
+)
 FEATURE_ADDITIONS = {
-    "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview", "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
-    "SKILLS_V1_PREVIEW": "Skills=V1Preview", "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
-    "MODELS_V1_PREVIEW": "Models=V1Preview", "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
+    "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
+    "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
+    "SKILLS_V1_PREVIEW": "Skills=V1Preview",
+    "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
+    "MODELS_V1_PREVIEW": "Models=V1Preview",
+    "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
     "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
 }
 SYNC_METHODS = (
-    "create", "create_from_checkpoint", "forward", "forward_backward", "optim_step", "save_weights",
-    "save_weights_for_sampler", "sample", "heartbeat", "close", "delete",
+    "create",
+    "create_from_checkpoint",
+    "forward",
+    "forward_backward",
+    "optim_step",
+    "save_weights",
+    "save_weights_for_sampler",
+    "sample",
+    "heartbeat",
+    "close",
+    "delete",
 )
 ASYNC_METHODS = (
-    "create_session", "create_session_from_checkpoint", "forward", "forward_post", "forward_async",
-    "forward_backward", "forward_backward_post", "forward_backward_async", "optim_step", "optim_step_post",
-    "optim_step_async", "save_weights", "save_weights_post", "save_weights_async", "save_weights_for_sampler_async",
-    "save_weights_and_get_sampling_client_async", "sample", "close_session", "delete_session",
+    "create_session",
+    "create_session_from_checkpoint",
+    "forward",
+    "forward_post",
+    "forward_async",
+    "forward_backward",
+    "forward_backward_post",
+    "forward_backward_async",
+    "optim_step",
+    "optim_step_post",
+    "optim_step_async",
+    "save_weights",
+    "save_weights_post",
+    "save_weights_async",
+    "save_weights_for_sampler_async",
+    "save_weights_and_get_sampling_client_async",
+    "sample",
+    "close_session",
+    "delete_session",
 )
 GENERATED_METHODS = ("sessions.get", "sessions.list", "sessions.heartbeat", "checkpoints.get", "checkpoints.list")
 ERROR_FIELDS = (
-    "status_code", "max_batch_size", "actual_batch_size", "retry_after_sec", "reason", "session_id",
-    "error_code", "debug_ref", "operation_completed", "field",
+    "status_code",
+    "max_batch_size",
+    "actual_batch_size",
+    "retry_after_sec",
+    "reason",
+    "session_id",
+    "error_code",
+    "debug_ref",
+    "operation_completed",
+    "field",
 )
 
 
@@ -203,18 +264,32 @@ def _offline_environment() -> None:
     # Child-only changes: never let the caller's identity, proxy, or telemetry
     # environment affect the snapshot or expose real credentials in its headers.
     for name in (
-        "COGNITIVE_SUBSCRIPTION_ID", "AZURE_SUBSCRIPTION_ID", "AZURE_HTTP_USER_AGENT",
-        "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY", "http_proxy", "https_proxy", "all_proxy", "no_proxy",
+        "COGNITIVE_SUBSCRIPTION_ID",
+        "AZURE_SUBSCRIPTION_ID",
+        "AZURE_HTTP_USER_AGENT",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
     ):
         os.environ.pop(name, None)
-    os.environ.update({
-        "X_COGNITIVE_SUBSCRIPTION_ID": "offline-subscription",
-        "LOOM_AZURE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
-        "LOOM_AZURE_RESOURCE_TENANT_ID": "offline-tenant", "LOOM_AZURE_RESOURCE_LOCATION": "offline-region",
-        "LOOM_WORKSPACE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
-        "FINETUNING_VERBOSE_HTTP": "0", "LOOM_POLL_WARN_SEC": "0",
-        "AZURE_AI_FINETUNING_SESSIONS_OPERATION_TIMEOUT_SEC": "5", "AZURE_TRACING_ENABLED": "false",
-    })
+    os.environ.update(
+        {
+            "X_COGNITIVE_SUBSCRIPTION_ID": "offline-subscription",
+            "LOOM_AZURE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
+            "LOOM_AZURE_RESOURCE_TENANT_ID": "offline-tenant",
+            "LOOM_AZURE_RESOURCE_LOCATION": "offline-region",
+            "LOOM_WORKSPACE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
+            "FINETUNING_VERBOSE_HTTP": "0",
+            "LOOM_POLL_WARN_SEC": "0",
+            "AZURE_AI_FINETUNING_SESSIONS_OPERATION_TIMEOUT_SEC": "5",
+            "AZURE_TRACING_ENABLED": "false",
+        }
+    )
 
 
 def _install_offline_guard() -> None:
@@ -225,10 +300,29 @@ def _install_offline_guard() -> None:
     until AFTER the guard is active; no service connection, even loopback, is allowed.
     """
     forbidden = {
-        "socket.connect", "socket.bind", "socket.getaddrinfo", "socket.gethostbyname", "socket.gethostbyaddr",
-        "socket.sendto", "socket.sendmsg", "subprocess.Popen", "os.system", "os.exec", "os.spawn",
-        "os.remove", "os.rename", "os.rmdir", "os.mkdir", "os.link", "os.symlink", "os.truncate",
-        "os.chmod", "os.chown", "os.utime", "shutil.copyfile", "shutil.rmtree",
+        "socket.connect",
+        "socket.bind",
+        "socket.getaddrinfo",
+        "socket.gethostbyname",
+        "socket.gethostbyaddr",
+        "socket.sendto",
+        "socket.sendmsg",
+        "subprocess.Popen",
+        "os.system",
+        "os.exec",
+        "os.spawn",
+        "os.remove",
+        "os.rename",
+        "os.rmdir",
+        "os.mkdir",
+        "os.link",
+        "os.symlink",
+        "os.truncate",
+        "os.chmod",
+        "os.chown",
+        "os.utime",
+        "shutil.copyfile",
+        "shutil.rmtree",
     }
     write_flags = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND
 
@@ -237,7 +331,9 @@ def _install_offline_guard() -> None:
             raise RuntimeError(f"Offline/read-only verifier forbids {event}")
         if event == "open":
             _, mode, flags = args
-            if (isinstance(flags, int) and flags & write_flags) or (isinstance(mode, str) and any(c in mode for c in "wax+")):
+            if (isinstance(flags, int) and flags & write_flags) or (
+                isinstance(mode, str) and any(c in mode for c in "wax+")
+            ):
                 raise RuntimeError("Offline/read-only verifier forbids opening files for writing")
 
     sys.addaudithook(audit)
@@ -268,16 +364,38 @@ class _Case:
     def equal(self, actual: Any, expected: Any, label: str) -> None:
         self.check(_dump(actual) == _dump(expected), f"{label}: expected {_dump(expected)}, got {_dump(actual)}")
 
-    def expect(self, method: str, suffix: str, payload: Any, *, body: Any = None, status: int = 200, query: tuple = ()) -> None:
+    def expect(
+        self, method: str, suffix: str, payload: Any, *, body: Any = None, status: int = 200, query: tuple = ()
+    ) -> None:
         url = ENDPOINT + ROUTE + suffix + "?" + urlencode((("api-version", "v1"), *query))
         self.replies.append(_Reply(method, url, body, payload, status))
 
-    def operation(self, action: str, body: Any, result: dict, request_id: str, *, resource: str = SESSION,
-                  server_id: str | None = None, query: tuple = (), failed: bool = False) -> None:
-        self.expect("POST", f"/{resource}/{action}", {
-            "request_id": request_id, "session_id": server_id or resource, "status": "pending",
-        }, body=body, query=query)
-        self.expect("GET", f"/{resource}/request/{request_id}", result if failed else {"status": "completed", "result": result})
+    def operation(
+        self,
+        action: str,
+        body: Any,
+        result: dict,
+        request_id: str,
+        *,
+        resource: str = SESSION,
+        server_id: str | None = None,
+        query: tuple = (),
+        failed: bool = False,
+    ) -> None:
+        self.expect(
+            "POST",
+            f"/{resource}/{action}",
+            {
+                "request_id": request_id,
+                "session_id": server_id or resource,
+                "status": "pending",
+            },
+            body=body,
+            query=query,
+        )
+        self.expect(
+            "GET", f"/{resource}/request/{request_id}", result if failed else {"status": "completed", "result": result}
+        )
 
     def create(self, server_id: str, resource: str, body: dict, request_id: str) -> None:
         self.expect("POST", "", {"session_id": server_id, "request_id": request_id, "status": "pending"}, body=body)
@@ -291,7 +409,13 @@ class _Case:
             headers["user-agent"] = agent.removesuffix(self.context.user_agent_suffix)
         content = request.content
         body = None if content is None else json.loads(content)
-        record = {"method": request.method, "url": request.url, "headers": headers, "body": body, "options": _plain(options)}
+        record = {
+            "method": request.method,
+            "url": request.url,
+            "headers": headers,
+            "body": body,
+            "options": _plain(options),
+        }
         self.requests.append(record)
         self.check(isinstance(request_id, str), "Client request ID header must be present")
         UUID(request_id)
@@ -310,7 +434,7 @@ class _Case:
         reply = self.replies.popleft()
         self.equal(request.method, reply.method, "HTTP method")
         # Deliberately compare the entire actual URL, not a normalized path or
-        # parsed/sorted query. A public canonical route reaching here is a failure.
+        # parsed/sorted query. A /fine_tuning_sessions route reaching here is a failure.
         self.equal(request.url, reply.url, "URL at the transport boundary")
         self.equal(body, reply.body, "Complete JSON request body")
         return reply
@@ -322,8 +446,11 @@ class _Case:
             except Exception as exc:
                 error = exc
         result = {
-            "ok": error is None, "checks": self.checks, "requests": self.requests,
-            "token_calls": self.token_calls, "remaining_responses": len(self.replies),
+            "ok": error is None,
+            "checks": self.checks,
+            "requests": self.requests,
+            "token_calls": self.token_calls,
+            "remaining_responses": len(self.replies),
         }
         if error is None:
             result["output"] = output
@@ -490,12 +617,17 @@ class _Context:
                 return _Credential().get_token(*scopes, **kwargs)
 
         transport = (self.async_transport if asynchronous else self.sync_transport)(case)
-        credential = (_AsyncCredential() if asynchronous else _Credential()) if case.token_auth else AzureKeyCredential(KEY)
+        credential = (
+            (_AsyncCredential() if asynchronous else _Credential()) if case.token_auth else AzureKeyCredential(KEY)
+        )
         options = {
-            "transport": transport, "retry_total": 0, "allow_insecure_http": False,
+            "transport": transport,
+            "retry_total": 0,
+            "allow_insecure_http": False,
             # Forces selected per-operation api_version='v1' to work rather than
             # accidentally passing because the public client default is also v1.
-            "api_version": "configured-not-on-wire", "logging_enable": False,
+            "api_version": "configured-not-on-wire",
+            "logging_enable": False,
         }
         if self.legacy_routes:
             options["use_legacy_routes"] = True
@@ -516,17 +648,30 @@ class _Context:
 
     def batch(self) -> list:
         m = self.models
-        return [m.Datum(
-            model_input=m.ModelInput(chunks=[m.ModelInputChunk(tokens=[1, 2, 3])]),
-            loss_fn_inputs=m.LossFnInputs(**{name: m.TensorData(**value) for name, value in BATCH[0]["loss_fn_inputs"].items()}),
-        ), m.Datum(
-            model_input=self.mixed_input(),
-            loss_fn_inputs=m.LossFnInputs(**{name: m.TensorData(**value) for name, value in BATCH[1]["loss_fn_inputs"].items()}),
-        )]
+        return [
+            m.Datum(
+                model_input=m.ModelInput(chunks=[m.ModelInputChunk(tokens=[1, 2, 3])]),
+                loss_fn_inputs=m.LossFnInputs(
+                    **{name: m.TensorData(**value) for name, value in BATCH[0]["loss_fn_inputs"].items()}
+                ),
+            ),
+            m.Datum(
+                model_input=self.mixed_input(),
+                loss_fn_inputs=m.LossFnInputs(
+                    **{name: m.TensorData(**value) for name, value in BATCH[1]["loss_fn_inputs"].items()}
+                ),
+            ),
+        ]
 
     def mixed_input(self) -> Any:
         m = self.models
-        return m.ModelInput(chunks=[m.ModelInputChunk(tokens=[1, 2]), m.ImageChunk(data=IMAGE, format="jpeg", expected_tokens=2), m.ModelInputChunk(tokens=[3])])
+        return m.ModelInput(
+            chunks=[
+                m.ModelInputChunk(tokens=[1, 2]),
+                m.ImageChunk(data=IMAGE, format="jpeg", expected_tokens=2),
+                m.ModelInputChunk(tokens=[3]),
+            ]
+        )
 
     def exception(self, case: _Case, exc: Exception, name: str, expected: dict) -> dict:
         from azure.core.exceptions import HttpResponseError
@@ -537,7 +682,9 @@ class _Context:
         for field, value in expected.items():
             case.equal(getattr(exc, field), value, f"Exception.{field}")
         return {
-            "class": type(exc).__name__, "message": str(exc), "args": _plain(exc.args),
+            "class": type(exc).__name__,
+            "message": str(exc),
+            "args": _plain(exc.args),
             "metadata": {field: _plain(getattr(exc, field)) for field in ERROR_FIELDS if hasattr(exc, field)},
             "hierarchy": [base.__name__ for base in type(exc).__mro__],
         }
@@ -549,7 +696,10 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
     exports = {}
     for name, module in modules.items():
         names = list(module.__all__)
-        case.check(len(names) == len(set(names)) and all(hasattr(module, item) for item in names), f"{name}.__all__ exports resolve at runtime")
+        case.check(
+            len(names) == len(set(names)) and all(hasattr(module, item) for item in names),
+            f"{name}.__all__ exports resolve at runtime",
+        )
         exports[name] = sorted(names)
     signatures = {
         "sync.client": _signature(ctx.sdk.FineTuningSessionClient),
@@ -572,13 +722,30 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
             generated[f"{prefix}.{name}"] = _signature(getattr(operation_type, operation))
     enums = {
         name: {member: item.value for member, item in getattr(ctx.models, name).__members__.items()}
-        for name in ("CheckpointType", "FoundryFeaturesOptInKeys", "LossFn", "OperationStatus", "OperationType", "SessionStatus", "SessionType")
+        for name in (
+            "CheckpointType",
+            "FoundryFeaturesOptInKeys",
+            "LossFn",
+            "OperationStatus",
+            "OperationType",
+            "SessionStatus",
+            "SessionType",
+        )
     }
     groups = sorted(name for name in vars(client) if not name.startswith("_"))
-    case.equal(groups, sorted(("sessions", "training", "checkpoints", "sampling", "operations")), "Client operation groups")
+    case.equal(
+        groups, sorted(("sessions", "training", "checkpoints", "sampling", "operations")), "Client operation groups"
+    )
     case.check(ctx.sdk.EngineDeadError is ctx.sdk.TrainingEngineError, "EngineDeadError alias")
     case.check(ctx.sdk.MalformedDatumError is ctx.sdk.RequestValidationError, "MalformedDatumError alias")
-    return {"version": ctx.sdk.__version__, "exports": exports, "signatures": signatures, "generated_signatures": generated, "enums": enums, "client_groups": groups}
+    return {
+        "version": ctx.sdk.__version__,
+        "exports": exports,
+        "signatures": signatures,
+        "generated_signatures": generated,
+        "enums": enums,
+        "client_groups": groups,
+    }
 
 
 def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
@@ -590,7 +757,12 @@ def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
         ("AdamParams", m.AdamParams(**ADAM), ADAM, tuple(ADAM)),
         ("SamplingParams", m.SamplingParams(**SAMPLING), SAMPLING, tuple(SAMPLING)),
         ("LossFnConfig", m.LossFnConfig(**LOSS_CONFIG), LOSS_CONFIG, tuple(LOSS_CONFIG)),
-        ("FromCheckpoint", m.FromCheckpoint(source_session_id="session_source", checkpoint_id="checkpoint_source"), {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"}, ("source_session_id", "checkpoint_id")),
+        (
+            "FromCheckpoint",
+            m.FromCheckpoint(source_session_id="session_source", checkpoint_id="checkpoint_source"),
+            {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+            ("source_session_id", "checkpoint_id"),
+        ),
         ("ModelInput", ctx.mixed_input(), MIXED_INPUT, ("chunks",)),
     ):
         output[name] = ctx.model(case, value, name, expected, fields)
@@ -601,19 +773,42 @@ def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
     case.equal(ctx.value(ctx.batch()), BATCH, "Mixed-image Datum/LossFnInputs/TensorData construction")
     request = m.CreateSessionRequest(type="training", base_model=BASE_MODEL, user_metadata=METADATA)
     expected_request = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA}
-    output["CreateSessionRequest"] = ctx.model(case, request, "CreateSessionRequest", expected_request, ("type", "base_model", "user_metadata", "lora_config"))
-    error = m.ApiError(code="invalid_request", message="Invalid input", details=[m.ApiError(code="field", message="Bad data")], additional_info=METADATA, debug_info={"ref": "offline"})
-    error_wire = {"error": {"code": "invalid_request", "message": "Invalid input", "details": [{"code": "field", "message": "Bad data"}], "additionalInfo": METADATA, "debugInfo": {"ref": "offline"}}}
-    output["ApiErrorResponse"] = ctx.model(case, m.ApiErrorResponse(error=error), "ApiErrorResponse", error_wire, ("error",))
+    output["CreateSessionRequest"] = ctx.model(
+        case, request, "CreateSessionRequest", expected_request, ("type", "base_model", "user_metadata", "lora_config")
+    )
+    error = m.ApiError(
+        code="invalid_request",
+        message="Invalid input",
+        details=[m.ApiError(code="field", message="Bad data")],
+        additional_info=METADATA,
+        debug_info={"ref": "offline"},
+    )
+    error_wire = {
+        "error": {
+            "code": "invalid_request",
+            "message": "Invalid input",
+            "details": [{"code": "field", "message": "Bad data"}],
+            "additionalInfo": METADATA,
+            "debugInfo": {"ref": "offline"},
+        }
+    }
+    output["ApiErrorResponse"] = ctx.model(
+        case, m.ApiErrorResponse(error=error), "ApiErrorResponse", error_wire, ("error",)
+    )
     round_trip = ctx.model_base._deserialize(m.ApiErrorResponse, error_wire)
     case.equal(ctx.value(round_trip.error.additional_info), METADATA, "ApiError additionalInfo attribute round-trip")
     case.equal(round_trip.error.details[0].code, "field", "Nested error models deserialize")
     constructors = {
-        "FineTuningSessionsError": {}, "BatchTooLargeError": {"max_batch_size": 1, "actual_batch_size": 2},
+        "FineTuningSessionsError": {},
+        "BatchTooLargeError": {"max_batch_size": 1, "actual_batch_size": 2},
         "NoCapacityError": {"retry_after_sec": 1.5, "reason": "engine_busy"},
         "RateLimitedError": {"retry_after_sec": 2.0, "reason": "rate_limited"},
         "TrainingEngineError": {"session_id": SESSION, "error_code": "worker_crashed", "debug_ref": "offline"},
-        "OperationResultUnavailableError": {"operation_completed": True, "error_code": "operation_completed_result_unavailable", "debug_ref": "offline"},
+        "OperationResultUnavailableError": {
+            "operation_completed": True,
+            "error_code": "operation_completed_result_unavailable",
+            "debug_ref": "offline",
+        },
         "ContentionError": {"retry_after_sec": 0.5, "reason": "busy"},
         "RequestValidationError": {"field": "data", "error_code": "invalid_request", "debug_ref": "offline"},
         "RequestRetryableError": {"retry_after_sec": 1.0, "error_code": "request_timeout", "debug_ref": "offline"},
@@ -627,18 +822,32 @@ def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
 
 
 def _create_options(ctx: _Context, index: int) -> tuple[dict, dict]:
-    options = {"base_model": BASE_MODEL, "user_metadata": METADATA, "training_type": "DeveloperTier", "timeout_sec": 5.0}
+    options = {
+        "base_model": BASE_MODEL,
+        "user_metadata": METADATA,
+        "training_type": "DeveloperTier",
+        "timeout_sec": 5.0,
+    }
     body = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA, "training_type": "DeveloperTier"}
     if index == 1:
         options["lora_config"], body["lora_config"] = ctx.models.LoRAConfig(**LORA), LORA
     if index == 2:
-        options["from_checkpoint"] = ctx.models.FromCheckpoint(source_session_id="model_source", checkpoint_id="checkpoint_source")
+        options["from_checkpoint"] = ctx.models.FromCheckpoint(
+            source_session_id="model_source", checkpoint_id="checkpoint_source"
+        )
         body["from_checkpoint"] = {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"}
     return options, body
 
 
 def _checkpoint_expected(request_id: str, path: str, result: dict) -> dict:
-    return {"type": "save_checkpoint", "operation_id": request_id, "status": "succeeded", "checkpoint_id": path, "path": "", **result}
+    return {
+        "type": "save_checkpoint",
+        "operation_id": request_id,
+        "status": "succeeded",
+        "checkpoint_id": path,
+        "path": "",
+        **result,
+    }
 
 
 def _sync_create(ctx: _Context, case: _Case, client: Any) -> list:
@@ -647,21 +856,46 @@ def _sync_create(ctx: _Context, case: _Case, client: Any) -> list:
         options, body = _create_options(ctx, index)
         case.create(raw, resource, body, f"create_{index}")
         session = ctx.sdk.FineTuningSession.create(client, **options)
-        state = {"session_id": session.session_id, "resource_id": session._resource_session_id, "heartbeat_id": session._heartbeat_session_id}
-        case.equal(state, {"session_id": canonical, "resource_id": resource, "heartbeat_id": canonical}, "Canonical versus actual resource identity")
+        state = {
+            "session_id": session.session_id,
+            "resource_id": session._resource_session_id,
+            "heartbeat_id": session._heartbeat_session_id,
+        }
+        case.equal(
+            state,
+            {"session_id": canonical, "resource_id": resource, "heartbeat_id": canonical},
+            "Canonical versus actual resource identity",
+        )
         case.check(session._heartbeat_thread is None, "No background heartbeat thread")
         case.operation("checkpoint", {"path": "identity"}, {}, f"identity_{index}", resource=resource, server_id=raw)
         saved = session.save_weights("identity")
-        output.append({"state": state, "followup": ctx.model(case, saved, "SaveCheckpointOperationResult", _checkpoint_expected(f"identity_{index}", "identity", {}), ("checkpoint_id", "path"))})
+        output.append(
+            {
+                "state": state,
+                "followup": ctx.model(
+                    case,
+                    saved,
+                    "SaveCheckpointOperationResult",
+                    _checkpoint_expected(f"identity_{index}", "identity", {}),
+                    ("checkpoint_id", "path"),
+                ),
+            }
+        )
     return output
 
 
 def _sync_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> list:
     output = []
     for index, path in enumerate(CHECKPOINT_PATHS):
-        body = {"type": "training", "base_model": BASE_MODEL, "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"}}
+        body = {
+            "type": "training",
+            "base_model": BASE_MODEL,
+            "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+        }
         case.create("model_resumed", "model_resumed", body, f"resume_{index}")
-        session = ctx.sdk.FineTuningSession.create_from_checkpoint(client, checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0)
+        session = ctx.sdk.FineTuningSession.create_from_checkpoint(
+            client, checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0
+        )
         state = {"session_id": session.session_id, "resource_id": session._resource_session_id}
         case.equal(state, {"session_id": "session_resumed", "resource_id": "model_resumed"}, "Resumed session identity")
         output.append(state)
@@ -680,9 +914,17 @@ def _training_plan(case: _Case, action: str, request_id: str, configured: bool =
         body = {"forward_input" if action == "forward" else "forward_backward_input": inputs}
         payload = FORWARD if action == "forward" else BACKWARD
         expected = {**payload, **({"total_loss": 1.25} if action == "forward_backward" else {})}
-        model, fields, discriminator = "ForwardBackwardOperationResult", ("total_loss", "loss_fn_output_type", "loss_fn_outputs", "per_datum_logprobs", "metrics"), "forward_backward"
+        model, fields, discriminator = (
+            "ForwardBackwardOperationResult",
+            ("total_loss", "loss_fn_output_type", "loss_fn_outputs", "per_datum_logprobs", "metrics"),
+            "forward_backward",
+        )
     case.operation(action, body, payload, request_id)
-    return {**expected, "operation_id": request_id, "status": "succeeded", "type": discriminator}, model, ("operation_id", "status", "type", *fields)
+    return (
+        {**expected, "operation_id": request_id, "status": "succeeded", "type": discriminator},
+        model,
+        ("operation_id", "status", "type", *fields),
+    )
 
 
 def _sync_training(ctx: _Context, case: _Case, client: Any) -> dict:
@@ -692,7 +934,11 @@ def _sync_training(ctx: _Context, case: _Case, client: Any) -> dict:
         configured = action == "forward_backward"
         expected, model, fields = _training_plan(case, action, action, configured)
         argument = ctx.models.AdamParams(**ADAM) if action == "optim_step" else ctx.batch()
-        options = {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)} if configured else {}
+        options = (
+            {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)}
+            if configured
+            else {}
+        )
         result = getattr(session, action)(argument, **options)
         output[action] = ctx.model(case, result, model, expected, fields)
     return output
@@ -701,10 +947,20 @@ def _sync_training(ctx: _Context, case: _Case, client: Any) -> dict:
 def _sync_checkpoints(ctx: _Context, case: _Case, client: Any) -> list:
     session = ctx.sdk.FineTuningSession(client, SESSION)
     output = []
-    for index, payload in enumerate(({"path": "loom://session_workload/weights/train"}, {"checkpoint_id": "server_override", "path": "server_path"})):
+    for index, payload in enumerate(
+        ({"path": "loom://session_workload/weights/train"}, {"checkpoint_id": "server_override", "path": "server_path"})
+    ):
         request_id = f"save_{index}"
         case.operation("checkpoint", {"path": "train"}, payload, request_id)
-        output.append(ctx.model(case, session.save_weights("train"), "SaveCheckpointOperationResult", _checkpoint_expected(request_id, "train", payload), ("checkpoint_id", "path")))
+        output.append(
+            ctx.model(
+                case,
+                session.save_weights("train"),
+                "SaveCheckpointOperationResult",
+                _checkpoint_expected(request_id, "train", payload),
+                ("checkpoint_id", "path"),
+            )
+        )
     for index, path in enumerate((None, "sampler_explicit")):
         body = {"seq_id": 7, "sampling_session_seq_id": 2}
         if path is not None:
@@ -713,23 +969,50 @@ def _sync_checkpoints(ctx: _Context, case: _Case, client: Any) -> list:
         request_id = f"sampler_{index}"
         case.operation("checkpoint_sample", body, payload, request_id)
         result = session.save_weights_for_sampler(7, sampling_session_seq_id=2, path=path)
-        expected = {**payload, "type": "save_sampler_weights", "checkpoint_id": path or "ss2_seq7", "operation_id": request_id, "status": "succeeded"}
-        output.append(ctx.model(case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")))
+        expected = {
+            **payload,
+            "type": "save_sampler_weights",
+            "checkpoint_id": path or "ss2_seq7",
+            "operation_id": request_id,
+            "status": "succeeded",
+        }
+        output.append(
+            ctx.model(
+                case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")
+            )
+        )
     return output
 
 
 def _sample_plan(ctx: _Context, case: _Case, index: int) -> tuple[Any, dict, dict]:
     prompt = [1, 2] if index == 0 else ctx.mixed_input()
     prompt_wire = {"chunks": [{"tokens": [1, 2]}]} if index == 0 else MIXED_INPUT
-    options = {"checkpoint_id": "sampler_explicit", "num_samples": 2, "sampling_session_id": "sampling_workload", "seq_id": 7, "prompt_logprobs": True, "topk_prompt_logprobs": 2}
-    body = {"prompt": prompt_wire, "sampling_params": SAMPLING, **{key: value for key, value in options.items() if key != "checkpoint_id"}}
+    options = {
+        "checkpoint_id": "sampler_explicit",
+        "num_samples": 2,
+        "sampling_session_id": "sampling_workload",
+        "seq_id": 7,
+        "prompt_logprobs": True,
+        "topk_prompt_logprobs": 2,
+    }
+    body = {
+        "prompt": prompt_wire,
+        "sampling_params": SAMPLING,
+        **{key: value for key, value in options.items() if key != "checkpoint_id"},
+    }
     request_id = f"sample_{index}"
     case.operation("sample", body, SAMPLES, request_id, query=(("checkpoint_id", "sampler_explicit"),))
     return prompt, options, {**SAMPLES, "type": "sample", "status": "succeeded", "operation_id": request_id}
 
 
 def _sample_result(ctx: _Context, case: _Case, result: Any, expected: dict) -> dict:
-    value = ctx.model(case, result, "SampleOperationResult", expected, ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics"))
+    value = ctx.model(
+        case,
+        result,
+        "SampleOperationResult",
+        expected,
+        ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics"),
+    )
     case.equal(result.sequences[0].tokens, [31, 32], "Sample token IDs remain integers")
     case.equal(result.sequences[0].text, "caf\u00e9", "Sample text")
     case.check(result.sequences[1].text is None and result.sequences[1].logprobs is None, "Nullable sequence fields")
@@ -758,23 +1041,88 @@ def _sync_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
             case.expect("DELETE", f"/{resource}", {}, status=status)
             case.equal(session.delete(), None, "Delete is idempotent")
         case.check(session._heartbeat_stop.is_set() and session._heartbeat_thread is None, "Lifecycle stops heartbeats")
-        output.append({"session_id": session.session_id, "resource_id": session._resource_session_id, "heartbeat": heartbeat})
+        output.append(
+            {"session_id": session.session_id, "resource_id": session._resource_session_id, "heartbeat": heartbeat}
+        )
         case.equal(session.session_id, canonical, "Lifecycle canonical session ID")
     return output
 
 
 def _generated_specs() -> list[tuple]:
     timestamp = "2026-09-17T12:00:00Z"
-    summary = {"session_id": SESSION, "base_model": BASE_MODEL, "status": "running", "is_lora": True, "lora_rank": 16, "corrupted": False, "last_request_time": timestamp}
-    session = {"session_id": SESSION, "type": "training", "status": "running", "model_data": {"base_model": BASE_MODEL, "lora_config": LORA, "model_name": "offline-model"}}
+    summary = {
+        "session_id": SESSION,
+        "base_model": BASE_MODEL,
+        "status": "running",
+        "is_lora": True,
+        "lora_rank": 16,
+        "corrupted": False,
+        "last_request_time": timestamp,
+    }
+    session = {
+        "session_id": SESSION,
+        "type": "training",
+        "status": "running",
+        "model_data": {"base_model": BASE_MODEL, "lora_config": LORA, "model_name": "offline-model"},
+    }
     page = {"data": [summary], "cursor": {"offset": 3, "limit": 2, "total_count": 4}}
-    checkpoints = {"checkpoints": [{"checkpoint_id": "train", "checkpoint_type": "training", "time": timestamp}, {"checkpoint_id": "sampler", "checkpoint_type": "sampler", "time": timestamp}]}
+    checkpoints = {
+        "checkpoints": [
+            {"checkpoint_id": "train", "checkpoint_type": "training", "time": timestamp},
+            {"checkpoint_id": "sampler", "checkpoint_type": "sampler", "time": timestamp},
+        ]
+    }
     return [
-        ("sessions.get", "GET", f"/{SESSION}", {"session_id": SESSION}, session, "Session", ("session_id", "status", "model_data"), ()),
-        ("sessions.list", "GET", "", {"offset": 3, "limit": 2}, page, "SessionList", ("data", "cursor"), (("limit", 2), ("offset", 3))),
-        ("sessions.heartbeat", "POST", f"/{SESSION}/heartbeat", {"session_id": SESSION}, {"session_id": SESSION}, "HeartbeatResponse", ("session_id",), ()),
-        ("checkpoints.get", "GET", f"/{SESSION}/checkpoints/train", {"session_id": SESSION, "checkpoint_id": "train"}, {"base_model": BASE_MODEL, "is_lora": True, "lora_rank": 16}, "CheckpointInfo", ("base_model", "is_lora", "lora_rank"), ()),
-        ("checkpoints.list", "GET", f"/{SESSION}/checkpoints", {"session_id": SESSION}, checkpoints, "CheckpointList", ("checkpoints",), ()),
+        (
+            "sessions.get",
+            "GET",
+            f"/{SESSION}",
+            {"session_id": SESSION},
+            session,
+            "Session",
+            ("session_id", "status", "model_data"),
+            (),
+        ),
+        (
+            "sessions.list",
+            "GET",
+            "",
+            {"offset": 3, "limit": 2},
+            page,
+            "SessionList",
+            ("data", "cursor"),
+            (("limit", 2), ("offset", 3)),
+        ),
+        (
+            "sessions.heartbeat",
+            "POST",
+            f"/{SESSION}/heartbeat",
+            {"session_id": SESSION},
+            {"session_id": SESSION},
+            "HeartbeatResponse",
+            ("session_id",),
+            (),
+        ),
+        (
+            "checkpoints.get",
+            "GET",
+            f"/{SESSION}/checkpoints/train",
+            {"session_id": SESSION, "checkpoint_id": "train"},
+            {"base_model": BASE_MODEL, "is_lora": True, "lora_rank": 16},
+            "CheckpointInfo",
+            ("base_model", "is_lora", "lora_rank"),
+            (),
+        ),
+        (
+            "checkpoints.list",
+            "GET",
+            f"/{SESSION}/checkpoints",
+            {"session_id": SESSION},
+            checkpoints,
+            "CheckpointList",
+            ("checkpoints",),
+            (),
+        ),
     ]
 
 
@@ -785,9 +1133,21 @@ def _generated_call(case: _Case, client: Any, spec: tuple, hooks: list) -> tuple
     target = getattr(getattr(client, group), operation)
 
     def on_response(response: Any) -> None:
-        hooks.append({"method": response.http_request.method, "url": response.http_request.url, "status": response.http_response.status_code})
+        hooks.append(
+            {
+                "method": response.http_request.method,
+                "url": response.http_request.url,
+                "status": response.http_response.status_code,
+            }
+        )
 
-    options = {**arguments, "foundry_features": PREVIEW, "api_version": "v1", "headers": {"x-compatibility-probe": "shared"}, "raw_response_hook": on_response}
+    options = {
+        **arguments,
+        "foundry_features": PREVIEW,
+        "api_version": "v1",
+        "headers": {"x-compatibility-probe": "shared"},
+        "raw_response_hook": on_response,
+    }
     inspect.signature(target).bind(**options)
     case.check(True, f"{name} legacy api_version/headers/hook keywords bind")
     return target, options
@@ -800,21 +1160,70 @@ def _sync_generated(ctx: _Context, case: _Case, client: Any) -> dict:
         result = target(**options)
         output[spec[0]] = ctx.model(case, result, spec[5], spec[4], spec[6])
     case.equal(len(hooks), 5, "All real generated calls invoke response hooks")
-    case.check(all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests), "Per-operation custom headers reach transport")
+    case.check(
+        all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests),
+        "Per-operation custom headers reach transport",
+    )
     return {"results": output, "hooks": hooks}
 
 
 def _http_errors() -> tuple:
     return (
-        (413, {"detail": {"message": "Batch size (2) exceeds the maximum allowed (1)", "field": "forward_backward_input.data"}}, "BatchTooLargeError", {"max_batch_size": 1, "actual_batch_size": 2}),
-        (422, {"detail": {"type": "validation_error", "message": "Invalid offline datum", "field": "forward_backward_input.data", "error_code": "invalid_request", "debug_ref": "debug_fixture"}}, "RequestValidationError", {"field": "forward_backward_input.data", "error_code": "invalid_request", "debug_ref": "debug_fixture"}),
+        (
+            413,
+            {
+                "detail": {
+                    "message": "Batch size (2) exceeds the maximum allowed (1)",
+                    "field": "forward_backward_input.data",
+                }
+            },
+            "BatchTooLargeError",
+            {"max_batch_size": 1, "actual_batch_size": 2},
+        ),
+        (
+            422,
+            {
+                "detail": {
+                    "type": "validation_error",
+                    "message": "Invalid offline datum",
+                    "field": "forward_backward_input.data",
+                    "error_code": "invalid_request",
+                    "debug_ref": "debug_fixture",
+                }
+            },
+            "RequestValidationError",
+            {"field": "forward_backward_input.data", "error_code": "invalid_request", "debug_ref": "debug_fixture"},
+        ),
     )
 
 
 def _poll_errors() -> tuple:
     return (
-        ({"status": "failed", "error": "Offline engine stopped", "error_code": "worker_crashed", "debug_ref": "debug_fixture"}, "TrainingEngineError", {"session_id": SESSION, "error_code": "worker_crashed", "debug_ref": "debug_fixture"}),
-        ({"status": "failed", "error": "Completed result unavailable", "error_code": "operation_completed_result_unavailable", "should_retry": True, "debug_ref": "debug_fixture"}, "OperationResultUnavailableError", {"operation_completed": True, "error_code": "operation_completed_result_unavailable", "debug_ref": "debug_fixture"}),
+        (
+            {
+                "status": "failed",
+                "error": "Offline engine stopped",
+                "error_code": "worker_crashed",
+                "debug_ref": "debug_fixture",
+            },
+            "TrainingEngineError",
+            {"session_id": SESSION, "error_code": "worker_crashed", "debug_ref": "debug_fixture"},
+        ),
+        (
+            {
+                "status": "failed",
+                "error": "Completed result unavailable",
+                "error_code": "operation_completed_result_unavailable",
+                "should_retry": True,
+                "debug_ref": "debug_fixture",
+            },
+            "OperationResultUnavailableError",
+            {
+                "operation_completed": True,
+                "error_code": "operation_completed_result_unavailable",
+                "debug_ref": "debug_fixture",
+            },
+        ),
     )
 
 
@@ -854,16 +1263,34 @@ async def _async_create(ctx: _Context, case: _Case, client: Any) -> list:
         case.equal(client._heartbeat_tasks, {}, "No background heartbeat tasks")
         case.operation("checkpoint", {"path": "identity"}, {}, f"identity_{index}", resource=resource, server_id=raw)
         saved = await client.save_weights(session_id, "identity")
-        output.append({"session_id": session_id, "resource_map": dict(client._session_resource_ids), "followup": ctx.model(case, saved, "SaveCheckpointOperationResult", _checkpoint_expected(f"identity_{index}", "identity", {}), ("checkpoint_id", "path"))})
+        output.append(
+            {
+                "session_id": session_id,
+                "resource_map": dict(client._session_resource_ids),
+                "followup": ctx.model(
+                    case,
+                    saved,
+                    "SaveCheckpointOperationResult",
+                    _checkpoint_expected(f"identity_{index}", "identity", {}),
+                    ("checkpoint_id", "path"),
+                ),
+            }
+        )
     return output
 
 
 async def _async_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> list:
     output = []
     for index, path in enumerate(CHECKPOINT_PATHS):
-        body = {"type": "training", "base_model": BASE_MODEL, "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"}}
+        body = {
+            "type": "training",
+            "base_model": BASE_MODEL,
+            "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+        }
         case.create("model_resumed", "model_resumed", body, f"resume_{index}")
-        session_id = await client.create_session_from_checkpoint(checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0)
+        session_id = await client.create_session_from_checkpoint(
+            checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0
+        )
         case.equal(session_id, "session_resumed", "Async resumed identity")
         case.equal(client._session_resource_ids, {"session_resumed": "model_resumed"}, "Async resumed resource map")
         output.append({"session_id": session_id, "resource_map": dict(client._session_resource_ids)})
@@ -890,7 +1317,11 @@ async def _async_training(ctx: _Context, case: _Case, client: Any) -> dict:
             name = action + variant
             configured = action == "forward_backward"
             expected, model, fields = _training_plan(case, action, name, configured)
-            options = {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)} if configured else {}
+            options = (
+                {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)}
+                if configured
+                else {}
+            )
             if name == "forward_backward_async":
                 options.update(poll_min_sec=0.001, poll_max_sec=0.001, max_chunks_per_wave=1)
             argument = ctx.models.AdamParams(**ADAM) if action == "optim_step" else ctx.batch()
@@ -921,7 +1352,13 @@ async def _async_checkpoints(ctx: _Context, case: _Case, client: Any) -> dict:
         result = await getattr(client, name)(SESSION, "train", **options)
         if variant:
             result = await _resolve_handle(case, result, posted_at=before, pending=variant == "_post")
-        output[name] = ctx.model(case, result, "SaveCheckpointOperationResult", _checkpoint_expected(name, "train", payload), ("checkpoint_id", "path"))
+        output[name] = ctx.model(
+            case,
+            result,
+            "SaveCheckpointOperationResult",
+            _checkpoint_expected(name, "train", payload),
+            ("checkpoint_id", "path"),
+        )
     return output
 
 
@@ -938,9 +1375,23 @@ async def _async_sampling(ctx: _Context, case: _Case, client: Any) -> list:
         before = len(case.requests)
         handle = await getattr(client, name)(SESSION, "sampler_explicit")
         result = await _resolve_handle(case, handle, posted_at=before)
-        expected = {**payload, "type": "save_sampler_weights", "checkpoint_id": "sampler_explicit", "operation_id": request_id, "status": "succeeded"}
-        output.append(ctx.model(case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")))
-    case.equal(client._sampling_session_seq, {SESSION: 2}, "Ephemeral sampler sequence increments independently of persisted save")
+        expected = {
+            **payload,
+            "type": "save_sampler_weights",
+            "checkpoint_id": "sampler_explicit",
+            "operation_id": request_id,
+            "status": "succeeded",
+        }
+        output.append(
+            ctx.model(
+                case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")
+            )
+        )
+    case.equal(
+        client._sampling_session_seq,
+        {SESSION: 2},
+        "Ephemeral sampler sequence increments independently of persisted save",
+    )
     for index in range(2):
         prompt, options, expected = _sample_plan(ctx, case, index)
         result = await client.sample(SESSION, prompt, ctx.models.SamplingParams(**SAMPLING), **options)
@@ -958,7 +1409,9 @@ async def _async_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
         # Background heartbeats are disabled. Explicitly exercise the real
         # generated heartbeat using the resource retained by create_session.
         case.expect("POST", f"/{resource}/heartbeat", {"session_id": resource})
-        heartbeat = await client.sessions.heartbeat(client._session_resource_ids[session_id], foundry_features=PREVIEW, api_version="v1")
+        heartbeat = await client.sessions.heartbeat(
+            client._session_resource_ids[session_id], foundry_features=PREVIEW, api_version="v1"
+        )
         output.append(ctx.model(case, heartbeat, "HeartbeatResponse", {"session_id": resource}, ("session_id",)))
         case.expect("POST", f"/{resource}/complete", {})
         case.equal(await client.close_session(session_id), None, "Async close result")
@@ -973,13 +1426,20 @@ async def _async_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
 
 async def _async_generated(ctx: _Context, case: _Case, client: Any) -> dict:
     output, hooks = {}, []
-    case.equal(sorted(name for name in vars(client) if not name.startswith("_")), sorted(("sessions", "training", "checkpoints", "sampling", "operations")), "Async client operation groups")
+    case.equal(
+        sorted(name for name in vars(client) if not name.startswith("_")),
+        sorted(("sessions", "training", "checkpoints", "sampling", "operations")),
+        "Async client operation groups",
+    )
     for spec in _generated_specs():
         target, options = _generated_call(case, client, spec, hooks)
         result = await target(**options)
         output[spec[0]] = ctx.model(case, result, spec[5], spec[4], spec[6])
     case.equal(len(hooks), 5, "All real async generated calls invoke response hooks")
-    case.check(all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests), "Async per-operation headers reach transport")
+    case.check(
+        all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests),
+        "Async per-operation headers reach transport",
+    )
     return {"results": output, "hooks": hooks}
 
 
@@ -997,18 +1457,27 @@ async def _async_errors(ctx: _Context, case: _Case, client: Any, *, polling: boo
 
 
 SYNC_CASES: tuple[tuple[str, Callable], ...] = (
-    ("surface_and_signatures", _surface), ("serialization_and_error_contracts", _serialization),
-    ("sync_create_identifiers", _sync_create), ("sync_create_from_checkpoint", _sync_checkpoint_create),
-    ("sync_training", _sync_training), ("sync_checkpoints", _sync_checkpoints),
-    ("sync_sampling", _sync_sampling), ("sync_lifecycle", _sync_lifecycle),
-    ("sync_generated_reads", _sync_generated), ("sync_http_errors", _sync_errors),
+    ("surface_and_signatures", _surface),
+    ("serialization_and_error_contracts", _serialization),
+    ("sync_create_identifiers", _sync_create),
+    ("sync_create_from_checkpoint", _sync_checkpoint_create),
+    ("sync_training", _sync_training),
+    ("sync_checkpoints", _sync_checkpoints),
+    ("sync_sampling", _sync_sampling),
+    ("sync_lifecycle", _sync_lifecycle),
+    ("sync_generated_reads", _sync_generated),
+    ("sync_http_errors", _sync_errors),
     ("sync_poll_errors", lambda ctx, case, client: _sync_errors(ctx, case, client, polling=True)),
 )
 ASYNC_CASES: tuple[tuple[str, Callable], ...] = (
-    ("async_create_identifiers", _async_create), ("async_create_from_checkpoint", _async_checkpoint_create),
-    ("async_training", _async_training), ("async_checkpoint_pipeline", _async_checkpoints),
-    ("async_sampling", _async_sampling), ("async_lifecycle", _async_lifecycle),
-    ("async_generated_reads", _async_generated), ("async_http_errors", _async_errors),
+    ("async_create_identifiers", _async_create),
+    ("async_create_from_checkpoint", _async_checkpoint_create),
+    ("async_training", _async_training),
+    ("async_checkpoint_pipeline", _async_checkpoints),
+    ("async_sampling", _async_sampling),
+    ("async_lifecycle", _async_lifecycle),
+    ("async_generated_reads", _async_generated),
+    ("async_http_errors", _async_errors),
     ("async_poll_errors", lambda ctx, case, client: _async_errors(ctx, case, client, polling=True)),
 )
 CASE_NAMES = tuple(name for name, _ in (*SYNC_CASES, *ASYNC_CASES))
@@ -1080,12 +1549,30 @@ def _snapshot(package: Path, legacy_routes: bool) -> dict:
         if before != after:
             raise RuntimeError("SDK source files changed during the read-only snapshot")
         return {
-            "schema": 1, "namespace": NAMESPACE,
-            "source": {"package": str(package), "origin": str(expected_origin), "imported_modules": origins, "sha256": hashlib.sha256(_dump(before).encode()).hexdigest(), "unchanged": True},
-            "runtime": {"legacy_routes": legacy_routes, "network_guard": True, "write_guard": True, "heartbeat_start_disabled": True, "bytecode_writes": False},
-            "normalizations": NORMALIZATIONS, "limitations": LIMITATIONS,
+            "schema": 1,
+            "namespace": NAMESPACE,
+            "source": {
+                "package": str(package),
+                "origin": str(expected_origin),
+                "imported_modules": origins,
+                "sha256": hashlib.sha256(_dump(before).encode()).hexdigest(),
+                "unchanged": True,
+            },
+            "runtime": {
+                "legacy_routes": legacy_routes,
+                "network_guard": True,
+                "write_guard": True,
+                "heartbeat_start_disabled": True,
+                "bytecode_writes": False,
+            },
+            "normalizations": NORMALIZATIONS,
+            "limitations": LIMITATIONS,
             "cases": results,
-            "counts": {"cases": len(results), "checks": sum(item["checks"] for item in results.values()), "requests": sum(len(item["requests"]) for item in results.values())},
+            "counts": {
+                "cases": len(results),
+                "checks": sum(item["checks"] for item in results.values()),
+                "requests": sum(len(item["requests"]) for item in results.values()),
+            },
         }
     finally:
         loop.run_until_complete(loop.shutdown_asyncgens())
@@ -1132,17 +1619,29 @@ def _surface_allowances(left: dict, right: dict) -> tuple[dict, dict, list[str]]
         if name not in left["enums"][enum_name] and right["enums"][enum_name].get(name) == value:
             del right["enums"][enum_name][name]
             notes.append(f"Additive shared Foundry feature: {name}={value}")
-    for target, keyword in (("sync.client", "use_legacy_routes"), ("async.client", "use_legacy_routes"), ("async.client", "allow_insecure_http")):
+    for target, keyword in (
+        ("sync.client", "use_legacy_routes"),
+        ("async.client", "use_legacy_routes"),
+        ("async.client", "allow_insecure_http"),
+    ):
         old, new = left["signatures"][target], right["signatures"][target]
         addition = {"name": keyword, "kind": "KEYWORD_ONLY", "default": False}
         if not any(item["name"] == keyword for item in old) and addition in new:
             new.remove(addition)
-            reason = "legacy accepted this flag through **kwargs" if keyword == "allow_insecure_http" else "public-only opt-in, enabled only for the public worker"
+            reason = (
+                "legacy accepted this flag through **kwargs"
+                if keyword == "allow_insecure_http"
+                else "ignored compatibility option; neither worker sets it"
+            )
             notes.append(f"{target}: explicit {keyword}=False ({reason})")
     api_version = {"name": "api_version", "kind": "KEYWORD_ONLY"}
     for target, old in left["generated_signatures"].items():
         new = right["generated_signatures"].get(target, [])
-        if api_version in old and not any(item["name"] == "api_version" for item in new) and any(item["kind"] == "VAR_KEYWORD" for item in new):
+        if (
+            api_version in old
+            and not any(item["name"] == "api_version" for item in new)
+            and any(item["kind"] == "VAR_KEYWORD" for item in new)
+        ):
             old.remove(api_version)
             notes.append(f"{target}: api_version accepted through **kwargs; real v1 wire request checked")
     return left, right, notes
@@ -1152,18 +1651,32 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
         command.append("--legacy-routes")
-    completed = subprocess.run(command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False)
+    completed = subprocess.run(
+        command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False
+    )
     try:
         report = json.loads(completed.stdout)
     except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Snapshot did not produce JSON for {package}:\n{completed.stdout}\n{completed.stderr}") from exc
+        raise RuntimeError(
+            f"Snapshot did not produce JSON for {package}:\n{completed.stdout}\n{completed.stderr}"
+        ) from exc
     if completed.returncode not in (0, 1) or "fatal" in report:
         raise RuntimeError(f"Snapshot setup failed for {package}: {_dump(report)}\n{completed.stderr}")
-    expected_runtime = {"legacy_routes": legacy_routes, "network_guard": True, "write_guard": True, "heartbeat_start_disabled": True, "bytecode_writes": False}
+    expected_runtime = {
+        "legacy_routes": legacy_routes,
+        "network_guard": True,
+        "write_guard": True,
+        "heartbeat_start_disabled": True,
+        "bytecode_writes": False,
+    }
     if report.get("schema") != 1 or report.get("namespace") != NAMESPACE or report.get("runtime") != expected_runtime:
         raise RuntimeError("Unexpected snapshot schema, namespace, or isolation flags")
     source = report.get("source", {})
-    if Path(source.get("package", "")).resolve() != package or Path(source.get("origin", "")).resolve() != (package / MODULE / "__init__.py").resolve() or source.get("unchanged") is not True:
+    if (
+        Path(source.get("package", "")).resolve() != package
+        or Path(source.get("origin", "")).resolve() != (package / MODULE / "__init__.py").resolve()
+        or source.get("unchanged") is not True
+    ):
         raise RuntimeError("Snapshot source origin/integrity verification failed")
     if set(report.get("cases", {})) != set(CASE_NAMES):
         raise RuntimeError("Snapshot did not execute exactly the required 20 cases")
@@ -1178,14 +1691,18 @@ def _compare(loom: dict, public: dict) -> int:
         left, right = loom["cases"][name], public["cases"][name]
         differences = []
         if not left["ok"] or not right["ok"]:
-            differences.append(f"Case must succeed independently in both SDKs; Loom={left.get('error')}, public={right.get('error')}")
+            differences.append(
+                f"Case must succeed independently in both SDKs; Loom={left.get('error')}, public={right.get('error')}"
+            )
         elif name == "surface_and_signatures":
             old_surface, new_surface, allowances = _surface_allowances(left["output"], right["output"])
             left, right = {**left, "output": old_surface}, {**right, "output": new_surface}
         differences.extend(_differences(left, right, name))
         if differences:
             failed.append(name)
-        print(f"{'FAIL' if differences else 'PASS'} {name}: requests {len(left['requests'])}/{len(right['requests'])}, checks {left['checks']}/{right['checks']} (Loom/public)")
+        print(
+            f"{'FAIL' if differences else 'PASS'} {name}: requests {len(left['requests'])}/{len(right['requests'])}, checks {left['checks']}/{right['checks']} (Loom/public)"
+        )
         for difference in differences[:20]:
             print("  " + difference)
         if len(differences) > 20:
@@ -1199,7 +1716,9 @@ def _compare(loom: dict, public: dict) -> int:
     print("\nScope limits (not passing compatibility checks):")
     for note in LIMITATIONS:
         print("  " + note)
-    print(f"\n{'FAIL' if failed else 'PASS'}: {len(CASE_NAMES) - len(failed)}/{len(CASE_NAMES)} paired cases; requests {loom['counts']['requests']}/{public['counts']['requests']}; checks {loom['counts']['checks']}/{public['counts']['checks']} (Loom/public).")
+    print(
+        f"\n{'FAIL' if failed else 'PASS'}: {len(CASE_NAMES) - len(failed)}/{len(CASE_NAMES)} paired cases; requests {loom['counts']['requests']}/{public['counts']['requests']}; checks {loom['counts']['checks']}/{public['counts']['checks']} (Loom/public)."
+    )
     return 1 if failed else 0
 
 
@@ -1229,7 +1748,7 @@ def main() -> int:
             raise ValueError("Loom and public source roots must be different packages")
         print(f"Loom source:   {loom_package}\nPublic source: {public_package}")
         loom = _run_worker(loom_package, legacy_routes=False)
-        public = _run_worker(public_package, legacy_routes=True)
+        public = _run_worker(public_package, legacy_routes=False)
         return _compare(loom, public)
     except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
         print(f"Verifier setup failed: {exc}", file=sys.stderr)

@@ -27,7 +27,7 @@ from azure.core.exceptions import ServiceResponseError
 from azure.ai.finetuningsessions import _patch as _patch_mod
 from azure.ai.finetuningsessions._patch import FineTuningSession, _ErrorBudget
 
-_SUBPATH = "/fine_tuning_sessions/session_deadbeef/optim_step"
+_SUBPATH = "/fine_tuning/sessions/session_deadbeef/optim_step"
 _COMPLETED = {"status": "completed", "result": {}}
 _PENDING = {"status": "pending"}
 
@@ -293,7 +293,7 @@ def test_happy_path_operation_timeline_has_stable_fields(clock, caplog):
     assert result is not None
     assert (
         "submit_started session_id=session_deadbeef op=optim_step "
-        "path=/fine_tuning_sessions/session_deadbeef/optim_step"
+        "path=/fine_tuning/sessions/session_deadbeef/optim_step"
     ) in caplog.text
     assert (
         "submit_completed session_id=session_deadbeef request_id=req-1 " "op=optim_step elapsed_ms=0.0"

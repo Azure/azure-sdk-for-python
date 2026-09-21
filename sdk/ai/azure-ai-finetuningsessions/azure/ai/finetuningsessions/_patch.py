@@ -20,7 +20,7 @@ SPEC_FOUNDRY_AICLIENT.md:
 Training submissions follow loom's two-step protocol:
   1. POST to the action endpoint — loom returns **200** with
      ``{request_id, session_id, status: "pending"}``.
-  2. GET ``/fine_tuning_sessions/{sessionId}/request/{requestId}`` — the server
+    2. GET ``/fine_tuning/sessions/{sessionId}/request/{requestId}`` — the server
       returns a ``pending``, ``completed``, or ``failed`` request-status envelope.
 
 Generated operations expose these HTTP 200 accepted-request handles and raw
@@ -940,7 +940,7 @@ class FineTuningSession:
     ) -> "FineTuningSession":
         """Create a fine-tuning session and wait until the model is loaded.
 
-        Combines ``POST /fine_tuning_sessions`` (which triggers an async model-load
+        Combines ``POST /fine_tuning/sessions`` (which triggers an async model-load
         on the server) with polling of the returned ``request_id`` until the load
         completes, then returns a ready-to-use :class:`FineTuningSession`.
 
@@ -984,14 +984,14 @@ class FineTuningSession:
         body_json = _json.dumps(body)
         post_req = _HttpRequest(
             "POST",
-            "{endpoint}/fine_tuning_sessions",
+            "{endpoint}/fine_tuning/sessions",
             headers=_base_headers({"Content-Type": "application/json"}),
             params={"api-version": _API_VERSION},
             content=body_json,
         )
-        _log_http("request", "POST", "/fine_tuning_sessions", body=_json.loads(body_json))
+        _log_http("request", "POST", "/fine_tuning/sessions", body=_json.loads(body_json))
         post_resp = client.send_request(post_req)
-        _log_http("response", "POST", "/fine_tuning_sessions", status=post_resp.status_code, body=post_resp.json())
+        _log_http("response", "POST", "/fine_tuning/sessions", status=post_resp.status_code, body=post_resp.json())
         if post_resp.status_code >= 400:
             try:
                 resp_body = post_resp.json()
@@ -1005,7 +1005,7 @@ class FineTuningSession:
         raw_session_id: str = data["session_id"]
         request_id: str = data["request_id"]
         _logger.info(
-            "[create] POST /fine_tuning_sessions response: raw_session_id=%s, request_id=%s, full_response=%s",
+            "[create] POST /fine_tuning/sessions response: raw_session_id=%s, request_id=%s, full_response=%s",
             raw_session_id,
             request_id,
             data,
@@ -1021,7 +1021,7 @@ class FineTuningSession:
         )
 
         # Wait for the model-load request to complete.
-        # The retrieve-status endpoint (GET /fine_tuning_sessions/{id}/request/{rid})
+        # The retrieve-status endpoint (GET /fine_tuning/sessions/{id}/request/{rid})
         # is now non-blocking: each call returns a {status, result, error} envelope
         # immediately. We short-poll until status=="completed" (or "failed")
         # using adaptive backoff (MIN doubling up to MAX) to keep poll RPS bounded
@@ -1034,11 +1034,11 @@ class FineTuningSession:
             try:
                 poll_req = _HttpRequest(
                     "GET",
-                    "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}",
+                    "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}",
                     headers=_base_headers(),
                     params={"api-version": _API_VERSION},
                 )
-                poll_path = f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}"
+                poll_path = f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}"
                 _log_http("request", "GET", poll_path)
                 poll_resp = client.send_request(poll_req)
                 # Parse JSON once — `azure.core.rest` responses do not guarantee
@@ -1334,8 +1334,8 @@ class FineTuningSession:
             self.session_id,
         )
         subpath = subpath.replace(
-            f"/fine_tuning_sessions/{self.session_id}",
-            f"/fine_tuning_sessions/{resource_session_id}",
+            f"/fine_tuning/sessions/{self.session_id}",
+            f"/fine_tuning/sessions/{resource_session_id}",
             1,
         )
         body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -1388,11 +1388,11 @@ class FineTuningSession:
         # discriminated SDK OperationResult convenience model.
         poll_req = _HttpRequest(
             "GET",
-            "{endpoint}" + f"/fine_tuning_sessions/{session_id}/request/{request_id}",
+            "{endpoint}" + f"/fine_tuning/sessions/{session_id}/request/{request_id}",
             headers=_base_headers(),
             params={"api-version": _API_VERSION},
         )
-        poll_path = f"/fine_tuning_sessions/{session_id}/request/{request_id}"
+        poll_path = f"/fine_tuning/sessions/{session_id}/request/{request_id}"
 
         # Short-poll the {status, result, error} envelope. The server returns
         # immediately on every call; we sleep with adaptive backoff (MIN doubling
@@ -1598,7 +1598,7 @@ class FineTuningSession:
         if len(chunks) <= 1:
             # Single chunk — no combining needed.
             return self._post_and_poll(
-                f"/fine_tuning_sessions/{self.session_id}/forward_backward",
+                f"/fine_tuning/sessions/{self.session_id}/forward_backward",
                 ForwardBackwardRequest(
                     forward_backward_input=ForwardBackwardInput(
                         data=batch,
@@ -1619,7 +1619,7 @@ class FineTuningSession:
             i, chunk = idx_chunk
             _logger.info("[forward_backward] sending chunk %d/%d (%d datums)", i + 1, len(chunks), len(chunk))
             result = self._post_and_poll(
-                f"/fine_tuning_sessions/{self.session_id}/forward_backward",
+                f"/fine_tuning/sessions/{self.session_id}/forward_backward",
                 ForwardBackwardRequest(
                     forward_backward_input=ForwardBackwardInput(
                         data=chunk,
@@ -1656,7 +1656,7 @@ class FineTuningSession:
         Spec: ``opt_result = session.optim_step(AdamParams(learning_rate=1e-4))``
         """
         return self._post_and_poll(
-            f"/fine_tuning_sessions/{self.session_id}/optim_step",
+            f"/fine_tuning/sessions/{self.session_id}/optim_step",
             OptimStepRequest(adam_params=adam_params),
         )
 
@@ -1684,7 +1684,7 @@ class FineTuningSession:
         """
         # Server expects a ForwardRequest with `forward_input` wrapping the
         # shared ForwardBackwardInput payload.
-        subpath = f"/fine_tuning_sessions/{self.session_id}/forward"
+        subpath = f"/fine_tuning/sessions/{self.session_id}/forward"
 
         def _build_body(chunk: List[Datum]) -> dict:
             return {
@@ -1740,7 +1740,7 @@ class FineTuningSession:
         Spec: ``ckpt_result = session.save_weights("sft_piglatin_v1")``
         """
         return self._post_and_poll(
-            f"/fine_tuning_sessions/{self.session_id}/checkpoint",
+            f"/fine_tuning/sessions/{self.session_id}/checkpoint",
             SaveCheckpointRequest(path=path),
             extra_result_fields={"checkpoint_id": path},
         )
@@ -1768,7 +1768,7 @@ class FineTuningSession:
         # poll response, so we inject it before deserialization.
         computed_checkpoint_id = path or f"ss{sampling_session_seq_id}_seq{seq_id}"
         return self._post_and_poll(
-            f"/fine_tuning_sessions/{self.session_id}/checkpoint_sample",
+            f"/fine_tuning/sessions/{self.session_id}/checkpoint_sample",
             SaveSamplerWeightsRequest(
                 seq_id=seq_id,
                 sampling_session_seq_id=sampling_session_seq_id,
@@ -1818,7 +1818,7 @@ class FineTuningSession:
         """
         with self._client._sample_semaphore:
             return self._post_and_poll(
-                f"/fine_tuning_sessions/{self.session_id}/sample",
+                f"/fine_tuning/sessions/{self.session_id}/sample",
                 SampleRequest(
                     num_samples=num_samples,
                     prompt=(
@@ -1856,7 +1856,7 @@ class FineTuningSession:
         self._stop_heartbeat()
         close_req = _HttpRequest(
             "POST",
-            "{endpoint}" + f"/fine_tuning_sessions/{self._resource_session_id}/complete",
+            "{endpoint}" + f"/fine_tuning/sessions/{self._resource_session_id}/complete",
             headers=_base_headers(),
             params={"api-version": _API_VERSION},
         )
@@ -1877,7 +1877,7 @@ class FineTuningSession:
         self._stop_heartbeat()
         del_req = _HttpRequest(
             "DELETE",
-            "{endpoint}" + f"/fine_tuning_sessions/{self._resource_session_id}",
+            "{endpoint}" + f"/fine_tuning/sessions/{self._resource_session_id}",
             headers=_base_headers(),
             params={"api-version": _API_VERSION},
         )

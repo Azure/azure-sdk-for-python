@@ -140,7 +140,7 @@ class _RequestPolling(_NoContinuation):
 
     def _request(self) -> Any:
         # Lazy import avoids a cycle when operation patch hooks install aliases.
-        # The generated builder owns the canonical route and ID/query encoding.
+        # The generated builder owns the service route and ID/query encoding.
         from .operations._operations import build_operations_get_request
 
         request = build_operations_get_request(**self._request_arguments)
@@ -161,7 +161,9 @@ class _RequestPolling(_NoContinuation):
                 error = _classify_poll_failure(payload, session_id=session_id)
             except (ValueError, TypeError):
                 error = None
-            raise error or HttpResponseError(message=str(payload.get("error") or "Operation failed."), response=response)
+            raise error or HttpResponseError(
+                message=str(payload.get("error") or "Operation failed."), response=response
+            )
         if status == "completed" and payload.get("result") is not None and not isinstance(payload["result"], dict):
             raise HttpResponseError(message="Expected an object or null for the completed result.", response=response)
         self._response = pipeline_response
@@ -366,5 +368,7 @@ def install_legacy_pollers(
         method = _make_begin(new_name, result_type, asynchronous)
         method.__name__ = old_name
         method.__qualname__ = f"{operation_type.__qualname__}.{old_name}"
-        method.__doc__ = f"Submit once through {new_name} and poll request status. See install_legacy_pollers for limits."
+        method.__doc__ = (
+            f"Submit once through {new_name} and poll request status. See install_legacy_pollers for limits."
+        )
         setattr(operation_type, old_name, method)

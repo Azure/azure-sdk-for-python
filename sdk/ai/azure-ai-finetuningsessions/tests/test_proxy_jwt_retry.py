@@ -152,7 +152,7 @@ async def test_sync_submit_error_logging_preserves_json_body(clock, monkeypatch,
     response_logs = [
         record.getMessage() for record in caplog.records if record.getMessage().startswith("[HTTP] <-- POST")
     ]
-    expected = f"[HTTP] <-- POST /fine_tuning_sessions/{_SESSION_ID}/sample  status=401"
+    expected = f"[HTTP] <-- POST /fine_tuning/sessions/{_SESSION_ID}/sample  status=401"
     if isinstance(body, dict):
         expected += "\n" + json.dumps(body, indent=2)
     assert response_logs == ([expected] if verbose else [])
@@ -175,7 +175,7 @@ async def test_sync_submit_success_logs_body_parsed_once(clock, monkeypatch, cap
     response_logs = [
         record.getMessage() for record in caplog.records if record.getMessage().startswith("[HTTP] <-- POST")
     ]
-    expected = f"[HTTP] <-- POST /fine_tuning_sessions/{_SESSION_ID}/sample  status=200\n" + json.dumps(
+    expected = f"[HTTP] <-- POST /fine_tuning/sessions/{_SESSION_ID}/sample  status=200\n" + json.dumps(
         _ACCEPTED, indent=2
     )
     assert response_logs == ([expected] if verbose else [])

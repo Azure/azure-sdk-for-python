@@ -69,29 +69,54 @@ _CASES = [
     pytest.param("sessions", "begin_create", "session", _CREATE, {}, models.OperationResult, "", id="create"),
     pytest.param("sessions", "begin_unload", None, None, {}, models.OperationResult, "/complete", id="unload"),
     pytest.param(
-        "training", "begin_forward_backward", "request", _FORWARD,
+        "training",
+        "begin_forward_backward",
+        "request",
+        _FORWARD,
         {"metrics": {"total_loss:sum": 1.25}, "loss_fn_outputs": [{"logprobs": [None, -0.5]}]},
-        models.ForwardBackwardOperationResult, "/forward_backward", id="forward-backward",
+        models.ForwardBackwardOperationResult,
+        "/forward_backward",
+        id="forward-backward",
     ),
     pytest.param(
-        "training", "begin_optim_step", "request", _OPTIMIZER,
+        "training",
+        "begin_optim_step",
+        "request",
+        _OPTIMIZER,
         {"metrics": {"skyrl.ai/grad_norm": 0.75, "step_count": 3}},
-        models.OptimStepOperationResult, "/optim_step", id="optim-step",
+        models.OptimStepOperationResult,
+        "/optim_step",
+        id="optim-step",
     ),
     pytest.param(
-        "checkpoints", "begin_save", "checkpoint", {"path": "checkpoint_test"},
+        "checkpoints",
+        "begin_save",
+        "checkpoint",
+        {"path": "checkpoint_test"},
         {"path": "loom://weights/checkpoint_test", "extra": {"retained": True}},
-        models.SaveCheckpointOperationResult, "/checkpoint", id="save",
+        models.SaveCheckpointOperationResult,
+        "/checkpoint",
+        id="save",
     ),
     pytest.param(
-        "checkpoints", "begin_save_sampler_weights", "checkpoint", {"path": "checkpoint_test"},
+        "checkpoints",
+        "begin_save_sampler_weights",
+        "checkpoint",
+        {"path": "checkpoint_test"},
         {"type": "save_weights_for_sampler", "sampling_session_id": "sampler_raw"},
-        models.SaveSamplerWeightsOperationResult, "/checkpoint_sample", id="save-sampler-weights",
+        models.SaveSamplerWeightsOperationResult,
+        "/checkpoint_sample",
+        id="save-sampler-weights",
     ),
     pytest.param(
-        "sampling", "begin_sample", "sample", _SAMPLE,
+        "sampling",
+        "begin_sample",
+        "sample",
+        _SAMPLE,
         {"sequences": [{"tokens": [42], "text": "answer", "logprobs": [None]}]},
-        models.SampleOperationResult, "/sample", id="sample",
+        models.SampleOperationResult,
+        "/sample",
+        id="sample",
     ),
 ]
 
@@ -194,16 +219,17 @@ async def _result(poller, asynchronous):
 def _assert_wire(transport, suffix, query, *, create=False, sample=False):
     post, *polls = transport.requests
     assert post.method == "POST" and len(polls) == 2
-    assert post.url.split("?", 1)[0] == _ENDPOINT + "/fine_tuning_sessions" + (
+    assert post.url.split("?", 1)[0] == _ENDPOINT + "/fine_tuning/sessions" + (
         "" if create else f"/{quote(_SESSION, safe='')}{suffix}"
     )
     assert parse_qs(urlsplit(post.url).query) == {
-        **query, **({"checkpoint_id": ["sampler_checkpoint"]} if sample else {})
+        **query,
+        **({"checkpoint_id": ["sampler_checkpoint"]} if sample else {}),
     }
     for request in polls:
         assert request.method == "GET"
         assert request.url.split("?", 1)[0] == (
-            f"{_ENDPOINT}/fine_tuning_sessions/{quote(_SESSION, safe='')}/request/{quote(_REQUEST, safe='')}"
+            f"{_ENDPOINT}/fine_tuning/sessions/{quote(_SESSION, safe='')}/request/{quote(_REQUEST, safe='')}"
         )
         assert parse_qs(urlsplit(request.url).query) == query
     for request in transport.requests:
@@ -211,7 +237,7 @@ def _assert_wire(transport, suffix, query, *, create=False, sample=False):
         assert request.headers["Accept"] == "application/json"
         assert request.headers["api-key"] == "offline-secret-not-a-token"
         assert request.headers["x-offline-routing-policy"] == "visited"
-        assert "/fine_tuning/sessions" not in request.url and "heartbeat" not in request.url
+        assert "/fine_tuning_sessions" not in request.url and "heartbeat" not in request.url
     forbidden = {"api_version", "body", "cls", "polling", "polling_interval", "continuation_token", "checkpoint_id"}
     assert all(not forbidden.intersection(options) for options in transport.options)
     for response in transport.responses:
@@ -287,8 +313,13 @@ async def test_per_call_options_survive_polling_without_mutating_config(asynchro
     headers = {"x-user-header": "value", "Content-Type": "application/json"}
     original = deepcopy((params, headers))
     async with _client(
-        asynchronous, {"request_id": _REQUEST}, _PENDING, _COMPLETED, _ACCEPTED,
-        polling_interval=0.25, per_call_policies=[_RoutingMarker()],
+        asynchronous,
+        {"request_id": _REQUEST},
+        _PENDING,
+        _COMPLETED,
+        _ACCEPTED,
+        polling_interval=0.25,
+        per_call_policies=[_RoutingMarker()],
     ) as (client, transport):
         kwargs = {"params": params, "headers": headers, "connection_timeout": 7, "read_timeout": 9}
         if per_call_version is not None:
@@ -326,7 +357,8 @@ async def test_concurrent_async_calls_keep_their_own_api_version_snapshots():
         for method in ("POST", "GET"):
             assert sorted(
                 parse_qs(urlsplit(request.url).query)["api-version"][0]
-                for request in transport.requests if request.method == method
+                for request in transport.requests
+                if request.method == method
             ) == ["first", "second"]
         assert client._config.api_version == "configured-version"
 
@@ -342,9 +374,7 @@ async def test_cls_gets_the_real_response_and_nopolling_keeps_the_handle(asynchr
         return sentinel
 
     async with _client(asynchronous, _ACCEPTED, _COMPLETED) as (client, transport):
-        poller = await _begin(
-            client.sessions.begin_create, asynchronous, body=_CREATE, polling=polling, cls=transform
-        )
+        poller = await _begin(client.sessions.begin_create, asynchronous, body=_CREATE, polling=polling, cls=transform)
         assert not calls  # cls is the poller's result callback, not the submission capture callback.
         assert await _result(poller, asynchronous) is sentinel
         response, result, headers = calls[0]
@@ -366,13 +396,18 @@ async def test_cls_gets_the_real_response_and_nopolling_keeps_the_handle(asynchr
     [("begin_save", models.SaveCheckpointRequest), ("begin_save_sampler_weights", models.SaveSamplerWeightsRequest)],
 )
 @pytest.mark.parametrize("server_id", [None, "server-wins"])
-async def test_checkpoint_body_path_fallback_never_overwrites_server_value(asynchronous, operation, body_type, server_id):
+async def test_checkpoint_body_path_fallback_never_overwrites_server_value(
+    asynchronous, operation, body_type, server_id
+):
     payload = {"path": "loom://weights/remote", "extra": {"future": [False, None, 0.5]}}
     if server_id is not None:
         payload["checkpoint_id"] = server_id
     async with _client(asynchronous, _ACCEPTED, {"status": "completed", "result": payload}) as (client, transport):
         poller = await _begin(
-            getattr(client.checkpoints, operation), asynchronous, session_id=_SESSION, body=body_type(path="caller-path")
+            getattr(client.checkpoints, operation),
+            asynchronous,
+            session_id=_SESSION,
+            body=body_type(path="caller-path"),
         )
         result = await _result(poller, asynchronous)
         assert result.checkpoint_id == (server_id or "caller-path")
@@ -387,7 +422,8 @@ _FAILURES = [
     pytest.param({"error_code": "future_transient_code", "should_retry": True}, RequestRetryableError, id="retry-hint"),
     pytest.param(
         {"error_code": "operation_completed_result_unavailable", "should_retry": True},
-        OperationResultUnavailableError, id="lost-result-no-resubmit",
+        OperationResultUnavailableError,
+        id="lost-result-no-resubmit",
     ),
     pytest.param({"error_code": "unknown"}, HttpResponseError, id="generic"),
 ]
@@ -415,13 +451,16 @@ async def test_failed_envelopes_are_terminal_typed_and_never_resubmitted(asynchr
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("phase", ["submission", "poll"])
-@pytest.mark.parametrize("status, payload, expected_error", [
-    (409, {"error_code": "engine_dead", "message": "engine died"}, TrainingEngineError),
-    (413, {"message": "Batch size (20) exceeds the maximum allowed (10)"}, BatchTooLargeError),
-    (503, {"reason": "engine_busy", "message": "No capacity"}, NoCapacityError),
-    (404, {"error": "missing request"}, HttpResponseError),
-    (500, {"message": "unknown failure"}, HttpResponseError),
-])
+@pytest.mark.parametrize(
+    "status, payload, expected_error",
+    [
+        (409, {"error_code": "engine_dead", "message": "engine died"}, TrainingEngineError),
+        (413, {"message": "Batch size (20) exceeds the maximum allowed (10)"}, BatchTooLargeError),
+        (503, {"reason": "engine_busy", "message": "No capacity"}, NoCapacityError),
+        (404, {"error": "missing request"}, HttpResponseError),
+        (500, {"message": "unknown failure"}, HttpResponseError),
+    ],
+)
 async def test_http_failures_classify_without_an_extra_retry_loop(asynchronous, phase, status, payload, expected_error):
     responses = [(status, payload)] if phase == "submission" else [_ACCEPTED, (status, payload)]
     async with _client(asynchronous, *responses) as (client, transport):
@@ -437,17 +476,24 @@ async def test_http_failures_classify_without_an_extra_retry_loop(asynchronous, 
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("failure", [
-    (503, {"reason": "engine_busy", "message": "No capacity"}, {"Retry-After": "0"}),
-    ServiceRequestError("offline connection error"),
-    (307, {}, {"location": "https://other.invalid/must-not-submit"}),
-])
+@pytest.mark.parametrize(
+    "failure",
+    [
+        (503, {"reason": "engine_busy", "message": "No capacity"}, {"Retry-After": "0"}),
+        ServiceRequestError("offline connection error"),
+        (307, {}, {"location": "https://other.invalid/must-not-submit"}),
+    ],
+)
 async def test_post_is_not_retried_even_if_pipeline_or_caller_enables_retries(asynchronous, failure):
     async with _client(asynchronous, failure, retry_total=5) as (client, transport):
         with pytest.raises((HttpResponseError, ServiceRequestError)):
             await _begin(
-                client.training.begin_optim_step, asynchronous, _SESSION, _OPTIMIZER,
-                retry_total=5, permit_redirects=True,
+                client.training.begin_optim_step,
+                asynchronous,
+                _SESSION,
+                _OPTIMIZER,
+                retry_total=5,
+                permit_redirects=True,
             )
         assert [request.method for request in transport.requests] == ["POST"]
         assert not transport.sleeps
@@ -465,7 +511,10 @@ async def test_get_retries_remain_bounded_by_existing_pipeline(asynchronous):
 
 @pytest.mark.asyncio
 async def test_exhausted_poll_transport_error_is_not_retried_by_the_adapter(asynchronous):
-    async with _client(asynchronous, _ACCEPTED, ServiceRequestError("offline transport failure")) as (client, transport):
+    async with _client(asynchronous, _ACCEPTED, ServiceRequestError("offline transport failure")) as (
+        client,
+        transport,
+    ):
         poller = await _begin(client.sessions.begin_unload, asynchronous, _SESSION)
         for _ in range(2):
             with pytest.raises(ServiceRequestError):
@@ -487,13 +536,23 @@ async def test_missing_submission_session_uses_the_supplied_keyword_id(asynchron
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("polling", [False, True])
-@pytest.mark.parametrize("payload", [
-    {}, {"request_id": "request_without_session"},
-    {"session_id": "session_without_request"},
-    {**_ACCEPTED, "request_id": ""}, {**_ACCEPTED, "request_id": 3}, {**_ACCEPTED, "request_id": "  "},
-    {**_ACCEPTED, "session_id": ["old-array-format"]}, {**_ACCEPTED, "session_id": None},
-    {**_ACCEPTED, "session_id": ""}, None, [], b"not-json",
-])
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {},
+        {"request_id": "request_without_session"},
+        {"session_id": "session_without_request"},
+        {**_ACCEPTED, "request_id": ""},
+        {**_ACCEPTED, "request_id": 3},
+        {**_ACCEPTED, "request_id": "  "},
+        {**_ACCEPTED, "session_id": ["old-array-format"]},
+        {**_ACCEPTED, "session_id": None},
+        {**_ACCEPTED, "session_id": ""},
+        None,
+        [],
+        b"not-json",
+    ],
+)
 async def test_invalid_submission_handles_never_poll(asynchronous, polling, payload):
     async with _client(asynchronous, payload) as (client, transport):
         # Non-object/invalid JSON can be rejected by the generated deserializer
@@ -547,10 +606,17 @@ async def test_empty_completed_unload_result_is_normalized(asynchronous, payload
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("payload", [
-    {"status": "succeeded", "result": {}}, {"status": "running"}, {}, [],
-    {"status": "completed", "result": []}, {"status": "completed", "result": "wrong"},
-])
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"status": "succeeded", "result": {}},
+        {"status": "running"},
+        {},
+        [],
+        {"status": "completed", "result": []},
+        {"status": "completed", "result": "wrong"},
+    ],
+)
 async def test_bad_poll_payloads_fail_instead_of_polling_forever(asynchronous, payload):
     async with _client(asynchronous, _ACCEPTED, payload) as (client, transport):
         poller = await _begin(client.sessions.begin_unload, asynchronous, _SESSION)
@@ -560,11 +626,18 @@ async def test_bad_poll_payloads_fail_instead_of_polling_forever(asynchronous, p
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("options", [
-    {"continuation_token": "untrusted-opaque-token"}, {"continuation_token": ""},
-    {"polling": object()}, {"polling_interval": -1}, {"polling_interval": float("inf")},
-    {"polling_interval": float("nan")}, {"stream": True},
-])
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"continuation_token": "untrusted-opaque-token"},
+        {"continuation_token": ""},
+        {"polling": object()},
+        {"polling_interval": -1},
+        {"polling_interval": float("inf")},
+        {"polling_interval": float("nan")},
+        {"stream": True},
+    ],
+)
 async def test_unsupported_options_are_rejected_before_submission(asynchronous, options):
     async with _client(asynchronous) as (client, transport):
         with pytest.raises(ValueError):

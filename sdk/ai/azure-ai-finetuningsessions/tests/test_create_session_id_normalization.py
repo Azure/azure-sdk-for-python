@@ -64,7 +64,7 @@ class _RecordingSessions:
     def heartbeat(self, session_id: str, **kwargs: Any) -> _FakeResponse:
         request = _sync_patch._HttpRequest(
             "POST",
-            f"{{endpoint}}/fine_tuning_sessions/{session_id}/heartbeat",
+            f"{{endpoint}}/fine_tuning/sessions/{session_id}/heartbeat",
         )
         return self._client.send_request(request)
 
@@ -81,7 +81,7 @@ def test_sync_create_preserves_canonical_server_session_id() -> None:
 
     assert session.session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/session_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/session_abc12345/request/req-1" in poll_req.url
 
 
 def test_sync_create_serializes_developer_tier_string() -> None:
@@ -111,7 +111,7 @@ def test_sync_create_routes_legacy_server_session_id() -> None:
 
     assert session.session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/model_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/model_abc12345/request/req-1" in poll_req.url
 
 
 def test_sync_create_normalizes_raw_server_session_id() -> None:
@@ -126,7 +126,7 @@ def test_sync_create_normalizes_raw_server_session_id() -> None:
 
     assert session.session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/model_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/model_abc12345/request/req-1" in poll_req.url
 
 
 async def test_async_create_preserves_canonical_server_session_id() -> None:
@@ -141,7 +141,7 @@ async def test_async_create_preserves_canonical_server_session_id() -> None:
 
     assert session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/session_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/session_abc12345/request/req-1" in poll_req.url
 
 
 async def test_async_create_routes_legacy_server_session_id() -> None:
@@ -156,7 +156,7 @@ async def test_async_create_routes_legacy_server_session_id() -> None:
 
     assert session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/model_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/model_abc12345/request/req-1" in poll_req.url
 
 
 async def test_async_create_normalizes_raw_server_session_id() -> None:
@@ -171,7 +171,7 @@ async def test_async_create_normalizes_raw_server_session_id() -> None:
 
     assert session_id == "session_abc12345"
     poll_req = client.requests[1]
-    assert "/fine_tuning_sessions/model_abc12345/request/req-1" in poll_req.url
+    assert "/fine_tuning/sessions/model_abc12345/request/req-1" in poll_req.url
 
 
 @pytest.mark.parametrize(
@@ -203,8 +203,8 @@ def test_sync_post_create_operation_uses_server_resource_id(
     session.save_weights("checkpoint-1")
 
     assert session.session_id == "session_abc12345"
-    assert f"/fine_tuning_sessions/{resource_session_id}/checkpoint" in client.requests[2].url
-    assert f"/fine_tuning_sessions/{resource_session_id}/request/req-2" in client.requests[3].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/checkpoint" in client.requests[2].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/request/req-2" in client.requests[3].url
 
 
 @pytest.mark.parametrize(
@@ -236,8 +236,8 @@ async def test_async_post_create_operation_uses_server_resource_id(
     await _aio_patch.save_weights(client, session_id, "checkpoint-1")
 
     assert session_id == "session_abc12345"
-    assert f"/fine_tuning_sessions/{resource_session_id}/checkpoint" in client.requests[2].url
-    assert f"/fine_tuning_sessions/{resource_session_id}/request/req-2" in client.requests[3].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/checkpoint" in client.requests[2].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/request/req-2" in client.requests[3].url
 
 
 @pytest.mark.parametrize(
@@ -266,7 +266,7 @@ def test_sync_post_create_close_uses_server_resource_id(
     session.close()
 
     assert session._heartbeat_session_id == "session_abc12345"
-    assert f"/fine_tuning_sessions/{resource_session_id}/complete" in client.requests[2].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/complete" in client.requests[2].url
 
 
 @pytest.mark.parametrize(
@@ -295,7 +295,7 @@ async def test_async_post_create_close_uses_server_resource_id(
     await _aio_patch.close_session(client, session_id)
 
     start_heartbeat.assert_called_once_with(client, "session_abc12345")
-    assert f"/fine_tuning_sessions/{resource_session_id}/complete" in client.requests[2].url
+    assert f"/fine_tuning/sessions/{resource_session_id}/complete" in client.requests[2].url
 
 
 @pytest.mark.parametrize("server_session_id", ["model_abc12345", "abc12345"])
@@ -316,7 +316,7 @@ def test_sync_legacy_create_heartbeat_uses_server_resource_id(
     session.heartbeat()
 
     assert session.session_id == "session_abc12345"
-    assert "/fine_tuning_sessions/model_abc12345/heartbeat" in client.requests[2].url
+    assert "/fine_tuning/sessions/model_abc12345/heartbeat" in client.requests[2].url
 
 
 @pytest.mark.parametrize("server_session_id", ["model_abc12345", "abc12345"])
@@ -345,7 +345,7 @@ async def test_async_legacy_create_heartbeat_uses_server_resource_id(
 
     assert session_id == "session_abc12345"
     assert list(client._heartbeat_tasks) == []
-    assert "/fine_tuning_sessions/model_abc12345/heartbeat" in client.requests[2].url
+    assert "/fine_tuning/sessions/model_abc12345/heartbeat" in client.requests[2].url
 
 
 def test_sync_create_serializes_checkpoint_source_as_session_id() -> None:

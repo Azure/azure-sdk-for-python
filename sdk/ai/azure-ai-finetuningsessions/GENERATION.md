@@ -52,8 +52,9 @@ changes and still needs its own coordinated source/wheel migration.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
   It pins the immutable TypeSpec commit
-  `12851ab6cc56378c9137e7971ac69172f2aa411b`, containing the namespace migration
-  and preserved preview error-model exports. Generation was verified against
+  `5b2372a4f5063925b56783f088e577758736b297`, restoring the existing session
+  routes while retaining the namespace migration and preview error-model exports.
+  Generation was verified against
   that commit's exact source content; the fingerprint below identifies it.
 - The TypeSpec target incorporated is
   `6d8e681878ddcfad7749a69e48dea167755dde6b`; the SDK main target incorporated is
@@ -117,10 +118,10 @@ patch files, but its formatter may normalize handwritten Python formatting.
 
 ## Intentional differences from the source snapshot
 
-- Canonical public `/fine_tuning_sessions` paths are the default. Set
-  `use_legacy_routes=True` explicitly for an existing `/fine_tuning/sessions`
-  endpoint. That handwritten policy rewrites requests before sending, never as
-  a fallback after a failed POST; it does not deploy gateway changes.
+- Generated operations, convenience calls, heartbeats, and polling use the
+  existing `/fine_tuning/sessions` paths directly, matching Loom. The earlier
+  `use_legacy_routes` option is accepted as a no-op for either value. No rewrite
+  policy, automatic fallback, or gateway deployment is needed for route selection.
 - Raw generated responses now match HTTP 200 submissions, string `session_id`,
   `request_id`, and `pending/completed/failed` request envelopes. Generated
   operations use ordinary submission methods; no invented `Operation-Location`
@@ -162,9 +163,9 @@ patch files, but its formatter may normalize handwritten Python formatting.
 and imports each SDK in a separate subprocess. Network access and filesystem
 writes are blocked in each worker. Twenty paired cases compare actual outgoing
 URLs, headers, JSON bodies, model attributes, exceptions, exported symbols,
-selected signatures, and session/resource-ID mappings. The public SDK uses
-the explicit legacy-route option; the verifier does not normalize route paths
-after requests are sent. Background heartbeats are disabled in this workload.
+selected signatures, and session/resource-ID mappings. Both SDKs use their
+default routes with no selection flag; the verifier does not normalize route
+paths after requests are sent. Background heartbeats are disabled in this workload.
 
 Only header casing, validated random request UUIDs, the exact runtime suffix
 of the user agent, and JSON object ordering are normalized. Added generated
@@ -199,19 +200,24 @@ dependencies because of feed authentication/TLS errors. These full repository
 checks require a working authenticated package-feed environment and remain
 distinct from the offline tests and successful emission comparisons.
 
-### Local results after namespace migration and compatibility fixes
+### Local results after restoring the existing routes
 
-- **697 public SDK tests passed** against both source and its installed wheel.
+- **706 public SDK tests passed** against both source and the installed wheel.
+  This includes default, false,
+  and true route-option cases, custom-pipeline preservation, and all existing
+  compatibility regressions.
 - **428 Loom SDK tests passed** before/after the mechanical rename and against
   its installed renamed wheel. Both wheels contain only the new Python namespace.
-- **20/20 paired cases passed**, with **134 requests and 2,246 checks per SDK**.
+- **20/20 paired cases passed**, with **134 requests and 2,246 checks per SDK**,
+  using both SDKs' default routes without a route-selection flag.
 - **22 generated files** matched two independent pinned emissions; handwritten
   files and TypeSpec source were unchanged during verification.
 - The renamed TypeSpec input fingerprint is
-  `b48d921523cd591c98dc98fa133951aa4d17a3930a4307ef40c56b5eb0fc2efa`.
-- The preceding public OpenAPI validation contained **13 canonical paths / 15
-  methods**, matching HTTP 200 submissions and raw request-status envelopes.
-  The distribution rename does not change those contracts.
+  `f75684047115c7d804f9929c3263501ad4ced9f7b41572aa4c4c116ac5467245`.
+- The API contains **13 paths / 15 methods**, now under `/fine_tuning/sessions`,
+  matching HTTP 200 submissions and raw request-status envelopes. Package and
+  Python namespace names remain `azure-ai-finetuningsessions` and
+  `azure.ai.finetuningsessions`; the route restoration does not change models.
 - Full Foundry compilation and Python emission were rerun successfully. Full-service
   compilation retained 29 warnings; Python emission retained 66 warnings.
 - Both wheels and source archives build with the new distribution name. Public
@@ -219,7 +225,7 @@ distinct from the offline tests and successful emission comparisons.
   match their respective sources, include `py.typed`, and contain no stale
   old-namespace modules, build trees, or tests.
 - Reviewed public wheel SHA-256:
-  `fd5e16ba343ef9a2ff7e8d89dc3590bcae070ebb412bd74d1200f5dc6a6dac6f`.
+  `0b539a05b737e79394041b079d9aa7ebfd9add9ca732addf0a989bffd7b2edd6`.
   Reviewed Loom wheel SHA-256:
   `30bfd7bdbd941c33215fea80886d21439e9a094918482882083c80c2327aafb3`.
 - Six changed PowerShell build scripts parse successfully; the renamed Loom

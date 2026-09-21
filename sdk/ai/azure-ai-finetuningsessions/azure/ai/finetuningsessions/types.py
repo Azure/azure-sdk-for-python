@@ -44,7 +44,7 @@ class AdamParams(TypedDict, total=False):
 
 
 class CreateSessionRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions.
+    """Request body for POST /fine_tuning/sessions.
 
     :ivar type: The session type. Required. "training"
     :vartype type: Union[str, "SessionType"]
@@ -116,7 +116,7 @@ class ForwardBackwardInput(TypedDict, total=False):
 
 
 class ForwardBackwardRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/forward_backward.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
@@ -150,7 +150,7 @@ class ForwardInput(TypedDict, total=False):
 
 
 class ForwardRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: "ForwardInput"
@@ -316,7 +316,7 @@ class ModelInputChunk(TypedDict, total=False):
 
 
 class OptimStepRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: "AdamParams"
@@ -327,7 +327,7 @@ class OptimStepRequest(TypedDict, total=False):
 
 
 class SampleRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/sample.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/sample.
 
     :ivar num_samples: Number of independent completions to generate. Default 1.
     :vartype num_samples: int
@@ -399,7 +399,7 @@ class SamplingParams(TypedDict, total=False):
 
 
 class SaveCheckpointRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
+    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.
@@ -420,7 +420,7 @@ class SaveCheckpointRequest(TypedDict, total=False):
 
 
 class SaveSamplerWeightsRequest(TypedDict, total=False):
-    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint_sample. Supply either path
+    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint_sample. Supply either path
     or both sampling_session_seq_id and seq_id. The service validates this requirement at runtime.
 
     :ivar path: Explicit sampler checkpoint identifier. Required unless both sequence identifiers

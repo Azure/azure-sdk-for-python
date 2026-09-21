@@ -104,7 +104,7 @@ def test_create_session_payload_preserves_boolean_metadata(monkeypatch):
     )
     assert session_id == "session_sess123"
 
-    # First captured request is the POST /fine_tuning_sessions.
+    # First captured request is the POST /fine_tuning/sessions.
     post_req = client.requests[0]
     body = json.loads(post_req.content)
     assert body["user_metadata"] == {

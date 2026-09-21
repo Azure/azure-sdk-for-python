@@ -10,33 +10,13 @@ not in generated configuration files. The loopback-only HTTP opt-in preserves
 the existing sync and async credential safeguards.
 """
 
-from collections.abc import Iterable
 from typing import Any
-from urllib.parse import urlparse, urlsplit, urlunsplit
+from urllib.parse import urlparse
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 _LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
-
-
-class _LegacySessionRoutePolicy(policies.SansIOHTTPPolicy):
-    """Rewrite this client's session routes before sending, never after a failure."""
-
-    def __init__(self, endpoint: str) -> None:
-        endpoint_parts = urlsplit(endpoint)
-        self._origin = (endpoint_parts.scheme.casefold(), endpoint_parts.netloc.casefold())
-        self._prefix = endpoint_parts.path.rstrip("/") + "/fine_tuning_sessions"
-
-    def on_request(self, request: Any) -> None:
-        parts = urlsplit(request.http_request.url)
-        if (parts.scheme.casefold(), parts.netloc.casefold()) != self._origin:
-            return
-        if parts.path != self._prefix and not parts.path.startswith(self._prefix + "/"):
-            return
-        path = self._prefix.removesuffix("/fine_tuning_sessions") + "/fine_tuning/sessions"
-        path += parts.path[len(self._prefix):]
-        request.http_request.url = urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment))
 
 
 def _is_local_endpoint(endpoint: str) -> bool:
@@ -69,18 +49,15 @@ def prepare_client_options(
     use_legacy_routes: bool = False,
     **kwargs: Any,
 ) -> dict[str, Any]:
-    """Return constructor options without changing credential-policy semantics."""
+    """Preserve credential policies; use_legacy_routes is a compatibility no-op.
+
+    All SDK operations use /fine_tuning/sessions regardless of this flag.
+    Consume it here rather than forwarding it to the pipeline or transport.
+    """
     if endpoint is None:
         raise ValueError("Parameter 'endpoint' must not be None.")
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
-    if use_legacy_routes:
-        if kwargs.get("pipeline") is not None:
-            raise ValueError("use_legacy_routes cannot be combined with a prebuilt pipeline.")
-        policies_before_retry = kwargs.get("per_call_policies") or []
-        if not isinstance(policies_before_retry, Iterable):
-            policies_before_retry = [policies_before_retry]
-        kwargs["per_call_policies"] = [_LegacySessionRoutePolicy(endpoint), *policies_before_retry]
     try:
         is_http = urlparse(endpoint).scheme.casefold() == "http"
     except ValueError:

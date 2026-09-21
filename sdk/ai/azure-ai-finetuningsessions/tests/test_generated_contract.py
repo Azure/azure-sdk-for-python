@@ -23,7 +23,7 @@ from azure.ai.finetuningsessions.operations import _operations as builders
 from conftest import FakeCredential, FakeTransport
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
-_ROOT = "/fine_tuning_sessions"
+_ROOT = "/fine_tuning/sessions"
 _SESSION = {"session_id": "session_test"}
 _JSON = {"enabled": True, "nested": {"values": [1, 0.5, None, False]}}
 _CREATE_BODY = {"type": "training", "base_model": "model_test", "lora_config": {"rank": 16}, "user_metadata": _JSON}
@@ -53,7 +53,7 @@ def _json_value(value: Any) -> Any:
 def _assert_request(request: Any, method: str, url: str, **query: Any) -> None:
     assert request.method == method
     assert request.url.partition("?")[0] == url
-    assert "/fine_tuning/sessions" not in request.url
+    assert "/fine_tuning_sessions" not in request.url
     assert parse_qs(urlsplit(request.url).query) == {"api-version": ["v1"], **{k: [str(v)] for k, v in query.items()}}
     assert request.headers["Foundry-Features"] == "FineTuningSessions=V1Preview"
     assert request.headers["Accept"] == "application/json"

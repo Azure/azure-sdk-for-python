@@ -50,6 +50,4 @@ def patch_sdk():
         },
         asynchronous=True,
     )
-    install_legacy_pollers(
-        _operations.SamplingOperations, {"begin_sample": ("sample", "sample")}, asynchronous=True
-    )
+    install_legacy_pollers(_operations.SamplingOperations, {"begin_sample": ("sample", "sample")}, asynchronous=True)

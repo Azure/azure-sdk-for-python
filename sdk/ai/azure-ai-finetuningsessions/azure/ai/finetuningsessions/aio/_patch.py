@@ -12,7 +12,7 @@ to the exported ``FineTuningSessionClient`` subclass via ``patch_sdk()``.
 
 Generated operations return HTTP 200 accepted-request handles and raw
 request-status envelopes. The convenience methods manually poll
-``/fine_tuning_sessions/{sessionId}/request/{requestId}``, apply retries,
+``/fine_tuning/sessions/{sessionId}/request/{requestId}``, apply retries,
 and normalize completed results into SDK convenience models.
 
 Concurrency:
@@ -211,7 +211,7 @@ def _client_resource_subpath(
     self: "FineTuningSessionClient",
     subpath: str,
 ) -> str:
-    prefix = "/fine_tuning_sessions/"
+    prefix = "/fine_tuning/sessions/"
     if not subpath.startswith(prefix):
         return subpath
     session_id, separator, suffix = subpath[len(prefix) :].partition("/")
@@ -238,7 +238,7 @@ def _start_heartbeat(
             try:
                 hb_req = _HttpRequest(
                     "POST",
-                    "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}/heartbeat",
+                    "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/heartbeat",
                     headers=_base_headers(),
                     params={"api-version": _API_VERSION},
                 )
@@ -315,7 +315,7 @@ async def _post(
     if extra_params:
         post_params.update(extra_params)
     op_type = _LOOM_SUBPATH_TO_OP_TYPE.get(subpath.rsplit("/", 1)[-1], "")
-    timeline_session_id = subpath.partition("/fine_tuning_sessions/")[2].partition("/")[0]
+    timeline_session_id = subpath.partition("/fine_tuning/sessions/")[2].partition("/")[0]
     submit_queued = _time.monotonic()
     _logger.info(
         "[operation_timeline] submit_queued session_id=%s op=%s path=%s%s",
@@ -652,7 +652,7 @@ async def _poll(
         raise ValueError("poll_max_sec must be greater than or equal to poll_min_sec")
 
     resource_session_id = _client_resource_session_id(self, session_id)
-    poll_path = f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}"
+    poll_path = f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}"
     conn_backoff = 1.0
     poll_backoff = effective_poll_min
     error_budget = _ErrorBudget.for_polling(error_budget_sec, op_type=op_type, request_id=request_id)
@@ -670,7 +670,7 @@ async def _poll(
             poll_attempts += 1
             poll_req = _HttpRequest(
                 "GET",
-                "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}",
+                "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}",
                 headers=_base_headers(),
                 params={"api-version": _API_VERSION},
             )
@@ -983,17 +983,17 @@ async def create_session(
     body_json = _json.dumps(body)
     post_req = _HttpRequest(
         "POST",
-        "{endpoint}/fine_tuning_sessions",
+        "{endpoint}/fine_tuning/sessions",
         headers=_base_headers({"Content-Type": "application/json"}),
         params={"api-version": _API_VERSION},
         content=body_json,
     )
-    _log_http("request", "POST", "/fine_tuning_sessions", body=_json.loads(body_json))
+    _log_http("request", "POST", "/fine_tuning/sessions", body=_json.loads(body_json))
     post_resp = await self.send_request(post_req)
     _log_http(
         "response",
         "POST",
-        "/fine_tuning_sessions",
+        "/fine_tuning/sessions",
         status=post_resp.status_code,
         body=post_resp.json() if post_resp.status_code < 400 else None,
     )
@@ -1034,11 +1034,11 @@ async def create_session(
         try:
             poll_req = _HttpRequest(
                 "GET",
-                "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}",
+                "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}",
                 headers=_base_headers(),
                 params={"api-version": _API_VERSION},
             )
-            poll_path = f"/fine_tuning_sessions/{resource_session_id}/request/{request_id}"
+            poll_path = f"/fine_tuning/sessions/{resource_session_id}/request/{request_id}"
             _log_http("request", "GET", poll_path)
             poll_resp = await self.send_request(poll_req)
             envelope = poll_resp.json() if poll_resp.status_code == 200 else None
@@ -1190,7 +1190,7 @@ async def forward_backward(
         return await _post_and_poll(
             self,
             session_id,
-            f"/fine_tuning_sessions/{session_id}/forward_backward",
+            f"/fine_tuning/sessions/{session_id}/forward_backward",
             ForwardBackwardRequest(
                 forward_backward_input=ForwardBackwardInput(
                     data=batch,
@@ -1217,7 +1217,7 @@ async def forward_backward(
         result = await _post_and_poll(
             self,
             session_id,
-            f"/fine_tuning_sessions/{session_id}/forward_backward",
+            f"/fine_tuning/sessions/{session_id}/forward_backward",
             ForwardBackwardRequest(
                 forward_backward_input=ForwardBackwardInput(
                     data=chunk,
@@ -1265,7 +1265,7 @@ async def forward(
         return await _post_and_poll(
             self,
             session_id,
-            f"/fine_tuning_sessions/{session_id}/forward",
+            f"/fine_tuning/sessions/{session_id}/forward",
             ForwardRequest(
                 forward_input=ForwardInput(
                     data=batch,
@@ -1292,7 +1292,7 @@ async def forward(
         result = await _post_and_poll(
             self,
             session_id,
-            f"/fine_tuning_sessions/{session_id}/forward",
+            f"/fine_tuning/sessions/{session_id}/forward",
             ForwardRequest(
                 forward_input=ForwardInput(
                     data=chunk,
@@ -1338,7 +1338,7 @@ async def forward_post(
     :param loss_fn_config: Optional per-loss hyper-parameters.
     :return: PendingRequests handle.
     """
-    subpath = f"/fine_tuning_sessions/{session_id}/forward"
+    subpath = f"/fine_tuning/sessions/{session_id}/forward"
     chunks = _chunk_data(batch)
 
     if len(chunks) > 1:
@@ -1425,7 +1425,7 @@ async def optim_step(
     return await _post_and_poll(
         self,
         session_id,
-        f"/fine_tuning_sessions/{session_id}/optim_step",
+        f"/fine_tuning/sessions/{session_id}/optim_step",
         OptimStepRequest(adam_params=adam_params),
     )
 
@@ -1605,7 +1605,7 @@ async def _forward_backward_chunks_post(
     loss_fn_config: Optional[LossFnConfig],
 ) -> PendingRequests:
     """POST precomputed forward/backward chunks sequentially."""
-    subpath = f"/fine_tuning_sessions/{session_id}/forward_backward"
+    subpath = f"/fine_tuning/sessions/{session_id}/forward_backward"
 
     posted: List[_PostSpec] = []
     for chunk in chunks:
@@ -1757,7 +1757,7 @@ async def optim_step_post(
     :param adam_params: Optimizer hyper-parameters.
     :return: PendingRequests handle.
     """
-    subpath = f"/fine_tuning_sessions/{session_id}/optim_step"
+    subpath = f"/fine_tuning/sessions/{session_id}/optim_step"
     body = OptimStepRequest(adam_params=adam_params)
     operation_started_at = _time.monotonic()
     request_id, op_type = await _post(self, subpath, body)
@@ -1824,7 +1824,7 @@ async def save_weights(
     return await _post_and_poll(
         self,
         session_id,
-        f"/fine_tuning_sessions/{session_id}/checkpoint",
+        f"/fine_tuning/sessions/{session_id}/checkpoint",
         SaveCheckpointRequest(path=path),
         extra_result_fields={"checkpoint_id": path},
     )
@@ -1846,7 +1846,7 @@ async def save_weights_post(
     :param metrics: Evaluation metrics at checkpoint time.
     :return: PendingRequests handle.
     """
-    subpath = f"/fine_tuning_sessions/{session_id}/checkpoint"
+    subpath = f"/fine_tuning/sessions/{session_id}/checkpoint"
     body = SaveCheckpointRequest(path=path, step_number=step_number, metrics=metrics)
     operation_started_at = _time.monotonic()
     request_id, op_type = await _post(self, subpath, body)
@@ -1897,7 +1897,7 @@ async def _save_weights_for_sampler_post(
     path: Optional[str] = None,
 ) -> "PendingRequests":
     """Internal: POST a save-weights-for-sampler request without polling."""
-    subpath = f"/fine_tuning_sessions/{session_id}/checkpoint_sample"
+    subpath = f"/fine_tuning/sessions/{session_id}/checkpoint_sample"
     body = SaveSamplerWeightsRequest(
         seq_id=0,
         sampling_session_seq_id=sampling_session_seq_id,
@@ -2023,7 +2023,7 @@ async def sample(
         seq_id=seq_id,
         prompt_logprobs=prompt_logprobs,
     )
-    subpath = f"/fine_tuning_sessions/{session_id}/sample"
+    subpath = f"/fine_tuning/sessions/{session_id}/sample"
     operation_started_at = _time.monotonic()
     # Hold the lifecycle-scoped permit across BOTH submit and poll: releasing it
     # after submit would let a queued burst starve slow/throttled in-flight
@@ -2067,7 +2067,7 @@ async def close_session(
     resource_session_id = _client_resource_session_id(self, session_id)
     close_req = _HttpRequest(
         "POST",
-        "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}/complete",
+        "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/complete",
         headers=_base_headers(),
         params={"api-version": _API_VERSION},
     )
@@ -2094,7 +2094,7 @@ async def delete_session(
     resource_session_id = _client_resource_session_id(self, session_id)
     del_req = _HttpRequest(
         "DELETE",
-        "{endpoint}" + f"/fine_tuning_sessions/{resource_session_id}",
+        "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}",
         headers=_base_headers(),
         params={"api-version": _API_VERSION},
     )
