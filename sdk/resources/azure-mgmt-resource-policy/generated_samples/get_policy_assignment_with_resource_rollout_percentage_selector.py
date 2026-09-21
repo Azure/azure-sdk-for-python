@@ -15,7 +15,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python delete_policy_enrollment.py
+    python get_policy_assignment_with_resource_rollout_percentage_selector.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.policy_enrollments.delete(
-        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/resourceGroups/demoCluster",
-        policy_enrollment_name="DemoExpensiveVM",
+    response = client.policy_assignments.get(
+        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+        policy_assignment_name="CostManagement",
     )
+    print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/deletePolicyEnrollment.json
+# x-ms-original-file: 2026-06-01/getPolicyAssignmentWithResourceRolloutPercentageSelector.json
 if __name__ == "__main__":
     main()
