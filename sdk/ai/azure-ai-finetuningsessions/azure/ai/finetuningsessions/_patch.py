@@ -52,7 +52,6 @@ from ._client_options import prepare_client_options
 from ._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
-    RequestRetryableError as _RequestRetryableError,
     BatchTooLargeError,
     ContentionError,
     EngineDeadError,
@@ -1167,7 +1166,7 @@ class FineTuningSession:
         :param checkpoint_path: Reference to a saved training checkpoint.
             Accepted formats:
               - ``"<source_session_id>/<checkpoint_name>"``
-                            - ``"loom://<source_session_id>/weights/<checkpoint_name>"``
+              - ``"loom://<source_session_id>/weights/<checkpoint_name>"``
         :param base_model: Base model name. Must match the checkpoint's source.
         :param lora_config: Optional LoRA config override.
         :param type: Session type. Defaults to ``"training"``.
@@ -1272,7 +1271,7 @@ class FineTuningSession:
                     extra_result_fields,
                     timeline,
                 )
-            except _RequestRetryableError as exc:
+            except RequestRetryableError as exc:
                 if attempt >= _MAX_REQUEST_RETRIES:
                     raise
                 attempt += 1

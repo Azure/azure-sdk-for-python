@@ -40,7 +40,7 @@ import json as _json
 import logging as _logging
 import random as _random
 import time as _time
-from typing import Awaitable, Callable, TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
+from typing import Awaitable, Callable, Any, Dict, List, NamedTuple, Optional, Union
 
 from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
@@ -100,9 +100,6 @@ from .._patch import (
     _BoundedRetryState,
     _ProxyJwtRetryState,
 )
-
-if TYPE_CHECKING:
-    from ._client import FineTuningSessionClient
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
 _logger = _logging.getLogger(__name__)
@@ -2117,7 +2114,9 @@ async def delete_session(
 # -- Patch the generated client ------------------------------------------------
 
 
-class FineTuningSessionClient(_GeneratedFineTuningSessionClient):
+class FineTuningSessionClient(
+    _GeneratedFineTuningSessionClient
+):  # pylint: disable=client-accepts-api-version-keyword
     """Async session client with regeneration-safe credential configuration."""
 
     def __init__(
