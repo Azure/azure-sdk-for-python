@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
@@ -142,6 +142,21 @@ class AsyncContainerSessionProvider:
             )
         self._client = BlobServiceClient(_to_service_url(service_url), credential=credential, **kwargs)
         self._cache = AsyncSessionCache()
+
+    async def __aenter__(self) -> "AsyncContainerSessionProvider":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: Any) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the client used to issue CreateSession calls.
+
+        Only meaningful for a provider you constructed yourself; one created by a
+        client shares that client's transport and closing it is a no-op.
+        """
+        await self._client.close()
 
     def is_request_eligible(self, request: "PipelineRequest") -> bool:
         """Checks whether the request can be signed with a session token.

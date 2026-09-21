@@ -155,7 +155,7 @@ class AsyncStorageAccountHostsMixin(object):
                 sub_kwargs.pop("_configuration", None)
                 sub_kwargs.pop("pipeline", None)
                 sub_kwargs.pop("sdk_moniker", None)
-                sub_kwargs["transport"] = transport
+                sub_kwargs["transport"] = AsyncTransportWrapper(transport)
                 session_provider = AsyncContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}",
                     cast(AsyncTokenCredential, credential),
