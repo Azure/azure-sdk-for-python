@@ -99,12 +99,14 @@ safe-outputs:
                 raise ValueError(message)
 
         def substantive(text):
+            # Normalize only for placeholder comparison; never rewrite submitted evidence.
             lines = [
-                line.strip() for line in text.splitlines()
+                " ".join(re.sub(r"[*_\x60~]", "", line).lower().split()).strip(". ")
+                for line in text.splitlines()
                 if line.strip() and not line.startswith(("#", "<!--"))
             ]
             return bool(lines) and all(
-                line.lower().strip(".* ") not in {
+                line not in {
                     "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
                 }
                 for line in lines
@@ -194,7 +196,7 @@ safe-outputs:
                 ("Unverified checks", "**Unverified checks:** None."),
                 ("Breaking-change attribution", "**Breaking-change attribution:** No newly added or modified entries."),
             ):
-                if "\n### " + heading + "\n" not in "\n" + content:
+                if not re.search(r"(?m)^### " + re.escape(heading) + r"\s*\n", content):
                     content = content.replace(none, "### " + heading + "\n\n" + none, 1)
             sections = re.split(r"(?m)^### (Unverified checks|Breaking-change attribution|Review summary)\s*\n", content)
             require(len(sections) == 7 and sections[1::2] ==

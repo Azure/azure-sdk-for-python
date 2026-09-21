@@ -128,6 +128,49 @@ class ReviewCommentTests(unittest.TestCase):
                 with self.subTest(placeholder=placeholder, section=section):
                     self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(section, placeholder)}]})
 
+    def test_formatted_placeholders_in_cells_and_handoffs_are_rejected(self):
+        for placeholder in (
+            "`None.`", "_Done_", "**`None.`**", "`_Done_`", "~~**None.**~~",
+            "_Full_ **review** `pending`", "**Full   review pending.**",
+        ):
+            bodies = (
+                REVIEW.replace("Version consistency, client signature, README, and API-version drift", placeholder),
+                REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Removed Widget", placeholder)),
+                REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Needs human review: baseline unavailable", placeholder)),
+                REVIEW.replace(NO_ENTRIES,
+                               "**Package: azure-mgmt-example | Release: unverified**\n\n"
+                               "**Needs human review:** " + placeholder),
+            )
+            for body in bodies:
+                with self.subTest(placeholder=placeholder, body=body):
+                    self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+
+    def test_formatted_evidence_is_preserved(self):
+        evidence = (
+            '`Widget._check()` returns `None` per **API documentation**, not a review placeholder; '
+            '[source](https://github.com/Azure/example/blob/' + "a" * 40 + '/_widget.py#L42).'
+        )
+        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Needs human review: baseline unavailable", evidence))
+        payload = {"items": [{"type": "add_comment", "body": body}]}
+        self.run_guard(payload)
+        self.assertEqual(body, payload["items"][0]["body"])
+
+    def test_optional_none_headings_allow_trailing_whitespace(self):
+        for unverified_suffix in ("", "   ", "\t", " \t "):
+            for attribution_suffix in ("", "   ", "\t", " \t "):
+                for omitted in (None, "Unverified checks", "Breaking-change attribution"):
+                    with self.subTest(unverified=unverified_suffix, attribution=attribution_suffix, omitted=omitted):
+                        body = REVIEW
+                        for heading, suffix in (
+                            ("Unverified checks", unverified_suffix),
+                            ("Breaking-change attribution", attribution_suffix),
+                        ):
+                            body = body.replace(
+                                f"### {heading}\n",
+                                "" if heading == omitted else f"### {heading}{suffix}\n",
+                            )
+                        self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+
     def test_attribution_requires_package_release_and_populated_table(self):
         for attribution in (
             "**Package: azure-mgmt-example | Release: 1.0.0**",
