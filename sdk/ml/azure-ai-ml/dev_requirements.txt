@@ -24,4 +24,4 @@ python-dotenv
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "CPython" and python_version < "3.13" and (sys_platform != "darwin" or platform_machine != "arm64")
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "PyPy" and python_version < "3.10"
 pip
-setuptools==78.1.1
+setuptools==83.0.0
