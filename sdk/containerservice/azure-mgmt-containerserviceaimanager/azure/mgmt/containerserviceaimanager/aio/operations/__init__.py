@@ -18,6 +18,7 @@ from ._operations import AIManagerNamespacesOperations  # type: ignore
 from ._operations import AIModelsOperations  # type: ignore
 from ._operations import ModelSourcesOperations  # type: ignore
 from ._operations import ModelDeploymentsOperations  # type: ignore
+from ._operations import CustomAIModelsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -30,6 +31,7 @@ __all__ = [
     "AIModelsOperations",
     "ModelSourcesOperations",
     "ModelDeploymentsOperations",
+    "CustomAIModelsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
