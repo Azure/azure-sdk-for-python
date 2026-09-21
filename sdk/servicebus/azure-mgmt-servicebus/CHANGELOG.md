@@ -1,5 +1,71 @@
 # Release History
 
+## 10.0.0 (2026-07-20)
+
+### Features Added
+
+  - Client `ServiceBusManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ServiceBusManagementClient` added method `send_request`
+  - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configuration`
+  - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceNamespacePatch` added property `system_data`
+  - Model `SBNamespaceUpdateParameters` added property `system_data`
+  - Enum `TlsVersion` added member `ONE3`
+  - Enum `MigrationConfigurationName` added member `DEFAULT`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `ConfidentialCompute`
+  - Added model `FailOver`
+  - Added model `FailOverProperties`
+  - Added model `FailoverPropertiesProperties`
+  - Added enum `GeoDRRoleType`
+  - Added model `GeoDataReplicationProperties`
+  - Added enum `IpAddressType`
+  - Added enum `Mode`
+  - Added model `NamespaceFailoverProperties`
+  - Added model `NamespaceReplicaLocation`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NetworkSecurityPerimeterConfigurationPropertiesProfile`
+  - Added model `NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NspAccessRule`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `NspAccessRuleProperties`
+  - Added model `NspAccessRulePropertiesSubscriptionsItem`
+  - Added model `PlatformCapabilities`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added enum `ResourceAssociationAccessMode`
+  - Operation group `NamespacesOperations` added method `begin_failover`
+  - Added operation group `NetworkSecurityPerimeterConfigurationOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ArmDisasterRecovery` moved instance variable `provisioning_state`, `pending_replication_operations_count`, `partner_namespace`, `alternate_name` and `role` under property `properties` whose type is `ArmDisasterRecoveryProperties`
+  - Model `MigrationConfigProperties` moved instance variable `provisioning_state`, `pending_replication_operations_count`, `target_namespace`, `post_migration_name` and `migration_state` under property `properties` whose type is `MigrationConfigPropertiesProperties`
+  - Model `NetworkRuleSet` moved instance variable `trusted_service_access_enabled`, `default_action`, `virtual_network_rules`, `ip_rules` and `public_network_access` under property `properties` whose type is `NetworkRuleSetProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `Rule` moved instance variable `action`, `filter_type`, `sql_filter` and `correlation_filter` under property `properties` whose type is `Ruleproperties`
+  - Model `SBAuthorizationRule` moved instance variable `rights` under property `properties` whose type is `SBAuthorizationRuleProperties`
+  - Model `SBNamespace` moved instance variable `minimum_tls_version`, `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `zone_redundant`, `encryption`, `private_endpoint_connections`, `disable_local_auth`, `alternate_name`, `public_network_access` and `premium_messaging_partitions` under property `properties` whose type is `SBNamespaceProperties`
+  - Model `SBNamespaceUpdateParameters` moved instance variable `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `encryption`, `private_endpoint_connections`, `disable_local_auth` and `alternate_name` under property `properties` whose type is `SBNamespaceUpdateProperties`
+  - Model `SBQueue` moved instance variable `count_details`, `created_at`, `updated_at`, `accessed_at`, `size_in_bytes`, `message_count`, `lock_duration`, `max_size_in_megabytes`, `max_message_size_in_kilobytes`, `requires_duplicate_detection`, `requires_session`, `default_message_time_to_live`, `dead_lettering_on_message_expiration`, `duplicate_detection_history_time_window`, `max_delivery_count`, `status`, `enable_batched_operations`, `auto_delete_on_idle`, `enable_partitioning`, `enable_express`, `forward_to` and `forward_dead_lettered_messages_to` under property `properties` whose type is `SBQueueProperties`
+  - Model `SBSubscription` moved instance variable `message_count`, `created_at`, `accessed_at`, `updated_at`, `count_details`, `lock_duration`, `requires_session`, `default_message_time_to_live`, `dead_lettering_on_filter_evaluation_exceptions`, `dead_lettering_on_message_expiration`, `duplicate_detection_history_time_window`, `max_delivery_count`, `status`, `enable_batched_operations`, `auto_delete_on_idle`, `forward_to`, `forward_dead_lettered_messages_to`, `is_client_affine` and `client_affine_properties` under property `properties` whose type is `SBSubscriptionProperties`
+  - Model `SBTopic` moved instance variable `size_in_bytes`, `created_at`, `updated_at`, `accessed_at`, `subscription_count`, `count_details`, `default_message_time_to_live`, `max_size_in_megabytes`, `max_message_size_in_kilobytes`, `requires_duplicate_detection`, `duplicate_detection_history_time_window`, `enable_batched_operations`, `status`, `support_ordering`, `auto_delete_on_idle`, `enable_partitioning` and `enable_express` under property `properties` whose type is `SBTopicProperties`
+  - Method `DisasterRecoveryConfigsOperations.fail_over` changed type of its parameter `parameters` from `FailoverProperties` to `NamespaceFailoverProperties`
+
+### Other Changes
+
+  - Deleted model `ArmDisasterRecoveryListResult`/`MigrationConfigListResult`/`NetworkRuleSetListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`RuleListResult`/`SBAuthorizationRuleListResult`/`SBNamespaceListResult`/`SBQueueListResult`/`SBSubscriptionListResult`/`SBTopicListResult` which actually were not used by SDK users
+  - Deleted model `FailoverProperties`/`SqlRuleAction` which actually were not used by SDK users
+
 ## 10.0.0b2 (2026-07-07)
 
 ### Features Added

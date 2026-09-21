@@ -8,7 +8,12 @@ import base64
 import sys
 import time
 from unittest.mock import Mock, patch, AsyncMock, create_autospec
+
 from requests import Response
+import pytest
+import trio
+
+from utils import HTTP_REQUESTS
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
@@ -23,10 +28,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.policies._authentication import MAX_REFRESH_JITTER_SECONDS
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
-import pytest
-import trio
-
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.asyncio

@@ -133,6 +133,33 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_initialize_merges_profile_first_wins_across_calls(self, mock_worker_class):
+        """A later initialize() contributes new profile fields without overriding earlier ones.
+
+        Supports a component call chain (e.g. distro -> exporter): the first caller sets
+        component, and a later caller still supplies ikey/region without clobbering component.
+        The worker must start only once across all initialize() calls.
+        """
+        from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
+
+        # Reset the module-level profile (class variables persist across tests).
+        for _field in ("os", "rp", "attach", "version", "component", "region", "ikey"):
+            setattr(_ConfigurationProfile, _field, "")
+
+        manager = _ConfigurationManager()
+        # First caller (e.g. the distro) sets the component.
+        manager.initialize(component="dst")
+        # Second caller (e.g. the exporter) tries a different component but adds ikey/region.
+        manager.initialize(component="ext", ikey="my-ikey", region="eastus")
+
+        # First-wins: component stays "dst"; the new fields are filled.
+        self.assertEqual(_ConfigurationProfile.component, "dst")
+        self.assertEqual(_ConfigurationProfile.ikey, "my-ikey")
+        self.assertEqual(_ConfigurationProfile.region, "eastus")
+        # Worker started exactly once despite two initialize() calls.
+        mock_worker_class.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_shutdown_is_soft_reset_and_reusable(self, mock_worker_class):
         """Test that shutdown() is a soft reset: the singleton instance stays reusable.
 
@@ -179,6 +206,140 @@ class TestConfigurationManager(unittest.TestCase):
         manager.register_callback(callback)
 
         self.assertIn(callback, manager._callbacks)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replays_cached_settings(self, mock_worker_class):
+        """Registering a callback immediately replays the currently cached settings to it, so a
+        callback registered after a value was already cached is not left stale until the next change."""
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        callback.assert_called_once_with({"FEATURE": "enabled"})
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_empty_cache_no_replay(self, mock_worker_class):
+        """When the cache is empty (worker has not fetched yet), registration does not invoke the
+        callback (the replay is a no-op)."""
+        manager = _ConfigurationManager()
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        callback.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replay_isolates_exception(self, mock_worker_class):
+        """A callback that raises during the registration replay is isolated: registration still
+        succeeds and the callback is stored (matching notification-time exception isolation)."""
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        callback = Mock(side_effect=ValueError("boom"))
+
+        manager.register_callback(callback)
+
+        callback.assert_called_once_with({"FEATURE": "enabled"})
+        self.assertIn(callback, manager._callbacks)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replays_to_bound_method(self, mock_worker_class):
+        """The replay resolves a WeakMethod-stored bound method and invokes it with cached settings."""
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        holder = _Holder(sink)
+
+        manager.register_callback(holder.on_settings)
+
+        self.assertEqual(sink, [{"FEATURE": "enabled"}])
+
+    def test_bound_method_callback_stored_weakly(self):
+        """A bound-method callback is wrapped in weakref.WeakMethod so its owner is not pinned."""
+        import weakref
+
+        class _Holder:
+            def on_settings(self, settings):
+                pass
+
+        holder = _Holder()
+        manager = _ConfigurationManager()
+        manager.register_callback(holder.on_settings)
+
+        self.assertEqual(len(manager._callbacks), 1)
+        self.assertIsInstance(manager._callbacks[0], weakref.WeakMethod)
+
+    def test_function_callback_stored_directly(self):
+        """A plain function callback is stored as-is (not weakly): it lives for the process anyway."""
+        import weakref
+
+        def on_settings(settings):
+            pass
+
+        manager = _ConfigurationManager()
+        manager.register_callback(on_settings)
+
+        self.assertEqual(len(manager._callbacks), 1)
+        self.assertNotIsInstance(manager._callbacks[0], weakref.WeakMethod)
+        self.assertIs(manager._callbacks[0], on_settings)
+
+    def test_dead_bound_method_not_notified_and_pruned(self):
+        """When a bound method's owner is garbage collected, _notify_callbacks skips it and prunes
+        the dead weak reference, so a discarded exporter is not retained or re-invoked."""
+        import gc
+
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        holder = _Holder(sink)
+        manager.register_callback(holder.on_settings)
+        self.assertEqual(len(manager._callbacks), 1)
+
+        # Drop the only strong reference to the owner and force collection.
+        del holder
+        gc.collect()
+
+        manager._notify_callbacks({"FEATURE": "x"})
+
+        # The dead callback was neither invoked nor left behind.
+        self.assertEqual(sink, [])
+        self.assertEqual(manager._callbacks, [])
+
+    def test_live_bound_method_still_notified(self):
+        """A bound method whose owner is still alive is resolved and invoked normally."""
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        holder = _Holder(sink)
+        manager.register_callback(holder.on_settings)
+
+        manager._notify_callbacks({"FEATURE": "x"})
+
+        self.assertEqual(sink, [{"FEATURE": "x"}])
+        self.assertEqual(len(manager._callbacks), 1)
 
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_worker_initialization(self, mock_worker_class):

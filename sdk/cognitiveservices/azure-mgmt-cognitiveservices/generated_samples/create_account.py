@@ -39,6 +39,11 @@ def main():
             "kind": "Emotion",
             "location": "West US",
             "properties": {
+                "capabilitySettings": {
+                    "blobStore": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/myStorageAccount",
+                    "documentStore": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.DocumentDB/databaseAccounts/myCosmosAccount",
+                    "vectorStore": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.Search/searchServices/mySearchService",
+                },
                 "encryption": {
                     "keySource": "Microsoft.KeyVault",
                     "keyVaultProperties": {
@@ -59,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/CreateAccount.json
+# x-ms-original-file: 2026-07-15-preview/CreateAccount.json
 if __name__ == "__main__":
     main()

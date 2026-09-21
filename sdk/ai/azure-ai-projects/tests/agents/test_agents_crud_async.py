@@ -116,7 +116,7 @@ class TestAgentCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agents_crud_async.py::TestAgentCrudAsync::test_agent_disable_enable_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_disable_enable_async(self, **kwargs):
         """
         Test disable and enable operations for Agents.
@@ -208,7 +208,7 @@ class TestAgentCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agents_crud_async.py::TestAgentCrudAsync::test_prompt_agent_endpoint_responses_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_prompt_agent_endpoint_responses_async(self, **kwargs):
         """
         Test prompt-agent endpoint routing for the Responses protocol.

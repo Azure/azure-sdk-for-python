@@ -25,6 +25,7 @@ from .operations import (
     AccountsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
+    ArcDeploymentsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     ComputeOperationsOperations,
@@ -79,7 +80,7 @@ if TYPE_CHECKING:
 
 class CognitiveServicesManagementClient(
     _CognitiveServicesManagementClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Cognitive Services Management Client.
 
     :ivar operations: Operations operations
@@ -134,6 +135,8 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.aio.operations.ProjectCapabilityHostsOperations
     :ivar quota_tiers: QuotaTiersOperations operations
     :vartype quota_tiers: azure.mgmt.cognitiveservices.aio.operations.QuotaTiersOperations
+    :ivar arc_deployments: ArcDeploymentsOperations operations
+    :vartype arc_deployments: azure.mgmt.cognitiveservices.aio.operations.ArcDeploymentsOperations
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.aio.operations.AgentApplicationsOperations
@@ -210,7 +213,7 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-15-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-07-15-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -309,6 +312,7 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.arc_deployments = ArcDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

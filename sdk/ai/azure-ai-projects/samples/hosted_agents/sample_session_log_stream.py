@@ -44,7 +44,7 @@ from util import zip_directory
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME") or "MyHostedAgent"
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
 

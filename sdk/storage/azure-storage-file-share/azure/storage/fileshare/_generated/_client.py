@@ -44,7 +44,7 @@ class FileClient:  # pylint: disable=client-accepts-api-version-keyword
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-06-06" and None. Default value is None. If not set, the operation's default API
+     are "2026-10-06" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype version: str

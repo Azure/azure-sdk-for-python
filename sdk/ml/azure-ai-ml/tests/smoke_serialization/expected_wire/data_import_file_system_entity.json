@@ -1,0 +1,14 @@
+{
+  "assetName": "smoke-data-import-fs",
+  "dataType": "uri_folder",
+  "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke-import-fs/",
+  "isAnonymous": false,
+  "isArchived": false,
+  "properties": {},
+  "source": {
+    "connection": "azureml:smoke-s3-connection",
+    "path": "test1/*",
+    "sourceType": "file_system"
+  },
+  "tags": {}
+}

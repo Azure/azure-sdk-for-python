@@ -3,16 +3,17 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
-from azure.ai.ml._restclient.v2023_04_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service import models as models_arm
+from azure.ai.ml._restclient.arm_ml_service import models as models_preview
+from azure.ai.ml._restclient.arm_ml_service.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.arm_ml_service.models import (
     NoneDatastoreCredentials,
     ServicePrincipalDatastoreCredentials,
 )
@@ -271,7 +272,7 @@ class TestDatastore:
         datastore_resource.name = internal_ds.name
         ds_properties = datastore_resource.properties
         assert ds_properties
-        assert isinstance(ds_properties, models_preview.OneLakeDatastore)
+        assert isinstance(ds_properties, models_arm.OneLakeDatastore)
         assert isinstance(ds_properties.credentials, NoneDatastoreCredentials)
         assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
         assert ds_properties.endpoint == cfg["endpoint"]
@@ -315,7 +316,7 @@ class TestDatastore:
         datastore_resource.name = internal_ds.name
         ds_properties = datastore_resource.properties
         assert ds_properties
-        assert isinstance(ds_properties, models_preview.OneLakeDatastore)
+        assert isinstance(ds_properties, models_arm.OneLakeDatastore)
         assert isinstance(ds_properties.credentials, ServicePrincipalDatastoreCredentials)
         assert ds_properties.one_lake_workspace_name == cfg["one_lake_workspace_name"]
         assert ds_properties.endpoint == cfg["endpoint"]

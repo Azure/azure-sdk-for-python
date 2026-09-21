@@ -1,5 +1,215 @@
 # Release History
 
+## 3.0.0 (2026-07-20)
+
+### Features Added
+
+  - Client `NetworkCloudMgmtClient` added method `send_request`
+  - Client `NetworkCloudMgmtClient` added operation group `access_bridges`
+  - Client `NetworkCloudMgmtClient` added operation group `kubernetes_versions`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `INITIALIZING`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `NONE`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `REPAIRING`
+  - Model `Cluster` added property `kind`
+  - Model `ClusterContinueUpdateVersionParameters` added property `safeguard_mode`
+  - Model `ClusterManager` added property `kind`
+  - Model `ClusterUpdateVersionParameters` added property `safeguard_mode`
+  - Enum `CommandOutputType` added member `CLUSTER_SUPPORT_ADMINISTRATIVE_ACTIONS`
+  - Model `RuntimeProtectionConfiguration` added property `definition_update_mode`
+  - Model `RuntimeProtectionStatus` added property `agent_health_status`
+  - Model `RuntimeProtectionStatus` added property `agent_health_status_issues`
+  - Model `RuntimeProtectionStatus` added property `agent_license_status`
+  - Model `RuntimeProtectionStatus` added property `definition_update_mode`
+  - Model `RuntimeProtectionStatus` added property `enforcement_level`
+  - Added model `AccessBridge`
+  - Added enum `AccessBridgeAllowedName`
+  - Added enum `AccessBridgeDetailedStatus`
+  - Added model `AccessBridgeEndpoint`
+  - Added model `AccessBridgePatchParameters`
+  - Added model `AccessBridgePatchProperties`
+  - Added model `AccessBridgeProperties`
+  - Added enum `AccessBridgeProvisioningState`
+  - Added model `AccessBridgeSecurityRule`
+  - Added model `AdministrativeCredentialsPatch`
+  - Added model `BareMetalMachineConfigurationDataPatch`
+  - Added model `BareMetalMachineMonitoringConfigurationStatus`
+  - Added enum `BareMetalMachineMonitoringConfigurationStatusLogLevel`
+  - Added enum `BareMetalMachineMonitoringConfigurationStatusMetricsLevel`
+  - Added model `BareMetalMachineReimageParameters`
+  - Added enum `BareMetalMachineReimageSafeguardMode`
+  - Added enum `ClusterContinueUpdateVersionSafeguardMode`
+  - Added enum `ClusterInspectAdditionalAction`
+  - Added model `ClusterInspectParameters`
+  - Added model `ClusterManagerRelayConfiguration`
+  - Added model `ClusterManagerUpdateRelayPrivateEndpointConnectionParameters`
+  - Added model `ClusterRotateCredentialParameters`
+  - Added model `ClusterSecretArchivePatch`
+  - Added model `ClusterUpdateStrategyPatch`
+  - Added enum `ClusterUpdateVersionSafeguardMode`
+  - Added enum `DeploymentType`
+  - Added enum `ExtendedLocationType`
+  - Added model `FilterDevices`
+  - Added model `ImageRepositoryCredentialsPatch`
+  - Added model `KubernetesVersion`
+  - Added model `KubernetesVersionPatchParameters`
+  - Added model `KubernetesVersionProperties`
+  - Added enum `KubernetesVersionProvisioningState`
+  - Added model `KubernetesVersionValue`
+  - Added model `ProxyResource`
+  - Added model `RackDefinitionPatch`
+  - Added enum `RelayPrivateEndpointConnectionState`
+  - Added enum `RuntimeProtectionAgentHealthStatus`
+  - Added enum `RuntimeProtectionAgentLicenseStatus`
+  - Added model `RuntimeProtectionConfigurationPatch`
+  - Added enum `RuntimeProtectionDefinitionUpdateMode`
+  - Added enum `SecurityRuleDirection`
+  - Added model `ServicePrincipalInformationPatch`
+  - Added model `SshPublicKeyPatch`
+  - Added model `StorageApplianceConfigurationDataPatch`
+  - Added model `StorageApplianceExpansionShelf`
+  - Added model `StorageApplianceMonitoringConfigurationStatus`
+  - Added enum `StorageApplianceMonitoringConfigurationStatusLogLevel`
+  - Added enum `StorageApplianceMonitoringConfigurationStatusMetricsLevel`
+  - Added enum `TransportProtocol`
+  - Added model `ValidationThresholdPatch`
+  - Operation group `BareMetalMachinesOperations` added parameter `content_type` in method `begin_reimage`
+  - Operation group `ClusterManagersOperations` added method `begin_update_relay_private_endpoint_connection`
+  - Operation group `ClustersOperations` added method `begin_inspect`
+  - Operation group `ClustersOperations` added method `begin_rotate_credential`
+  - Added operation group `AccessBridgesOperations`
+  - Added operation group `KubernetesVersionsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AgentPool` moved instance variable `administrator_configuration`, `agent_options`, `attached_network_configuration`, `availability_zones`, `count`, `detailed_status`, `detailed_status_message`, `kubernetes_version`, `labels`, `mode`, `provisioning_state`, `taints`, `upgrade_settings` and `vm_sku_name` under property `properties` whose type is `AgentPoolProperties`
+  - Model `AgentPoolPatchParameters` moved instance variable `administrator_configuration`, `count` and `upgrade_settings` under property `properties` whose type is `AgentPoolPatchProperties`
+  - Model `BareMetalMachine` moved instance variable `action_states`, `associated_resource_ids`, `bmc_connection_string`, `bmc_credentials`, `bmc_mac_address`, `boot_mac_address`, `ca_certificate`, `cluster_id`, `cordon_status`, `detailed_status`, `detailed_status_message`, `hardware_inventory`, `hardware_validation_status`, `hybrid_aks_clusters_associated_ids`, `kubernetes_node_name`, `kubernetes_version`, `machine_cluster_version`, `machine_details`, `machine_name`, `machine_roles`, `machine_sku_id`, `oam_ipv4_address`, `oam_ipv6_address`, `os_image`, `power_state`, `provisioning_state`, `rack_id`, `rack_slot`, `ready_state`, `runtime_protection_status`, `secret_rotation_status`, `serial_number`, `service_tag` and `virtual_machines_associated_ids` under property `properties` whose type is `BareMetalMachineProperties`
+  - Model `BareMetalMachineKeySet` moved instance variable `azure_group_id`, `detailed_status`, `detailed_status_message`, `expiration`, `jump_hosts_allowed`, `last_validation`, `os_group_name`, `privilege_level`, `privilege_level_name`, `provisioning_state`, `user_list` and `user_list_status` under property `properties` whose type is `BareMetalMachineKeySetProperties`
+  - Model `BareMetalMachineKeySetPatchParameters` moved instance variable `expiration`, `jump_hosts_allowed` and `user_list` under property `properties` whose type is `BareMetalMachineKeySetPatchProperties`
+  - Model `BareMetalMachinePatchParameters` moved instance variable `machine_details` under property `properties` whose type is `BareMetalMachinePatchProperties`
+  - Model `BmcKeySet` moved instance variable `azure_group_id`, `detailed_status`, `detailed_status_message`, `expiration`, `last_validation`, `privilege_level`, `provisioning_state`, `user_list` and `user_list_status` under property `properties` whose type is `BmcKeySetProperties`
+  - Model `BmcKeySetPatchParameters` moved instance variable `expiration` and `user_list` under property `properties` whose type is `BmcKeySetPatchProperties`
+  - Model `CloudServicesNetwork` moved instance variable `additional_egress_endpoints`, `associated_resource_ids`, `cluster_id`, `detailed_status`, `detailed_status_message`, `enable_default_egress_endpoints`, `enabled_egress_endpoints`, `hybrid_aks_clusters_associated_ids`, `interface_name`, `provisioning_state`, `storage_options`, `storage_status` and `virtual_machines_associated_ids` under property `properties` whose type is `CloudServicesNetworkProperties`
+  - Model `CloudServicesNetworkPatchParameters` moved instance variable `additional_egress_endpoints`, `enable_default_egress_endpoints` and `storage_options` under property `properties` whose type is `CloudServicesNetworkPatchProperties`
+  - Model `Cluster` moved instance variable `action_states`, `aggregator_or_single_rack_definition`, `analytics_output_settings`, `analytics_workspace_id`, `available_upgrade_versions`, `cluster_capacity`, `cluster_connection_status`, `cluster_extended_location`, `cluster_location`, `cluster_manager_connection_status`, `cluster_manager_id`, `cluster_service_principal`, `cluster_type`, `cluster_version`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `detailed_status`, `detailed_status_message`, `hybrid_aks_extended_location`, `managed_resource_group_configuration`, `manual_action_count`, `network_fabric_id`, `provisioning_state`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `support_expiry_date`, `update_strategy`, `vulnerability_scanning_settings` and `workload_resource_ids` under property `properties` whose type is `ClusterProperties`
+  - Model `ClusterManager` moved instance variable `analytics_workspace_id`, `availability_zones`, `cluster_versions`, `detailed_status`, `detailed_status_message`, `fabric_controller_id`, `managed_resource_group_configuration`, `manager_extended_location`, `provisioning_state` and `vm_size` under property `properties` whose type is `ClusterManagerProperties`
+  - Model `ClusterMetricsConfiguration` moved instance variable `collection_interval`, `detailed_status`, `detailed_status_message`, `disabled_metrics`, `enabled_metrics` and `provisioning_state` under property `properties` whose type is `ClusterMetricsConfigurationProperties`
+  - Model `ClusterMetricsConfigurationPatchParameters` moved instance variable `collection_interval` and `enabled_metrics` under property `properties` whose type is `ClusterMetricsConfigurationPatchProperties`
+  - Model `ClusterPatchParameters` moved instance variable `aggregator_or_single_rack_definition`, `analytics_output_settings`, `cluster_location`, `cluster_service_principal`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `update_strategy` and `vulnerability_scanning_settings` under property `properties` whose type is `ClusterPatchProperties`
+  - Model `Console` moved instance variable `detailed_status`, `detailed_status_message`, `enabled`, `expiration`, `private_link_service_id`, `provisioning_state`, `ssh_public_key` and `virtual_machine_access_id` under property `properties` whose type is `ConsoleProperties`
+  - Model `ConsolePatchParameters` moved instance variable `enabled`, `expiration` and `ssh_public_key` under property `properties` whose type is `ConsolePatchProperties`
+  - Model `KubernetesCluster` moved instance variable `aad_configuration`, `administrator_configuration`, `attached_network_ids`, `available_upgrades`, `cluster_id`, `connected_cluster_id`, `control_plane_kubernetes_version`, `control_plane_node_configuration`, `detailed_status`, `detailed_status_message`, `feature_statuses`, `initial_agent_pool_configurations`, `kubernetes_version`, `managed_resource_group_configuration`, `network_configuration`, `nodes` and `provisioning_state` under property `properties` whose type is `KubernetesClusterProperties`
+  - Model `KubernetesClusterFeature` moved instance variable `availability_lifecycle`, `detailed_status`, `detailed_status_message`, `options`, `provisioning_state`, `required` and `version` under property `properties` whose type is `KubernetesClusterFeatureProperties`
+  - Model `KubernetesClusterFeaturePatchParameters` moved instance variable `options` under property `properties` whose type is `KubernetesClusterFeaturePatchProperties`
+  - Model `KubernetesClusterPatchParameters` moved instance variable `administrator_configuration`, `control_plane_node_configuration` and `kubernetes_version` under property `properties` whose type is `KubernetesClusterPatchProperties`
+  - Model `L2Network` moved instance variable `associated_resource_ids`, `cluster_id`, `detailed_status`, `detailed_status_message`, `hybrid_aks_clusters_associated_ids`, `hybrid_aks_plugin_type`, `interface_name`, `l2_isolation_domain_id`, `provisioning_state` and `virtual_machines_associated_ids` under property `properties` whose type is `L2NetworkProperties`
+  - Model `L3Network` moved instance variable `associated_resource_ids`, `cluster_id`, `detailed_status`, `detailed_status_message`, `hybrid_aks_clusters_associated_ids`, `hybrid_aks_ipam_enabled`, `hybrid_aks_plugin_type`, `interface_name`, `ip_allocation_type`, `ipv4_connected_prefix`, `ipv6_connected_prefix`, `l3_isolation_domain_id`, `provisioning_state`, `virtual_machines_associated_ids` and `vlan` under property `properties` whose type is `L3NetworkProperties`
+  - Model `MachineSkuSlot` moved instance variable `bootstrap_protocol`, `cpu_cores`, `cpu_sockets`, `disks`, `generation`, `hardware_version`, `memory_capacity_gb`, `model`, `network_interfaces`, `total_threads` and `vendor` under property `properties` whose type is `MachineSkuProperties`
+  - Model `OperationStatusResult` moved instance variable `exit_code`, `output_head`, `result_ref` and `result_url` under property `properties` whose type is `OperationStatusResultProperties`
+  - Model `Rack` moved instance variable `availability_zone`, `cluster_id`, `detailed_status`, `detailed_status_message`, `provisioning_state`, `rack_location`, `rack_serial_number` and `rack_sku_id` under property `properties` whose type is `RackProperties`
+  - Model `RackPatchParameters` moved instance variable `rack_location` and `rack_serial_number` under property `properties` whose type is `RacksPatchProperties`
+  - Model `RackSku` moved instance variable `compute_machines`, `controller_machines`, `description`, `max_cluster_slots`, `provisioning_state`, `rack_type`, `storage_appliances` and `supported_rack_sku_ids` under property `properties` whose type is `RackSkuProperties`
+  - Model `StorageAppliance` moved instance variable `administrator_credentials`, `ca_certificate`, `capacity`, `capacity_used`, `cluster_id`, `detailed_status`, `detailed_status_message`, `management_ipv4_address`, `manufacturer`, `model`, `provisioning_state`, `rack_id`, `rack_slot`, `remote_vendor_management_feature`, `remote_vendor_management_status`, `secret_rotation_status`, `serial_number`, `storage_appliance_sku_id` and `version` under property `properties` whose type is `StorageApplianceProperties`
+  - Model `StorageAppliancePatchParameters` moved instance variable `serial_number` under property `properties` whose type is `StorageAppliancePatchProperties`
+  - Model `StorageApplianceSkuSlot` moved instance variable `capacity_gb` and `model` under property `properties` whose type is `StorageApplianceSkuProperties`
+  - Model `TrunkedNetwork` moved instance variable `associated_resource_ids`, `cluster_id`, `detailed_status`, `detailed_status_message`, `hybrid_aks_clusters_associated_ids`, `hybrid_aks_plugin_type`, `interface_name`, `isolation_domain_ids`, `provisioning_state`, `virtual_machines_associated_ids` and `vlans` under property `properties` whose type is `TrunkedNetworkProperties`
+  - Model `VirtualMachine` moved instance variable `admin_username`, `availability_zone`, `bare_metal_machine_id`, `boot_method`, `cloud_services_network_attachment`, `cluster_id`, `console_extended_location`, `cpu_cores`, `detailed_status`, `detailed_status_message`, `isolate_emulator_thread`, `memory_size_gb`, `network_attachments`, `network_data`, `network_data_content`, `placement_hints`, `power_state`, `provisioning_state`, `ssh_public_keys`, `storage_profile`, `user_data`, `user_data_content`, `virtio_interface`, `vm_device_model`, `vm_image`, `vm_image_repository_credentials` and `volumes` under property `properties` whose type is `VirtualMachineProperties`
+  - Model `VirtualMachinePatchParameters` moved instance variable `vm_image_repository_credentials` under property `properties` whose type is `VirtualMachinePatchProperties`
+  - Model `Volume` moved instance variable `allocated_size_mi_b`, `attached_to`, `detailed_status`, `detailed_status_message`, `provisioning_state`, `serial_number`, `size_mi_b` and `storage_appliance_id` under property `properties` whose type is `VolumeProperties`
+  - Deleted or renamed enum value `BareMetalMachineHardwareValidationResult.PASS_ENUM`
+  - Deleted or renamed model `AgentPoolConfiguration`
+  - Deleted or renamed model `TagsParameter`
+  - Method `AgentPoolsOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `AgentPoolsOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `AgentPoolsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachineKeySetsOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachineKeySetsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachinesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachinesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BareMetalMachinesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BmcKeySetsOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BmcKeySetsOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `BmcKeySetsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `CloudServicesNetworksOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `CloudServicesNetworksOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `CloudServicesNetworksOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClusterManagersOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClusterManagersOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClusterManagersOperations.update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClustersOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ClustersOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ConsolesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ConsolesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `ConsolesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClusterFeaturesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClusterFeaturesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClustersOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClustersOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `KubernetesClustersOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L2NetworksOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L2NetworksOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L2NetworksOperations.update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L3NetworksOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L3NetworksOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `L3NetworksOperations.update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `MetricsConfigurationsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `RacksOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `RacksOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `RacksOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `StorageAppliancesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `StorageAppliancesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `StorageAppliancesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `TrunkedNetworksOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `TrunkedNetworksOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `TrunkedNetworksOperations.update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VirtualMachinesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VolumesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VolumesOperations.begin_delete` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `VolumesOperations.update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
+  - Method `AgentPoolsOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachineKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BmcKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `CloudServicesNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `CloudServicesNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClusterManagersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClusterManagersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ConsolesOperations.list_by_virtual_machine` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClusterFeaturesOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L2NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L2NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L3NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L3NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsConfigurationsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RacksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RacksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAppliancesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAppliancesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `TrunkedNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `TrunkedNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AgentPoolList`/`BareMetalMachineKeySetList`/`BareMetalMachineList`/`BmcKeySetList`/`CloudServicesNetworkList`/`ClusterList`/`ClusterManagerList`/`ClusterMetricsConfigurationList`/`ConsoleList`/`KubernetesClusterFeatureList`/`KubernetesClusterList`/`L2NetworkList`/`L3NetworkList`/`OperationListResult`/`RackList`/`RackSkuList`/`StorageApplianceList`/`TrunkedNetworkList`/`VirtualMachineList`/`VolumeList` which actually were not used by SDK users
+
 ## 3.0.0b2 (2026-06-24)
 
 ### Features Added
@@ -74,467 +284,4 @@
   - Added operation group `AccessBridgesOperations`
   - Added operation group `KubernetesVersionsOperations`
 
-## 3.0.0b1 (2026-04-02)
-
-### Features Added
-
-  - Client `NetworkCloudMgmtClient` added method `send_request`
-  - Added enum `ExtendedLocationType`
-  - Added model `ProxyResource`
-
-### Breaking Changes
-
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `AgentPoolPatchParameters` moved instance variable `administrator_configuration`, `count` and `upgrade_settings` under property `properties` whose type is `AgentPoolPatchProperties`
-  - Model `BareMetalMachineKeySetPatchParameters` moved instance variable `expiration`, `jump_hosts_allowed` and `user_list` under property `properties` whose type is `BareMetalMachineKeySetPatchProperties`
-  - Model `BareMetalMachinePatchParameters` moved instance variable `machine_details` under property `properties` whose type is `BareMetalMachinePatchProperties`
-  - Model `BmcKeySetPatchParameters` moved instance variable `expiration` and `user_list` under property `properties` whose type is `BmcKeySetPatchProperties`
-  - Model `CloudServicesNetworkPatchParameters` moved instance variable `additional_egress_endpoints`, `enable_default_egress_endpoints` and `storage_options` under property `properties` whose type is `CloudServicesNetworkPatchProperties`
-  - Model `ClusterMetricsConfigurationPatchParameters` moved instance variable `collection_interval` and `enabled_metrics` under property `properties` whose type is `ClusterMetricsConfigurationPatchProperties`
-  - Model `ClusterPatchParameters` moved instance variable `aggregator_or_single_rack_definition`, `analytics_output_settings`, `cluster_location`, `cluster_service_principal`, `command_output_settings`, `compute_deployment_threshold`, `compute_rack_definitions`, `runtime_protection_configuration`, `secret_archive`, `secret_archive_settings`, `update_strategy` and `vulnerability_scanning_settings` under property `properties` whose type is `ClusterPatchProperties`
-  - Model `ConsolePatchParameters` moved instance variable `enabled`, `expiration` and `ssh_public_key` under property `properties` whose type is `ConsolePatchProperties`
-  - Model `KubernetesClusterFeaturePatchParameters` moved instance variable `options` under property `properties` whose type is `KubernetesClusterFeaturePatchProperties`
-  - Model `KubernetesClusterPatchParameters` moved instance variable `administrator_configuration`, `control_plane_node_configuration` and `kubernetes_version` under property `properties` whose type is `KubernetesClusterPatchProperties`
-  - Model `MachineSkuSlot` moved instance variable `bootstrap_protocol`, `cpu_cores`, `cpu_sockets`, `disks`, `generation`, `hardware_version`, `memory_capacity_gb`, `model`, `network_interfaces`, `total_threads` and `vendor` under property `properties` whose type is `MachineSkuProperties`
-  - Model `RackPatchParameters` moved instance variable `rack_location` and `rack_serial_number` under property `properties` whose type is `RacksPatchProperties`
-  - Model `StorageAppliancePatchParameters` moved instance variable `serial_number` under property `properties` whose type is `StorageAppliancePatchProperties`
-  - Model `StorageApplianceSkuSlot` moved instance variable `capacity_gb` and `model` under property `properties` whose type is `StorageApplianceSkuProperties`
-  - Model `VirtualMachinePatchParameters` moved instance variable `vm_image_repository_credentials` under property `properties` whose type is `VirtualMachinePatchProperties`
-  - Deleted or renamed model `AgentPoolConfiguration`
-  - Deleted or renamed model `TagsParameter`
-  - Method `AgentPoolsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `AgentPoolsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `AgentPoolsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `AgentPoolsOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachineKeySetsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachineKeySetsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachineKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BareMetalMachinesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachinesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachinesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BareMetalMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BareMetalMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BmcKeySetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BmcKeySetsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BmcKeySetsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `BmcKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `CloudServicesNetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `CloudServicesNetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `CloudServicesNetworksOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `CloudServicesNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `CloudServicesNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClusterManagersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClusterManagersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClusterManagersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClusterManagersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClusterManagersOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClustersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ConsolesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ConsolesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ConsolesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `ConsolesOperations.list_by_virtual_machine` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClusterFeaturesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClusterFeaturesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClusterFeaturesOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `KubernetesClustersOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClustersOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClustersOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `KubernetesClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `KubernetesClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L2NetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `L2NetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `L2NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L2NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L2NetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `L3NetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `L3NetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `L3NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L3NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `L3NetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `MetricsConfigurationsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `MetricsConfigurationsOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `MetricsConfigurationsOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `MetricsConfigurationsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `RacksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `RacksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `RacksOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `RacksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `RacksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `StorageAppliancesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `StorageAppliancesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `StorageAppliancesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `StorageAppliancesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `StorageAppliancesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `TrunkedNetworksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `TrunkedNetworksOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `TrunkedNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `TrunkedNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `TrunkedNetworksOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VirtualMachinesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VirtualMachinesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VirtualMachinesOperations.begin_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VirtualMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VirtualMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VolumesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VolumesOperations.begin_delete` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-  - Method `VolumesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VolumesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `VolumesOperations.update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
-
-### Other Changes
-
-  - Deleted model `AgentPoolList`/`BareMetalMachineKeySetList`/`BareMetalMachineList`/`BmcKeySetList`/`CloudServicesNetworkList`/`ClusterList`/`ClusterManagerList`/`ClusterMetricsConfigurationList`/`ConsoleList`/`KubernetesClusterFeatureList`/`KubernetesClusterList`/`L2NetworkList`/`L3NetworkList`/`RackList`/`RackSkuList`/`StorageApplianceList`/`TrunkedNetworkList`/`VirtualMachineList`/`VolumeList` which actually were not used by SDK users
-
-## 2.2.0 (2025-12-22)
-
-### Features Added
-
-  - Model `NetworkCloudMgmtClient` added parameter `cloud_setting` in method `__init__`
-  - Model `BareMetalMachine` added property `action_states`
-  - Model `BareMetalMachine` added property `ca_certificate`
-  - Model `BareMetalMachineKeySet` added property `privilege_level_name`
-  - Enum `BareMetalMachineKeySetPrivilegeLevel` added member `OTHER`
-  - Model `BareMetalMachineReplaceParameters` added property `safeguard_mode`
-  - Model `BareMetalMachineReplaceParameters` added property `storage_policy`
-  - Model `CloudServicesNetwork` added property `storage_options`
-  - Model `CloudServicesNetwork` added property `storage_status`
-  - Model `CloudServicesNetworkPatchParameters` added property `storage_options`
-  - Model `Cluster` added property `action_states`
-  - Model `CommandOutputSettings` added property `overrides`
-  - Model `SecretArchiveReference` added property `key_vault_uri`
-  - Model `StorageAppliance` added property `ca_certificate`
-  - Model `VirtualMachine` added property `identity`
-  - Model `VirtualMachine` added property `network_data_content`
-  - Model `VirtualMachine` added property `user_data_content`
-  - Model `VirtualMachinePatchParameters` added property `identity`
-  - Model `Volume` added property `allocated_size_mi_b`
-  - Model `Volume` added property `storage_appliance_id`
-  - Added model `ActionState`
-  - Added enum `ActionStateStatus`
-  - Added enum `BareMetalMachineReplaceSafeguardMode`
-  - Added enum `BareMetalMachineReplaceStoragePolicy`
-  - Added model `CertificateInfo`
-  - Added enum `CloudServicesNetworkStorageMode`
-  - Added model `CloudServicesNetworkStorageOptions`
-  - Added model `CloudServicesNetworkStorageOptionsPatch`
-  - Added model `CloudServicesNetworkStorageStatus`
-  - Added enum `CloudServicesNetworkStorageStatusStatus`
-  - Added model `CommandOutputOverride`
-  - Added enum `CommandOutputType`
-  - Added enum `RelayType`
-  - Added model `StepState`
-  - Added enum `StepStateStatus`
-  - Added model `StorageApplianceCommandSpecification`
-  - Added model `StorageApplianceRunReadCommandsParameters`
-  - Added model `VirtualMachineAssignRelayParameters`
-  - Operation group `BareMetalMachinesOperations` added method `begin_run_data_extracts_restricted`
-  - Operation group `StorageAppliancesOperations` added method `begin_run_read_commands`
-  - Operation group `VirtualMachinesOperations` added method `begin_assign_relay`
-
-## 2.2.0b1 (2025-11-17)
-
-### Features Added
-
-  - Model `NetworkCloudMgmtClient` added parameter `cloud_setting` in method `__init__`
-  - Model `BareMetalMachine` added property `action_states`
-  - Model `BareMetalMachine` added property `ca_certificate`
-  - Model `BareMetalMachineKeySet` added property `privilege_level_name`
-  - Enum `BareMetalMachineKeySetPrivilegeLevel` added member `OTHER`
-  - Model `BareMetalMachineReplaceParameters` added property `safeguard_mode`
-  - Model `BareMetalMachineReplaceParameters` added property `storage_policy`
-  - Model `CloudServicesNetwork` added property `storage_options`
-  - Model `CloudServicesNetwork` added property `storage_status`
-  - Model `CloudServicesNetworkPatchParameters` added property `storage_options`
-  - Model `Cluster` added property `action_states`
-  - Model `CommandOutputSettings` added property `overrides`
-  - Model `SecretArchiveReference` added property `key_vault_uri`
-  - Model `StorageAppliance` added property `ca_certificate`
-  - Model `VirtualMachine` added property `identity`
-  - Model `VirtualMachine` added property `network_data_content`
-  - Model `VirtualMachine` added property `user_data_content`
-  - Model `VirtualMachinePatchParameters` added property `identity`
-  - Model `Volume` added property `allocated_size_mi_b`
-  - Model `Volume` added property `storage_appliance_id`
-  - Added model `ActionState`
-  - Added enum `ActionStateStatus`
-  - Added enum `BareMetalMachineReplaceSafeguardMode`
-  - Added enum `BareMetalMachineReplaceStoragePolicy`
-  - Added model `CertificateInfo`
-  - Added enum `CloudServicesNetworkStorageMode`
-  - Added model `CloudServicesNetworkStorageOptions`
-  - Added model `CloudServicesNetworkStorageOptionsPatch`
-  - Added model `CloudServicesNetworkStorageStatus`
-  - Added enum `CloudServicesNetworkStorageStatusStatus`
-  - Added model `CommandOutputOverride`
-  - Added enum `CommandOutputType`
-  - Added enum `RelayType`
-  - Added model `StepState`
-  - Added enum `StepStateStatus`
-  - Added model `StorageApplianceCommandSpecification`
-  - Added model `StorageApplianceRunReadCommandsParameters`
-  - Added model `VirtualMachineAssignRelayParameters`
-  - Operation group `BareMetalMachinesOperations` added method `begin_run_data_extracts_restricted`
-  - Operation group `StorageAppliancesOperations` added method `begin_run_read_commands`
-  - Operation group `VirtualMachinesOperations` added method `begin_assign_relay`
-
-## 2.1.0 (2025-06-16)
-
-### Features Added
-
-  - All resources implement concurrency control via Etag/If-Match/If-None-Match parameters. As a result, customers who use create/patch/delete methods with positional arguments may need to adjust part of calls. It is recommended to switch to keyword based calls to avoid any future issues.
-  - Model `AgentPool` added property `etag`
-  - Model `BareMetalMachine` added property `etag`
-  - Model `BareMetalMachineKeySet` added property `etag`
-  - Model `BmcKeySet` added property `etag`
-  - Model `CloudServicesNetwork` added property `etag`
-  - Model `Cluster` added property `etag`
-  - Model `Cluster` added property `analytics_output_settings`
-  - Model `Cluster` added property `secret_archive_settings`
-  - Model `Cluster` added property `vulnerability_scanning_settings`
-  - Model `ClusterManager` added property `etag`
-  - Model `ClusterMetricsConfiguration` added property `etag`
-  - Model `ClusterPatchParameters` added property `analytics_output_settings`
-  - Model `ClusterPatchParameters` added property `secret_archive_settings`
-  - Model `ClusterPatchParameters` added property `vulnerability_scanning_settings`
-  - Model `Console` added property `etag`
-  - Model `KubernetesCluster` added property `etag`
-  - Model `KubernetesClusterFeature` added property `etag`
-  - Model `L2Network` added property `etag`
-  - Model `L3Network` added property `etag`
-  - Enum `OsDiskCreateOption` added member `PERSISTENT`
-  - Model `Rack` added property `etag`
-  - Model `StorageAppliance` added property `etag`
-  - Enum `StorageApplianceDetailedStatus` added member `DEGRADED`
-  - Model `TrunkedNetwork` added property `etag`
-  - Model `VirtualMachine` added property `etag`
-  - Model `VirtualMachine` added property `console_extended_location`
-  - Enum `VirtualMachineDeviceModelType` added member `T3`
-  - Model `Volume` added property `etag`
-  - Added model `AnalyticsOutputSettings`
-  - Added model `SecretArchiveSettings`
-  - Added model `VulnerabilityScanningSettings`
-  - Added enum `VulnerabilityScanningSettingsContainerScan`
-  - Added model `VulnerabilityScanningSettingsPatch`
-
-## 2.1.0b1 (2025-04-21)
-
-### Features Added
-
-  - Model `Cluster` added property `analytics_output_settings`
-  - Model `Cluster` added property `secret_archive_settings`
-  - Model `Cluster` added property `vulnerability_scanning_settings`
-  - Model `ClusterPatchParameters` added property `analytics_output_settings`
-  - Model `ClusterPatchParameters` added property `secret_archive_settings`
-  - Model `ClusterPatchParameters` added property `vulnerability_scanning_settings`
-  - Enum `OsDiskCreateOption` added member `PERSISTENT`
-  - Enum `StorageApplianceDetailedStatus` added member `DEGRADED`
-  - Model `VirtualMachine` added property `console_extended_location`
-  - Enum `VirtualMachineDeviceModelType` added member `T3`
-  - Added model `AnalyticsOutputSettings`
-  - Added model `SecretArchiveSettings`
-  - Added model `VulnerabilityScanningSettings`
-  - Added enum `VulnerabilityScanningSettingsContainerScan`
-  - Added model `VulnerabilityScanningSettingsPatch`
-
-## 2.0.0 (2025-02-24)
-
-### Features Added
-
-  - Client `NetworkCloudMgmtClient` added operation group `kubernetes_cluster_features`
-  - Model `AgentPoolPatchParameters` added property `administrator_configuration`
-  - Model `AgentPoolUpgradeSettings` added property `drain_timeout`
-  - Model `AgentPoolUpgradeSettings` added property `max_unavailable`
-  - Model `BareMetalMachine` added property `machine_cluster_version`
-  - Model `BareMetalMachine` added property `machine_roles`
-  - Model `BareMetalMachine` added property `runtime_protection_status`
-  - Model `BareMetalMachine` added property `secret_rotation_status`
-  - Model `Cluster` added property `identity`
-  - Model `Cluster` added property `command_output_settings`
-  - Model `Cluster` added property `runtime_protection_configuration`
-  - Model `Cluster` added property `secret_archive`
-  - Model `Cluster` added property `update_strategy`
-  - Enum `ClusterConnectionStatus` added member `DISCONNECTED`
-  - Enum `ClusterDetailedStatus` added member `UPDATE_PAUSED`
-  - Model `ClusterManager` added property `identity`
-  - Model `ClusterManagerPatchParameters` added property `identity`
-  - Model `ClusterPatchParameters` added property `identity`
-  - Model `ClusterPatchParameters` added property `command_output_settings`
-  - Model `ClusterPatchParameters` added property `runtime_protection_configuration`
-  - Model `ClusterPatchParameters` added property `secret_archive`
-  - Model `ClusterPatchParameters` added property `update_strategy`
-  - Model `ControlPlaneNodePatchConfiguration` added property `administrator_configuration`
-  - Model `KeySetUser` added property `user_principal_name`
-  - Model `KubernetesClusterPatchParameters` added property `administrator_configuration`
-  - Model `NetworkConfiguration` added property `l2_service_load_balancer_configuration`
-  - Model `OperationStatusResult` added property `exit_code`
-  - Model `OperationStatusResult` added property `output_head`
-  - Model `OperationStatusResult` added property `result_ref`
-  - Model `OperationStatusResult` added property `result_url`
-  - Enum `RackSkuProvisioningState` added member `CANCELED`
-  - Enum `RackSkuProvisioningState` added member `FAILED`
-  - Model `StorageAppliance` added property `manufacturer`
-  - Model `StorageAppliance` added property `model`
-  - Model `StorageAppliance` added property `secret_rotation_status`
-  - Model `StorageAppliance` added property `version`
-  - Added model `AdministratorConfigurationPatch`
-  - Added enum `ClusterContinueUpdateVersionMachineGroupTargetingMode`
-  - Added model `ClusterContinueUpdateVersionParameters`
-  - Added model `ClusterScanRuntimeParameters`
-  - Added enum `ClusterScanRuntimeParametersScanActivity`
-  - Added model `ClusterSecretArchive`
-  - Added enum `ClusterSecretArchiveEnabled`
-  - Added model `ClusterUpdateStrategy`
-  - Added enum `ClusterUpdateStrategyType`
-  - Added model `CommandOutputSettings`
-  - Added model `IdentitySelector`
-  - Added model `KubernetesClusterFeature`
-  - Added enum `KubernetesClusterFeatureAvailabilityLifecycle`
-  - Added enum `KubernetesClusterFeatureDetailedStatus`
-  - Added model `KubernetesClusterFeatureList`
-  - Added model `KubernetesClusterFeaturePatchParameters`
-  - Added enum `KubernetesClusterFeatureProvisioningState`
-  - Added enum `KubernetesClusterFeatureRequired`
-  - Added model `L2ServiceLoadBalancerConfiguration`
-  - Added model `ManagedServiceIdentity`
-  - Added enum `ManagedServiceIdentitySelectorType`
-  - Added enum `ManagedServiceIdentityType`
-  - Added model `NodePoolAdministratorConfigurationPatch`
-  - Added model `RuntimeProtectionConfiguration`
-  - Added enum `RuntimeProtectionEnforcementLevel`
-  - Added model `RuntimeProtectionStatus`
-  - Added model `SecretArchiveReference`
-  - Added model `SecretRotationStatus`
-  - Added model `StringKeyValuePair`
-  - Added model `UserAssignedIdentity`
-  - Operation group `ClustersOperations` added method `begin_continue_update_version`
-  - Operation group `ClustersOperations` added method `begin_scan_runtime`
-  - Added operation group `KubernetesClusterFeaturesOperations`
-
-### Breaking Changes
-
-  - Parameter `max_surge` of method `AgentPoolUpgradeSettings` is now optional
-
-## 2.0.0b1 (2024-11-21)
-
-### Features Added
-
-  - Client `NetworkCloudMgmtClient` added operation group `kubernetes_cluster_features`
-  - Model `AgentPoolPatchParameters` added property `administrator_configuration`
-  - Model `AgentPoolUpgradeSettings` added property `drain_timeout`
-  - Model `AgentPoolUpgradeSettings` added property `max_unavailable`
-  - Model `BareMetalMachine` added property `machine_cluster_version`
-  - Model `BareMetalMachine` added property `machine_roles`
-  - Model `BareMetalMachine` added property `runtime_protection_status`
-  - Model `BareMetalMachine` added property `secret_rotation_status`
-  - Model `Cluster` added property `identity`
-  - Model `Cluster` added property `command_output_settings`
-  - Model `Cluster` added property `runtime_protection_configuration`
-  - Model `Cluster` added property `secret_archive`
-  - Model `Cluster` added property `update_strategy`
-  - Enum `ClusterConnectionStatus` added member `DISCONNECTED`
-  - Enum `ClusterDetailedStatus` added member `UPDATE_PAUSED`
-  - Model `ClusterManager` added property `identity`
-  - Model `ClusterManagerPatchParameters` added property `identity`
-  - Model `ClusterPatchParameters` added property `identity`
-  - Model `ClusterPatchParameters` added property `command_output_settings`
-  - Model `ClusterPatchParameters` added property `runtime_protection_configuration`
-  - Model `ClusterPatchParameters` added property `secret_archive`
-  - Model `ClusterPatchParameters` added property `update_strategy`
-  - Model `ControlPlaneNodePatchConfiguration` added property `administrator_configuration`
-  - Model `KeySetUser` added property `user_principal_name`
-  - Model `KubernetesClusterPatchParameters` added property `administrator_configuration`
-  - Model `NetworkConfiguration` added property `l2_service_load_balancer_configuration`
-  - Model `OperationStatusResult` added property `exit_code`
-  - Model `OperationStatusResult` added property `output_head`
-  - Model `OperationStatusResult` added property `result_ref`
-  - Model `OperationStatusResult` added property `result_url`
-  - Enum `RackSkuProvisioningState` added member `CANCELED`
-  - Enum `RackSkuProvisioningState` added member `FAILED`
-  - Model `StorageAppliance` added property `manufacturer`
-  - Model `StorageAppliance` added property `model`
-  - Model `StorageAppliance` added property `secret_rotation_status`
-  - Model `StorageAppliance` added property `version`
-  - Added model `AdministratorConfigurationPatch`
-  - Added enum `ClusterContinueUpdateVersionMachineGroupTargetingMode`
-  - Added model `ClusterContinueUpdateVersionParameters`
-  - Added model `ClusterScanRuntimeParameters`
-  - Added enum `ClusterScanRuntimeParametersScanActivity`
-  - Added model `ClusterSecretArchive`
-  - Added enum `ClusterSecretArchiveEnabled`
-  - Added model `ClusterUpdateStrategy`
-  - Added enum `ClusterUpdateStrategyType`
-  - Added model `CommandOutputSettings`
-  - Added model `IdentitySelector`
-  - Added model `KubernetesClusterFeature`
-  - Added enum `KubernetesClusterFeatureAvailabilityLifecycle`
-  - Added enum `KubernetesClusterFeatureDetailedStatus`
-  - Added model `KubernetesClusterFeatureList`
-  - Added model `KubernetesClusterFeaturePatchParameters`
-  - Added enum `KubernetesClusterFeatureProvisioningState`
-  - Added enum `KubernetesClusterFeatureRequired`
-  - Added model `L2ServiceLoadBalancerConfiguration`
-  - Added model `ManagedServiceIdentity`
-  - Added enum `ManagedServiceIdentitySelectorType`
-  - Added enum `ManagedServiceIdentityType`
-  - Added model `NodePoolAdministratorConfigurationPatch`
-  - Added model `RuntimeProtectionConfiguration`
-  - Added enum `RuntimeProtectionEnforcementLevel`
-  - Added model `RuntimeProtectionStatus`
-  - Added model `SecretArchiveReference`
-  - Added model `SecretRotationStatus`
-  - Added model `StringKeyValuePair`
-  - Added model `UserAssignedIdentity`
-  - Operation group `ClustersOperations` added method `begin_continue_update_version`
-  - Operation group `ClustersOperations` added method `begin_scan_runtime`
-  - Added operation group `KubernetesClusterFeaturesOperations`
-
-### Breaking Changes
-
-  - Parameter `max_surge` of model `AgentPoolUpgradeSettings` is no longer required
-
-## 1.0.0 (2023-08-18)
-
-### Breaking Changes
-
-  - Removed operation BareMetalMachinesOperations.begin_validate_hardware
-  - Removed operation StorageAppliancesOperations.begin_run_read_commands
-  - Removed operation VirtualMachinesOperations.begin_attach_volume
-  - Removed operation VirtualMachinesOperations.begin_detach_volume
-
-## 1.0.0b2 (2023-07-19)
-
-### Features Added
-
-  - Added operation BareMetalMachineKeySetsOperations.list_by_cluster
-  - Added operation BmcKeySetsOperations.list_by_cluster
-  - Added operation ConsolesOperations.list_by_virtual_machine
-  - Added operation MetricsConfigurationsOperations.list_by_cluster
-  - Added operation group AgentPoolsOperations
-  - Added operation group KubernetesClustersOperations
-  - Model BareMetalMachine has a new parameter associated_resource_ids
-  - Model CloudServicesNetwork has a new parameter associated_resource_ids
-  - Model L2Network has a new parameter associated_resource_ids
-  - Model L3Network has a new parameter associated_resource_ids
-  - Model TrunkedNetwork has a new parameter associated_resource_ids
-  - Model VirtualMachine has a new parameter availability_zone
-
-### Breaking Changes
-
-  - Removed operation BareMetalMachineKeySetsOperations.list_by_resource_group
-  - Removed operation BmcKeySetsOperations.list_by_resource_group
-  - Removed operation ConsolesOperations.list_by_resource_group
-  - Removed operation MetricsConfigurationsOperations.list_by_resource_group
-  - Removed operation StorageAppliancesOperations.begin_validate_hardware
-  - Removed operation group DefaultCniNetworksOperations
-  - Removed operation group HybridAksClustersOperations
-
-## 1.0.0b1 (2023-05-19)
-
-* Initial Release
+> Changelog entries prior to 3.0.0b2 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-networkcloud/3.0.0b2/ for the older history.

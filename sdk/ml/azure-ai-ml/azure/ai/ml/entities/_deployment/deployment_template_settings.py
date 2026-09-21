@@ -34,10 +34,10 @@ module_logger = logging.getLogger(__name__)
 class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 
-    :param max_retries: Number of retries in failure, defaults to 3
-    :type max_retries: int
-    :param timeout: Timeout in seconds, defaults to 30
-    :type timeout: int
+    :keyword max_retries: Number of retries in failure, defaults to 3
+    :paramtype max_retries: int
+    :keyword timeout: Timeout in seconds, defaults to 30
+    :paramtype timeout: int
     """
 
     def __init__(self, *, max_retries: Optional[int] = None, timeout: Optional[int] = None):
@@ -150,16 +150,16 @@ class ProbeSettings(RestTranslatableMixin):
     ):
         """Settings on how to probe an endpoint.
 
-        :param failure_threshold: Threshold for probe failures, defaults to 30
-        :type failure_threshold: int
-        :param success_threshold: Threshold for probe success, defaults to 1
-        :type success_threshold: int
-        :param timeout: timeout in seconds, defaults to 2
-        :type timeout: int
-        :param period: How often (in seconds) to perform the probe, defaults to 10
-        :type period: int
-        :param initial_delay: How long (in seconds) to wait for the first probe, defaults to 10
-        :type initial_delay: int
+        :keyword failure_threshold: Threshold for probe failures, defaults to 30
+        :paramtype failure_threshold: int
+        :keyword success_threshold: Threshold for probe success, defaults to 1
+        :paramtype success_threshold: int
+        :keyword timeout: timeout in seconds, defaults to 2
+        :paramtype timeout: int
+        :keyword period: How often (in seconds) to perform the probe, defaults to 10
+        :paramtype period: int
+        :keyword initial_delay: How long (in seconds) to wait for the first probe, defaults to 10
+        :paramtype initial_delay: int
         """
 
         self.failure_threshold = failure_threshold

@@ -46,7 +46,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
-from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
 
 app = ResponsesAgentServerHost()
 
@@ -54,8 +54,8 @@ app = ResponsesAgentServerHost()
 async def _find_function_call_output(context: ResponseContext) -> str | None:
     """Return the output string from the first function_call_output item, or None."""
     for item in await context.get_input_items():
-        if isinstance(item, FunctionCallOutputItemParam):
-            output = item.output
+        if item.get("type") == "function_call_output":
+            output = item.get("output")
             if isinstance(output, str):
                 return output
     return None
@@ -75,18 +75,18 @@ async def handler(
     """Two-turn function-calling handler using convenience generators."""
     tool_output = await _find_function_call_output(context)
 
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
     if tool_output is not None:
         # Turn 2: we have the tool result — produce a final text message.
-        async for event in stream.aoutput_item_message(f"The weather is: {tool_output}"):
+        async for event in stream.output_item_message(f"The weather is: {tool_output}"):
             yield event
     else:
         # Turn 1: ask the client to call get_weather.
         arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-        async for event in stream.aoutput_item_function_call("get_weather", "call_weather_1", arguments):
+        async for event in stream.output_item_function_call("get_weather", "call_weather_1", arguments):
             yield event
 
     yield stream.emit_completed()

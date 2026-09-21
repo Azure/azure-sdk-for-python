@@ -10,7 +10,7 @@ DESCRIPTION:
     using the Code Interpreter Tool and an asynchronous client followed by downloading the generated file.
 
 USAGE:
-    python sample_agent_code_interpreter_async.py
+    python sample_agent_code_interpreter_with_files_async.py
 
     Before running the sample:
 
@@ -58,7 +58,7 @@ async def main() -> None:
 
             # Create agent with code interpreter tool
             agent = await project_client.agents.create_version(
-                agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
+                agent_name=os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent",
                 definition=PromptAgentDefinition(
                     model=os.environ["FOUNDRY_MODEL_NAME"],
                     instructions="You are a helpful assistant.",

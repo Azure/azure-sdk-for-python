@@ -20,6 +20,7 @@ from ._operations import HorizonDbFirewallRulesOperations  # type: ignore
 from ._operations import HorizonDbPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import HorizonDbPrivateLinkResourcesOperations  # type: ignore
 from ._operations import HorizonDbParameterGroupsOperations  # type: ignore
+from ._operations import HorizonDbAdministratorsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -34,6 +35,7 @@ __all__ = [
     "HorizonDbPrivateEndpointConnectionsOperations",
     "HorizonDbPrivateLinkResourcesOperations",
     "HorizonDbParameterGroupsOperations",
+    "HorizonDbAdministratorsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -21,7 +21,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -141,9 +141,9 @@ class TestMalformedPreviousResponseId:
         # If the server returns 400, it must NOT be the format-validation shape.
         if r.status_code == 400:
             error = r.json().get("error", {})
-            assert error.get("code") != "invalid_parameters", (
-                "Valid-format previous_response_id was rejected by format validation"
-            )
-            assert "Malformed" not in error.get("message", ""), (
-                "Valid-format previous_response_id was rejected with Malformed message"
-            )
+            assert (
+                error.get("code") != "invalid_parameters"
+            ), "Valid-format previous_response_id was rejected by format validation"
+            assert "Malformed" not in error.get(
+                "message", ""
+            ), "Valid-format previous_response_id was rejected with Malformed message"

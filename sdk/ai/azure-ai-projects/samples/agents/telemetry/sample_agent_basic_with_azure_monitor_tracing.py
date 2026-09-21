@@ -43,7 +43,7 @@ from azure.ai.projects.models import PromptAgentDefinition
 load_dotenv()
 
 agent = None
-agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
 with (
     DefaultAzureCredential() as credential,

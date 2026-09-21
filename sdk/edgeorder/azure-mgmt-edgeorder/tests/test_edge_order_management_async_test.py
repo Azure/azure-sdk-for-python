@@ -22,42 +22,42 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_operations(self, resource_group):
-        response = self.client.list_operations()
+        response = self.client.operations.list()
         result = [r async for r in response]
         assert result
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_addresses_at_subscription_level(self, resource_group):
-        response = self.client.list_addresses_at_subscription_level()
+        response = self.client.addresses.list_by_subscription()
         result = [r async for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_product_families_metadata(self, resource_group):
-        response = self.client.list_product_families_metadata()
+        response = self.client.products_and_configurations.list_product_families_metadata()
         result = [r async for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_order_at_subscription_level(self, resource_group):
-        response = self.client.list_order_at_subscription_level()
+        response = self.client.orders.list_by_subscription()
         result = [r async for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_order_items_at_subscription_level(self, resource_group):
-        response = self.client.list_order_items_at_subscription_level()
+        response = self.client.order_items.list_by_subscription()
         result = [r async for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_addresses_at_resource_group_level(self, resource_group):
-        response = self.client.list_addresses_at_resource_group_level(
+        response = self.client.addresses.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -66,7 +66,7 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_order_at_resource_group_level(self, resource_group):
-        response = self.client.list_order_at_resource_group_level(
+        response = self.client.orders.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
@@ -75,7 +75,7 @@ class TestEdgeOrderManagementAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_order_items_at_resource_group_level(self, resource_group):
-        response = self.client.list_order_items_at_resource_group_level(
+        response = self.client.order_items.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]

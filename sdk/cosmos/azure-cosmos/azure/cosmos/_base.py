@@ -394,7 +394,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             authorization = urllib_quote(authorization, "-_.!~*'()")
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
-    if verb in ("post", "put"):
+    if verb == "patch":
+        if not headers.get(http_constants.HttpHeaders.ContentType):
+            headers[http_constants.HttpHeaders.ContentType] = (
+                _runtime_constants.MediaTypes.JsonPatch
+            )
+    elif verb in ("post", "put"):
         if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 

@@ -109,7 +109,7 @@ def _get_ranges_options(
     lease_id = get_lease_id(kwargs.pop("lease", None))
 
     content_range = None
-    if offset:
+    if offset is not None:
         if length:
             end_range = offset + length - 1  # Reformat to an inclusive range index
             content_range = f"bytes={offset}-{end_range}"

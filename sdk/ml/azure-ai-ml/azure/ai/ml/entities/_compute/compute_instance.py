@@ -66,8 +66,8 @@ class ComputeInstanceSshSettings:
     Can only be configured if `ssh_public_access_enabled` is set to true on compute
     resource.
 
-    :param ssh_key_value: The SSH public key of the administrator user account.
-    :type ssh_key_value: Optional[str]
+    :keyword ssh_key_value: The SSH public key of the administrator user account.
+    :paramtype ssh_key_value: Optional[str]
 
     .. admonition:: Example:
 
@@ -111,10 +111,10 @@ class ComputeInstanceSshSettings:
 class AssignedUserConfiguration(DictMixin):
     """Settings to create a compute resource on behalf of another user.
 
-    :param user_tenant_id: Tenant ID of the user to assign the compute target to.
-    :type user_tenant_id: str
-    :param user_object_id: Object ID of the user to assign the compute target to.
-    :type user_object_id: str
+    :keyword user_tenant_id: Tenant ID of the user to assign the compute target to.
+    :paramtype user_tenant_id: str
+    :keyword user_object_id: Object ID of the user to assign the compute target to.
+    :paramtype user_object_id: str
 
     .. admonition:: Example:
 
@@ -134,29 +134,29 @@ class AssignedUserConfiguration(DictMixin):
 class ComputeInstance(Compute):
     """Compute Instance resource.
 
-    :param name: Name of the compute.
-    :type name: str
+    :keyword name: Name of the compute.
+    :paramtype name: str
     :param location: The resource location.
     :type location: Optional[str]
-    :param description: Description of the resource.
-    :type description: Optional[str]
-    :param size: Compute size.
-    :type size: Optional[str]
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict[str, str]]
-    :param create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
-    :type create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
+    :keyword description: Description of the resource.
+    :paramtype description: Optional[str]
+    :keyword size: Compute size.
+    :paramtype size: Optional[str]
+    :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
+    :paramtype create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
     :ivar state: State of the resource.
     :type state: Optional[str]
     :ivar last_operation: The last operation.
     :type last_operation: Optional[Dict[str, str]]
     :ivar applications: Applications associated with the compute instance.
     :type applications: Optional[List[Dict[str, str]]]
-    :param network_settings: Network settings for the compute instance.
-    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
-    :param ssh_settings: SSH settings for the compute instance.
-    :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
-    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None.
+    :keyword network_settings: Network settings for the compute instance.
+    :paramtype network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
+    :keyword ssh_settings: SSH settings for the compute instance.
+    :paramtype ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
+    :keyword ssh_public_access_enabled: State of the public SSH port. Defaults to None.
         Possible values are:
 
         * False - Indicates that the public ssh port is closed on all nodes of the cluster.
@@ -165,37 +165,37 @@ class ComputeInstance(Compute):
             else is open all public nodes. It can be default only during cluster creation time, after
             creation it will be either True or False.
 
-    :type ssh_public_access_enabled: Optional[bool]
-    :param schedules: Compute instance schedules. Defaults to None.
-    :type schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
-    :param identity: The identities that are associated with the compute cluster.
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
+    :paramtype ssh_public_access_enabled: Optional[bool]
+    :keyword schedules: Compute instance schedules. Defaults to None.
+    :paramtype schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
+    :keyword identity: The identities that are associated with the compute cluster.
+    :paramtype identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :keyword idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str]
-    :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
+    :paramtype idle_time_before_shutdown: Optional[str]
+    :keyword idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown_minutes: Optional[int]
-    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
+    :paramtype idle_time_before_shutdown_minutes: Optional[int]
+    :keyword enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
 
             * True - Indicates that the compute nodes will have public IPs provisioned.
             * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
 
-    :type enable_node_public_ip: Optional[bool]
-    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
-    :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
-    :param custom_applications: List of custom applications and their endpoints for the compute instance.
-    :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
-    :param enable_sso: Enable or disable single sign-on. Defaults to True.
-    :type enable_sso: bool
-    :param enable_root_access: Enable or disable root access. Defaults to True.
-    :type enable_root_access: bool
-    :param release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
-    :type release_quota_on_stop: bool
-    :param enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
-    :type enable_os_patching: bool
+    :paramtype enable_node_public_ip: Optional[bool]
+    :keyword setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :paramtype setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
+    :keyword custom_applications: List of custom applications and their endpoints for the compute instance.
+    :paramtype custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+    :keyword enable_sso: Enable or disable single sign-on. Defaults to True.
+    :paramtype enable_sso: bool
+    :keyword enable_root_access: Enable or disable root access. Defaults to True.
+    :paramtype enable_root_access: bool
+    :keyword release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
+    :paramtype release_quota_on_stop: bool
+    :keyword enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
+    :paramtype enable_os_patching: bool
 
     .. admonition:: Example:
 

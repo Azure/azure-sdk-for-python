@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-01-02/diskExamples/Disk_ListByResourceGroup.json
+# x-ms-original-file: 2026-03-02/diskExamples/Disk_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

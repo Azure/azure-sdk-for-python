@@ -35,7 +35,7 @@ def basic():
 
     if request.method == "GET":
         return Response(basic_body, status=200)
-    elif request.method == "PUT":
+    if request.method == "PUT":
         assert_with_message("content length", str(len(request.data)), request.headers["Content-Length"])
         parsed_xml = ET.fromstring(request.data.decode("utf-8"))
         assert_with_message("tag", "slideshow", parsed_xml.tag)

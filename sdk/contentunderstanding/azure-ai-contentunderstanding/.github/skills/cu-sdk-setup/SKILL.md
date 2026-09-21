@@ -73,7 +73,7 @@ Before starting, ensure you have:
 > **[ASK USER] Prerequisites Check:**
 > After the probe above, confirm the remaining items:
 > 1. "Do you already have a **Microsoft Foundry resource** set up in Azure?" — If no, jump to **Step 5** (Azure Resource Setup) first, then return here.
-> 2. "Have you already deployed the required **AI models** (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
+> 2. "Have you already deployed the required **AI models** (gpt-5.2, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
 
 ## Package Directory
 
@@ -199,7 +199,7 @@ if (Test-Path ".env") {
 
 > **[ASK USER] Authentication method:**
 > Ask the user: "How would you like to **authenticate** with Azure?"
-> - **Option A: API Key** — You'll need your `CONTENTUNDERSTANDING_KEY` from the Azure Portal.
+> - **Option A: API Key** — Configure `CONTENTUNDERSTANDING_KEY` locally without sharing it in chat.
 > - **Option B: DefaultAzureCredential (recommended)** — Uses `az login` or managed identity. No API key needed.
 >
 > Based on their choice, guide accordingly below.
@@ -210,9 +210,15 @@ if (Test-Path ".env") {
 > - Validate: it should NOT include `api-version` or other query parameters.
 > - If the user doesn't know where to find it: direct them to Azure Portal → Their Foundry resource → Keys and Endpoint.
 
-> **[ASK USER] Provide API key (if Option A):**
-> If the user chose API Key authentication, ask: "Please provide your **API key** (`CONTENTUNDERSTANDING_KEY`)."
-> - Found at: Azure Portal → Your Foundry resource → Keys and Endpoint → Key1 or Key2.
+> **[COPILOT] Configure API key locally (if Option A):**
+> Never ask the user to paste, send, or otherwise expose an API key in chat or a tool argument.
+> Prefer `DefaultAzureCredential`. If the user chooses key authentication, tell them to get the key
+> from Azure Portal → Their Foundry resource → Keys and Endpoint → Key1 or Key2, then either:
+> - edit `CONTENTUNDERSTANDING_KEY` in `.env` directly, or
+> - run the setup helper themselves in an interactive terminal and enter the key at its hidden prompt.
+>
+> Ask only for confirmation that local configuration is complete. Do not read, print, summarize, or
+> validate the secret value through the model.
 >
 > If the user chose DefaultAzureCredential, remind them: "Make sure you've run `az login` to authenticate."
 
@@ -226,7 +232,7 @@ Open `.env` in your editor and set the following **required** variables:
 **For running `sample_update_defaults.py` (one-time model configuration):**
 
 > **[COPILOT] Probe existing model defaults on the Foundry resource:**
-> Before asking the user for deployment names, probe what the resource already has configured. The venv is active and the SDK is installed, so call `get_defaults()` via a short inline Python snippet. Export `CONTENTUNDERSTANDING_ENDPOINT` (and `CONTENTUNDERSTANDING_KEY` if Option A) in the shell first so the snippet can read them.
+> Before asking the user for deployment names, probe what the resource already has configured. The venv is active and the SDK is installed, so call `get_defaults()` via a short inline Python snippet. Export `CONTENTUNDERSTANDING_ENDPOINT` first. For Option A, have the user configure `CONTENTUNDERSTANDING_KEY` locally as described above; never pass it in a command or tool argument. The snippet inherits it from the environment.
 >
 > ```bash
 > python - <<'PY'
@@ -248,7 +254,7 @@ Open `.env` in your editor and set the following **required** variables:
 > except Exception:
 >     sys.exit(1)
 >
-> keys = ["gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"]
+> keys = ["gpt-5.2", "text-embedding-3-large"]
 > vals = [d.get(k, "") for k in keys]
 > print(";".join(f"{k}={v}" for k, v in zip(keys, vals)))
 > sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
@@ -259,7 +265,7 @@ Open `.env` in your editor and set the following **required** variables:
 >
 > | Exit | Meaning | Action |
 > |------|---------|--------|
-> | `0` | **ALL_SET** — all 3 deployments already mapped on the resource | Show the detected values and ask *"Detected existing defaults: gpt-4.1=`<A>`, gpt-4.1-mini=`<B>`, text-embedding-3-large=`<C>`. Use these? (Y/n)"*. On Y, prefill the 3 env vars and **skip Step 6** (defaults already configured). On n, fall through to the per-model prompts below. |
+> | `0` | **ALL_SET** — all 3 deployments already mapped on the resource | Show the detected values and ask *"Detected existing defaults: gpt-5.2=`<A>`, text-embedding-3-large=`<C>`. Use these? (Y/n)"*. On Y, prefill the 3 env vars and **skip Step 6** (defaults already configured). On n, fall through to the per-model prompts below. |
 > | `10` | **PARTIAL** — some mapped, some missing | Prefill the ones that are set. For missing models, ask per-item with the default shown below. After Step 4 completes, run Step 6 to fill the gaps. |
 > | `2` | **NONE** — resource has no defaults yet | Fall through to the per-model prompts below. Step 6 will configure them. |
 > | `3` | **AUTH_ERROR** (401/403) | Print a one-line warning: *"Probe unavailable (auth failed). If you're using DefaultAzureCredential, run `az login` and ensure the Cognitive Services User role is assigned. Continuing with manual entry."* Fall through to per-model prompts. |
@@ -268,18 +274,18 @@ Open `.env` in your editor and set the following **required** variables:
 > Only proceed to the per-model prompts below when the probe outcome requires it.
 
 > **[ASK USER] Model deployment names (only when probe did not yield all values):**
-> For each model not already prefilled from the probe, ask with a sensible default:
->   - "What is your **GPT-4.1** deployment name?" (default: `gpt-4.1`)
->   - "What is your **GPT-4.1-mini** deployment name?" (default: `gpt-4.1-mini`)
->   - "What is your **text-embedding-3-large** deployment name?" (default: `text-embedding-3-large`)
+> Ask for the completion model (default: `gpt-5.2`), mini completion model (default: the completion model), and embedding model (default: `text-embedding-3-large`). For each model not already prefilled from the probe, ask for its deployment name. The mini deployment defaults to the completion deployment; the other deployment names default to their model names.
 >
 > If the user prefers to configure these later, let them know they can run `sample_update_defaults.py` (Step 6) anytime before using prebuilt analyzers.
 
 | Variable | Description | How to Get It |
 |----------|-------------|---------------|
-| `GPT_4_1_DEPLOYMENT` | Your GPT-4.1 deployment name | Microsoft Foundry → Deployments → Your GPT-4.1 deployment name |
-| `GPT_4_1_MINI_DEPLOYMENT` | Your GPT-4.1-mini deployment name | Microsoft Foundry → Deployments → Your GPT-4.1-mini deployment name |
-| `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` | Your text-embedding-3-large deployment name | Microsoft Foundry → Deployments → Your embedding deployment name |
+| `CU_COMPLETION_MODEL` | Completion model name (optional; defaults to `gpt-5.2`) | Microsoft Foundry → Deployments → Model name |
+| `CU_COMPLETION_MODEL_MINI` | Mini completion model name (optional; defaults to `CU_COMPLETION_MODEL`) | Microsoft Foundry → Deployments → Model name |
+| `CU_EMBEDDING_MODEL` | Embedding model name (optional; defaults to `text-embedding-3-large`) | Microsoft Foundry → Deployments → Model name |
+| `CU_COMPLETION_MODEL_DEPLOYMENT` | Completion deployment name (required) | Microsoft Foundry → Deployments → Deployment name |
+| `CU_COMPLETION_MINI_DEPLOYMENT` | Mini completion deployment name (optional; defaults to `CU_COMPLETION_MODEL_DEPLOYMENT`) | Microsoft Foundry → Deployments → Deployment name |
+| `CU_EMBEDDING_DEPLOYMENT` | Embedding deployment name (required) | Microsoft Foundry → Deployments → Deployment name |
 
 #### 4.3 Validate Your Configuration
 
@@ -289,9 +295,12 @@ Open `.env` in your editor and set the following **required** variables:
 > Here's your configuration:
 >   CONTENTUNDERSTANDING_ENDPOINT = <value>
 >   Authentication: API Key / DefaultAzureCredential
->   GPT_4_1_DEPLOYMENT = <value>
->   GPT_4_1_MINI_DEPLOYMENT = <value>
->   TEXT_EMBEDDING_3_LARGE_DEPLOYMENT = <value>
+>   CU_COMPLETION_MODEL = <value>
+>   CU_COMPLETION_MODEL_MINI = <value>
+>   CU_EMBEDDING_MODEL = <value>
+>   CU_COMPLETION_MODEL_DEPLOYMENT = <value>
+>   CU_COMPLETION_MINI_DEPLOYMENT = <value>
+>   CU_EMBEDDING_DEPLOYMENT = <value>
 >
 > Does this look correct? (Yes / No — let me fix something)
 > ```
@@ -306,9 +315,12 @@ CONTENTUNDERSTANDING_ENDPOINT=https://my-foundry-resource.services.ai.azure.com/
 CONTENTUNDERSTANDING_KEY=
 
 # Required for sample_update_defaults.py (model configuration)
-GPT_4_1_DEPLOYMENT=gpt-4.1
-GPT_4_1_MINI_DEPLOYMENT=gpt-4.1-mini
-TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=text-embedding-3-large
+CU_COMPLETION_MODEL=gpt-5.2
+CU_COMPLETION_MODEL_MINI=gpt-5.2
+CU_EMBEDDING_MODEL=text-embedding-3-large
+CU_COMPLETION_MODEL_DEPLOYMENT=gpt-5.2
+CU_COMPLETION_MINI_DEPLOYMENT=gpt-5.2
+CU_EMBEDDING_DEPLOYMENT=text-embedding-3-large
 ```
 
 ### Step 5: Azure Resource Setup (if not done)
@@ -343,18 +355,18 @@ This role is required even if you own the resource:
 
 | Analyzer Type | Required Models |
 |--------------|-----------------|
-| `prebuilt-documentSearch`, `prebuilt-imageSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` | gpt-4.1-mini, text-embedding-3-large |
-| Other prebuilt analyzers (invoice, receipt, etc.) | gpt-4.1, text-embedding-3-large |
+| `prebuilt-documentSearch`, `prebuilt-imageSearch`, `prebuilt-audioSearch`, `prebuilt-videoSearch` | gpt-5.2, text-embedding-3-large |
+| Other prebuilt analyzers (invoice, receipt, etc.) | gpt-5.2, text-embedding-3-large |
 
 **To deploy a model:**
 1. In Microsoft Foundry → **Deployments** → **Deploy model** → **Deploy base model**
-2. Search and deploy: `gpt-4.1`, `gpt-4.1-mini`, `text-embedding-3-large`
+2. Search and deploy: `gpt-5.2`, `text-embedding-3-large`
 3. Note deployment names (recommendation: use model name as deployment name)
 
 > **[ASK USER] Models deployed:**
 > Ask: "Have you deployed the required models? Please provide the **deployment names** you used for each:"
-> - GPT-4.1 deployment name
-> - GPT-4.1-mini deployment name
+> - gpt-5.2 deployment name
+> - gpt-5.2 deployment name
 > - text-embedding-3-large deployment name
 >
 > Use these names to populate the `.env` file.
@@ -390,7 +402,7 @@ This is a **one-time setup per Microsoft Foundry resource**.
 >
 > If the user picks "Other", list available samples from the `samples/` directory.
 >
-> **[COPILOT] Timing note (do not parrot verbatim to user):** `sample_analyze_url.py` runs 14 sequential LROs (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation is slow on the service side, so total runtime can be on the order of 15+ minutes today. Do not interpret quiet periods (no stdout for several minutes during a video/audio LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. When talking to the user, prefer phrasing like "takes a few minutes" or "please be patient" rather than citing exact large minute counts.
+> **[COPILOT] Timing note (do not parrot verbatim to user):** `sample_analyze_url.py` runs 14 sequential long-running operations (LROs) (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation is slow on the service side, so total runtime can be on the order of 15+ minutes today. Do not interpret quiet periods (no stdout for several minutes during a video/audio LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. When talking to the user, prefer phrasing like "takes a few minutes" or "please be patient" rather than citing exact large minute counts.
 
 #### Sync Samples
 

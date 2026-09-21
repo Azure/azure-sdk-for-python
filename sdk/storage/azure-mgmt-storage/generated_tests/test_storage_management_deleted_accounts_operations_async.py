@@ -25,6 +25,7 @@ class TestStorageManagementDeletedAccountsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.deleted_accounts.get(
             deleted_account_name="str",
             location="str",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself

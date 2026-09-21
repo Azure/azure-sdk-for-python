@@ -34,9 +34,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_backup_short_term_retention_policies_create_or_update_request,
     build_backup_short_term_retention_policies_get_request,
@@ -588,11 +589,10 @@ from .._configuration import SqlManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -702,7 +702,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-long
+class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -809,7 +809,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: Union[_models.BackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.BackupShortTermRetentionPolicy, _types.BackupShortTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -924,7 +924,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.BackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -941,7 +941,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         :param policy_name: The policy name. Should always be default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.BackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -994,7 +994,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: Union[_models.BackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.BackupShortTermRetentionPolicy, _types.BackupShortTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupShortTermRetentionPolicy]:
         """Updates a database's short term retention policy.
@@ -1008,9 +1008,10 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         :type database_name: str
         :param policy_name: The policy name. Should always be default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         BackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or JSON or IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         BackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.BackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupShortTermRetentionPolicy. The
          BackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -1077,7 +1078,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: Union[_models.BackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.BackupShortTermRetentionPolicy, _types.BackupShortTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1192,7 +1193,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.BackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1209,7 +1210,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         :param policy_name: The policy name. Should always be default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.BackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1262,7 +1263,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.ShortTermRetentionPolicyName],
-        parameters: Union[_models.BackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.BackupShortTermRetentionPolicy, _types.BackupShortTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupShortTermRetentionPolicy]:
         """Updates a database's short term retention policy.
@@ -1276,9 +1277,10 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         :type database_name: str
         :param policy_name: The policy name. Should always be default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         BackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or JSON or IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         BackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.BackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupShortTermRetentionPolicy. The
          BackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -1446,7 +1448,7 @@ class BackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseColumnsOperations:
+class DatabaseColumnsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1809,7 +1811,7 @@ class DatabaseColumnsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorePointsOperations:
+class RestorePointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2079,7 +2081,9 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.CreateDatabaseRestorePointDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CreateDatabaseRestorePointDefinition, _types.CreateDatabaseRestorePointDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2190,7 +2194,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.CreateDatabaseRestorePointDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2205,7 +2209,7 @@ class RestorePointsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The definition for creating the restore point of this database. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.CreateDatabaseRestorePointDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2252,7 +2256,9 @@ class RestorePointsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.CreateDatabaseRestorePointDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CreateDatabaseRestorePointDefinition, _types.CreateDatabaseRestorePointDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RestorePoint]:
         """Creates a restore point for a data warehouse.
@@ -2264,10 +2270,10 @@ class RestorePointsOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The definition for creating the restore point of this database. Is one of
-         the following types: CreateDatabaseRestorePointDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.CreateDatabaseRestorePointDefinition or JSON or
-         IO[bytes]
+        :param parameters: The definition for creating the restore point of this database. Is either a
+         CreateDatabaseRestorePointDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.CreateDatabaseRestorePointDefinition or
+         ~azure.mgmt.sql.types.CreateDatabaseRestorePointDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RestorePoint. The RestorePoint is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.RestorePoint]
@@ -2327,7 +2333,7 @@ class RestorePointsOperations:
         )
 
 
-class SensitivityLabelsOperations:
+class SensitivityLabelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2503,7 +2509,7 @@ class SensitivityLabelsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.SensitivityLabelUpdateList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2518,7 +2524,7 @@ class SensitivityLabelsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SensitivityLabelUpdateList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2563,7 +2569,7 @@ class SensitivityLabelsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.SensitivityLabelUpdateList, JSON, IO[bytes]],
+        parameters: Union[_models.SensitivityLabelUpdateList, _types.SensitivityLabelUpdateList, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Update sensitivity labels of a given database using an operations batch.
@@ -2575,9 +2581,9 @@ class SensitivityLabelsOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is one of the following types: SensitivityLabelUpdateList, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.SensitivityLabelUpdateList or JSON or IO[bytes]
+        :param parameters: Is either a SensitivityLabelUpdateList type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabelUpdateList or
+         ~azure.mgmt.sql.types.SensitivityLabelUpdateList or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3020,7 +3026,7 @@ class SensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        parameters: JSON,
+        parameters: _types.SensitivityLabel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3041,7 +3047,7 @@ class SensitivityLabelsOperations:
         :param column_name: The name of the column. Required.
         :type column_name: str
         :param parameters: The column sensitivity label resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SensitivityLabel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3098,7 +3104,7 @@ class SensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        parameters: Union[_models.SensitivityLabel, JSON, IO[bytes]],
+        parameters: Union[_models.SensitivityLabel, _types.SensitivityLabel, IO[bytes]],
         **kwargs: Any
     ) -> _models.SensitivityLabel:
         """Creates or updates the sensitivity label of a given column.
@@ -3116,9 +3122,10 @@ class SensitivityLabelsOperations:
         :type table_name: str
         :param column_name: The name of the column. Required.
         :type column_name: str
-        :param parameters: The column sensitivity label resource. Is one of the following types:
-         SensitivityLabel, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SensitivityLabel or JSON or IO[bytes]
+        :param parameters: The column sensitivity label resource. Is either a SensitivityLabel type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabel or
+         ~azure.mgmt.sql.types.SensitivityLabel or IO[bytes]
         :return: SensitivityLabel. The SensitivityLabel is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.SensitivityLabel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3438,7 +3445,7 @@ class SensitivityLabelsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatabasesOperations:  # pylint: disable=too-many-public-methods
+class DatabasesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3549,7 +3556,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3663,7 +3670,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.Database,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3678,7 +3685,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.Database
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3725,7 +3732,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
         """Creates a new database or updates an existing database.
@@ -3737,9 +3744,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is one of the following types:
-         Database, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.Database or JSON or IO[bytes]
+        :param parameters: The requested database resource state. Is either a Database type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Database or ~azure.mgmt.sql.types.Database or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -3803,7 +3811,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseUpdate, _types.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3912,7 +3920,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.DatabaseUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3927,7 +3935,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3974,7 +3982,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseUpdate, _types.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
         """Updates an existing database.
@@ -3986,9 +3994,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is one of the following types:
-         DatabaseUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate or JSON or IO[bytes]
+        :param parameters: The requested database resource state. Is either a DatabaseUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate or ~azure.mgmt.sql.types.DatabaseUpdate
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -4172,8 +4181,20 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2025-02-01-preview": ["top", "skip", "filter", "orderby"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview"],
+    )
     def list_by_server(
-        self, resource_group_name: str, server_name: str, *, skip_token: Optional[str] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        filter: Optional[str] = None,
+        orderby: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.Database"]:
         """Gets a list of databases.
 
@@ -4182,8 +4203,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword skip_token: Default value is None.
-        :paramtype skip_token: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of elements in the collection to skip. Default value is None.
+        :paramtype skip: int
+        :keyword filter: An OData filter expression that filters elements in the collection. Default
+         value is None.
+        :paramtype filter: str
+        :keyword orderby: How the results should be ordered. Default value is None.
+        :paramtype orderby: str
         :return: An iterator like instance of Database
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4208,7 +4236,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
-                    skip_token=skip_token,
+                    top=top,
+                    skip=skip,
+                    filter=filter,
+                    orderby=orderby,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4281,7 +4312,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExportDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ExportDatabaseDefinition, _types.ExportDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4390,7 +4421,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ExportDatabaseDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4405,7 +4436,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database export request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ExportDatabaseDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4452,7 +4483,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExportDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ExportDatabaseDefinition, _types.ExportDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportOperationResult]:
         """Exports a database.
@@ -4464,9 +4495,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database export request parameters. Is one of the following types:
-         ExportDatabaseDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition or JSON or IO[bytes]
+        :param parameters: The database export request parameters. Is either a ExportDatabaseDefinition
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition or
+         ~azure.mgmt.sql.types.ExportDatabaseDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ImportExportOperationResult. The
          ImportExportOperationResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -4671,7 +4703,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ImportExistingDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ImportExistingDatabaseDefinition, _types.ImportExistingDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4780,7 +4812,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ImportExistingDatabaseDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4795,7 +4827,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database import request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ImportExistingDatabaseDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4842,7 +4874,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ImportExistingDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ImportExistingDatabaseDefinition, _types.ImportExistingDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportOperationResult]:
         """Imports a bacpac into a new database.
@@ -4854,9 +4886,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database import request parameters. Is one of the following types:
-         ImportExistingDatabaseDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition or JSON or IO[bytes]
+        :param parameters: The database import request parameters. Is either a
+         ImportExistingDatabaseDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition or
+         ~azure.mgmt.sql.types.ImportExistingDatabaseDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ImportExportOperationResult. The
          ImportExportOperationResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -4951,7 +4984,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceMoveDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4966,7 +4999,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The resource move definition for renaming this database. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ResourceMoveDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5011,7 +5044,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ResourceMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceMoveDefinition, _types.ResourceMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Renames a database.
@@ -5023,9 +5056,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The resource move definition for renaming this database. Is one of the
-         following types: ResourceMoveDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ResourceMoveDefinition or JSON or IO[bytes]
+        :param parameters: The resource move definition for renaming this database. Is either a
+         ResourceMoveDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ResourceMoveDefinition or
+         ~azure.mgmt.sql.types.ResourceMoveDefinition or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5677,7 +5711,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FirewallRulesOperations:
+class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5805,7 +5839,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5820,7 +5854,7 @@ class FirewallRulesOperations:
         :param firewall_rule_name: The name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating a firewall rule. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.FirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5865,7 +5899,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.FirewallRule, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.FirewallRule:
         """Creates or updates a firewall rule.
@@ -5877,9 +5911,10 @@ class FirewallRulesOperations:
         :type server_name: str
         :param firewall_rule_name: The name of the firewall rule. Required.
         :type firewall_rule_name: str
-        :param parameters: The required parameters for creating or updating a firewall rule. Is one of
-         the following types: FirewallRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.FirewallRule or JSON or IO[bytes]
+        :param parameters: The required parameters for creating or updating a firewall rule. Is either
+         a FirewallRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.FirewallRule or ~azure.mgmt.sql.types.FirewallRule or
+         IO[bytes]
         :return: FirewallRule. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.FirewallRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6146,7 +6181,7 @@ class FirewallRulesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.FirewallRuleList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6159,7 +6194,7 @@ class FirewallRulesOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.FirewallRuleList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6200,7 +6235,7 @@ class FirewallRulesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.FirewallRuleList, JSON, IO[bytes]],
+        parameters: Union[_models.FirewallRuleList, _types.FirewallRuleList, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.FirewallRule]:
         """Replaces all firewall rules on the server.
@@ -6210,8 +6245,9 @@ class FirewallRulesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Is one of the following types: FirewallRuleList, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.FirewallRuleList or JSON or IO[bytes]
+        :param parameters: Is either a FirewallRuleList type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.FirewallRuleList or
+         ~azure.mgmt.sql.types.FirewallRuleList or IO[bytes]
         :return: FirewallRule or None. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.FirewallRule or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6286,7 +6322,7 @@ class FirewallRulesOperations:
         return deserialized  # type: ignore
 
 
-class ReplicationLinksOperations:
+class ReplicationLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6387,7 +6423,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: Union[_models.ReplicationLink, JSON, IO[bytes]],
+        parameters: Union[_models.ReplicationLink, _types.ReplicationLink, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6501,7 +6537,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: JSON,
+        parameters: _types.ReplicationLink,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6518,7 +6554,7 @@ class ReplicationLinksOperations:
         :param link_id: The name of the replication link. Required.
         :type link_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ReplicationLink
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6569,7 +6605,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: Union[_models.ReplicationLink, JSON, IO[bytes]],
+        parameters: Union[_models.ReplicationLink, _types.ReplicationLink, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ReplicationLink]:
         """Updates the replication link type.
@@ -6583,8 +6619,9 @@ class ReplicationLinksOperations:
         :type database_name: str
         :param link_id: The name of the replication link. Required.
         :type link_id: str
-        :param parameters: Is one of the following types: ReplicationLink, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ReplicationLink or JSON or IO[bytes]
+        :param parameters: Is either a ReplicationLink type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ReplicationLink or
+         ~azure.mgmt.sql.types.ReplicationLink or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ReplicationLink. The ReplicationLink is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ReplicationLink]
@@ -6650,7 +6687,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: Union[_models.ReplicationLinkUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ReplicationLinkUpdate, _types.ReplicationLinkUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6764,7 +6801,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: JSON,
+        parameters: _types.ReplicationLinkUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6781,7 +6818,7 @@ class ReplicationLinksOperations:
         :param link_id: The name of the replication link. Required.
         :type link_id: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ReplicationLinkUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6832,7 +6869,7 @@ class ReplicationLinksOperations:
         server_name: str,
         database_name: str,
         link_id: str,
-        parameters: Union[_models.ReplicationLinkUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ReplicationLinkUpdate, _types.ReplicationLinkUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ReplicationLink]:
         """Updates the replication link type.
@@ -6846,9 +6883,9 @@ class ReplicationLinksOperations:
         :type database_name: str
         :param link_id: The name of the replication link. Required.
         :type link_id: str
-        :param parameters: Is one of the following types: ReplicationLinkUpdate, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.ReplicationLinkUpdate or JSON or IO[bytes]
+        :param parameters: Is either a ReplicationLinkUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ReplicationLinkUpdate or
+         ~azure.mgmt.sql.types.ReplicationLinkUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ReplicationLink. The ReplicationLink is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ReplicationLink]
@@ -7512,7 +7549,7 @@ class ReplicationLinksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServersOperations:
+class ServersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7608,7 +7645,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, JSON, IO[bytes]],
+        parameters: Union[_models.Server, _types.Server, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7716,7 +7753,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.Server,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7729,7 +7766,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested server resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.Server
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7772,7 +7809,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.Server, JSON, IO[bytes]],
+        parameters: Union[_models.Server, _types.Server, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Server]:
         """Creates or updates a server.
@@ -7782,9 +7819,9 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The requested server resource state. Is one of the following types: Server,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.Server or JSON or IO[bytes]
+        :param parameters: The requested server resource state. Is either a Server type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Server or ~azure.mgmt.sql.types.Server or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Server]
@@ -7846,7 +7883,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ServerUpdate, _types.ServerUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7950,7 +7987,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ServerUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7963,7 +8000,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested server resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8006,7 +8043,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ServerUpdate, _types.ServerUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Server]:
         """Updates a server.
@@ -8016,9 +8053,10 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The requested server resource state. Is one of the following types:
-         ServerUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerUpdate or JSON or IO[bytes]
+        :param parameters: The requested server resource state. Is either a ServerUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerUpdate or ~azure.mgmt.sql.types.ServerUpdate or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Server. The Server is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Server]
@@ -8394,7 +8432,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ImportNewDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ImportNewDatabaseDefinition, _types.ImportNewDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8498,7 +8536,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ImportNewDatabaseDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8511,7 +8549,7 @@ class ServersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The database import request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ImportNewDatabaseDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8554,7 +8592,7 @@ class ServersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ImportNewDatabaseDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ImportNewDatabaseDefinition, _types.ImportNewDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportOperationResult]:
         """Imports a bacpac into a new database.
@@ -8564,9 +8602,10 @@ class ServersOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The database import request parameters. Is one of the following types:
-         ImportNewDatabaseDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ImportNewDatabaseDefinition or JSON or IO[bytes]
+        :param parameters: The database import request parameters. Is either a
+         ImportNewDatabaseDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ImportNewDatabaseDefinition or
+         ~azure.mgmt.sql.types.ImportNewDatabaseDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ImportExportOperationResult. The
          ImportExportOperationResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -8771,12 +8810,12 @@ class ServersOperations:
 
     @overload
     async def check_name_availability(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Determines whether a resource can be created with the specified name.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8805,13 +8844,16 @@ class ServersOperations:
 
     @distributed_trace_async
     async def check_name_availability(
-        self, parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Determines whether a resource can be created with the specified name.
 
-        :param parameters: The request body. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+        :param parameters: The request body. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.sql.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.sql.models.CheckNameAvailabilityResponse
@@ -8883,7 +8925,7 @@ class ServersOperations:
         return deserialized  # type: ignore
 
 
-class ServerBlobAuditingPoliciesOperations:
+class ServerBlobAuditingPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8977,7 +9019,7 @@ class ServerBlobAuditingPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerBlobAuditingPolicy, _types.ServerBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9083,7 +9125,7 @@ class ServerBlobAuditingPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ServerBlobAuditingPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9096,7 +9138,7 @@ class ServerBlobAuditingPoliciesOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Properties of blob auditing policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerBlobAuditingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9139,7 +9181,7 @@ class ServerBlobAuditingPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerBlobAuditingPolicy, _types.ServerBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerBlobAuditingPolicy]:
         """Creates or updates a server's blob auditing policy.
@@ -9149,9 +9191,10 @@ class ServerBlobAuditingPoliciesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Properties of blob auditing policy. Is one of the following types:
-         ServerBlobAuditingPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerBlobAuditingPolicy or JSON or IO[bytes]
+        :param parameters: Properties of blob auditing policy. Is either a ServerBlobAuditingPolicy
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerBlobAuditingPolicy or
+         ~azure.mgmt.sql.types.ServerBlobAuditingPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerBlobAuditingPolicy. The
          ServerBlobAuditingPolicy is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerBlobAuditingPolicy]
@@ -9315,7 +9358,7 @@ class ServerBlobAuditingPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseBlobAuditingPoliciesOperations:
+class DatabaseBlobAuditingPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9447,7 +9490,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.DatabaseBlobAuditingPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9462,7 +9505,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database blob auditing policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseBlobAuditingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9509,7 +9552,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseBlobAuditingPolicy, _types.DatabaseBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseBlobAuditingPolicy:
         """Creates or updates a database's blob auditing policy.
@@ -9521,9 +9564,10 @@ class DatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database blob auditing policy. Is one of the following types:
-         DatabaseBlobAuditingPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or JSON or IO[bytes]
+        :param parameters: The database blob auditing policy. Is either a DatabaseBlobAuditingPolicy
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or
+         ~azure.mgmt.sql.types.DatabaseBlobAuditingPolicy or IO[bytes]
         :return: DatabaseBlobAuditingPolicy. The DatabaseBlobAuditingPolicy is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
@@ -9706,7 +9750,7 @@ class DatabaseBlobAuditingPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-too-long
+class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9838,7 +9882,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ExtendedDatabaseBlobAuditingPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9853,7 +9897,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The extended database blob auditing policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ExtendedDatabaseBlobAuditingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9900,7 +9944,9 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExtendedDatabaseBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ExtendedDatabaseBlobAuditingPolicy, _types.ExtendedDatabaseBlobAuditingPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ExtendedDatabaseBlobAuditingPolicy:
         """Creates or updates an extended database's blob auditing policy.
@@ -9912,10 +9958,10 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The extended database blob auditing policy. Is one of the following types:
-         ExtendedDatabaseBlobAuditingPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or JSON or
-         IO[bytes]
+        :param parameters: The extended database blob auditing policy. Is either a
+         ExtendedDatabaseBlobAuditingPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or
+         ~azure.mgmt.sql.types.ExtendedDatabaseBlobAuditingPolicy or IO[bytes]
         :return: ExtendedDatabaseBlobAuditingPolicy. The ExtendedDatabaseBlobAuditingPolicy is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
@@ -10098,7 +10144,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-to
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-long
+class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10194,7 +10240,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ExtendedServerBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ExtendedServerBlobAuditingPolicy, _types.ExtendedServerBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10301,7 +10347,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ExtendedServerBlobAuditingPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10314,7 +10360,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: Properties of extended blob auditing policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ExtendedServerBlobAuditingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10359,7 +10405,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ExtendedServerBlobAuditingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ExtendedServerBlobAuditingPolicy, _types.ExtendedServerBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExtendedServerBlobAuditingPolicy]:
         """Creates or updates an extended server's blob auditing policy.
@@ -10369,9 +10415,10 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Properties of extended blob auditing policy. Is one of the following types:
-         ExtendedServerBlobAuditingPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ExtendedServerBlobAuditingPolicy or JSON or IO[bytes]
+        :param parameters: Properties of extended blob auditing policy. Is either a
+         ExtendedServerBlobAuditingPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ExtendedServerBlobAuditingPolicy or
+         ~azure.mgmt.sql.types.ExtendedServerBlobAuditingPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExtendedServerBlobAuditingPolicy. The
          ExtendedServerBlobAuditingPolicy is compatible with MutableMapping
         :rtype:
@@ -10536,7 +10583,7 @@ class ExtendedServerBlobAuditingPoliciesOperations:  # pylint: disable=name-too-
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerAdvisorsOperations:
+class ServerAdvisorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10664,7 +10711,7 @@ class ServerAdvisorsOperations:
         resource_group_name: str,
         server_name: str,
         advisor_name: str,
-        parameters: JSON,
+        parameters: _types.Advisor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10679,7 +10726,7 @@ class ServerAdvisorsOperations:
         :param advisor_name: The name of the Server Advisor. Required.
         :type advisor_name: str
         :param parameters: The requested advisor resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.Advisor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10724,7 +10771,7 @@ class ServerAdvisorsOperations:
         resource_group_name: str,
         server_name: str,
         advisor_name: str,
-        parameters: Union[_models.Advisor, JSON, IO[bytes]],
+        parameters: Union[_models.Advisor, _types.Advisor, IO[bytes]],
         **kwargs: Any
     ) -> _models.Advisor:
         """Updates a server advisor.
@@ -10736,9 +10783,9 @@ class ServerAdvisorsOperations:
         :type server_name: str
         :param advisor_name: The name of the Server Advisor. Required.
         :type advisor_name: str
-        :param parameters: The requested advisor resource state. Is one of the following types:
-         Advisor, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.Advisor or JSON or IO[bytes]
+        :param parameters: The requested advisor resource state. Is either a Advisor type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Advisor or ~azure.mgmt.sql.types.Advisor or IO[bytes]
         :return: Advisor. The Advisor is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10887,7 +10934,7 @@ class ServerAdvisorsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedDatabaseColumnsOperations:
+class ManagedDatabaseColumnsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11250,7 +11297,7 @@ class ManagedDatabaseColumnsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseTablesOperations:
+class DatabaseTablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11474,7 +11521,7 @@ class DatabaseTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseTablesOperations:
+class ManagedDatabaseTablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11698,7 +11745,7 @@ class ManagedDatabaseTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseSchemasOperations:
+class DatabaseSchemasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11909,7 +11956,7 @@ class DatabaseSchemasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseSchemasOperations:
+class ManagedDatabaseSchemasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12120,7 +12167,7 @@ class ManagedDatabaseSchemasOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseSecurityAlertPoliciesOperations:
+class DatabaseSecurityAlertPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12262,7 +12309,7 @@ class DatabaseSecurityAlertPoliciesOperations:
         server_name: str,
         database_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: JSON,
+        parameters: _types.DatabaseSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12279,7 +12326,7 @@ class DatabaseSecurityAlertPoliciesOperations:
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
         :param parameters: The database security alert policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseSecurityAlertPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12330,7 +12377,7 @@ class DatabaseSecurityAlertPoliciesOperations:
         server_name: str,
         database_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.DatabaseSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseSecurityAlertPolicy, _types.DatabaseSecurityAlertPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseSecurityAlertPolicy:
         """Creates or updates a database's security alert policy.
@@ -12344,9 +12391,10 @@ class DatabaseSecurityAlertPoliciesOperations:
         :type database_name: str
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The database security alert policy. Is one of the following types:
-         DatabaseSecurityAlertPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or JSON or IO[bytes]
+        :param parameters: The database security alert policy. Is either a DatabaseSecurityAlertPolicy
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or
+         ~azure.mgmt.sql.types.DatabaseSecurityAlertPolicy or IO[bytes]
         :return: DatabaseSecurityAlertPolicy. The DatabaseSecurityAlertPolicy is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy
@@ -12528,7 +12576,7 @@ class DatabaseSecurityAlertPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12750,7 +12798,7 @@ class SqlVulnerabilityAssessmentBaselineOperations:  # pylint: disable=name-too-
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentsOperations:
+class SqlVulnerabilityAssessmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12835,7 +12883,7 @@ class SqlVulnerabilityAssessmentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12972,7 +13020,7 @@ class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: JSON,
+        parameters: _types.SqlVulnerabilityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12988,7 +13036,7 @@ class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param parameters: The requested resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SqlVulnerabilityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13036,7 +13084,7 @@ class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: Union[_models.SqlVulnerabilityAssessment, JSON, IO[bytes]],
+        parameters: Union[_models.SqlVulnerabilityAssessment, _types.SqlVulnerabilityAssessment, IO[bytes]],
         **kwargs: Any
     ) -> _models.SqlVulnerabilityAssessment:
         """Creates or updates SQL Vulnerability Assessment policy.
@@ -13049,9 +13097,10 @@ class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too
         :param vulnerability_assessment_name: The name of the SQL Vulnerability Assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :param parameters: The requested resource. Is one of the following types:
-         SqlVulnerabilityAssessment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SqlVulnerabilityAssessment or JSON or IO[bytes]
+        :param parameters: The requested resource. Is either a SqlVulnerabilityAssessment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SqlVulnerabilityAssessment or
+         ~azure.mgmt.sql.types.SqlVulnerabilityAssessment or IO[bytes]
         :return: SqlVulnerabilityAssessment. The SqlVulnerabilityAssessment is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.sql.models.SqlVulnerabilityAssessment
@@ -13229,7 +13278,7 @@ class SqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13389,7 +13438,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disa
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        parameters: JSON,
+        parameters: _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13411,7 +13460,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disa
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13471,7 +13520,11 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disa
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
+            _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
         """Creates or updates a database's vulnerability assessment rule baseline.
@@ -13490,10 +13543,10 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disa
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes] Required.
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseSqlVulnerabilityAssessmentRuleBaselineInput type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput or IO[bytes]
         :return: DatabaseSqlVulnerabilityAssessmentRuleBaseline. The
          DatabaseSqlVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaseline
@@ -13769,7 +13822,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disa
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13925,7 +13978,7 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        parameters: JSON,
+        parameters: _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13945,7 +13998,7 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14001,7 +14054,11 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
         rule_id: str,
-        parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
+            _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentRuleBaseline:
         """Creates or updates a database's vulnerability assessment rule baseline.
@@ -14018,10 +14075,10 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param rule_id: The vulnerability assessment rule ID. Required.
         :type rule_id: str
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, JSON, IO[bytes] Required.
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseSqlVulnerabilityAssessmentRuleBaselineInput type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput or IO[bytes]
         :return: DatabaseSqlVulnerabilityAssessmentRuleBaseline. The
          DatabaseSqlVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaseline
@@ -14221,7 +14278,7 @@ class SqlVulnerabilityAssessmentRuleBaselineOperations:  # pylint: disable=name-
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseSqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14455,7 +14512,7 @@ class DatabaseSqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14689,7 +14746,7 @@ class SqlVulnerabilityAssessmentScanResultOperations:  # pylint: disable=name-to
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14911,7 +14968,7 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15077,7 +15134,7 @@ class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         rule_id: str,
         baseline_name: Union[str, _models.VulnerabilityAssessmentPolicyBaselineName],
-        parameters: JSON,
+        parameters: _types.DatabaseVulnerabilityAssessmentRuleBaseline,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15102,7 +15159,7 @@ class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable
          and "default". Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentPolicyBaselineName
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaseline
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15165,7 +15222,11 @@ class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         rule_id: str,
         baseline_name: Union[str, _models.VulnerabilityAssessmentPolicyBaselineName],
-        parameters: Union[_models.DatabaseVulnerabilityAssessmentRuleBaseline, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseVulnerabilityAssessmentRuleBaseline,
+            _types.DatabaseVulnerabilityAssessmentRuleBaseline,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseVulnerabilityAssessmentRuleBaseline:
         """Creates or updates a database's vulnerability assessment rule baseline.
@@ -15187,10 +15248,10 @@ class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable
          baseline on a database level rule and master for server level rule). Known values are: "master"
          and "default". Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentPolicyBaselineName
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseVulnerabilityAssessmentRuleBaseline, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline or JSON or
-         IO[bytes]
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseVulnerabilityAssessmentRuleBaseline type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline or
+         ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaseline or IO[bytes]
         :return: DatabaseVulnerabilityAssessmentRuleBaseline. The
          DatabaseVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline
@@ -15350,7 +15411,7 @@ class DatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15516,7 +15577,7 @@ class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: 
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         rule_id: str,
         baseline_name: Union[str, _models.VulnerabilityAssessmentPolicyBaselineName],
-        parameters: JSON,
+        parameters: _types.DatabaseVulnerabilityAssessmentRuleBaseline,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15541,7 +15602,7 @@ class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: 
          and "default". Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentPolicyBaselineName
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaseline
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15604,7 +15665,11 @@ class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: 
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         rule_id: str,
         baseline_name: Union[str, _models.VulnerabilityAssessmentPolicyBaselineName],
-        parameters: Union[_models.DatabaseVulnerabilityAssessmentRuleBaseline, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseVulnerabilityAssessmentRuleBaseline,
+            _types.DatabaseVulnerabilityAssessmentRuleBaseline,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseVulnerabilityAssessmentRuleBaseline:
         """Creates or updates a database's vulnerability assessment rule baseline.
@@ -15626,10 +15691,10 @@ class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: 
          baseline on a database level rule and master for server level rule). Known values are: "master"
          and "default". Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentPolicyBaselineName
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseVulnerabilityAssessmentRuleBaseline, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline or JSON or
-         IO[bytes]
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseVulnerabilityAssessmentRuleBaseline type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline or
+         ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaseline or IO[bytes]
         :return: DatabaseVulnerabilityAssessmentRuleBaseline. The
          DatabaseVulnerabilityAssessmentRuleBaseline is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessmentRuleBaseline
@@ -15789,7 +15854,7 @@ class ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: 
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15935,7 +16000,7 @@ class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: JSON,
+        parameters: _types.DatabaseVulnerabilityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15954,7 +16019,7 @@ class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-lo
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param parameters: The requested resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16007,7 +16072,7 @@ class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-lo
         server_name: str,
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: Union[_models.DatabaseVulnerabilityAssessment, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseVulnerabilityAssessment, _types.DatabaseVulnerabilityAssessment, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseVulnerabilityAssessment:
         """Creates or updates the database's vulnerability assessment.
@@ -16023,9 +16088,10 @@ class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-lo
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :param parameters: The requested resource. Is one of the following types:
-         DatabaseVulnerabilityAssessment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or JSON or IO[bytes]
+        :param parameters: The requested resource. Is either a DatabaseVulnerabilityAssessment type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or
+         ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessment or IO[bytes]
         :return: DatabaseVulnerabilityAssessment. The DatabaseVulnerabilityAssessment is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment
@@ -16280,7 +16346,7 @@ class DatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16426,7 +16492,7 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: JSON,
+        parameters: _types.DatabaseVulnerabilityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16445,7 +16511,7 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param parameters: The requested resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16498,7 +16564,7 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: Union[_models.DatabaseVulnerabilityAssessment, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseVulnerabilityAssessment, _types.DatabaseVulnerabilityAssessment, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseVulnerabilityAssessment:
         """Creates or updates the database's vulnerability assessment.
@@ -16514,9 +16580,10 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :param parameters: The requested resource. Is one of the following types:
-         DatabaseVulnerabilityAssessment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or JSON or IO[bytes]
+        :param parameters: The requested resource. Is either a DatabaseVulnerabilityAssessment type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment or
+         ~azure.mgmt.sql.types.DatabaseVulnerabilityAssessment or IO[bytes]
         :return: DatabaseVulnerabilityAssessment. The DatabaseVulnerabilityAssessment is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseVulnerabilityAssessment
@@ -16771,7 +16838,7 @@ class ManagedDatabaseVulnerabilityAssessmentsOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17227,7 +17294,7 @@ class ManagedDatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DataMaskingPoliciesOperations:
+class DataMaskingPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17357,7 +17424,7 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.DataMaskingPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17372,7 +17439,7 @@ class DataMaskingPoliciesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters for creating or updating a data masking policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DataMaskingPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17417,7 +17484,7 @@ class DataMaskingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DataMaskingPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.DataMaskingPolicy, _types.DataMaskingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataMaskingPolicy:
         """Creates or updates a database data masking policy.
@@ -17429,9 +17496,10 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters for creating or updating a data masking policy. Is one of the
-         following types: DataMaskingPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DataMaskingPolicy or JSON or IO[bytes]
+        :param parameters: Parameters for creating or updating a data masking policy. Is either a
+         DataMaskingPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DataMaskingPolicy or
+         ~azure.mgmt.sql.types.DataMaskingPolicy or IO[bytes]
         :return: DataMaskingPolicy. The DataMaskingPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DataMaskingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17507,7 +17575,7 @@ class DataMaskingPoliciesOperations:
         return deserialized  # type: ignore
 
 
-class DeletedServersOperations:
+class DeletedServersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17907,7 +17975,7 @@ class DeletedServersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DistributedAvailabilityGroupsOperations:
+class DistributedAvailabilityGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18009,7 +18077,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.DistributedAvailabilityGroup, _types.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18122,7 +18190,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: JSON,
+        parameters: _types.DistributedAvailabilityGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18137,7 +18205,7 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DistributedAvailabilityGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18184,7 +18252,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.DistributedAvailabilityGroup, _types.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
         """Creates a distributed availability group between Sql On-Prem and Sql Managed Instance.
@@ -18196,9 +18264,10 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info. Is one of the following types:
-         DistributedAvailabilityGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or JSON or IO[bytes]
+        :param parameters: The distributed availability group info. Is either a
+         DistributedAvailabilityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or
+         ~azure.mgmt.sql.types.DistributedAvailabilityGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DistributedAvailabilityGroup. The
          DistributedAvailabilityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -18262,7 +18331,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.DistributedAvailabilityGroup, _types.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18371,7 +18440,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: JSON,
+        parameters: _types.DistributedAvailabilityGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18386,7 +18455,7 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DistributedAvailabilityGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18433,7 +18502,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroup, JSON, IO[bytes]],
+        parameters: Union[_models.DistributedAvailabilityGroup, _types.DistributedAvailabilityGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
         """Updates a distributed availability group replication mode.
@@ -18445,9 +18514,10 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group info. Is one of the following types:
-         DistributedAvailabilityGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or JSON or IO[bytes]
+        :param parameters: The distributed availability group info. Is either a
+         DistributedAvailabilityGroup type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroup or
+         ~azure.mgmt.sql.types.DistributedAvailabilityGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DistributedAvailabilityGroup. The
          DistributedAvailabilityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -18746,7 +18816,11 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DistributedAvailabilityGroupsFailoverRequest,
+            _types.DistributedAvailabilityGroupsFailoverRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18855,7 +18929,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: JSON,
+        parameters: _types.DistributedAvailabilityGroupsFailoverRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18870,7 +18944,7 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group failover request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DistributedAvailabilityGroupsFailoverRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18917,7 +18991,11 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DistributedAvailabilityGroupsFailoverRequest,
+            _types.DistributedAvailabilityGroupsFailoverRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
         """Performs requested failover type in this distributed availability group.
@@ -18929,10 +19007,10 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group failover request parameters. Is one of
-         the following types: DistributedAvailabilityGroupsFailoverRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest or JSON
-         or IO[bytes]
+        :param parameters: The distributed availability group failover request parameters. Is either a
+         DistributedAvailabilityGroupsFailoverRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest or
+         ~azure.mgmt.sql.types.DistributedAvailabilityGroupsFailoverRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DistributedAvailabilityGroup. The
          DistributedAvailabilityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -18996,7 +19074,9 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupSetRole, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DistributedAvailabilityGroupSetRole, _types.DistributedAvailabilityGroupSetRole, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19105,7 +19185,7 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: JSON,
+        parameters: _types.DistributedAvailabilityGroupSetRole,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19120,7 +19200,7 @@ class DistributedAvailabilityGroupsOperations:
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
         :param parameters: The distributed availability group set role request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DistributedAvailabilityGroupSetRole
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19167,7 +19247,9 @@ class DistributedAvailabilityGroupsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         distributed_availability_group_name: str,
-        parameters: Union[_models.DistributedAvailabilityGroupSetRole, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DistributedAvailabilityGroupSetRole, _types.DistributedAvailabilityGroupSetRole, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
         """Sets the role for managed instance in a distributed availability group.
@@ -19179,10 +19261,10 @@ class DistributedAvailabilityGroupsOperations:
         :type managed_instance_name: str
         :param distributed_availability_group_name: The distributed availability group name. Required.
         :type distributed_availability_group_name: str
-        :param parameters: The distributed availability group set role request parameters. Is one of
-         the following types: DistributedAvailabilityGroupSetRole, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole or JSON or
-         IO[bytes]
+        :param parameters: The distributed availability group set role request parameters. Is either a
+         DistributedAvailabilityGroupSetRole type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole or
+         ~azure.mgmt.sql.types.DistributedAvailabilityGroupSetRole or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DistributedAvailabilityGroup. The
          DistributedAvailabilityGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
@@ -19242,7 +19324,7 @@ class DistributedAvailabilityGroupsOperations:
         )
 
 
-class ManagedDatabasesOperations:
+class ManagedDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19339,7 +19421,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabase, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabase, _types.ManagedDatabase, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19452,7 +19534,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedDatabase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19467,7 +19549,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19514,7 +19596,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabase, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabase, _types.ManagedDatabase, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedDatabase]:
         """Creates a new database or updates an existing database.
@@ -19526,9 +19608,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is one of the following types:
-         ManagedDatabase, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabase or JSON or IO[bytes]
+        :param parameters: The requested database resource state. Is either a ManagedDatabase type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabase or
+         ~azure.mgmt.sql.types.ManagedDatabase or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedDatabase. The ManagedDatabase is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedDatabase]
@@ -19592,7 +19675,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseUpdate, _types.ManagedDatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19701,7 +19784,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19716,7 +19799,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19763,7 +19846,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseUpdate, _types.ManagedDatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedDatabase]:
         """Updates an existing database.
@@ -19775,9 +19858,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is one of the following types:
-         ManagedDatabaseUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseUpdate or JSON or IO[bytes]
+        :param parameters: The requested database resource state. Is either a ManagedDatabaseUpdate
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseUpdate or
+         ~azure.mgmt.sql.types.ManagedDatabaseUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedDatabase. The ManagedDatabase is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedDatabase]
@@ -20067,7 +20151,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseMoveDefinition, _types.ManagedDatabaseMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20175,7 +20259,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseMoveDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20190,7 +20274,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters of the cancel managed database move operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseMoveDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20235,7 +20319,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseMoveDefinition, _types.ManagedDatabaseMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Cancels a managed database move operation.
@@ -20247,9 +20331,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters of the cancel managed database move operation. Is one of the
-         following types: ManagedDatabaseMoveDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or JSON or IO[bytes]
+        :param parameters: Parameters of the cancel managed database move operation. Is either a
+         ManagedDatabaseMoveDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or
+         ~azure.mgmt.sql.types.ManagedDatabaseMoveDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20307,7 +20392,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseMoveDefinition, _types.ManagedDatabaseMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20415,7 +20500,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseMoveDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20430,7 +20515,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters of the complete managed database move operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseMoveDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20475,7 +20560,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedDatabaseMoveDefinition, _types.ManagedDatabaseMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Completes a managed database move operation.
@@ -20487,9 +20572,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters of the complete managed database move operation. Is one of the
-         following types: ManagedDatabaseMoveDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or JSON or IO[bytes]
+        :param parameters: Parameters of the complete managed database move operation. Is either a
+         ManagedDatabaseMoveDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or
+         ~azure.mgmt.sql.types.ManagedDatabaseMoveDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20547,7 +20633,9 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.CompleteDatabaseRestoreDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CompleteDatabaseRestoreDefinition, _types.CompleteDatabaseRestoreDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20656,7 +20744,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.CompleteDatabaseRestoreDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20672,7 +20760,7 @@ class ManagedDatabasesOperations:
         :type database_name: str
         :param parameters: The definition for completing the restore of this managed database.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.CompleteDatabaseRestoreDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20718,7 +20806,9 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.CompleteDatabaseRestoreDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CompleteDatabaseRestoreDefinition, _types.CompleteDatabaseRestoreDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Completes the restore operation on a managed database.
@@ -20730,9 +20820,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The definition for completing the restore of this managed database. Is one
-         of the following types: CompleteDatabaseRestoreDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.CompleteDatabaseRestoreDefinition or JSON or IO[bytes]
+        :param parameters: The definition for completing the restore of this managed database. Is
+         either a CompleteDatabaseRestoreDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.CompleteDatabaseRestoreDefinition or
+         ~azure.mgmt.sql.types.CompleteDatabaseRestoreDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20920,7 +21011,9 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseStartMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedDatabaseStartMoveDefinition, _types.ManagedDatabaseStartMoveDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21028,7 +21121,7 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseStartMoveDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21043,7 +21136,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters of the start managed database move operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseStartMoveDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21088,7 +21181,9 @@ class ManagedDatabasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.ManagedDatabaseStartMoveDefinition, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedDatabaseStartMoveDefinition, _types.ManagedDatabaseStartMoveDefinition, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts a managed database move operation.
@@ -21100,10 +21195,10 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters of the start managed database move operation. Is one of the
-         following types: ManagedDatabaseStartMoveDefinition, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseStartMoveDefinition or JSON or
-         IO[bytes]
+        :param parameters: Parameters of the start managed database move operation. Is either a
+         ManagedDatabaseStartMoveDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseStartMoveDefinition or
+         ~azure.mgmt.sql.types.ManagedDatabaseStartMoveDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21259,7 +21354,7 @@ class ManagedDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerTrustGroupsOperations:
+class ServerTrustGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21356,7 +21451,7 @@ class ServerTrustGroupsOperations:
         resource_group_name: str,
         location_name: str,
         server_trust_group_name: str,
-        parameters: Union[_models.ServerTrustGroup, JSON, IO[bytes]],
+        parameters: Union[_models.ServerTrustGroup, _types.ServerTrustGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21469,7 +21564,7 @@ class ServerTrustGroupsOperations:
         resource_group_name: str,
         location_name: str,
         server_trust_group_name: str,
-        parameters: JSON,
+        parameters: _types.ServerTrustGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21484,7 +21579,7 @@ class ServerTrustGroupsOperations:
         :param server_trust_group_name: The name of the server trust group. Required.
         :type server_trust_group_name: str
         :param parameters: The server trust group parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerTrustGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21531,7 +21626,7 @@ class ServerTrustGroupsOperations:
         resource_group_name: str,
         location_name: str,
         server_trust_group_name: str,
-        parameters: Union[_models.ServerTrustGroup, JSON, IO[bytes]],
+        parameters: Union[_models.ServerTrustGroup, _types.ServerTrustGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerTrustGroup]:
         """Creates or updates a server trust group.
@@ -21543,9 +21638,10 @@ class ServerTrustGroupsOperations:
         :type location_name: str
         :param server_trust_group_name: The name of the server trust group. Required.
         :type server_trust_group_name: str
-        :param parameters: The server trust group parameters. Is one of the following types:
-         ServerTrustGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerTrustGroup or JSON or IO[bytes]
+        :param parameters: The server trust group parameters. Is either a ServerTrustGroup type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerTrustGroup or
+         ~azure.mgmt.sql.types.ServerTrustGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerTrustGroup. The ServerTrustGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerTrustGroup]
@@ -21933,7 +22029,7 @@ class ServerTrustGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
+class ManagedInstancesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22029,7 +22125,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstance, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstance, _types.ManagedInstance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22137,7 +22233,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedInstance,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22150,7 +22246,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: The requested managed instance resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22193,7 +22289,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstance, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstance, _types.ManagedInstance, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstance]:
         """Creates or updates a managed instance.
@@ -22203,9 +22299,10 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: The requested managed instance resource state. Is one of the following
-         types: ManagedInstance, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstance or JSON or IO[bytes]
+        :param parameters: The requested managed instance resource state. Is either a ManagedInstance
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstance or
+         ~azure.mgmt.sql.types.ManagedInstance or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstance. The ManagedInstance is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedInstance]
@@ -22267,7 +22364,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstanceUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceUpdate, _types.ManagedInstanceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22371,7 +22468,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedInstanceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22384,7 +22481,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: The requested managed instance resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22427,7 +22524,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstanceUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceUpdate, _types.ManagedInstanceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstance]:
         """Updates a managed instance.
@@ -22437,9 +22534,10 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: The requested managed instance resource state. Is one of the following
-         types: ManagedInstanceUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceUpdate or JSON or IO[bytes]
+        :param parameters: The requested managed instance resource state. Is either a
+         ManagedInstanceUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceUpdate or
+         ~azure.mgmt.sql.types.ManagedInstanceUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstance. The ManagedInstance is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedInstance]
@@ -23696,7 +23794,11 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest,
+            _types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -23800,7 +23902,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23813,7 +23915,8 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: The validate azure key vault encryption key parameters. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.sql.types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23854,7 +23957,11 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest,
+            _types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Validates customer managed key.
@@ -23864,12 +23971,11 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: The validate azure key vault encryption key parameters. Is one of the
-         following types: ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest, JSON, IO[bytes]
-         Required.
+        :param parameters: The validate azure key vault encryption key parameters. Is either a
+         ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.sql.models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.sql.models.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest or
+         ~azure.mgmt.sql.types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24027,7 +24133,7 @@ class ManagedInstancesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ElasticPoolsOperations:
+class ElasticPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24124,7 +24230,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: Union[_models.ElasticPool, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticPool, _types.ElasticPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24238,7 +24344,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: JSON,
+        parameters: _types.ElasticPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24253,7 +24359,7 @@ class ElasticPoolsOperations:
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
         :param parameters: The elastic pool parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ElasticPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24300,7 +24406,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: Union[_models.ElasticPool, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticPool, _types.ElasticPool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ElasticPool]:
         """Creates or updates an elastic pool.
@@ -24312,9 +24418,10 @@ class ElasticPoolsOperations:
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
-        :param parameters: The elastic pool parameters. Is one of the following types: ElasticPool,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ElasticPool or JSON or IO[bytes]
+        :param parameters: The elastic pool parameters. Is either a ElasticPool type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ElasticPool or ~azure.mgmt.sql.types.ElasticPool or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns ElasticPool. The ElasticPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ElasticPool]
@@ -24378,7 +24485,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: Union[_models.ElasticPoolUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticPoolUpdate, _types.ElasticPoolUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24487,7 +24594,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: JSON,
+        parameters: _types.ElasticPoolUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24502,7 +24609,7 @@ class ElasticPoolsOperations:
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
         :param parameters: The elastic pool update parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ElasticPoolUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24549,7 +24656,7 @@ class ElasticPoolsOperations:
         resource_group_name: str,
         server_name: str,
         elastic_pool_name: str,
-        parameters: Union[_models.ElasticPoolUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ElasticPoolUpdate, _types.ElasticPoolUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ElasticPool]:
         """Updates an elastic pool.
@@ -24561,9 +24668,10 @@ class ElasticPoolsOperations:
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
-        :param parameters: The elastic pool update parameters. Is one of the following types:
-         ElasticPoolUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate or JSON or IO[bytes]
+        :param parameters: The elastic pool update parameters. Is either a ElasticPoolUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate or
+         ~azure.mgmt.sql.types.ElasticPoolUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ElasticPool. The ElasticPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ElasticPool]
@@ -24976,7 +25084,7 @@ class ElasticPoolsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class EncryptionProtectorsOperations:
+class EncryptionProtectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25078,7 +25186,7 @@ class EncryptionProtectorsOperations:
         resource_group_name: str,
         server_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: Union[_models.EncryptionProtector, JSON, IO[bytes]],
+        parameters: Union[_models.EncryptionProtector, _types.EncryptionProtector, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25188,7 +25296,7 @@ class EncryptionProtectorsOperations:
         resource_group_name: str,
         server_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: JSON,
+        parameters: _types.EncryptionProtector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25204,7 +25312,7 @@ class EncryptionProtectorsOperations:
          "current" Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
         :param parameters: The requested encryption protector resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.EncryptionProtector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25252,7 +25360,7 @@ class EncryptionProtectorsOperations:
         resource_group_name: str,
         server_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: Union[_models.EncryptionProtector, JSON, IO[bytes]],
+        parameters: Union[_models.EncryptionProtector, _types.EncryptionProtector, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EncryptionProtector]:
         """Updates an existing encryption protector.
@@ -25265,9 +25373,10 @@ class EncryptionProtectorsOperations:
         :param encryption_protector_name: The name of the encryption protector to be retrieved.
          "current" Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :param parameters: The requested encryption protector resource state. Is one of the following
-         types: EncryptionProtector, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.EncryptionProtector or JSON or IO[bytes]
+        :param parameters: The requested encryption protector resource state. Is either a
+         EncryptionProtector type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.EncryptionProtector or
+         ~azure.mgmt.sql.types.EncryptionProtector or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EncryptionProtector. The
          EncryptionProtector is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.EncryptionProtector]
@@ -25562,7 +25671,7 @@ class EncryptionProtectorsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class EndpointCertificatesOperations:
+class EndpointCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25758,7 +25867,7 @@ class EndpointCertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FailoverGroupsOperations:
+class FailoverGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25855,7 +25964,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: Union[_models.FailoverGroup, JSON, IO[bytes]],
+        parameters: Union[_models.FailoverGroup, _types.FailoverGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25968,7 +26077,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: JSON,
+        parameters: _types.FailoverGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25983,7 +26092,7 @@ class FailoverGroupsOperations:
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
         :param parameters: The failover group parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.FailoverGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26030,7 +26139,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: Union[_models.FailoverGroup, JSON, IO[bytes]],
+        parameters: Union[_models.FailoverGroup, _types.FailoverGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FailoverGroup]:
         """Creates or updates a failover group.
@@ -26042,9 +26151,10 @@ class FailoverGroupsOperations:
         :type server_name: str
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
-        :param parameters: The failover group parameters. Is one of the following types: FailoverGroup,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.FailoverGroup or JSON or IO[bytes]
+        :param parameters: The failover group parameters. Is either a FailoverGroup type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.FailoverGroup or ~azure.mgmt.sql.types.FailoverGroup
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FailoverGroup. The FailoverGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.FailoverGroup]
@@ -26108,7 +26218,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: Union[_models.FailoverGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.FailoverGroupUpdate, _types.FailoverGroupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -26217,7 +26327,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: JSON,
+        parameters: _types.FailoverGroupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26232,7 +26342,7 @@ class FailoverGroupsOperations:
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
         :param parameters: The failover group parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.FailoverGroupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26279,7 +26389,7 @@ class FailoverGroupsOperations:
         resource_group_name: str,
         server_name: str,
         failover_group_name: str,
-        parameters: Union[_models.FailoverGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.FailoverGroupUpdate, _types.FailoverGroupUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FailoverGroup]:
         """Updates a failover group.
@@ -26291,9 +26401,10 @@ class FailoverGroupsOperations:
         :type server_name: str
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
-        :param parameters: The failover group parameters. Is one of the following types:
-         FailoverGroupUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.FailoverGroupUpdate or JSON or IO[bytes]
+        :param parameters: The failover group parameters. Is either a FailoverGroupUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.FailoverGroupUpdate or
+         ~azure.mgmt.sql.types.FailoverGroupUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FailoverGroup. The FailoverGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.FailoverGroup]
@@ -26971,7 +27082,7 @@ class FailoverGroupsOperations:
         )
 
 
-class GeoBackupPoliciesOperations:
+class GeoBackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27114,7 +27225,7 @@ class GeoBackupPoliciesOperations:
         server_name: str,
         database_name: str,
         geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
-        parameters: JSON,
+        parameters: _types.GeoBackupPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27133,7 +27244,7 @@ class GeoBackupPoliciesOperations:
         :type geo_backup_policy_name: str or ~azure.mgmt.sql.models.GeoBackupPolicyName
         :param parameters: The required parameters for creating or updating the geo backup policy.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.GeoBackupPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27184,7 +27295,7 @@ class GeoBackupPoliciesOperations:
         server_name: str,
         database_name: str,
         geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
-        parameters: Union[_models.GeoBackupPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.GeoBackupPolicy, _types.GeoBackupPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.GeoBackupPolicy:
         """Create or update a database default Geo backup policy.
@@ -27200,8 +27311,9 @@ class GeoBackupPoliciesOperations:
          'Default'. "Default" Required.
         :type geo_backup_policy_name: str or ~azure.mgmt.sql.models.GeoBackupPolicyName
         :param parameters: The required parameters for creating or updating the geo backup policy. Is
-         one of the following types: GeoBackupPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.GeoBackupPolicy or JSON or IO[bytes]
+         either a GeoBackupPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.GeoBackupPolicy or
+         ~azure.mgmt.sql.types.GeoBackupPolicy or IO[bytes]
         :return: GeoBackupPolicy. The GeoBackupPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.GeoBackupPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27381,7 +27493,7 @@ class GeoBackupPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InstanceFailoverGroupsOperations:
+class InstanceFailoverGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27478,7 +27590,7 @@ class InstanceFailoverGroupsOperations:
         resource_group_name: str,
         location_name: str,
         failover_group_name: str,
-        parameters: Union[_models.InstanceFailoverGroup, JSON, IO[bytes]],
+        parameters: Union[_models.InstanceFailoverGroup, _types.InstanceFailoverGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27591,7 +27703,7 @@ class InstanceFailoverGroupsOperations:
         resource_group_name: str,
         location_name: str,
         failover_group_name: str,
-        parameters: JSON,
+        parameters: _types.InstanceFailoverGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27606,7 +27718,7 @@ class InstanceFailoverGroupsOperations:
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
         :param parameters: The failover group parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.InstanceFailoverGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27653,7 +27765,7 @@ class InstanceFailoverGroupsOperations:
         resource_group_name: str,
         location_name: str,
         failover_group_name: str,
-        parameters: Union[_models.InstanceFailoverGroup, JSON, IO[bytes]],
+        parameters: Union[_models.InstanceFailoverGroup, _types.InstanceFailoverGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InstanceFailoverGroup]:
         """Creates or updates a failover group.
@@ -27665,9 +27777,10 @@ class InstanceFailoverGroupsOperations:
         :type location_name: str
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
-        :param parameters: The failover group parameters. Is one of the following types:
-         InstanceFailoverGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.InstanceFailoverGroup or JSON or IO[bytes]
+        :param parameters: The failover group parameters. Is either a InstanceFailoverGroup type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.InstanceFailoverGroup or
+         ~azure.mgmt.sql.types.InstanceFailoverGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InstanceFailoverGroup. The
          InstanceFailoverGroup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.InstanceFailoverGroup]
@@ -28214,7 +28327,7 @@ class InstanceFailoverGroupsOperations:
         )
 
 
-class InstancePoolOperationsOperations:
+class InstancePoolOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28409,7 +28522,7 @@ class InstancePoolOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InstancePoolsOperations:
+class InstancePoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28500,7 +28613,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: Union[_models.InstancePool, JSON, IO[bytes]],
+        parameters: Union[_models.InstancePool, _types.InstancePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28608,7 +28721,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: JSON,
+        parameters: _types.InstancePool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28621,7 +28734,7 @@ class InstancePoolsOperations:
         :param instance_pool_name: The name of the instance pool to be retrieved. Required.
         :type instance_pool_name: str
         :param parameters: The requested instance pool resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.InstancePool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28664,7 +28777,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: Union[_models.InstancePool, JSON, IO[bytes]],
+        parameters: Union[_models.InstancePool, _types.InstancePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InstancePool]:
         """Creates or updates an instance pool.
@@ -28674,9 +28787,10 @@ class InstancePoolsOperations:
         :type resource_group_name: str
         :param instance_pool_name: The name of the instance pool to be retrieved. Required.
         :type instance_pool_name: str
-        :param parameters: The requested instance pool resource state. Is one of the following types:
-         InstancePool, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.InstancePool or JSON or IO[bytes]
+        :param parameters: The requested instance pool resource state. Is either a InstancePool type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.InstancePool or ~azure.mgmt.sql.types.InstancePool or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns InstancePool. The InstancePool is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.InstancePool]
@@ -28738,7 +28852,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: Union[_models.InstancePoolUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.InstancePoolUpdate, _types.InstancePoolUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28842,7 +28956,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: JSON,
+        parameters: _types.InstancePoolUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28855,7 +28969,7 @@ class InstancePoolsOperations:
         :param instance_pool_name: The name of the instance pool to be retrieved. Required.
         :type instance_pool_name: str
         :param parameters: The requested instance pool resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.InstancePoolUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28898,7 +29012,7 @@ class InstancePoolsOperations:
         self,
         resource_group_name: str,
         instance_pool_name: str,
-        parameters: Union[_models.InstancePoolUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.InstancePoolUpdate, _types.InstancePoolUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InstancePool]:
         """Updates an instance pool.
@@ -28908,9 +29022,10 @@ class InstancePoolsOperations:
         :type resource_group_name: str
         :param instance_pool_name: The name of the instance pool to be retrieved. Required.
         :type instance_pool_name: str
-        :param parameters: The requested instance pool resource state. Is one of the following types:
-         InstancePoolUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.InstancePoolUpdate or JSON or IO[bytes]
+        :param parameters: The requested instance pool resource state. Is either a InstancePoolUpdate
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.InstancePoolUpdate or
+         ~azure.mgmt.sql.types.InstancePoolUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InstancePool. The InstancePool is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.InstancePool]
@@ -29279,7 +29394,7 @@ class InstancePoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IPv6FirewallRulesOperations:
+class IPv6FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29408,7 +29523,7 @@ class IPv6FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: JSON,
+        parameters: _types.IPv6FirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29424,7 +29539,7 @@ class IPv6FirewallRulesOperations:
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating an IPv6 firewall rule.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.IPv6FirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29470,7 +29585,7 @@ class IPv6FirewallRulesOperations:
         resource_group_name: str,
         server_name: str,
         firewall_rule_name: str,
-        parameters: Union[_models.IPv6FirewallRule, JSON, IO[bytes]],
+        parameters: Union[_models.IPv6FirewallRule, _types.IPv6FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.IPv6FirewallRule:
         """Creates or updates an IPv6 firewall rule.
@@ -29483,8 +29598,9 @@ class IPv6FirewallRulesOperations:
         :param firewall_rule_name: The name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating an IPv6 firewall rule. Is
-         one of the following types: IPv6FirewallRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.IPv6FirewallRule or JSON or IO[bytes]
+         either a IPv6FirewallRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.IPv6FirewallRule or
+         ~azure.mgmt.sql.types.IPv6FirewallRule or IO[bytes]
         :return: IPv6FirewallRule. The IPv6FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.IPv6FirewallRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -29720,7 +29836,7 @@ class IPv6FirewallRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobExecutionsOperations:
+class JobExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30477,7 +30593,7 @@ class JobExecutionsOperations:
         )
 
 
-class JobAgentsOperations:
+class JobAgentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30574,7 +30690,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: Union[_models.JobAgent, JSON, IO[bytes]],
+        parameters: Union[_models.JobAgent, _types.JobAgent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -30687,7 +30803,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: JSON,
+        parameters: _types.JobAgent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30702,7 +30818,7 @@ class JobAgentsOperations:
         :param job_agent_name: The name of the job agent to be retrieved. Required.
         :type job_agent_name: str
         :param parameters: The requested job agent resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobAgent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30749,7 +30865,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: Union[_models.JobAgent, JSON, IO[bytes]],
+        parameters: Union[_models.JobAgent, _types.JobAgent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobAgent]:
         """Creates or updates a job agent.
@@ -30761,9 +30877,10 @@ class JobAgentsOperations:
         :type server_name: str
         :param job_agent_name: The name of the job agent to be retrieved. Required.
         :type job_agent_name: str
-        :param parameters: The requested job agent resource state. Is one of the following types:
-         JobAgent, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobAgent or JSON or IO[bytes]
+        :param parameters: The requested job agent resource state. Is either a JobAgent type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobAgent or ~azure.mgmt.sql.types.JobAgent or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns JobAgent. The JobAgent is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.JobAgent]
@@ -30827,7 +30944,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: Union[_models.JobAgentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.JobAgentUpdate, _types.JobAgentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -30936,7 +31053,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: JSON,
+        parameters: _types.JobAgentUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30951,7 +31068,7 @@ class JobAgentsOperations:
         :param job_agent_name: The name of the job agent to be retrieved. Required.
         :type job_agent_name: str
         :param parameters: The update to the job agent. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobAgentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30998,7 +31115,7 @@ class JobAgentsOperations:
         resource_group_name: str,
         server_name: str,
         job_agent_name: str,
-        parameters: Union[_models.JobAgentUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.JobAgentUpdate, _types.JobAgentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobAgent]:
         """Updates a job agent.
@@ -31010,9 +31127,10 @@ class JobAgentsOperations:
         :type server_name: str
         :param job_agent_name: The name of the job agent to be retrieved. Required.
         :type job_agent_name: str
-        :param parameters: The update to the job agent. Is one of the following types: JobAgentUpdate,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobAgentUpdate or JSON or IO[bytes]
+        :param parameters: The update to the job agent. Is either a JobAgentUpdate type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobAgentUpdate or ~azure.mgmt.sql.types.JobAgentUpdate
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JobAgent. The JobAgent is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.JobAgent]
@@ -31298,7 +31416,7 @@ class JobAgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobCredentialsOperations:
+class JobCredentialsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31433,7 +31551,7 @@ class JobCredentialsOperations:
         server_name: str,
         job_agent_name: str,
         credential_name: str,
-        parameters: JSON,
+        parameters: _types.JobCredential,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31450,7 +31568,7 @@ class JobCredentialsOperations:
         :param credential_name: The name of the credential. Required.
         :type credential_name: str
         :param parameters: The requested job credential state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobCredential
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31499,7 +31617,7 @@ class JobCredentialsOperations:
         server_name: str,
         job_agent_name: str,
         credential_name: str,
-        parameters: Union[_models.JobCredential, JSON, IO[bytes]],
+        parameters: Union[_models.JobCredential, _types.JobCredential, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobCredential:
         """Creates or updates a job credential.
@@ -31513,9 +31631,10 @@ class JobCredentialsOperations:
         :type job_agent_name: str
         :param credential_name: The name of the credential. Required.
         :type credential_name: str
-        :param parameters: The requested job credential state. Is one of the following types:
-         JobCredential, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobCredential or JSON or IO[bytes]
+        :param parameters: The requested job credential state. Is either a JobCredential type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobCredential or ~azure.mgmt.sql.types.JobCredential
+         or IO[bytes]
         :return: JobCredential. The JobCredential is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.JobCredential
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31760,7 +31879,7 @@ class JobCredentialsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobStepExecutionsOperations:
+class JobStepExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32020,7 +32139,7 @@ class JobStepExecutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobTargetExecutionsOperations:
+class JobTargetExecutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32439,7 +32558,7 @@ class JobTargetExecutionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32574,7 +32693,7 @@ class JobsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        parameters: JSON,
+        parameters: _types.Job,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32591,7 +32710,7 @@ class JobsOperations:
         :param job_name: The name of the job to get. Required.
         :type job_name: str
         :param parameters: The requested job state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.Job
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32640,7 +32759,7 @@ class JobsOperations:
         server_name: str,
         job_agent_name: str,
         job_name: str,
-        parameters: Union[_models.Job, JSON, IO[bytes]],
+        parameters: Union[_models.Job, _types.Job, IO[bytes]],
         **kwargs: Any
     ) -> _models.Job:
         """Creates or updates a job.
@@ -32654,9 +32773,8 @@ class JobsOperations:
         :type job_agent_name: str
         :param job_name: The name of the job to get. Required.
         :type job_name: str
-        :param parameters: The requested job state. Is one of the following types: Job, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.Job or JSON or IO[bytes]
+        :param parameters: The requested job state. Is either a Job type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Job or ~azure.mgmt.sql.types.Job or IO[bytes]
         :return: Job. The Job is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32901,7 +33019,7 @@ class JobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobPrivateEndpointsOperations:
+class JobPrivateEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33002,7 +33120,7 @@ class JobPrivateEndpointsOperations:
         server_name: str,
         job_agent_name: str,
         private_endpoint_name: str,
-        parameters: Union[_models.JobPrivateEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.JobPrivateEndpoint, _types.JobPrivateEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -33120,7 +33238,7 @@ class JobPrivateEndpointsOperations:
         server_name: str,
         job_agent_name: str,
         private_endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.JobPrivateEndpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33137,7 +33255,7 @@ class JobPrivateEndpointsOperations:
         :param private_endpoint_name: The name of the private endpoint to get. Required.
         :type private_endpoint_name: str
         :param parameters: The requested private endpoint state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobPrivateEndpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33188,7 +33306,7 @@ class JobPrivateEndpointsOperations:
         server_name: str,
         job_agent_name: str,
         private_endpoint_name: str,
-        parameters: Union[_models.JobPrivateEndpoint, JSON, IO[bytes]],
+        parameters: Union[_models.JobPrivateEndpoint, _types.JobPrivateEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.JobPrivateEndpoint]:
         """Creates or updates a private endpoint.
@@ -33202,9 +33320,10 @@ class JobPrivateEndpointsOperations:
         :type job_agent_name: str
         :param private_endpoint_name: The name of the private endpoint to get. Required.
         :type private_endpoint_name: str
-        :param parameters: The requested private endpoint state. Is one of the following types:
-         JobPrivateEndpoint, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobPrivateEndpoint or JSON or IO[bytes]
+        :param parameters: The requested private endpoint state. Is either a JobPrivateEndpoint type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobPrivateEndpoint or
+         ~azure.mgmt.sql.types.JobPrivateEndpoint or IO[bytes]
         :return: An instance of AsyncLROPoller that returns JobPrivateEndpoint. The JobPrivateEndpoint
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.JobPrivateEndpoint]
@@ -33498,7 +33617,7 @@ class JobPrivateEndpointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobStepsOperations:
+class JobStepsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33646,7 +33765,7 @@ class JobStepsOperations:
         job_agent_name: str,
         job_name: str,
         step_name: str,
-        parameters: JSON,
+        parameters: _types.JobStep,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33665,7 +33784,7 @@ class JobStepsOperations:
         :param step_name: The name of the job step. Required.
         :type step_name: str
         :param parameters: The requested state of the job step. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobStep
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33718,7 +33837,7 @@ class JobStepsOperations:
         job_agent_name: str,
         job_name: str,
         step_name: str,
-        parameters: Union[_models.JobStep, JSON, IO[bytes]],
+        parameters: Union[_models.JobStep, _types.JobStep, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobStep:
         """Creates or updates a job step. This will implicitly create a new job version.
@@ -33734,9 +33853,9 @@ class JobStepsOperations:
         :type job_name: str
         :param step_name: The name of the job step. Required.
         :type step_name: str
-        :param parameters: The requested state of the job step. Is one of the following types: JobStep,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobStep or JSON or IO[bytes]
+        :param parameters: The requested state of the job step. Is either a JobStep type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobStep or ~azure.mgmt.sql.types.JobStep or IO[bytes]
         :return: JobStep. The JobStep is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.JobStep
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34202,7 +34321,7 @@ class JobStepsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobTargetGroupsOperations:
+class JobTargetGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34337,7 +34456,7 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        parameters: JSON,
+        parameters: _types.JobTargetGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34354,7 +34473,7 @@ class JobTargetGroupsOperations:
         :param target_group_name: The name of the target group. Required.
         :type target_group_name: str
         :param parameters: The requested state of the target group. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.JobTargetGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34403,7 +34522,7 @@ class JobTargetGroupsOperations:
         server_name: str,
         job_agent_name: str,
         target_group_name: str,
-        parameters: Union[_models.JobTargetGroup, JSON, IO[bytes]],
+        parameters: Union[_models.JobTargetGroup, _types.JobTargetGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobTargetGroup:
         """Creates or updates a target group.
@@ -34417,9 +34536,10 @@ class JobTargetGroupsOperations:
         :type job_agent_name: str
         :param target_group_name: The name of the target group. Required.
         :type target_group_name: str
-        :param parameters: The requested state of the target group. Is one of the following types:
-         JobTargetGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.JobTargetGroup or JSON or IO[bytes]
+        :param parameters: The requested state of the target group. Is either a JobTargetGroup type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.JobTargetGroup or ~azure.mgmt.sql.types.JobTargetGroup
+         or IO[bytes]
         :return: JobTargetGroup. The JobTargetGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.JobTargetGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34664,7 +34784,7 @@ class JobTargetGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class JobVersionsOperations:
+class JobVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34877,7 +34997,7 @@ class JobVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-methods
+class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -35238,7 +35358,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ChangeLongTermRetentionBackupAccessTierParameters,
+            _types.ChangeLongTermRetentionBackupAccessTierParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -35350,7 +35474,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.ChangeLongTermRetentionBackupAccessTierParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35366,7 +35490,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ChangeLongTermRetentionBackupAccessTierParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35416,7 +35540,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ChangeLongTermRetentionBackupAccessTierParameters,
+            _types.ChangeLongTermRetentionBackupAccessTierParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackup]:
         """Change a long term retention backup access tier.
@@ -35429,10 +35557,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: Is one of the following types:
-         ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes] Required.
+        :param parameters: Is either a ChangeLongTermRetentionBackupAccessTierParameters type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.sql.models.ChangeLongTermRetentionBackupAccessTierParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.sql.types.ChangeLongTermRetentionBackupAccessTierParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackup. The
          LongTermRetentionBackup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
@@ -35498,7 +35626,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.CopyLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CopyLongTermRetentionBackupParameters, _types.CopyLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -35611,7 +35741,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.CopyLongTermRetentionBackupParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35627,7 +35757,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The parameters needed for long term retention copy request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.CopyLongTermRetentionBackupParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35679,7 +35809,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.CopyLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CopyLongTermRetentionBackupParameters, _types.CopyLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackupOperationResult]:
         """Copy an existing long term retention backup.
@@ -35692,10 +35824,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The parameters needed for long term retention copy request. Is one of the
-         following types: CopyLongTermRetentionBackupParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters needed for long term retention copy request. Is either a
+         CopyLongTermRetentionBackupParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or
+         ~azure.mgmt.sql.types.CopyLongTermRetentionBackupParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackupOperationResult. The
          LongTermRetentionBackupOperationResult is compatible with MutableMapping
         :rtype:
@@ -36330,7 +36462,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.UpdateLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.UpdateLongTermRetentionBackupParameters, _types.UpdateLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -36443,7 +36577,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.UpdateLongTermRetentionBackupParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36459,7 +36593,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The requested backup resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.UpdateLongTermRetentionBackupParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36511,7 +36645,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.UpdateLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.UpdateLongTermRetentionBackupParameters, _types.UpdateLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackupOperationResult]:
         """Updates an existing long term retention backup.
@@ -36524,10 +36660,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The requested backup resource state. Is one of the following types:
-         UpdateLongTermRetentionBackupParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or JSON or
-         IO[bytes]
+        :param parameters: The requested backup resource state. Is either a
+         UpdateLongTermRetentionBackupParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or
+         ~azure.mgmt.sql.types.UpdateLongTermRetentionBackupParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackupOperationResult. The
          LongTermRetentionBackupOperationResult is compatible with MutableMapping
         :rtype:
@@ -36950,7 +37086,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ChangeLongTermRetentionBackupAccessTierParameters,
+            _types.ChangeLongTermRetentionBackupAccessTierParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -37068,7 +37208,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.ChangeLongTermRetentionBackupAccessTierParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37087,7 +37227,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ChangeLongTermRetentionBackupAccessTierParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37142,7 +37282,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ChangeLongTermRetentionBackupAccessTierParameters,
+            _types.ChangeLongTermRetentionBackupAccessTierParameters,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackup]:
         """Change a long term retention backup access tier.
@@ -37158,10 +37302,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: Is one of the following types:
-         ChangeLongTermRetentionBackupAccessTierParameters, JSON, IO[bytes] Required.
+        :param parameters: Is either a ChangeLongTermRetentionBackupAccessTierParameters type or a
+         IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.sql.models.ChangeLongTermRetentionBackupAccessTierParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.sql.types.ChangeLongTermRetentionBackupAccessTierParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackup. The
          LongTermRetentionBackup is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LongTermRetentionBackup]
@@ -37229,7 +37373,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.CopyLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CopyLongTermRetentionBackupParameters, _types.CopyLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -37348,7 +37494,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.CopyLongTermRetentionBackupParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37367,7 +37513,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The parameters needed for long term retention copy request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.CopyLongTermRetentionBackupParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37424,7 +37570,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.CopyLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CopyLongTermRetentionBackupParameters, _types.CopyLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackupOperationResult]:
         """Copy an existing long term retention backup to a different server.
@@ -37440,10 +37588,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The parameters needed for long term retention copy request. Is one of the
-         following types: CopyLongTermRetentionBackupParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters needed for long term retention copy request. Is either a
+         CopyLongTermRetentionBackupParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or
+         ~azure.mgmt.sql.types.CopyLongTermRetentionBackupParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackupOperationResult. The
          LongTermRetentionBackupOperationResult is compatible with MutableMapping
         :rtype:
@@ -38108,7 +38256,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.UpdateLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.UpdateLongTermRetentionBackupParameters, _types.UpdateLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -38227,7 +38377,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: JSON,
+        parameters: _types.UpdateLongTermRetentionBackupParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -38246,7 +38396,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The requested backup resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.UpdateLongTermRetentionBackupParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -38303,7 +38453,9 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         backup_name: str,
-        parameters: Union[_models.UpdateLongTermRetentionBackupParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.UpdateLongTermRetentionBackupParameters, _types.UpdateLongTermRetentionBackupParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionBackupOperationResult]:
         """Updates an existing long term retention backup.
@@ -38319,10 +38471,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The requested backup resource state. Is one of the following types:
-         UpdateLongTermRetentionBackupParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or JSON or
-         IO[bytes]
+        :param parameters: The requested backup resource state. Is either a
+         UpdateLongTermRetentionBackupParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or
+         ~azure.mgmt.sql.types.UpdateLongTermRetentionBackupParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionBackupOperationResult. The
          LongTermRetentionBackupOperationResult is compatible with MutableMapping
         :rtype:
@@ -38847,7 +38999,7 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=too-many-public-met
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LongTermRetentionManagedInstanceBackupsOperations:  # pylint: disable=name-too-long
+class LongTermRetentionManagedInstanceBackupsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40039,7 +40191,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LongTermRetentionPoliciesOperations:
+class LongTermRetentionPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40145,7 +40297,7 @@ class LongTermRetentionPoliciesOperations:
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.LongTermRetentionPolicyName],
-        parameters: Union[_models.LongTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.LongTermRetentionPolicy, _types.LongTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40259,7 +40411,7 @@ class LongTermRetentionPoliciesOperations:
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.LongTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.LongTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40276,7 +40428,7 @@ class LongTermRetentionPoliciesOperations:
         :param policy_name: The policy name. Should always be Default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.LongTermRetentionPolicyName
         :param parameters: The long term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.LongTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40327,7 +40479,7 @@ class LongTermRetentionPoliciesOperations:
         server_name: str,
         database_name: str,
         policy_name: Union[str, _models.LongTermRetentionPolicyName],
-        parameters: Union[_models.LongTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.LongTermRetentionPolicy, _types.LongTermRetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionPolicy]:
         """Set or update a database's long term retention policy.
@@ -40341,9 +40493,10 @@ class LongTermRetentionPoliciesOperations:
         :type database_name: str
         :param policy_name: The policy name. Should always be Default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.LongTermRetentionPolicyName
-        :param parameters: The long term retention policy info. Is one of the following types:
-         LongTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.LongTermRetentionPolicy or JSON or IO[bytes]
+        :param parameters: The long term retention policy info. Is either a LongTermRetentionPolicy
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.LongTermRetentionPolicy or
+         ~azure.mgmt.sql.types.LongTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LongTermRetentionPolicy. The
          LongTermRetentionPolicy is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LongTermRetentionPolicy]
@@ -40509,7 +40662,7 @@ class LongTermRetentionPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-long
+class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40616,7 +40769,9 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40731,7 +40886,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40748,7 +40903,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40801,7 +40956,9 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedBackupShortTermRetentionPolicy]:
         """Updates a managed database's short term retention policy.
@@ -40815,10 +40972,10 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         :type database_name: str
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or JSON or
-         IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedBackupShortTermRetentionPolicy. The
          ManagedBackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -40885,7 +41042,9 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -41000,7 +41159,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41017,7 +41176,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41070,7 +41229,9 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedBackupShortTermRetentionPolicy]:
         """Updates a managed database's short term retention policy.
@@ -41084,10 +41245,10 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         :type database_name: str
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or JSON or
-         IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedBackupShortTermRetentionPolicy. The
          ManagedBackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -41255,7 +41416,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations:  # pylint: disable=name-too-long
+class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41362,7 +41523,9 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -41479,7 +41642,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41496,7 +41659,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41549,7 +41712,9 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedBackupShortTermRetentionPolicy]:
         """Sets a database's short term retention policy.
@@ -41563,10 +41728,10 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         :type restorable_dropped_database_id: str
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or JSON or
-         IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedBackupShortTermRetentionPolicy. The
          ManagedBackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -41633,7 +41798,9 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -41748,7 +41915,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41765,7 +41932,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
         :param parameters: The short term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41818,7 +41985,9 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         managed_instance_name: str,
         restorable_dropped_database_id: str,
         policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
-        parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedBackupShortTermRetentionPolicy, _types.ManagedBackupShortTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedBackupShortTermRetentionPolicy]:
         """Sets a database's short term retention policy.
@@ -41832,10 +42001,10 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         :type restorable_dropped_database_id: str
         :param policy_name: The policy name. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is one of the following types:
-         ManagedBackupShortTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or JSON or
-         IO[bytes]
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or
+         ~azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedBackupShortTermRetentionPolicy. The
          ManagedBackupShortTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -42003,7 +42172,7 @@ class ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42145,7 +42314,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-to
         managed_instance_name: str,
         database_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42162,7 +42331,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-to
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
         :param parameters: The database security alert policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseSecurityAlertPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42213,7 +42382,9 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-to
         managed_instance_name: str,
         database_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.ManagedDatabaseSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedDatabaseSecurityAlertPolicy, _types.ManagedDatabaseSecurityAlertPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ManagedDatabaseSecurityAlertPolicy:
         """Creates or updates a database's security alert policy.
@@ -42227,10 +42398,10 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-to
         :type database_name: str
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The database security alert policy. Is one of the following types:
-         ManagedDatabaseSecurityAlertPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy or JSON or
-         IO[bytes]
+        :param parameters: The database security alert policy. Is either a
+         ManagedDatabaseSecurityAlertPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy or
+         ~azure.mgmt.sql.types.ManagedDatabaseSecurityAlertPolicy or IO[bytes]
         :return: ManagedDatabaseSecurityAlertPolicy. The ManagedDatabaseSecurityAlertPolicy is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseSecurityAlertPolicy
@@ -42412,7 +42583,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:  # pylint: disable=name-to
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceAdministratorsOperations:
+class ManagedInstanceAdministratorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42514,7 +42685,7 @@ class ManagedInstanceAdministratorsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ManagedInstanceAdministrator, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceAdministrator, _types.ManagedInstanceAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -42627,7 +42798,7 @@ class ManagedInstanceAdministratorsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceAdministrator,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42642,7 +42813,7 @@ class ManagedInstanceAdministratorsOperations:
         :param administrator_name: "ActiveDirectory" Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested administrator parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceAdministrator
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42689,7 +42860,7 @@ class ManagedInstanceAdministratorsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ManagedInstanceAdministrator, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceAdministrator, _types.ManagedInstanceAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceAdministrator]:
         """Creates or updates a managed instance administrator.
@@ -42701,9 +42872,10 @@ class ManagedInstanceAdministratorsOperations:
         :type managed_instance_name: str
         :param administrator_name: "ActiveDirectory" Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :param parameters: The requested administrator parameters. Is one of the following types:
-         ManagedInstanceAdministrator, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator or JSON or IO[bytes]
+        :param parameters: The requested administrator parameters. Is either a
+         ManagedInstanceAdministrator type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator or
+         ~azure.mgmt.sql.types.ManagedInstanceAdministrator or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceAdministrator. The
          ManagedInstanceAdministrator is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedInstanceAdministrator]
@@ -42998,7 +43170,7 @@ class ManagedInstanceAdministratorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-long
+class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43101,7 +43273,9 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: Union[_models.ManagedInstanceAzureADOnlyAuthentication, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceAzureADOnlyAuthentication, _types.ManagedInstanceAzureADOnlyAuthentication, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -43218,7 +43392,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceAzureADOnlyAuthentication,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43236,7 +43410,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :param parameters: The required parameters for creating or updating an Active Directory only
          authentication property. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceAzureADOnlyAuthentication
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43288,7 +43462,9 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: Union[_models.ManagedInstanceAzureADOnlyAuthentication, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceAzureADOnlyAuthentication, _types.ManagedInstanceAzureADOnlyAuthentication, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceAzureADOnlyAuthentication]:
         """Sets Server Active Directory only authentication property or updates an existing server Active
@@ -43303,10 +43479,10 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
          "Default" Required.
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :param parameters: The required parameters for creating or updating an Active Directory only
-         authentication property. Is one of the following types:
-         ManagedInstanceAzureADOnlyAuthentication, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAzureADOnlyAuthentication or JSON or
-         IO[bytes]
+         authentication property. Is either a ManagedInstanceAzureADOnlyAuthentication type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAzureADOnlyAuthentication or
+         ~azure.mgmt.sql.types.ManagedInstanceAzureADOnlyAuthentication or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceAzureADOnlyAuthentication.
          The ManagedInstanceAzureADOnlyAuthentication is compatible with MutableMapping
         :rtype:
@@ -43603,7 +43779,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:  # pylint: disable=na
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceDtcsOperations:
+class ManagedInstanceDtcsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43700,7 +43876,7 @@ class ManagedInstanceDtcsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dtc_name: Union[str, _models.DtcName],
-        parameters: Union[_models.ManagedInstanceDtc, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceDtc, _types.ManagedInstanceDtc, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -43807,7 +43983,7 @@ class ManagedInstanceDtcsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dtc_name: Union[str, _models.DtcName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceDtc,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43822,7 +43998,7 @@ class ManagedInstanceDtcsOperations:
         :param dtc_name: The name of the managed instance DTC. "current" Required.
         :type dtc_name: str or ~azure.mgmt.sql.models.DtcName
         :param parameters: Managed instance DTC settings. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceDtc
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43869,7 +44045,7 @@ class ManagedInstanceDtcsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dtc_name: Union[str, _models.DtcName],
-        parameters: Union[_models.ManagedInstanceDtc, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceDtc, _types.ManagedInstanceDtc, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceDtc]:
         """Updates managed instance DTC settings.
@@ -43881,9 +44057,10 @@ class ManagedInstanceDtcsOperations:
         :type managed_instance_name: str
         :param dtc_name: The name of the managed instance DTC. "current" Required.
         :type dtc_name: str or ~azure.mgmt.sql.models.DtcName
-        :param parameters: Managed instance DTC settings. Is one of the following types:
-         ManagedInstanceDtc, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceDtc or JSON or IO[bytes]
+        :param parameters: Managed instance DTC settings. Is either a ManagedInstanceDtc type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceDtc or
+         ~azure.mgmt.sql.types.ManagedInstanceDtc or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceDtc. The ManagedInstanceDtc
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedInstanceDtc]
@@ -44048,7 +44225,7 @@ class ManagedInstanceDtcsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too-long
+class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44151,7 +44328,9 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         managed_instance_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: Union[_models.ManagedInstanceEncryptionProtector, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceEncryptionProtector, _types.ManagedInstanceEncryptionProtector, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -44262,7 +44441,7 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         managed_instance_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceEncryptionProtector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44278,7 +44457,7 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
          "current" Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
         :param parameters: The requested encryption protector resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceEncryptionProtector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44328,7 +44507,9 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         managed_instance_name: str,
         encryption_protector_name: Union[str, _models.EncryptionProtectorName],
-        parameters: Union[_models.ManagedInstanceEncryptionProtector, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceEncryptionProtector, _types.ManagedInstanceEncryptionProtector, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceEncryptionProtector]:
         """Updates an existing encryption protector.
@@ -44341,10 +44522,10 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
         :param encryption_protector_name: The name of the encryption protector to be retrieved.
          "current" Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :param parameters: The requested encryption protector resource state. Is one of the following
-         types: ManagedInstanceEncryptionProtector, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceEncryptionProtector or JSON or
-         IO[bytes]
+        :param parameters: The requested encryption protector resource state. Is either a
+         ManagedInstanceEncryptionProtector type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceEncryptionProtector or
+         ~azure.mgmt.sql.types.ManagedInstanceEncryptionProtector or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceEncryptionProtector. The
          ManagedInstanceEncryptionProtector is compatible with MutableMapping
         :rtype:
@@ -44641,7 +44822,7 @@ class ManagedInstanceEncryptionProtectorsOperations:  # pylint: disable=name-too
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ManagedInstanceKeysOperations:
+class ManagedInstanceKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44738,7 +44919,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        parameters: Union[_models.ManagedInstanceKey, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceKey, _types.ManagedInstanceKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -44851,7 +45032,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedInstanceKey,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44866,7 +45047,7 @@ class ManagedInstanceKeysOperations:
         :param key_name: The name of the managed instance key to be retrieved. Required.
         :type key_name: str
         :param parameters: The requested managed instance key resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceKey
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44913,7 +45094,7 @@ class ManagedInstanceKeysOperations:
         resource_group_name: str,
         managed_instance_name: str,
         key_name: str,
-        parameters: Union[_models.ManagedInstanceKey, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedInstanceKey, _types.ManagedInstanceKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceKey]:
         """Creates or updates a managed instance key.
@@ -44925,9 +45106,10 @@ class ManagedInstanceKeysOperations:
         :type managed_instance_name: str
         :param key_name: The name of the managed instance key to be retrieved. Required.
         :type key_name: str
-        :param parameters: The requested managed instance key resource state. Is one of the following
-         types: ManagedInstanceKey, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceKey or JSON or IO[bytes]
+        :param parameters: The requested managed instance key resource state. Is either a
+         ManagedInstanceKey type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceKey or
+         ~azure.mgmt.sql.types.ManagedInstanceKey or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceKey. The ManagedInstanceKey
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedInstanceKey]
@@ -45217,7 +45399,7 @@ class ManagedInstanceKeysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=name-too-long
+class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -45324,7 +45506,9 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
-        parameters: Union[_models.ManagedInstanceLongTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceLongTermRetentionPolicy, _types.ManagedInstanceLongTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -45439,7 +45623,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceLongTermRetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45456,7 +45640,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         :param policy_name: The policy name. Should always be Default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicyName
         :param parameters: The long term retention policy info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceLongTermRetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45509,7 +45693,9 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         managed_instance_name: str,
         database_name: str,
         policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
-        parameters: Union[_models.ManagedInstanceLongTermRetentionPolicy, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceLongTermRetentionPolicy, _types.ManagedInstanceLongTermRetentionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceLongTermRetentionPolicy]:
         """Sets a managed database's long term retention policy.
@@ -45523,10 +45709,10 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         :type database_name: str
         :param policy_name: The policy name. Should always be Default. "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicyName
-        :param parameters: The long term retention policy info. Is one of the following types:
-         ManagedInstanceLongTermRetentionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicy or JSON or
-         IO[bytes]
+        :param parameters: The long term retention policy info. Is either a
+         ManagedInstanceLongTermRetentionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicy or
+         ~azure.mgmt.sql.types.ManagedInstanceLongTermRetentionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceLongTermRetentionPolicy. The
          ManagedInstanceLongTermRetentionPolicy is compatible with MutableMapping
         :rtype:
@@ -45838,7 +46024,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:  # pylint: disable=nam
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceOperationsOperations:
+class ManagedInstanceOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46097,7 +46283,7 @@ class ManagedInstanceOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=name-too-long
+class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46195,7 +46381,9 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstancePrivateEndpointConnection, _types.ManagedInstancePrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -46305,7 +46493,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedInstancePrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46320,7 +46508,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstancePrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46369,7 +46557,9 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         resource_group_name: str,
         managed_instance_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.ManagedInstancePrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstancePrivateEndpointConnection, _types.ManagedInstancePrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstancePrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -46381,10 +46571,10 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         :type managed_instance_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is one of the following types: ManagedInstancePrivateEndpointConnection,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param parameters: Is either a ManagedInstancePrivateEndpointConnection type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointConnection or
+         ~azure.mgmt.sql.types.ManagedInstancePrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstancePrivateEndpointConnection.
          The ManagedInstancePrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -46672,7 +46862,7 @@ class ManagedInstancePrivateEndpointConnectionsOperations:  # pylint: disable=na
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name-too-long
+class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -46811,7 +47001,7 @@ class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name
         resource_group_name: str,
         managed_instance_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceVulnerabilityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -46830,7 +47020,7 @@ class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param parameters: The requested resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceVulnerabilityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -46881,7 +47071,9 @@ class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name
         resource_group_name: str,
         managed_instance_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: Union[_models.ManagedInstanceVulnerabilityAssessment, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceVulnerabilityAssessment, _types.ManagedInstanceVulnerabilityAssessment, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ManagedInstanceVulnerabilityAssessment:
         """Creates or updates the managed instance's vulnerability assessment. Learn more about setting
@@ -46897,10 +47089,10 @@ class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :param parameters: The requested resource. Is one of the following types:
-         ManagedInstanceVulnerabilityAssessment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceVulnerabilityAssessment or JSON or
-         IO[bytes]
+        :param parameters: The requested resource. Is either a ManagedInstanceVulnerabilityAssessment
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceVulnerabilityAssessment or
+         ~azure.mgmt.sql.types.ManagedInstanceVulnerabilityAssessment or IO[bytes]
         :return: ManagedInstanceVulnerabilityAssessment. The ManagedInstanceVulnerabilityAssessment is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ManagedInstanceVulnerabilityAssessment
@@ -47145,7 +47337,7 @@ class ManagedInstanceVulnerabilityAssessmentsOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedServerDnsAliasesOperations:
+class ManagedServerDnsAliasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -47242,7 +47434,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ManagedServerDnsAliasCreation, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerDnsAliasCreation, _types.ManagedServerDnsAliasCreation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47355,7 +47547,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedServerDnsAliasCreation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47370,7 +47562,7 @@ class ManagedServerDnsAliasesOperations:
         :param dns_alias_name: Required.
         :type dns_alias_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedServerDnsAliasCreation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47417,7 +47609,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ManagedServerDnsAliasCreation, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerDnsAliasCreation, _types.ManagedServerDnsAliasCreation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedServerDnsAlias]:
         """Creates a managed server DNS alias.
@@ -47429,9 +47621,10 @@ class ManagedServerDnsAliasesOperations:
         :type managed_instance_name: str
         :param dns_alias_name: Required.
         :type dns_alias_name: str
-        :param parameters: Is one of the following types: ManagedServerDnsAliasCreation, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasCreation or JSON or IO[bytes]
+        :param parameters: Is either a ManagedServerDnsAliasCreation type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasCreation or
+         ~azure.mgmt.sql.types.ManagedServerDnsAliasCreation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedServerDnsAlias. The
          ManagedServerDnsAlias is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
@@ -47721,7 +47914,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ManagedServerDnsAliasAcquisition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerDnsAliasAcquisition, _types.ManagedServerDnsAliasAcquisition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -47830,7 +48023,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: JSON,
+        parameters: _types.ManagedServerDnsAliasAcquisition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -47845,7 +48038,7 @@ class ManagedServerDnsAliasesOperations:
         :param dns_alias_name: Required.
         :type dns_alias_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedServerDnsAliasAcquisition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -47892,7 +48085,7 @@ class ManagedServerDnsAliasesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ManagedServerDnsAliasAcquisition, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerDnsAliasAcquisition, _types.ManagedServerDnsAliasAcquisition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedServerDnsAlias]:
         """Acquires managed server DNS alias from another managed server.
@@ -47904,9 +48097,10 @@ class ManagedServerDnsAliasesOperations:
         :type managed_instance_name: str
         :param dns_alias_name: Required.
         :type dns_alias_name: str
-        :param parameters: Is one of the following types: ManagedServerDnsAliasAcquisition, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasAcquisition or JSON or IO[bytes]
+        :param parameters: Is either a ManagedServerDnsAliasAcquisition type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasAcquisition or
+         ~azure.mgmt.sql.types.ManagedServerDnsAliasAcquisition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedServerDnsAlias. The
          ManagedServerDnsAlias is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedServerDnsAlias]
@@ -47966,7 +48160,7 @@ class ManagedServerDnsAliasesOperations:
         )
 
 
-class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-long
+class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -48068,7 +48262,7 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         managed_instance_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.ManagedServerSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerSecurityAlertPolicy, _types.ManagedServerSecurityAlertPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -48178,7 +48372,7 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         managed_instance_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: JSON,
+        parameters: _types.ManagedServerSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -48193,7 +48387,7 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
         :param parameters: The managed server security alert policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedServerSecurityAlertPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -48242,7 +48436,7 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         resource_group_name: str,
         managed_instance_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.ManagedServerSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedServerSecurityAlertPolicy, _types.ManagedServerSecurityAlertPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedServerSecurityAlertPolicy]:
         """Creates or updates a threat detection policy.
@@ -48254,9 +48448,10 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         :type managed_instance_name: str
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The managed server security alert policy. Is one of the following types:
-         ManagedServerSecurityAlertPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedServerSecurityAlertPolicy or JSON or IO[bytes]
+        :param parameters: The managed server security alert policy. Is either a
+         ManagedServerSecurityAlertPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedServerSecurityAlertPolicy or
+         ~azure.mgmt.sql.types.ManagedServerSecurityAlertPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedServerSecurityAlertPolicy. The
          ManagedServerSecurityAlertPolicy is compatible with MutableMapping
         :rtype:
@@ -48420,7 +48615,7 @@ class ManagedServerSecurityAlertPoliciesOperations:  # pylint: disable=name-too-
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -48748,7 +48943,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         )
 
 
-class OutboundFirewallRulesOperations:
+class OutboundFirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -49201,7 +49396,7 @@ class OutboundFirewallRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -49299,7 +49494,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -49408,7 +49603,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -49423,7 +49618,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -49470,7 +49665,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         server_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -49482,9 +49677,9 @@ class PrivateEndpointConnectionsOperations:
         :type server_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param parameters: Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.PrivateEndpointConnection or
+         ~azure.mgmt.sql.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.PrivateEndpointConnection]
@@ -49771,7 +49966,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -49966,7 +50161,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecoverableDatabasesOperations:
+class RecoverableDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50175,7 +50370,7 @@ class RecoverableDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecoverableManagedDatabasesOperations:
+class RecoverableManagedDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50372,7 +50567,7 @@ class RecoverableManagedDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableDroppedDatabasesOperations:
+class RestorableDroppedDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50583,7 +50778,7 @@ class RestorableDroppedDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableDroppedManagedDatabasesOperations:  # pylint: disable=name-too-long
+class RestorableDroppedManagedDatabasesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50780,7 +50975,7 @@ class RestorableDroppedManagedDatabasesOperations:  # pylint: disable=name-too-l
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerAzureADAdministratorsOperations:
+class ServerAzureADAdministratorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -50883,7 +51078,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ServerAzureADAdministrator, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAzureADAdministrator, _types.ServerAzureADAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -50997,7 +51192,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: JSON,
+        parameters: _types.ServerAzureADAdministrator,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51013,7 +51208,7 @@ class ServerAzureADAdministratorsOperations:
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested Azure Active Directory administrator Resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerAzureADAdministrator
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51061,7 +51256,7 @@ class ServerAzureADAdministratorsOperations:
         resource_group_name: str,
         server_name: str,
         administrator_name: Union[str, _models.AdministratorName],
-        parameters: Union[_models.ServerAzureADAdministrator, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAzureADAdministrator, _types.ServerAzureADAdministrator, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAzureADAdministrator]:
         """Creates or updates an existing Azure Active Directory administrator.
@@ -51074,9 +51269,10 @@ class ServerAzureADAdministratorsOperations:
         :param administrator_name: The name of server active directory administrator. "ActiveDirectory"
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :param parameters: The requested Azure Active Directory administrator Resource state. Is one of
-         the following types: ServerAzureADAdministrator, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator or JSON or IO[bytes]
+        :param parameters: The requested Azure Active Directory administrator Resource state. Is either
+         a ServerAzureADAdministrator type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator or
+         ~azure.mgmt.sql.types.ServerAzureADAdministrator or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerAzureADAdministrator. The
          ServerAzureADAdministrator is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
@@ -51372,7 +51568,7 @@ class ServerAzureADAdministratorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-long
+class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -51475,7 +51671,7 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         server_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: Union[_models.ServerAzureADOnlyAuthentication, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAzureADOnlyAuthentication, _types.ServerAzureADOnlyAuthentication, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -51592,7 +51788,7 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         server_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: JSON,
+        parameters: _types.ServerAzureADOnlyAuthentication,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -51610,7 +51806,7 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :param parameters: The required parameters for creating or updating an Active Directory only
          authentication property. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerAzureADOnlyAuthentication
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -51662,7 +51858,7 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         server_name: str,
         authentication_name: Union[str, _models.AuthenticationName],
-        parameters: Union[_models.ServerAzureADOnlyAuthentication, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAzureADOnlyAuthentication, _types.ServerAzureADOnlyAuthentication, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAzureADOnlyAuthentication]:
         """Sets Server Active Directory only authentication property or updates an existing server Active
@@ -51677,9 +51873,10 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
          "Default" Required.
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :param parameters: The required parameters for creating or updating an Active Directory only
-         authentication property. Is one of the following types: ServerAzureADOnlyAuthentication, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication or JSON or IO[bytes]
+         authentication property. Is either a ServerAzureADOnlyAuthentication type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication or
+         ~azure.mgmt.sql.types.ServerAzureADOnlyAuthentication or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerAzureADOnlyAuthentication. The
          ServerAzureADOnlyAuthentication is compatible with MutableMapping
         :rtype:
@@ -51976,7 +52173,7 @@ class ServerAzureADOnlyAuthenticationsOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerConfigurationOptionsOperations:
+class ServerConfigurationOptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -52080,7 +52277,7 @@ class ServerConfigurationOptionsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         server_configuration_option_name: Union[str, _models.ServerConfigurationOptionName],
-        parameters: Union[_models.ServerConfigurationOption, JSON, IO[bytes]],
+        parameters: Union[_models.ServerConfigurationOption, _types.ServerConfigurationOption, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -52189,7 +52386,7 @@ class ServerConfigurationOptionsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         server_configuration_option_name: Union[str, _models.ServerConfigurationOptionName],
-        parameters: JSON,
+        parameters: _types.ServerConfigurationOption,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52206,7 +52403,7 @@ class ServerConfigurationOptionsOperations:
         :type server_configuration_option_name: str or
          ~azure.mgmt.sql.models.ServerConfigurationOptionName
         :param parameters: Server configuration option parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerConfigurationOption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52255,7 +52452,7 @@ class ServerConfigurationOptionsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         server_configuration_option_name: Union[str, _models.ServerConfigurationOptionName],
-        parameters: Union[_models.ServerConfigurationOption, JSON, IO[bytes]],
+        parameters: Union[_models.ServerConfigurationOption, _types.ServerConfigurationOption, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerConfigurationOption]:
         """Updates managed instance server configuration option.
@@ -52269,9 +52466,10 @@ class ServerConfigurationOptionsOperations:
          "allowPolybaseExport" Required.
         :type server_configuration_option_name: str or
          ~azure.mgmt.sql.models.ServerConfigurationOptionName
-        :param parameters: Server configuration option parameters. Is one of the following types:
-         ServerConfigurationOption, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerConfigurationOption or JSON or IO[bytes]
+        :param parameters: Server configuration option parameters. Is either a
+         ServerConfigurationOption type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerConfigurationOption or
+         ~azure.mgmt.sql.types.ServerConfigurationOption or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerConfigurationOption. The
          ServerConfigurationOption is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerConfigurationOption]
@@ -52437,7 +52635,7 @@ class ServerConfigurationOptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerConnectionPoliciesOperations:
+class ServerConnectionPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -52538,7 +52736,7 @@ class ServerConnectionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         connection_policy_name: Union[str, _models.ConnectionPolicyName],
-        parameters: Union[_models.ServerConnectionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerConnectionPolicy, _types.ServerConnectionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -52647,7 +52845,7 @@ class ServerConnectionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         connection_policy_name: Union[str, _models.ConnectionPolicyName],
-        parameters: JSON,
+        parameters: _types.ServerConnectionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -52662,7 +52860,7 @@ class ServerConnectionPoliciesOperations:
         :param connection_policy_name: The name of the connection policy. "default" Required.
         :type connection_policy_name: str or ~azure.mgmt.sql.models.ConnectionPolicyName
         :param parameters: The required parameters for updating a server connection policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerConnectionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -52709,7 +52907,7 @@ class ServerConnectionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         connection_policy_name: Union[str, _models.ConnectionPolicyName],
-        parameters: Union[_models.ServerConnectionPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerConnectionPolicy, _types.ServerConnectionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerConnectionPolicy]:
         """Updates a server connection policy.
@@ -52721,9 +52919,10 @@ class ServerConnectionPoliciesOperations:
         :type server_name: str
         :param connection_policy_name: The name of the connection policy. "default" Required.
         :type connection_policy_name: str or ~azure.mgmt.sql.models.ConnectionPolicyName
-        :param parameters: The required parameters for updating a server connection policy. Is one of
-         the following types: ServerConnectionPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerConnectionPolicy or JSON or IO[bytes]
+        :param parameters: The required parameters for updating a server connection policy. Is either a
+         ServerConnectionPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerConnectionPolicy or
+         ~azure.mgmt.sql.types.ServerConnectionPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerConnectionPolicy. The
          ServerConnectionPolicy is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerConnectionPolicy]
@@ -52885,7 +53084,7 @@ class ServerConnectionPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerDevOpsAuditSettingsOperations:
+class ServerDevOpsAuditSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -52987,7 +53186,7 @@ class ServerDevOpsAuditSettingsOperations:
         resource_group_name: str,
         server_name: str,
         dev_ops_auditing_settings_name: Union[str, _models.DevOpsAuditingSettingsName],
-        parameters: Union[_models.ServerDevOpsAuditingSettings, JSON, IO[bytes]],
+        parameters: Union[_models.ServerDevOpsAuditingSettings, _types.ServerDevOpsAuditingSettings, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -53098,7 +53297,7 @@ class ServerDevOpsAuditSettingsOperations:
         resource_group_name: str,
         server_name: str,
         dev_ops_auditing_settings_name: Union[str, _models.DevOpsAuditingSettingsName],
-        parameters: JSON,
+        parameters: _types.ServerDevOpsAuditingSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53113,7 +53312,7 @@ class ServerDevOpsAuditSettingsOperations:
         :param dev_ops_auditing_settings_name: "Default" Required.
         :type dev_ops_auditing_settings_name: str or ~azure.mgmt.sql.models.DevOpsAuditingSettingsName
         :param parameters: Properties of DevOps audit settings. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerDevOpsAuditingSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53160,7 +53359,7 @@ class ServerDevOpsAuditSettingsOperations:
         resource_group_name: str,
         server_name: str,
         dev_ops_auditing_settings_name: Union[str, _models.DevOpsAuditingSettingsName],
-        parameters: Union[_models.ServerDevOpsAuditingSettings, JSON, IO[bytes]],
+        parameters: Union[_models.ServerDevOpsAuditingSettings, _types.ServerDevOpsAuditingSettings, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerDevOpsAuditingSettings]:
         """Creates or updates a server's DevOps audit settings.
@@ -53172,9 +53371,10 @@ class ServerDevOpsAuditSettingsOperations:
         :type server_name: str
         :param dev_ops_auditing_settings_name: "Default" Required.
         :type dev_ops_auditing_settings_name: str or ~azure.mgmt.sql.models.DevOpsAuditingSettingsName
-        :param parameters: Properties of DevOps audit settings. Is one of the following types:
-         ServerDevOpsAuditingSettings, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerDevOpsAuditingSettings or JSON or IO[bytes]
+        :param parameters: Properties of DevOps audit settings. Is either a
+         ServerDevOpsAuditingSettings type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerDevOpsAuditingSettings or
+         ~azure.mgmt.sql.types.ServerDevOpsAuditingSettings or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerDevOpsAuditingSettings. The
          ServerDevOpsAuditingSettings is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerDevOpsAuditingSettings]
@@ -53337,7 +53537,7 @@ class ServerDevOpsAuditSettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerDnsAliasesOperations:
+class ServerDnsAliasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -53794,7 +53994,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ServerDnsAliasAcquisition, JSON, IO[bytes]],
+        parameters: Union[_models.ServerDnsAliasAcquisition, _types.ServerDnsAliasAcquisition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -53903,7 +54103,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        parameters: JSON,
+        parameters: _types.ServerDnsAliasAcquisition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -53918,7 +54118,7 @@ class ServerDnsAliasesOperations:
         :param dns_alias_name: The name of the server dns alias. Required.
         :type dns_alias_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerDnsAliasAcquisition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -53965,7 +54165,7 @@ class ServerDnsAliasesOperations:
         resource_group_name: str,
         server_name: str,
         dns_alias_name: str,
-        parameters: Union[_models.ServerDnsAliasAcquisition, JSON, IO[bytes]],
+        parameters: Union[_models.ServerDnsAliasAcquisition, _types.ServerDnsAliasAcquisition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerDnsAlias]:
         """Acquires server DNS alias from another server.
@@ -53977,9 +54177,9 @@ class ServerDnsAliasesOperations:
         :type server_name: str
         :param dns_alias_name: The name of the server dns alias. Required.
         :type dns_alias_name: str
-        :param parameters: Is one of the following types: ServerDnsAliasAcquisition, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerDnsAliasAcquisition or JSON or IO[bytes]
+        :param parameters: Is either a ServerDnsAliasAcquisition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerDnsAliasAcquisition or
+         ~azure.mgmt.sql.types.ServerDnsAliasAcquisition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerDnsAlias. The ServerDnsAlias is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerDnsAlias]
@@ -54039,7 +54239,7 @@ class ServerDnsAliasesOperations:
         )
 
 
-class ServerKeysOperations:
+class ServerKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -54134,7 +54334,7 @@ class ServerKeysOperations:
         resource_group_name: str,
         server_name: str,
         key_name: str,
-        parameters: Union[_models.ServerKey, JSON, IO[bytes]],
+        parameters: Union[_models.ServerKey, _types.ServerKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -54247,7 +54447,7 @@ class ServerKeysOperations:
         resource_group_name: str,
         server_name: str,
         key_name: str,
-        parameters: JSON,
+        parameters: _types.ServerKey,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54262,7 +54462,7 @@ class ServerKeysOperations:
         :param key_name: The name of the server key to be retrieved. Required.
         :type key_name: str
         :param parameters: The requested server key resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerKey
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54309,7 +54509,7 @@ class ServerKeysOperations:
         resource_group_name: str,
         server_name: str,
         key_name: str,
-        parameters: Union[_models.ServerKey, JSON, IO[bytes]],
+        parameters: Union[_models.ServerKey, _types.ServerKey, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerKey]:
         """Creates or updates a server key.
@@ -54321,9 +54521,10 @@ class ServerKeysOperations:
         :type server_name: str
         :param key_name: The name of the server key to be retrieved. Required.
         :type key_name: str
-        :param parameters: The requested server key resource state. Is one of the following types:
-         ServerKey, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerKey or JSON or IO[bytes]
+        :param parameters: The requested server key resource state. Is either a ServerKey type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerKey or ~azure.mgmt.sql.types.ServerKey or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerKey. The ServerKey is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerKey]
@@ -54609,7 +54810,7 @@ class ServerKeysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerSecurityAlertPoliciesOperations:
+class ServerSecurityAlertPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -54711,7 +54912,7 @@ class ServerSecurityAlertPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.ServerSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerSecurityAlertPolicy, _types.ServerSecurityAlertPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -54820,7 +55021,7 @@ class ServerSecurityAlertPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: JSON,
+        parameters: _types.ServerSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -54835,7 +55036,7 @@ class ServerSecurityAlertPoliciesOperations:
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
         :param parameters: The server security alert policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerSecurityAlertPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -54882,7 +55083,7 @@ class ServerSecurityAlertPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
-        parameters: Union[_models.ServerSecurityAlertPolicy, JSON, IO[bytes]],
+        parameters: Union[_models.ServerSecurityAlertPolicy, _types.ServerSecurityAlertPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerSecurityAlertPolicy]:
         """Creates or updates a threat detection policy.
@@ -54894,9 +55095,10 @@ class ServerSecurityAlertPoliciesOperations:
         :type server_name: str
         :param security_alert_policy_name: The name of the security alert policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The server security alert policy. Is one of the following types:
-         ServerSecurityAlertPolicy, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerSecurityAlertPolicy or JSON or IO[bytes]
+        :param parameters: The server security alert policy. Is either a ServerSecurityAlertPolicy type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerSecurityAlertPolicy or
+         ~azure.mgmt.sql.types.ServerSecurityAlertPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerSecurityAlertPolicy. The
          ServerSecurityAlertPolicy is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerSecurityAlertPolicy]
@@ -55059,7 +55261,7 @@ class ServerSecurityAlertPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerTrustCertificatesOperations:
+class ServerTrustCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -55156,7 +55358,7 @@ class ServerTrustCertificatesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         certificate_name: str,
-        parameters: Union[_models.ServerTrustCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.ServerTrustCertificate, _types.ServerTrustCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -55269,7 +55471,7 @@ class ServerTrustCertificatesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         certificate_name: str,
-        parameters: JSON,
+        parameters: _types.ServerTrustCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55284,7 +55486,7 @@ class ServerTrustCertificatesOperations:
         :param certificate_name: Name of of the certificate to get. Required.
         :type certificate_name: str
         :param parameters: The server trust certificate info. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerTrustCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55331,7 +55533,7 @@ class ServerTrustCertificatesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         certificate_name: str,
-        parameters: Union[_models.ServerTrustCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.ServerTrustCertificate, _types.ServerTrustCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerTrustCertificate]:
         """Uploads a server trust certificate from SQL Server to SQL Managed Instance.
@@ -55343,9 +55545,10 @@ class ServerTrustCertificatesOperations:
         :type managed_instance_name: str
         :param certificate_name: Name of of the certificate to get. Required.
         :type certificate_name: str
-        :param parameters: The server trust certificate info. Is one of the following types:
-         ServerTrustCertificate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerTrustCertificate or JSON or IO[bytes]
+        :param parameters: The server trust certificate info. Is either a ServerTrustCertificate type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerTrustCertificate or
+         ~azure.mgmt.sql.types.ServerTrustCertificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerTrustCertificate. The
          ServerTrustCertificate is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ServerTrustCertificate]
@@ -55632,7 +55835,7 @@ class ServerTrustCertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerVulnerabilityAssessmentsOperations:
+class ServerVulnerabilityAssessmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -55771,7 +55974,7 @@ class ServerVulnerabilityAssessmentsOperations:
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: JSON,
+        parameters: _types.ServerVulnerabilityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -55790,7 +55993,7 @@ class ServerVulnerabilityAssessmentsOperations:
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param parameters: The requested resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerVulnerabilityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -55841,7 +56044,7 @@ class ServerVulnerabilityAssessmentsOperations:
         resource_group_name: str,
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
-        parameters: Union[_models.ServerVulnerabilityAssessment, JSON, IO[bytes]],
+        parameters: Union[_models.ServerVulnerabilityAssessment, _types.ServerVulnerabilityAssessment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServerVulnerabilityAssessment:
         """Creates or updates the server's vulnerability assessment. Learn more about setting SQL
@@ -55857,9 +56060,10 @@ class ServerVulnerabilityAssessmentsOperations:
         :param vulnerability_assessment_name: The name of the vulnerability assessment. "default"
          Required.
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
-        :param parameters: The requested resource. Is one of the following types:
-         ServerVulnerabilityAssessment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerVulnerabilityAssessment or JSON or IO[bytes]
+        :param parameters: The requested resource. Is either a ServerVulnerabilityAssessment type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerVulnerabilityAssessment or
+         ~azure.mgmt.sql.types.ServerVulnerabilityAssessment or IO[bytes]
         :return: ServerVulnerabilityAssessment. The ServerVulnerabilityAssessment is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.sql.models.ServerVulnerabilityAssessment
@@ -56104,7 +56308,7 @@ class ServerVulnerabilityAssessmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-long
+class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -56240,7 +56444,7 @@ class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         managed_instance_name: str,
         start_stop_schedule_name: Union[str, _models.StartStopScheduleName],
-        parameters: JSON,
+        parameters: _types.StartStopManagedInstanceSchedule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56256,7 +56460,7 @@ class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-l
          Required.
         :type start_stop_schedule_name: str or ~azure.mgmt.sql.models.StartStopScheduleName
         :param parameters: The requested managed instance Start/Stop schedule. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.StartStopManagedInstanceSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -56304,7 +56508,7 @@ class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         managed_instance_name: str,
         start_stop_schedule_name: Union[str, _models.StartStopScheduleName],
-        parameters: Union[_models.StartStopManagedInstanceSchedule, JSON, IO[bytes]],
+        parameters: Union[_models.StartStopManagedInstanceSchedule, _types.StartStopManagedInstanceSchedule, IO[bytes]],
         **kwargs: Any
     ) -> _models.StartStopManagedInstanceSchedule:
         """Creates or updates the managed instance's Start/Stop schedule.
@@ -56317,9 +56521,10 @@ class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-l
         :param start_stop_schedule_name: Name of the managed instance Start/Stop schedule. "default"
          Required.
         :type start_stop_schedule_name: str or ~azure.mgmt.sql.models.StartStopScheduleName
-        :param parameters: The requested managed instance Start/Stop schedule. Is one of the following
-         types: StartStopManagedInstanceSchedule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.StartStopManagedInstanceSchedule or JSON or IO[bytes]
+        :param parameters: The requested managed instance Start/Stop schedule. Is either a
+         StartStopManagedInstanceSchedule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.StartStopManagedInstanceSchedule or
+         ~azure.mgmt.sql.types.StartStopManagedInstanceSchedule or IO[bytes]
         :return: StartStopManagedInstanceSchedule. The StartStopManagedInstanceSchedule is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.sql.models.StartStopManagedInstanceSchedule
@@ -56564,7 +56769,7 @@ class StartStopManagedInstanceSchedulesOperations:  # pylint: disable=name-too-l
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SubscriptionUsagesOperations:
+class SubscriptionUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -56747,7 +56952,7 @@ class SubscriptionUsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SyncAgentsOperations:
+class SyncAgentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -56844,7 +57049,7 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        parameters: Union[_models.SyncAgent, JSON, IO[bytes]],
+        parameters: Union[_models.SyncAgent, _types.SyncAgent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -56957,7 +57162,7 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        parameters: JSON,
+        parameters: _types.SyncAgent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -56972,7 +57177,7 @@ class SyncAgentsOperations:
         :param sync_agent_name: The name of the sync agent. Required.
         :type sync_agent_name: str
         :param parameters: The requested sync agent resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SyncAgent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57019,7 +57224,7 @@ class SyncAgentsOperations:
         resource_group_name: str,
         server_name: str,
         sync_agent_name: str,
-        parameters: Union[_models.SyncAgent, JSON, IO[bytes]],
+        parameters: Union[_models.SyncAgent, _types.SyncAgent, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SyncAgent]:
         """Creates or updates a sync agent.
@@ -57031,9 +57236,10 @@ class SyncAgentsOperations:
         :type server_name: str
         :param sync_agent_name: The name of the sync agent. Required.
         :type sync_agent_name: str
-        :param parameters: The requested sync agent resource state. Is one of the following types:
-         SyncAgent, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SyncAgent or JSON or IO[bytes]
+        :param parameters: The requested sync agent resource state. Is either a SyncAgent type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SyncAgent or ~azure.mgmt.sql.types.SyncAgent or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SyncAgent. The SyncAgent is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.SyncAgent]
@@ -57499,7 +57705,7 @@ class SyncAgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SyncGroupsOperations:
+class SyncGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -57600,7 +57806,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: Union[_models.SyncGroup, JSON, IO[bytes]],
+        parameters: Union[_models.SyncGroup, _types.SyncGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -57718,7 +57924,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: JSON,
+        parameters: _types.SyncGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -57735,7 +57941,7 @@ class SyncGroupsOperations:
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
         :param parameters: The requested sync group resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SyncGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -57786,7 +57992,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: Union[_models.SyncGroup, JSON, IO[bytes]],
+        parameters: Union[_models.SyncGroup, _types.SyncGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SyncGroup]:
         """Creates or updates a sync group.
@@ -57800,9 +58006,10 @@ class SyncGroupsOperations:
         :type database_name: str
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
-        :param parameters: The requested sync group resource state. Is one of the following types:
-         SyncGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SyncGroup or JSON or IO[bytes]
+        :param parameters: The requested sync group resource state. Is either a SyncGroup type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SyncGroup or ~azure.mgmt.sql.types.SyncGroup or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SyncGroup. The SyncGroup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.SyncGroup]
@@ -57868,7 +58075,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: Union[_models.SyncGroup, JSON, IO[bytes]],
+        parameters: Union[_models.SyncGroup, _types.SyncGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -57982,7 +58189,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: JSON,
+        parameters: _types.SyncGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -57999,7 +58206,7 @@ class SyncGroupsOperations:
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
         :param parameters: The requested sync group resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SyncGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -58050,7 +58257,7 @@ class SyncGroupsOperations:
         server_name: str,
         database_name: str,
         sync_group_name: str,
-        parameters: Union[_models.SyncGroup, JSON, IO[bytes]],
+        parameters: Union[_models.SyncGroup, _types.SyncGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SyncGroup]:
         """Updates a sync group.
@@ -58064,9 +58271,10 @@ class SyncGroupsOperations:
         :type database_name: str
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
-        :param parameters: The requested sync group resource state. Is one of the following types:
-         SyncGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SyncGroup or JSON or IO[bytes]
+        :param parameters: The requested sync group resource state. Is either a SyncGroup type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SyncGroup or ~azure.mgmt.sql.types.SyncGroup or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SyncGroup. The SyncGroup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.SyncGroup]
@@ -58958,7 +59166,7 @@ class SyncGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SyncMembersOperations:
+class SyncMembersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -59069,7 +59277,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: Union[_models.SyncMember, JSON, IO[bytes]],
+        parameters: Union[_models.SyncMember, _types.SyncMember, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -59192,7 +59400,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: JSON,
+        parameters: _types.SyncMember,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59211,7 +59419,7 @@ class SyncMembersOperations:
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
         :param parameters: The requested sync member resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SyncMember
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59266,7 +59474,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: Union[_models.SyncMember, JSON, IO[bytes]],
+        parameters: Union[_models.SyncMember, _types.SyncMember, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SyncMember]:
         """Creates or updates a sync member.
@@ -59282,9 +59490,10 @@ class SyncMembersOperations:
         :type sync_group_name: str
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
-        :param parameters: The requested sync member resource state. Is one of the following types:
-         SyncMember, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SyncMember or JSON or IO[bytes]
+        :param parameters: The requested sync member resource state. Is either a SyncMember type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SyncMember or ~azure.mgmt.sql.types.SyncMember or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SyncMember. The SyncMember is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.SyncMember]
@@ -59352,7 +59561,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: Union[_models.SyncMember, JSON, IO[bytes]],
+        parameters: Union[_models.SyncMember, _types.SyncMember, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -59471,7 +59680,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: JSON,
+        parameters: _types.SyncMember,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -59490,7 +59699,7 @@ class SyncMembersOperations:
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
         :param parameters: The requested sync member resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SyncMember
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -59545,7 +59754,7 @@ class SyncMembersOperations:
         database_name: str,
         sync_group_name: str,
         sync_member_name: str,
-        parameters: Union[_models.SyncMember, JSON, IO[bytes]],
+        parameters: Union[_models.SyncMember, _types.SyncMember, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SyncMember]:
         """Updates an existing sync member.
@@ -59561,9 +59770,10 @@ class SyncMembersOperations:
         :type sync_group_name: str
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
-        :param parameters: The requested sync member resource state. Is one of the following types:
-         SyncMember, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SyncMember or JSON or IO[bytes]
+        :param parameters: The requested sync member resource state. Is either a SyncMember type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SyncMember or ~azure.mgmt.sql.types.SyncMember or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns SyncMember. The SyncMember is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.SyncMember]
@@ -60139,7 +60349,7 @@ class SyncMembersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TimeZonesOperations:
+class TimeZonesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -60322,7 +60532,7 @@ class TimeZonesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualClustersOperations:
+class VirtualClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -60413,7 +60623,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: Union[_models.VirtualCluster, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualCluster, _types.VirtualCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -60521,7 +60731,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60534,7 +60744,7 @@ class VirtualClustersOperations:
         :param virtual_cluster_name: The name of the virtual cluster. Required.
         :type virtual_cluster_name: str
         :param parameters: The requested virtual cluster resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.VirtualCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60577,7 +60787,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: Union[_models.VirtualCluster, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualCluster, _types.VirtualCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualCluster]:
         """Creates virtual cluster.
@@ -60587,9 +60797,10 @@ class VirtualClustersOperations:
         :type resource_group_name: str
         :param virtual_cluster_name: The name of the virtual cluster. Required.
         :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Is one of the following types:
-         VirtualCluster, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.VirtualCluster or JSON or IO[bytes]
+        :param parameters: The requested virtual cluster resource state. Is either a VirtualCluster
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.VirtualCluster or ~azure.mgmt.sql.types.VirtualCluster
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualCluster. The VirtualCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.VirtualCluster]
@@ -60651,7 +60862,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: Union[_models.VirtualClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualClusterUpdate, _types.VirtualClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -60755,7 +60966,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -60768,7 +60979,7 @@ class VirtualClustersOperations:
         :param virtual_cluster_name: The name of the virtual cluster. Required.
         :type virtual_cluster_name: str
         :param parameters: The requested virtual cluster resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.VirtualClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -60811,7 +61022,7 @@ class VirtualClustersOperations:
         self,
         resource_group_name: str,
         virtual_cluster_name: str,
-        parameters: Union[_models.VirtualClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualClusterUpdate, _types.VirtualClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualCluster]:
         """Updates an existing virtual cluster.
@@ -60821,9 +61032,10 @@ class VirtualClustersOperations:
         :type resource_group_name: str
         :param virtual_cluster_name: The name of the virtual cluster. Required.
         :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Is one of the following types:
-         VirtualClusterUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate or JSON or IO[bytes]
+        :param parameters: The requested virtual cluster resource state. Is either a
+         VirtualClusterUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate or
+         ~azure.mgmt.sql.types.VirtualClusterUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualCluster. The VirtualCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.VirtualCluster]
@@ -61322,7 +61534,7 @@ class VirtualClustersOperations:
         )
 
 
-class VirtualNetworkRulesOperations:
+class VirtualNetworkRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -61419,7 +61631,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        parameters: Union[_models.VirtualNetworkRule, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkRule, _types.VirtualNetworkRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -61532,7 +61744,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        parameters: JSON,
+        parameters: _types.VirtualNetworkRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -61547,7 +61759,7 @@ class VirtualNetworkRulesOperations:
         :param virtual_network_rule_name: The name of the virtual network rule. Required.
         :type virtual_network_rule_name: str
         :param parameters: The requested virtual Network Rule Resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.VirtualNetworkRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -61594,7 +61806,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         server_name: str,
         virtual_network_rule_name: str,
-        parameters: Union[_models.VirtualNetworkRule, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualNetworkRule, _types.VirtualNetworkRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkRule]:
         """Creates or updates an existing virtual network rule.
@@ -61606,9 +61818,10 @@ class VirtualNetworkRulesOperations:
         :type server_name: str
         :param virtual_network_rule_name: The name of the virtual network rule. Required.
         :type virtual_network_rule_name: str
-        :param parameters: The requested virtual Network Rule Resource state. Is one of the following
-         types: VirtualNetworkRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.VirtualNetworkRule or JSON or IO[bytes]
+        :param parameters: The requested virtual Network Rule Resource state. Is either a
+         VirtualNetworkRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.VirtualNetworkRule or
+         ~azure.mgmt.sql.types.VirtualNetworkRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualNetworkRule. The VirtualNetworkRule
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.VirtualNetworkRule]
@@ -61894,7 +62107,7 @@ class VirtualNetworkRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkloadClassifiersOperations:
+class WorkloadClassifiersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -62005,7 +62218,7 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         workload_classifier_name: str,
-        parameters: Union[_models.WorkloadClassifier, JSON, IO[bytes]],
+        parameters: Union[_models.WorkloadClassifier, _types.WorkloadClassifier, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -62128,7 +62341,7 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         workload_classifier_name: str,
-        parameters: JSON,
+        parameters: _types.WorkloadClassifier,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62147,7 +62360,7 @@ class WorkloadClassifiersOperations:
         :param workload_classifier_name: The name of the workload classifier. Required.
         :type workload_classifier_name: str
         :param parameters: The properties of the workload classifier. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.WorkloadClassifier
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62202,7 +62415,7 @@ class WorkloadClassifiersOperations:
         database_name: str,
         workload_group_name: str,
         workload_classifier_name: str,
-        parameters: Union[_models.WorkloadClassifier, JSON, IO[bytes]],
+        parameters: Union[_models.WorkloadClassifier, _types.WorkloadClassifier, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadClassifier]:
         """Creates or updates a workload classifier.
@@ -62218,9 +62431,10 @@ class WorkloadClassifiersOperations:
         :type workload_group_name: str
         :param workload_classifier_name: The name of the workload classifier. Required.
         :type workload_classifier_name: str
-        :param parameters: The properties of the workload classifier. Is one of the following types:
-         WorkloadClassifier, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.WorkloadClassifier or JSON or IO[bytes]
+        :param parameters: The properties of the workload classifier. Is either a WorkloadClassifier
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.WorkloadClassifier or
+         ~azure.mgmt.sql.types.WorkloadClassifier or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadClassifier. The WorkloadClassifier
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.WorkloadClassifier]
@@ -62534,7 +62748,7 @@ class WorkloadClassifiersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkloadGroupsOperations:
+class WorkloadGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -62635,7 +62849,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        parameters: Union[_models.WorkloadGroup, JSON, IO[bytes]],
+        parameters: Union[_models.WorkloadGroup, _types.WorkloadGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -62753,7 +62967,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        parameters: JSON,
+        parameters: _types.WorkloadGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -62770,7 +62984,7 @@ class WorkloadGroupsOperations:
         :param workload_group_name: The name of the workload group. Required.
         :type workload_group_name: str
         :param parameters: The requested workload group state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.WorkloadGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -62821,7 +63035,7 @@ class WorkloadGroupsOperations:
         server_name: str,
         database_name: str,
         workload_group_name: str,
-        parameters: Union[_models.WorkloadGroup, JSON, IO[bytes]],
+        parameters: Union[_models.WorkloadGroup, _types.WorkloadGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkloadGroup]:
         """Creates or updates a workload group.
@@ -62835,9 +63049,10 @@ class WorkloadGroupsOperations:
         :type database_name: str
         :param workload_group_name: The name of the workload group. Required.
         :type workload_group_name: str
-        :param parameters: The requested workload group state. Is one of the following types:
-         WorkloadGroup, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.WorkloadGroup or JSON or IO[bytes]
+        :param parameters: The requested workload group state. Is either a WorkloadGroup type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.WorkloadGroup or ~azure.mgmt.sql.types.WorkloadGroup
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkloadGroup. The WorkloadGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.WorkloadGroup]
@@ -63131,7 +63346,7 @@ class WorkloadGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -63292,7 +63507,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         schema_name: str,
         table_name: str,
         column_name: str,
-        parameters: JSON,
+        parameters: _types.SensitivityLabel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63313,7 +63528,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         :param column_name: The name of the column. Required.
         :type column_name: str
         :param parameters: The column sensitivity label resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SensitivityLabel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63370,7 +63585,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         schema_name: str,
         table_name: str,
         column_name: str,
-        parameters: Union[_models.SensitivityLabel, JSON, IO[bytes]],
+        parameters: Union[_models.SensitivityLabel, _types.SensitivityLabel, IO[bytes]],
         **kwargs: Any
     ) -> _models.SensitivityLabel:
         """Creates or updates the sensitivity label of a given column.
@@ -63388,9 +63603,10 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         :type table_name: str
         :param column_name: The name of the column. Required.
         :type column_name: str
-        :param parameters: The column sensitivity label resource. Is one of the following types:
-         SensitivityLabel, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.SensitivityLabel or JSON or IO[bytes]
+        :param parameters: The column sensitivity label resource. Is either a SensitivityLabel type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabel or
+         ~azure.mgmt.sql.types.SensitivityLabel or IO[bytes]
         :return: SensitivityLabel. The SensitivityLabel is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.SensitivityLabel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -63868,7 +64084,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.SensitivityLabelUpdateList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -63883,7 +64099,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SensitivityLabelUpdateList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -63928,7 +64144,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.SensitivityLabelUpdateList, JSON, IO[bytes]],
+        parameters: Union[_models.SensitivityLabelUpdateList, _types.SensitivityLabelUpdateList, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Update sensitivity labels of a given database using an operations batch.
@@ -63940,9 +64156,9 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is one of the following types: SensitivityLabelUpdateList, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.SensitivityLabelUpdateList or JSON or IO[bytes]
+        :param parameters: Is either a SensitivityLabelUpdateList type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SensitivityLabelUpdateList or
+         ~azure.mgmt.sql.types.SensitivityLabelUpdateList or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -64242,7 +64458,7 @@ class ManagedDatabaseSensitivityLabelsOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseEncryptionProtectorsOperations:
+class DatabaseEncryptionProtectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -64538,7 +64754,7 @@ class DatabaseEncryptionProtectorsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DatabaseOperationsOperations:
+class DatabaseOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -64726,7 +64942,7 @@ class DatabaseOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatabaseUsagesOperations:
+class DatabaseUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -64849,7 +65065,7 @@ class DatabaseUsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecommendedSensitivityLabelsOperations:
+class RecommendedSensitivityLabelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -64902,7 +65118,7 @@ class RecommendedSensitivityLabelsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.RecommendedSensitivityLabelUpdateList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -64917,7 +65133,7 @@ class RecommendedSensitivityLabelsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -64962,7 +65178,9 @@ class RecommendedSensitivityLabelsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.RecommendedSensitivityLabelUpdateList, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RecommendedSensitivityLabelUpdateList, _types.RecommendedSensitivityLabelUpdateList, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Update recommended sensitivity labels states of a given database using an operations batch.
@@ -64974,10 +65192,10 @@ class RecommendedSensitivityLabelsOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is one of the following types: RecommendedSensitivityLabelUpdateList, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or JSON or
-         IO[bytes]
+        :param parameters: Is either a RecommendedSensitivityLabelUpdateList type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or
+         ~azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateList or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -65038,7 +65256,7 @@ class RecommendedSensitivityLabelsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SynapseLinkWorkspacesOperations:
+class SynapseLinkWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65161,7 +65379,7 @@ class SynapseLinkWorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerOperationsOperations:
+class ServerOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65281,7 +65499,7 @@ class ServerOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerUsagesOperations:
+class ServerUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65401,7 +65619,7 @@ class ServerUsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TdeCertificatesOperations:
+class TdeCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65422,7 +65640,7 @@ class TdeCertificatesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.TdeCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.TdeCertificate, _types.TdeCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -65525,7 +65743,7 @@ class TdeCertificatesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.TdeCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65538,7 +65756,7 @@ class TdeCertificatesOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested TDE certificate to be created or updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.TdeCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65579,7 +65797,7 @@ class TdeCertificatesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.TdeCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.TdeCertificate, _types.TdeCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a TDE certificate for a given server.
@@ -65589,9 +65807,10 @@ class TdeCertificatesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The requested TDE certificate to be created or updated. Is one of the
-         following types: TdeCertificate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.TdeCertificate or JSON or IO[bytes]
+        :param parameters: The requested TDE certificate to be created or updated. Is either a
+         TdeCertificate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.TdeCertificate or ~azure.mgmt.sql.types.TdeCertificate
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -65644,7 +65863,7 @@ class TdeCertificatesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -65790,7 +66009,7 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=nam
         server_name: str,
         database_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: JSON,
+        parameters: _types.DatabaseAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -65809,7 +66028,7 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=nam
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
         :param parameters: The database Advanced Threat Protection state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseAdvancedThreatProtection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -65862,7 +66081,7 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=nam
         server_name: str,
         database_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.DatabaseAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseAdvancedThreatProtection, _types.DatabaseAdvancedThreatProtection, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseAdvancedThreatProtection:
         """Creates or updates a database's Advanced Threat Protection state.
@@ -65878,9 +66097,10 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=nam
          "Default" Required.
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
-        :param parameters: The database Advanced Threat Protection state. Is one of the following
-         types: DatabaseAdvancedThreatProtection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseAdvancedThreatProtection or JSON or IO[bytes]
+        :param parameters: The database Advanced Threat Protection state. Is either a
+         DatabaseAdvancedThreatProtection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseAdvancedThreatProtection or
+         ~azure.mgmt.sql.types.DatabaseAdvancedThreatProtection or IO[bytes]
         :return: DatabaseAdvancedThreatProtection. The DatabaseAdvancedThreatProtection is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseAdvancedThreatProtection
@@ -66062,7 +66282,7 @@ class DatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=nam
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseAdvisorsOperations:
+class DatabaseAdvisorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -66197,7 +66417,7 @@ class DatabaseAdvisorsOperations:
         server_name: str,
         database_name: str,
         advisor_name: str,
-        parameters: JSON,
+        parameters: _types.Advisor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -66214,7 +66434,7 @@ class DatabaseAdvisorsOperations:
         :param advisor_name: The name of the Database Advisor. Required.
         :type advisor_name: str
         :param parameters: The requested advisor resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.Advisor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66263,7 +66483,7 @@ class DatabaseAdvisorsOperations:
         server_name: str,
         database_name: str,
         advisor_name: str,
-        parameters: Union[_models.Advisor, JSON, IO[bytes]],
+        parameters: Union[_models.Advisor, _types.Advisor, IO[bytes]],
         **kwargs: Any
     ) -> _models.Advisor:
         """Updates a database advisor.
@@ -66277,9 +66497,9 @@ class DatabaseAdvisorsOperations:
         :type database_name: str
         :param advisor_name: The name of the Database Advisor. Required.
         :type advisor_name: str
-        :param parameters: The requested advisor resource state. Is one of the following types:
-         Advisor, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.Advisor or JSON or IO[bytes]
+        :param parameters: The requested advisor resource state. Is either a Advisor type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Advisor or ~azure.mgmt.sql.types.Advisor or IO[bytes]
         :return: Advisor. The Advisor is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -66438,7 +66658,7 @@ class DatabaseAdvisorsOperations:
         return deserialized  # type: ignore
 
 
-class DatabaseAutomaticTuningOperations:
+class DatabaseAutomaticTuningOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -66566,7 +66786,7 @@ class DatabaseAutomaticTuningOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.DatabaseAutomaticTuning,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -66581,7 +66801,7 @@ class DatabaseAutomaticTuningOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested automatic tuning resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseAutomaticTuning
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66626,7 +66846,7 @@ class DatabaseAutomaticTuningOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseAutomaticTuning, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseAutomaticTuning, _types.DatabaseAutomaticTuning, IO[bytes]],
         **kwargs: Any
     ) -> _models.DatabaseAutomaticTuning:
         """Update automatic tuning properties for target database.
@@ -66638,9 +66858,10 @@ class DatabaseAutomaticTuningOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested automatic tuning resource state. Is one of the following
-         types: DatabaseAutomaticTuning, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseAutomaticTuning or JSON or IO[bytes]
+        :param parameters: The requested automatic tuning resource state. Is either a
+         DatabaseAutomaticTuning type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseAutomaticTuning or
+         ~azure.mgmt.sql.types.DatabaseAutomaticTuning or IO[bytes]
         :return: DatabaseAutomaticTuning. The DatabaseAutomaticTuning is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -66714,7 +66935,7 @@ class DatabaseAutomaticTuningOperations:
         return deserialized  # type: ignore
 
 
-class DatabaseExtensionsOperations:
+class DatabaseExtensionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -66802,7 +67023,7 @@ class DatabaseExtensionsOperations:
         server_name: str,
         database_name: str,
         extension_name: str,
-        parameters: Union[_models.DatabaseExtensions, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseExtensions, _types.DatabaseExtensions, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -66918,7 +67139,7 @@ class DatabaseExtensionsOperations:
         server_name: str,
         database_name: str,
         extension_name: str,
-        parameters: JSON,
+        parameters: _types.DatabaseExtensions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -66936,7 +67157,7 @@ class DatabaseExtensionsOperations:
         :param extension_name: Required.
         :type extension_name: str
         :param parameters: The database import request parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseExtensions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -66990,7 +67211,7 @@ class DatabaseExtensionsOperations:
         server_name: str,
         database_name: str,
         extension_name: str,
-        parameters: Union[_models.DatabaseExtensions, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseExtensions, _types.DatabaseExtensions, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportExtensionsOperationResult]:
         """Perform a database extension operation, like database import, database export, or polybase
@@ -67005,9 +67226,10 @@ class DatabaseExtensionsOperations:
         :type database_name: str
         :param extension_name: Required.
         :type extension_name: str
-        :param parameters: The database import request parameters. Is one of the following types:
-         DatabaseExtensions, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseExtensions or JSON or IO[bytes]
+        :param parameters: The database import request parameters. Is either a DatabaseExtensions type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseExtensions or
+         ~azure.mgmt.sql.types.DatabaseExtensions or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ImportExportExtensionsOperationResult. The
          ImportExportExtensionsOperationResult is compatible with MutableMapping
         :rtype:
@@ -67175,7 +67397,7 @@ class DatabaseExtensionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseRecommendedActionsOperations:
+class DatabaseRecommendedActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -67323,7 +67545,7 @@ class DatabaseRecommendedActionsOperations:
         database_name: str,
         advisor_name: str,
         recommended_action_name: str,
-        parameters: JSON,
+        parameters: _types.RecommendedAction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67342,7 +67564,7 @@ class DatabaseRecommendedActionsOperations:
         :param recommended_action_name: The name of Database Recommended Action. Required.
         :type recommended_action_name: str
         :param parameters: The requested recommended action resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.RecommendedAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67395,7 +67617,7 @@ class DatabaseRecommendedActionsOperations:
         database_name: str,
         advisor_name: str,
         recommended_action_name: str,
-        parameters: Union[_models.RecommendedAction, JSON, IO[bytes]],
+        parameters: Union[_models.RecommendedAction, _types.RecommendedAction, IO[bytes]],
         **kwargs: Any
     ) -> _models.RecommendedAction:
         """Updates a database recommended action.
@@ -67411,9 +67633,10 @@ class DatabaseRecommendedActionsOperations:
         :type advisor_name: str
         :param recommended_action_name: The name of Database Recommended Action. Required.
         :type recommended_action_name: str
-        :param parameters: The requested recommended action resource state. Is one of the following
-         types: RecommendedAction, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.RecommendedAction or JSON or IO[bytes]
+        :param parameters: The requested recommended action resource state. Is either a
+         RecommendedAction type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.RecommendedAction or
+         ~azure.mgmt.sql.types.RecommendedAction or IO[bytes]
         :return: RecommendedAction. The RecommendedAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.RecommendedAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -67567,7 +67790,7 @@ class DatabaseRecommendedActionsOperations:
         return deserialized  # type: ignore
 
 
-class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -67720,7 +67943,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        parameters: JSON,
+        parameters: _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -67740,7 +67963,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -67796,7 +68019,11 @@ class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=
         database_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
+            _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
         """Add a database's vulnerability assessment rule baseline list.
@@ -67813,11 +68040,11 @@ class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, JSON, IO[bytes] Required.
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or
+         ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or IO[bytes]
         :return: DatabaseSqlVulnerabilityAssessmentBaselineSet. The
          DatabaseSqlVulnerabilityAssessmentBaselineSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentBaselineSet
@@ -68011,7 +68238,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68071,7 +68298,7 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        parameters: JSON,
+        parameters: _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -68089,7 +68316,7 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
         :param parameters: The requested rule baseline resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -68141,7 +68368,11 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         server_name: str,
         vulnerability_assessment_name: Union[str, _models.VulnerabilityAssessmentName],
         baseline_name: Union[str, _models.BaselineName],
-        parameters: Union[_models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
+            _types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.DatabaseSqlVulnerabilityAssessmentBaselineSet:
         """Add a database's vulnerability assessment rule baseline list.
@@ -68156,11 +68387,11 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         :type vulnerability_assessment_name: str or ~azure.mgmt.sql.models.VulnerabilityAssessmentName
         :param baseline_name: "default" Required.
         :type baseline_name: str or ~azure.mgmt.sql.models.BaselineName
-        :param parameters: The requested rule baseline resource. Is one of the following types:
-         DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, JSON, IO[bytes] Required.
+        :param parameters: The requested rule baseline resource. Is either a
+         DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or
+         ~azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput or IO[bytes]
         :return: DatabaseSqlVulnerabilityAssessmentBaselineSet. The
          DatabaseSqlVulnerabilityAssessmentBaselineSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DatabaseSqlVulnerabilityAssessmentBaselineSet
@@ -68240,7 +68471,7 @@ class SqlVulnerabilityAssessmentBaselinesOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class DatabaseSqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68450,7 +68681,7 @@ class DatabaseSqlVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseSqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68607,7 +68838,7 @@ class DatabaseSqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disabl
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68766,7 +68997,7 @@ class SqlVulnerabilityAssessmentExecuteScanOperations:  # pylint: disable=name-t
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68863,7 +69094,7 @@ class SqlVulnerabilityAssessmentRuleBaselinesOperations:  # pylint: disable=name
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatabaseSqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-long
+class DatabaseSqlVulnerabilityAssessmentScansOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69087,7 +69318,7 @@ class DatabaseSqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-long
+class DatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69543,7 +69774,7 @@ class DatabaseVulnerabilityAssessmentScansOperations:  # pylint: disable=name-to
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DataMaskingRulesOperations:
+class DataMaskingRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -69561,8 +69792,18 @@ class DataMaskingRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2025-02-01-preview": ["skip"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview"],
+    )
     def list_by_database(
-        self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        *,
+        skip: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.DataMaskingRule"]:
         """Gets a list of database data masking rules.
 
@@ -69573,6 +69814,8 @@ class DataMaskingRulesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
+        :keyword skip: The number of elements in the collection to skip. Default value is None.
+        :paramtype skip: int
         :return: An iterator like instance of DataMaskingRule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.DataMaskingRule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -69599,6 +69842,7 @@ class DataMaskingRulesOperations:
                     server_name=server_name,
                     database_name=database_name,
                     subscription_id=self._config.subscription_id,
+                    skip=skip,
                     data_masking_policy_name=data_masking_policy_name,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -69708,7 +69952,7 @@ class DataMaskingRulesOperations:
         server_name: str,
         database_name: str,
         data_masking_rule_name: str,
-        parameters: JSON,
+        parameters: _types.DataMaskingRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -69726,7 +69970,7 @@ class DataMaskingRulesOperations:
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.DataMaskingRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -69776,7 +70020,7 @@ class DataMaskingRulesOperations:
         server_name: str,
         database_name: str,
         data_masking_rule_name: str,
-        parameters: Union[_models.DataMaskingRule, JSON, IO[bytes]],
+        parameters: Union[_models.DataMaskingRule, _types.DataMaskingRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataMaskingRule:
         """Creates or updates a database data masking rule.
@@ -69790,9 +70034,10 @@ class DataMaskingRulesOperations:
         :type database_name: str
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
-        :param parameters: The required parameters for creating or updating a data masking rule. Is one
-         of the following types: DataMaskingRule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.DataMaskingRule or JSON or IO[bytes]
+        :param parameters: The required parameters for creating or updating a data masking rule. Is
+         either a DataMaskingRule type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DataMaskingRule or
+         ~azure.mgmt.sql.types.DataMaskingRule or IO[bytes]
         :return: DataMaskingRule. The DataMaskingRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.DataMaskingRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -69869,7 +70114,7 @@ class DataMaskingRulesOperations:
         return deserialized  # type: ignore
 
 
-class DataWarehouseUserActivitiesOperations:
+class DataWarehouseUserActivitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70079,7 +70324,7 @@ class DataWarehouseUserActivitiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseSecurityEventsOperations:
+class ManagedDatabaseSecurityEventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70225,7 +70470,7 @@ class ManagedDatabaseSecurityEventsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70278,7 +70523,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.RecommendedSensitivityLabelUpdateList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70293,7 +70538,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70338,7 +70583,9 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        parameters: Union[_models.RecommendedSensitivityLabelUpdateList, JSON, IO[bytes]],
+        parameters: Union[
+            _models.RecommendedSensitivityLabelUpdateList, _types.RecommendedSensitivityLabelUpdateList, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Update recommended sensitivity labels states of a given database using an operations batch.
@@ -70350,10 +70597,10 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is one of the following types: RecommendedSensitivityLabelUpdateList, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or JSON or
-         IO[bytes]
+        :param parameters: Is either a RecommendedSensitivityLabelUpdateList type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateList or
+         ~azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateList or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70414,7 +70661,7 @@ class ManagedDatabaseRecommendedSensitivityLabelsOperations:  # pylint: disable=
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ManagedInstanceTdeCertificatesOperations:
+class ManagedInstanceTdeCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70435,7 +70682,7 @@ class ManagedInstanceTdeCertificatesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.TdeCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.TdeCertificate, _types.TdeCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -70538,7 +70785,7 @@ class ManagedInstanceTdeCertificatesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: JSON,
+        parameters: _types.TdeCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -70551,7 +70798,7 @@ class ManagedInstanceTdeCertificatesOperations:
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: The requested TDE certificate to be created or updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.TdeCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -70592,7 +70839,7 @@ class ManagedInstanceTdeCertificatesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.TdeCertificate, JSON, IO[bytes]],
+        parameters: Union[_models.TdeCertificate, _types.TdeCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a TDE certificate for a given server.
@@ -70602,9 +70849,10 @@ class ManagedInstanceTdeCertificatesOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: The requested TDE certificate to be created or updated. Is one of the
-         following types: TdeCertificate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.TdeCertificate or JSON or IO[bytes]
+        :param parameters: The requested TDE certificate to be created or updated. Is either a
+         TdeCertificate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.TdeCertificate or ~azure.mgmt.sql.types.TdeCertificate
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -70657,7 +70905,7 @@ class ManagedInstanceTdeCertificatesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ElasticPoolOperationsOperations:
+class ElasticPoolOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70845,7 +71093,7 @@ class ElasticPoolOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -70974,7 +71222,7 @@ class UsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LedgerDigestUploadsOperations:
+class LedgerDigestUploadsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -71080,7 +71328,7 @@ class LedgerDigestUploadsOperations:
         server_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
-        parameters: Union[_models.LedgerDigestUploads, JSON, IO[bytes]],
+        parameters: Union[_models.LedgerDigestUploads, _types.LedgerDigestUploads, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -71195,7 +71443,7 @@ class LedgerDigestUploadsOperations:
         server_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
-        parameters: JSON,
+        parameters: _types.LedgerDigestUploads,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -71213,7 +71461,7 @@ class LedgerDigestUploadsOperations:
         :param ledger_digest_uploads: "current" Required.
         :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.LedgerDigestUploads
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -71265,7 +71513,7 @@ class LedgerDigestUploadsOperations:
         server_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
-        parameters: Union[_models.LedgerDigestUploads, JSON, IO[bytes]],
+        parameters: Union[_models.LedgerDigestUploads, _types.LedgerDigestUploads, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LedgerDigestUploads]:
         """Enables upload ledger digests to an Azure Storage account or an Azure Confidential Ledger
@@ -71280,9 +71528,9 @@ class LedgerDigestUploadsOperations:
         :type database_name: str
         :param ledger_digest_uploads: "current" Required.
         :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.LedgerDigestUploadsName
-        :param parameters: Is one of the following types: LedgerDigestUploads, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.LedgerDigestUploads or JSON or IO[bytes]
+        :param parameters: Is either a LedgerDigestUploads type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.LedgerDigestUploads or
+         ~azure.mgmt.sql.types.LedgerDigestUploads or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LedgerDigestUploads. The
          LedgerDigestUploads is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.LedgerDigestUploads]
@@ -71593,7 +71841,7 @@ class LedgerDigestUploadsOperations:
         )
 
 
-class MaintenanceWindowOptionsOperations:
+class MaintenanceWindowOptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -71696,7 +71944,7 @@ class MaintenanceWindowOptionsOperations:
         return deserialized  # type: ignore
 
 
-class MaintenanceWindowsOperations:
+class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -71836,7 +72084,7 @@ class MaintenanceWindowsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.MaintenanceWindows,
         *,
         maintenance_window_name: str,
         content_type: str = "application/json",
@@ -71852,7 +72100,7 @@ class MaintenanceWindowsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.MaintenanceWindows
         :keyword maintenance_window_name: Maintenance window name. Required.
         :paramtype maintenance_window_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -71902,7 +72150,7 @@ class MaintenanceWindowsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.MaintenanceWindows, JSON, IO[bytes]],
+        parameters: Union[_models.MaintenanceWindows, _types.MaintenanceWindows, IO[bytes]],
         *,
         maintenance_window_name: str,
         **kwargs: Any
@@ -71916,8 +72164,9 @@ class MaintenanceWindowsOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Is one of the following types: MaintenanceWindows, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.MaintenanceWindows or JSON or IO[bytes]
+        :param parameters: Is either a MaintenanceWindows type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.MaintenanceWindows or
+         ~azure.mgmt.sql.types.MaintenanceWindows or IO[bytes]
         :keyword maintenance_window_name: Maintenance window name. Required.
         :paramtype maintenance_window_name: str
         :return: None
@@ -71981,7 +72230,7 @@ class MaintenanceWindowsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72127,7 +72376,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         managed_instance_name: str,
         database_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: JSON,
+        parameters: _types.ManagedDatabaseAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -72146,7 +72395,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
         :param parameters: The managed database Advanced Threat Protection state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedDatabaseAdvancedThreatProtection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72199,7 +72448,9 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         managed_instance_name: str,
         database_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.ManagedDatabaseAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedDatabaseAdvancedThreatProtection, _types.ManagedDatabaseAdvancedThreatProtection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ManagedDatabaseAdvancedThreatProtection:
         """Creates or updates a managed database's Advanced Threat Protection state.
@@ -72215,10 +72466,10 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disa
          "Default" Required.
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
-        :param parameters: The managed database Advanced Threat Protection state. Is one of the
-         following types: ManagedDatabaseAdvancedThreatProtection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseAdvancedThreatProtection or JSON or
-         IO[bytes]
+        :param parameters: The managed database Advanced Threat Protection state. Is either a
+         ManagedDatabaseAdvancedThreatProtection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseAdvancedThreatProtection or
+         ~azure.mgmt.sql.types.ManagedDatabaseAdvancedThreatProtection or IO[bytes]
         :return: ManagedDatabaseAdvancedThreatProtection. The ManagedDatabaseAdvancedThreatProtection
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseAdvancedThreatProtection
@@ -72400,7 +72651,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseMoveOperationsOperations:
+class ManagedDatabaseMoveOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72611,7 +72862,7 @@ class ManagedDatabaseMoveOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseQueriesOperations:
+class ManagedDatabaseQueriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72834,7 +73085,7 @@ class ManagedDatabaseQueriesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedDatabaseRestoreDetailsOperations:
+class ManagedDatabaseRestoreDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72936,7 +73187,7 @@ class ManagedDatabaseRestoreDetailsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=name-too-long
+class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73078,7 +73329,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=nam
         managed_instance_name: str,
         database_name: str,
         tde_name: Union[str, _models.TransparentDataEncryptionName],
-        parameters: JSON,
+        parameters: _types.ManagedTransparentDataEncryption,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73095,7 +73346,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=nam
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
         :param parameters: The database transparent data encryption. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedTransparentDataEncryption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73146,7 +73397,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=nam
         managed_instance_name: str,
         database_name: str,
         tde_name: Union[str, _models.TransparentDataEncryptionName],
-        parameters: Union[_models.ManagedTransparentDataEncryption, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedTransparentDataEncryption, _types.ManagedTransparentDataEncryption, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagedTransparentDataEncryption:
         """Updates a database's transparent data encryption configuration.
@@ -73160,9 +73411,10 @@ class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=nam
         :type database_name: str
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
-        :param parameters: The database transparent data encryption. Is one of the following types:
-         ManagedTransparentDataEncryption, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedTransparentDataEncryption or JSON or IO[bytes]
+        :param parameters: The database transparent data encryption. Is either a
+         ManagedTransparentDataEncryption type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedTransparentDataEncryption or
+         ~azure.mgmt.sql.types.ManagedTransparentDataEncryption or IO[bytes]
         :return: ManagedTransparentDataEncryption. The ManagedTransparentDataEncryption is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ManagedTransparentDataEncryption
@@ -73344,7 +73596,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:  # pylint: disable=nam
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73448,7 +73700,9 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         resource_group_name: str,
         managed_instance_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.ManagedInstanceAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceAdvancedThreatProtection, _types.ManagedInstanceAdvancedThreatProtection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -73560,7 +73814,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         resource_group_name: str,
         managed_instance_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: JSON,
+        parameters: _types.ManagedInstanceAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -73577,7 +73831,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
         :param parameters: The managed instance Advanced Threat Protection state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedInstanceAdvancedThreatProtection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -73628,7 +73882,9 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         resource_group_name: str,
         managed_instance_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.ManagedInstanceAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ManagedInstanceAdvancedThreatProtection, _types.ManagedInstanceAdvancedThreatProtection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceAdvancedThreatProtection]:
         """Creates or updates Advanced Threat Protection settings.
@@ -73642,10 +73898,10 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
          "Default" Required.
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
-        :param parameters: The managed instance Advanced Threat Protection state. Is one of the
-         following types: ManagedInstanceAdvancedThreatProtection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdvancedThreatProtection or JSON or
-         IO[bytes]
+        :param parameters: The managed instance Advanced Threat Protection state. Is either a
+         ManagedInstanceAdvancedThreatProtection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdvancedThreatProtection or
+         ~azure.mgmt.sql.types.ManagedInstanceAdvancedThreatProtection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedInstanceAdvancedThreatProtection.
          The ManagedInstanceAdvancedThreatProtection is compatible with MutableMapping
         :rtype:
@@ -73809,7 +74065,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:  # pylint: disa
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedInstancePrivateLinkResourcesOperations:  # pylint: disable=name-too-long
+class ManagedInstancePrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -74006,7 +74262,7 @@ class ManagedInstancePrivateLinkResourcesOperations:  # pylint: disable=name-too
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ManagedLedgerDigestUploadsOperations:
+class ManagedLedgerDigestUploadsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -74113,7 +74369,7 @@ class ManagedLedgerDigestUploadsOperations:
         managed_instance_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.ManagedLedgerDigestUploadsName],
-        parameters: Union[_models.ManagedLedgerDigestUploads, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedLedgerDigestUploads, _types.ManagedLedgerDigestUploads, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -74228,7 +74484,7 @@ class ManagedLedgerDigestUploadsOperations:
         managed_instance_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.ManagedLedgerDigestUploadsName],
-        parameters: JSON,
+        parameters: _types.ManagedLedgerDigestUploads,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74246,7 +74502,7 @@ class ManagedLedgerDigestUploadsOperations:
         :param ledger_digest_uploads: "current" Required.
         :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.ManagedLedgerDigestUploadsName
         :param parameters: The Ledger Digest Storage Endpoint. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ManagedLedgerDigestUploads
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74298,7 +74554,7 @@ class ManagedLedgerDigestUploadsOperations:
         managed_instance_name: str,
         database_name: str,
         ledger_digest_uploads: Union[str, _models.ManagedLedgerDigestUploadsName],
-        parameters: Union[_models.ManagedLedgerDigestUploads, JSON, IO[bytes]],
+        parameters: Union[_models.ManagedLedgerDigestUploads, _types.ManagedLedgerDigestUploads, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedLedgerDigestUploads]:
         """Enables upload ledger digests to an Azure Storage account or an Azure Confidential Ledger
@@ -74313,9 +74569,10 @@ class ManagedLedgerDigestUploadsOperations:
         :type database_name: str
         :param ledger_digest_uploads: "current" Required.
         :type ledger_digest_uploads: str or ~azure.mgmt.sql.models.ManagedLedgerDigestUploadsName
-        :param parameters: The Ledger Digest Storage Endpoint. Is one of the following types:
-         ManagedLedgerDigestUploads, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ManagedLedgerDigestUploads or JSON or IO[bytes]
+        :param parameters: The Ledger Digest Storage Endpoint. Is either a ManagedLedgerDigestUploads
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ManagedLedgerDigestUploads or
+         ~azure.mgmt.sql.types.ManagedLedgerDigestUploads or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagedLedgerDigestUploads. The
          ManagedLedgerDigestUploads is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ManagedLedgerDigestUploads]
@@ -74627,7 +74884,7 @@ class ManagedLedgerDigestUploadsOperations:
         )
 
 
-class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-long
+class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -74731,7 +74988,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
         resource_group_name: str,
         server_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.ServerAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAdvancedThreatProtection, _types.ServerAdvancedThreatProtection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -74843,7 +75100,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
         resource_group_name: str,
         server_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: JSON,
+        parameters: _types.ServerAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -74860,7 +75117,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
         :param parameters: The server Advanced Threat Protection state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerAdvancedThreatProtection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -74911,7 +75168,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
         resource_group_name: str,
         server_name: str,
         advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
-        parameters: Union[_models.ServerAdvancedThreatProtection, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAdvancedThreatProtection, _types.ServerAdvancedThreatProtection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAdvancedThreatProtection]:
         """Creates or updates an Advanced Threat Protection state.
@@ -74925,9 +75182,10 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
          "Default" Required.
         :type advanced_threat_protection_name: str or
          ~azure.mgmt.sql.models.AdvancedThreatProtectionName
-        :param parameters: The server Advanced Threat Protection state. Is one of the following types:
-         ServerAdvancedThreatProtection, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAdvancedThreatProtection or JSON or IO[bytes]
+        :param parameters: The server Advanced Threat Protection state. Is either a
+         ServerAdvancedThreatProtection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAdvancedThreatProtection or
+         ~azure.mgmt.sql.types.ServerAdvancedThreatProtection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServerAdvancedThreatProtection. The
          ServerAdvancedThreatProtection is compatible with MutableMapping
         :rtype:
@@ -75091,7 +75349,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServerAutomaticTuningOperations:
+class ServerAutomaticTuningOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -75210,7 +75468,7 @@ class ServerAutomaticTuningOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: JSON,
+        parameters: _types.ServerAutomaticTuning,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75223,7 +75481,7 @@ class ServerAutomaticTuningOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param parameters: The requested automatic tuning resource state. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.ServerAutomaticTuning
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75264,7 +75522,7 @@ class ServerAutomaticTuningOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        parameters: Union[_models.ServerAutomaticTuning, JSON, IO[bytes]],
+        parameters: Union[_models.ServerAutomaticTuning, _types.ServerAutomaticTuning, IO[bytes]],
         **kwargs: Any
     ) -> _models.ServerAutomaticTuning:
         """Update automatic tuning options on server.
@@ -75274,9 +75532,10 @@ class ServerAutomaticTuningOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The requested automatic tuning resource state. Is one of the following
-         types: ServerAutomaticTuning, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.ServerAutomaticTuning or JSON or IO[bytes]
+        :param parameters: The requested automatic tuning resource state. Is either a
+         ServerAutomaticTuning type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ServerAutomaticTuning or
+         ~azure.mgmt.sql.types.ServerAutomaticTuning or IO[bytes]
         :return: ServerAutomaticTuning. The ServerAutomaticTuning is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75349,7 +75608,7 @@ class ServerAutomaticTuningOperations:
         return deserialized  # type: ignore
 
 
-class SqlAgentOperations:
+class SqlAgentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -75470,7 +75729,7 @@ class SqlAgentOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: JSON,
+        parameters: _types.SqlAgentConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75483,7 +75742,7 @@ class SqlAgentOperations:
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.SqlAgentConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75524,7 +75783,7 @@ class SqlAgentOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        parameters: Union[_models.SqlAgentConfiguration, JSON, IO[bytes]],
+        parameters: Union[_models.SqlAgentConfiguration, _types.SqlAgentConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.SqlAgentConfiguration:
         """Puts new sql agent configuration to instance.
@@ -75534,9 +75793,9 @@ class SqlAgentOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: Is one of the following types: SqlAgentConfiguration, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.SqlAgentConfiguration or JSON or IO[bytes]
+        :param parameters: Is either a SqlAgentConfiguration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.SqlAgentConfiguration or
+         ~azure.mgmt.sql.types.SqlAgentConfiguration or IO[bytes]
         :return: SqlAgentConfiguration. The SqlAgentConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.sql.models.SqlAgentConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -75609,7 +75868,7 @@ class SqlAgentOperations:
         return deserialized  # type: ignore
 
 
-class TransparentDataEncryptionsOperations:
+class TransparentDataEncryptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -75716,7 +75975,9 @@ class TransparentDataEncryptionsOperations:
         server_name: str,
         database_name: str,
         tde_name: Union[str, _models.TransparentDataEncryptionName],
-        parameters: Union[_models.LogicalDatabaseTransparentDataEncryption, JSON, IO[bytes]],
+        parameters: Union[
+            _models.LogicalDatabaseTransparentDataEncryption, _types.LogicalDatabaseTransparentDataEncryption, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -75836,7 +76097,7 @@ class TransparentDataEncryptionsOperations:
         server_name: str,
         database_name: str,
         tde_name: Union[str, _models.TransparentDataEncryptionName],
-        parameters: JSON,
+        parameters: _types.LogicalDatabaseTransparentDataEncryption,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -75853,7 +76114,7 @@ class TransparentDataEncryptionsOperations:
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
         :param parameters: The database transparent data encryption. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.sql.types.LogicalDatabaseTransparentDataEncryption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -75906,7 +76167,9 @@ class TransparentDataEncryptionsOperations:
         server_name: str,
         database_name: str,
         tde_name: Union[str, _models.TransparentDataEncryptionName],
-        parameters: Union[_models.LogicalDatabaseTransparentDataEncryption, JSON, IO[bytes]],
+        parameters: Union[
+            _models.LogicalDatabaseTransparentDataEncryption, _types.LogicalDatabaseTransparentDataEncryption, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LogicalDatabaseTransparentDataEncryption]:
         """Updates a logical database's transparent data encryption configuration.
@@ -75920,10 +76183,10 @@ class TransparentDataEncryptionsOperations:
         :type database_name: str
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
-        :param parameters: The database transparent data encryption. Is one of the following types:
-         LogicalDatabaseTransparentDataEncryption, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption or JSON or
-         IO[bytes]
+        :param parameters: The database transparent data encryption. Is either a
+         LogicalDatabaseTransparentDataEncryption type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.LogicalDatabaseTransparentDataEncryption or
+         ~azure.mgmt.sql.types.LogicalDatabaseTransparentDataEncryption or IO[bytes]
         :return: An instance of AsyncLROPoller that returns LogicalDatabaseTransparentDataEncryption.
          The LogicalDatabaseTransparentDataEncryption is compatible with MutableMapping
         :rtype:
@@ -76381,7 +76644,7 @@ class TransparentDataEncryptionsOperations:
         )
 
 
-class CapabilitiesOperations:
+class CapabilitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

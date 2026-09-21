@@ -1,5 +1,20 @@
 # Release History
 
+## 25.1.0 (2026-06-01)
+
+### Features Added
+
+  - Client `StorageManagementClient` added operation group `advanced_platform_metrics`
+  - Model `FileShareLimits` added property `guardrail_io_scalar`
+  - Model `FileShareLimits` added property `guardrail_bandwidth_scalar`
+  - Added enum `AdvancedPlatformMetricsFilterType`
+  - Added model `AdvancedPlatformMetricsRule`
+  - Added model `AdvancedPlatformMetricsRuleConfig`
+  - Added model `AdvancedPlatformMetricsRuleProperties`
+  - Added enum `AdvancedPlatformMetricsRuleType`
+  - Added enum `MetricsEmitted`
+  - Added operation group `AdvancedPlatformMetricsOperations`
+
 ## 25.0.0 (2026-05-19)
 
 ### Features Added

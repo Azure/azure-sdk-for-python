@@ -34,6 +34,10 @@ cd sdk/search/azure-search-documents
 tsp-client update
 # or: azsdk_package_generate_code
 
+# Reapply temporary Python emitter workarounds, then verify they are present:
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py --check
+
 # If the API version changed, _metadata.json updates automatically;
 # reconcile the hand-maintained ApiVersion enum in Step 3.
 ```

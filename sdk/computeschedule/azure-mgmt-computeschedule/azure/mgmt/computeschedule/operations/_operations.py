@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -39,8 +39,9 @@ from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +73,7 @@ def build_scheduled_actions_virtual_machines_submit_deallocate_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +103,7 @@ def build_scheduled_actions_virtual_machines_submit_hibernate_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +133,7 @@ def build_scheduled_actions_virtual_machines_submit_start_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +163,7 @@ def build_scheduled_actions_virtual_machines_execute_deallocate_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +193,7 @@ def build_scheduled_actions_virtual_machines_execute_hibernate_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,11 +223,41 @@ def build_scheduled_actions_virtual_machines_execute_start_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeSchedule/locations/{locationparameter}/virtualMachinesExecuteStart"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "locationparameter": _SERIALIZER.url("locationparameter", locationparameter, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_scheduled_actions_virtual_machines_execute_create_flex_request(  # pylint: disable=name-too-long
+    locationparameter: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeSchedule/locations/{locationparameter}/virtualMachinesExecuteCreateFlex"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "locationparameter": _SERIALIZER.url("locationparameter", locationparameter, "str"),
@@ -252,7 +283,7 @@ def build_scheduled_actions_virtual_machines_execute_create_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,7 +313,7 @@ def build_scheduled_actions_virtual_machines_execute_delete_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -312,7 +343,7 @@ def build_scheduled_actions_virtual_machines_get_operation_status_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -342,7 +373,7 @@ def build_scheduled_actions_virtual_machines_cancel_operations_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -372,7 +403,7 @@ def build_scheduled_actions_virtual_machines_get_operation_errors_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,7 +432,7 @@ def build_scheduled_actions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,7 +461,7 @@ def build_scheduled_actions_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -461,7 +492,7 @@ def build_scheduled_actions_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -488,12 +519,9 @@ def build_scheduled_actions_update_request(
 def build_scheduled_actions_delete_request(
     resource_group_name: str, scheduled_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ComputeSchedule/scheduledActions/{scheduledActionName}"
     path_format_arguments = {
@@ -507,10 +535,7 @@ def build_scheduled_actions_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_scheduled_actions_list_by_resource_group_request(  # pylint: disable=name-too-long
@@ -519,7 +544,7 @@ def build_scheduled_actions_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -546,7 +571,7 @@ def build_scheduled_actions_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -572,7 +597,7 @@ def build_scheduled_actions_list_resources_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -601,7 +626,7 @@ def build_scheduled_actions_attach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -632,7 +657,7 @@ def build_scheduled_actions_detach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -663,7 +688,7 @@ def build_scheduled_actions_patch_resources_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -690,12 +715,9 @@ def build_scheduled_actions_patch_resources_request(  # pylint: disable=name-too
 def build_scheduled_actions_disable_request(
     resource_group_name: str, scheduled_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ComputeSchedule/scheduledActions/{scheduledActionName}/disable"
     path_format_arguments = {
@@ -709,21 +731,15 @@ def build_scheduled_actions_disable_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_scheduled_actions_enable_request(
     resource_group_name: str, scheduled_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ComputeSchedule/scheduledActions/{scheduledActionName}/enable"
     path_format_arguments = {
@@ -737,10 +753,7 @@ def build_scheduled_actions_enable_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_scheduled_actions_cancel_next_occurrence_request(  # pylint: disable=name-too-long
@@ -750,7 +763,7 @@ def build_scheduled_actions_cancel_next_occurrence_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -780,7 +793,7 @@ def build_scheduled_actions_trigger_manual_occurrence_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -808,7 +821,7 @@ def build_scheduled_action_extension_list_by_vms_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -834,7 +847,7 @@ def build_occurrences_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -863,7 +876,7 @@ def build_occurrences_list_by_scheduled_action_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -891,7 +904,7 @@ def build_occurrences_list_resources_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -921,7 +934,7 @@ def build_occurrences_cancel_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -953,7 +966,7 @@ def build_occurrences_delay_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -984,7 +997,7 @@ def build_occurrence_extension_list_occurrence_by_vms_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1068,7 +1081,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1081,7 +1097,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1097,7 +1116,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1243,6 +1265,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1257,11 +1280,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeallocateResourceOperationResponse, response.json())
 
@@ -1391,6 +1417,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1405,11 +1432,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HibernateResourceOperationResponse, response.json())
 
@@ -1535,6 +1565,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1549,11 +1580,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StartResourceOperationResponse, response.json())
 
@@ -1683,6 +1717,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1697,11 +1732,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeallocateResourceOperationResponse, response.json())
 
@@ -1831,6 +1869,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1845,11 +1884,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HibernateResourceOperationResponse, response.json())
 
@@ -1975,6 +2017,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1989,13 +2032,171 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StartResourceOperationResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def virtual_machines_execute_create_flex(
+        self,
+        locationparameter: str,
+        body: _models.ExecuteCreateFlexRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-15-preview"],
+    )
+    def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Is one of the following types: ExecuteCreateFlexRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexRequest or JSON or IO[bytes]
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CreateFlexResourceOperationResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_virtual_machines_execute_create_flex_request(
+            locationparameter=locationparameter,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CreateFlexResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2011,8 +2212,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2031,8 +2232,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_create(
         self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2051,8 +2252,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_create(
         self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2073,13 +2274,19 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
+        api_versions_list=[
+            "2025-05-01",
+            "2025-04-15-preview",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-15-preview",
+        ],
     )
     def virtual_machines_execute_create(
         self, locationparameter: str, request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2127,6 +2334,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2141,11 +2349,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CreateResourceOperationResponse, response.json())
 
@@ -2163,8 +2374,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2183,8 +2394,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2203,8 +2414,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2225,13 +2436,19 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
+        api_versions_list=[
+            "2025-05-01",
+            "2025-04-15-preview",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-15-preview",
+        ],
     )
     def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -2279,6 +2496,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2293,11 +2511,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteResourceOperationResponse, response.json())
 
@@ -2427,6 +2648,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2441,11 +2663,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetOperationStatusResponse, response.json())
 
@@ -2575,6 +2800,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2589,11 +2815,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CancelOperationsResponse, response.json())
 
@@ -2723,6 +2952,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2737,11 +2967,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetOperationErrorsResponse, response.json())
 
@@ -2762,7 +2995,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
         """Get a ScheduledAction.
@@ -2802,6 +3035,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2816,11 +3050,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScheduledAction, response.json())
 
@@ -2841,7 +3078,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -2886,6 +3123,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2899,7 +3137,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2909,7 +3150,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3013,7 +3254,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def begin_create_or_update(
         self,
@@ -3183,7 +3424,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def update(
         self,
@@ -3242,6 +3483,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3256,11 +3498,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScheduledAction, response.json())
 
@@ -3272,15 +3517,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def _delete_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3309,6 +3548,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3322,7 +3562,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3330,7 +3573,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3341,15 +3584,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def begin_delete(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a ScheduledAction.
@@ -3411,7 +3648,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by resource group.
@@ -3464,7 +3701,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3477,7 +3717,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3493,7 +3736,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3504,7 +3750,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by subscription ID.
@@ -3553,7 +3799,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3566,7 +3815,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3582,7 +3834,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3601,7 +3856,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -3660,7 +3915,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3673,7 +3931,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledActionResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3689,7 +3950,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3705,7 +3969,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3718,9 +3982,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3733,7 +3997,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3746,9 +4010,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3761,7 +4025,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3774,9 +4038,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3793,7 +4057,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def attach_resources(
         self,
@@ -3801,7 +4065,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourceAttachRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3812,9 +4076,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceAttachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest or JSON or IO[bytes]
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3829,7 +4093,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3853,6 +4117,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3867,13 +4132,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3889,7 +4157,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3902,9 +4170,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3917,7 +4185,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3930,9 +4198,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3945,7 +4213,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3958,9 +4226,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3977,7 +4245,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def detach_resources(
         self,
@@ -3985,7 +4253,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourceDetachRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3996,9 +4264,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceDetachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest or JSON or IO[bytes]
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4013,7 +4281,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4037,6 +4305,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4051,13 +4320,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4073,7 +4345,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4086,9 +4358,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4101,7 +4373,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4114,9 +4386,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4129,7 +4401,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4142,9 +4414,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4161,7 +4433,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def patch_resources(
         self,
@@ -4169,7 +4441,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourcePatchRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4180,9 +4452,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourcePatchRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest or JSON or IO[bytes]
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4197,7 +4469,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4221,6 +4493,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4235,13 +4508,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4252,15 +4528,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def disable(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -4311,7 +4581,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4321,15 +4594,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def enable(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -4380,7 +4647,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -4395,7 +4665,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4408,9 +4678,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4423,7 +4693,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4436,9 +4706,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4451,7 +4721,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4464,9 +4734,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4483,7 +4753,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def cancel_next_occurrence(
         self,
@@ -4491,7 +4761,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4502,9 +4772,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4519,7 +4789,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4543,6 +4813,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4557,13 +4828,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4582,7 +4856,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def trigger_manual_occurrence(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -4624,6 +4898,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4638,11 +4913,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Occurrence, response.json())
 
@@ -4673,7 +4951,7 @@ class ScheduledActionExtensionOperations:
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_vms(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.ScheduledActionResources"]:
         """List ScheduledActionResources resources by parent.
@@ -4726,7 +5004,10 @@ class ScheduledActionExtensionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4739,7 +5020,10 @@ class ScheduledActionExtensionOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledActionResources], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResources],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4755,7 +5039,10 @@ class ScheduledActionExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4793,7 +5080,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def get(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -4838,6 +5125,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4852,11 +5140,14 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Occurrence, response.json())
 
@@ -4877,7 +5168,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_scheduled_action(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -4935,7 +5226,10 @@ class OccurrencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4948,7 +5242,10 @@ class OccurrencesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Occurrence], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Occurrence],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4964,7 +5261,10 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4984,7 +5284,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -5045,7 +5345,10 @@ class OccurrencesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5058,7 +5361,10 @@ class OccurrencesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OccurrenceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5074,7 +5380,10 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5091,7 +5400,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5106,9 +5415,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5122,7 +5431,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5137,9 +5446,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5153,7 +5462,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5168,9 +5477,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5188,7 +5497,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def cancel(
         self,
@@ -5197,7 +5506,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecurringActionsResourceOperationResult:
+    ) -> _models.ResourceOperationResponse:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5210,9 +5519,9 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
-        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
-         is compatible with MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
+        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5227,7 +5536,7 @@ class OccurrencesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5252,6 +5561,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5266,13 +5576,16 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5292,7 +5605,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def _delay_initial(
         self,
@@ -5339,6 +5652,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5352,7 +5666,10 @@ class OccurrencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5360,7 +5677,7 @@ class OccurrencesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5377,7 +5694,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RecurringActionsResourceOperationResult]:
+    ) -> LROPoller[_models.ResourceOperationResponse]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5392,10 +5709,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns RecurringActionsResourceOperationResult. The
-         RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5409,7 +5726,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RecurringActionsResourceOperationResult]:
+    ) -> LROPoller[_models.ResourceOperationResponse]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5424,10 +5741,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns RecurringActionsResourceOperationResult. The
-         RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5441,7 +5758,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RecurringActionsResourceOperationResult]:
+    ) -> LROPoller[_models.ResourceOperationResponse]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5456,10 +5773,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns RecurringActionsResourceOperationResult. The
-         RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5477,7 +5794,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def begin_delay(
         self,
@@ -5486,7 +5803,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: Union[_models.DelayRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.RecurringActionsResourceOperationResult]:
+    ) -> LROPoller[_models.ResourceOperationResponse]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5499,17 +5816,17 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types: DelayRequest,
          JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.DelayRequest or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns RecurringActionsResourceOperationResult. The
-         RecurringActionsResourceOperationResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ResourceOperationResponse. The
+         ResourceOperationResponse is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -5529,14 +5846,10 @@ class OccurrencesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
+            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5552,13 +5865,13 @@ class OccurrencesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.RecurringActionsResourceOperationResult].from_continuation_token(
+            return LROPoller[_models.ResourceOperationResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.RecurringActionsResourceOperationResult](
+        return LROPoller[_models.ResourceOperationResponse](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -5584,7 +5897,7 @@ class OccurrenceExtensionOperations:
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_occurrence_by_vms(
         self, resource_uri: str, **kwargs: Any
@@ -5639,7 +5952,10 @@ class OccurrenceExtensionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5652,7 +5968,10 @@ class OccurrenceExtensionOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OccurrenceExtensionResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceExtensionResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5668,7 +5987,10 @@ class OccurrenceExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

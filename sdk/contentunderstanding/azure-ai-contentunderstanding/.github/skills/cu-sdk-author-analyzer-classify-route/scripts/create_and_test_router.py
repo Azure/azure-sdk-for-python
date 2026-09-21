@@ -65,12 +65,7 @@ except ImportError:  # pragma: no cover
 # Reuse helpers from the sibling script via direct file load.
 _HERE = Path(__file__).resolve().parent
 _SHARED_DIR = _HERE.parent.parent / "_shared"
-_SIBLING_CREATE_AND_TEST = (
-    _HERE.parent.parent
-    / "cu-sdk-author-analyzer"
-    / "scripts"
-    / "create_and_test.py"
-)
+_SIBLING_CREATE_AND_TEST = _HERE.parent.parent / "cu-sdk-author-analyzer" / "scripts" / "create_and_test.py"
 
 
 def _load_module(name: str, path: Path):
@@ -82,12 +77,8 @@ def _load_module(name: str, path: Path):
     return module
 
 
-_validator = _load_module(
-    "_skill_schema_validator", _SHARED_DIR / "schema_validator.py"
-)
-_create_and_test = _load_module(
-    "_skill_create_and_test", _SIBLING_CREATE_AND_TEST
-)
+_validator = _load_module("_skill_schema_validator", _SHARED_DIR / "schema_validator.py")
+_create_and_test = _load_module("_skill_create_and_test", _SIBLING_CREATE_AND_TEST)
 
 _iter_inputs = _create_and_test._iter_inputs
 _result_to_dict = _create_and_test._result_to_dict
@@ -109,9 +100,7 @@ def _parse_inner_arg(values: List[str]) -> Dict[str, Path]:
     result: Dict[str, Path] = {}
     for entry in values:
         if "=" not in entry:
-            raise SystemExit(
-                f"--inner-schema must be alias=path, got: {entry!r}"
-            )
+            raise SystemExit(f"--inner-schema must be alias=path, got: {entry!r}")
         alias, _, raw_path = entry.partition("=")
         alias = alias.strip()
         path = Path(raw_path.strip())
@@ -123,9 +112,7 @@ def _parse_inner_arg(values: List[str]) -> Dict[str, Path]:
     return result
 
 
-def _discover_inner_from_dir(
-    outer_schema: Dict[str, Any], schema_dir: Path
-) -> Dict[str, Path]:
+def _discover_inner_from_dir(outer_schema: Dict[str, Any], schema_dir: Path) -> Dict[str, Path]:
     """Auto-build {alias: path} from a directory.
 
     For every category in the outer schema whose ``analyzerId`` is a non-
@@ -152,10 +139,7 @@ def _discover_inner_from_dir(
     resolved: Dict[str, Path] = {}
     missing: List[str] = []
     for alias in aliases:
-        matches = [
-            p for p in json_files
-            if p.stem == alias or p.stem.startswith(f"{alias}_")
-        ]
+        matches = [p for p in json_files if p.stem == alias or p.stem.startswith(f"{alias}_")]
         if not matches:
             missing.append(alias)
             continue
@@ -254,17 +238,10 @@ def _wire_inner_ids(
         entry["analyzerId"] = real
 
     # Catch unused inner schemas (cheap typo check).
-    used = {
-        e.get("analyzerId")
-        for e in categories.values()
-        if isinstance(e, dict)
-    }
+    used = {e.get("analyzerId") for e in categories.values() if isinstance(e, dict)}
     for alias in alias_to_real_id:
         if alias_to_real_id[alias] not in used:
-            errors.append(
-                f"--inner-schema {alias!r} was supplied but no category in "
-                f"the outer schema routes to it"
-            )
+            errors.append(f"--inner-schema {alias!r} was supplied but no category in " f"the outer schema routes to it")
 
     return patched, errors
 
@@ -322,12 +299,7 @@ def summarize_routed(
             fill_rate = (len(filled) / denom) if denom else 0.0
             # Only consider confidence from rows where the value was actually
             # extracted; reporting confidence for empty fields is misleading.
-            confidences = [
-                r[2]
-                for r in rows
-                if r[1] not in (None, "", [], {})
-                and isinstance(r[2], (int, float))
-            ]
+            confidences = [r[2] for r in rows if r[1] not in (None, "", [], {}) and isinstance(r[2], (int, float))]
             avg_conf = (sum(confidences) / len(confidences)) if confidences else None
             conf_str = f"{avg_conf:.3f}" if avg_conf is not None else "  n/a"
             lines.append(f"  {fname:<30} {fill_rate * 100:>5.1f}%      {conf_str}")
@@ -404,9 +376,7 @@ def run(
             # Outer hash depends on patched analyzerIds, which depend on
             # inner hashes — fold them in so any inner schema edit also
             # gives the outer a new ID.
-            inner_hash_blob = "".join(
-                f"{a}:{_schema_hash(s)};" for a, s in sorted(inner_schemas.items())
-            )
+            inner_hash_blob = "".join(f"{a}:{_schema_hash(s)};" for a, s in sorted(inner_schemas.items()))
             outer_id_input = {"outer": outer_schema, "inner": inner_hash_blob}
             analyzer_id = f"{outer_schema_path.stem}_{_schema_hash(outer_id_input)}"
         else:
@@ -419,9 +389,7 @@ def run(
     fail = 0
     results: List[Tuple[str, Dict[str, Any]]] = []
     try:
-        alias_to_id, _inner_reused = create_inner_analyzers(
-            client, inner_schemas, id_prefix=analyzer_id, reuse=reuse
-        )
+        alias_to_id, _inner_reused = create_inner_analyzers(client, inner_schemas, id_prefix=analyzer_id, reuse=reuse)
 
         patched_outer, wire_errors = _wire_inner_ids(outer_schema, alias_to_id)
         if wire_errors:
@@ -442,18 +410,14 @@ def run(
             try:
                 print(f"[ANALYZE] {file_path} → {out_path}")
                 with file_path.open("rb") as fh:
-                    p = client.begin_analyze_binary(
-                        analyzer_id=analyzer_id, binary_input=fh.read()
-                    )
+                    p = client.begin_analyze_binary(analyzer_id=analyzer_id, binary_input=fh.read())
                 result = p.result()
             except Exception as exc:  # noqa: BLE001
                 print(f"[FAIL]    {file_path}: {exc}", file=sys.stderr)
                 fail += 1
                 continue
             doc = _result_to_dict(result)
-            out_path.write_text(
-                json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8"
-            )
+            out_path.write_text(json.dumps(doc, indent=2, ensure_ascii=False), encoding="utf-8")
             # Best-effort LLM-ready markdown next to the JSON. For
             # classify-and-route results, to_llm_input expands each segment
             # into its own block with the category in the YAML front matter.
@@ -478,10 +442,7 @@ def run(
                     )
         else:
             kept = [analyzer_id, *alias_to_id.values()]
-            print(
-                f"[KEEP]    analyzers retained ({len(kept)}): {kept} "
-                "(use --ephemeral to delete)"
-            )
+            print(f"[KEEP]    analyzers retained ({len(kept)}): {kept} " "(use --ephemeral to delete)")
 
     print(summarize_routed(results))
     return 0 if fail == 0 else 1
@@ -495,13 +456,10 @@ def run(
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Validate, create, and batch-test a classify-and-route pipeline "
-            "(outer classifier + N inner extractors)."
+            "Validate, create, and batch-test a classify-and-route pipeline " "(outer classifier + N inner extractors)."
         )
     )
-    parser.add_argument(
-        "--outer-schema", required=True, type=Path, help="Outer (classifier) schema JSON."
-    )
+    parser.add_argument("--outer-schema", required=True, type=Path, help="Outer (classifier) schema JSON.")
     parser.add_argument(
         "--inner-schema",
         action="append",
@@ -525,9 +483,7 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
             "version wins). Mutually exclusive with --inner-schema."
         ),
     )
-    parser.add_argument(
-        "--input", required=True, type=Path, help="Input file or folder."
-    )
+    parser.add_argument("--input", required=True, type=Path, help="Input file or folder.")
     parser.add_argument(
         "--output",
         required=True,
@@ -582,16 +538,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 2
 
     if args.schema_dir:
-        outer_schema_preview = json.loads(
-            args.outer_schema.read_text(encoding="utf-8")
-        )
-        inner_paths = _discover_inner_from_dir(
-            outer_schema_preview, args.schema_dir
-        )
-        print(
-            "[SCHEMA-DIR] resolved: "
-            + ", ".join(f"{a}={p.name}" for a, p in inner_paths.items())
-        )
+        outer_schema_preview = json.loads(args.outer_schema.read_text(encoding="utf-8"))
+        inner_paths = _discover_inner_from_dir(outer_schema_preview, args.schema_dir)
+        print("[SCHEMA-DIR] resolved: " + ", ".join(f"{a}={p.name}" for a, p in inner_paths.items()))
     else:
         inner_paths = _parse_inner_arg(args.inner_schema)
 

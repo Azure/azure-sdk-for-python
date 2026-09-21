@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-02/diskEncryptionSetExamples/DiskEncryptionSet_Update_WithRotationToLatestKeyVersionEnabled.json
+# x-ms-original-file: 2026-03-02/diskEncryptionSetExamples/DiskEncryptionSet_Update_WithRotationToLatestKeyVersionEnabled.json
 if __name__ == "__main__":
     main()

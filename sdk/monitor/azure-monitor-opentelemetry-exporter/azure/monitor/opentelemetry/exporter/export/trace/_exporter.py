@@ -8,6 +8,11 @@ from typing import no_type_check, Any, Dict, List, Sequence, Optional
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.attributes.client_attributes import CLIENT_ADDRESS
+from opentelemetry.semconv.attributes.db_attributes import (
+    DB_OPERATION_NAME,
+    DB_QUERY_TEXT,
+    DB_SYSTEM_NAME,
+)
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
     HTTP_RESPONSE_STATUS_CODE,
@@ -33,6 +38,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_AI_SDK_NAME,
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
@@ -115,6 +121,7 @@ _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
 
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
 ]
 
 _GEN_AI_ATTRIBUTE_PREFIX = "GenAI | {}"
@@ -257,6 +264,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
+    measurements = _utils._filter_custom_measurements(span.attributes)
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
@@ -267,7 +275,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             response_code="0",
             success=span.status.is_ok,
             properties={},
-            measurements={},
+            measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
@@ -362,6 +370,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             duration=_utils.ns_to_duration(time),
             success=span.status.is_ok,  # Success depends only on span status
             properties={},
+            measurements=measurements,
         )
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
@@ -416,8 +425,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 else:
                     status_code = 0
                 data.result_code = str(status_code)
-            elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
-                db_system = span.attributes[SpanAttributes.DB_SYSTEM]
+            elif DB_SYSTEM_NAME in span.attributes or SpanAttributes.DB_SYSTEM in span.attributes:  # Database
+                # Prefer the new stable `db.system.name`, fall back to the deprecated `db.system`.
+                db_system = span.attributes.get(DB_SYSTEM_NAME) or span.attributes.get(SpanAttributes.DB_SYSTEM)
                 if db_system == DbSystemValues.MYSQL.value:
                     data.type = "mysql"
                 elif db_system == DbSystemValues.POSTGRESQL.value:
@@ -430,9 +440,14 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.type = "SQL"
                 else:
                     data.type = db_system
-                # data is the full statement or operation
-                if SpanAttributes.DB_STATEMENT in span.attributes:
+                # Use query text when available, otherwise fall back to the operation name.
+                # Support both stable and deprecated semantic conventions.
+                if DB_QUERY_TEXT in span.attributes:
+                    data.data = span.attributes[DB_QUERY_TEXT]
+                elif SpanAttributes.DB_STATEMENT in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_STATEMENT]
+                elif DB_OPERATION_NAME in span.attributes:
+                    data.data = span.attributes[DB_OPERATION_NAME]
                 elif SpanAttributes.DB_OPERATION in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_OPERATION]
                 # db specific logic for target
@@ -548,6 +563,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
         properties = _utils._filter_custom_properties(
             event.attributes, lambda key, val: not _is_standard_attribute(key)
         )
+        measurements = _utils._filter_custom_measurements(event.attributes)
         if event.name == "exception":
             envelope.name = _EXCEPTION_ENVELOPE_NAME
             exc_type = exc_message = stack_trace = None
@@ -569,6 +585,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             data = TelemetryExceptionData(
                 version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 properties=properties,
+                measurements=measurements,
                 exceptions=[exc_details],
             )
             envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
@@ -578,6 +595,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
                 message=str(event.name)[:32768],
                 properties=properties,
+                measurements=measurements,
             )
             envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 

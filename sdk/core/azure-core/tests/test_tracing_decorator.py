@@ -8,16 +8,16 @@ from unittest import mock
 import time
 
 import pytest
+from opentelemetry.trace import StatusCode as OtelStatusCode
+from tracing_common import FakeSpan
+from utils import HTTP_REQUESTS
+
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
 from azure.core.tracing import common, SpanKind
 from azure.core.tracing.decorator import distributed_trace
-from opentelemetry.trace import StatusCode as OtelStatusCode
-
-from tracing_common import FakeSpan
-from utils import HTTP_REQUESTS
 
 
 class MockClient:

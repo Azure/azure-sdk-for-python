@@ -4,7 +4,7 @@ from collections import OrderedDict
 import pytest
 
 from azure.ai.ml import Input, MpiDistribution
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import AmlToken, JobBase
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import CommandJob, Environment, Job
@@ -42,7 +42,7 @@ class TestCommandJobEntity:
     def test_from_rest_legacy1_command(self, mock_workspace_scope: OperationScope, file: str):
         with open(file, "r") as f:
             resource = json.load(f)
-        rest_job = JobBase.deserialize(resource)
+        rest_job = JobBase._deserialize(resource, [])
         print(type(rest_job.properties))
         job = Job._from_rest_object(rest_job)
         assert job.command == "echo ${{inputs.filePath}} && ls ${{inputs.dirPath}}"
@@ -50,7 +50,7 @@ class TestCommandJobEntity:
     def test_missing_input_raises(self):
         with open("./tests/test_configs/command_job/rest_command_job_env_var_command.json", "r") as f:
             resource = json.load(f)
-        rest_job = JobBase.deserialize(resource)
+        rest_job = JobBase._deserialize(resource, [])
         job = Job._from_rest_object(rest_job)
         job.command = "echo ${{inputs.missing_input}}"
         with pytest.raises(ValidationException):

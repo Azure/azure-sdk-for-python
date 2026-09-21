@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-03/galleryExamples/Gallery_Get_WithManagedIdentity.json
+# x-ms-original-file: 2025-12-03/galleryExamples/Gallery_Get_WithManagedIdentity.json
 if __name__ == "__main__":
     main()

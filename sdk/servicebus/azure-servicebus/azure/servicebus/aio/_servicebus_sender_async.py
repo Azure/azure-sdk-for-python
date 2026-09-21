@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio  # pylint:disable=do-not-import-asyncio
+import time
 import datetime
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
@@ -26,7 +27,12 @@ from .._common.constants import (
     MAX_BATCH_SIZE_STANDARD,
 )
 from .._common import mgmt_handlers
-from .._common.utils import transform_outbound_messages
+from .._common.utils import (
+    transform_outbound_messages,
+    get_link_ready_deadline,
+    get_remaining_timeout,
+    check_link_ready_deadline,
+)
 from .._common.tracing import (
     send_trace_context_manager,
     trace_message,
@@ -36,7 +42,13 @@ from .._common.tracing import (
     SPAN_NAME_SCHEDULE,
     TraceAttributes,
 )
-from ._async_utils import create_authentication
+from ._async_utils import (
+    await_with_deadline,
+    close_handler_for_cleanup,
+    close_handler_with_deadline,
+    create_authentication,
+    open_handler_with_deadline,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -200,17 +212,35 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
         )
 
-    async def _open(self):
+    async def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler:
-            await self._handler.close_async()
-        auth = None if self._connection else (await create_authentication(self))
+            await close_handler_with_deadline(self._handler, deadline)
+
+        check_link_ready_deadline(deadline)
+        auth = (
+            None
+            if self._connection
+            else await await_with_deadline(
+                create_authentication(self), deadline, "Timed out acquiring the AMQP credential."
+            )
+        )
         self._create_handler(auth)
         try:
-            await self._handler.open_async(connection=self._connection)
-            while not await self._handler.client_ready_async():
+            # The token fetch can use the budget, so re-check before opening; the open itself
+            # is bounded by open_handler_with_deadline.
+            check_link_ready_deadline(deadline)
+            await open_handler_with_deadline(self._handler, self._connection, deadline)
+            while True:
+                check_link_ready_deadline(deadline)
+                if await await_with_deadline(
+                    self._handler.client_ready_async(), deadline, "Timed out waiting for the AMQP link to open."
+                ):
+                    break
                 await asyncio.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
@@ -227,7 +257,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
-            await self._close_handler()
+            await close_handler_for_cleanup(self._close_handler(), deadline)
             raise
 
     async def _send(
@@ -236,8 +266,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
+        # The transport opens the link before sending; bound it and give the send the rest.
+        attempt_started = time.monotonic()
+        await self._open(timeout)
         await self._amqp_transport.send_messages_async(
-            self, message, _LOGGER, timeout=timeout, last_exception=last_exception
+            self,
+            message,
+            _LOGGER,
+            timeout=get_remaining_timeout(timeout, attempt_started),
+            last_exception=last_exception,
         )
 
     async def schedule_messages(
@@ -444,6 +481,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 message=obj_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
+                apply_try_timeout=True,
                 require_last_exception=True,
             )
 

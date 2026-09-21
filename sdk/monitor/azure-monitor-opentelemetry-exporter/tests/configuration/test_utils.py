@@ -7,6 +7,7 @@ import requests
 
 from azure.monitor.opentelemetry.exporter._configuration._utils import (
     _ConfigurationProfile,
+    _FeatureConfig,
     OneSettingsResponse,
     make_onesettings_request,
     _parse_onesettings_response,
@@ -408,6 +409,74 @@ class TestEvaluateFeature(unittest.TestCase):
         result = evaluate_feature("test_feature", settings)
         self.assertTrue(result)  # Second override matches
 
+    def test_arbitrary_default_value(self):
+        """Test that a default value is converted to the requested type."""
+        settings = {"EXPORT_INTERVAL_SECONDS": {"default": "60"}}
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int), 60)
+
+    def test_matching_override_returns_value(self):
+        """Test that a matching override returns its explicit value."""
+        settings = {
+            "EXPORT_INTERVAL_SECONDS": {
+                "default": "60",
+                "override": [
+                    {
+                        "rp": ["aks", "fn"],
+                        "region": ["eastus", "westus"],
+                        "value": "300",
+                    }
+                ],
+            }
+        }
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int), 300)
+
+    def test_non_matching_override_returns_arbitrary_default(self):
+        """Test that an arbitrary default is returned when no override matches."""
+        settings = {
+            "EXPORT_INTERVAL_SECONDS": {
+                "default": "60",
+                "override": [{"rp": ["aks"], "region": ["eastus"], "value": "300"}],
+            }
+        }
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int), 60)
+
+    def test_arbitrary_value_is_preserved_without_type(self):
+        """Test that arbitrary string values are preserved when no type is requested."""
+        settings = {"EXPORT_INTERVAL_SECONDS": {"default": "60"}}
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings), "60")
+
+    def test_invalid_typed_value_returns_none(self):
+        """Test that a value that cannot be converted returns None."""
+        settings = {"EXPORT_INTERVAL_SECONDS": {"default": "invalid"}}
+
+        self.assertIsNone(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int))
+
+    def test_invalid_typed_override_falls_back_to_default(self):
+        """Test that a matching override that cannot be converted uses the default."""
+        settings = {
+            "EXPORT_INTERVAL_SECONDS": {
+                "default": "60",
+                "override": [{"os": ["windows"], "value": "invalid"}],
+            }
+        }
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int), 60)
+
+    def test_override_enabled_disabled_value_is_normalized(self):
+        """Test that explicit legacy override values are converted to booleans."""
+        settings = {
+            "test_feature": {
+                "default": "enabled",
+                "override": [{"os": ["windows"], "value": "disabled"}],
+            }
+        }
+
+        self.assertFalse(evaluate_feature("test_feature", settings))
+
     def test_invalid_inputs(self):
         """Test evaluate_feature with invalid inputs."""
         # Empty feature key
@@ -421,6 +490,9 @@ class TestEvaluateFeature(unittest.TestCase):
 
         # Invalid feature config
         self.assertIsNone(evaluate_feature("test", {"test": "invalid"}))
+
+        # Missing default
+        self.assertIsNone(evaluate_feature("test", {"test": {"override": []}}))
 
 
 class TestMatchesOverrideRule(unittest.TestCase):
@@ -472,6 +544,52 @@ class TestMatchesOverrideRule(unittest.TestCase):
         self.assertFalse(_matches_override_rule({}))
         self.assertFalse(_matches_override_rule(None))
 
+    def test_value_is_not_a_condition(self):
+        """Test that parsing separates value metadata from matching conditions."""
+        config = _FeatureConfig.parse(
+            json.dumps(
+                {
+                    "default": "60",
+                    "override": [{"os": "windows", "value": "300"}],
+                }
+            )
+        )
+
+        self.assertIsNotNone(config)
+        self.assertEqual(config.overrides[0].conditions, {"os": "windows"})
+        self.assertEqual(config.overrides[0].value, "300")
+
+    def test_json_feature_value_is_evaluated(self):
+        """Test that a feature configuration is decoded from its cached JSON string."""
+        settings = {
+            "EXPORT_INTERVAL_SECONDS": json.dumps(
+                {
+                    "default": "60",
+                    "override": [{"os": "windows", "value": "300"}],
+                }
+            )
+        }
+
+        self.assertEqual(evaluate_feature("EXPORT_INTERVAL_SECONDS", settings, int), 300)
+
+    def test_invalid_json_feature_value_returns_none(self):
+        """Test that malformed cached feature JSON is ignored."""
+        self.assertIsNone(evaluate_feature("test_feature", {"test_feature": "not-json"}))
+
+    def test_value_only_rule_is_ignored(self):
+        """Test that parsing ignores an override without profile conditions."""
+        config = _FeatureConfig.parse(
+            json.dumps(
+                {
+                    "default": "60",
+                    "override": [{"value": "300"}],
+                }
+            )
+        )
+
+        self.assertIsNotNone(config)
+        self.assertEqual(config.overrides, [])
+
 
 class TestMatchesCondition(unittest.TestCase):
     """Test cases for _matches_condition function."""
@@ -520,6 +638,12 @@ class TestMatchesCondition(unittest.TestCase):
         """Test region condition."""
         self.assertTrue(_matches_condition("region", "westus"))
         self.assertFalse(_matches_condition("region", "eastus"))
+
+    def test_list_condition(self):
+        """Test that a profile value can match any entry in a condition list."""
+        self.assertTrue(_matches_condition("rp", ["aks", "fn"]))
+        self.assertFalse(_matches_condition("region", ["eastus", "centralus"]))
+        self.assertFalse(_matches_condition("region", []))
 
     def test_attach_condition(self):
         """Test attach condition."""

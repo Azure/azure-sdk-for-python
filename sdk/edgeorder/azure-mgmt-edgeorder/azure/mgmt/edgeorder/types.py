@@ -7,39 +7,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Literal, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
-
-from .models._enums import BillingType
 
 if TYPE_CHECKING:
     from .models import (
         ActionStatusEnum,
-        ActionType,
         AddressClassification,
         AddressType,
         AddressValidationStatus,
         AutoProvisioningStatus,
-        AvailabilityStage,
-        ChargingType,
         ChildConfigurationType,
         CreatedByType,
-        DescriptionType,
         DevicePresenceVerificationStatus,
-        DisabledReason,
         DoubleEncryptionStatus,
-        FulfillmentType,
         IdentificationType,
-        ImageType,
-        LengthHeightUnit,
-        LinkType,
-        MeteringType,
         NotificationStageName,
         OrderItemCancellationEnum,
         OrderItemReturnEnum,
         OrderItemType,
         OrderMode,
-        Origin,
         ProvisioningState,
         ProvisioningSupport,
         StageName,
@@ -47,7 +34,6 @@ if TYPE_CHECKING:
         SupportedFilterTypes,
         TermCommitmentType,
         TransportShipmentTypes,
-        WeightMeasurementUnit,
     )
 
 
@@ -229,96 +215,6 @@ class AddressUpdateProperties(TypedDict, total=False):
     """Contact details for the address."""
 
 
-class AvailabilityInformation(TypedDict, total=False):
-    """Availability information of a product system.
-
-    :ivar availability_stage: Current availability stage of the product. Known values are:
-     "Available", "Preview", "Signup", "Discoverable", "ComingSoon", "Unavailable", and
-     "Deprecated".
-    :vartype availability_stage: Union[str, "AvailabilityStage"]
-    :ivar disabled_reason: Reason why the product is disabled. Known values are: "None", "Country",
-     "Region", "Feature", "OfferType", "NoSubscriptionInfo", "NotAvailable", and "OutOfStock".
-    :vartype disabled_reason: Union[str, "DisabledReason"]
-    :ivar disabled_reason_message: Message for why the product is disabled.
-    :vartype disabled_reason_message: str
-    """
-
-    availabilityStage: Union[str, "AvailabilityStage"]
-    """Current availability stage of the product. Known values are: \"Available\", \"Preview\",
-     \"Signup\", \"Discoverable\", \"ComingSoon\", \"Unavailable\", and \"Deprecated\"."""
-    disabledReason: Union[str, "DisabledReason"]
-    """Reason why the product is disabled. Known values are: \"None\", \"Country\", \"Region\",
-     \"Feature\", \"OfferType\", \"NoSubscriptionInfo\", \"NotAvailable\", and \"OutOfStock\"."""
-    disabledReasonMessage: str
-    """Message for why the product is disabled."""
-
-
-class BasicInformation(TypedDict, total=False):
-    """Basic information for any product system.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    """
-
-    displayName: str
-    """Display Name for the product system."""
-    description: "Description"
-    """Description related to the product system."""
-    imageInformation: list["ImageInformation"]
-    """Image information for the product system."""
-    costInformation: "CostInformation"
-    """Cost information for the product system."""
-    availabilityInformation: "AvailabilityInformation"
-    """Availability information of the product system."""
-    hierarchyInformation: "HierarchyInformation"
-    """Hierarchy information of a product."""
-    fulfilledBy: Union[str, "FulfillmentType"]
-    """The entity responsible for fulfillment of the item at the given hierarchy level. Known values
-     are: \"Microsoft\" and \"External\"."""
-
-
-class BillingMeterDetails(TypedDict, total=False):
-    """Holds billing meter details for each type of billing.
-
-    :ivar name: Represents Billing type name.
-    :vartype name: str
-    :ivar meter_details: Represents MeterDetails.
-    :vartype meter_details: "MeterDetails"
-    :ivar metering_type: Represents Metering type (eg one-time or recurrent). Known values are:
-     "OneTime", "Recurring", and "Adhoc".
-    :vartype metering_type: Union[str, "MeteringType"]
-    :ivar frequency: Frequency of recurrence.
-    :vartype frequency: str
-    :ivar term_type_details: Represent Term Type details.
-    :vartype term_type_details: "TermTypeDetails"
-    """
-
-    name: str
-    """Represents Billing type name."""
-    meterDetails: "MeterDetails"
-    """Represents MeterDetails."""
-    meteringType: Union[str, "MeteringType"]
-    """Represents Metering type (eg one-time or recurrent). Known values are: \"OneTime\",
-     \"Recurring\", and \"Adhoc\"."""
-    frequency: str
-    """Frequency of recurrence."""
-    termTypeDetails: "TermTypeDetails"
-    """Represent Term Type details."""
-
-
 class CancellationReason(TypedDict, total=False):
     """Reason for cancellation.
 
@@ -328,40 +224,6 @@ class CancellationReason(TypedDict, total=False):
 
     reason: Required[str]
     """Reason for cancellation. Required."""
-
-
-class CategoryInformation(TypedDict, total=False):
-    """Category related properties of a child configuration.
-
-    :ivar category_name: Category name of the child configuration.
-    :vartype category_name: str
-    :ivar category_display_name: Category display name of the child configuration.
-    :vartype category_display_name: str
-    :ivar description: Description text for the category.
-    :vartype description: str
-    :ivar links: Links for the category.
-    :vartype links: list["Link"]
-    """
-
-    categoryName: str
-    """Category name of the child configuration."""
-    categoryDisplayName: str
-    """Category display name of the child configuration."""
-    description: str
-    """Description text for the category."""
-    links: list["Link"]
-    """Links for the category."""
-
-
-class ChildConfiguration(TypedDict, total=False):
-    """Child configuration object.
-
-    :ivar properties: Properties of child configuration.
-    :vartype properties: "ChildConfigurationProperties"
-    """
-
-    properties: "ChildConfigurationProperties"
-    """Properties of child configuration."""
 
 
 class ChildConfigurationFilter(TypedDict, total=False):
@@ -379,139 +241,6 @@ class ChildConfigurationFilter(TypedDict, total=False):
     """The list of child configuration hierarchy customer wants to filter for the given configuration."""
     childConfigurationTypes: list[Union[str, "ChildConfigurationType"]]
     """Filter to fetch all child configurations belonging to the given list of configuration types."""
-
-
-class ChildConfigurationProperties(TypedDict, total=False):
-    """Properties of child configuration.
-
-    :ivar child_configuration_type: Child configuration type. Known values are:
-     "DeviceConfiguration" and "AdditionalConfiguration".
-    :vartype child_configuration_type: Union[str, "ChildConfigurationType"]
-    :ivar is_part_of_base_configuration: Flag to indicate if the child configuration is part of the
-     base configuration, which means the customer need not pass this configuration in
-     OptInAdditionalConfigurations while placing an order, it will be shipped by default.
-    :vartype is_part_of_base_configuration: bool
-    :ivar minimum_quantity: Minimum quantity a customer can order while choosing this
-     configuration.
-    :vartype minimum_quantity: int
-    :ivar maximum_quantity: Maximum quantity a customer can order while choosing this
-     configuration.
-    :vartype maximum_quantity: int
-    :ivar specifications: Specifications of the configuration.
-    :vartype specifications: list["Specification"]
-    :ivar dimensions: Dimensions of the configuration.
-    :vartype dimensions: "Dimensions"
-    :ivar provisioning_support: Determining nature of provisioning that the configuration supports.
-     Known values are: "CloudBased" and "Manual".
-    :vartype provisioning_support: Union[str, "ProvisioningSupport"]
-    :ivar child_configuration_types: Different types of child configurations which exist for this
-     configuration, these can be used to populate the child configuration filter.
-    :vartype child_configuration_types: list[Union[str, "ChildConfigurationType"]]
-    :ivar grouped_child_configurations: Child configurations present for the configuration after
-     applying child configuration filter, grouped by the category name of the child configuration.
-    :vartype grouped_child_configurations: list["GroupedChildConfigurations"]
-    :ivar supported_term_commitment_durations: The Term Commitment Durations that are supported for
-     a configuration.
-    :vartype supported_term_commitment_durations: list[str]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    """
-
-    childConfigurationType: Union[str, "ChildConfigurationType"]
-    """Child configuration type. Known values are: \"DeviceConfiguration\" and
-     \"AdditionalConfiguration\"."""
-    isPartOfBaseConfiguration: bool
-    """Flag to indicate if the child configuration is part of the base configuration, which means the
-     customer need not pass this configuration in OptInAdditionalConfigurations while placing an
-     order, it will be shipped by default."""
-    minimumQuantity: int
-    """Minimum quantity a customer can order while choosing this configuration."""
-    maximumQuantity: int
-    """Maximum quantity a customer can order while choosing this configuration."""
-    specifications: list["Specification"]
-    """Specifications of the configuration."""
-    dimensions: "Dimensions"
-    """Dimensions of the configuration."""
-    provisioningSupport: Union[str, "ProvisioningSupport"]
-    """Determining nature of provisioning that the configuration supports. Known values are:
-     \"CloudBased\" and \"Manual\"."""
-    childConfigurationTypes: list[Union[str, "ChildConfigurationType"]]
-    """Different types of child configurations which exist for this configuration, these can be used
-     to populate the child configuration filter."""
-    groupedChildConfigurations: list["GroupedChildConfigurations"]
-    """Child configurations present for the configuration after applying child configuration filter,
-     grouped by the category name of the child configuration."""
-    supportedTermCommitmentDurations: list[str]
-    """The Term Commitment Durations that are supported for a configuration."""
-    filterableProperties: list["FilterableProperty"]
-    """List of filters supported for a product."""
-    displayName: str
-    """Display Name for the product system."""
-    description: "Description"
-    """Description related to the product system."""
-    imageInformation: list["ImageInformation"]
-    """Image information for the product system."""
-    costInformation: "CostInformation"
-    """Cost information for the product system."""
-    availabilityInformation: "AvailabilityInformation"
-    """Availability information of the product system."""
-    hierarchyInformation: "HierarchyInformation"
-    """Hierarchy information of a product."""
-    fulfilledBy: Union[str, "FulfillmentType"]
-    """The entity responsible for fulfillment of the item at the given hierarchy level. Known values
-     are: \"Microsoft\" and \"External\"."""
-
-
-class CommonProperties(BasicInformation):
-    """Represents common properties across product hierarchy.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    """
-
-    filterableProperties: list["FilterableProperty"]
-    """List of filters supported for a product."""
-
-
-class Configuration(TypedDict, total=False):
-    """Configuration object.
-
-    :ivar properties: Properties of configuration.
-    :vartype properties: "ConfigurationProperties"
-    """
-
-    properties: "ConfigurationProperties"
-    """Properties of configuration."""
 
 
 class ConfigurationDeviceDetails(TypedDict, total=False):
@@ -571,61 +300,6 @@ class ConfigurationFilter(TypedDict, total=False):
      specific types of child configurations."""
 
 
-class ConfigurationProperties(CommonProperties):
-    """Properties of configuration.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    :ivar specifications: Specifications of the configuration.
-    :vartype specifications: list["Specification"]
-    :ivar dimensions: Dimensions of the configuration.
-    :vartype dimensions: "Dimensions"
-    :ivar provisioning_support: Determining nature of provisioning that the configuration supports.
-     Known values are: "CloudBased" and "Manual".
-    :vartype provisioning_support: Union[str, "ProvisioningSupport"]
-    :ivar child_configuration_types: Different types of child configurations which exist for this
-     configuration, these can be used to populate the child configuration filter.
-    :vartype child_configuration_types: list[Union[str, "ChildConfigurationType"]]
-    :ivar grouped_child_configurations: Child configurations present for the configuration after
-     applying child configuration filter, grouped by the category name of the child configuration.
-    :vartype grouped_child_configurations: list["GroupedChildConfigurations"]
-    :ivar supported_term_commitment_durations: The Term Commitment Durations that are supported for
-     a configuration.
-    :vartype supported_term_commitment_durations: list[str]
-    """
-
-    specifications: list["Specification"]
-    """Specifications of the configuration."""
-    dimensions: "Dimensions"
-    """Dimensions of the configuration."""
-    provisioningSupport: Union[str, "ProvisioningSupport"]
-    """Determining nature of provisioning that the configuration supports. Known values are:
-     \"CloudBased\" and \"Manual\"."""
-    childConfigurationTypes: list[Union[str, "ChildConfigurationType"]]
-    """Different types of child configurations which exist for this configuration, these can be used
-     to populate the child configuration filter."""
-    groupedChildConfigurations: list["GroupedChildConfigurations"]
-    """Child configurations present for the configuration after applying child configuration filter,
-     grouped by the category name of the child configuration."""
-    supportedTermCommitmentDurations: list[str]
-    """The Term Commitment Durations that are supported for a configuration."""
-
-
 class ConfigurationsRequest(TypedDict, total=False):
     """Configuration request object.
 
@@ -671,21 +345,6 @@ class ContactDetails(TypedDict, total=False):
     """List of Email-ids to be notified about job progress."""
 
 
-class CostInformation(TypedDict, total=False):
-    """Cost information for the product system.
-
-    :ivar billing_meter_details: Details on the various billing aspects for the product system.
-    :vartype billing_meter_details: list["BillingMeterDetails"]
-    :ivar billing_info_url: Default url to display billing information.
-    :vartype billing_info_url: str
-    """
-
-    billingMeterDetails: list["BillingMeterDetails"]
-    """Details on the various billing aspects for the product system."""
-    billingInfoUrl: str
-    """Default url to display billing information."""
-
-
 class CustomerSubscriptionDetails(TypedDict, total=False):
     """Holds Customer subscription details. Clients can display available products to unregistered
     customers by explicitly passing subscription details.
@@ -719,37 +378,6 @@ class CustomerSubscriptionRegisteredFeatures(TypedDict, total=False):
     """Name of subscription registered feature."""
     state: str
     """State of subscription registered feature."""
-
-
-class Description(TypedDict, total=False):
-    """Description related properties of a product system.
-
-    :ivar description_type: Type of description. "Base"
-    :vartype description_type: Union[str, "DescriptionType"]
-    :ivar short_description: Short description of the product system.
-    :vartype short_description: str
-    :ivar long_description: Long description of the product system.
-    :vartype long_description: str
-    :ivar keywords: Keywords for the product system.
-    :vartype keywords: list[str]
-    :ivar attributes: Attributes for the product system.
-    :vartype attributes: list[str]
-    :ivar links: Links for the product system.
-    :vartype links: list["Link"]
-    """
-
-    descriptionType: Union[str, "DescriptionType"]
-    """Type of description. \"Base\""""
-    shortDescription: str
-    """Short description of the product system."""
-    longDescription: str
-    """Long description of the product system."""
-    keywords: list[str]
-    """Keywords for the product system."""
-    attributes: list[str]
-    """Attributes for the product system."""
-    links: list["Link"]
-    """Links for the product system."""
 
 
 class DeviceDetails(TypedDict, total=False):
@@ -798,42 +426,6 @@ class DevicePresenceVerificationDetails(TypedDict, total=False):
     """Proof of possession status. Known values are: \"NotInitiated\" and \"Completed\"."""
     message: str
     """Insights on current status."""
-
-
-class Dimensions(TypedDict, total=False):
-    """Dimensions of a configuration.
-
-    :ivar length: Length of the device.
-    :vartype length: float
-    :ivar height: Height of the device.
-    :vartype height: float
-    :ivar width: Width of the device.
-    :vartype width: float
-    :ivar length_height_unit: Unit for the dimensions of length, height and width. Known values
-     are: "IN" and "CM".
-    :vartype length_height_unit: Union[str, "LengthHeightUnit"]
-    :ivar weight: Weight of the device.
-    :vartype weight: float
-    :ivar depth: Depth of the device.
-    :vartype depth: float
-    :ivar weight_unit: Unit for the dimensions of weight. Known values are: "LBS" and "KGS".
-    :vartype weight_unit: Union[str, "WeightMeasurementUnit"]
-    """
-
-    length: float
-    """Length of the device."""
-    height: float
-    """Height of the device."""
-    width: float
-    """Width of the device."""
-    lengthHeightUnit: Union[str, "LengthHeightUnit"]
-    """Unit for the dimensions of length, height and width. Known values are: \"IN\" and \"CM\"."""
-    weight: float
-    """Weight of the device."""
-    depth: float
-    """Depth of the device."""
-    weightUnit: Union[str, "WeightMeasurementUnit"]
-    """Unit for the dimensions of weight. Known values are: \"LBS\" and \"KGS\"."""
 
 
 class DisplayInfo(TypedDict, total=False):
@@ -907,17 +499,6 @@ class ErrorDetail(TypedDict, total=False):
     """The error additional info."""
 
 
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class FilterableProperty(TypedDict, total=False):
     """Different types of filters supported and its values.
 
@@ -959,21 +540,6 @@ class ForwardShippingDetails(TypedDict, total=False):
     """TrackingUrl of the package."""
 
 
-class GroupedChildConfigurations(TypedDict, total=False):
-    """Grouped child configuration object.
-
-    :ivar category_information: Category information.
-    :vartype category_information: "CategoryInformation"
-    :ivar child_configurations: List of child configurations.
-    :vartype child_configurations: list["ChildConfiguration"]
-    """
-
-    categoryInformation: "CategoryInformation"
-    """Category information."""
-    childConfigurations: list["ChildConfiguration"]
-    """List of child configurations."""
-
-
 class HierarchyInformation(TypedDict, total=False):
     """Holds details about product hierarchy information.
 
@@ -1002,39 +568,6 @@ class HierarchyInformation(TypedDict, total=False):
     """Represents Model Display Name."""
 
 
-class ImageInformation(TypedDict, total=False):
-    """Image for the product.
-
-    :ivar image_type: Type of the image. Known values are: "MainImage", "BulletImage", and
-     "GenericImage".
-    :vartype image_type: Union[str, "ImageType"]
-    :ivar image_url: Url of the image.
-    :vartype image_url: str
-    """
-
-    imageType: Union[str, "ImageType"]
-    """Type of the image. Known values are: \"MainImage\", \"BulletImage\", and \"GenericImage\"."""
-    imageUrl: str
-    """Url of the image."""
-
-
-class Link(TypedDict, total=False):
-    """Returns link related to the product.
-
-    :ivar link_type: Type of link. Known values are: "Generic", "TermsAndConditions",
-     "Specification", "Documentation", "KnowMore", "SignUp", and "Discoverable".
-    :vartype link_type: Union[str, "LinkType"]
-    :ivar link_url: Url of the link.
-    :vartype link_url: str
-    """
-
-    linkType: Union[str, "LinkType"]
-    """Type of link. Known values are: \"Generic\", \"TermsAndConditions\", \"Specification\",
-     \"Documentation\", \"KnowMore\", \"SignUp\", and \"Discoverable\"."""
-    linkUrl: str
-    """Url of the link."""
-
-
 class ManagementResourcePreferences(TypedDict, total=False):
     """Management resource preference to link device.
 
@@ -1059,75 +592,6 @@ class NotificationPreference(TypedDict, total=False):
     """Name of the stage. Required. Known values are: \"Shipped\" and \"Delivered\"."""
     sendNotification: Required[bool]
     """Notification is required or not. Required."""
-
-
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
 
 
 class OrderItemDetails(TypedDict, total=False):
@@ -1331,92 +795,6 @@ class OrderItemUpdateProperties(TypedDict, total=False):
     """Represents order item details."""
 
 
-class OrderProperties(TypedDict, total=False):
-    """Represents order details.
-
-    :ivar order_item_ids: List of order item ARM Ids which are part of an order.
-    :vartype order_item_ids: list[str]
-    :ivar current_stage: Order current status.
-    :vartype current_stage: "StageDetails"
-    :ivar order_stage_history: Order status history.
-    :vartype order_stage_history: list["StageDetails"]
-    :ivar order_mode: Order mode. Known values are: "Default" and "DoNotFulfill".
-    :vartype order_mode: Union[str, "OrderMode"]
-    """
-
-    orderItemIds: list[str]
-    """List of order item ARM Ids which are part of an order."""
-    currentStage: "StageDetails"
-    """Order current status."""
-    orderStageHistory: list["StageDetails"]
-    """Order status history."""
-    orderMode: Union[str, "OrderMode"]
-    """Order mode. Known values are: \"Default\" and \"DoNotFulfill\"."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    """
-
-
-class OrderResource(ProxyResource):
-    """Specifies the properties or parameters for an order. Order is a grouping of one or more order
-    items.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Order properties. Required.
-    :vartype properties: "OrderProperties"
-    """
-
-    properties: Required["OrderProperties"]
-    """Order properties. Required."""
-
-
-class Pav2MeterDetails(TypedDict, total=False):
-    """Billing type PAV2 meter details.
-
-    :ivar multiplier: Billing unit applicable for Pav2 billing.
-    :vartype multiplier: float
-    :ivar charging_type: Charging type. Known values are: "PerOrder" and "PerDevice".
-    :vartype charging_type: Union[str, "ChargingType"]
-    :ivar meter_guid: Validation status of requested data center and transport.
-    :vartype meter_guid: str
-    :ivar billing_type: Represents billing type. Required. PaV2 billing.
-    :vartype billing_type: Literal[BillingType.PAV2]
-    """
-
-    multiplier: float
-    """Billing unit applicable for Pav2 billing."""
-    chargingType: Union[str, "ChargingType"]
-    """Charging type. Known values are: \"PerOrder\" and \"PerDevice\"."""
-    meterGuid: str
-    """Validation status of requested data center and transport."""
-    billingType: Required[Literal[BillingType.PAV2]]
-    """Represents billing type. Required. PaV2 billing."""
-
-
 class Preferences(TypedDict, total=False):
     """Preferences related to the order.
 
@@ -1442,17 +820,6 @@ class Preferences(TypedDict, total=False):
     """Preferences related to the Management resource."""
     termCommitmentPreferences: "TermCommitmentPreferences"
     """Preferences related to the Term commitment."""
-
-
-class Product(TypedDict, total=False):
-    """Represents a product.
-
-    :ivar properties: Properties of product.
-    :vartype properties: "ProductProperties"
-    """
-
-    properties: "ProductProperties"
-    """Properties of product."""
 
 
 class ProductDetails(TypedDict, total=False):
@@ -1517,17 +884,6 @@ class ProductDetailsUpdateParameter(TypedDict, total=False):
     """Device Provisioning Details for Parent."""
 
 
-class ProductFamiliesMetadataDetails(TypedDict, total=False):
-    """Product families metadata details.
-
-    :ivar properties: Product family properties.
-    :vartype properties: "ProductFamilyProperties"
-    """
-
-    properties: "ProductFamilyProperties"
-    """Product family properties."""
-
-
 class ProductFamiliesRequest(TypedDict, total=False):
     """The filters for showing the product families.
 
@@ -1543,116 +899,6 @@ class ProductFamiliesRequest(TypedDict, total=False):
     customerSubscriptionDetails: "CustomerSubscriptionDetails"
     """Customer subscription properties. Clients can display available products to unregistered
      customers by explicitly passing subscription details."""
-
-
-class ProductFamily(TypedDict, total=False):
-    """Product Family.
-
-    :ivar properties: Properties of product family.
-    :vartype properties: "ProductFamilyProperties"
-    """
-
-    properties: "ProductFamilyProperties"
-    """Properties of product family."""
-
-
-class ProductFamilyProperties(CommonProperties):
-    """Properties of product family.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    :ivar product_lines: List of product lines supported in the product family.
-    :vartype product_lines: list["ProductLine"]
-    :ivar resource_provider_details: Contains details related to resource provider.
-    :vartype resource_provider_details: list["ResourceProviderDetails"]
-    """
-
-    productLines: list["ProductLine"]
-    """List of product lines supported in the product family."""
-    resourceProviderDetails: list["ResourceProviderDetails"]
-    """Contains details related to resource provider."""
-
-
-class ProductLine(TypedDict, total=False):
-    """Product line.
-
-    :ivar properties: Properties of product line.
-    :vartype properties: "ProductLineProperties"
-    """
-
-    properties: "ProductLineProperties"
-    """Properties of product line."""
-
-
-class ProductLineProperties(CommonProperties):
-    """Properties of product line.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    :ivar products: List of products in the product line.
-    :vartype products: list["Product"]
-    """
-
-    products: list["Product"]
-    """List of products in the product line."""
-
-
-class ProductProperties(CommonProperties):
-    """Properties of product.
-
-    :ivar display_name: Display Name for the product system.
-    :vartype display_name: str
-    :ivar description: Description related to the product system.
-    :vartype description: "Description"
-    :ivar image_information: Image information for the product system.
-    :vartype image_information: list["ImageInformation"]
-    :ivar cost_information: Cost information for the product system.
-    :vartype cost_information: "CostInformation"
-    :ivar availability_information: Availability information of the product system.
-    :vartype availability_information: "AvailabilityInformation"
-    :ivar hierarchy_information: Hierarchy information of a product.
-    :vartype hierarchy_information: "HierarchyInformation"
-    :ivar fulfilled_by: The entity responsible for fulfillment of the item at the given hierarchy
-     level. Known values are: "Microsoft" and "External".
-    :vartype fulfilled_by: Union[str, "FulfillmentType"]
-    :ivar filterable_properties: List of filters supported for a product.
-    :vartype filterable_properties: list["FilterableProperty"]
-    :ivar configurations: List of configurations for the product.
-    :vartype configurations: list["Configuration"]
-    """
-
-    configurations: list["Configuration"]
-    """List of configurations for the product."""
 
 
 class ProvisioningDetails(TypedDict, total=False):
@@ -1701,37 +947,6 @@ class ProvisioningDetails(TypedDict, total=False):
     """Auto Provisioning Details. Known values are: \"Enabled\" and \"Disabled\"."""
     devicePresenceVerification: "DevicePresenceVerificationDetails"
     """Proof of possession details."""
-
-
-class PurchaseMeterDetails(TypedDict, total=False):
-    """Billing type Purchase meter details.
-
-    :ivar multiplier: Billing unit applicable for Pav2 billing.
-    :vartype multiplier: float
-    :ivar charging_type: Charging type. Known values are: "PerOrder" and "PerDevice".
-    :vartype charging_type: Union[str, "ChargingType"]
-    :ivar product_id: Product Id.
-    :vartype product_id: str
-    :ivar sku_id: Sku Id.
-    :vartype sku_id: str
-    :ivar term_id: Term Id.
-    :vartype term_id: str
-    :ivar billing_type: Represents billing type. Required. Purchase billing.
-    :vartype billing_type: Literal[BillingType.PURCHASE]
-    """
-
-    multiplier: float
-    """Billing unit applicable for Pav2 billing."""
-    chargingType: Union[str, "ChargingType"]
-    """Charging type. Known values are: \"PerOrder\" and \"PerDevice\"."""
-    productId: str
-    """Product Id."""
-    skuId: str
-    """Sku Id."""
-    termId: str
-    """Term Id."""
-    billingType: Required[Literal[BillingType.PURCHASE]]
-    """Represents billing type. Required. Purchase billing."""
 
 
 class ResourceIdentity(TypedDict, total=False):
@@ -1877,21 +1092,6 @@ class SiteDetails(TypedDict, total=False):
     """Unique Id, Identifying A Site. Required."""
 
 
-class Specification(TypedDict, total=False):
-    """Specification of the configurations.
-
-    :ivar name: Name of the specification.
-    :vartype name: str
-    :ivar value: Value of the specification.
-    :vartype value: str
-    """
-
-    name: str
-    """Name of the specification."""
-    value: str
-    """Value of the specification."""
-
-
 class StageDetails(TypedDict, total=False):
     """Resource stage details.
 
@@ -1993,22 +1193,6 @@ class TermCommitmentPreferences(TypedDict, total=False):
     """Customer preferred Term Duration."""
 
 
-class TermTypeDetails(TypedDict, total=False):
-    """Holds details about term type and duration.
-
-    :ivar term_type: Term Commitment Type. Required. Known values are: "None", "Trial", and
-     "Timed".
-    :vartype term_type: Union[str, "TermCommitmentType"]
-    :ivar term_type_duration: Duration for the term type. Required.
-    :vartype term_type_duration: str
-    """
-
-    termType: Required[Union[str, "TermCommitmentType"]]
-    """Term Commitment Type. Required. Known values are: \"None\", \"Trial\", and \"Timed\"."""
-    termTypeDuration: Required[str]
-    """Duration for the term type. Required."""
-
-
 class TransportPreferences(TypedDict, total=False):
     """Preferences related to the shipment logistics of the sku.
 
@@ -2035,6 +1219,3 @@ class UserAssignedIdentity(TypedDict, total=False):
     """The principal ID of the assigned identity."""
     clientId: str
     """The client ID of the assigned identity."""
-
-
-MeterDetails = Union[Pav2MeterDetails, PurchaseMeterDetails]

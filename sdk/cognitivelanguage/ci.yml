@@ -43,3 +43,5 @@ extends:
       safeName: azureaitextanalyticsauthoring
     - name: azure-ai-textanalytics
       safeName: azureaitextanalytics
+    - name: azure-ai-language-documents
+      safeName: azureailanguagedocuments

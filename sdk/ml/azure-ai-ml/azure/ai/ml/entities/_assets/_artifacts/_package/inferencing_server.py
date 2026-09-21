@@ -4,31 +4,43 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import CustomInferencingServer as RestCustomInferencingServer
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    OnlineInferenceConfiguration as RestOnlineInferenceConfiguration,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Route as RestRoute
-from azure.ai.ml._restclient.v2023_08_01_preview.models import TritonInferencingServer as RestTritonInferencingServer
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    AzureMLBatchInferencingServer as RestAzureMLBatchInferencingServer,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
-)
 from azure.ai.ml._utils._experimental import experimental
 
 from ...._deployment.code_configuration import CodeConfiguration
+
+
+def _code_configuration_to_wire(code_configuration: Any) -> Optional[Dict[str, Any]]:
+    """Serialize a code configuration (entity, dict, or None) into the model-package wire shape.
+
+    :param code_configuration: The code configuration to serialize.
+    :type code_configuration: Any
+    :return: The camelCase wire dict, or None.
+    :rtype: Optional[Dict[str, Any]]
+    """
+    if code_configuration is None:
+        return None
+    if isinstance(code_configuration, dict):
+        return code_configuration
+    code_id = getattr(code_configuration, "code_id", None)
+    if code_id is None:
+        code_id = getattr(code_configuration, "code", None)
+    scoring_script = getattr(code_configuration, "scoring_script", None)
+    wire: Dict[str, Any] = {}
+    if code_id is not None:
+        wire["codeId"] = code_id
+    if scoring_script is not None:
+        wire["scoringScript"] = scoring_script
+    return wire
 
 
 @experimental
 class AzureMLOnlineInferencingServer:
     """Azure ML online inferencing configurations.
 
-    :param code_configuration: The code configuration of the inferencing server.
-    :type code_configuration: str
+    :keyword code_configuration: The code configuration of the inferencing server.
+    :paramtype code_configuration: str
     :ivar type: The type of the inferencing server.
     """
 
@@ -37,19 +49,28 @@ class AzureMLOnlineInferencingServer:
         self.code_configuration = code_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAzureMLOnlineInferencingServer) -> "RestAzureMLOnlineInferencingServer":
-        return AzureMLOnlineInferencingServer(type=rest_obj.server_type, code_configuration=rest_obj.code_configuration)
+    def _from_rest_object(cls, rest_obj: Any) -> "AzureMLOnlineInferencingServer":
+        code = (
+            rest_obj.get("codeConfiguration")
+            if isinstance(rest_obj, dict)
+            else getattr(rest_obj, "code_configuration", None)
+        )
+        return AzureMLOnlineInferencingServer(code_configuration=code)
 
-    def _to_rest_object(self) -> RestAzureMLOnlineInferencingServer:
-        return RestAzureMLOnlineInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        rest: Dict[str, Any] = {"serverType": "AzureMLOnline"}
+        code = _code_configuration_to_wire(self.code_configuration)
+        if code is not None:
+            rest["codeConfiguration"] = code
+        return rest
 
 
 @experimental
 class AzureMLBatchInferencingServer:
     """Azure ML batch inferencing configurations.
 
-    :param code_configuration: The code configuration of the inferencing server.
-    :type code_configuration: azure.ai.ml.entities.CodeConfiguration
+    :keyword code_configuration: The code configuration of the inferencing server.
+    :paramtype code_configuration: azure.ai.ml.entities.CodeConfiguration
     :ivar type: The type of the inferencing server.
     """
 
@@ -58,19 +79,28 @@ class AzureMLBatchInferencingServer:
         self.code_configuration = code_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestAzureMLBatchInferencingServer) -> "RestAzureMLBatchInferencingServer":
-        return AzureMLBatchInferencingServer(code_configuration=rest_obj.code_configuration)
+    def _from_rest_object(cls, rest_obj: Any) -> "AzureMLBatchInferencingServer":
+        code = (
+            rest_obj.get("codeConfiguration")
+            if isinstance(rest_obj, dict)
+            else getattr(rest_obj, "code_configuration", None)
+        )
+        return AzureMLBatchInferencingServer(code_configuration=code)
 
-    def _to_rest_object(self) -> RestAzureMLBatchInferencingServer:
-        return RestAzureMLBatchInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        rest: Dict[str, Any] = {"serverType": "AzureMLBatch"}
+        code = _code_configuration_to_wire(self.code_configuration)
+        if code is not None:
+            rest["codeConfiguration"] = code
+        return rest
 
 
 @experimental
 class TritonInferencingServer:
     """Azure ML triton inferencing configurations.
 
-    :param inference_configuration: The inference configuration of the inferencing server.
-    :type inference_configuration: azure.ai.ml.entities.CodeConfiguration
+    :keyword inference_configuration: The inference configuration of the inferencing server.
+    :paramtype inference_configuration: azure.ai.ml.entities.CodeConfiguration
     :ivar type: The type of the inferencing server.
     """
 
@@ -79,23 +109,32 @@ class TritonInferencingServer:
         self.inference_configuration = inference_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestTritonInferencingServer) -> "RestTritonInferencingServer":
-        return CustomInferencingServer(
-            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+    def _from_rest_object(cls, rest_obj: Any) -> "CustomInferencingServer":
+        ic = (
+            rest_obj.get("inferenceConfiguration")
+            if isinstance(rest_obj, dict)
+            else getattr(rest_obj, "inference_configuration", None)
         )
+        return CustomInferencingServer(inference_configuration=ic)
 
-    def _to_rest_object(self) -> RestTritonInferencingServer:
-        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # NOTE: preserves the legacy wire shape exactly — the original built a ``CustomInferencingServer``
+        # (server discriminator "Custom") from a Triton entity, so this path emits ``serverType: Custom``.
+        rest: Dict[str, Any] = {"serverType": "Custom"}
+        if self.inference_configuration is not None:
+            ic = self.inference_configuration
+            rest["inferenceConfiguration"] = ic._to_rest_object() if hasattr(ic, "_to_rest_object") else ic
+        return rest
 
 
 @experimental
 class Route:
     """Route.
 
-    :param port: The port of the route.
-    :type port: str
-    :param path: The path of the route.
-    :type path: str
+    :keyword port: The port of the route.
+    :paramtype port: str
+    :keyword path: The path of the route.
+    :paramtype path: str
     """
 
     def __init__(self, *, port: Optional[str] = None, path: Optional[str] = None):
@@ -103,11 +142,18 @@ class Route:
         self.path = path
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestRoute) -> "RestRoute":
+    def _from_rest_object(cls, rest_obj: Any) -> "Route":
+        if isinstance(rest_obj, dict):
+            return Route(port=rest_obj.get("port"), path=rest_obj.get("path"))
         return Route(port=rest_obj.port, path=rest_obj.path)
 
-    def _to_rest_object(self) -> Optional[RestRoute]:
-        return RestRoute(port=self.port, path=self.path)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        rest: Dict[str, Any] = {}
+        if self.port is not None:
+            rest["port"] = int(self.port)
+        if self.path is not None:
+            rest["path"] = self.path
+        return rest
 
 
 @experimental
@@ -141,61 +187,39 @@ class OnlineInferenceConfiguration:
         self.configuration = configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestOnlineInferenceConfiguration) -> "RestOnlineInferenceConfiguration":
+    def _from_rest_object(cls, rest_obj: Any) -> "OnlineInferenceConfiguration":
+        def _get(obj: Any, key: str, attr: str) -> Any:
+            return obj.get(key) if isinstance(obj, dict) else getattr(obj, attr, None)
+
         return OnlineInferenceConfiguration(
-            liveness_route=Route._from_rest_object(rest_obj.liveness_route),
-            readiness_route=Route._from_rest_object(rest_obj.readiness_route),
-            scoring_route=Route._from_rest_object(rest_obj.scoring_route),
-            entry_script=rest_obj.entry_script,
-            configuration=rest_obj.configuration,
+            liveness_route=Route._from_rest_object(_get(rest_obj, "livenessRoute", "liveness_route")),
+            readiness_route=Route._from_rest_object(_get(rest_obj, "readinessRoute", "readiness_route")),
+            scoring_route=Route._from_rest_object(_get(rest_obj, "scoringRoute", "scoring_route")),
+            entry_script=_get(rest_obj, "entryScript", "entry_script"),
+            configuration=_get(rest_obj, "configuration", "configuration"),
         )
 
-    def _to_rest_object(self) -> RestOnlineInferenceConfiguration:
-        if self.liveness_route is not None and self.readiness_route is not None and self.scoring_route is not None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                readiness_route=self.readiness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object(),
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.liveness_route is None:
-            return RestOnlineInferenceConfiguration(
-                readiness_route=self.readiness_route._to_rest_object() if self.readiness_route is not None else None,
-                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.readiness_route is None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                scoring_route=self.scoring_route._to_rest_object() if self.scoring_route is not None else None,
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        if self.scoring_route is None:
-            return RestOnlineInferenceConfiguration(
-                liveness_route=self.liveness_route._to_rest_object(),
-                readiness_route=self.readiness_route._to_rest_object(),
-                entry_script=self.entry_script,
-                configuration=self.configuration,
-            )
-
-        return RestOnlineInferenceConfiguration(
-            entry_script=self.entry_script,
-            configuration=self.configuration,
-        )
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # NOTE: ``configuration`` is intentionally omitted — the legacy msrest
+        # ``OnlineInferenceConfiguration`` model had no such field and dropped it on the wire.
+        rest: Dict[str, Any] = {}
+        if self.liveness_route is not None:
+            rest["livenessRoute"] = self.liveness_route._to_rest_object()
+        if self.readiness_route is not None:
+            rest["readinessRoute"] = self.readiness_route._to_rest_object()
+        if self.scoring_route is not None:
+            rest["scoringRoute"] = self.scoring_route._to_rest_object()
+        if self.entry_script is not None:
+            rest["entryScript"] = self.entry_script
+        return rest
 
 
 @experimental
 class CustomInferencingServer:
     """Custom inferencing configurations.
 
-    :param inference_configuration: The inference configuration of the inferencing server.
-    :type inference_configuration: OnlineInferenceConfiguration
+    :keyword inference_configuration: The inference configuration of the inferencing server.
+    :paramtype inference_configuration: OnlineInferenceConfiguration
     :ivar type: The type of the inferencing server.
     """
 
@@ -204,10 +228,16 @@ class CustomInferencingServer:
         self.inference_configuration = inference_configuration
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestCustomInferencingServer) -> "RestCustomInferencingServer":
-        return CustomInferencingServer(
-            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+    def _from_rest_object(cls, rest_obj: Any) -> "CustomInferencingServer":
+        ic = (
+            rest_obj.get("inferenceConfiguration")
+            if isinstance(rest_obj, dict)
+            else getattr(rest_obj, "inference_configuration", None)
         )
+        return CustomInferencingServer(inference_configuration=ic)
 
-    def _to_rest_object(self) -> RestCustomInferencingServer:
-        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        rest: Dict[str, Any] = {"serverType": "Custom"}
+        if self.inference_configuration is not None:
+            rest["inferenceConfiguration"] = self.inference_configuration._to_rest_object()
+        return rest

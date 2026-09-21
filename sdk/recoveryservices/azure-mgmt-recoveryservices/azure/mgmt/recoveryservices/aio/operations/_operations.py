@@ -71,7 +71,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -182,7 +182,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VaultsOperations:
+class VaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1080,7 +1080,7 @@ class VaultsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DeletedVaultsOperations:
+class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1101,7 +1101,15 @@ class DeletedVaultsOperations:
     @api_version_validation(
         method_added_on="2025-08-01",
         params_added_on={"2025-08-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2026-01-01",
+            "2026-02-01",
+            "2026-03-31-preview",
+            "2026-05-01",
+            "2026-05-31-preview",
+            "2026-07-01",
+        ],
     )
     def list_by_subscription_id(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedVault"]:
         """List deleted vaults in a subscription.
@@ -1203,7 +1211,15 @@ class DeletedVaultsOperations:
     @api_version_validation(
         method_added_on="2025-08-01",
         params_added_on={"2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2026-01-01",
+            "2026-02-01",
+            "2026-03-31-preview",
+            "2026-05-01",
+            "2026-05-31-preview",
+            "2026-07-01",
+        ],
     )
     async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedVault:
         """Get a specific deleted vault.
@@ -1278,7 +1294,15 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "content_type", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2026-01-01",
+            "2026-02-01",
+            "2026-03-31-preview",
+            "2026-05-01",
+            "2026-05-31-preview",
+            "2026-07-01",
+        ],
     )
     async def _undelete_initial(
         self,
@@ -1441,7 +1465,15 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "content_type", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2026-01-01",
+            "2026-02-01",
+            "2026-03-31-preview",
+            "2026-05-01",
+            "2026-05-31-preview",
+            "2026-07-01",
+        ],
     )
     async def begin_undelete(
         self,
@@ -1517,7 +1549,15 @@ class DeletedVaultsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "operation_id", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-01-01", "2026-02-01", "2026-03-31-preview", "2026-05-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2026-01-01",
+            "2026-02-01",
+            "2026-03-31-preview",
+            "2026-05-01",
+            "2026-05-31-preview",
+            "2026-07-01",
+        ],
     )
     async def get_operation_status(
         self, location: str, deleted_vault_name: str, operation_id: str, **kwargs: Any
@@ -1593,7 +1633,7 @@ class DeletedVaultsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1789,7 +1829,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VaultCertificatesOperations:
+class VaultCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1995,7 +2035,7 @@ class VaultCertificatesOperations:
         return deserialized  # type: ignore
 
 
-class RegisteredIdentitiesOperations:
+class RegisteredIdentitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2073,7 +2113,7 @@ class RegisteredIdentitiesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ReplicationUsagesOperations:
+class ReplicationUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2194,7 +2234,7 @@ class ReplicationUsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2314,7 +2354,7 @@ class UsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VaultExtendedInfoOperations:
+class VaultExtendedInfoOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2763,7 +2803,7 @@ class VaultExtendedInfoOperations:
         return deserialized  # type: ignore
 
 
-class RecoveryServicesOperations:
+class RecoveryServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

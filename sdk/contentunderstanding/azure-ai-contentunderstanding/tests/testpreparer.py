@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+from dataclasses import dataclass
 from typing import cast
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
@@ -13,9 +14,118 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 import functools
 
 
+GA_API_VERSION = "2025-11-01"
+PREVIEW_API_VERSION = "2026-06-01-preview"
+
+
+@dataclass(frozen=True)
+class ModelProfile:
+    completion_model: str
+    completion_deployment: str
+    mini_completion_model: str
+    mini_completion_deployment: str
+    embedding_model: str
+    embedding_deployment: str
+    includes_prebuilt_aliases: bool
+
+    def default_model_deployments(self):
+        deployments = {
+            self.completion_model: self.completion_deployment,
+            self.embedding_model: self.embedding_deployment,
+        }
+        if self.mini_completion_model != self.completion_model:
+            deployments[self.mini_completion_model] = self.mini_completion_deployment
+        if self.includes_prebuilt_aliases:
+            deployments["prebuilt-analyzer-completion"] = self.completion_deployment
+            deployments["prebuilt-analyzer-completion-mini"] = self.mini_completion_deployment
+            deployments["prebuilt-analyzer-embedding"] = self.embedding_deployment
+        return deployments
+
+
+def _env_or_default(name: str, default: str) -> str:
+    value = os.getenv(name)
+    return value if value and value.strip() else default
+
+
+def get_test_api_version() -> str:
+    return _env_or_default("CONTENTUNDERSTANDING_TEST_API_VERSION", GA_API_VERSION)
+
+
+def get_model_profile_for_version(api_version: str) -> ModelProfile:
+    if api_version == PREVIEW_API_VERSION:
+        completion_model = _env_or_default("CU_COMPLETION_MODEL", "gpt-5.2")
+        mini_completion_model = _env_or_default("CU_COMPLETION_MODEL_MINI", completion_model)
+        embedding_model = _env_or_default("CU_EMBEDDING_MODEL", "text-embedding-3-large")
+        completion_deployment = _env_or_default("CU_COMPLETION_MODEL_DEPLOYMENT", "gpt-5.2")
+        return ModelProfile(
+            completion_model=completion_model,
+            completion_deployment=completion_deployment,
+            mini_completion_model=mini_completion_model,
+            mini_completion_deployment=_env_or_default("CU_COMPLETION_MINI_DEPLOYMENT", completion_deployment),
+            embedding_model=embedding_model,
+            embedding_deployment=_env_or_default("CU_EMBEDDING_DEPLOYMENT", "text-embedding-3-large"),
+            includes_prebuilt_aliases=True,
+        )
+
+    completion_deployment = _env_or_default(
+        "GPT_4_1_DEPLOYMENT",
+        _env_or_default("CU_COMPLETION_MODEL_DEPLOYMENT", "gpt-4.1"),
+    )
+    mini_completion_deployment = _env_or_default(
+        "GPT_4_1_MINI_DEPLOYMENT",
+        _env_or_default("CU_COMPLETION_MINI_DEPLOYMENT", "gpt-4.1-mini"),
+    )
+    embedding_deployment = _env_or_default("CU_EMBEDDING_DEPLOYMENT", "text-embedding-3-large")
+    return ModelProfile(
+        completion_model="gpt-4.1",
+        completion_deployment=completion_deployment,
+        mini_completion_model="gpt-4.1-mini",
+        mini_completion_deployment=mini_completion_deployment,
+        embedding_model="text-embedding-3-large",
+        embedding_deployment=embedding_deployment,
+        includes_prebuilt_aliases=True,
+    )
+
+
+_LIVE_DEFAULTS_CONFIGURED = set()
+
+
+def _is_live_mode() -> bool:
+    return os.getenv("AZURE_TEST_RUN_LIVE", "").lower() == "true"
+
+
+def ensure_live_defaults(endpoint: str, credential, api_version: str) -> None:
+    if not _is_live_mode():
+        return
+
+    cache_key = (endpoint.rstrip("/"), api_version)
+    if cache_key in _LIVE_DEFAULTS_CONFIGURED:
+        return
+
+    profile = get_model_profile_for_version(api_version)
+    client = ContentUnderstandingClient(endpoint=endpoint.rstrip("/"), credential=credential, api_version=api_version)
+    try:
+        current = client.get_defaults()
+        current_deployments = getattr(current, "model_deployments", None) or {}
+        desired = profile.default_model_deployments()
+        needs_update = any(current_deployments.get(k) != v for k, v in desired.items())
+        if needs_update:
+            client.update_defaults(model_deployments=desired)
+    except Exception:
+        client.update_defaults(model_deployments=profile.default_model_deployments())
+    finally:
+        client.close()
+
+    _LIVE_DEFAULTS_CONFIGURED.add(cache_key)
+
+
 class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
 
-    def create_client(self, endpoint: str) -> ContentUnderstandingClient:
+    def get_model_profile(self, api_version: str = "") -> ModelProfile:
+        resolved_api_version = api_version or get_test_api_version()
+        return get_model_profile_for_version(resolved_api_version)
+
+    def create_client(self, endpoint: str, api_version: str = "") -> ContentUnderstandingClient:
         # Normalize endpoint: remove trailing slashes to prevent double slashes in URLs
         endpoint = endpoint.rstrip("/")
 
@@ -27,15 +137,21 @@ class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
         else:
             # Fall back to service principal or DefaultAzureCredential
             credential = self.get_credential(ContentUnderstandingClient, is_async=False)
+        resolved_api_version = api_version or get_test_api_version()
+        ensure_live_defaults(endpoint=endpoint, credential=credential, api_version=resolved_api_version)
         return cast(
             ContentUnderstandingClient,
             self.create_client_from_credential(
                 ContentUnderstandingClient,
                 credential=credential,
                 endpoint=endpoint,
+                api_version=resolved_api_version,
                 polling_interval=3,  # Use 3-second polling interval for test stability
             ),
         )
+
+    def create_preview_client(self, endpoint: str) -> ContentUnderstandingClient:
+        return self.create_client(endpoint=endpoint, api_version=PREVIEW_API_VERSION)
 
     def create_client_from_credential(self, client_class, *, endpoint=None, **kwargs):
         # Mirror create_client(): strip trailing slashes so the generated URL template

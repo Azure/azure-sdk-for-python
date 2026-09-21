@@ -6,12 +6,16 @@ import asyncio
 import logging
 import os
 import signal
+from typing import Any
 from unittest import mock
 
 import pytest
 
 from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core._config import resolve_graceful_shutdown_timeout, _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+from azure.ai.agentserver.core._config import (
+    resolve_graceful_shutdown_timeout,
+    _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT,
+)
 
 
 # ------------------------------------------------------------------ #
@@ -204,7 +208,9 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
 
 
 @pytest.mark.asyncio
-async def test_slow_shutdown_cancelled_with_warning(caplog: pytest.LogCaptureFixture) -> None:
+async def test_slow_shutdown_cancelled_with_warning(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """A shutdown handler exceeding the timeout is cancelled and a warning is logged."""
     agent = AgentServerHost(graceful_shutdown_timeout=1)
 
@@ -312,63 +318,139 @@ async def test_zero_timeout_skips_shutdown_handler() -> None:
 
 
 class TestSigtermHandler:
-    """Tests for SIGTERM signal handler installed by run()."""
+    """Tests for the shutdown-trigger handler installed by run().
 
-    def _restore_sigterm(self):
-        """Fixture-like helper: save and restore the SIGTERM handler."""
-        original = signal.getsignal(signal.SIGTERM)
-        yield
-        signal.signal(signal.SIGTERM, original)
+     note: ``AgentServerHost.run`` registers signal handlers
+    via ``loop.add_signal_handler(SIG, _on_signal)`` rather than
+    ``signal.signal(SIG, ...)``. The handler:
 
-    def test_run_installs_sigterm_handler(self) -> None:
-        """run() registers a SIGTERM handler that logs and re-raises."""
-        original = signal.getsignal(signal.SIGTERM)
-        try:
-            agent = AgentServerHost(graceful_shutdown_timeout=5)
-            handler_at_serve_time = None
+    1. Invokes every callback in ``_pre_shutdown_callbacks``.
+    2. Sets the ``signal_event`` so Hypercorn's ``shutdown_trigger``
+       awaitable resolves and graceful drain begins.
 
-            def fake_asyncio_run(coroutine):
-                nonlocal handler_at_serve_time
-                handler_at_serve_time = signal.getsignal(signal.SIGTERM)
-                coroutine.close()
+    These tests inspect the local namespace of the inner
+    ``_serve_with_shutdown_trigger`` coroutine via a stub-out of
+    ``asyncio.run`` that captures the coroutine before letting it run.
+    """
 
-            with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
-                agent.run(host="127.0.0.1", port=9999)
+    def test_run_installs_signal_handler_via_event_loop(self) -> None:
+        """run() registers signal handlers via loop.add_signal_handler
+        . We verify by intercepting asyncio.get_event_loop
+                with a stub whose add_signal_handler captures registrations.
+        """
+        agent = AgentServerHost(graceful_shutdown_timeout=5)
+        captured_handlers: list[tuple[Any, Any]] = []
 
-            assert handler_at_serve_time is not None
-            assert callable(handler_at_serve_time)
-            assert handler_at_serve_time is not original
-        finally:
-            signal.signal(signal.SIGTERM, original)
+        # Stub out hypercorn.serve so the coroutine returns after
+        # add_signal_handler is called but before it tries to bind a
+        # port (which would fail in a test environment without root).
+        async def fake_hypercorn_serve(*_args, **_kwargs):
+            return None
 
-    def test_sigterm_handler_logs_and_re_raises(self, caplog: pytest.LogCaptureFixture) -> None:
-        """The installed SIGTERM handler logs then re-raises via os.kill."""
-        original = signal.getsignal(signal.SIGTERM)
-        try:
-            agent = AgentServerHost(graceful_shutdown_timeout=5)
-            handler_at_serve_time = None
+        # Stub get_event_loop to return a fake loop whose
+        # add_signal_handler records what was registered.
+        class _FakeLoop:
+            def add_signal_handler(self, sig, callback, *args):
+                captured_handlers.append((sig, callback))
 
-            def fake_asyncio_run(coroutine):
-                nonlocal handler_at_serve_time
-                handler_at_serve_time = signal.getsignal(signal.SIGTERM)
-                coroutine.close()
+        with (
+            mock.patch(
+                "hypercorn.asyncio.serve",
+                side_effect=fake_hypercorn_serve,
+            ),
+            mock.patch("asyncio.get_event_loop", return_value=_FakeLoop()),
+        ):
+            agent.run(host="127.0.0.1", port=9999)
 
-            with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
-                agent.run(host="127.0.0.1", port=9999)
+        # At minimum SIGTERM should have been registered. SIGINT and
+        # SIGBREAK may or may not be on this platform.
+        registered_sigs = [sig for sig, _ in captured_handlers]
+        assert signal.SIGTERM in registered_sigs, (
+            f": AgentServerHost.run MUST register a SIGTERM "
+            f"handler via loop.add_signal_handler. Registered: "
+            f"{[getattr(s, 'name', s) for s in registered_sigs]}"
+        )
+        # Every registered handler MUST be callable (the lambda /
+        # _on_signal closure).
+        for sig, callback in captured_handlers:
+            assert callable(callback), f"Registered signal handler for {sig} is not callable: {callback!r}"
 
-            assert callable(handler_at_serve_time)
+    def test_signal_handler_fires_pre_shutdown_callbacks(self) -> None:
+        """The installed signal handler invokes every registered
+        pre-shutdown callback BEFORE setting the signal event (so
+        callbacks fire before Hypercorn begins draining).
 
-            # Invoke the handler and verify it:
-            # 1) logs the message
-            # 2) restores the original handler
-            # 3) calls os.kill to re-raise
-            with (
-                caplog.at_level(logging.INFO, logger="azure.ai.agentserver"),
-                mock.patch("os.kill") as mock_kill,
-            ):
-                handler_at_serve_time(signal.SIGTERM, None)
+         contract: ``register_pre_shutdown_callback`` callbacks
+        run synchronously inside the signal handler.
+        """
+        agent = AgentServerHost(graceful_shutdown_timeout=5)
+        fired: list[str] = []
+        agent.register_pre_shutdown_callback(lambda: fired.append("cb-1"))
+        agent.register_pre_shutdown_callback(lambda: fired.append("cb-2"))
 
-            assert any("SIGTERM received" in r.message for r in caplog.records)
-            mock_kill.assert_called_once_with(os.getpid(), signal.SIGTERM)
-        finally:
-            signal.signal(signal.SIGTERM, original)
+        captured_handler: dict[str, Any] = {}
+
+        async def fake_hypercorn_serve(*_args, **_kwargs):
+            return None
+
+        class _FakeLoop:
+            def add_signal_handler(self, sig, callback, *args):
+                if sig == signal.SIGTERM:
+                    captured_handler["fn"] = callback
+
+        with (
+            mock.patch(
+                "hypercorn.asyncio.serve",
+                side_effect=fake_hypercorn_serve,
+            ),
+            mock.patch("asyncio.get_event_loop", return_value=_FakeLoop()),
+        ):
+            agent.run(host="127.0.0.1", port=9999)
+
+        # Now invoke the captured signal handler — it should fire all
+        # registered pre-shutdown callbacks in registration order.
+        assert "fn" in captured_handler, "No SIGTERM handler was captured during run()"
+        captured_handler["fn"]()
+        assert fired == ["cb-1", "cb-2"], f"Pre-shutdown callbacks did not fire in registration order. " f"Got: {fired}"
+
+    def test_signal_handler_isolates_callback_exceptions(self) -> None:
+        """A raising pre-shutdown callback MUST NOT prevent later
+        callbacks from firing AND MUST NOT prevent the shutdown event
+        from being set. Otherwise a buggy callback would deadlock the
+        graceful drain."""
+        agent = AgentServerHost(graceful_shutdown_timeout=5)
+        fired: list[str] = []
+
+        def bad_callback():
+            fired.append("bad-before-raise")
+            raise RuntimeError("boom")
+
+        def good_callback():
+            fired.append("good-after-bad")
+
+        agent.register_pre_shutdown_callback(bad_callback)
+        agent.register_pre_shutdown_callback(good_callback)
+
+        captured_handler: dict[str, Any] = {}
+
+        async def fake_hypercorn_serve(*_args, **_kwargs):
+            return None
+
+        class _FakeLoop:
+            def add_signal_handler(self, sig, callback, *args):
+                if sig == signal.SIGTERM:
+                    captured_handler["fn"] = callback
+
+        with (
+            mock.patch(
+                "hypercorn.asyncio.serve",
+                side_effect=fake_hypercorn_serve,
+            ),
+            mock.patch("asyncio.get_event_loop", return_value=_FakeLoop()),
+        ):
+            agent.run(host="127.0.0.1", port=9999)
+
+        # Invoke the handler — bad_callback raises, but good_callback
+        # must still fire.
+        captured_handler["fn"]()
+        assert fired == ["bad-before-raise", "good-after-bad"], f"Callback exception isolation broken: got {fired}"

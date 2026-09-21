@@ -13,30 +13,30 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 class ModelBatchDeploymentSettings:
     """Model Batch Deployment Settings entity.
 
-    :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int
-    :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int
-    :param output_action: Indicates how the output will be organized. Possible values include:
+    :keyword mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
+    :paramtype mini_batch_size: int
+    :keyword instance_count: Number of instances the inference will run on. Equivalent to resources.instance_count.
+    :paramtype instance_count: int
+    :keyword output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
-    :type output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
-    :param output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
-    :type output_file_name: str
-    :param max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
-    :type max_concurrency_per_instance: int
-    :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict
-    :param error_threshold: Error threshold, if the error count for the entire input goes above
+    :paramtype output_action: str or ~azure.ai.ml.constants._deployment.BatchDeploymentOutputAction
+    :keyword output_file_name: Customized output file name for append_row output action, defaults to "predictions.csv"
+    :paramtype output_file_name: str
+    :keyword max_concurrency_per_instance: Indicates maximum number of parallelism per instance, defaults to 1
+    :paramtype max_concurrency_per_instance: int
+    :keyword retry_settings: Retry settings for a batch inference operation, defaults to None
+    :paramtype retry_settings: BatchRetrySettings
+    :keyword environment_variables: Environment variables that will be set in deployment.
+    :paramtype environment_variables: dict
+    :keyword error_threshold: Error threshold, if the error count for the entire input goes above
         this value,
         the batch inference will be aborted. Range is [-1, int.MaxValue]
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int
-    :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str
+    :paramtype error_threshold: int
+    :keyword logging_level: Logging level for batch inference operation, defaults to "info"
+    :paramtype logging_level: str
 
     .. admonition:: Example:
 

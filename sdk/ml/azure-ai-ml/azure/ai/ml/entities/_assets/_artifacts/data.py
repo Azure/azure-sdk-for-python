@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DataContainer,
     DataContainerProperties,
     DataType,
@@ -26,6 +26,7 @@ from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -68,20 +69,20 @@ def getDataAssetType(data_type: DataType) -> str:
 class Data(Artifact):
     """Data for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param path: The path to the asset on the datastore. This can be local or remote
-    :type path: str
-    :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
-    :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword path: The path to the asset on the datastore. This can be local or remote
+    :paramtype path: str
+    :keyword type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
+    :paramtype type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -174,9 +175,16 @@ class Data(Artifact):
                 is_archived=False,
                 properties=self.properties,
                 data_uri=self.path,
-                auto_delete_setting=self.auto_delete_setting,
             )
-            if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
+            # ``autoDeleteSetting`` exists on the 2023-04 wire contract but was dropped from the
+            # arm_ml_service (2025-12) model; preserve it via wire-key assignment (JSON-direct).
+            if self.auto_delete_setting is not None:
+                auto_delete = self.auto_delete_setting
+                data_version_details["autoDeleteSetting"] = (
+                    auto_delete._to_rest_object() if hasattr(auto_delete, "_to_rest_object") else auto_delete
+                )
+            # ``referenced_uris`` only exists on MLTable data versions.
+            if "referenced_uris" in getattr(data_version_details, "_attr_to_rest_field", {}):
                 data_version_details.referenced_uris = self._referenced_uris
             return DataVersionBase(properties=data_version_details)
 
@@ -200,6 +208,16 @@ class Data(Artifact):
         data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
+        # ``autoDeleteSetting`` was dropped from the arm_ml_service (2025-12) model, so it is an
+        # untyped wire key on the hybrid model rather than a typed attribute; read it directly.
+        raw_auto_delete = (
+            data_rest_object_details.get("autoDeleteSetting") if hasattr(data_rest_object_details, "get") else None
+        )
+        if raw_auto_delete is None:
+            raw_auto_delete = getattr(data_rest_object_details, "auto_delete_setting", None)
+        auto_delete_setting = (
+            AutoDeleteSetting._from_rest_object(raw_auto_delete) if raw_auto_delete is not None else None
+        )
         data = Data(
             id=data_rest_object.id,
             name=arm_id_object.asset_name,
@@ -212,7 +230,7 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
-            auto_delete_setting=getattr(data_rest_object_details, "auto_delete_setting", None),
+            auto_delete_setting=auto_delete_setting,
         )
         return data
 

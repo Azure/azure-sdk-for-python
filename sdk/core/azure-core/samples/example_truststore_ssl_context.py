@@ -22,6 +22,7 @@ USAGE:
     python example_truststore_ssl_context.py
 """
 
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 import ssl
 import asyncio
 import truststore

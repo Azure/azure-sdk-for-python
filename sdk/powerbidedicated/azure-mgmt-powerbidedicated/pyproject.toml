@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Powerbidedicated Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-powerbidedicated"
 package_pprint_name = "Power BI Dedicated Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 title = "PowerBIDedicatedMgmtClient"
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true

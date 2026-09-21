@@ -5,7 +5,7 @@
 import re
 from typing import Any, Dict, List, Optional, Type, Union
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionCategory
 from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
     APIKeyConnectionSchema,
     AzureAISearchConnectionSchema,
@@ -31,7 +31,10 @@ from azure.ai.ml.constants._common import (
     CognitiveServiceKinds,
     ConnectionTypes,
 )
-from azure.ai.ml.entities._credentials import AadCredentialConfiguration, ApiKeyConfiguration
+from azure.ai.ml.entities._credentials import (
+    AadCredentialConfiguration,
+    ApiKeyConfiguration,
+)
 
 from .one_lake_artifacts import OneLakeConnectionArtifact
 from .workspace_connection import WorkspaceConnection
@@ -45,12 +48,12 @@ class AzureBlobStoreConnection(WorkspaceConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param url: The URL or ARM resource ID of the external resource.
-    :type url: str
-    :param container_name: The name of the container.
-    :type container_name: str
-    :param account_name: The name of the account.
-    :type account_name: str
+    :keyword url: The URL or ARM resource ID of the external resource.
+    :paramtype url: str
+    :keyword container_name: The name of the container.
+    :paramtype container_name: str
+    :keyword account_name: The name of the account.
+    :paramtype account_name: str
     :param credentials: The credentials for authenticating to the blob store. This type of
         connection accepts 3 types of credentials: account key and SAS token credentials,
         or NoneCredentialConfiguration for credential-less connections.
@@ -59,8 +62,8 @@ class AzureBlobStoreConnection(WorkspaceConnection):
         ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.AadCredentialConfiguration,
         ]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -153,13 +156,13 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The endpoint of the connection.
-    :type endpoint: str
-    :param artifact: The artifact class used to further specify the connection.
-    :type artifact: Optional[~azure.ai.ml.entities.OneLakeArtifact]
-    :param one_lake_workspace_name: The name, not ID, of the workspace where the One Lake
+    :keyword endpoint: The endpoint of the connection.
+    :paramtype endpoint: str
+    :keyword artifact: The artifact class used to further specify the connection.
+    :paramtype artifact: Optional[~azure.ai.ml.entities.OneLakeArtifact]
+    :keyword one_lake_workspace_name: The name, not ID, of the workspace where the One Lake
         resource lives.
-    :type one_lake_workspace_name: Optional[str]
+    :paramtype one_lake_workspace_name: Optional[str]
     :param credentials: The credentials for authenticating to the blob store. This type of
         connection accepts 3 types of credentials: account key and SAS token credentials,
         or NoneCredentialConfiguration for credential-less connections.
@@ -168,8 +171,8 @@ class MicrosoftOneLakeConnection(WorkspaceConnection):
         ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.AadCredentialConfiguration,
         ]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -231,16 +234,16 @@ class ApiOrAadConnection(WorkspaceConnection):
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
-    :param api_key: The api key to connect to the azure endpoint.
+    :keyword api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: Optional[str]
+    :paramtype api_key: Optional[str]
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
-    :param type: The type of the connection.
-    :type type: str
-    :param allow_entra: Whether or not this connection allows initialization without
+    :keyword type: The type of the connection.
+    :paramtype type: str
+    :keyword allow_entra: Whether or not this connection allows initialization without
         an API key via Aad. Defaults to True.
-    :type allow_entra: bool
+    :paramtype allow_entra: bool
     """
 
     def __init__(
@@ -306,17 +309,17 @@ class AzureOpenAIConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param azure_endpoint: The URL or ARM resource ID of the Azure Open AI Resource.
-    :type azure_endpoint: str
-    :param api_key: The api key to connect to the azure endpoint.
+    :keyword azure_endpoint: The URL or ARM resource ID of the Azure Open AI Resource.
+    :paramtype azure_endpoint: str
+    :keyword api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: Optional[str]
-    :param open_ai_resource_id: The fully qualified ID of the Azure Open AI resource to connect to.
-    :type open_ai_resource_id: Optional[str]
-    :param api_version: The api version that this connection was created for.
-    :type api_version: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :paramtype api_key: Optional[str]
+    :keyword open_ai_resource_id: The fully qualified ID of the Azure Open AI resource to connect to.
+    :paramtype open_ai_resource_id: Optional[str]
+    :keyword api_version: The api version that this connection was created for.
+    :paramtype api_version: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -353,7 +356,11 @@ class AzureOpenAIConnection(ApiOrAadConnection):
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
-        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY, CONNECTION_RESOURCE_ID_KEY]
+        return [
+            CONNECTION_API_VERSION_KEY,
+            CONNECTION_API_TYPE_KEY,
+            CONNECTION_RESOURCE_ID_KEY,
+        ]
 
     @classmethod
     def _get_schema_class(cls) -> Type:
@@ -415,15 +422,15 @@ class AzureAIServicesConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The URL or ARM resource ID of the external resource.
-    :type endpoint: str
-    :param api_key: The api key to connect to the azure endpoint.
+    :keyword endpoint: The URL or ARM resource ID of the external resource.
+    :paramtype endpoint: str
+    :keyword api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: Optional[str]
-    :param ai_services_resource_id: The fully qualified ID of the Azure AI service resource to connect to.
-    :type ai_services_resource_id: str
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :paramtype api_key: Optional[str]
+    :keyword ai_services_resource_id: The fully qualified ID of the Azure AI service resource to connect to.
+    :paramtype ai_services_resource_id: str
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -486,12 +493,12 @@ class AzureAISearchConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The URL or ARM resource ID of the Azure AI Search Service
-    :type endpoint: str
-    :param api_key: The API key needed to connect to the Azure AI Search Service.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword endpoint: The URL or ARM resource ID of the Azure AI Search Service
+    :paramtype endpoint: str
+    :keyword api_key: The API key needed to connect to the Azure AI Search Service.
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -523,13 +530,13 @@ class AzureContentSafetyConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The URL or ARM resource ID of the external resource.
-    :type endpoint: str
-    :param api_key: The api key to connect to the azure endpoint.
+    :keyword endpoint: The URL or ARM resource ID of the external resource.
+    :paramtype endpoint: str
+    :keyword api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -565,13 +572,13 @@ class AzureSpeechServicesConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The URL or ARM resource ID of the external resource.
-    :type endpoint: str
-    :param api_key: The api key to connect to the azure endpoint.
+    :keyword endpoint: The URL or ARM resource ID of the external resource.
+    :paramtype endpoint: str
+    :keyword api_key: The api key to connect to the azure endpoint.
         If unset, tries to use the user's Entra ID as credentials instead.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     # kinds AzureOpenAI", "ContentSafety", and "Speech"
@@ -609,12 +616,12 @@ class APIKeyConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param api_base: The URL to target with this connection.
-    :type api_base: str
-    :param api_key: The API key needed to connect to the api_base.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword api_base: The URL to target with this connection.
+    :paramtype api_base: str
+    :keyword api_key: The API key needed to connect to the api_base.
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -648,10 +655,10 @@ class OpenAIConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param api_key: The API key needed to connect to the Open AI.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword api_key: The API key needed to connect to the Open AI.
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -682,10 +689,10 @@ class SerpConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param api_key: The API key needed to connect to the Open AI.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword api_key: The API key needed to connect to the Open AI.
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(
@@ -716,12 +723,12 @@ class ServerlessConnection(ApiOrAadConnection):
 
     :param name: Name of the connection.
     :type name: str
-    :param endpoint: The serverless endpoint.
-    :type endpoint: str
-    :param api_key: The API key needed to connect to the endpoint.
-    :type api_key: Optional[str]
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[dict[str,str]]
+    :keyword endpoint: The serverless endpoint.
+    :paramtype endpoint: str
+    :keyword api_key: The API key needed to connect to the endpoint.
+    :paramtype api_key: Optional[str]
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[dict[str,str]]
     """
 
     def __init__(

@@ -51,7 +51,7 @@ def classification(
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             and precision_score_weighted
             Defaults to accuracy
-    :type primary_metric: str
+    :paramtype primary_metric: str
     :keyword enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
             The default is None. For more information, see
@@ -193,7 +193,7 @@ def regression(
             Acceptable values: spearman_correlation, r2_score, normalized_mean_absolute_error,
             normalized_root_mean_squared_error.
             Defaults to normalized_root_mean_squared_error
-    :type primary_metric: str
+    :paramtype primary_metric: str
     :keyword enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
             The default is None. For more information, see
@@ -334,7 +334,7 @@ def forecasting(
 
             Acceptable values: r2_score, normalized_mean_absolute_error, normalized_root_mean_squared_error
             Defaults to normalized_root_mean_squared_error
-    :type primary_metric: str
+    :paramtype primary_metric: str
     :keyword enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
             The default is None. For more information, see

@@ -1,0 +1,21 @@
+{
+  "properties": {
+    "accountName": "smokeaccount",
+    "credentials": {
+      "authorityUrl": "https://login.microsoftonline.com",
+      "clientId": "11111111-1111-1111-1111-111111111111",
+      "credentialsType": "Certificate",
+      "secrets": {
+        "certificate": "smoke-certificate-pem",
+        "secretsType": "Certificate"
+      },
+      "tenantId": "00000000-0000-0000-0000-000000000000",
+      "thumbprint": "SMOKE-THUMBPRINT"
+    },
+    "datastoreType": "AzureDataLakeGen2",
+    "endpoint": "core.windows.net",
+    "filesystem": "smoke-filesystem",
+    "protocol": "https",
+    "tags": {}
+  }
+}

@@ -35,6 +35,7 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -499,7 +500,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
             pipeline,
             experiment_name="mixed_pipeline",
         )
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "compute_id": "cpu-cluster",
@@ -621,7 +624,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "The command node with optional inputs",
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
@@ -691,7 +696,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.pipeline_output.mode = InputOutputModes.DIRECT
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "The spark node with optional inputs",
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
@@ -764,7 +771,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_exp",
         )
         pipeline_job.settings.force_rerun = False
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "description": "The hello world pipeline job",
@@ -1727,7 +1736,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "tags": {},
             "is_archived": False,
@@ -1787,7 +1798,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "tags": {},
             "is_archived": False,
@@ -1902,7 +1915,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs.parallel_node.task.code",
             "jobs.parallel_node.task.environment",
         ] + common_omit_fields
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *omit_fields)
+        actual_job = omit_with_wildcard(as_attribute_dict(pipeline_job._to_rest_object().properties), *omit_fields)
         expected_job = {
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "description": "The pipeline job with parallel function",
@@ -1981,7 +1994,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs.*.task.code",
             "jobs.*.task.environment",
         ] + common_omit_fields
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *omit_fields)
+        actual_job = omit_with_wildcard(as_attribute_dict(pipeline_job._to_rest_object().properties), *omit_fields)
         expected_job = {
             "tags": {},
             "is_archived": False,
@@ -2079,7 +2092,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline_without_setting_binding_node()
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "E2E dummy pipeline with components defined via yaml.",
             "tags": {},
@@ -2124,7 +2139,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline_with_only_setting_pipeline_level()
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "E2E dummy pipeline with components defined via yaml.",
             "tags": {},
@@ -2171,7 +2188,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline_with_only_setting_binding_node()
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "E2E dummy pipeline with components defined via yaml.",
             "tags": {},
@@ -2228,7 +2247,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline_with_setting_binding_node_and_pipeline_level()
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job = {
             "description": "E2E dummy pipeline with components defined via yaml.",
             "tags": {},
@@ -2284,7 +2305,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline_with_command_builder_setting_binding_node_and_pipeline_level()
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
 
         expected_job = {
             "description": "E2E dummy pipeline with components defined via yaml.",
@@ -2403,7 +2426,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = pipeline_with_group(default_param)
         pipeline_job = client.jobs.create_or_update(pipeline_job)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         expected_job_inputs = {
             "group.int_param": {"job_input_type": "literal", "value": "2"},
             "group.enum_param": {"job_input_type": "literal", "value": "hello"},
@@ -2505,7 +2530,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_node_identity_with_component(self, client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func = load_component(path)
@@ -2527,7 +2551,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
         assert actual_dict["jobs"] == {
             "node1": {
-                "identity": {"type": "aml_token"},
+                "identity": {"identity_type": "AMLToken"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
@@ -2536,7 +2560,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "type": "command",
             },
             "node2": {
-                "identity": {"type": "user_identity"},
+                "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
@@ -2545,7 +2569,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "type": "command",
             },
             "node3": {
-                "identity": {"type": "managed_identity"},
+                "identity": {"identity_type": "Managed"},
                 "inputs": {
                     "component_in_number": {"job_input_type": "literal", "value": "1"},
                     "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
@@ -2603,7 +2627,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # overwrite group outputs mode will appear in pipeline job&component level
         expected_outputs = {"output1": {"description": "new description", "type": "uri_folder"}}
         expected_job_outputs = {"output1": {"description": "new description", "job_output_type": "uri_folder"}}
-        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+        rest_job_dict = as_attribute_dict(pipeline_job._to_rest_object())
 
         # assert pipeline job level mode overwrite
         assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
@@ -2611,7 +2635,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
 
         rest_job = assert_job_cancel(pipeline_job, client)
-        rest_job_dict = rest_job._to_rest_object().as_dict()
+        rest_job_dict = as_attribute_dict(rest_job._to_rest_object())
         assert rest_job_dict["properties"]["outputs"]["output1"]["description"] == "new description"
 
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
@@ -2637,14 +2661,14 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # overwrite group outputs mode will appear in pipeline job&component level
         expected_job_outputs = {"output1": {"mode": "Upload", "job_output_type": "uri_folder"}}
         expected_outputs = {"output1": {"mode": "upload", "type": "uri_folder"}}
-        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+        rest_job_dict = as_attribute_dict(pipeline_job._to_rest_object())
         # assert pipeline job level mode overwrite
         assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
         # assert pipeline component level mode overwrite
         assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
 
         rest_job = assert_job_cancel(pipeline_job, client)
-        rest_job_dict = rest_job._to_rest_object().as_dict()
+        rest_job_dict = as_attribute_dict(rest_job._to_rest_object())
         assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
 
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
@@ -2664,7 +2688,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
+    @pytest.mark.skip(reason="Anonymous component hash differs between recording and playback.")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
@@ -2793,7 +2817,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline_job = client.jobs.create_or_update(pipeline)
 
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
 
         expected_job = {
             "description": "submit a pipeline with data transfer copy job",
@@ -3104,7 +3130,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = pipeline_with_user_defined_nodes_1()
         pipeline_job.settings.default_compute = "cpu-cluster"
         pipeline_job = assert_job_cancel(pipeline_job, client)
-        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        actual_job = omit_with_wildcard(
+            as_attribute_dict(pipeline_job._to_rest_object().properties), *common_omit_fields
+        )
         assert actual_job["jobs"] == {
             "another_0": {
                 "inputs": {

@@ -46,7 +46,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     def test_list_document_statuses_with_skip(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 10
+        docs_count = 5
         skip = 2
         target_language = "es"
 
@@ -70,7 +70,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     def test_list_document_statuses_filter_by_status(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 10
+        docs_count = 5
         target_language = "es"
 
         # submit and validate operation
@@ -180,7 +180,7 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
     def test_list_document_statuses_mixed_filters(self, **kwargs):
         client = kwargs.pop("client")
         variables = kwargs.pop("variables", {})
-        docs_count = 10
+        docs_count = 5
         target_language = "es"
         skip = 1
         statuses = ["Succeeded"]

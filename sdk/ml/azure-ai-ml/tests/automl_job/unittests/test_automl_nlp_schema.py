@@ -6,30 +6,24 @@ from unittest.mock import patch
 import pytest
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
-    NlpParameterSubspace as RestNlpParameterSubspace,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import NlpSweepSettings as RestNlpSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import (
     NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     NlpVerticalLimitSettings as RestNlpVerticalLimitSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import TextNer as RestTextNer
-from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import TextNer as RestTextNer
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ClassificationPrimaryMetrics,
     JobBase,
     LogVerbosity,
     MLTableJobInput,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import TextClassification as RestTextClassification
+from azure.ai.ml._restclient.arm_ml_service.models import TextClassification as RestTextClassification
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
 from azure.ai.ml.automl import (
@@ -43,6 +37,7 @@ from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.sweep import BanditPolicy
 
 
 @pytest.fixture(autouse=True)
@@ -65,47 +60,61 @@ def nlp_limits_expected(run_type: str) -> RestNlpVerticalLimitSettings:
         max_trials = 4
         max_concurrent_trials = 4
         max_nodes = 16
-    return RestNlpVerticalLimitSettings(
+    limit_settings = RestNlpVerticalLimitSettings(
         timeout=to_iso_duration_format_mins(30),
-        trial_timeout=to_iso_duration_format_mins(10),
-        max_nodes=max_nodes,
         max_concurrent_trials=max_concurrent_trials,
         max_trials=max_trials,
     )
+    # ``maxNodes``/``trialTimeout`` were dropped from the arm_ml_service model; carried as wire-keys.
+    limit_settings["maxNodes"] = max_nodes
+    limit_settings["trialTimeout"] = to_iso_duration_format_mins(10)
+    return limit_settings
 
 
 @pytest.fixture
-def nlp_sweep_settings_expected() -> RestNlpSweepSettings:
-    return RestNlpSweepSettings(
+def nlp_sweep_settings_expected() -> dict:
+    # ``NlpSweepSettings`` is JSON-direct under arm_ml_service; build the wire dict via the entity.
+    return NlpSweepSettings(
         sampling_algorithm="grid",
-        early_termination=RestBanditPolicy(
-            slack_amount=0.02,
-            evaluation_interval=10,
-        ),
-    )
+        early_termination=BanditPolicy(slack_amount=0.02, evaluation_interval=10),
+    )._to_rest_object()
 
 
 @pytest.fixture
-def nlp_fixed_parameters_expected() -> RestNlpFixedParameters:
-    return RestNlpFixedParameters(
+def nlp_fixed_parameters_expected() -> dict:
+    # ``NlpFixedParameters`` is JSON-direct under arm_ml_service; build the wire dict via the entity.
+    return NlpFixedParameters(
         training_batch_size=32,
         warmup_ratio=0.1,
-    )
+    )._to_rest_object()
 
 
 @pytest.fixture
-def nlp_search_space_expected() -> List[RestNlpParameterSubspace]:
+def nlp_search_space_expected() -> List[dict]:
+    # ``NlpParameterSubspace`` is JSON-direct under arm_ml_service; these are the camelCase wire dicts.
     return [
-        RestNlpParameterSubspace(
-            model_name="choice('bert-base-cased','bert-base-uncased')",
-            learning_rate="uniform(0.000005,0.00005)",
-            learning_rate_scheduler="choice('linear','cosine_with_restarts')",
-        ),
-        RestNlpParameterSubspace(
-            model_name="choice('roberta-base','roberta-large')",
-            learning_rate="uniform(0.000002,0.000008)",
-            gradient_accumulation_steps="choice(1,2,3)",
-        ),
+        {
+            "gradientAccumulationSteps": None,
+            "learningRate": "uniform(0.000005,0.00005)",
+            "learningRateScheduler": "choice('linear','cosine_with_restarts')",
+            "modelName": "choice('bert-base-cased','bert-base-uncased')",
+            "numberOfEpochs": None,
+            "trainingBatchSize": None,
+            "validationBatchSize": None,
+            "warmupRatio": None,
+            "weightDecay": None,
+        },
+        {
+            "gradientAccumulationSteps": "choice(1,2,3)",
+            "learningRate": "uniform(0.000002,0.000008)",
+            "learningRateScheduler": None,
+            "modelName": "choice('roberta-base','roberta-large')",
+            "numberOfEpochs": None,
+            "trainingBatchSize": None,
+            "validationBatchSize": None,
+            "warmupRatio": None,
+            "weightDecay": None,
+        },
     ]
 
 
@@ -140,28 +149,31 @@ def expected_text_classification_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
     nlp_limits_expected: RestNlpVerticalLimitSettings,
-    nlp_sweep_settings_expected: RestNlpSweepSettings,
-    nlp_fixed_parameters_expected: RestNlpFixedParameters,
-    nlp_search_space_expected: List[RestNlpParameterSubspace],
+    nlp_sweep_settings_expected: dict,
+    nlp_fixed_parameters_expected: dict,
+    nlp_search_space_expected: List[dict],
     nlp_featurization_settings_expected: RestNlpFeaturizationSettings,
     expected_nlp_target_column_name: str,
     expected_nlp_training_data: MLTableJobInput,
     expected_nlp_validation_data: MLTableJobInput,
     compute_binding_expected: str,
 ) -> JobBase:
+    text_classification = RestTextClassification(
+        target_column_name=expected_nlp_target_column_name,
+        training_data=expected_nlp_training_data,
+        validation_data=expected_nlp_validation_data,
+        featurization_settings=nlp_featurization_settings_expected,
+        limit_settings=nlp_limits_expected,
+        primary_metric=ClassificationPrimaryMetrics.ACCURACY,
+        log_verbosity=LogVerbosity.DEBUG,
+    )
+    # ``fixedParameters``/``sweepSettings``/``searchSpace`` are JSON-direct wire-keys under arm.
+    text_classification["fixedParameters"] = nlp_fixed_parameters_expected
+    if run_type == "sweep":
+        text_classification["sweepSettings"] = nlp_sweep_settings_expected
+        text_classification["searchSpace"] = nlp_search_space_expected
     return _get_rest_automl_job(
-        RestTextClassification(
-            target_column_name=expected_nlp_target_column_name,
-            training_data=expected_nlp_training_data,
-            validation_data=expected_nlp_validation_data,
-            featurization_settings=nlp_featurization_settings_expected,
-            limit_settings=nlp_limits_expected,
-            sweep_settings=nlp_sweep_settings_expected if run_type == "sweep" else None,
-            fixed_parameters=nlp_fixed_parameters_expected,
-            search_space=nlp_search_space_expected if run_type == "sweep" else None,
-            primary_metric=ClassificationPrimaryMetrics.ACCURACY,
-            log_verbosity=LogVerbosity.DEBUG,
-        ),
+        text_classification,
         compute_id=compute_binding_expected,
         name="simpleautomlnlpjob",
     )
@@ -172,28 +184,31 @@ def expected_text_classification_multilabel_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
     nlp_limits_expected: RestNlpVerticalLimitSettings,
-    nlp_sweep_settings_expected: RestNlpSweepSettings,
-    nlp_fixed_parameters_expected: RestNlpFixedParameters,
-    nlp_search_space_expected: List[RestNlpParameterSubspace],
+    nlp_sweep_settings_expected: dict,
+    nlp_fixed_parameters_expected: dict,
+    nlp_search_space_expected: List[dict],
     nlp_featurization_settings_expected: RestNlpFeaturizationSettings,
     expected_nlp_target_column_name: str,
     expected_nlp_training_data: MLTableJobInput,
     expected_nlp_validation_data: MLTableJobInput,
     compute_binding_expected: str,
 ) -> JobBase:
+    text_classification_multilabel = RestTextClassificationMultilabel(
+        target_column_name=expected_nlp_target_column_name,
+        training_data=expected_nlp_training_data,
+        validation_data=expected_nlp_validation_data,
+        featurization_settings=nlp_featurization_settings_expected,
+        limit_settings=nlp_limits_expected,
+        primary_metric=ClassificationPrimaryMetrics.ACCURACY,
+        log_verbosity=LogVerbosity.DEBUG,
+    )
+    # ``fixedParameters``/``sweepSettings``/``searchSpace`` are JSON-direct wire-keys under arm.
+    text_classification_multilabel["fixedParameters"] = nlp_fixed_parameters_expected
+    if run_type == "sweep":
+        text_classification_multilabel["sweepSettings"] = nlp_sweep_settings_expected
+        text_classification_multilabel["searchSpace"] = nlp_search_space_expected
     return _get_rest_automl_job(
-        RestTextClassificationMultilabel(
-            target_column_name=expected_nlp_target_column_name,
-            training_data=expected_nlp_training_data,
-            validation_data=expected_nlp_validation_data,
-            featurization_settings=nlp_featurization_settings_expected,
-            limit_settings=nlp_limits_expected,
-            sweep_settings=nlp_sweep_settings_expected if run_type == "sweep" else None,
-            fixed_parameters=nlp_fixed_parameters_expected,
-            search_space=nlp_search_space_expected if run_type == "sweep" else None,
-            primary_metric=ClassificationPrimaryMetrics.ACCURACY,
-            log_verbosity=LogVerbosity.DEBUG,
-        ),
+        text_classification_multilabel,
         compute_id=compute_binding_expected,
         name="simpleautomlnlpjob",
     )
@@ -204,26 +219,29 @@ def expected_text_ner_job(
     mock_workspace_scope: OperationScope,
     run_type: str,
     nlp_limits_expected: RestNlpVerticalLimitSettings,
-    nlp_sweep_settings_expected: RestNlpSweepSettings,
-    nlp_fixed_parameters_expected: RestNlpFixedParameters,
-    nlp_search_space_expected: List[RestNlpParameterSubspace],
+    nlp_sweep_settings_expected: dict,
+    nlp_fixed_parameters_expected: dict,
+    nlp_search_space_expected: List[dict],
     nlp_featurization_settings_expected: RestNlpFeaturizationSettings,
     expected_nlp_training_data: MLTableJobInput,
     expected_nlp_validation_data: MLTableJobInput,
     compute_binding_expected: str,
 ) -> JobBase:
+    text_ner = RestTextNer(
+        training_data=expected_nlp_training_data,
+        validation_data=expected_nlp_validation_data,
+        featurization_settings=nlp_featurization_settings_expected,
+        limit_settings=nlp_limits_expected,
+        primary_metric=ClassificationPrimaryMetrics.ACCURACY,
+        log_verbosity=LogVerbosity.DEBUG,
+    )
+    # ``fixedParameters``/``sweepSettings``/``searchSpace`` are JSON-direct wire-keys under arm.
+    text_ner["fixedParameters"] = nlp_fixed_parameters_expected
+    if run_type == "sweep":
+        text_ner["sweepSettings"] = nlp_sweep_settings_expected
+        text_ner["searchSpace"] = nlp_search_space_expected
     return _get_rest_automl_job(
-        RestTextNer(
-            training_data=expected_nlp_training_data,
-            validation_data=expected_nlp_validation_data,
-            featurization_settings=nlp_featurization_settings_expected,
-            limit_settings=nlp_limits_expected,
-            sweep_settings=nlp_sweep_settings_expected if run_type == "sweep" else None,
-            fixed_parameters=nlp_fixed_parameters_expected,
-            search_space=nlp_search_space_expected if run_type == "sweep" else None,
-            primary_metric=ClassificationPrimaryMetrics.ACCURACY,
-            log_verbosity=LogVerbosity.DEBUG,
-        ),
+        text_ner,
         compute_id=compute_binding_expected,
         name="simpleautomlnlpjob",
     )
@@ -237,6 +255,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
         properties={},
         outputs={},
         tags={},
+        is_archived=False,
     )
     result = JobBase(properties=properties)
     result.name = name

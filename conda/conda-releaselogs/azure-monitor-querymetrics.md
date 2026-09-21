@@ -1,5 +1,11 @@
 # Azure Monitor Query Metrics client library for Python (conda)
 
+## 2026.09.01
+
+### Packages included
+
+- azure-monitor-querymetrics-1.0.0
+
 ## 2026.06.01
 
 ### Packages included

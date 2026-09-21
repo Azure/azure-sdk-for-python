@@ -24,7 +24,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
         response = self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -83,6 +83,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "sourceMetadata": {
                                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                                     "hardwareProfile": {
+                                        "processorMode": "str",
                                         "vmSize": "str",
                                         "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                                     },
@@ -149,10 +150,18 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                         "proxyAgentSettings": {
                                             "addProxyAgentExtension": bool,
                                             "enabled": bool,
-                                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                            "imds": {
+                                                "inVMAccessControlProfileReferenceId": "str",
+                                                "mode": "str",
+                                                "useLocalFileRules": bool,
+                                            },
                                             "keyIncarnationId": 0,
                                             "mode": "str",
-                                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                            "wireServer": {
+                                                "inVMAccessControlProfileReferenceId": "str",
+                                                "mode": "str",
+                                                "useLocalFileRules": bool,
+                                            },
                                         },
                                         "securityType": "str",
                                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
@@ -169,6 +178,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                                 "diskSizeGB": 0,
                                                 "lun": 0,
                                                 "managedDisk": {
+                                                    "additionalDiskProperties": {
+                                                        "managedDiskProperties": {
+                                                            "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                            "burstingEnabled": bool,
+                                                            "diskAccessId": "str",
+                                                            "diskIOPSReadOnly": 0,
+                                                            "diskMBpsReadOnly": 0,
+                                                            "logicalSectorSize": 0,
+                                                            "maxShares": 0,
+                                                            "networkAccessPolicy": "str",
+                                                            "optimizedForFrequentAttach": bool,
+                                                            "performancePlus": bool,
+                                                            "tier": "str",
+                                                        }
+                                                    },
                                                     "diskEncryptionSet": {"id": "str"},
                                                     "id": "str",
                                                     "securityProfile": {
@@ -196,6 +220,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                                 "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
                                             },
                                             "managedDisk": {
+                                                "additionalDiskProperties": {
+                                                    "managedDiskProperties": {
+                                                        "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                        "burstingEnabled": bool,
+                                                        "diskAccessId": "str",
+                                                        "diskIOPSReadOnly": 0,
+                                                        "diskMBpsReadOnly": 0,
+                                                        "logicalSectorSize": 0,
+                                                        "maxShares": 0,
+                                                        "networkAccessPolicy": "str",
+                                                        "optimizedForFrequentAttach": bool,
+                                                        "performancePlus": bool,
+                                                        "tier": "str",
+                                                    }
+                                                },
                                                 "diskEncryptionSet": {"id": "str"},
                                                 "id": "str",
                                                 "securityProfile": {
@@ -239,7 +278,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -295,6 +334,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "sourceMetadata": {
                                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                                     "hardwareProfile": {
+                                        "processorMode": "str",
                                         "vmSize": "str",
                                         "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                                     },
@@ -361,10 +401,18 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                         "proxyAgentSettings": {
                                             "addProxyAgentExtension": bool,
                                             "enabled": bool,
-                                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                            "imds": {
+                                                "inVMAccessControlProfileReferenceId": "str",
+                                                "mode": "str",
+                                                "useLocalFileRules": bool,
+                                            },
                                             "keyIncarnationId": 0,
                                             "mode": "str",
-                                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                            "wireServer": {
+                                                "inVMAccessControlProfileReferenceId": "str",
+                                                "mode": "str",
+                                                "useLocalFileRules": bool,
+                                            },
                                         },
                                         "securityType": "str",
                                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
@@ -381,6 +429,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                                 "diskSizeGB": 0,
                                                 "lun": 0,
                                                 "managedDisk": {
+                                                    "additionalDiskProperties": {
+                                                        "managedDiskProperties": {
+                                                            "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                            "burstingEnabled": bool,
+                                                            "diskAccessId": "str",
+                                                            "diskIOPSReadOnly": 0,
+                                                            "diskMBpsReadOnly": 0,
+                                                            "logicalSectorSize": 0,
+                                                            "maxShares": 0,
+                                                            "networkAccessPolicy": "str",
+                                                            "optimizedForFrequentAttach": bool,
+                                                            "performancePlus": bool,
+                                                            "tier": "str",
+                                                        }
+                                                    },
                                                     "diskEncryptionSet": {"id": "str"},
                                                     "id": "str",
                                                     "securityProfile": {
@@ -408,6 +471,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                                 "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
                                             },
                                             "managedDisk": {
+                                                "additionalDiskProperties": {
+                                                    "managedDiskProperties": {
+                                                        "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                        "burstingEnabled": bool,
+                                                        "diskAccessId": "str",
+                                                        "diskIOPSReadOnly": 0,
+                                                        "diskMBpsReadOnly": 0,
+                                                        "logicalSectorSize": 0,
+                                                        "maxShares": 0,
+                                                        "networkAccessPolicy": "str",
+                                                        "optimizedForFrequentAttach": bool,
+                                                        "performancePlus": bool,
+                                                        "tier": "str",
+                                                    }
+                                                },
                                                 "diskEncryptionSet": {"id": "str"},
                                                 "id": "str",
                                                 "securityProfile": {
@@ -442,7 +520,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -454,7 +532,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -465,7 +543,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
     def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -475,7 +553,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Async live tests for ``SearchIndexClient`` synonym map operations."""
+
 from __future__ import annotations
 
 import pytest

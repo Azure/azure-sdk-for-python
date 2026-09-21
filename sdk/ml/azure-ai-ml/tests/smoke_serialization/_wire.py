@@ -39,6 +39,10 @@ def serialize_wire(rest_obj):
     if getattr(rest_obj, "_is_model", False) is True:
         # arm hybrid: serialize exactly the way the generated operation does.
         return json.loads(json.dumps(rest_obj, cls=SdkJSONEncoder, exclude_readonly=True))
+    if isinstance(rest_obj, dict):
+        # Some migrated entities (e.g. feature store) build the camelCase wire body as a plain dict
+        # directly; serialize it the same way the generated operation would (handles nested hybrids).
+        return json.loads(json.dumps(rest_obj, cls=SdkJSONEncoder, exclude_readonly=True))
     # msrest: ``.serialize()`` already returns the camelCase wire dict and omits readonly fields.
     return rest_obj.serialize()
 
