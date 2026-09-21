@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
         response = await self.client.express_route_circuits.get(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -65,6 +65,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                         "bandwidthInGbps": 0.0,
                         "circuitProvisioningState": "str",
                         "enableDirectPortRateLimit": bool,
+                        "expressRouteLag": {"id": "str"},
                         "expressRoutePort": {"id": "str"},
                         "gatewayManagerEtag": "str",
                         "globalReachEnabled": bool,
@@ -191,7 +192,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -205,7 +206,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             circuit_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -218,7 +219,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
             await self.client.express_route_circuits.begin_delete(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -230,7 +231,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
     async def test_express_route_circuits_list(self, resource_group):
         response = self.client.express_route_circuits.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -240,7 +241,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_express_route_circuits_list_all(self, resource_group):
         response = self.client.express_route_circuits.list_all(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -252,7 +253,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
         response = await self.client.express_route_circuits.get_stats(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -265,7 +266,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
             await self.client.express_route_circuits.begin_get_circuit_link_failover_all_tests_details(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -282,7 +283,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                 link_type="str",
                 circuit_test_category="str",
                 failover_test_id="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -298,7 +299,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                 circuit_name="str",
                 link_type="str",
                 circuit_test_category="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -318,7 +319,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                     "linkType": "str",
                     "wasSimulationSuccessful": bool,
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -334,7 +335,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -350,7 +351,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -366,7 +367,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -380,7 +381,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             circuit_name="str",
             peering_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

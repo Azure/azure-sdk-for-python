@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,6 +24,7 @@ from .operations import (
     AIManagerNamespacesOperations,
     AIManagersOperations,
     AIModelsOperations,
+    CustomAIModelsOperations,
     ModelDeploymentsOperations,
     ModelSourcesOperations,
     Operations,
@@ -38,7 +40,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerServiceAIManagerMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ContainerServiceAIManagerMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Kubernetes AI Manager api client.
 
     :ivar operations: Operations operations
@@ -56,6 +58,9 @@ class ContainerServiceAIManagerMgmtClient:  # pylint: disable=docstring-keyword-
     :ivar model_deployments: ModelDeploymentsOperations operations
     :vartype model_deployments:
      azure.mgmt.containerserviceaimanager.aio.operations.ModelDeploymentsOperations
+    :ivar custom_ai_models: CustomAIModelsOperations operations
+    :vartype custom_ai_models:
+     azure.mgmt.containerserviceaimanager.aio.operations.CustomAIModelsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -66,7 +71,7 @@ class ContainerServiceAIManagerMgmtClient:  # pylint: disable=docstring-keyword-
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -133,6 +138,7 @@ class ContainerServiceAIManagerMgmtClient:  # pylint: disable=docstring-keyword-
         self.model_deployments = ModelDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.custom_ai_models = CustomAIModelsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

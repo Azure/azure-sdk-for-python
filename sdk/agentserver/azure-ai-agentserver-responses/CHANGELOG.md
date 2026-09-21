@@ -17,6 +17,12 @@
   provider write, moving the terminal storage round-trip off the client's last-byte
   path. A rare terminal-write failure now surfaces on a later GET (record stamped
   `storage_error`) rather than on the stream. The resilient path is unchanged.
+- Reuse request-scoped history lookups and concurrent input-reference resolution without caching failed or cancelled reads.
+- Flush streaming telemetry after request-owned handler and iterator cleanup,
+  including on disconnects, and before HTTP completion instead of delaying the first stream event.
+- Construct generated model types on demand while preserving real TypedDict contracts and public exports.
+- Avoid redundant event and recovery-seed copies while retaining validation and caller-owned mutation isolation.
+
 - Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
