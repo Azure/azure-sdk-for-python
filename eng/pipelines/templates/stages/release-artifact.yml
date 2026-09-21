@@ -158,8 +158,8 @@ stages:
                   artifactName: release_artifact
                   targetPath: $(Pipeline.Workspace)/release_artifact
                 - input: pipelineArtifact
-                  artifactName: packages_extended
-                  targetPath: $(Pipeline.Workspace)/packages_extended
+                  artifactName: ${{ parameters.ArtifactName }}
+                  targetPath: $(Pipeline.Workspace)/${{ parameters.ArtifactName }}
 
             pool:
               image: ubuntu-24.04

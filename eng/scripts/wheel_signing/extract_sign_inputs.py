@@ -6,7 +6,10 @@ from pathlib import Path
 from typing import Dict, List
 
 
-SIGNABLE_SUFFIXES = {".so", ".dylib", ".dll", ".pyd"}
+SIGNABLE_SUFFIXES = {
+    "mac": {".so", ".dylib"},
+    "windows": {".dll", ".pyd"},
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -57,10 +60,10 @@ def collect_wheels(wheels_dir: Path) -> List[Path]:
     return sorted(wheels_dir.rglob("*.whl"))
 
 
-def collect_signable_files(unpacked_wheel_dir: Path) -> List[Path]:
+def collect_signable_files(unpacked_wheel_dir: Path, platform: str) -> List[Path]:
     files = []
     for path in sorted(unpacked_wheel_dir.rglob("*")):
-        if path.is_file() and path.suffix.lower() in SIGNABLE_SUFFIXES:
+        if path.is_file() and path.suffix.lower() in SIGNABLE_SUFFIXES[platform]:
             files.append(path)
     return files
 
@@ -130,7 +133,7 @@ def main() -> None:
             }
         )
 
-        signable_files = collect_signable_files(unpacked_wheel_dir)
+        signable_files = collect_signable_files(unpacked_wheel_dir, args.platform)
         print(f"[EXTRACT] wheel={wheel_path.name} signable_count={len(signable_files)}")
         for signable_file in signable_files:
             relative_path = signable_file.relative_to(unpacked_wheel_dir).as_posix()

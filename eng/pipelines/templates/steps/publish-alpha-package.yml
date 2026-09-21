@@ -13,15 +13,6 @@ parameters:
 
 steps:
   - pwsh: |
-      # The signed artifact is absent when a Sign_* stage failed or was skipped. Skip this one
-      # package rather than failing the dev feed publish for every other package in the service.
-      # Logged as a build issue, not just Write-Warning, so a signing failure degrading to
-      # "this package was not published" is visible in the run summary instead of buried in logs.
-      if (-not (Test-Path "${{ parameters.PackagePath }}")) {
-        Write-Host "##vso[task.logissue type=warning]No build output at '${{ parameters.PackagePath }}'. Skipping alpha publish for ${{ parameters.Artifact.name }}. If this package sets signBinaries, check whether its Sign stage failed or was skipped."
-        exit 0
-      }
-
       # If BuildTargetingString is set, check whether this artifact matches any of the
       # (possibly comma-separated) glob patterns before attempting to publish.
       # This handles scoped builds where only a subset of packages are built.
@@ -33,6 +24,15 @@ steps:
           Write-Host "Package '${{ parameters.Artifact.name }}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
           exit 0
         }
+      }
+
+      # The signed artifact is absent when a Sign_* stage failed or was skipped. Skip this one
+      # package rather than failing the dev feed publish for every other package in the service.
+      # Logged as a build issue, not just Write-Warning, so a signing failure degrading to
+      # "this package was not published" is visible in the run summary instead of buried in logs.
+      if (-not (Test-Path "${{ parameters.PackagePath }}")) {
+        Write-Host "##vso[task.logissue type=warning]No build output at '${{ parameters.PackagePath }}'. Skipping alpha publish for ${{ parameters.Artifact.name }}. If this package sets signBinaries, check whether its Sign stage failed or was skipped."
+        exit 0
       }
 
       $fileCount = (Get-ChildItem ${{ parameters.PackagePath }} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count

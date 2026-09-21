@@ -148,7 +148,8 @@ stages:
           - template: pipelines/steps/azd-cli-win-signing.yml@azure-sdk-build-tools
             parameters:
               WinPath: "$(Build.ArtifactStagingDirectory)/win-sign-input"
-              WinPattern: '**/*.pyd'
+              # The extractor limits this payload to Windows signable files (.pyd and .dll).
+              WinPattern: '**/*'
 
           - pwsh: |
               python eng/scripts/wheel_signing/repackage_signed_wheels.py `

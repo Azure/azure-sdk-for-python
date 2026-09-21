@@ -33,7 +33,7 @@ istrue.is_true()  # True
 
 Wheels are produced with [cibuildwheel](https://cibuildwheel.pypa.io/), configured in `pyproject.toml` to build CPython 3.10 for x86_64 Linux, x86_64 Windows, and arm64 macOS. Because the extension compiles against the CPython limited API, each wheel is tagged `abi3` and remains importable on later interpreters.
 
-To build and test for the current platform only:
+To build and test the arm64 macOS wheel locally:
 
 ```bash
 pip install cibuildwheel
