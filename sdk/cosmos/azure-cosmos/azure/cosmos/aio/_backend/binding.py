@@ -52,6 +52,7 @@ from azure.cosmos._backend._shared import (
     close_credential_bridge_quietly,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
+    finalize_backend_resources,
     page_dispatch_errors,
     validate_page_request,
 )
@@ -85,7 +86,6 @@ except ImportError:
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
-_native_runtime_module = _rust_module
 _REQUEST_CONTRACT_ERROR = native_settings_contract_error(_rust_module) if _rust_module is not None else None
 
 
@@ -125,12 +125,6 @@ def _close_driver_handle_quietly(driver_handle: str) -> None:
         _LOGGER.debug("Failed releasing native resources")
 
 
-def _runtime_configuration() -> Optional[tuple[Optional[bool], Optional[float], Optional[float]]]:
-    if _native_runtime_module is None:
-        return None
-    return _native_runtime_module._runtime_configuration()
-
-
 class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
     """Sends async operations from one ``CosmosClient`` to a shared rust driver.
 
@@ -144,7 +138,7 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
     synchronous Python work, locks, and cleanup fallback can still block.
     Concurrency is not determined by the service/connection pool alone.
 
-    RustBindingShared stores common client state and registrations. This class
+    RustBindingShared stores common client state. This class
     owns async dispatch and shares driver initialization and cleanup across
     callers, including callers on different event loops.
     """
@@ -157,11 +151,9 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
-        strict_isolation: bool = False,
     ) -> None:
         """Store client settings and prepare lazy Rust driver initialization."""
-        # Backend-specific fields first, so they exist even if the shared init's
-        # strict-mode registration raises and the finalizer then runs.
+        # Fields must exist even if shared validation fails and the finalizer runs.
         # _build_lock serializes acquisition attempts across loops. Successful
         # initialization is reused; failed attempts can run again. Native
         # acquisition does not hold _driver_handle_lock, so close can mark the
@@ -175,9 +167,8 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
         # Callers on different loops may submit separate serialized build jobs.
         self._init_future: Optional["asyncio.Future[str]"] = None
         self._init_future_loop: Optional[asyncio.AbstractEventLoop] = None
-        # Shared per-client state + endpoint registration (may raise in strict mode).
         self._init_shared(
-            endpoint, master_key, client_config, token_credential, strict_isolation
+            endpoint, master_key, client_config, token_credential
         )
 
     def _build_driver_handle(self) -> str:
@@ -191,16 +182,14 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
                 "module is not present in this environment. Build it "
                 "with `maturin develop` from the repo root."
             )
-        if self._driver_handle is not None:
-            return self._driver_handle
         surplus_driver_handle: Optional[str] = None
         with self._build_lock:
-            # Another loop may have built it while we waited for _build_lock.
-            if self._driver_handle is not None:
-                return self._driver_handle
-            if self._closing:
-                raise RuntimeError("AsyncRustBinding: the client is closed.")
-            new_driver_handle: Optional[str] = self._initialize_driver(_rust_module, _runtime_configuration)
+            with self._driver_handle_lock:
+                if self._closing:
+                    raise RuntimeError("AsyncRustBinding: the client is closed.")
+                if self._driver_handle is not None:
+                    return self._driver_handle
+            new_driver_handle: Optional[str] = self._initialize_driver(_rust_module)
             with self._driver_handle_lock:
                 if self._closing:
                     surplus_driver_handle, new_driver_handle = new_driver_handle, None
@@ -232,26 +221,29 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
         """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
-        if self._closing:
-            raise RuntimeError("AsyncRustBinding: the client is closed.")
-        # Already built: return it without taking any lock.
-        driver_handle = self._driver_handle
-        if driver_handle is not None:
-            return driver_handle
         loop = asyncio.get_running_loop()
-        init_future = self._init_future
-        if init_future is None or self._init_future_loop is not loop:
-            init_future = loop.run_in_executor(None, self._build_driver_handle)
-            self._init_future = init_future
-            self._init_future_loop = loop
-        try:
-            return await init_future
-        finally:
-            # Clear this future on completion, failure, or cancelled waiting.
-            # Its executor job may still be running after cancellation.
-            if self._init_future is init_future:
+        with self._driver_handle_lock:
+            if self._closing:
+                raise RuntimeError("AsyncRustBinding: the client is closed.")
+            if self._driver_handle is not None:
+                return self._driver_handle
+            init_future = self._init_future
+            if init_future is None or self._init_future_loop is not loop:
+                init_future = loop.run_in_executor(None, self._build_driver_handle)
+                self._init_future = init_future
+                self._init_future_loop = loop
+                init_future.add_done_callback(self._driver_initialization_finished)
+        return await asyncio.shield(init_future)
+
+    def _driver_initialization_finished(self, future: "asyncio.Future[str]") -> None:
+        with self._driver_handle_lock:
+            if self._init_future is future:
                 self._init_future = None
                 self._init_future_loop = None
+        # Observe failures even when every waiter was cancelled; active waiters
+        # still receive the original exception through their shielded await.
+        if not future.cancelled() and future.exception() is not None:
+            _LOGGER.debug("Rust driver initialization failed")
 
     async def close(self) -> None:
         """Release this client's Rust resources once.
@@ -266,7 +258,6 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
             if completion is None:
                 with self._driver_handle_lock:
                     self._closing = True
-                self._release_config_once()
                 driver_handle = self._take_driver_handle_for_close()
                 credential = self._take_token_credential_for_close()
                 pending_close: Future[None] = Future()
@@ -322,46 +313,10 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
 
     def __del__(self) -> None:
         """Release resources if the client was not closed explicitly."""
-        # Fallback for a client that was never closed explicitly; prefer calling
-        # close() (or `async with`). The teardown calls into the Rust driver
-        # (release_driver_handle) and may join the credential-bridge thread, both of which
-        # can block. A finalizer can run on ANY thread -- including the
-        # event-loop thread, when GC collects the client mid-run -- so blocking
-        # here would stall that loop. Release the config registration inline
-        # (including its locking), then offload native/bridge teardown to a
-        # daemon thread if a loop is running on this thread, or inline otherwise
-        # (the usual finalizer case, and interpreter shutdown where a new thread
-        # may not start). The closure captures only the handle and credential, not
-        # self, so the finalizer does not resurrect the object.
         try:
-            self._release_config_once()
             credential = self._take_token_credential_for_close()
             driver_handle = self._take_driver_handle_for_close()
-            if driver_handle is None and credential is None:
-                return
-
-            def _blocking_teardown() -> None:
-                """Release resources that may block the current thread."""
-                close_credential_bridge_quietly(credential)
-                if driver_handle is not None:
-                    _close_driver_handle_quietly(driver_handle)
-
-            try:
-                asyncio.get_running_loop()
-            except RuntimeError:
-                # No running event loop on this thread; perform cleanup inline.
-                _blocking_teardown()
-                return
-            try:
-                threading.Thread(
-                    target=_blocking_teardown,
-                    name="cosmos-rust-finalizer",
-                    daemon=True,
-                ).start()
-            except Exception:  # pylint: disable=broad-except
-                # Could not start a thread (e.g. during interpreter shutdown);
-                # fall back to inline cleanup.
-                _blocking_teardown()
+            finalize_backend_resources(credential, driver_handle, _rust_module)
         except Exception:  # pylint: disable=broad-except
             # Never raise from object finalization.
             pass
@@ -380,13 +335,13 @@ class AsyncRustBinding(RustBindingShared, AsyncCosmosBackend):
                 "the repo root."
             )
 
-        driver_handle = await self._ensure_driver_handle()
         # Look up the binding's *_item_async function for this op; None if unsupported.
         binding_function = _get_binding_function(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
                 "AsyncRustBinding.execute does not yet support op={!r}.".format(prepared.op)
             )
+        driver_handle = await self._ensure_driver_handle()
         # Record selected dispatch, not successful execution or service I/O.
         # Omit the credential-bearing handle.
         _LOGGER.debug(

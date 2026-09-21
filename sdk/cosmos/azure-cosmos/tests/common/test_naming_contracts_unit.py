@@ -584,6 +584,7 @@ def test_installed_native_cursor_exports_have_no_concept_aliases():
     """
     native = pytest.importorskip("azure.cosmos._rust")
     assert hasattr(native, "_ItemFeedCursor")
+    assert native._ItemFeedCursor().can_retry_setup is True
     for name in ("fetch_page_with_cursor", "fetch_page_with_cursor_async"):
         assert "cursor" in inspect.signature(getattr(native, name)).parameters
     for old in (
@@ -690,7 +691,6 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypa
         adapter = object.__new__(module.RustBinding)
         adapter._driver_handle_lock = threading.Lock()
         adapter._driver_handle = handle
-        monkeypatch.setattr(adapter, "_release_config_once", lambda: None)
         monkeypatch.setattr(adapter, "_close_token_credential_bridge", lambda: None)
         adapter.close()
     assert "releasing native resources" in caplog.text

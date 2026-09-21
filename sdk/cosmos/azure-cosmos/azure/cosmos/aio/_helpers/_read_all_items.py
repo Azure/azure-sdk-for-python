@@ -114,10 +114,8 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
             return result
         except StopAsyncIteration:
             raise
-        except BaseException:
-            state.failed = True
-            state.cursor = None
-            state.legacy_pages = None
+        except BaseException as error:
+            state.invalidate(error)
             raise
         finally:
             state.lock.release()

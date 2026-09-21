@@ -24,8 +24,9 @@ The recurring themes:
   instead of handing back something unusable.
 * **One budget per public page**, including driver start-up and any empty
   pages consumed along the way.
-* **Failures do not replay.** After an error the pager stays failed, keeps the
-  last token it actually delivered, and never re-sends the page.
+* **Execution failures do not replay.** After execution may have started, an
+  error leaves the pager failed with its last delivered token. Initial setup
+  service errors can be retried when the binding confirms execution never began.
 
 Results are not always objects: ``SELECT VALUE`` can yield numbers, nulls,
 lists and strings, so the tests check scalars survive the trip.
@@ -87,14 +88,20 @@ def query(request, monkeypatch):
         delay=0,
         resumable=True,
         failure=None,
+        setup_status=0,
         pages=[[{"id": "a", "nested": [1]}], [], [7, None, ["value"], "text"], None],
     )
 
     def cursor():
-        return SimpleNamespace(index=0, has_more=False, continuation_supported=True)
+        return SimpleNamespace(
+            index=0, has_more=False, continuation_supported=True, can_retry_setup=True
+        )
 
     def page(handle, prepared, state, *, timeout_seconds=None):
         context.calls.append((prepared, state, timeout_seconds))
+        if context.setup_status:
+            return context.setup_status, 0, {}, b'{"message":"setup failed"}', None
+        state.can_retry_setup = False
         if context.failure:
             raise context.failure
         if timeout_seconds is not None and context.delay > timeout_seconds:
@@ -173,6 +180,56 @@ def query(request, monkeypatch):
     closed = backend.close()
     if inspect.isawaitable(closed):
         asyncio.run(closed)
+
+
+@pytest.mark.parametrize("status", [429, 503])
+def test_initial_setup_service_error_can_retry_same_page_iterator(query, status):
+    hooks = []
+    pages = query.proxy.query_items(
+        "SELECT * FROM c", response_hook=lambda headers, body: hooks.append(body)
+    ).by_page()
+    query.setup_status = status
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        query.next_page(pages)
+    assert caught.value.status_code == status
+    cursor = pages.state.cursor
+    assert cursor is not None and not pages.state.failed
+    assert pages.continuation_token is None
+    assert hooks == []
+    query.setup_status = 0
+    assert query.next_page(pages) == [{"id": "a", "nested": [1]}]
+    assert query.calls[0][1] is query.calls[1][1] is cursor
+    assert len(hooks) == 1
+
+
+def test_first_execution_service_error_still_invalidates(query):
+    query.status = 503
+    pages = query.proxy.query_items("SELECT * FROM c").by_page()
+    with pytest.raises(CosmosHttpResponseError):
+        query.next_page(pages)
+    assert pages.state.cursor is None
+    with pytest.raises(RuntimeError, match="failed"):
+        query.next_page(pages)
+    assert len(query.calls) == 1
+
+
+def test_setup_failure_preserves_input_query_bookmark(query):
+    pager = query.proxy.query_items("SELECT * FROM c")
+    original = pager.by_page()
+    query.next_page(original)
+    bookmark = original.continuation_token
+    pages = pager.by_page(continuation_token=bookmark)
+    query.setup_status = 503
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        query.next_page(pages)
+    assert caught.value.continuation_token == bookmark
+    assert pages.continuation_token == bookmark
+    cursor = pages.state.cursor
+    assert cursor is not None and not pages.state.failed
+    query.setup_status = 0
+    assert query.next_page(pages) == [7, None, ["value"], "text"]
+    assert query.calls[-1][1] is cursor
+    assert pages.continuation_token != bookmark
 
 
 def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):

@@ -237,6 +237,11 @@ impl ItemFeedCursor {
     fn continuation_supported(&self) -> bool {
         self.published_status.load(Ordering::Acquire) & 2 == 0
     }
+
+    #[getter]
+    fn can_retry_setup(&self) -> bool {
+        self.state.try_lock().is_ok_and(|state| !state.started)
+    }
 }
 
 type PageResult = (Result<Option<CosmosResponse>, CosmosError>, Option<String>);
@@ -293,7 +298,6 @@ async fn next_plan_page(
             "Feed cursor failed; resume using the last delivered continuation token",
         ));
     }
-    state.started = true;
     modifiers
         .custom_headers
         .retain(|name, _| name.as_str() != "x-ms-continuation");
@@ -360,6 +364,9 @@ async fn next_plan_page(
             request,
         }
     };
+    // Setup can be repeated, but execution may advance the opaque plan even
+    // when it fails or is cancelled. Never make that plan available again.
+    state.started = true;
     let response = match driver
         .execute_plan(
             &mut progress.plan,
@@ -557,6 +564,10 @@ mod tests {
         Url,
     };
     use azure_data_cosmos_driver::{
+        fault_injection::{
+            CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+            FaultInjectionRule, FaultInjectionRuleBuilder,
+        },
         in_memory_emulator::{
             ContainerConfig, InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
         },
@@ -583,6 +594,14 @@ mod tests {
     async fn setup_with_definition(
         count: usize,
         definition: PartitionKeyDefinition,
+    ) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
+        setup_with_fault_rules(count, definition, Vec::new()).await
+    }
+
+    async fn setup_with_fault_rules(
+        count: usize,
+        definition: PartitionKeyDefinition,
+        rules: Vec<Arc<FaultInjectionRule>>,
     ) -> (Arc<InMemoryEmulatorHttpClient>, Arc<CosmosDriver>) {
         pyo3::prepare_freethreaded_python();
         let url = Url::parse("https://read-all.emulator.local").unwrap();
@@ -611,6 +630,8 @@ mod tests {
                             .with_query_plan_mode(QueryPlanMode::GatewayOnly)
                             .build(),
                     )
+                    .with_fault_injection_rules(rules)
+                    .unwrap()
                     .build(),
             )
             .await
@@ -667,8 +688,14 @@ mod tests {
         let cursor = ItemFeedCursor::default();
         assert!(!cursor.has_more());
         assert!(cursor.continuation_supported());
+        assert!(cursor.can_retry_setup());
+        {
+            let _setup_in_flight = cursor.state.lock().await;
+            assert!(!cursor.can_retry_setup());
+        }
         let (rows, _) = fetch(&driver, &cursor.state, None).await;
         assert!(rows.is_some());
+        assert!(!cursor.can_retry_setup());
         let _in_flight = cursor.state.lock().await;
         assert!(cursor.has_more());
         assert!(cursor.continuation_supported());
@@ -684,6 +711,128 @@ mod tests {
         assert!(!first.continuation_supported());
         assert!(!second.has_more());
         assert!(second.continuation_supported());
+        assert!(!first.can_retry_setup());
+        assert!(second.can_retry_setup());
+    }
+
+    async fn setup_fault(
+        operation: &str,
+        delay: Duration,
+    ) -> (Arc<CosmosDriver>, Arc<FaultInjectionRule>) {
+        let rule = Arc::new(
+            FaultInjectionRuleBuilder::new(
+                "cursor-phase",
+                FaultInjectionResultBuilder::new()
+                    .with_custom_response(
+                        CustomResponseBuilder::new(azure_core::http::StatusCode::BadRequest).build(),
+                    )
+                    .with_delay(delay)
+                    .build(),
+            )
+            .with_condition(
+                FaultInjectionConditionBuilder::new()
+                    .with_operation_type(operation.parse().unwrap())
+                    .build(),
+            )
+            .build(),
+        );
+        rule.disable();
+        let (_emulator, driver) = setup_with_fault_rules(
+            0,
+            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+            vec![rule.clone()],
+        )
+        .await;
+        rule.enable();
+        (driver, rule)
+    }
+
+    #[tokio::test]
+    async fn setup_errors_can_retry_but_execution_errors_invalidate() {
+        for operation in ["MetadataReadContainer", "MetadataQueryPlan", "QueryItem"] {
+            let (driver, rule) = setup_fault(operation, Duration::ZERO).await;
+            let cursor = ItemFeedCursor::default();
+            let identity = ("test".into(), "dbs/db/colls/other".into());
+            let (result, token) = next_page(
+                driver.clone(),
+                cursor.state.clone(),
+                identity.clone(),
+                None,
+                modifiers(),
+            )
+            .await
+            .unwrap();
+            assert!(result.is_err(), "{operation}");
+            assert!(token.is_none(), "{operation}");
+            assert!(rule.hit_count() > 0, "{operation}");
+            let setup_failed = operation != "QueryItem";
+            assert_eq!(cursor.can_retry_setup(), setup_failed, "{operation}");
+            {
+                let state = cursor.state.lock().await;
+                assert_eq!(state.started, !setup_failed, "{operation}");
+                assert!(state.progress.is_none(), "{operation}");
+            }
+            rule.disable();
+            let retry = next_page(
+                driver,
+                cursor.state.clone(),
+                identity,
+                None,
+                modifiers(),
+            )
+            .await;
+            if setup_failed {
+                assert!(retry.unwrap().0.is_ok(), "{operation}");
+                assert!(!cursor.can_retry_setup(), "{operation}");
+            } else {
+                let error = retry.err().expect("execution failure must remain terminal");
+                assert!(error.to_string().contains("Feed cursor failed"));
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn cancellation_before_execution_does_not_start_cursor() {
+        for operation in ["MetadataReadContainer", "MetadataQueryPlan", "QueryItem"] {
+            let (driver, rule) = setup_fault(operation, Duration::from_secs(60)).await;
+            let cursor = ItemFeedCursor::default();
+            let mut options = modifiers();
+            options.driver_timeout_policy = None;
+            let fetch = tokio::spawn(next_page(
+                driver.clone(),
+                cursor.state.clone(),
+                ("test".into(), "dbs/db/colls/other".into()),
+                None,
+                options,
+            ));
+            tokio::time::timeout(Duration::from_secs(5), async {
+                while rule.hit_count() == 0 {
+                    tokio::task::yield_now().await;
+                }
+            })
+            .await
+            .expect("fetch did not reach the injected delay");
+            assert!(!cursor.can_retry_setup());
+            fetch.abort();
+            assert!(fetch.await.unwrap_err().is_cancelled());
+            let setup_cancelled = operation != "QueryItem";
+            assert_eq!(cursor.can_retry_setup(), setup_cancelled, "{operation}");
+            assert_eq!(cursor.state.lock().await.started, !setup_cancelled);
+            rule.disable();
+            let retry = next_page(
+                driver,
+                cursor.state.clone(),
+                ("test".into(), "dbs/db/colls/other".into()),
+                None,
+                modifiers(),
+            )
+            .await;
+            if setup_cancelled {
+                assert!(retry.unwrap().0.is_ok(), "{operation}");
+            } else {
+                assert!(retry.err().unwrap().to_string().contains("Feed cursor failed"));
+            }
+        }
     }
 
     async fn fetch(

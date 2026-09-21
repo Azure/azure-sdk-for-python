@@ -153,8 +153,8 @@ def build_client_config(
     * ``read_timeout_seconds`` -- ``None`` carries nothing; a value is
       approximate, because Python treats it as socket-read inactivity while the
       Rust transport caps the complete HTTP attempt on both data-plane and
-      metadata requests. Both participate in process-wide policy reservations;
-      runtime initialization, not this builder, freezes the effective values.
+      metadata requests. The binding checks these against initialized runtime
+      settings; this builder does not reserve process-wide values.
       Only explicitly requested timeouts are carried here.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
@@ -175,6 +175,7 @@ def build_client_config(
         isinstance(throttling_max_retry_wait_time_seconds, bool)
         or not isinstance(throttling_max_retry_wait_time_seconds, Real)
         or not 0 <= throttling_max_retry_wait_time_seconds < 2**64
+        # An in-range integer can round up to 2**64 at the native float boundary.
         or float(throttling_max_retry_wait_time_seconds) >= 2**64
     ):
         raise ValueError("retry_throttle_backoff_max must be finite nonnegative seconds below 2**64.")

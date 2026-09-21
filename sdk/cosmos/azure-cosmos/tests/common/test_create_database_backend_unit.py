@@ -3586,6 +3586,201 @@ def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
         assert ("offerThroughput" in options) == (index == 1)
 
 
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize("options,error", [
+    ({"offer_throughput": ThroughputProperties(offer_throughput="4000")}, TypeError),
+    ({"offer_throughput": ThroughputProperties(offer_throughput=True)}, TypeError),
+    ({"offer_throughput": ThroughputProperties(offer_throughput=4000.0)}, TypeError),
+    ({"offer_throughput": ThroughputProperties(auto_scale_max_throughput="4000")}, TypeError),
+    ({"offer_throughput": ThroughputProperties(auto_scale_max_throughput=True)}, TypeError),
+    ({"offer_throughput": ThroughputProperties(
+        auto_scale_max_throughput=4000, auto_scale_increment_percent=False,
+    )}, TypeError),
+    ({"offer_throughput": ThroughputProperties(
+        auto_scale_max_throughput=4000, auto_scale_increment_percent=1.5,
+    )}, TypeError),
+    ({"offer_throughput": 2**63}, ValueError),
+    ({"offer_throughput": -(2**63) - 1}, ValueError),
+    ({"request_options": {"offerThroughput": "4000"}}, TypeError),
+    ({"request_options": {"offerThroughput": False}}, TypeError),
+    ({"feed_options": {"offerThroughput": 2**80}}, ValueError),
+    ({"request_options": {"autoUpgradePolicy": {"maxThroughput": 4000}}}, TypeError),
+    ({"feed_options": {"autoUpgradePolicy": 4000}}, TypeError),
+])
+def test_creation_values_fail_before_any_request(create_database_client, method_name, use_legacy, options, error):
+    client = create_database_client
+    backend = client._backend
+    backend.responses = _get_or_create_responses([200])
+    if use_legacy:
+        client._backend = ASYNC_LEGACY_BACKEND if isinstance(client, AsyncCosmosClient) else LEGACY_BACKEND
+    hook = MagicMock()
+    with pytest.raises(error):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert backend.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("mapping_name", ["request_options", "feed_options"])
+@pytest.mark.parametrize("throughput", [None, 0, -(2**63), 2**63 - 1])
+def test_manual_throughput_local_validation_preserves_representable_values(
+    create_database_client, method_name, mapping_name, throughput
+):
+    client = create_database_client
+    statuses = [201] if method_name == "create_database" else [404, 201]
+    client._backend.responses = _get_or_create_responses(statuses)
+    _call_create_database(
+        client, "db1", method_name=method_name, **{mapping_name: {"offerThroughput": throughput}},
+    )
+    assert client._backend.prepared.settings.resource.offer_throughput == (throughput or None)
+
+
+@pytest.mark.parametrize("method_name,statuses", [
+    ("create_database", [201]),
+    ("create_database_if_not_exists", [200]),
+    ("create_database_if_not_exists", [404, 201]),
+    ("create_database_if_not_exists", [404, 409, 200]),
+])
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("typed,raw,explicit,expected", [
+    ({}, {}, {}, ("Low", "7")),
+    ({}, {}, {"priority": None, "throughput_bucket": 0}, ("Low", "7")),
+    ({}, {}, {"priority": "", "throughput_bucket": None}, ("Low", "7")),
+    ({}, {"x-ms-cosmos-priority-level": "High", "X-MS-COSMOS-THROUGHPUT-BUCKET": "2"},
+     {}, ("High", "2")),
+    ({"priorityLevel": "High", "throughputBucket": 3}, {}, {}, ("High", "3")),
+    ({"priorityLevel": "Low", "throughputBucket": 2},
+     {"x-ms-cosmos-priority-level": "Low", "x-ms-cosmos-throughput-bucket": "2"},
+     {"priority": "High", "throughput_bucket": 3}, ("High", "3")),
+    ({"priorityLevel": "High", "throughputBucket": 3},
+     {"x-ms-cosmos-priority-level": "Low", "x-ms-cosmos-throughput-bucket": "2"},
+     {"priority": None, "throughput_bucket": 0}, ("Low", "2")),
+])
+def test_database_defaults_and_overrides_are_stable_across_every_step(
+    create_database_client, method_name, statuses, use_legacy, reverse, typed, raw, explicit, expected,
+):
+    from copy import deepcopy
+    from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+    from azure.cosmos import documents
+    client = create_database_client
+    is_async = isinstance(client, AsyncCosmosClient)
+    backend = client._backend
+    backend.responses = _get_or_create_responses(statuses)
+    default_headers = {"x-ms-cosmos-priority-level": "Low", "x-ms-cosmos-throughput-bucket": 7}
+    recorded_headers = []
+    if use_legacy:
+        client._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
+        replies = iter(_get_or_create_responses(statuses))
+        header_context = SimpleNamespace(
+            UseMultipleWriteLocations=False, master_key=None, resource_tokens=None, client_id=None,
+        )
+
+        def dispatch(*args, options, **kwargs):
+            initial = base.resolve_initial_headers(default_headers, options) or default_headers
+            creates = "database" in kwargs
+            headers = base.GetHeaders(
+                header_context, initial, "post" if creates else "get",
+                "/dbs/" if creates else "/dbs/db1/", "" if creates else "dbs/db1", "dbs",
+                documents._OperationType.Create if creates else documents._OperationType.Read, options,
+            )
+            recorded_headers.append({key.lower(): str(value) for key, value in headers.items()})
+            reply = next(replies)
+            if reply.status_code == 404:
+                raise CosmosResourceNotFoundError(status_code=404, message="missing")
+            if reply.status_code == 409:
+                raise CosmosResourceExistsError(status_code=409, message="race")
+            return CosmosDict(json.loads(reply.body), response_headers=reply.headers)
+
+        mock = AsyncMock if is_async else MagicMock
+        client.client_connection.ReadDatabase = mock(side_effect=dispatch)
+        client.client_connection.CreateDatabase = mock(side_effect=dispatch)
+    client._item_context = ItemClientContext(
+        client._backend, ItemClientDefaults(priority="Low", throughput_bucket=7, no_response_on_write=True),
+    )
+    entries = [*typed.items(), ("initialHeaders", raw), ("offerThroughput", 1000)]
+    options = dict(reversed(entries) if reverse else entries)
+    original = deepcopy(options)
+    result = _call_create_database(
+        client, "db1", method_name=method_name, request_options=options, offer_throughput=4000, **explicit,
+    )
+    assert result.id == "db1"
+    assert options == original
+    if not use_legacy:
+        recorded_headers = [wire_headers(request) for request in backend.prepared_requests]
+    assert len(recorded_headers) == len(statuses)
+    for index, headers in enumerate(recorded_headers):
+        assert (headers["x-ms-cosmos-priority-level"], headers["x-ms-cosmos-throughput-bucket"]) == expected
+        creates = method_name == "create_database" or index == 1
+        assert headers.get("x-ms-offer-throughput") == ("4000" if creates else None)
+        assert "prefer" not in headers
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("option,header,value,override", [
+    ("offerThroughput", "x-ms-offer-throughput", 1000, 4000),
+    ("autoUpgradePolicy", "x-ms-cosmos-offer-autopilot-settings",
+     '{"maxThroughput":1000}', '{"maxThroughput":4000}'),
+    ("contentType", "content-type", "application/json", "application/custom+json"),
+    ("correlatedActivityId", "x-ms-cosmos-correlated-activityid", "raw", "typed"),
+])
+def test_get_or_create_typed_options_override_headers_without_order_dependency(
+    create_database_client, reverse, option, header, value, override,
+):
+    client = create_database_client
+    client._backend.responses = _get_or_create_responses([404, 409, 200])
+    entries = [(option, override), ("initialHeaders", {header.upper(): str(value)})]
+    options = dict(reversed(entries) if reverse else entries)
+    _call_create_database(client, "db1", method_name="create_database_if_not_exists", request_options=options)
+    for request in client._backend.prepared_requests:
+        if option in ("offerThroughput", "autoUpgradePolicy") and request.op == OP_READ_DATABASE:
+            assert header not in wire_headers(request)
+        else:
+            assert wire_headers(request)[header] == str(override)
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("offer", [4000, ThroughputProperties(auto_scale_max_throughput=4000)])
+def test_explicit_throughput_replaces_invalid_unused_nested_values(create_database_client, method_name, offer):
+    client = create_database_client
+    client._backend.responses = _get_or_create_responses(
+        [201] if method_name == "create_database" else [404, 201]
+    )
+    options = {"offerThroughput": "invalid", "autoUpgradePolicy": {"maxThroughput": "invalid"}}
+    _call_create_database(client, "db1", method_name=method_name, offer_throughput=offer, request_options=options)
+    resource = client._backend.prepared.settings.resource
+    if offer == 4000:
+        assert resource.offer_throughput == 4000
+        assert resource.autoscale_settings is None
+    else:
+        assert json.loads(resource.autoscale_settings) == {"maxThroughput": 4000}
+        assert resource.offer_throughput is None
+    assert options == {"offerThroughput": "invalid", "autoUpgradePolicy": {"maxThroughput": "invalid"}}
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("options", [{}, {"priority": None, "throughput_bucket": None},
+                                    {"priority": "", "throughput_bucket": 0}])
+def test_unset_database_defaults_add_no_request_tags_or_capacity(create_database_client, method_name, options):
+    client = create_database_client
+    client._backend.responses = _get_or_create_responses(
+        [201] if method_name == "create_database" else [404, 409, 200]
+    )
+    _call_create_database(client, "db1", method_name=method_name, **options)
+    for request in client._backend.prepared_requests:
+        assert request.settings.priority is None
+        assert request.settings.throughput_bucket is None
+        assert request.settings.resource.offer_throughput is None
+        assert request.settings.resource.autoscale_settings is None
+        assert not {
+            "x-ms-cosmos-priority-level", "x-ms-cosmos-throughput-bucket",
+            "x-ms-offer-throughput", "x-ms-cosmos-offer-autopilot-settings",
+        }.intersection(wire_headers(request))
+
+
 # ---------------------------------------------------------------------------
 # delete_database
 # ---------------------------------------------------------------------------

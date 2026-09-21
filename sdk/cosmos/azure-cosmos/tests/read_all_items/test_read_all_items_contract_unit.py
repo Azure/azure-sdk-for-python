@@ -39,6 +39,7 @@ from types import MethodType, SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _operation_deadline
@@ -48,7 +49,7 @@ from azure.cosmos._backend import binding as sync_rust
 from azure.cosmos.aio._backend import binding as async_rust
 from azure.cosmos._helpers import _read_all_items
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
-from azure.cosmos.exceptions import CosmosClientTimeoutError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
@@ -86,10 +87,14 @@ def feed(request, monkeypatch):
         init_delay=0,
         async_mode=async_mode,
         status=200,
+        setup_status=0,
     )
 
     def page(handle, prepared, cursor, *, timeout_seconds=None):
         context.calls.append((prepared, cursor, timeout_seconds))
+        if context.setup_status:
+            return context.setup_status, 0, {}, b'{"message":"setup failed"}', None
+        cursor.can_retry_setup = False
         if timeout_seconds is not None and context.delay > timeout_seconds:
             raise TimeoutError("native page budget exhausted")
         clock.now += context.delay
@@ -118,7 +123,9 @@ def feed(request, monkeypatch):
 
     module = async_rust if async_mode else sync_rust
     binding = SimpleNamespace(
-        _ItemFeedCursor=MagicMock(side_effect=object),
+        _ItemFeedCursor=MagicMock(
+            side_effect=lambda: SimpleNamespace(can_retry_setup=True)
+        ),
         read_all_items=MagicMock(),
         read_all_items_async=AsyncMock(),
         fetch_page_with_cursor=MagicMock(side_effect=page),
@@ -205,6 +212,80 @@ def test_complete_enumeration_retains_cursor_and_skips_empty_pages(feed):
     assert len({id(cursor) for _, cursor, _ in feed.calls}) == 1
     assert all(p.settings.query.max_item_count == 1 for p, _, _ in feed.calls)
     feed.connection.ReadItems.assert_not_called()
+
+
+@pytest.mark.parametrize("status", [429, 503])
+@pytest.mark.parametrize("token", [None, "c1.a"])
+def test_initial_setup_service_error_can_retry_same_page_iterator(feed, status, token):
+    hooks = []
+    pages = feed.proxy.read_all_items(
+        response_hook=lambda headers, body: hooks.append(body)
+    ).by_page(continuation_token=token)
+    feed.setup_status = status
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        feed.next_page(pages)
+    assert caught.value.status_code == status
+    cursor = pages.state.cursor
+    assert cursor is not None and not pages.state.failed
+    assert pages.continuation_token == token
+    assert hooks == []
+    feed.setup_status = 0
+    assert feed.next_page(pages) == (
+        [{"id": "b"}] if token else [{"id": "a", "nested": [1]}]
+    )
+    assert all(call[1] is cursor for call in feed.calls)
+    assert feed.calls[0][0].settings.query.continuation == token
+    assert feed.calls[1][0].settings.query.continuation == token
+    assert len(hooks) == 1
+
+
+def test_first_execution_service_error_still_invalidates(feed):
+    feed.status = 503
+    pages = feed.proxy.read_all_items().by_page()
+    with pytest.raises(CosmosHttpResponseError):
+        feed.next_page(pages)
+    assert pages.state.cursor is None
+    with pytest.raises(RuntimeError, match="pager failed"):
+        feed.next_page(pages)
+    assert len(feed.calls) == 1
+
+
+@pytest.mark.parametrize("error", [
+    ServiceResponseError("setup transport failure"),
+    CosmosClientTimeoutError(),
+    TimeoutError("setup timeout"),
+])
+def test_setup_transport_error_can_retry_but_timeouts_remain_terminal(feed, error):
+    pages = feed.proxy.read_all_items().by_page()
+    fetch = (
+        feed.binding.fetch_page_with_cursor_async
+        if feed.async_mode else feed.binding.fetch_page_with_cursor
+    )
+    original = fetch.side_effect
+    fetch.side_effect = error
+    with pytest.raises(type(error)) as caught:
+        feed.next_page(pages)
+    assert caught.value is error
+    fetch.side_effect = original
+    if isinstance(error, ServiceResponseError):
+        cursor = pages.state.cursor
+        assert cursor is not None
+        assert feed.next_page(pages) == [{"id": "a", "nested": [1]}]
+        assert feed.calls[0][1] is cursor
+    else:
+        assert pages.state.cursor is None
+        with pytest.raises(RuntimeError, match="pager failed"):
+            feed.next_page(pages)
+        assert feed.calls == []
+
+
+def test_stale_cursor_contract_fails_before_native_fetch(feed):
+    feed.binding._ItemFeedCursor.side_effect = object
+    pages = feed.proxy.read_all_items().by_page()
+    with pytest.raises(RuntimeError, match="can_retry_setup.*rebuild"):
+        feed.next_page(pages)
+    assert feed.calls == []
+    assert pages.state.cursor is None
 
 
 def test_resume_and_independent_pagers_ignore_global_headers(feed):

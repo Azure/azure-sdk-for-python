@@ -43,6 +43,7 @@ from ._shared import (
     _binding_error_type,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
+    finalize_backend_resources,
     page_dispatch_errors,
     validate_page_request,
 )
@@ -72,7 +73,6 @@ except ImportError:
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
-_native_runtime_module = _rust_module
 _REQUEST_CONTRACT_ERROR = native_settings_contract_error(_rust_module) if _rust_module is not None else None
 
 
@@ -93,12 +93,6 @@ def _get_page_dispatch(method: Optional[str]) -> Optional[Any]:
     if method is None or _rust_module is None:
         return None
     return getattr(_rust_module, method, None)
-
-
-def _runtime_configuration() -> Optional[tuple[Optional[bool], Optional[float], Optional[float]]]:
-    if _native_runtime_module is None:
-        return None
-    return _native_runtime_module._runtime_configuration()
 
 
 class RustBinding(RustBindingShared, CosmosBackend):
@@ -128,14 +122,10 @@ class RustBinding(RustBindingShared, CosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
-        strict_isolation: bool = False,
     ) -> None:
-        """Store client settings and register process-wide Rust configuration."""
-        # The sync backend has no fields beyond the shared ones, so initialize shared
-        # state directly. This also registers against the endpoint and, in strict
-        # isolation mode, may raise _StrictDriverIsolationError for a config conflict.
+        """Store client settings and check initialized runtime configuration."""
         self._init_shared(
-            endpoint, master_key, client_config, token_credential, strict_isolation
+            endpoint, master_key, client_config, token_credential
         )
 
     def _ensure_driver_handle(self) -> str:
@@ -171,11 +161,11 @@ class RustBinding(RustBindingShared, CosmosBackend):
             if self._closing:
                 raise RuntimeError("RustBinding: the client is closed.")
             if self._driver_handle is None:
-                self._driver_handle = self._initialize_driver(_rust_module, _runtime_configuration)
+                self._driver_handle = self._initialize_driver(_rust_module)
             return self._driver_handle
 
     def close(self) -> None:
-        """Release this client's registration, credential-bridge hold, and Rust driver reference.
+        """Release this client's credential-bridge hold and Rust driver reference.
 
         Mark the client closed and take its handle once, so repeated calls cannot
         release another client's reference. Other clients and operations can keep
@@ -185,7 +175,6 @@ class RustBinding(RustBindingShared, CosmosBackend):
             self._closing = True
             driver_handle = self._driver_handle
             self._driver_handle = None
-        self._release_config_once()
         self._close_token_credential_bridge()
         if driver_handle is None or _rust_module is None:
             return
@@ -201,7 +190,11 @@ class RustBinding(RustBindingShared, CosmosBackend):
     def __del__(self) -> None:
         """Release resources if the client was not closed explicitly."""
         try:
-            self.close()
+            with self._driver_handle_lock:
+                self._closing = True
+                driver_handle, self._driver_handle = self._driver_handle, None
+            credential = self._take_token_credential_for_close()
+            finalize_backend_resources(credential, driver_handle, _rust_module)
         except Exception:  # pylint: disable=broad-except
             # Never raise from object finalization.
             pass
@@ -220,13 +213,13 @@ class RustBinding(RustBindingShared, CosmosBackend):
                 "the repo root."
             )
 
-        driver_handle = self._ensure_driver_handle()
         # Look up the binding's function for this op; None if unsupported.
         binding_function = _get_binding_function(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
                 "RustBinding.execute does not yet support op={!r}.".format(prepared.op)
             )
+        driver_handle = self._ensure_driver_handle()
         # Record the selected dispatch before calling it; this is not proof of
         # native execution or service I/O. Omit the credential-bearing handle.
         _LOGGER.debug(

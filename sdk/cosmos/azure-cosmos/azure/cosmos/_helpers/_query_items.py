@@ -35,6 +35,7 @@ from ._partition_key import query_partition_key_components, partition_key_bookma
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
 from ._wire_encoding import serialize_body_to_bytes
+from ._request_settings import normalize_query_specification
 
 _PREFIX = "q1."
 _QUERY_OPTIONS = {
@@ -66,31 +67,9 @@ if TYPE_CHECKING:
 
 class QueryConfig(ReadAllConfig):
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
-        query = deepcopy(kwargs.pop("query", None))
-        parameters = deepcopy(kwargs.pop("parameters", None))
-        if isinstance(query, dict):
-            if set(query) - {"query", "parameters"} or parameters is not None:
-                raise ValueError(
-                    "Supply query parameters once, with a query string or SQL query specification."
-                )
-            parameters = query.get("parameters")
-            query = query.get("query")
-        if not isinstance(query, str) or not query.strip():
-            raise ValueError("query_items requires a nonempty SQL query string.")
-        if parameters is not None and (
-            not isinstance(parameters, (list, tuple))
-            or any(
-                not isinstance(p, dict)
-                or set(p) != {"name", "value"}
-                or not isinstance(p["name"], str)
-                or not p["name"].startswith("@")
-                for p in parameters
-            )
-        ):
-            raise ValueError(
-                "Query parameters must be name/value objects with @-prefixed names."
-            )
-        self.query, self.parameters = query, tuple(parameters or ())
+        self.query, self.parameters = normalize_query_specification(
+            kwargs.pop("query", None), kwargs.pop("parameters", None), operation="query_items",
+        )
         options = deepcopy(
             kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {}
         )
@@ -204,7 +183,7 @@ class QueryConfig(ReadAllConfig):
             [
                 self.backend._endpoint,
                 proxy.container_link,
-                query,
+                self.query,
                 self.parameters,
                 bookmark_scope,
             ],
@@ -323,8 +302,7 @@ class QueryPageState(ReadAllPageState):
     def invalidate(self, error: BaseException) -> None:
         if isinstance(error, AzureError) and not error.continuation_token:
             error.continuation_token = self.bookmark
-        self.failed = True
-        self.cursor = None
+        super().invalidate(error)
 
     def check(self) -> None:
         if self.failed:

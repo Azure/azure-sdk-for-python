@@ -131,11 +131,7 @@ class PreparedClientConfig(_ValidatedSettings):
 
     Config participates in native driver identity together with endpoint and
     credential. A differing identity can select a separate driver, subject to
-    process-wide policy checks and successful native initialization. Opting
-    into strict isolation (see
-    :class:`~azure.cosmos._backend._driver_registry._StrictDriverIsolationError`)
-    instead rejects a new credential/config identity when other identities are
-    already registered for that endpoint; matching any existing identity is allowed.
+    binding-owned runtime compatibility checks and successful native initialization.
     """
 
     #: Ordered preferred region names exactly as the customer passed them

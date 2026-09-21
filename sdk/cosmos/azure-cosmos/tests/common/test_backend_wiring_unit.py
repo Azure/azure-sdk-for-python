@@ -58,36 +58,15 @@ from azure.cosmos._backend.operations import (
 )
 from azure.cosmos._backend.errors import UnsupportedQueryError
 from azure.cosmos._backend.errors import raise_account_read_unsupported
-from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._shared import (
     configure_packaged_query_plan_interop,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
 )
-from azure.cosmos._backend._driver_registry import (
-    _StrictDriverIsolationError,
-    ProxyPolicyConflictError,
-    TransportTimeoutPolicyConflictError,
-    _reset_for_tests as _reset_driver_registry,
-    make_driver_identity,
-    _register_client_identity,
-    register_proxy_policy,
-    register_transport_timeout_policy,
-    _release_client_identity,
-)
-from azure.cosmos._backend.constants import (
-    BACKEND_ENV_VAR,
-    BACKEND_NAME_CORE_PYTHON,
-    BACKEND_NAME_RUST,
-    RUST_STRICT_ISOLATION_ENV_VAR,
-)
+from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._backend.credentials import resolve_credential
-from azure.cosmos._backend.factory import (
-    make_backend,
-    resolve_backend_name,
-    resolve_strict_isolation,
-)
+from azure.cosmos._backend.factory import make_backend, resolve_backend_name
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.transport_settings import (
     reject_unsupported_transport_settings,
@@ -169,17 +148,6 @@ def test_native_close_accepts_driver_handle_keyword():
     assert binding.release_driver_handle(driver_handle="unregistered-test-driver") is None
     with pytest.raises(TypeError):
         binding.release_driver_handle(handle="unregistered-test-driver")
-
-
-@pytest.fixture(autouse=True)
-def _isolate_driver_registry():
-    """Reset the shared driver registry before and after each test so one test's
-    clients can't make another test warn (or not warn) unexpectedly. The registry
-    lives for the whole process, and these tests use unique endpoints, so a client
-    finalized late only affects its own endpoint."""
-    _reset_driver_registry()
-    yield
-    _reset_driver_registry()
 
 
 def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monkeypatch):
@@ -325,7 +293,7 @@ def test_driver_initialization_configures_query_plan_path_before_acquisition(
     backend = backend_type(endpoint="https://qpi.documents.azure.com", master_key="k")
     try:
         assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
-        assert backend._initialize_driver(binding, lambda: None) == "test-handle"
+        assert backend._initialize_driver(binding) == "test-handle"
     finally:
         backend.abort_construction()
 
@@ -357,12 +325,12 @@ _PKG_ROOT = Path(__file__).resolve().parents[2] / "azure" / "cosmos"
 
 # Each name may only be imported by the files listed here. Anything else fails.
 _ALLOWED = {
-    # Dispatch imports belong to the backends. The registry only asks the
-    # binding for its side-effect-free cache identity.
+    # Dispatch imports belong to the backends; shared lifecycle setup
+    # checks initialized runtime settings without creating or reserving them.
     "_rust": {
         Path("_backend") / "binding.py",
         Path("aio") / "_backend" / "binding.py",
-        Path("_backend") / "_driver_registry.py",
+        Path("_backend") / "_shared.py",
     },
     # The Rust backend class may only be imported by the factory that builds
     # it and the client that holds it.
@@ -1528,7 +1496,7 @@ def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
     """If the finalizer fires while an event loop is running on this thread (GC
     collecting the client mid-run), the blocking driver close must be offloaded to
     a daemon thread, not run inline on the loop thread -- otherwise release_driver_handle
-    would stall the loop. The config drop stays inline (it does not block)."""
+    would stall the loop."""
     close_started = threading.Event()
     close_may_finish = threading.Event()
     close_thread_names = []
@@ -1669,6 +1637,50 @@ def test_dataclasses_are_frozen():
 # PreparedClientConfig, and the backend hands it to acquire_driver_handle as the third
 # argument. With nothing to carry, that third argument is None.
 
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_unsupported_operation_does_not_acquire_driver(monkeypatch, async_mode):
+    module = "azure.cosmos.aio._backend.binding" if async_mode else "azure.cosmos._backend.binding"
+    native = MagicMock()
+    monkeypatch.setattr(module + "._rust_module", native)
+    backend = (AsyncRustBinding if async_mode else RustBinding)(
+        "https://unsupported.invalid", master_key="key"
+    )
+    prepared = PreparedRequest(
+        op="not-a-supported-operation", container_link="", body_bytes=b"",
+        partition_key=key_from_legacy_header('["key"]'),
+    )
+    try:
+        with pytest.raises(NotImplementedError, match="does not yet support"):
+            if async_mode:
+                asyncio.run(backend.execute(prepared))
+            else:
+                backend.execute(prepared)
+        native.acquire_driver_handle.assert_not_called()
+        assert backend._driver_handle is None
+    finally:
+        backend.abort_construction()
+
+
+@pytest.mark.parametrize("backend_type", [RustBinding, AsyncRustBinding])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_different_client_settings_are_allowed_in_either_construction_order(backend_type, reverse):
+    configs = [
+        PreparedClientConfig(preferred_locations=("West US",)),
+        PreparedClientConfig(preferred_locations=("East US",)),
+    ]
+    if reverse:
+        configs.reverse()
+    clients = []
+    try:
+        for config in configs:
+            clients.append(backend_type("https://same-account.invalid", master_key="key", client_config=config))
+        assert all(client._driver_handle is None for client in clients)
+        assert [client._client_config for client in clients] == configs
+    finally:
+        for client in clients:
+            client.abort_construction()
+
+
 def test_build_client_config_returns_none_when_nothing_to_carry():
     """Absent or empty preferred locations alone produce no client config."""
     assert build_client_config(None) is None
@@ -1689,51 +1701,6 @@ def test_prepared_client_config_is_frozen():
     config = PreparedClientConfig(preferred_locations=("West US",))
     with pytest.raises(Exception):  # FrozenInstanceError
         setattr(config, "preferred_locations", ("East US",))
-
-
-def test_native_driver_identity_distinguishes_every_config_field():
-    """Every declared behavior-affecting field participates in the actual native key."""
-    import dataclasses
-
-    # A distinguishable non-default value per field. Every declared field MUST
-    # appear here, so adding a field without updating this map fails the test
-    # (the assertion below), forcing a conscious decision.
-    variants = {
-        "preferred_locations": ("East US",),
-        "excluded_locations": ("Central US",),
-        "throttling_max_retry_count": 7,
-        "throttling_max_retry_wait_time_seconds": 12.5,
-        "hedging_threshold_ms": 250,
-        "user_agent_suffix": "checkout-westus2",
-        "consistency_level": "Eventual",
-        "proxy_allowed": True,
-        "connection_timeout_seconds": 1.5,
-        "read_timeout_seconds": 30.0,
-        "fault_injection_rules": (
-            PreparedFaultInjectionRule(id="identity-check", operation_type="CreateItem", status_code=502),
-        ),
-    }
-
-    field_names = {f.name for f in dataclasses.fields(PreparedClientConfig)}
-    assert field_names == set(variants), (
-        "PreparedClientConfig fields changed; update the `variants` map so the "
-        "native identity guard covers every behavior-affecting field. "
-        "Missing from test: {}; stale in test: {}".format(
-            field_names - set(variants), set(variants) - field_names
-        )
-    )
-
-    baseline = PreparedClientConfig()
-    url = "https://config-identity.invalid"
-    baseline_identity = make_driver_identity(url, "key", baseline, None)
-    assert baseline_identity == make_driver_identity(url, "key", None, None)
-    for name, value in variants.items():
-        changed = dataclasses.replace(baseline, **{name: value})
-        assert make_driver_identity(url, "key", changed, None) != baseline_identity, (
-            "Changing field {!r} did not change native identity; "
-            "the Rust driver cache would treat these two configs as identical "
-            "and silently share a driver.".format(name)
-        )
 
 
 def test_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
@@ -1891,14 +1858,20 @@ def test_async_rust_backend_passes_client_config_to_acquire_driver_handle(monkey
 class _ProxyGlobalRuntimeFakeModule:
     """Fake Rust module to test process-global proxy policy.
 
-    The first client sets the proxy policy for the process. Later clients must
+    The first acquisition sets the proxy policy for the process. Later clients must
     use the same policy or leave it unset.
     """
 
     def __init__(self):
         """Start with no proxy choice recorded and no drivers handed out yet."""
         self._initialized_proxy_allowed = None
+        self._initialized = False
         self._next_driver_handle = 0
+
+    def validate_runtime_configuration(self, config=None):
+        requested = getattr(config, "proxy_allowed", None)
+        if self._initialized and requested is not None and requested != self._initialized_proxy_allowed:
+            raise ValueError("Rust runtime proxy configuration is process-global and was already initialized")
 
     def acquire_driver_handle(self, *args):
         """Model a proxy-policy conflict and return a distinct synthetic handle.
@@ -1907,12 +1880,10 @@ class _ProxyGlobalRuntimeFakeModule:
         """
         config = args[2] if len(args) >= 3 else None
         requested = getattr(config, "proxy_allowed", None) if config is not None else None
-        if self._initialized_proxy_allowed is None:
+        if not self._initialized:
             self._initialized_proxy_allowed = requested
-        elif requested is not None and requested != self._initialized_proxy_allowed:
-            raise ValueError(
-                "Rust runtime proxy configuration is process-global and was already initialized"
-            )
+            self._initialized = True
+        self.validate_runtime_configuration(config)
         self._next_driver_handle += 1
         return "handle-{}".format(self._next_driver_handle)
 
@@ -1921,23 +1892,37 @@ class _ProxyGlobalRuntimeFakeModule:
         return None
 
 
-def test_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
-    """Sync path: conflicting proxy policy fails at client construction."""
+@pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
+def test_rust_backend_checks_initialized_policy_not_construction_order(monkeypatch, first_proxy, initialize_second):
+    """Unused clients coexist; acquisition and later construction check actual state."""
     fake_module = _ProxyGlobalRuntimeFakeModule()
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos._rust._validate_runtime_configuration", fake_module.validate_runtime_configuration
+    )
 
     first = RustBinding(
         endpoint="https://x.documents.azure.com",
         master_key="k",
-        client_config=PreparedClientConfig(proxy_allowed=True),
+        client_config=PreparedClientConfig(proxy_allowed=first_proxy),
     )
-    with pytest.raises(ProxyPolicyConflictError, match="process-global"):
+    second = RustBinding(
+        endpoint="https://x.documents.azure.com", master_key="k",
+        client_config=PreparedClientConfig(proxy_allowed=False),
+    )
+    assert not fake_module._initialized
+    initializer, later = (second, first) if initialize_second else (first, second)
+    initializer._ensure_driver_handle()
+    with pytest.raises(ValueError, match="process-global"):
+        later._ensure_driver_handle()
+    with pytest.raises(ValueError, match="process-global"):
         RustBinding(
             endpoint="https://x.documents.azure.com",
             master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=False),
+            client_config=PreparedClientConfig(proxy_allowed=initialize_second),
         )
     first.close()
+    second.close()
 
 
 def test_rust_backend_unset_proxy_allowed_does_not_conflict(monkeypatch):
@@ -1960,24 +1945,38 @@ def test_rust_backend_unset_proxy_allowed_does_not_conflict(monkeypatch):
     second._ensure_driver_handle()
 
 
-def test_async_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
-    """Async path: conflicting proxy policy fails at client construction."""
+@pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
+def test_async_rust_backend_checks_initialized_policy_not_construction_order(monkeypatch, first_proxy, initialize_second):
+    """Async acquisition repeats the non-reserving constructor check."""
     fake_module = _ProxyGlobalRuntimeFakeModule()
     monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos._rust._validate_runtime_configuration", fake_module.validate_runtime_configuration
+    )
 
     async def _run():
         first = AsyncRustBinding(
             endpoint="https://x.documents.azure.com",
             master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=True),
+            client_config=PreparedClientConfig(proxy_allowed=first_proxy),
         )
-        with pytest.raises(ProxyPolicyConflictError, match="process-global"):
+        second = AsyncRustBinding(
+            endpoint="https://x.documents.azure.com", master_key="k",
+            client_config=PreparedClientConfig(proxy_allowed=False),
+        )
+        assert not fake_module._initialized
+        initializer, later = (second, first) if initialize_second else (first, second)
+        await initializer._ensure_driver_handle()
+        with pytest.raises(ValueError, match="process-global"):
+            await later._ensure_driver_handle()
+        with pytest.raises(ValueError, match="process-global"):
             AsyncRustBinding(
                 endpoint="https://x.documents.azure.com",
                 master_key="k",
-                client_config=PreparedClientConfig(proxy_allowed=False),
+                client_config=PreparedClientConfig(proxy_allowed=initialize_second),
             )
         await first.close()
+        await second.close()
 
     asyncio.run(_run())
 
@@ -2244,88 +2243,46 @@ def test_build_client_config_rejects_non_bool_proxy_allowed():
         build_client_config(None, proxy_allowed="true")
 
 
-@pytest.mark.parametrize("first, second", [(True, False), (False, True)])
-def test_register_proxy_policy_rejects_later_differing_explicit_value(first, second):
-    """proxy_allowed is process-global for the Rust runtime, so once one client sets
-    an explicit value a later client requesting a *different* explicit value must fail
-    fast at construction -- deterministically, instead of relying on the binding's late,
-    race-determined OnceLock check at first operation. (_isolate_driver_registry resets
-    the process policy between tests.)"""
-    register_proxy_policy(build_client_config(None, proxy_allowed=first))
-    with pytest.raises(ProxyPolicyConflictError, match="process-global"):
-        register_proxy_policy(build_client_config(None, proxy_allowed=second))
-
-
-@pytest.mark.parametrize("value", [True, False])
-def test_register_proxy_policy_accepts_repeated_equal_value(value):
-    """Two clients that agree on proxy_allowed are compatible: the second must not
-    raise (idempotent), matching the binding allowing an equal value."""
-    register_proxy_policy(build_client_config(None, proxy_allowed=value))
-    register_proxy_policy(build_client_config(None, proxy_allowed=value))
-
-
-@pytest.mark.parametrize("explicit", [True, False])
-def test_register_proxy_policy_unset_client_never_sets_or_conflicts(explicit):
-    """Unset proxy values do not reserve or conflict in the Python registry.
-
-    No native runtime is initialized here. Native initialization with defaults
-    is different from leaving a provisional Python reservation unset.
-    """
-    # None first: it must not establish a policy, so a later explicit value is accepted.
-    register_proxy_policy(build_client_config(None, proxy_allowed=None))
-    register_proxy_policy(build_client_config(None, proxy_allowed=explicit))
-    # And a None client after an explicit value is always compatible.
-    register_proxy_policy(build_client_config(None, proxy_allowed=None))
-    # The explicit value is now the policy: a later differing explicit value conflicts.
-    with pytest.raises(ProxyPolicyConflictError):
-        register_proxy_policy(build_client_config(None, proxy_allowed=not explicit))
-
-
-def test_register_proxy_policy_tolerates_none_config():
-    """An untuned client carries no config object at all (build_client_config returns
-    None); the policy check must treat that exactly like proxy_allowed unset."""
-    register_proxy_policy(None)
-    # Still no policy established: an explicit value afterward sets it cleanly.
-    register_proxy_policy(build_client_config(None, proxy_allowed=True))
-    with pytest.raises(ProxyPolicyConflictError):
-        register_proxy_policy(build_client_config(None, proxy_allowed=False))
-
-
-def test_register_transport_timeout_policy_accepts_equal_values():
-    """The Python policy registry accepts matching explicit timeout values."""
-    config = build_client_config(
-        None,
-        connection_timeout_seconds=5,
-        read_timeout_seconds=65,
-    )
-    register_transport_timeout_policy(config)
-    register_transport_timeout_policy(config)
-
-
 @pytest.mark.parametrize(
     "first, second",
     [
-        ((5, 65), (4, 65)),
-        ((5, 65), (5, 30)),
+        (None, PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=False)),
+        (PreparedClientConfig(proxy_allowed=False), PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=True)),
+        (PreparedClientConfig(connection_timeout_seconds=2), PreparedClientConfig(connection_timeout_seconds=5)),
+        (PreparedClientConfig(read_timeout_seconds=25), PreparedClientConfig(read_timeout_seconds=30)),
     ],
 )
-def test_register_transport_timeout_policy_rejects_conflicts(first, second):
-    """The Python policy registry rejects differing explicit timeout values."""
-    register_transport_timeout_policy(
-        build_client_config(
-            None,
-            connection_timeout_seconds=first[0],
-            read_timeout_seconds=first[1],
-        )
-    )
-    with pytest.raises(TransportTimeoutPolicyConflictError, match="process-global"):
-        register_transport_timeout_policy(
-            build_client_config(
-                None,
-                connection_timeout_seconds=second[0],
-                read_timeout_seconds=second[1],
-            )
-        )
+def test_unused_clients_do_not_reserve_runtime_settings(first, second):
+    """No Python constructor reserves a proxy choice or transport timeout."""
+    endpoint = "https://unused-clients.documents.azure.com"
+    a = RustBinding(endpoint, master_key="key", client_config=first)
+    b = RustBinding(endpoint, master_key="key", client_config=second)
+    try:
+        assert a._driver_handle is None and b._driver_handle is None
+    finally:
+        a.close()
+        b.close()
+
+
+def test_construction_requires_native_runtime_validation(monkeypatch):
+    monkeypatch.delattr("azure.cosmos._rust._validate_runtime_configuration")
+    endpoint = "https://outdated-extension.documents.azure.com"
+    with pytest.raises(RuntimeError, match="_validate_runtime_configuration; rebuild"):
+        RustBinding(endpoint, master_key="key")
+
+
+def test_native_validation_failure_does_not_record_a_client(monkeypatch):
+    error = RuntimeError("cached runtime initialization failure")
+    validator = MagicMock(side_effect=error)
+    monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
+    endpoint = "https://failed-preflight.documents.azure.com"
+    config = PreparedClientConfig(connection_timeout_seconds=2)
+    with pytest.raises(RuntimeError) as caught:
+        RustBinding(endpoint, master_key="key", client_config=config)
+    assert caught.value is error
+    validator.assert_called_once_with(config)
 
 
 @pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])
@@ -2930,8 +2887,11 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container.create_item(body={"id": "x", "pk": "a"})
-    assert fake_module.create_item.called, "Rust path should have been taken"
+    try:
+        container.create_item(body={"id": "x", "pk": "a"})
+        assert fake_module.create_item.called, "Rust path should have been taken"
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_dispatch_rejects_missing_backend():
@@ -2952,16 +2912,19 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    container = AsyncContainerProxy(
-        mock_cc, "dbs/test", "test", _item_context=ItemClientContext(mock_cc._backend)
-    )
+    try:
+        from azure.cosmos._helpers._item_context import ItemClientContext
+        container = AsyncContainerProxy(
+            mock_cc, "dbs/test", "test", _item_context=ItemClientContext(mock_cc._backend)
+        )
 
-    async def _run():
-        await container.create_item(body={"id": "x", "pk": "a"})
-        assert fake_module.create_item_async.called, "async Rust path should have been taken"
+        async def _run():
+            await container.create_item(body={"id": "x", "pk": "a"})
+            assert fake_module.create_item_async.called, "async Rust path should have been taken"
 
-    asyncio.run(_run())
+        asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 # Exercise read_feed_ranges through the public methods with fake bindings,
@@ -2980,18 +2943,21 @@ def test_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container.client_connection._routing_map_provider = MagicMock()
+    try:
+        container.client_connection._routing_map_provider = MagicMock()
 
-    feed_ranges = list(container.read_feed_ranges(force_refresh=True))
-    assert len(feed_ranges) == 1
-    assert fake_module.read_feed_ranges.called
-    assert not container.client_connection.refresh_routing_map_provider.called
-    assert not container.client_connection._routing_map_provider.get_overlapping_ranges.called
+        feed_ranges = list(container.read_feed_ranges(force_refresh=True))
+        assert len(feed_ranges) == 1
+        assert fake_module.read_feed_ranges.called
+        assert not container.client_connection.refresh_routing_map_provider.called
+        assert not container.client_connection._routing_map_provider.get_overlapping_ranges.called
 
-    prepared = fake_module.read_feed_ranges.call_args.args[1]
-    assert prepared.op == OP_READ_FEED_RANGES
-    assert prepared.container_link == "dbs/test/colls/test"
-    assert prepared.body_bytes == b'{"forceRefresh":true}'
+        prepared = fake_module.read_feed_ranges.call_args.args[1]
+        assert prepared.op == OP_READ_FEED_RANGES
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert prepared.body_bytes == b'{"forceRefresh":true}'
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch):
@@ -3007,22 +2973,25 @@ def test_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container.client_connection._routing_map_provider = MagicMock()
-    container.client_connection._routing_map_provider.get_overlapping_ranges.return_value = [
-        {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
-    ]
-    container._get_properties_with_options = MagicMock(return_value={})
-    setattr(
-        container,
-        "_ContainerProxy__get_client_container_caches",
-        lambda: {container.container_link: {"_rid": "rid-1"}},
-    )
+    try:
+        container.client_connection._routing_map_provider = MagicMock()
+        container.client_connection._routing_map_provider.get_overlapping_ranges.return_value = [
+            {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
+        ]
+        container._get_properties_with_options = MagicMock(return_value={})
+        setattr(
+            container,
+            "_ContainerProxy__get_client_container_caches",
+            lambda: {container.container_link: {"_rid": "rid-1"}},
+        )
 
-    feed_ranges = list(container.read_feed_ranges(force_refresh=True, excluded_locations=["West US"]))
-    assert len(feed_ranges) == 1
-    assert not fake_module.read_feed_ranges.called
-    container.client_connection.refresh_routing_map_provider.assert_called_once()
-    container.client_connection._routing_map_provider.get_overlapping_ranges.assert_called_once()
+        feed_ranges = list(container.read_feed_ranges(force_refresh=True, excluded_locations=["West US"]))
+        assert len(feed_ranges) == 1
+        assert not fake_module.read_feed_ranges.called
+        container.client_connection.refresh_routing_map_provider.assert_called_once()
+        container.client_connection._routing_map_provider.get_overlapping_ranges.assert_called_once()
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
@@ -3033,8 +3002,11 @@ def test_container_read_feed_ranges_rust_payload_must_include_partition_key_rang
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    with pytest.raises(ValueError, match="PartitionKeyRanges"):
-        list(container.read_feed_ranges())
+    try:
+        with pytest.raises(ValueError, match="PartitionKeyRanges"):
+            list(container.read_feed_ranges())
+    finally:
+        container._item_context.backend.close()
 
 
 def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
@@ -3053,27 +3025,30 @@ def test_async_container_read_feed_ranges_routes_to_rust_backend(monkeypatch):
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._routing_map_provider = MagicMock()
-    mock_cc.refresh_routing_map_provider = AsyncMock()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
+    try:
+        mock_cc._routing_map_provider = MagicMock()
+        mock_cc.refresh_routing_map_provider = AsyncMock()
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
 
-    async def _run():
-        return [feed_range async for feed_range in container.read_feed_ranges(force_refresh=True)]
+        async def _run():
+            return [feed_range async for feed_range in container.read_feed_ranges(force_refresh=True)]
 
-    feed_ranges = asyncio.run(_run())
-    assert len(feed_ranges) == 1
-    assert fake_module.read_feed_ranges_async.await_count == 1
-    mock_cc.refresh_routing_map_provider.assert_not_awaited()
-    assert not mock_cc._routing_map_provider.get_overlapping_ranges.called
+        feed_ranges = asyncio.run(_run())
+        assert len(feed_ranges) == 1
+        assert fake_module.read_feed_ranges_async.await_count == 1
+        mock_cc.refresh_routing_map_provider.assert_not_awaited()
+        assert not mock_cc._routing_map_provider.get_overlapping_ranges.called
 
-    prepared = fake_module.read_feed_ranges_async.await_args.args[1]
-    assert prepared.op == OP_READ_FEED_RANGES
-    assert prepared.container_link == "dbs/test/colls/test"
-    assert prepared.body_bytes == b'{"forceRefresh":true}'
+        prepared = fake_module.read_feed_ranges_async.await_args.args[1]
+        assert prepared.op == OP_READ_FEED_RANGES
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert prepared.body_bytes == b'{"forceRefresh":true}'
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_async_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monkeypatch):
@@ -3092,36 +3067,39 @@ def test_async_container_read_feed_ranges_with_kwargs_falls_back_to_legacy(monke
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    mock_cc._routing_map_provider = MagicMock()
-    mock_cc._routing_map_provider.get_overlapping_ranges = AsyncMock(
-        return_value=[{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
-    )
-    mock_cc.refresh_routing_map_provider = AsyncMock()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
-    container._get_properties_with_options = AsyncMock(return_value={})
-    setattr(
-        container,
-        "_ContainerProxy__get_client_container_caches",
-        lambda: {container.container_link: {"_rid": "rid-1"}},
-    )
+    try:
+        mock_cc._routing_map_provider = MagicMock()
+        mock_cc._routing_map_provider.get_overlapping_ranges = AsyncMock(
+            return_value=[{"id": "0", "minInclusive": "", "maxExclusive": "FF"}]
+        )
+        mock_cc.refresh_routing_map_provider = AsyncMock()
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties_with_options = AsyncMock(return_value={})
+        setattr(
+            container,
+            "_ContainerProxy__get_client_container_caches",
+            lambda: {container.container_link: {"_rid": "rid-1"}},
+        )
 
-    async def _run():
-        return [
-            feed_range
-            async for feed_range in container.read_feed_ranges(
-                force_refresh=True, excluded_locations=["West US"]
-            )
-        ]
+        async def _run():
+            return [
+                feed_range
+                async for feed_range in container.read_feed_ranges(
+                    force_refresh=True, excluded_locations=["West US"]
+                )
+            ]
 
-    feed_ranges = asyncio.run(_run())
-    assert len(feed_ranges) == 1
-    assert fake_module.read_feed_ranges_async.await_count == 0
-    mock_cc.refresh_routing_map_provider.assert_awaited_once()
-    mock_cc._routing_map_provider.get_overlapping_ranges.assert_awaited_once()
+        feed_ranges = asyncio.run(_run())
+        assert len(feed_ranges) == 1
+        assert fake_module.read_feed_ranges_async.await_count == 0
+        mock_cc.refresh_routing_map_provider.assert_awaited_once()
+        mock_cc._routing_map_provider.get_overlapping_ranges.assert_awaited_once()
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_async_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges(monkeypatch):
@@ -3133,17 +3111,20 @@ def test_async_container_read_feed_ranges_rust_payload_must_include_partition_ke
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
 
-    async def _run():
-        return [feed_range async for feed_range in container.read_feed_ranges()]
+        async def _run():
+            return [feed_range async for feed_range in container.read_feed_ranges()]
 
-    with pytest.raises(ValueError, match="PartitionKeyRanges"):
-        asyncio.run(_run())
+        with pytest.raises(ValueError, match="PartitionKeyRanges"):
+            asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
@@ -3159,18 +3140,21 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypa
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container._get_properties = MagicMock(side_effect=AssertionError("legacy fallback should not run"))
+    try:
+        container._get_properties = MagicMock(side_effect=AssertionError("legacy fallback should not run"))
 
-    feed_range = container.feed_range_from_partition_key("pk-a")
-    assert feed_range["Range"]["min"] == "3C"
-    assert feed_range["Range"]["isMaxInclusive"] is True
-    assert fake_module.feed_range_from_partition_key.called
+        feed_range = container.feed_range_from_partition_key("pk-a")
+        assert feed_range["Range"]["min"] == "3C"
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key.called
 
-    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
-    assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
-    assert prepared.container_link == "dbs/test/colls/test"
-    assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
-    assert prepared.body_bytes == b""
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
+        assert prepared.body_bytes == b""
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
@@ -3182,8 +3166,11 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    with pytest.raises(ValueError, match="Range"):
-        container.feed_range_from_partition_key("pk-a")
+    try:
+        with pytest.raises(ValueError, match="Range"):
+            container.feed_range_from_partition_key("pk-a")
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
@@ -3201,19 +3188,22 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container._get_properties = MagicMock(
-        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
-    )
+    try:
+        container._get_properties = MagicMock(
+            return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
+        )
 
-    feed_range = container.feed_range_from_partition_key(NonePartitionKeyValue)
+        feed_range = container.feed_range_from_partition_key(NonePartitionKeyValue)
 
-    assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
-    assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
-    assert feed_range["Range"]["isMinInclusive"] is True
-    assert feed_range["Range"]["isMaxInclusive"] is True
-    assert fake_module.feed_range_from_partition_key.call_count == 1
-    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
-    assert legacy_partition_key_from_request(prepared) == "[]"
+        assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key.call_count == 1
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[]"
+    finally:
+        container._item_context.backend.close()
 
 
 def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
@@ -3230,21 +3220,24 @@ def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_b
     monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
 
     container = _make_sync_container_with_backend(_new_rust_backend())
-    container._get_properties = MagicMock(
-        return_value={
-            "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
-        }
-    )
+    try:
+        container._get_properties = MagicMock(
+            return_value={
+                "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+            }
+        )
 
-    feed_range = container.feed_range_from_partition_key([])
+        feed_range = container.feed_range_from_partition_key([])
 
-    assert feed_range["Range"]["min"] == ""
-    assert feed_range["Range"]["max"] == ""
-    assert feed_range["Range"]["isMinInclusive"] is True
-    assert feed_range["Range"]["isMaxInclusive"] is False
-    assert fake_module.feed_range_from_partition_key.call_count == 1
-    prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
-    assert legacy_partition_key_from_request(prepared) == "[[]]"
+        assert feed_range["Range"]["min"] == ""
+        assert feed_range["Range"]["max"] == ""
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is False
+        assert fake_module.feed_range_from_partition_key.call_count == 1
+        prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[[]]"
+    finally:
+        container._item_context.backend.close()
 
 
 def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypatch):
@@ -3263,25 +3256,28 @@ def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(mo
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
 
-    async def _run():
-        return await container.feed_range_from_partition_key("pk-a")
+        async def _run():
+            return await container.feed_range_from_partition_key("pk-a")
 
-    feed_range = asyncio.run(_run())
-    assert feed_range["Range"]["min"] == "3C"
-    assert feed_range["Range"]["isMaxInclusive"] is True
-    assert fake_module.feed_range_from_partition_key_async.await_count == 1
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == "3C"
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
 
-    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
-    assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
-    assert prepared.container_link == "dbs/test/colls/test"
-    assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
-    assert prepared.body_bytes == b""
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert prepared.op == OP_FEED_RANGE_FROM_PARTITION_KEY
+        assert prepared.container_link == "dbs/test/colls/test"
+        assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
+        assert prepared.body_bytes == b""
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
@@ -3295,17 +3291,20 @@ def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_pa
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
 
-    async def _run():
-        return await container.feed_range_from_partition_key("pk-a")
+        async def _run():
+            return await container.feed_range_from_partition_key("pk-a")
 
-    with pytest.raises(ValueError, match="Range"):
-        asyncio.run(_run())
+        with pytest.raises(ValueError, match="Range"):
+            asyncio.run(_run())
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
@@ -3325,26 +3324,29 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
-    container._get_properties = AsyncMock(
-        return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
-    )
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties = AsyncMock(
+            return_value={"partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2, "systemKey": True}}
+        )
 
-    async def _run():
-        return await container.feed_range_from_partition_key(NonePartitionKeyValue)
+        async def _run():
+            return await container.feed_range_from_partition_key(NonePartitionKeyValue)
 
-    feed_range = asyncio.run(_run())
-    assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
-    assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
-    assert feed_range["Range"]["isMinInclusive"] is True
-    assert feed_range["Range"]["isMaxInclusive"] is True
-    assert fake_module.feed_range_from_partition_key_async.await_count == 1
-    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
-    assert legacy_partition_key_from_request(prepared) == "[]"
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["max"] == "00000000000000000000000000000000"
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is True
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[]"
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
@@ -3364,28 +3366,31 @@ def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_
 
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
-    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
-    container.client_connection = mock_cc
-    container.id = "test"
-    container.database_link = "dbs/test"
-    container.container_link = "dbs/test/colls/test"
-    container._get_properties_with_options = AsyncMock(
-        return_value={
-            "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
-        }
-    )
+    try:
+        container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+        container.client_connection = mock_cc
+        container.id = "test"
+        container.database_link = "dbs/test"
+        container.container_link = "dbs/test/colls/test"
+        container._get_properties_with_options = AsyncMock(
+            return_value={
+                "partitionKey": {"paths": ["/tenant", "/region"], "kind": "MultiHash", "version": 2}
+            }
+        )
 
-    async def _run():
-        return await container.feed_range_from_partition_key([])
+        async def _run():
+            return await container.feed_range_from_partition_key([])
 
-    feed_range = asyncio.run(_run())
-    assert feed_range["Range"]["min"] == ""
-    assert feed_range["Range"]["max"] == ""
-    assert feed_range["Range"]["isMinInclusive"] is True
-    assert feed_range["Range"]["isMaxInclusive"] is False
-    assert fake_module.feed_range_from_partition_key_async.await_count == 1
-    prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
-    assert legacy_partition_key_from_request(prepared) == "[[]]"
+        feed_range = asyncio.run(_run())
+        assert feed_range["Range"]["min"] == ""
+        assert feed_range["Range"]["max"] == ""
+        assert feed_range["Range"]["isMinInclusive"] is True
+        assert feed_range["Range"]["isMaxInclusive"] is False
+        assert fake_module.feed_range_from_partition_key_async.await_count == 1
+        prepared = fake_module.feed_range_from_partition_key_async.await_args.args[1]
+        assert legacy_partition_key_from_request(prepared) == "[[]]"
+    finally:
+        asyncio.run(mock_cc._backend.close())
 
 
 # ---------------------------------------------------------------------------
@@ -3653,498 +3658,6 @@ def test_make_async_backend_rejects_connection_cert_on_rust(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# Per-account engine isolation: default silent-isolate vs. opt-in strict raise
-# ---------------------------------------------------------------------------
-#
-# The Rust binding keys its driver cache by (endpoint, credential, config), so a
-# second client to one account with a *different* config gets its own engine that
-# honors its settings -- nothing is silently dropped. By default that isolation is
-# silent (no warning). Strict isolation mode (opt-in) instead *raises*
-# _StrictDriverIsolationError when a later client's config differs from the first
-# live client's, making the fragmentation loud and early. Each test uses a unique
-# endpoint so a client finalized late in another test can't disturb its count (the
-# _isolate_driver_registry autouse fixture also resets state).
-
-
-def _rust_backend(url, config=None, strict=False):
-    """Build a sync Rust backend with standard fake dependencies."""
-    return RustBinding(
-        endpoint=url, master_key="k", client_config=config, strict_isolation=strict
-    )
-
-
-def test_second_client_different_config_default_isolates_silently(recwarn):
-    """Default-mode backend construction accepts the two configs without warnings.
-
-    No handle is acquired, so native driver isolation is not measured.
-    """
-    url = "https://m16-different.documents.azure.com"
-    first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
-    second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
-    assert first is not None and second is not None
-    # No warning of any kind is emitted -- isolation is silent now.
-    assert len(recwarn) == 0
-
-
-def test_second_client_different_config_strict_raises():
-    """Strict mode: a second client whose config differs from the first live
-    client's raises _StrictDriverIsolationError at construction."""
-    url = "https://m16-strict-different.documents.azure.com"
-    first = _rust_backend(
-        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
-    )
-    with pytest.raises(_StrictDriverIsolationError):
-        _rust_backend(
-            url, PreparedClientConfig(preferred_locations=("East US",)), strict=True
-        )
-    assert first is not None
-    # The failed client must not have counted itself against the endpoint.
-    assert _driver_registry._live_client_count(url) == 1
-
-
-def test_strict_same_config_does_not_raise():
-    """Equal configs allow two strict-mode Python registrations at one endpoint."""
-    url = "https://m16-strict-same.documents.azure.com"
-    first = _rust_backend(
-        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
-    )
-    second = _rust_backend(
-        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
-    )
-    assert first is not None and second is not None
-    assert _driver_registry._live_client_count(url) == 2
-
-
-def test_strict_two_untuned_clients_do_not_raise():
-    """Strict mode: two untuned (None) clients to one account match and don't raise."""
-    url = "https://m16-strict-untuned.documents.azure.com"
-    first = _rust_backend(url, None, strict=True)
-    second = _rust_backend(url, None, strict=True)
-    assert first is not None and second is not None
-
-
-def test_strict_different_endpoints_do_not_raise():
-    """Strict mode: different endpoints never conflict, whatever their configs."""
-    a = _rust_backend(
-        "https://m16-strict-a.documents.azure.com",
-        PreparedClientConfig(preferred_locations=("West US",)),
-        strict=True,
-    )
-    b = _rust_backend(
-        "https://m16-strict-b.documents.azure.com",
-        PreparedClientConfig(preferred_locations=("East US",)),
-        strict=True,
-    )
-    assert a is not None and b is not None
-
-
-def test_strict_releases_on_close_then_new_config_ok():
-    """After the first client closes, the endpoint is forgotten, so a new client
-    with a different config starts fresh and does not raise even in strict mode."""
-    url = "https://m16-strict-release.documents.azure.com"
-    first = _rust_backend(
-        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
-    )
-    first.close()
-    # Fresh "first" for the endpoint now -- no conflict.
-    second = _rust_backend(
-        url, PreparedClientConfig(preferred_locations=("East US",)), strict=True
-    )
-    assert second is not None
-
-
-def test_backend_close_releases_registration_once():
-    """close() releases the endpoint registration exactly once; a double close
-    doesn't over-decrement, so another client to the same account stays counted."""
-    url = "https://m16-refcount.documents.azure.com"
-    first = _rust_backend(url, None)
-    second = _rust_backend(url, None)
-    assert _driver_registry._live_client_count(url) == 2
-    first.close()
-    first.close()  # idempotent -- _config_released guards the second release
-    assert _driver_registry._live_client_count(url) == 1
-    second.close()
-    assert url not in _driver_registry._REGISTRY
-
-
-def test_registry_register_release_refcount():
-    """The registry itself: register increments, release drops, the entry is
-    removed at zero, and an extra release is a harmless no-op."""
-    url = "https://m16-registry.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    identity = make_driver_identity(url, "k", cfg, None)
-    _register_client_identity(url, cfg, driver_identity=identity)
-    _register_client_identity(url, cfg, driver_identity=identity)
-    assert _driver_registry._live_client_count(url) == 2
-    _release_client_identity(url, cfg, driver_identity=identity)
-    assert _driver_registry._live_client_count(url) == 1
-    _release_client_identity(url, cfg, driver_identity=identity)
-    assert url not in _driver_registry._REGISTRY
-    _release_client_identity(url, cfg, driver_identity=identity)  # extra release: no-op
-    assert url not in _driver_registry._REGISTRY
-
-
-def test_registry_strict_raise_does_not_increment_count():
-    """A strict-mode conflict raises *without* recording, so the failed client never
-    counts against the endpoint and the existing client's count stays correct."""
-    url = "https://m16-strict-count.documents.azure.com"
-    cfg_a = PreparedClientConfig(preferred_locations=("West US",))
-    cfg_b = PreparedClientConfig(preferred_locations=("East US",))
-    _register_client_identity(url, cfg_a, driver_identity=make_driver_identity(url, "k", cfg_a, None))
-    assert _driver_registry._live_client_count(url) == 1
-    with pytest.raises(_StrictDriverIsolationError):
-        _register_client_identity(
-            url, cfg_b, driver_identity=make_driver_identity(url, "k", cfg_b, None), strict=True
-        )
-    # Count unchanged -- the failed registration did not enter the count.
-    assert _driver_registry._live_client_count(url) == 1
-
-
-# ---------------------------------------------------------------------------
-# Python reservation guard: track endpoint, credential, and config registrations,
-# not a census of initialized native engines. These cover:
-# stale baseline, the credential axis, and endpoint canonicalization.
-# ---------------------------------------------------------------------------
-
-
-class _Cred:
-    """A stand-in token credential -- keyed by object identity, like azure-identity
-    credentials are. Two instances are two identities."""
-
-
-def test_strict_credential_axis_different_credentials_raise():
-    """Same endpoint and config but a *different* credential would build a second
-    engine (the binding keys on credential too), so strict mode must raise."""
-    url = "https://m16-cred-axis.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    cred_a, cred_b = _Cred(), _Cred()
-    _register_client_identity(
-        url, cfg, driver_identity=make_driver_identity(url, None, cfg, cred_a), strict=True
-    )
-    with pytest.raises(_StrictDriverIsolationError):
-        _register_client_identity(
-            url, cfg, driver_identity=make_driver_identity(url, None, cfg, cred_b), strict=True
-        )
-    # Only the first engine is recorded.
-    assert _driver_registry._live_client_count(url) == 1
-
-
-def test_strict_same_credential_and_config_shares():
-    """Same endpoint, credential, and config -> one engine, shared, no raise."""
-    url = "https://m16-cred-same.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    cred = _Cred()
-    identity = make_driver_identity(url, None, cfg, cred)
-    _register_client_identity(url, cfg, driver_identity=identity, strict=True)
-    _register_client_identity(url, cfg, driver_identity=identity, strict=True)
-    assert _driver_registry._live_client_count(url) == 2
-
-
-def test_strict_baseline_not_stale_after_first_engine_closes():
-    """The strict-isolation baseline must track live engines, not the first registrant.
-    With engines X and Y both live (default mode), closing X must not leave a later
-    strict client compared against the gone X -- a client matching Y is fine, and only
-    one matching neither raises."""
-    url = "https://m16-stale-baseline.documents.azure.com"
-    cfg_x = PreparedClientConfig(preferred_locations=("West US",))
-    cfg_y = PreparedClientConfig(preferred_locations=("East US",))
-    identity_x = make_driver_identity(url, "k", cfg_x, None)
-    identity_y = make_driver_identity(url, "k", cfg_y, None)
-    _register_client_identity(url, cfg_x, driver_identity=identity_x)
-    _register_client_identity(url, cfg_y, driver_identity=identity_y)
-    _release_client_identity(url, cfg_x, driver_identity=identity_x)
-    # A strict client matching the still-live Y shares it -- no false positive.
-    _register_client_identity(url, cfg_y, driver_identity=identity_y, strict=True)
-    assert _driver_registry._live_client_count(url) == 2
-    # A strict client matching neither live engine (X is gone) correctly raises.
-    cfg_z = PreparedClientConfig(preferred_locations=("Central US",))
-    with pytest.raises(_StrictDriverIsolationError):
-        _register_client_identity(
-            url, cfg_z, driver_identity=make_driver_identity(url, "k", cfg_z, None), strict=True
-        )
-
-
-def test_endpoint_canonicalization_coalesces_url_variants():
-    """Trailing-slash and host-case variants of one account must share a
-    bucket, so the strict guard is not bypassed by a cosmetic URL difference."""
-    base = "https://M16-Canon.documents.azure.com"
-    variant = "https://m16-canon.documents.azure.com/"
-    cfg_a = PreparedClientConfig(preferred_locations=("West US",))
-    cfg_b = PreparedClientConfig(preferred_locations=("East US",))
-    _register_client_identity(
-        base, cfg_a, driver_identity=make_driver_identity(base, "k", cfg_a, None), strict=True
-    )
-    with pytest.raises(_StrictDriverIsolationError):
-        _register_client_identity(
-            variant, cfg_b, driver_identity=make_driver_identity(variant, "k", cfg_b, None), strict=True
-        )
-    # Both spellings resolve to the same live count.
-    assert _driver_registry._live_client_count(base) == 1
-    assert _driver_registry._live_client_count(variant) == 1
-
-
-def test_canonicalization_keeps_distinct_accounts_separate():
-    """Canonicalization must never collapse genuinely different accounts."""
-    a = "https://m16-acct-a.documents.azure.com"
-    b = "https://m16-acct-b.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    _register_client_identity(a, cfg, driver_identity=make_driver_identity(a, "k", cfg, None), strict=True)
-    # Different account, even with a different config, never conflicts.
-    other_cfg = PreparedClientConfig(preferred_locations=("East US",))
-    _register_client_identity(
-        b, other_cfg, driver_identity=make_driver_identity(b, "k", other_cfg, None), strict=True
-    )
-    assert _driver_registry._live_client_count(a) == 1
-    assert _driver_registry._live_client_count(b) == 1
-
-
-@pytest.mark.parametrize("backend_type", [RustBinding, AsyncRustBinding])
-@pytest.mark.parametrize("variant,shared", [
-    ("https://m16-native-identity.documents.azure.com/", True),
-    ("https://M16-NATIVE-IDENTITY.documents.azure.com", True),
-    ("https://m16-native-identity.documents.azure.com:443", True),
-    ("https://m16-native-identity.documents.azure.com?ignored-by-account-grouping", False),
-])
-def test_strict_endpoint_variants_use_native_identity(backend_type, variant, shared):
-    """Canonical URL spellings share identity; meaningful URL differences do not."""
-    url = "https://m16-native-identity.documents.azure.com"
-    first = backend_type(endpoint=url, master_key="k", strict_isolation=True)
-    second = None
-    try:
-        assert (first._driver_identity == make_driver_identity(variant, "k", None, None)) is shared
-        if shared:
-            second = backend_type(endpoint=variant, master_key="k", strict_isolation=True)
-        else:
-            with pytest.raises(_StrictDriverIsolationError):
-                backend_type(endpoint=variant, master_key="k", strict_isolation=True)
-        assert _driver_registry._live_client_count(url) == (2 if shared else 1)
-        assert _driver_registry._live_client_count(variant) == (2 if shared else 1)
-    finally:
-        if second is not None:
-            second.abort_construction()
-        first.abort_construction()
-    assert _driver_registry._live_client_count(url) == 0
-
-
-@pytest.mark.parametrize("backend_type", [RustBinding, AsyncRustBinding])
-def test_strict_equal_configs_ignore_numeric_repr_differences(backend_type):
-    """Equivalent typed numeric values do not create separate drivers."""
-    url = "https://m16-config-identity.documents.azure.com"
-    first_config = PreparedClientConfig(throttling_max_retry_wait_time_seconds=0.0)
-    second_config = PreparedClientConfig(throttling_max_retry_wait_time_seconds=-0.0)
-    assert first_config == second_config
-    assert repr(first_config) != repr(second_config)
-    first = backend_type(endpoint=url, master_key="k", client_config=first_config, strict_isolation=True)
-    second = None
-    try:
-        assert first._driver_identity == make_driver_identity(url, "k", second_config, None)
-        second = backend_type(endpoint=url, master_key="k", client_config=second_config, strict_isolation=True)
-        assert _driver_registry._live_client_count(url) == 2
-    finally:
-        if second is not None:
-            second.abort_construction()
-        first.abort_construction()
-
-
-def test_same_config_repr_cannot_hide_different_native_settings():
-    """Identical representations cannot cause drivers with different routing to share."""
-    class SameReprConfig(PreparedClientConfig):
-        def __repr__(self):
-            return "same-native-config-representation"
-
-    url = "https://m16-native-config.documents.azure.com"
-    first_config = SameReprConfig(preferred_locations=("West US",))
-    second_config = SameReprConfig(preferred_locations=("East US",))
-    assert first_config != second_config
-    first_identity = make_driver_identity(url, "k", first_config, None)
-    second_identity = make_driver_identity(url, "k", second_config, None)
-    assert first_identity != second_identity
-    _register_client_identity(url, first_config, driver_identity=first_identity, strict=True)
-    with pytest.raises(_StrictDriverIsolationError):
-        _register_client_identity(url, second_config, driver_identity=second_identity, strict=True)
-    assert _driver_registry._live_client_count(url) == 1
-    _release_client_identity(url, first_config, driver_identity=first_identity)
-    assert _driver_registry._live_client_count(url) == 0
-
-
-def test_native_identity_never_reads_config_repr():
-    class NoReprConfig(PreparedClientConfig):
-        def __repr__(self):
-            raise AssertionError("identity must not call repr")
-
-    url = "https://no-repr.invalid"
-    assert make_driver_identity(url, "key", NoReprConfig(read_timeout_seconds=30), None) == (
-        make_driver_identity(url, "key", PreparedClientConfig(read_timeout_seconds=30.0), None)
-    )
-
-
-def test_native_identity_includes_every_fault_rule_field():
-    import dataclasses
-
-    base = PreparedFaultInjectionRule(id="rule", operation_type="CreateItem", status_code=429)
-    variants = {
-        "id": "other", "operation_type": "ReadItem", "status_code": 503,
-        "sub_status": 1002, "container_id": "container", "region": "East US",
-        "delay_ms": 5, "probability": 0.5, "hit_limit": 2, "enabled": False,
-    }
-    assert set(variants) == {field.name for field in dataclasses.fields(base)}
-    url = "https://fault-identity.invalid"
-    original = make_driver_identity(url, "key", PreparedClientConfig(fault_injection_rules=(base,)), None)
-    for field, value in variants.items():
-        rule = dataclasses.replace(base, **{field: value})
-        changed = make_driver_identity(url, "key", PreparedClientConfig(fault_injection_rules=(rule,)), None)
-        assert changed != original, field
-
-
-def test_driver_identity_does_not_initialize_runtime_or_call_credential():
-    script = textwrap.dedent("""
-        from azure.cosmos import _rust
-        from azure.cosmos._backend._driver_registry import make_driver_identity
-
-        class Credential:
-            def get_token(self, *args, **kwargs):
-                raise AssertionError("identity lookup must not request a token")
-
-        credential = Credential()
-        assert _rust._runtime_configuration() is None
-        identity = make_driver_identity("https://identity.documents.azure.com", None, None, credential)
-        assert isinstance(identity, str)
-        assert _rust._runtime_configuration() is None
-    """)
-    result = subprocess.run(
-        [sys.executable, "-c", script],
-        cwd=Path(__file__).resolve().parents[2],
-        capture_output=True, text=True, timeout=30, check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-
-
-def test_driver_identity_missing_export_fails_without_registration(monkeypatch):
-    from azure.cosmos import _rust
-
-    monkeypatch.delattr(_rust, "_driver_identity")
-    url = "https://m16-missing-identity.documents.azure.com"
-    with pytest.raises(RuntimeError, match="does not export _driver_identity"):
-        _rust_backend(url)
-    assert _driver_registry._live_client_count(url) == 0
-
-
-def test_make_driver_identity_uses_native_key_without_plaintext_master_key():
-    """Check delegation, sample stability, inequality, and plaintext omission.
-
-    These assertions do not establish cryptographic irreversibility or
-    collision freedom for arbitrary inputs.
-    """
-    from azure.cosmos import _rust
-
-    url = "https://m16-identity.documents.azure.com"
-    secret = "super-secret-master-key=="
-    key = make_driver_identity(url, secret, None, None)
-    assert key == _rust._driver_identity(url, secret)
-    assert secret not in key
-    assert key == make_driver_identity(url, secret, None, None)
-    assert key != make_driver_identity(url, "a-different-key", None, None)
-    cred = _Cred()
-    assert make_driver_identity(url, None, None, cred) == _rust._driver_identity(url, credential=cred)
-
-
-def test_release_with_wrong_engine_is_noop():
-    """Releasing an engine that was never registered must not corrupt the live count
-    of the engine that *is* registered."""
-    url = "https://m16-release-mismatch.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    identity = make_driver_identity(url, "k", cfg, None)
-    _register_client_identity(url, cfg, driver_identity=identity)
-    # Release a different config (a different engine) -- harmless no-op.
-    other_cfg = PreparedClientConfig(preferred_locations=("East US",))
-    _release_client_identity(
-        url, other_cfg, driver_identity=make_driver_identity(url, "k", other_cfg, None)
-    )
-    assert _driver_registry._live_client_count(url) == 1
-    _release_client_identity(url, cfg, driver_identity=identity)
-    assert url not in _driver_registry._REGISTRY
-
-
-def test_async_second_client_different_config_strict_raises():
-    """Strict isolation (async): a second client to the same endpoint with a
-    different config raises ``_StrictDriverIsolationError`` instead of silently sharing
-    the first client's engine."""
-    url = "https://m16-async-strict-different.documents.azure.com"
-    first = AsyncRustBinding(
-        endpoint=url,
-        master_key="k",
-        client_config=PreparedClientConfig(preferred_locations=("West US",)),
-        strict_isolation=True,
-    )
-    with pytest.raises(_StrictDriverIsolationError):
-        AsyncRustBinding(
-            endpoint=url,
-            master_key="k",
-            client_config=PreparedClientConfig(preferred_locations=("East US",)),
-            strict_isolation=True,
-        )
-    assert first is not None
-    assert _driver_registry._live_client_count(url) == 1
-
-
-def test_async_second_client_different_config_default_isolates(recwarn):
-    """Async backend construction accepts distinct configs without warning.
-
-    This checks Python registration, not native driver construction.
-    """
-    url = "https://m16-async-default-different.documents.azure.com"
-    first = AsyncRustBinding(
-        endpoint=url,
-        master_key="k",
-        client_config=PreparedClientConfig(preferred_locations=("West US",)),
-    )
-    second = AsyncRustBinding(
-        endpoint=url,
-        master_key="k",
-        client_config=PreparedClientConfig(preferred_locations=("East US",)),
-    )
-    assert first is not None and second is not None
-    assert len(recwarn) == 0
-
-
-# ---------------------------------------------------------------------------
-# Strict-isolation toggle: factory resolution and end-to-end wiring
-# ---------------------------------------------------------------------------
-
-
-def test_resolve_strict_isolation_precedence(monkeypatch):
-    """Explicit kwarg wins; otherwise the env var decides; unset/empty is off."""
-    # Explicit True/False beats the env var.
-    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "false")
-    assert resolve_strict_isolation(True) is True
-    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "true")
-    assert resolve_strict_isolation(False) is False
-    # No explicit value -> the env var decides, case- and whitespace-insensitively.
-    for truthy in ("1", "true", "TRUE", "Yes", "on", "  on  ", "ON\n"):
-        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, truthy)
-        assert resolve_strict_isolation(None) is True
-    for falsy in ("0", "false", "FALSE", "no", "off", " off ", ""):
-        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, falsy)
-        assert resolve_strict_isolation(None) is False
-    # Unset -> off.
-    monkeypatch.delenv(RUST_STRICT_ISOLATION_ENV_VAR, raising=False)
-    assert resolve_strict_isolation(None) is False
-
-
-def test_resolve_strict_isolation_rejects_unrecognized(monkeypatch):
-    """A safety toggle is never silently disabled: an unrecognized value (a typo
-    that clearly meant 'on') raises instead of quietly leaving the guard off."""
-    for bad in ("treu", "enabled", "2", "yes please", "tru e"):
-        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, bad)
-        with pytest.raises(ValueError, match="COSMOS_RUST_STRICT_ISOLATION"):
-            resolve_strict_isolation(None)
-    # An explicit kwarg still wins and never consults the (bad) env var.
-    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "treu")
-    assert resolve_strict_isolation(True) is True
-    assert resolve_strict_isolation(False) is False
-
-
-# ---------------------------------------------------------------------------
 # Input-validation robustness: bad-typed inputs fail early and clearly at
 # construction, rather than throwing the wrong exception, failing later in a
 # murkier place, or (worst) silently producing wrong behavior.
@@ -4158,15 +3671,6 @@ def test_resolve_backend_name_non_string_raises_valueerror(monkeypatch, bad):
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     with pytest.raises(ValueError, match="Invalid backend"):
         resolve_backend_name(bad)
-
-
-@pytest.mark.parametrize("bad", ["true", "false", "", 1, 0, [], object()])
-def test_resolve_strict_isolation_rejects_non_bool_explicit(monkeypatch, bad):
-    """The explicit strict_isolation value must be a real bool. A truthy non-bool
-    like the string 'false' would otherwise silently turn the safety guard ON."""
-    monkeypatch.delenv(RUST_STRICT_ISOLATION_ENV_VAR, raising=False)
-    with pytest.raises(ValueError, match="strict_isolation must be a bool"):
-        resolve_strict_isolation(bad)
 
 
 @pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
@@ -4252,50 +3756,6 @@ def test_resolve_backend_name_still_rejects_genuine_typos(monkeypatch):
         with pytest.raises(ValueError, match="Invalid backend"):
             resolve_backend_name(bad)
 
-
-def test_make_backend_threads_strict_isolation_kwarg():
-    """make_backend(strict_isolation=True) builds a strict backend: a second client
-    with a different config to the same account raises at construction."""
-    url = "https://m16-factory-strict.documents.azure.com"
-    first = make_backend(
-        BACKEND_NAME_RUST,
-        url=url,
-        credential="k",
-        preferred_locations=["West US"],
-        strict_isolation=True,
-    )
-    assert first is not None and first._strict_isolation is True
-    with pytest.raises(_StrictDriverIsolationError):
-        make_backend(
-            BACKEND_NAME_RUST,
-            url=url,
-            credential="k",
-            preferred_locations=["East US"],
-            strict_isolation=True,
-        )
-
-
-def test_make_backend_strict_isolation_defaults_off():
-    """Without the toggle (and no env var), the backend is non-strict: a second
-    differently-configured client is built fine (its own isolated engine)."""
-    url = "https://m16-factory-default.documents.azure.com"
-    first = make_backend(
-        BACKEND_NAME_RUST, url=url, credential="k", preferred_locations=["West US"]
-    )
-    second = make_backend(
-        BACKEND_NAME_RUST, url=url, credential="k", preferred_locations=["East US"]
-    )
-    assert first is not None and first._strict_isolation is False
-    assert second is not None
-
-
-def test_make_backend_strict_isolation_from_env(monkeypatch):
-    """The COSMOS_RUST_STRICT_ISOLATION env var enables strict mode when no explicit
-    kwarg is given."""
-    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "true")
-    url = "https://m16-factory-env-strict.documents.azure.com"
-    first = make_backend(BACKEND_NAME_RUST, url=url, credential="k")
-    assert first is not None and first._strict_isolation is True
 
 # ---------------------------------------------------------------------------
 # Response-less driver errors map to azure-core ServiceResponseError (A2)
@@ -4447,24 +3907,6 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
 
 
 # --- Regressions for the Rust client lifecycle and process-wide runtime policy ---
-
-
-def test_untuned_client_does_not_pin_process_wide_transport_timeouts():
-    """Unset and explicit timeout reservations coexist before native initialization.
-
-    Only Python policy registration is exercised. Initializing the native runtime
-    with default values can still constrain later explicit settings.
-    """
-    register_transport_timeout_policy(build_client_config(None))
-    register_transport_timeout_policy(
-        build_client_config(None, connection_timeout_seconds=2.0)
-    )
-    # The reverse order must work too: a tuned client first, then an untuned one.
-    _reset_driver_registry()
-    register_transport_timeout_policy(
-        build_client_config(None, connection_timeout_seconds=2.0)
-    )
-    register_transport_timeout_policy(build_client_config(None))
 
 
 def test_untuned_and_tuned_rust_clients_can_both_be_constructed(monkeypatch):

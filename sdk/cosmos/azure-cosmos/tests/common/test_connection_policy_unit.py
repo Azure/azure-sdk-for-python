@@ -27,7 +27,6 @@ import pytest
 
 import azure.cosmos.cosmos_client as sync_client
 import azure.cosmos.aio._cosmos_client as async_client
-from azure.cosmos._backend._driver_registry import _reset_for_tests
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._connection_policy import resolve_connection_policy_kwargs
 from azure.cosmos._retry_options import RetryOptions
@@ -53,16 +52,13 @@ def construct_client(client_module, monkeypatch):
     the Rust configuration and the older path's policy say the same thing, and having
     them side by side is what makes that possible in one assertion.
 
-    Environment variables that could pick a different backend are removed first, and the
-    registry is cleared before and after, so a client built by an earlier test cannot
-    change what this one gets. The address and key are not real; nothing connects.
+    The backend selector is cleared first. The address and key are not real;
+    nothing connects or initializes a native runtime.
 
     Every client built is closed at the end, awaiting the close where the asynchronous
     client needs it. Left open, the native side holds resources for the rest of the run.
     """
-    _reset_for_tests()
     monkeypatch.delenv("COSMOS_BACKEND", raising=False)
-    monkeypatch.delenv("COSMOS_RUST_STRICT_ISOLATION", raising=False)
     connection = MagicMock()
     monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
     clients = []
@@ -84,7 +80,6 @@ def construct_client(client_module, monkeypatch):
             result = client._backend.close()
             if inspect.isawaitable(result):
                 asyncio.run(result)
-    _reset_for_tests()
 
 
 def configured_policy():
@@ -279,10 +274,8 @@ def test_nested_unsupported_transport_rejected_before_startup(
     is the thing the caller can actually change. The older connection object is checked
     never to have been built, so the failure really did come first.
 
-    The last line then builds a client that does set a proxy choice. That choice is fixed
-    for the whole process and a later client disagreeing with it is refused, so this
-    succeeding proves the rejected constructions reserved nothing on their way out. A
-    failed client that left its choice behind would poison every client built afterwards.
+    The last line verifies that an explicit proxy choice is supported. Construction
+    does not reserve that choice; the binding fixes it when the runtime initializes.
     """
     policy = ConnectionPolicy()
     if setting == "proxy":

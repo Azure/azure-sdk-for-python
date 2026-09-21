@@ -33,6 +33,117 @@ SYNC_URL = "https://close-sync.documents.azure.com"
 ASYNC_URL = "https://close-async.documents.azure.com"
 
 
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mode):
+    from types import SimpleNamespace
+    from azure.cosmos._backend.binding import RustBinding
+
+    started, finish, finished = threading.Event(), threading.Event(), threading.Event()
+    calls = []
+
+    def blocking_close():
+        calls.append(threading.get_ident())
+        started.set()
+        try:
+            assert finish.wait(3)
+        finally:
+            finished.set()
+
+    backend_type = async_rust_module.AsyncRustBinding if async_mode else RustBinding
+    backend = backend_type(
+        SYNC_URL, token_credential=SimpleNamespace(_close_cosmos_async_bridge=blocking_close)
+    )
+    try:
+        backend.__del__()
+        assert started.wait(2)
+        assert not finished.is_set()
+        backend.__del__()
+        assert calls == [calls[0]] and calls[0] != threading.get_ident()
+    finally:
+        finish.set()
+        assert finished.wait(2)
+
+
+def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
+    from types import SimpleNamespace
+
+    class CheckedBackend(async_rust_module.AsyncRustBinding):
+        def __getattribute__(self, name):
+            if name in ("_init_future", "_init_future_loop"):
+                assert object.__getattribute__(self, "_driver_handle_lock").locked()
+            return super().__getattribute__(name)
+
+        def __setattr__(self, name, value):
+            if name in ("_init_future", "_init_future_loop"):
+                lock = self.__dict__.get("_driver_handle_lock")
+                assert lock is None or lock.locked()
+            super().__setattr__(name, value)
+
+    started, finish = threading.Event(), threading.Event()
+
+    def acquire(*args):
+        started.set()
+        assert finish.wait(5)
+        return "cross-loop-handle"
+
+    native = SimpleNamespace(acquire_driver_handle=MagicMock(side_effect=acquire),
+                             release_driver_handle=MagicMock())
+    monkeypatch.setattr(async_rust_module, "_rust_module", native)
+    backend = CheckedBackend(ASYNC_URL, master_key="key")
+
+    async def run():
+        return await asyncio.gather(backend._ensure_driver_handle(), backend._ensure_driver_handle())
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [executor.submit(lambda: asyncio.run(run())) for _ in range(4)]
+            try:
+                assert started.wait(2)
+            finally:
+                finish.set()
+            for future in futures:
+                assert future.result(timeout=5) == ["cross-loop-handle", "cross-loop-handle"]
+        native.acquire_driver_handle.assert_called_once()
+    finally:
+        finish.set()
+        asyncio.run(backend.close())
+    native.release_driver_handle.assert_called_once_with("cross-loop-handle")
+
+
+def test_cancelling_one_initialization_waiter_does_not_cancel_others(monkeypatch):
+    from types import SimpleNamespace
+
+    started, finish = threading.Event(), threading.Event()
+
+    def acquire(*args):
+        started.set()
+        assert finish.wait(5)
+        return "shared-build"
+
+    native = SimpleNamespace(acquire_driver_handle=MagicMock(side_effect=acquire),
+                             release_driver_handle=MagicMock())
+    monkeypatch.setattr(async_rust_module, "_rust_module", native)
+    backend = async_rust_module.AsyncRustBinding(ASYNC_URL, master_key="key")
+
+    async def run():
+        first = asyncio.create_task(backend._ensure_driver_handle())
+        second = asyncio.create_task(backend._ensure_driver_handle())
+        try:
+            assert await asyncio.to_thread(started.wait, 2)
+            first.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await first
+            assert not second.done()
+            finish.set()
+            assert await second == "shared-build"
+        finally:
+            finish.set()
+            await backend.close()
+
+    asyncio.run(run())
+    native.acquire_driver_handle.assert_called_once()
+
+
 def _make_sync_client(monkeypatch):
     """Build a sync Rust-backed client that touches no network.
 

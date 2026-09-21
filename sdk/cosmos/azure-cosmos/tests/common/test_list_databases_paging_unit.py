@@ -16,17 +16,18 @@ What a customer callback is allowed to do. It runs between pages, so a mistake
 inside it must surface as their error, not be retried, swallowed, or mistaken
 for the end of the list.
 
-How the time limit is spent. One limit covers the whole listing, not each page,
-so time already spent -- starting the driver, waiting on earlier pages -- comes
-off what is left. Otherwise a listing with many pages could run far past the
-limit the caller asked for.
+How the time limit is spent. One timeout covers a public page fetch, including
+driver setup and any empty service pages fetched before delivering results.
+The next public page fetch gets a fresh timeout; application processing between
+delivered pages does not consume it.
 
-Most tests run twice, once through the Rust path and once through the legacy
-path, because these are exactly the behaviors customers would notice changing.
+Most tests exercise both selectable transports through the current pager.
+They check consistent behavior, not parity with a released legacy SDK.
 """
 import asyncio
 import json
 import time
+from copy import deepcopy
 from unittest.mock import MagicMock
 
 import pytest
@@ -53,10 +54,8 @@ def listing(listing_client, request):
     page the Rust stand-in would, so both paths answer identically and any
     difference in behavior is the code under test, not the stand-in.
 
-    Running both is the point. Everything here -- the continuation token, when
-    callbacks fire, how the time limit is divided -- is something a customer
-    could notice changing when they move to the Rust path, so each one is
-    checked against what the legacy path already does.
+    Both transports use the current listing configuration and pager. This
+    fixture does not supply the released legacy API as a comparison baseline.
 
     Combined with the sync and async split it inherits, every test runs four
     ways.
@@ -185,6 +184,120 @@ def test_invalid_hook_rejected_without_request(listing, hook):
     requests(listing).assert_not_called()
 
 
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize(
+    "name,key",
+    [
+        ("session_token", "sessionToken"),
+        ("populate_query_metrics", "populateQueryMetrics"),
+        ("availability_strategy", "availabilityStrategy"),
+        ("no_response", "responsePayloadOnWriteDisabled"),
+        ("content_type", "contentType"),
+    ],
+)
+@pytest.mark.parametrize("value", [None, False, True, "customer-value"])
+def test_inapplicable_options_rejected_through_each_input_route(listing, source, name, key, value):
+    kwargs = {name: value} if source == "keyword" else {source: {key: value}}
+    original = deepcopy(kwargs)
+    with pytest.raises(TypeError, match=name):
+        listing[0].list_databases(**kwargs)
+    assert kwargs == original
+    requests(listing).assert_not_called()
+
+
+@pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "raw_option", "default"])
+@pytest.mark.parametrize("value", ["0", "-2", str(2**63), str(2**80), "True", "1.5", "invalid"])
+def test_invalid_header_page_size_rejected_before_iteration(listing, source, value):
+    client, connection, _, _, _ = listing
+    headers = {"X-MS-MAX-ITEM-COUNT": value}
+    if source == "default":
+        connection.default_headers.update(headers)
+        kwargs = {}
+    elif source == "initial_headers":
+        kwargs = {source: headers}
+    elif source == "raw_option":
+        kwargs = {"request_options": headers}
+    else:
+        kwargs = {source: {"initialHeaders": headers}}
+    original = deepcopy(kwargs)
+    with pytest.raises(ValueError, match="max.item.count"):
+        client.list_databases(**kwargs)
+    assert kwargs == original
+    requests(listing).assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("count", [-1, 1, 2**63 - 1])
+@pytest.mark.parametrize("typed", [False, True])
+async def test_effective_page_size_is_validated_and_forwarded(listing, count, typed):
+    client, connection, backend, is_async, legacy = listing
+    connection.default_headers["x-ms-max-item-count"] = "0"
+    headers = {"X-MS-MAX-ITEM-COUNT": "invalid" if typed else str(count)}
+    options = {"initialHeaders": headers}
+    kwargs = {"request_options": options, "max_item_count": count} if typed else {"feed_options": options}
+    original = deepcopy(kwargs)
+    pager = client.list_databases(**kwargs).by_page()
+    assert kwargs == original
+    headers["X-MS-MAX-ITEM-COUNT"] = "-2"
+    assert await _next_listing_page(pager, is_async)
+    if legacy:
+        sent = CaseInsensitiveDict(requests(listing).call_args.args[2])
+        assert str(sent["x-ms-max-item-count"]) == str(count)
+    else:
+        assert backend.prepared.max_item_count == count
+        assert "x-ms-max-item-count" not in backend.prepared.headers
+    assert options == {"initialHeaders": {"X-MS-MAX-ITEM-COUNT": "-2"}}
+
+
+@pytest.mark.asyncio
+async def test_raw_option_page_size_overrides_headers_without_mutation(listing):
+    client, connection, backend, is_async, legacy = listing
+    connection.default_headers["x-ms-max-item-count"] = "0"
+    options = {"initialHeaders": {"X-MS-MAX-ITEM-COUNT": "-2"}, "X-MS-MAX-ITEM-COUNT": "3"}
+    original = deepcopy(options)
+    assert await _next_listing_page(client.list_databases(request_options=options).by_page(), is_async)
+    if legacy:
+        assert str(CaseInsensitiveDict(requests(listing).call_args.args[2])["x-ms-max-item-count"]) == "3"
+    else:
+        assert backend.prepared.max_item_count == 3
+    assert options == original
+
+
+@pytest.mark.asyncio
+async def test_default_header_page_size_is_snapshotted(listing):
+    client, connection, backend, is_async, legacy = listing
+    connection.default_headers["X-MS-MAX-ITEM-COUNT"] = "2"
+    pager = client.list_databases().by_page()
+    connection.default_headers["X-MS-MAX-ITEM-COUNT"] = "0"
+    assert await _next_listing_page(pager, is_async)
+    if legacy:
+        assert str(CaseInsensitiveDict(requests(listing).call_args.args[2])["x-ms-max-item-count"]) == "2"
+    else:
+        assert backend.prepared.max_item_count == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("named_count", [None, 3])
+async def test_effective_option_overrides_invalid_raw_page_sizes(listing, named_count):
+    client, _, backend, is_async, legacy = listing
+    options = {
+        "initialHeaders": {"X-MS-MAX-ITEM-COUNT": "invalid"},
+        "x-ms-max-item-count": "0",
+        "maxItemCount": 2,
+    }
+    original = deepcopy(options)
+    pages = client.list_databases(
+        request_options=options, feed_options={"maxItemCount": -2}, max_item_count=named_count,
+    )
+    assert await _next_listing_page(pages.by_page(), is_async)
+    count = 2 if named_count is None else named_count
+    if legacy:
+        assert str(CaseInsensitiveDict(requests(listing).call_args.args[2])["x-ms-max-item-count"]) == str(count)
+    else:
+        assert backend.prepared.max_item_count == count
+    assert options == original
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("option_name", ["request_options", "feed_options"])
 async def test_nested_input_is_copied_before_iteration(listing, option_name):
@@ -252,16 +365,15 @@ async def test_replay_does_not_change_an_existing_pagers_bookmark(listing):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("spent", [3.0, 4.75])
 async def test_empty_service_page_uses_remaining_budget(listing, monkeypatch, spent):
-    """The time limit covers the whole listing, so the second page gets only what the
-    first one left.
+    """Empty service pages share the timeout of the current public page fetch.
 
     The clock is controlled, and the service returns an empty first page that
     still points at more results -- which is normal, not an error. The first
     request is given the full limit; the second is given the limit minus the
     time the first actually took.
 
-    Handing the full limit to each page would let a listing with many pages run
-    for far longer than the caller asked, and the more pages, the worse it gets.
+    Restarting the timeout after each empty service page could prevent the
+    current public page fetch from ever timing out.
     Two different amounts of elapsed time are covered so the value is being
     subtracted rather than a fixed step.
 

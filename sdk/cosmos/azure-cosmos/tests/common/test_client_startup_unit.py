@@ -3,16 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Offline checks of client construction and rollback of Python reservations.
+"""Offline checks of client construction and partial-startup cleanup.
 
-Inject startup failures and inspect registry state and mocked cleanup calls.
-Native-reported runtime settings are simulated where needed. The cases
-distinguish provisional reservations from settings reported as initialized,
-but do not initialize a real runtime or prove complete resource cleanup.
+Inject startup failures and inspect backend state and mocked cleanup calls.
+Binding validation is simulated where needed; no service operations are made.
 """
 import asyncio
 import concurrent.futures
 import inspect
+import subprocess
+import sys
 import threading
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -22,32 +22,12 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as sync_client
 import azure.cosmos.aio._cosmos_client as async_client
-from azure.cosmos._backend import _driver_registry as registry
 from azure.cosmos._backend import binding as sync_backend
 from azure.cosmos.aio._backend import binding as async_backend
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._retry_options import RetryOptions
 from azure.cosmos.documents import ConnectionPolicy
-
-
-@pytest.fixture(autouse=True)
-def reset_registry(monkeypatch):
-    """Clear the process-wide client bookkeeping before and after every test.
-
-    This state lives for the life of the process, not the test, so without a
-    reset one test's client would establish a proxy or timeout setting that the
-    next test then conflicts with. That shows up as failures that depend on the
-    order tests happen to run in, which is among the most expensive kinds of
-    test bug to track down.
-
-    The strict isolation switch is cleared from the environment too, so a
-    developer who has it turned on locally gets the same results as the build.
-    """
-    registry._reset_for_tests()
-    monkeypatch.delenv("COSMOS_RUST_STRICT_ISOLATION", raising=False)
-    yield
-    registry._reset_for_tests()
 
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
@@ -100,7 +80,7 @@ def test_factory_forwards_every_declared_option_to_shared_construction(monkeypat
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
-@pytest.mark.parametrize("failure_stage", [None, "config", "isolation", "constructor"])
+@pytest.mark.parametrize("failure_stage", [None, "config", "constructor"])
 def test_factory_keeps_credential_guard_active_through_construction(
     monkeypatch, async_mode, failure_stage
 ):
@@ -134,18 +114,17 @@ def test_factory_keeps_credential_guard_active_through_construction(
 
     monkeypatch.setattr(sync_factory, "resolved_credential", guard)
     monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
-    monkeypatch.setattr(sync_factory, "resolve_strict_isolation", stage("isolation", False))
     monkeypatch.setattr(
         module, "AsyncRustBinding" if async_mode else "RustBinding", stage("constructor", result)
     )
     if failure_stage is None:
         assert factory("rust", url="https://startup.invalid", credential=credential) is result
-        assert events == ["enter", "config", "isolation", "constructor", "exit"]
+        assert events == ["enter", "config", "constructor", "exit"]
     else:
         with pytest.raises(RuntimeError) as caught:
             factory("rust", url="https://startup.invalid", credential=credential)
         assert caught.value is error
-        stages = ["config", "isolation", "constructor"]
+        stages = ["config", "constructor"]
         assert events == ["enter", *stages[:stages.index(failure_stage) + 1], "exit"]
 
 
@@ -175,7 +154,6 @@ def test_invalid_retry_counts_fail_before_legacy_startup(module, value, nested):
     with pytest.raises(ValueError, match="retry_throttle_total"):
         module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
     module.CosmosClientConnection.assert_not_called()
-    assert registry._live_client_count("https://startup.invalid") == 0
 
 
 @pytest.mark.parametrize("name", ["preferred_locations", "excluded_locations"])
@@ -202,22 +180,8 @@ def test_invalid_retry_wait_rejected(value):
 
 
 @pytest.mark.parametrize("stage", ["encoding", "auth", "policy", "legacy"])
-def test_failed_constructor_unwinds_backend_and_reservations(module, monkeypatch, stage):
-    """However far construction got before failing, the backend is closed and its
-    reservations are given back.
-
-    Four failure points are covered, from an argument rejected early to the
-    legacy startup failing at the very end. Each is checked the same way: the
-    backend that was built is marked closed and its settings released, and the
-    account is left with no live clients.
-
-    The proof is the last part. Another client is then built for the same
-    account with different transport settings and succeeds, which it could not
-    do if the failed attempt had kept its claim on them. Without this, one
-    failed constructor would make every later client in the process unable to
-    choose its own timeouts, with an error naming a conflict against something
-    that does not exist.
-    """
+def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
+    """Failures at each startup stage close the partially constructed backend."""
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
     retained = []
@@ -241,110 +205,46 @@ def test_failed_constructor_unwinds_backend_and_reservations(module, monkeypatch
     with pytest.raises(expected):
         module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
     assert len(retained) == 1
-    assert retained[0]._closing and retained[0]._config_released
-    assert registry._live_client_count("https://startup.invalid") == 0
+    assert retained[0]._closing
     replacement = sync_backend.RustBinding(
         "https://startup.invalid", master_key="ZmFrZQ==",
         client_config=PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=3,
                                           read_timeout_seconds=30),
     )
     close_backend(retained[0])
-    assert registry._live_client_count("https://startup.invalid") == 1
     replacement.close()
 
 
-def test_timeout_conflict_does_not_leave_a_proxy_reservation():
-    """A client refused over a timeout conflict does not get to keep the proxy setting it
-    asked for on the way in.
-
-    The two settings are registered one after the other, so a client can claim
-    the proxy setting and then be turned away over timeouts. If that claim
-    stayed, it would be enforced against every later client for the rest of the
-    process -- an error about a value nobody chose.
-
-    The sequence proves it is given back: after the refusal, another client
-    takes the opposite proxy setting without complaint. Later, once that one has
-    closed, the setting is free again and the last client takes the very
-    combination that was refused at the start.
-    """
+def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
+    validator = MagicMock()
+    monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
     first = sync_backend.RustBinding(
         "https://first.invalid", master_key="key",
         client_config=PreparedClientConfig(read_timeout_seconds=20),
     )
-    with pytest.raises(registry.TransportTimeoutPolicyConflictError):
-        sync_backend.RustBinding(
-            "https://failed.invalid", master_key="key",
-            client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=30),
-        )
-    other = sync_backend.RustBinding(
-        "https://other.invalid", master_key="key",
-        client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=20),
-    )
-    first.close()
-    with pytest.raises(registry.ProxyPolicyConflictError):
-        sync_backend.RustBinding(
-            "https://conflict.invalid", master_key="key",
-            client_config=PreparedClientConfig(proxy_allowed=False),
-        )
-    other.close()
-    replacement = sync_backend.RustBinding(
-        "https://replacement.invalid", master_key="key",
-        client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=30),
-    )
-    replacement.close()
-
-
-def test_strict_isolation_failure_rolls_back_new_runtime_reservations():
-    """A client refused by strict isolation leaves nothing of its own behind.
-
-    Strict isolation is the opt-in rule that a second client for an account must
-    not quietly cause a second driver to be built. Here the second client asks
-    for the same account with different settings and is refused.
-
-    Two things must follow. The account still shows exactly one live client, so
-    the refused one was never counted. And its transport settings were not
-    claimed, shown by a third client immediately taking different ones.
-
-    Rolling back matters more under strict isolation than anywhere else, because
-    it exists to be turned on in production by customers who need the guarantee.
-    A rule that leaked state each time it fired would punish exactly the people
-    who opted into it.
-    """
-    first = sync_backend.RustBinding("https://account.invalid", master_key="key")
-    with pytest.raises(registry._StrictDriverIsolationError):
-        sync_backend.RustBinding(
-            "https://account.invalid", master_key="key", strict_isolation=True,
-            client_config=PreparedClientConfig(proxy_allowed=False, read_timeout_seconds=25),
-        )
-    assert registry._live_client_count("https://account.invalid") == 1
     other = sync_backend.RustBinding(
         "https://other.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=30),
     )
+    assert validator.call_count == 2
+    validator.reset_mock()
+    validator.side_effect = ValueError("must not validate during close")
     first.close()
     other.close()
+    validator.assert_not_called()
 
 
-@pytest.mark.parametrize("frozen", [False, True])
-def test_close_during_initialization_retains_inflight_reservation(monkeypatch, frozen):
-    """Keep a reservation until a blocked fake handle acquisition finishes.
-
-    Check release of the late synthetic handle and reservation conflicts with
-    simulated unfrozen/frozen native settings. No real runtime is initialized.
-    """
+def test_close_during_initialization_releases_late_handle(monkeypatch):
+    """Close releases a late acquired handle without publishing it."""
     started, finish = threading.Event(), threading.Event()
-    state = SimpleNamespace(settings=None)
 
     def initialize(*args):
         started.set()
         assert finish.wait(10)
-        if frozen:
-            state.settings = (True, None, None)
         return "test-handle"
 
     binding = SimpleNamespace(acquire_driver_handle=initialize, release_driver_handle=MagicMock())
     monkeypatch.setattr(async_backend, "_rust_module", binding)
-    monkeypatch.setattr(async_backend, "_runtime_configuration", lambda: state.settings)
     backend = async_backend.AsyncRustBinding(
         "https://account.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True),
@@ -354,42 +254,30 @@ def test_close_during_initialization_retains_inflight_reservation(monkeypatch, f
         try:
             assert started.wait(10)
             close_backend(backend)
-            with pytest.raises(registry.ProxyPolicyConflictError):
-                sync_backend.RustBinding(
-                    "https://other.invalid", master_key="key",
-                    client_config=PreparedClientConfig(proxy_allowed=False),
-                )
+            replacement = sync_backend.RustBinding(
+                "https://account.invalid", master_key="key",
+                client_config=PreparedClientConfig(proxy_allowed=False),
+            )
+            replacement.close()
         finally:
             finish.set()
         with pytest.raises(RuntimeError, match="closed during initialization"):
             future.result(timeout=10)
     binding.release_driver_handle.assert_called_once_with("test-handle")
-    assert registry._live_client_count("https://account.invalid") == 0
-    if frozen:
-        with pytest.raises(registry.ProxyPolicyConflictError):
-            sync_backend.RustBinding(
-                "https://other.invalid", master_key="key",
-                client_config=PreparedClientConfig(proxy_allowed=False),
-            )
-    else:
-        replacement = sync_backend.RustBinding(
-            "https://other.invalid", master_key="key",
-            client_config=PreparedClientConfig(proxy_allowed=False),
-        )
-        replacement.close()
 
 
-@pytest.mark.parametrize("settings", [(False, 2, 25), (None, None, None)])
-def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch, settings):
-    """Keep policy reported as initialized by a fake runtime-configuration function.
+def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
+    """A failed build and close cannot clear settings already fixed in the binding."""
+    validator = MagicMock()
+    monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
 
-    Both explicit values and reported defaults remain conflict constraints after
-    the injected build failure. This tests Python policy, not native startup.
-    """
-    monkeypatch.setattr(sync_backend, "_rust_module", SimpleNamespace(
-        acquire_driver_handle=MagicMock(side_effect=RuntimeError("driver failed")),
-    ))
-    monkeypatch.setattr(sync_backend, "_runtime_configuration", lambda: settings)
+    def acquire(*args):
+        validator.side_effect = ValueError("runtime settings already initialized")
+        raise RuntimeError("driver failed")
+
+    monkeypatch.setattr(
+        sync_backend, "_rust_module", SimpleNamespace(acquire_driver_handle=acquire)
+    )
     backend = sync_backend.RustBinding("https://account.invalid", master_key="key")
     with pytest.raises(RuntimeError, match="driver failed"):
         backend._ensure_driver_handle()
@@ -399,7 +287,7 @@ def test_failed_driver_build_preserves_actually_initialized_runtime(monkeypatch,
         PreparedClientConfig(connection_timeout_seconds=3),
         PreparedClientConfig(read_timeout_seconds=30),
     ):
-        with pytest.raises((registry.ProxyPolicyConflictError, registry.TransportTimeoutPolicyConflictError)):
+        with pytest.raises(ValueError, match="runtime settings already initialized"):
             sync_backend.RustBinding("https://other.invalid", master_key="key", client_config=config)
 
 
@@ -494,7 +382,7 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
     connection.pipeline_client.__aexit__.assert_awaited_once()
     connection._global_endpoint_manager.close.assert_awaited_once()
     connection._routing_map_provider.release.assert_called_once()
-    assert client._backend._closing and registry._live_client_count("https://account.invalid") == 0
+    assert client._backend._closing
 
 
 def test_client_priority_defaults_are_captured(module):
@@ -515,24 +403,25 @@ def test_client_priority_defaults_are_captured(module):
     close_backend(client._backend)
 
 
-def test_frozen_timeout_compares_native_nanosecond_precision():
-    """Compare Python reservations with supplied frozen values at nanosecond precision.
-
-    This exercises the registry's comparison, not actual native duration storage.
-    """
-    registry.freeze_runtime_policy((None, 2.123456789, 25.123456789))
-    backend = sync_backend.RustBinding(
-        "https://account.invalid", master_key="key",
-        client_config=PreparedClientConfig(
-            connection_timeout_seconds=2.1234567891, read_timeout_seconds=25.1234567891
-        ),
+def test_native_validation_does_not_initialize_or_reserve_runtime():
+    """A fresh process proves that the real export permits different unused settings."""
+    code = """
+from azure.cosmos import _rust
+from azure.cosmos._backend.contracts import PreparedClientConfig
+assert not hasattr(_rust, "_driver_identity")
+assert _rust._runtime_configuration() is None
+for config in (
+    None,
+    PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=2),
+    PreparedClientConfig(proxy_allowed=False, connection_timeout_seconds=5),
+):
+    assert _rust._validate_runtime_configuration(config) is None
+    assert _rust._runtime_configuration() is None
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, timeout=30, check=False
     )
-    backend.close()
-    with pytest.raises(registry.TransportTimeoutPolicyConflictError):
-        sync_backend.RustBinding(
-            "https://other.invalid", master_key="key",
-            client_config=PreparedClientConfig(connection_timeout_seconds=2.1234567896),
-        )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.mark.parametrize("stage", ["account", "consistency"])
@@ -578,4 +467,3 @@ def test_real_sync_connection_releases_partial_startup_resources(monkeypatch, st
     routing.release.assert_called_once()
     pipeline.close.assert_called_once()
     manager.force_refresh_on_startup.assert_not_called()
-    assert registry._live_client_count("https://account.invalid") == 0

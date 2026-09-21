@@ -20,7 +20,7 @@ _BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
 @dataclass(frozen=True)
 class ItemClientDefaults:
-    """Immutable client defaults for item operations, not all CosmosClient options."""
+    """Client defaults used by items and, for priority/bucket, database creation."""
 
     no_response_on_write: bool = False
     enable_compact_utf8_item_writes: bool = False

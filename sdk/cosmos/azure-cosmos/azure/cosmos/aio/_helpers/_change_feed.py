@@ -124,10 +124,8 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
 
             rows = await run_with_deadline(fetch_page, deadline)
             return state.finish(rows, deadline)
-        except BaseException:
-            state.failed = True
-            state.cursor = None
-            state.fetcher = None
+        except BaseException as error:
+            state.invalidate(error)
             raise
         finally:
             state.lock.release()

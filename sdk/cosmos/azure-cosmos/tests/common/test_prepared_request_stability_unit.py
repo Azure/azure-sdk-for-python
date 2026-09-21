@@ -22,6 +22,15 @@ from azure.cosmos._backend.binding import build_binding_request_from_page as syn
 from azure.cosmos.aio._backend.binding import build_binding_request_from_page as async_page
 
 
+def test_frozen_mapping_is_a_value_mapping_not_a_hash_key():
+    from azure.cosmos._backend._immutable import FrozenMapping
+
+    value = FrozenMapping({"order": "order-42"})
+    assert value == {"order": "order-42"}
+    with pytest.raises(TypeError, match="unhashable"):
+        hash(value)
+
+
 def point(**kwargs):
     return PreparedRequest(
         op="read_item",

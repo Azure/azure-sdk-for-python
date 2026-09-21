@@ -7,13 +7,9 @@
 
 A backend is the Python dispatch object; a driver is the native CosmosDriver
 identified by a driver handle; the runtime owns process-wide transport settings.
-Native acquisition is lazy and independent of Python client registration.
-
-Construction reserves client identity and provisional process policies with
-register_driver_client. Close guards against duplicate registration releases and releases
-this client's hold on an async credential bridge when present. The Python registry
-predicts isolation conflicts; its counts do not own native driver handles or their
-reference counts.
+Construction checks initialized runtime settings in the binding; native driver
+acquisition remains lazy. Python does not reserve runtime settings, compute
+driver identities, or keep an open-client registry.
 """
 from __future__ import annotations
 
@@ -31,12 +27,6 @@ from .contracts import PreparedClientConfig, PreparedQuery
 from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_method
 from ..exceptions import CosmosClientTimeoutError
-from ._driver_registry import (
-    make_driver_identity,
-    register_driver_client,
-    release_driver_client,
-    freeze_runtime_policy,
-)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -197,18 +187,41 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
             _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
 
 
+def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
+    """Release detached resources off the finalizing thread, without retaining the backend."""
+    if credential is None and driver_handle is None:
+        return
+    release = getattr(binding, "release_driver_handle", None)
+
+    def teardown() -> None:
+        try:
+            close_credential_bridge_quietly(credential)
+        finally:
+            if driver_handle is not None and callable(release):
+                try:
+                    release(driver_handle)
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.debug("Failed releasing native resources during finalization")
+
+    try:
+        threading.Thread(target=teardown, name="cosmos-rust-finalizer", daemon=True).start()
+    except RuntimeError:
+        # At interpreter shutdown a worker may be unavailable; preserve cleanup.
+        _LOGGER.warning("Could not start finalizer worker; cleaning up on the finalizing thread")
+        teardown()
+
+
 class RustBindingShared:
     """Mixin holding the state and lifecycle common to both Rust backends.
 
     Each backend calls ``_init_shared`` from its ``__init__`` to store the common fields
-    and register with the guard, then adds only its own logic to build and run the
+    and validate initialized runtime settings, then adds its own logic to build and run the
     driver handle (``self._driver_handle``) -- the one thing the sync and async paths do
     differently.
 
     ``_init_shared`` sets all the shared attributes: ``_endpoint``, ``_master_key``,
-    ``_token_credential``, ``_client_config``, ``_strict_isolation``,
-    ``_driver_identity``, ``_driver_handle``, ``_driver_handle_lock``, ``_closing``, and
-    ``_config_released``.
+    ``_token_credential``, ``_client_config``, ``_driver_handle``,
+    ``_driver_handle_lock``, and ``_closing``.
     """
 
     def _init_shared(
@@ -217,21 +230,11 @@ class RustBindingShared:
         master_key: Optional[str],
         client_config: Optional[PreparedClientConfig],
         token_credential: Optional[Any],
-        strict_isolation: bool = False,
     ) -> None:
-        """Do all the open work, and register with the guard last, on purpose.
+        """Store client state and check initialized runtime settings.
 
-        It sets ``_config_released = True`` *before* registering and flips it to
-        ``False`` only *after* registration succeeds -- so a client whose construction
-        fails during registration never later tries to release a registration it never
-        made. (It is called from each backend's ``__init__`` after that backend has set
-        its own fields, so every attribute the finalizer might touch already exists.)
-
-        It asks the binding for ``_driver_identity`` once, without initializing a
-        runtime or driver, so open and close use the same native identity.
-        It also enforces the
-        process-wide proxy and transport-timeout policies *first*, so a runtime
-        conflict fails before any registration exists to undo.
+        The binding's check does not initialize or reserve a runtime. Acquisition
+        checks again because initialization can occur after construction.
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -243,7 +246,6 @@ class RustBindingShared:
         # Client settings (e.g. preferred_locations) passed to the first acquire_driver_handle
         # call. None means there are none to pass.
         self._client_config = client_config
-        self._strict_isolation = strict_isolation
         # The driver handle acquire_driver_handle returns: a key made from (endpoint,
         # credential, config) that names which rust driver this client uses (the
         # rust driver owns the connection pool, request signing, and region
@@ -255,72 +257,31 @@ class RustBindingShared:
         # out a handle, so a closed client refuses further work instead of quietly
         # building a second driver reference and carrying on as if it were open.
         self._closing = False
-        # Register against the endpoint last: in strict isolation mode this raises if
-        # a live client already targets the account with a different native identity.
-        # Start _config_released True so a construction that fails here
-        # never releases a registration it never made; set it False only once
-        # registration succeeds.
-        self._config_released = True
-        # Proxy allowance and transport timeouts are process-global for the Rust
-        # runtime, not per-account like the driver registration below. Enforce them
-        # here before recording a registration; the binding checks them again later
-        # in case the runtime is only started at that point.
         try:
-            self._driver_identity = make_driver_identity(
-                endpoint, master_key, client_config, token_credential
-            )
-            register_driver_client(
-                endpoint,
-                client_config,
-                driver_identity=self._driver_identity,
-                strict=strict_isolation,
-            )
+            from azure.cosmos import _rust
+
+            validate_runtime = getattr(_rust, "_validate_runtime_configuration", None)
+            if not callable(validate_runtime):
+                raise RuntimeError(
+                    "The compiled azure.cosmos._rust extension does not export "
+                    "_validate_runtime_configuration; rebuild it from the current source."
+                )
+            validate_runtime(client_config)
         except BaseException:
             # The factory's resolved_credential scope still owns this hold.
             self._token_credential = None
             raise
-        self._config_released = False
-
-    def _release_config_once(self) -> None:
-        """Attempt this client's guard-registration release at most once.
-
-        The lock and flag allow at most one call to ``release_driver_client``
-        from this backend, including concurrent close/finalizer paths. The flag
-        is set before that call, so a failed release is not retried here.
-        """
-        with self._driver_handle_lock:
-            if self._config_released:
-                return
-            self._config_released = True
-        release_driver_client(
-            self._endpoint,
-            self._client_config,
-            driver_identity=self._driver_identity,
-        )
 
     def abort_construction(self) -> None:
         """Synchronously unwind a public constructor before native initialization."""
         with self._driver_handle_lock:
             self._closing = True
-        self._release_config_once()
         self._close_token_credential_bridge()
 
-    def _initialize_driver(
-        self, binding: Any,
-        runtime_configuration: Callable[[], Optional[tuple[Optional[bool], Optional[float], Optional[float]]]],
-    ) -> str:
-        """Hold a reservation across init/close races and observe the real runtime."""
-        register_driver_client(self._endpoint, self._client_config, self._driver_identity)
-        try:
-            configure_packaged_query_plan_interop(binding)
-            return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
-        finally:
-            try:
-                settings = runtime_configuration()
-                if settings is not None:
-                    freeze_runtime_policy(settings)
-            finally:
-                release_driver_client(self._endpoint, self._client_config, self._driver_identity)
+    def _initialize_driver(self, binding: Any) -> str:
+        """Acquire a driver; each backend protects publication against close."""
+        configure_packaged_query_plan_interop(binding)
+        return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
         """Return the arguments for the binding's ``acquire_driver_handle``, in one place.

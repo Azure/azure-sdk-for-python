@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Independent database listing inputs, response state and synchronous paging."""
+"""Independent database listing/query inputs, response state and synchronous paging."""
 from __future__ import annotations
 
 import threading
@@ -19,50 +19,83 @@ from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import (
     build_list_databases_prepared_query,
+    build_query_databases_prepared_query,
     can_use_rust_backend_for_list_databases_page,
+    can_use_rust_backend_for_query_databases_page,
     page_to_backend_response,
 )
-from ._request_settings import compose_item_options, is_supported_operation_timeout
+from ._request_settings import (
+    build_customer_headers, compose_item_options, is_supported_operation_timeout, normalize_query_specification,
+)
 from ._response_parse import process_backend_response
 
 
 class ListDatabasesConfig:
+    operation = "list_databases"
+    query_payload: Optional[dict[str, Any]] = None
+    unsupported_options: tuple[tuple[str, str], ...] = (
+        ("session_token", "sessionToken"),
+        ("populate_query_metrics", "populateQueryMetrics"),
+        ("availability_strategy", "availabilityStrategy"),
+        ("no_response", "responsePayloadOnWriteDisabled"),
+        ("content_type", "contentType"),
+    )
+
     def __init__(self, client: Any, kwargs: dict[str, Any]) -> None:
         started = time.monotonic()
-        for option in ("session_token", "populate_query_metrics", "availability_strategy"):
-            if option in kwargs:
-                raise TypeError(f"list_databases() does not support the '{option}' keyword argument")
         self.hook = kwargs.pop("response_hook", None)
         if self.hook is not None and not callable(self.hook):
-            raise TypeError("list_databases response_hook must be callable or None.")
+            raise TypeError(f"{self.operation} response_hook must be callable or None.")
         self.options = deepcopy(compose_item_options(kwargs))
+        for name, key in self.unsupported_options:
+            if name in kwargs or key in self.options:
+                raise TypeError(f"{self.operation}() does not support the '{name}' option")
         for source in (self.options, kwargs):
             if source.pop("read_timeout", None) is not None:
                 raise TypeError(
-                    "list_databases() does not support the 'read_timeout' keyword argument; "
+                    f"{self.operation}() does not support the 'read_timeout' keyword argument; "
                     "configure it when constructing CosmosClient."
                 )
         kwargs.pop("timeout", None)
         self.timeout = self.options.get("timeout")
         if not is_supported_operation_timeout(self.timeout):
-            raise ValueError("list_databases timeout must be None or finite seconds >= 1 and < 2**64.")
+            raise ValueError(f"{self.operation} timeout must be None or finite seconds >= 1 and < 2**64.")
         self.options.pop(_Constants.OperationStartTime, None)
         self.operation_deadline = (
             started + self.timeout
             if self.timeout is not None and self.options.get(_Constants.TimeoutScope) == TimeoutScope.OPERATION
             else None
         )
+        self.default_headers = dict(client.client_connection.default_headers)
+        initial = build_customer_headers(self.options.get("initialHeaders"))
+        page_size_header = http_constants.HttpHeaders.PageSize
+        raw_count = initial.get(
+            page_size_header, build_customer_headers(self.default_headers).get(page_size_header),
+        )
+        # Raw option headers override initial headers; a typed count overrides both.
+        for key in tuple(self.options):
+            if isinstance(key, str) and key.lower() == page_size_header:
+                raw_count = str(self.options.pop(key))
         count = self.options.get("maxItemCount")
+        if count is None and raw_count is not None:
+            try:
+                count = int(raw_count)
+            except ValueError as error:
+                raise ValueError(f"{self.operation} x-ms-max-item-count must be an integer.") from error
         if count is not None and (
-            isinstance(count, bool) or not isinstance(count, int)
+            type(count) is not int
             or count == 0 or count < -1 or count >= 2**63
         ):
-            raise ValueError("list_databases max_item_count must be a positive i64 integer, -1, or None.")
+            raise ValueError(f"{self.operation} max_item_count must be a positive i64 integer, -1, or None.")
+        if count is not None:
+            self.options["maxItemCount"] = count
+        if "initialHeaders" in self.options:
+            initial.pop(page_size_header, None)
+            self.options["initialHeaders"] = initial
         self.kwargs = kwargs
         self.backend = client._backend
         self.rust = self.backend.name != "core-python"
         self.response_state = client._item_context.response_state
-        self.default_headers = dict(client.client_connection.default_headers)
         self.connection = None if self.rust else client.client_connection
 
     def deadline(self) -> Optional[float]:
@@ -71,19 +104,29 @@ class ListDatabasesConfig:
         return None if self.timeout is None else time.monotonic() + self.timeout
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedQuery:
-        if not can_use_rust_backend_for_list_databases_page(
+        eligible = can_use_rust_backend_for_list_databases_page(
             options=self.options, kwargs=self.kwargs, is_query_plan=False,
             resource_type=http_constants.ResourceType.Database,
-        ):
+        ) if self.query_payload is None else can_use_rust_backend_for_query_databases_page(
+            query_payload=self.query_payload, options=self.options, kwargs=self.kwargs,
+            is_query_plan=False, resource_type=http_constants.ResourceType.Database,
+        )
+        if not eligible:
             raise NotImplementedError(
-                "list_databases cannot honor these options on Rust; the request will not be sent through legacy Python."
+                f"{self.operation} cannot honor these options on Rust; "
+                "the request will not be sent through legacy Python."
             )
         options = dict(self.options)
         if token is not None:
             options["continuation"] = token
         else:
             options.pop("continuation", None)
-        prepared = build_list_databases_prepared_query(options=options, req_headers=self.default_headers)
+        prepared = (
+            build_list_databases_prepared_query(options=options, req_headers=self.default_headers)
+            if self.query_payload is None else build_query_databases_prepared_query(
+                query_payload=self.query_payload, options=options, req_headers=self.default_headers,
+            )
+        )
         return replace(prepared, settings=replace(prepared.settings, timeout_seconds=remaining_timeout(deadline)))
 
     def legacy_page(
@@ -97,11 +140,35 @@ class ListDatabasesConfig:
         # The old transport retries the request, never the customer's success hook.
         return self.connection._CosmosClientConnection__QueryFeed(
             "/dbs", http_constants.ResourceType.Database, "",
-            lambda body: body["Databases"], lambda _, body: body, None, options,
+            lambda body: body["Databases"], lambda _, body: body, self.query_payload, options,
             _read_all_backend=self.backend,
             response_headers=response_headers,
             **legacy_deadline_kwargs(self.kwargs, deadline),
         )
+
+
+class QueryDatabasesConfig(ListDatabasesConfig):
+    operation = "query_databases"
+    unsupported_options = ListDatabasesConfig.unsupported_options + (
+        ("enable_cross_partition_query", "enableCrossPartitionQuery"),
+    )
+
+    def __init__(
+        self, client: Any, query: Any, parameters: Any, kwargs: dict[str, Any],
+    ) -> None:
+        if query is not None:
+            text, values = normalize_query_specification(query, parameters, operation=self.operation)
+            self.query_payload = {"query": text, "parameters": list(values)}
+        modes = client.client_connection._QueryCompatibilityMode
+        self.query_mode_supported = client.client_connection._query_compatibility_mode in (
+            modes.Default, modes.Query,
+        )
+        super().__init__(client, kwargs)
+
+    def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedQuery:
+        if self.query_payload is not None and not self.query_mode_supported:
+            raise SystemError("Unexpected query compatibility mode.")
+        return super().prepared(token, deadline)
 
 
 class ListDatabasesPageState:
@@ -112,18 +179,20 @@ class ListDatabasesPageState:
         self.done = False
         self.lock = threading.Lock()
 
-    def parse(self, page: QueryPage) -> tuple[list[dict[str, Any]], CaseInsensitiveDict]:
+    def parse(self, page: QueryPage) -> tuple[list[Any], CaseInsensitiveDict]:
         result = process_backend_response(
             page_to_backend_response(page), response_state=self.config.response_state,
         )
         rows = result.get("Databases")
-        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
-            raise BindingProtocolError("list_databases received an invalid Databases response.")
+        if not isinstance(rows, list) or (
+            self.config.query_payload is None and any(not isinstance(row, dict) for row in rows)
+        ):
+            raise BindingProtocolError(f"{self.config.operation} received an invalid Databases response.")
         return rows, CaseInsensitiveDict(result.get_response_headers())
 
     def accept(
-        self, response: tuple[list[dict[str, Any]], Any], deadline: Optional[float],
-    ) -> list[dict[str, Any]]:
+        self, response: tuple[list[Any], Any], deadline: Optional[float],
+    ) -> list[Any]:
         rows, headers = response
         remaining_timeout(deadline)
         previous = self.token
@@ -133,17 +202,17 @@ class ListDatabasesPageState:
             try:
                 self.config.hook(dict(headers))
             except (StopIteration, StopAsyncIteration) as error:
-                raise RuntimeError("list_databases response_hook raised an iteration-stop exception.") from error
+                raise RuntimeError(f"{self.config.operation} response_hook raised an iteration-stop exception.") from error
         if not rows and not self.done and self.token == previous:
-            raise BindingProtocolError("list_databases returned an empty page without continuation progress.")
+            raise BindingProtocolError(f"{self.config.operation} returned an empty page without continuation progress.")
         return rows
 
     def acquire(self) -> None:
         if not self.lock.acquire(blocking=False):
-            raise RuntimeError("Concurrent use of a list_databases pager is not supported.")
+            raise RuntimeError(f"Concurrent use of a {self.config.operation} pager is not supported.")
         if self.failed:
             self.lock.release()
-            raise RuntimeError("list_databases pager failed; resume a new pager from the last delivered bookmark.")
+            raise RuntimeError(f"{self.config.operation} pager failed; resume a new pager from the last delivered bookmark.")
 
 
 class ListDatabasesPageIterator(PageIterator):
@@ -179,7 +248,7 @@ class ListDatabasesPageIterator(PageIterator):
                 try:
                     page = next(pages)
                 except StopIteration as error:
-                    raise BindingProtocolError("Rust backend returned no list_databases page.") from error
+                    raise BindingProtocolError(f"Rust backend returned no {state.config.operation} page.") from error
                 finally:
                     pages.close()
                 response = state.parse(page)
@@ -195,3 +264,9 @@ class ListDatabasesPageIterator(PageIterator):
 
 def list_databases(client: Any, kwargs: dict[str, Any]) -> ItemPaged[dict[str, Any]]:
     return ItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=ListDatabasesPageIterator)
+
+
+def query_databases(client: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> ItemPaged[Any]:
+    return ItemPaged(
+        QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=ListDatabasesPageIterator,
+    )

@@ -110,14 +110,14 @@ def process_backend_response(
     apply_response_diagnostics(headers, response.diagnostics)
 
     if client_connection is not None:
-        client_connection.last_response_headers = deepcopy(headers)
+        client_connection.last_response_headers = _copy_response_headers(headers)
     if response_state is not None:
-        response_state.last_response_headers = deepcopy(headers)
+        response_state.last_response_headers = _copy_response_headers(headers)
 
     parsed = parse_response_body(replace(response, headers=headers))
     cosmos_dict = CosmosDict(parsed, response_headers=headers)
     if response_hook is not None:
-        response_hook(deepcopy(headers), parsed)
+        response_hook(_copy_response_headers(headers), parsed)
     return cosmos_dict
 
 
@@ -157,7 +157,15 @@ def parse_response_body(response: BackendResponse) -> Any:
 
 def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
     """Snapshot headers before normalization or publication to customer code."""
-    return CaseInsensitiveDict(deepcopy(response.headers or {}))
+    return _copy_response_headers(response.headers or {})
+
+
+def _copy_response_headers(headers: Mapping[str, Any]) -> CaseInsensitiveDict:
+    """Reuse wire strings while isolating any mutable extension-provided values."""
+    return CaseInsensitiveDict({
+        key: value if type(value) is str else deepcopy(value)
+        for key, value in headers.items()
+    })
 
 
 def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:

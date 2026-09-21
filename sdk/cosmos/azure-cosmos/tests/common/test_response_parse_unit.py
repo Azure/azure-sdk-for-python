@@ -65,6 +65,30 @@ def _make_response(*, status_code=200, sub_status=0, headers=None, body=b"", dia
     )
 
 
+def test_wire_string_headers_do_not_need_deepcopy(monkeypatch):
+    from types import SimpleNamespace
+    from azure.cosmos._helpers import _response_parse as parser
+
+    def unexpected_deepcopy(value):
+        raise AssertionError("string-valued headers must not be deep-copied")
+
+    monkeypatch.setattr(parser, "deepcopy", unexpected_deepcopy)
+    connection = SimpleNamespace(last_response_headers=None)
+    state = ClientLastResponseHeaders()
+    response = _make_response(headers={"ETag": "original", "x-ms-request-charge": "1.5"}, body=b"{}")
+
+    def hook(headers, body):
+        headers["etag"] = "hook"
+
+    result = process_backend_response(
+        response, client_connection=connection, response_state=state, response_hook=hook
+    )
+    connection.last_response_headers["etag"] = "connection"
+    assert state.last_response_headers["etag"] == "original"
+    assert result.get_response_headers()["etag"] == "original"
+    assert response.headers["etag"] == "original"
+
+
 class _FakeClientConnection:
     """Tiny stand-in for ``CosmosClientConnection``.
 

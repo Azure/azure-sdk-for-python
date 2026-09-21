@@ -451,6 +451,11 @@ class ChangeFeedPageState(ReadAllPageState):
             self.fetcher = None
         return result
 
+    def invalidate(self, error: BaseException) -> None:
+        super().invalidate(error)
+        if self.failed:
+            self.fetcher = None
+
 
 class ChangeFeedPageIterator(PageIterator):
     def __init__(
@@ -545,10 +550,8 @@ class ChangeFeedPageIterator(PageIterator):
                     )
                 rows = state.legacy_result(state.fetcher.fetch_next_block())
             return state.finish(rows, deadline)
-        except BaseException:
-            state.failed = True
-            state.cursor = None
-            state.fetcher = None
+        except BaseException as error:
+            state.invalidate(error)
             raise
         finally:
             state.lock.release()

@@ -21,6 +21,7 @@ from ._request_settings import (
 )
 from typing import TYPE_CHECKING, Any, Mapping, Optional
 
+from azure.core.exceptions import AzureError
 from azure.core.paging import PageIterator
 from azure.core.utils import CaseInsensitiveDict
 
@@ -28,6 +29,7 @@ from .._backend.contracts import PreparedQuery, QueryPage
 from .._backend.operations import OP_READ_ALL_ITEMS
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosItemPaged
+from ..exceptions import CosmosClientTimeoutError
 from .._operation_deadline import legacy_deadline_options, remaining_timeout
 from ._read_items import ReadItemsHeaders
 from ._response_parse import process_backend_response
@@ -198,10 +200,31 @@ class ReadAllPageState:
 
     def begin(self) -> None:
         if self.config.rust and self.cursor is None:
-            self.cursor = self.config.backend.create_item_feed_cursor()
+            cursor = self.config.backend.create_item_feed_cursor()
+            if not hasattr(cursor, "can_retry_setup"):
+                raise RuntimeError(
+                    "The compiled extension lacks _ItemFeedCursor.can_retry_setup; "
+                    "rebuild it from the current source."
+                )
+            self.cursor = cursor
         self.accumulated = ReadItemsHeaders()
         self.responses = 0
         self.has_charge = False
+
+    def invalidate(self, error: BaseException) -> None:
+        # Only the binding can establish that no plan has begun execution.
+        # Timeouts/cancellation remain terminal, including in-flight shutdown.
+        if (
+            self.config.rust
+            and isinstance(error, AzureError)
+            and not isinstance(error, CosmosClientTimeoutError)
+            and self.cursor is not None
+            and self.cursor.can_retry_setup
+        ):
+            return
+        self.failed = True
+        self.cursor = None
+        self.legacy_pages = None
 
     def capture(self, headers: Any, body: Any) -> None:
         self.responses += 1
@@ -378,10 +401,8 @@ class ReadAllPageIterator(PageIterator):
             return result
         except StopIteration:
             raise
-        except BaseException:
-            state.failed = True
-            state.cursor = None
-            state.legacy_pages = None
+        except BaseException as error:
+            state.invalidate(error)
             raise
         finally:
             state.lock.release()

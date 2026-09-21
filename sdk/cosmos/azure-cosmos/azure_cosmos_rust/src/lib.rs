@@ -21,7 +21,8 @@
 //! function for its execution and return-value contract.
 //!
 //! Driver lifecycle (`runtime.rs`):
-//!   `_driver_identity`, `acquire_driver_handle`, `release_driver_handle`, `_runtime_configuration`,
+//!   `_validate_runtime_configuration`, `acquire_driver_handle`,
+//!   `release_driver_handle`, `_runtime_configuration`,
 //!   `_debug_fault_injection_rule_hit_count`
 //!
 //! Items (`ffi/items.rs`):
@@ -86,7 +87,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor_async);
     add_pyfn!(m, runtime::acquire_driver_handle);
-    add_pyfn!(m, runtime::driver_identity);
+    add_pyfn!(m, runtime::validate_runtime_configuration);
     add_pyfn!(m, runtime::runtime_configuration);
     add_pyfn!(m, runtime::release_driver_handle);
     add_pyfn!(m, runtime::_debug_fault_injection_rule_hit_count);

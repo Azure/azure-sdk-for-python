@@ -42,6 +42,7 @@ from ._backend.transport_settings import resolve_client_transport_timeouts
 from ._base import build_options
 from ._helpers._request_database import prepare_create_database_options
 from ._helpers._list_databases import list_databases as _list_databases
+from ._helpers._list_databases import query_databases as _query_databases
 from ._constants import _Constants as Constants
 from ._client_lifecycle import unwind_client_construction
 from ._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
@@ -534,6 +535,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         autoscale are mutually exclusive; an empty ThroughputProperties is invalid.
         Rust rejects unsupported options instead of ignoring them or using legacy.
 
+        Client priority and throughput-bucket defaults apply unless a per-call
+        value or matching initial header overrides them. Nonempty typed options
+        take precedence over matching initial headers, regardless of dictionary
+        order. These request settings do not provision database capacity.
+        Without a throughput input, no shared database throughput is requested.
+
         Only ``id`` may be positional. ``populate_query_metrics``, ``session_token``,
         ``etag``, and ``match_condition`` do not apply to database creation and are
         rejected, including when set to ``None``.
@@ -550,7 +557,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
-        request_options, deadline = prepare_create_database_options(kwargs, offer_throughput)
+        request_options, deadline = prepare_create_database_options(
+            kwargs, offer_throughput, defaults=self._item_context.defaults,
+        )
         database = {"id": id}
         result = DatabaseHelper(
             self.client_connection, self._backend,
@@ -692,10 +701,22 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         An explicit ``timeout`` is one budget across preparation, driver setup,
         read, creation, and conflict recovery. Synchronous setup cannot be
         interrupted, but its elapsed time is deducted before sending a request.
-        Creation settings are validated before the existence read, even when
-        the database already exists. Conditional headers are not supported.
+        Throughput types, manual integer representation, and conflicting modes
+        are checked before the existence read, even when the database exists.
+        For example, nested ``offerThroughput="4000"`` raises ``TypeError``;
+        use integer ``4000`` instead. Service capacity rules and serialized
+        autoscale/header contents are not exhaustively checked locally.
+        Conditional headers are not supported.
         The success hook receives independent copies of the final response's
         headers and properties, outside the request timeout and retry handling.
+
+        Client priority and throughput-bucket defaults apply to each step.
+        Nonempty per-call typed options override matching initial headers;
+        those headers override client defaults. ``None``/empty priority and
+        ``None``/zero bucket do not disable an inherited client default.
+        These settings do not allocate capacity. Without any throughput input,
+        creation requests no shared database throughput; an existing database's
+        allocation is never changed.
         """
         return_properties = kwargs.pop("return_properties", False)
 
@@ -703,6 +724,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options, deadline = prepare_create_database_options(
             kwargs, offer_throughput,
             operation_name="create_database_if_not_exists", allow_read_timeout=True,
+            defaults=self._item_context.defaults,
         )
         database = {"id": id}
         result = DatabaseHelper(
@@ -758,30 +780,33 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :keyword int max_item_count: Maximum number of databases requested per page, not a total result limit.
             Use a positive integer below ``2**63``, ``-1`` to let the service choose, or ``None`` to leave unset.
-        :keyword float timeout: Timeout budget in seconds per page fetch by default, not for
+        :keyword float timeout: Timeout in seconds per public page fetch by default, not for
             draining the whole iterator. Rust supports finite numeric durations of at least
             one second within its duration range; ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A synchronous callable invoked once after each successfully fetched page,
             with a snapshot of that page's response headers. It is not called until iteration fetches a page.
-        :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :rtype: ItemPaged[dict[str, Any]]
 
         Per-call ``read_timeout`` is not supported; configure it on ``CosmosClient``.
         Unsupported Rust page options raise during iteration instead of using
         the legacy transport. All settings are keyword-only. ``session_token``,
-        ``populate_query_metrics``, and ``availability_strategy`` do not apply
-        to database listing and are rejected, including explicit ``None`` or ``False``.
+        ``populate_query_metrics``, ``availability_strategy``, ``no_response``,
+        and ``content_type`` do not apply to database listing and are rejected,
+        including explicit ``None`` or ``False`` and equivalent nested options.
         Settings are copied when this method is called. Each pager owns its bookmark.
-        A page-fetch budget includes driver setup and any empty service pages, but
+        A page-fetch timeout includes driver setup and any empty service pages, but
         not application processing between delivered pages. Synchronous setup and
         callbacks cannot be forcibly interrupted; cancellation cleanup can take longer.
         Hook failures never retry a page. After a failed or cancelled fetch, use a new
         pager from the last successfully processed page's bookmark.
-        Invalid timeouts/page sizes raise ``ValueError`` at listing construction;
-        a non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
+        Invalid timeouts/page sizes raise ``ValueError`` at listing construction.
+        Page-size headers follow the same range checks; a non-``None``
+        ``max_item_count`` takes precedence over the header.
+        A non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
         become ``RuntimeError`` rather than ending the listing silently.
         """
         if throughput_bucket is not None:
@@ -796,7 +821,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def query_databases(  # pylint:disable=docstring-missing-param
         self,
-        query: Optional[str],
+        query: Optional[Union[str, dict[str, Any]]],
         *,
         parameters: Optional[list[dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
@@ -804,67 +829,60 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> ItemPaged[Any]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :param str query: The Azure Cosmos DB SQL query to execute. This argument is required.
-        :keyword list[dict[str, Any]] parameters: Optional array of parameters to the query.
-            Ignored if no query is provided.
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword float timeout: Timeout budget in seconds per page fetch by default, not for
-            draining the whole iterator. Rust supports finite numeric durations of at least
-            one second within its duration range; ``None`` leaves the override unset.
+        Find databases by their metadata, not orders stored inside their containers.
+        Constructing the iterator sends no request; iteration fetches result pages.
+
+        :param query: A nonempty SQL string or a dictionary with ``query`` and optional
+            ``parameters``. This argument is required. Explicit ``None`` enumerates all
+            databases for compatibility; prefer ``list_databases()`` for that purpose.
+        :type query: Union[str, dict[str, Any], None]
+        :keyword list[dict[str, Any]] parameters: Query parameters with ``name`` and ``value`` keys.
+            Names start with ``@``. Supply parameters here or in the query dictionary, not both.
+            Ignored when ``query`` is ``None``.
+        :keyword int max_item_count: Requested maximum results per page, not a total limit.
+            Use a positive integer below ``2**63``, ``-1`` for a service-selected size,
+            or ``None`` to leave this argument unset.
+        :keyword float timeout: Timeout in seconds per public page fetch, including setup,
+            retries, and empty service pages. Time processing delivered results is excluded.
+            Supply finite non-boolean seconds with ``1 <= timeout < 2**64``, or ``None``.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A synchronous callable invoked once per successfully fetched page
             with a separate snapshot of that page's response headers.
-        :paramtype response_hook: Callable[[Mapping[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[dict[str, str]]
+        :returns: An iterator of query results. ``SELECT *`` returns database-property dictionaries;
+            projections determine the returned row shape.
+        :rtype: ItemPaged[Any]
 
         Only ``query`` may be positional; all optional settings are keyword-only.
-        Use ``list_databases()`` to enumerate databases without supplying a query.
+        Query inputs and settings are copied at construction. Invalid query specifications,
+        timeouts, and page sizes raise ``ValueError`` before iteration. Page-size headers
+        use the same range checks; a non-``None`` named count takes precedence.
+        A non-callable hook raises ``TypeError`` before any request.
 
         ``session_token``, ``populate_query_metrics``, ``availability_strategy``,
-        and ``enable_cross_partition_query``
-        do not apply to database queries and are rejected, including explicit
-        ``None`` or ``False``. Configure ``read_timeout`` on ``CosmosClient``, not
-        per call. Unsupported Rust page options raise during iteration without
-        switching to the legacy transport.
-        """
-        for option in (
-            "session_token",
-            "populate_query_metrics",
-            "availability_strategy",
-            "enable_cross_partition_query",
-        ):
-            if option in kwargs:
-                raise TypeError(f"query_databases() does not support the '{option}' keyword argument")
-        if kwargs.pop("read_timeout", None) is not None:
-            raise TypeError(
-                "query_databases() does not support the 'read_timeout' keyword argument; "
-                "configure it when constructing CosmosClient."
-            )
+        ``enable_cross_partition_query``, ``no_response``, and ``content_type`` are
+        rejected with ``TypeError``, including explicit ``None``/``False`` and nested equivalents.
+        Configure ``read_timeout`` on ``CosmosClient``, not per call.
+        Unsupported Rust page options fail without switching to the legacy transport.
 
+        Each pager owns its continuation. Hook failures do not replay pages; hook
+        iteration-stop exceptions become ``RuntimeError``. After a failed or cancelled
+        fetch, start a new pager from the last fully processed page's bookmark.
+        Synchronous setup and callbacks cannot be forcibly interrupted; cancellation
+        cleanup can delay return beyond the timeout.
+        """
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
-        feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        if response_hook is not None:
-            kwargs["response_hook"] = lambda headers, _body: response_hook(dict(headers))
-        if query:
-            result = self.client_connection.QueryDatabases(
-                query=query if parameters is None else {'query': query, 'parameters': parameters},
-                options=feed_options,
-                **kwargs
-            )
-        else:
-            result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _query_databases(self, query, parameters, kwargs)
 
     @distributed_trace
     def delete_database(  # pylint:disable=docstring-missing-param

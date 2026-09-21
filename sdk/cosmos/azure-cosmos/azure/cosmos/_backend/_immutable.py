@@ -12,6 +12,8 @@ from typing import Any, Optional
 
 @dataclass(frozen=True, slots=True, eq=False)
 class FrozenMapping(Mapping[Any, Any]):
+    """Immutable mapping with Mapping's value equality and unhashable contract."""
+
     _values: Mapping[Any, Any]
     _parents: InitVar[Optional[set[int]]] = None
 

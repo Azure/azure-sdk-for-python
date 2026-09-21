@@ -339,7 +339,12 @@ fn partition_key_path_tokens(path: &str) -> PyResult<Vec<&str>> {
             let quote = bytes[index];
             let start = index + 1;
             index = start;
-            while index < bytes.len() && (bytes[index] != quote || bytes[index - 1] == b'\\') {
+            let mut escaped = false;
+            while index < bytes.len() {
+                if bytes[index] == quote && !escaped {
+                    break;
+                }
+                escaped = bytes[index] == b'\\' && !escaped;
                 index += 1;
             }
             if index == bytes.len() {
@@ -529,6 +534,7 @@ mod tests {
             ("Hash", vec!["/a/b"], r#"{"a":1}"#, "[{}]"),
             ("Hash", vec!["/'a/b'"], r#"{"a/b":"v"}"#, r#"["v"]"#),
             ("Hash", vec![r#"/"a\"b""#], r#"{"a\\\"b":"v"}"#, r#"["v"]"#),
+            ("Hash", vec![r#"/"a\\""#], r#"{"a\\\\":"v"}"#, r#"["v"]"#),
             ("Hash", vec!["/ pk /"], r#"{"pk":2}"#, "[2]"),
             ("Hash", vec!["//pk"], r#"{"":{"pk":2}}"#, "[2]"),
             ("Hash", vec!["/a", "/b"], r#"{"a":{"b":"v"}}"#, r#"["v"]"#),

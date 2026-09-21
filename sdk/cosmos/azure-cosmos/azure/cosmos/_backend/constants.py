@@ -34,24 +34,3 @@ BACKEND_ENV_VAR = "COSMOS_BACKEND"
 def is_rust_backend(backend: Any) -> bool:
     """Return whether ``backend`` is the concrete Rust implementation."""
     return getattr(backend, "name", None) == BACKEND_NAME_RUST
-
-
-#: Env var that opts into strict per-account driver isolation on the Rust backend.
-#: When truthy, building a second ``CosmosClient`` to an account whose
-#: client-construction config differs from the first live client's raises
-#: ``_StrictDriverIsolationError`` instead of silently building a second isolated
-#: driver. Off by default (silent isolation). The factory toggle wins; otherwise
-#: this env var decides; otherwise it is off. On/off values are in
-#: ``STRICT_ISOLATION_TRUE_VALUES`` / ``STRICT_ISOLATION_FALSE_VALUES``; an
-#: unrecognized value raises ``ValueError`` rather than silently disabling the
-#: toggle.
-RUST_STRICT_ISOLATION_ENV_VAR = "COSMOS_RUST_STRICT_ISOLATION"
-
-#: Case-insensitive env-var values (after trimming whitespace) that turn strict
-#: isolation on.
-STRICT_ISOLATION_TRUE_VALUES = ("1", "true", "yes", "on")
-
-#: Case-insensitive values that turn it off; unset or empty is also off. Any
-#: value outside either set is rejected with ``ValueError`` so a typo (e.g.
-#: ``treu``) can't silently disable the safety toggle.
-STRICT_ISOLATION_FALSE_VALUES = ("0", "false", "no", "off")

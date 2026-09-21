@@ -225,9 +225,7 @@ fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> St
 
 /// Compute the same identity used by acquisition, without starting the runtime,
 /// acquiring a driver reference, or calling a credential.
-#[pyfunction(name = "_driver_identity")]
-#[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
-pub(crate) fn driver_identity(
+fn driver_identity(
     endpoint: &str,
     master_key: Option<&str>,
     config: Option<&Bound<'_, PyAny>>,
@@ -344,7 +342,14 @@ fn runtime_context(
             })
         })
     });
-    match ctx_or_error {
+    validate_runtime_context(ctx_or_error, requested_settings)
+}
+
+fn validate_runtime_context(
+    context: &Result<RuntimeContext, String>,
+    requested_settings: RuntimeSettings,
+) -> PyResult<&RuntimeContext> {
+    match context {
         Ok(ctx) => {
             if runtime_settings_conflict(ctx.settings, requested_settings) {
                 return Err(PyValueError::new_err(format!(
@@ -356,6 +361,20 @@ fn runtime_context(
         }
         Err(message) => Err(PyRuntimeError::new_err(message.clone())),
     }
+}
+
+/// Check settings against an initialized runtime without creating one.
+///
+/// A successful check is not a reservation: another caller can initialize the
+/// runtime afterwards. Acquisition repeats this check using the same rules.
+#[pyfunction(name = "_validate_runtime_configuration")]
+#[pyo3(signature = (config=None))]
+pub(crate) fn validate_runtime_configuration(config: Option<&Bound<'_, PyAny>>) -> PyResult<()> {
+    let requested_settings = runtime_settings_from_config(config)?;
+    if let Some(context) = RUNTIME_CONTEXT.get() {
+        validate_runtime_context(context, requested_settings)?;
+    }
+    Ok(())
 }
 
 fn connection_pool_from_settings(
@@ -892,12 +911,14 @@ mod tests {
         connection_pool_from_settings, get_config_opt, master_key_fingerprint,
         operation_options_from_config, read_consistency_from_str, runtime_settings_conflict,
         runtime_settings_from_config, token_credential_fingerprint, validate_auth_inputs,
-        RuntimeSettings, AUTH_EXCLUSIVE_ERROR, AUTH_REQUIRED_ERROR,
+        validate_runtime_context, RuntimeContext, RuntimeSettings, AUTH_EXCLUSIVE_ERROR,
+        AUTH_REQUIRED_ERROR,
     };
     use azure_data_cosmos_driver::options::{
         AvailabilityStrategy, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
         OperationOptionsView, ReadConsistencyStrategy,
     };
+    use pyo3::exceptions::{PyRuntimeError, PyValueError};
     use pyo3::prelude::*;
     use pyo3::types::{PyModule, PyString};
     use std::time::Duration;
@@ -1157,6 +1178,139 @@ class Config:
                 settings.max_metadata_request_timeout,
                 Some(Duration::from_millis(42_500))
             );
+        });
+    }
+
+    #[test]
+    fn runtime_validation_propagates_cached_initialization_failure() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let context = Err("driver runtime build failed: test failure".to_owned());
+            let error = validate_runtime_context(&context, RuntimeSettings::default())
+                .err()
+                .expect("cached initialization failure must propagate");
+            assert!(error.is_instance_of::<PyRuntimeError>(py));
+            assert!(error.to_string().contains("test failure"));
+        });
+    }
+
+    #[test]
+    fn acquisition_identity_covers_config_and_credential_without_starting_driver() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace
+class Config(SimpleNamespace):
+    def __repr__(self):
+        raise AssertionError("identity must not use repr")
+class Credential:
+    def get_token(self, *args, **kwargs):
+        raise AssertionError("identity must not request a token")
+credential = Credential()
+baseline = Config()
+variants = [
+    Config(preferred_locations=("East US",)),
+    Config(excluded_locations=("Central US",)),
+    Config(throttling_max_retry_count=7),
+    Config(throttling_max_retry_wait_time_seconds=12.5),
+    Config(hedging_threshold_ms=250),
+    Config(user_agent_suffix="checkout-west"),
+    Config(consistency_level="Eventual"),
+    Config(proxy_allowed=True),
+    Config(connection_timeout_seconds=1.5),
+    Config(read_timeout_seconds=30.0),
+    Config(fault_injection_rules=(SimpleNamespace(
+        id="rule", operation_type="CreateItem", status_code=502, sub_status=0,
+        container_id=None, region=None, delay_ms=0, probability=1.0,
+        hit_limit=None, enabled=True),)),
+]
+"#,
+                "identity_test.py",
+                "identity_test",
+            ).unwrap();
+            let url = "https://identity.invalid";
+            let baseline = module.getattr("baseline").unwrap();
+            let identity = super::driver_identity(url, Some("key"), Some(&baseline), None).unwrap();
+            assert_eq!(identity, super::driver_identity(url, Some("key"), None, None).unwrap());
+            for config in module.getattr("variants").unwrap().iter().unwrap() {
+                let config = config.unwrap();
+                assert_ne!(identity, super::driver_identity(url, Some("key"), Some(&config), None).unwrap());
+            }
+            assert_ne!(identity, super::driver_identity(url, Some("different-key"), None, None).unwrap());
+            let credential = module.getattr("credential").unwrap();
+            let token_identity = super::driver_identity(url, None, None, Some(&credential)).unwrap();
+            assert_ne!(identity, token_identity);
+            assert_eq!(token_identity, super::driver_identity(url, None, None, Some(&credential)).unwrap());
+        });
+    }
+
+    #[test]
+    fn runtime_validation_checks_successfully_initialized_settings() {
+        pyo3::prepare_freethreaded_python();
+        let tokio_rt = pyo3_async_runtimes::tokio::get_runtime();
+        let driver_runtime = tokio_rt
+            .block_on(azure_data_cosmos_driver::driver::CosmosDriverRuntime::builder().build())
+            .expect("local driver runtime should build without an account");
+        let settings = RuntimeSettings {
+            proxy_allowed: Some(true),
+            max_connect_timeout: Some(Duration::from_secs(2)),
+            ..RuntimeSettings::default()
+        };
+        let context = Ok(RuntimeContext {
+            tokio_rt,
+            driver_runtime,
+            settings,
+        });
+        Python::with_gil(|py| {
+            assert!(validate_runtime_context(&context, RuntimeSettings::default()).is_ok());
+            assert!(validate_runtime_context(&context, settings).is_ok());
+            let error = validate_runtime_context(
+                &context,
+                RuntimeSettings {
+                    max_connect_timeout: Some(Duration::from_secs(5)),
+                    ..settings
+                },
+            )
+            .err()
+            .expect("different initialized timeout must fail");
+            assert!(error.is_instance_of::<PyValueError>(py));
+            assert!(error.to_string().contains("process-global"));
+        });
+    }
+
+    #[test]
+    fn runtime_settings_compare_timeouts_at_native_nanosecond_precision() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+class Config:
+    proxy_allowed = None
+    connection_timeout_seconds = 2.123456789
+    read_timeout_seconds = 25.123456789
+"#,
+                "runtime_precision_test.py",
+                "runtime_precision_test",
+            )
+            .expect("module must compile");
+            let config = module.getattr("Config").unwrap().call0().unwrap();
+            let initialized = runtime_settings_from_config(Some(&config)).unwrap();
+            config
+                .setattr("connection_timeout_seconds", 2.1234567891)
+                .unwrap();
+            config
+                .setattr("read_timeout_seconds", 25.1234567891)
+                .unwrap();
+            let equivalent = runtime_settings_from_config(Some(&config)).unwrap();
+            assert!(!runtime_settings_conflict(initialized, equivalent));
+            config
+                .setattr("connection_timeout_seconds", 2.1234567896)
+                .unwrap();
+            let different = runtime_settings_from_config(Some(&config)).unwrap();
+            assert!(runtime_settings_conflict(initialized, different));
         });
     }
 

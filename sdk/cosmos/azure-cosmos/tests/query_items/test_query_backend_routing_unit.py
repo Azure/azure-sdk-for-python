@@ -868,17 +868,17 @@ async def test_database_feed_unsupported_public_options_never_fall_back(
     agent or API version header, the raw request and response hooks, and an
     unrecognised keyword.
 
-    These database feeds reject the unsupported option with a
+    These database feeds reject unsupported transport options with a
     ``NotImplementedError`` naming the legacy Python path. The hook is never
     called, neither transport is used, and the fallback counter does not move.
 
-    ``list_databases`` rejects a bad timeout even earlier, while building the
-    iterable, since it has no query to defer.
+    Both listing and query reject an invalid timeout while constructing the
+    iterator, before any page can be requested.
     """
     _, conn, backend, is_async = listing_client
     hook = MagicMock()
     fallback_before = rust_compatibility_fallback_count()
-    if database_feed.__name__ == "list_databases" and "timeout" in kwargs:
+    if "timeout" in kwargs:
         with pytest.raises(ValueError, match="timeout"):
             database_feed(response_hook=hook, **kwargs)
         backend.execute_pages.assert_not_called()
@@ -961,9 +961,9 @@ def test_query_databases_requires_query_and_keyword_only_settings(client_type, a
     client.client_connection.ReadDatabases.assert_not_called()
 
 
-@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
+@pytest.mark.asyncio
 @pytest.mark.parametrize("query_by_keyword", [False, True])
-def test_query_databases_accepts_positional_or_named_query_with_keyword_settings(client_type, query_by_keyword):
+async def test_query_databases_accepts_positional_or_named_query_with_keyword_settings(listing_client, query_by_keyword):
     """The query may be given positionally or by name, and both build the same request.
 
     The positive counterpart to the signature tests. Either way the query and
@@ -974,8 +974,7 @@ def test_query_databases_accepts_positional_or_named_query_with_keyword_settings
     never partitioned, so sending it would be meaningless -- and it is
     rejected outright if a caller passes it.
     """
-    client = object.__new__(client_type)
-    client.client_connection = MagicMock()
+    client, connection, backend, is_async = listing_client
     query = "SELECT * FROM root r WHERE r.id = @id"
     parameters = [{"name": "@id", "value": "db-1"}]
     options = {"parameters": parameters, "max_item_count": 20}
@@ -983,11 +982,13 @@ def test_query_databases_accepts_positional_or_named_query_with_keyword_settings
         result = client.query_databases(query=query, **options)
     else:
         result = client.query_databases(query, **options)
-    assert result is client.client_connection.QueryDatabases.return_value
-    call = client.client_connection.QueryDatabases.call_args.kwargs
-    assert call["query"] == {"query": query, "parameters": parameters}
-    assert call["options"]["maxItemCount"] == 20
-    assert "enableCrossPartitionQuery" not in call["options"]
+    backend.execute_pages.assert_not_called()
+    assert await _next_listing_page(result.by_page(), is_async)
+    assert backend.prepared.query == query
+    assert dict(backend.prepared.parameters[0]) == parameters[0]
+    assert backend.prepared.max_item_count == 20
+    assert "x-ms-documentdb-query-enablecrosspartition" not in backend.prepared.headers
+    connection._CosmosClientConnection__Post.assert_not_called()
 
 
 @pytest.mark.parametrize("value", [None, False, True])

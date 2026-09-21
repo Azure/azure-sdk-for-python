@@ -68,9 +68,19 @@ Current surface:
   other snapshot failures remain errors. Python exposes query-bound `q1.` bookmarks
   for resumable queries and raises on bookmark access for non-resumable shapes.
   The wrapper checks the remaining budget after initialization; the native page
-  deadline covers metadata, planning and execution. A
-  cancelled or failed page invalidates its cursor. Public queries never replay on
-  legacy Python after a Rust failure. Rebuild the extension after this cursor change.
+  deadline covers metadata, planning and execution.
+  Initial metadata/planning failures leave the native cursor unstarted.
+  `can_retry_setup` checks that execution has never begun and no fetch currently
+  holds the cursor lock; it never waits for an in-flight fetch. The synchronous
+  and asynchronous Python page iterators for read-all, query, and change feed
+  retain that cursor after a service/transport error only when this check succeeds.
+  The error still propagates; another explicit next-page call retries setup,
+  without advancing the bookmark or calling the success hook for the failed attempt.
+  Once execution may have started, errors (including fatal continuation-token
+  extraction failures) invalidate the cursor rather than reuse a possibly advanced
+  plan. Python page iterators also remain terminal after cancellation or a page
+  timeout, even during setup. Public queries never replay on legacy Python after
+  a Rust failure. Rebuild the extension after this cursor change.
   Change feed uses native change-feed operations, not a SQL query. The Python
   layer wraps its opaque driver token with backend/container/mode/scope metadata.
   The binding deliberately rejects multi-physical-partition change-feed scopes:
@@ -162,13 +172,18 @@ errors retain `_DriverTransportError`; deadlines and cancellation keep their
 existing behavior. Rebuild the extension for the renamed private entry points
 and new exception export. There are no old-name compatibility aliases.
 
-`runtime_configuration()` reports the initialized process runtime's proxy,
-connection-timeout, and read-timeout settings, or `None` before initialization.
-The Python wrapper uses this read-only snapshot to distinguish provisional client
-reservations from settings already frozen by the native runtime. Failed startup
-can release provisional reservations, but cannot reset an initialized runtime.
-This also applies when runtime initialization succeeds and driver creation fails.
-Rebuild the extension when updating this lifecycle integration.
+`_validate_runtime_configuration(config)` checks requested proxy and transport
+timeouts against an already initialized process runtime without creating one.
+It uses the same Rust duration conversion and compatibility check as acquisition,
+and propagates cached runtime-initialization failures. Before initialization,
+different unused clients may coexist: Python does not reserve runtime settings.
+Acquisition checks again because another client can initialize after construction.
+Failed driver creation or client close cannot reset an initialized runtime.
+
+`_runtime_configuration()` remains a diagnostic snapshot. It returns `None`
+before/during initialization and after a cached initialization failure, so it is
+not a replacement for the validation export. Rebuild the extension alongside
+the wrapper; an older extension without the new export fails with rebuild guidance.
 
 Client hedging defaults to **disabled**, matching Python rather than the driver's
 default-enabled behavior. `acquire_driver_handle` sets `AvailabilityStrategy::Disabled`
@@ -191,8 +206,10 @@ Driver identity is binding-owned. It uses the parsed URL (normalizing host case,
 default ports and the root slash without erasing meaningful paths or queries),
 process-salted SHA-256 for master keys, token-credential object identity, and
 typed configuration fields rather than Python `repr()`. The returned handle is
-an opaque digest. `_driver_identity` and acquisition use the same computation;
-identity lookup does not initialize a runtime or request a token.
+an opaque digest calculated during acquisition. Python no longer computes an
+identity at construction or tracks open clients for optional strict isolation.
+The unused Python `_driver_identity` export and that isolation switch are removed;
+rebuild the extension alongside the wrapper.
 
 Driver work and the Python async bridge share one Tokio executor. The binding
 still owns one process-wide driver runtime: conflicting explicit proxy or
@@ -384,7 +401,8 @@ establishes a measured performance improvement.
 
 The Python backend is the dispatch object; the Rust driver is the native
 `CosmosDriver`; the process-wide runtime has a separate lifetime and policy.
-Python driver-client registration does not acquire a native handle.
+Python construction validates initialized runtime settings without acquiring a
+native handle or recording an open-client registration.
 
 The wrapper now passes synchronous `build_request` callbacks in both modes.
 Native exports retain `_async` where sync and async functions share this module.

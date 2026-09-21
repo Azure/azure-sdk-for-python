@@ -25,8 +25,10 @@ from typing import Any, Dict, Mapping, Optional
 
 from .._backend.contracts import PreparedRequest
 from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
+from .._backend.request_settings import ResourceSettings
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
+from ._item_context import ItemClientDefaults
 from ._resource_validation import validate_resource
 
 from ._request_settings import (
@@ -72,6 +74,7 @@ _CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
 def prepare_create_database_options(
     kwargs: dict[str, Any], offer: Optional[int | ThroughputProperties],
     *, operation_name: str = "create_database", allow_read_timeout: bool = False,
+    defaults: Optional[ItemClientDefaults] = None,
 ) -> tuple[dict[str, Any], Optional[float]]:
     """Snapshot creation inputs and establish one budget before driver setup."""
     started = time.monotonic()
@@ -106,6 +109,12 @@ def prepare_create_database_options(
             increment = offer.auto_scale_increment_percent
             if manual is not None and maximum is not None:
                 raise ValueError("Specify manual throughput or autoscale, not both.")
+            for name, value in (
+                ("auto_scale_max_throughput", maximum),
+                ("auto_scale_increment_percent", increment),
+            ):
+                if value is not None and type(value) is not int:
+                    raise TypeError(f"{name} must be an integer, not a boolean or another type.")
             if maximum is not None:
                 autoscale: dict[str, Any] = {"maxThroughput": maximum}
                 if increment is not None:
@@ -127,6 +136,21 @@ def prepare_create_database_options(
     )
     if has_manual and has_autoscale:
         raise ValueError("Specify manual throughput or autoscale, not both.")
+    # Reads omit these fields, so their local validation must happen before the
+    # workflow can return an existing database without preparing creation.
+    throughput = ResourceSettings(
+        offer_throughput=options.get("offerThroughput"),
+        autoscale_settings=options.get("autoUpgradePolicy"),
+    )
+    if throughput.offer_throughput is not None and not -(2**63) <= throughput.offer_throughput < 2**63:
+        raise ValueError("offer_throughput must fit a signed 64-bit integer.")
+    if "initialHeaders" in options:
+        options = {
+            "initialHeaders": initial,
+            **{key: value for key, value in options.items() if key != "initialHeaders"},
+        }
+    if defaults is not None:
+        defaults.apply_to_options(options)
     return options, None if timeout is None else started + float(timeout)
 
 

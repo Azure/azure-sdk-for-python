@@ -21,7 +21,7 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._helpers._change_feed import ChangeFeedPageState
 from azure.cosmos._helpers._item_context import ItemClientContext
-from azure.cosmos.exceptions import CosmosClientTimeoutError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
 from read_all_items.test_read_all_items_contract_unit import feed as base_feed
 
@@ -43,6 +43,37 @@ def feed(base_feed):
         ([], "c1.d"),
     ]
     return base_feed
+
+
+@pytest.mark.parametrize("status", [429, 503])
+def test_initial_setup_service_error_can_retry_same_page_iterator(feed, status):
+    hooks = []
+    pages = feed.proxy.query_items_change_feed(
+        response_hook=lambda headers, body: hooks.append(body)
+    ).by_page()
+    feed.setup_status = status
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        feed.next_page(pages)
+    assert caught.value.status_code == status
+    cursor = pages.state.cursor
+    assert cursor is not None and not pages.state.failed
+    assert pages.continuation_token is None
+    assert hooks == []
+    feed.setup_status = 0
+    assert feed.next_page(pages) == [{"id": "a", "nested": [1]}]
+    assert feed.calls[0][1] is feed.calls[1][1] is cursor
+    assert len(hooks) == 1
+
+
+def test_first_execution_service_error_still_invalidates(feed):
+    feed.status = 503
+    pages = feed.proxy.query_items_change_feed().by_page()
+    with pytest.raises(CosmosHttpResponseError):
+        feed.next_page(pages)
+    assert pages.state.cursor is None
+    with pytest.raises(RuntimeError, match="pager failed"):
+        feed.next_page(pages)
+    assert len(feed.calls) == 1
 
 
 def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed):

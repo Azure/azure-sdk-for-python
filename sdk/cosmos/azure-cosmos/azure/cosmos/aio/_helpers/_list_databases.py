@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Async database listing with pager-owned state and a budget per page fetch."""
+"""Async database listing and queries with pager-owned state and per-page timeouts."""
 from typing import Any, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.utils import CaseInsensitiveDict
 
 from ..._backend.errors import BindingProtocolError
-from ..._helpers._list_databases import ListDatabasesConfig, ListDatabasesPageState
+from ..._helpers._list_databases import ListDatabasesConfig, ListDatabasesPageState, QueryDatabasesConfig
 from ..._operation_deadline import remaining_timeout, run_with_deadline
 
 
@@ -48,7 +48,7 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
             try:
                 page = await pages.__anext__()
             except StopAsyncIteration as error:
-                raise BindingProtocolError("Rust backend returned no list_databases page.") from error
+                raise BindingProtocolError(f"Rust backend returned no {state.config.operation} page.") from error
             finally:
                 await pages.aclose()
             return state.parse(page)
@@ -66,3 +66,9 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
 
 def list_databases(client: Any, kwargs: dict[str, Any]) -> AsyncItemPaged[dict[str, Any]]:
     return AsyncItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=AsyncListDatabasesPageIterator)
+
+
+def query_databases(client: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> AsyncItemPaged[Any]:
+    return AsyncItemPaged(
+        QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=AsyncListDatabasesPageIterator,
+    )

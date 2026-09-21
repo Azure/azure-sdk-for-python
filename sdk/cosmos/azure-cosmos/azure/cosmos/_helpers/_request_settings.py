@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import math
+from copy import deepcopy
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from azure.core import MatchConditions
@@ -18,6 +19,32 @@ from .._backend.request_settings import (
     ResourceSettings,
 )
 from .._constants import _Constants as Constants
+
+
+def normalize_query_specification(
+    query: Any, parameters: Any, *, operation: str,
+) -> Tuple[str, tuple[dict[str, Any], ...]]:
+    """Validate and snapshot SQL text and parameter values owned by the caller."""
+    query, parameters = deepcopy(query), deepcopy(parameters)
+    if isinstance(query, dict):
+        if set(query) - {"query", "parameters"} or parameters is not None:
+            raise ValueError("Supply query parameters once, with a query string or SQL query specification.")
+        parameters = query.get("parameters")
+        query = query.get("query")
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError(f"{operation} requires a nonempty SQL query string.")
+    if parameters is not None and (
+        not isinstance(parameters, (list, tuple))
+        or any(
+            not isinstance(parameter, dict)
+            or set(parameter) != {"name", "value"}
+            or not isinstance(parameter["name"], str)
+            or not parameter["name"].startswith("@")
+            for parameter in parameters
+        )
+    ):
+        raise ValueError("Query parameters must be name/value objects with @-prefixed names.")
+    return query, tuple(parameters or ())
 
 # snake_case kwarg name -> internal option-dict key.
 COMMON_OPTIONS: Dict[str, str] = {

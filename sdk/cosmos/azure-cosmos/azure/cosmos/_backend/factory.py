@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Temporary migration selection and shared sync/async construction.
 
-``_backend``, ``COSMOS_BACKEND`` and ``COSMOS_RUST_STRICT_ISOLATION`` are
+``_backend`` and ``COSMOS_BACKEND`` are
 internal migration/test controls, not supported customer switches. LR-09 in
 LEGACY_CODE_RETIREMENT.md owns their removal before the Rust-only release.
 
@@ -17,7 +17,7 @@ native driver acquisition remains lazy.
 from __future__ import annotations
 
 import os
-from typing import Any, Callable, Optional, Sequence, TypeVar
+from typing import Any, Callable, Optional, Sequence, TypeVar, Union
 
 from .cosmos_backend import CosmosBackend
 from .client_config import build_client_config
@@ -25,9 +25,6 @@ from .constants import (
     BACKEND_ENV_VAR,
     BACKEND_NAME_RUST,
     DEFAULT_BACKEND_NAME,
-    RUST_STRICT_ISOLATION_ENV_VAR,
-    STRICT_ISOLATION_FALSE_VALUES,
-    STRICT_ISOLATION_TRUE_VALUES,
     VALID_BACKEND_NAMES,
 )
 from .credentials import resolved_credential
@@ -36,6 +33,7 @@ from .binding import RustBinding
 from .transport_settings import reject_unsupported_transport_settings
 
 _BackendT = TypeVar("_BackendT")
+_LegacyBackendT = TypeVar("_LegacyBackendT")
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
     """Select the backend name from the ``_backend=`` argument, else the
@@ -78,63 +76,11 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
     return choice
 
 
-def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
-    """Read an on/off safety switch that controls whether the Rust backend uses
-    strict per-account driver isolation.
-
-    Precedence (highest wins): an explicit factory toggle, then the
-    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. Without it:
-    an unrecognized value like ``"treu"`` would quietly leave the safety switch
-    off, which is exactly the outcome a safety switch must never have -- so it
-    raises instead. The env var is matched case-insensitively after trimming
-    whitespace: ``STRICT_ISOLATION_TRUE_VALUES`` turn it on,
-    ``STRICT_ISOLATION_FALSE_VALUES`` (and unset or empty) turn it off, and any
-    other value raises ``ValueError``. Shared by the sync and async factories so
-    the rule lives in one place.
-
-    When on, a second ``CosmosClient`` to an account whose config differs from the
-    first live client's raises
-    :class:`~azure.cosmos._backend._driver_registry._StrictDriverIsolationError` at
-    construction instead of silently building a second isolated driver.
-    """
-    if explicit is not None:
-        if not isinstance(explicit, bool):
-            # A safety toggle must never be driven by an ambiguous truthy value
-            # (a non-empty string like "false" is truthy and would turn the guard
-            # ON). Require a real bool, matching how the env-var path rejects
-            # unrecognized values below.
-            raise ValueError(
-                "strict_isolation must be a bool when provided; got {!r}. A safety "
-                "toggle is never driven by an ambiguous truthy value.".format(
-                    type(explicit).__name__
-                )
-            )
-        return explicit
-    value = os.environ.get(RUST_STRICT_ISOLATION_ENV_VAR)
-    if value is None:
-        return False
-    normalized = value.strip().lower()
-    if normalized in STRICT_ISOLATION_TRUE_VALUES:
-        return True
-    if normalized == "" or normalized in STRICT_ISOLATION_FALSE_VALUES:
-        return False
-    raise ValueError(
-        "Invalid {} value {!r}. Expected one of {} (on) or {} (off), or leave it "
-        "unset. A safety toggle is never silently disabled by an unrecognized "
-        "value.".format(
-            RUST_STRICT_ISOLATION_ENV_VAR,
-            value,
-            STRICT_ISOLATION_TRUE_VALUES,
-            STRICT_ISOLATION_FALSE_VALUES,
-        )
-    )
-
-
 def _make_backend(
     explicit: Optional[str],
     *,
     rust_backend_type: Callable[..., _BackendT],
-    legacy_backend: _BackendT,
+    legacy_backend: _LegacyBackendT,
     url: Optional[str] = None,
     credential: Any = None,
     preferred_locations: Optional[Sequence[str]] = None,
@@ -148,14 +94,13 @@ def _make_backend(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
-    strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
     connection_cert: Any = None,
     ssl_config: Any = None,
     transport: Any = None,
-) -> _BackendT:
+) -> Union[_BackendT, _LegacyBackendT]:
     """Select and construct either backend under the same credential cleanup guard.
 
     Legacy selection does not validate Rust-only settings. On the Rust path,
@@ -178,7 +123,7 @@ def _make_backend(
         )
         # Sort the credential inside the guard: an async credential becomes a
         # bridge holding a background thread, and everything below can still raise
-        # (config validation, process-wide policy conflicts, strict isolation), which
+        # (config validation or initialized runtime conflicts), which
         # would otherwise strand that thread with no owner left to close it.
         with resolved_credential(credential) as (master_key, token_credential):
             return rust_backend_type(
@@ -198,7 +143,6 @@ def _make_backend(
                     read_timeout_seconds=read_timeout_seconds,
                     fault_injection_rules=fault_injection_rules,
                 ),
-                strict_isolation=resolve_strict_isolation(strict_isolation),
             )
     return legacy_backend
 
@@ -219,7 +163,6 @@ def make_backend(
     connection_timeout_seconds: Optional[float] = None,
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
-    strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -245,7 +188,6 @@ def make_backend(
         connection_timeout_seconds=connection_timeout_seconds,
         read_timeout_seconds=read_timeout_seconds,
         fault_injection_rules=fault_injection_rules,
-        strict_isolation=strict_isolation,
         proxy_config=proxy_config,
         proxies=proxies,
         connection_verify=connection_verify,
