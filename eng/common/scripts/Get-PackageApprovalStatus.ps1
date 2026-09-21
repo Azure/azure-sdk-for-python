@@ -107,6 +107,11 @@ function Test-PackageApproval([string] $PackageName, [string] $PackageVersion, [
 
     $commandResult = Invoke-AzSdkCliCommand $AzSdkExePath $arguments
     $exitCode = $commandResult.ExitCode
+    Write-Host "azsdk exit code: $exitCode"
+    Write-Host "azsdk stdout:"
+    Write-Host $commandResult.Stdout
+    Write-Host "azsdk stderr:"
+    Write-Host $commandResult.Stderr
 
     try {
         $response = $commandResult.Output | ConvertFrom-Json -ErrorAction Stop

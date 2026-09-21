@@ -119,6 +119,14 @@ Describe "Get-PackageApprovalStatus.ps1" {
         ($messages -join [Environment]::NewLine) | Should Match 'Command: azsdk package get-approval-status --language python --package-name "azure test" --package-version 1.0.0 --output json'
     }
 
+    It "logs the complete azsdk output" {
+        $global:AzSdkOutput = '{"operation_status":"Succeeded","result":{"isApproved":true,"finalSource":"reviewHub","reason":"complete diagnostic output"}}'
+        $messages = @(& $scriptPath -PackageInfoFiles $packageInfoPath 6>&1)
+
+        ($messages -join [Environment]::NewLine) | Should Match ([regex]::Escape($global:AzSdkOutput))
+        ($messages -join [Environment]::NewLine) | Should Match "azsdk exit code: 0"
+    }
+
     It "shows Review Hub and APIView results before the overall result" {
         $global:AzSdkOutput = '{"operation_status":"Succeeded","result":{"isApproved":true,"finalSource":"APIView","reason":"approved","reviewHub":{"isApproved":false,"reason":"repositoryNotSupported","statusCode":200},"apiView":{"isApproved":true,"reason":"approved","statusCode":200,"details":["API review is approved."]}}}'
 
