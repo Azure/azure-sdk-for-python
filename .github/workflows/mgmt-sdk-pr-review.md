@@ -400,6 +400,8 @@ Finish with a brief `### Review summary` naming every affected package and the c
 Write the final Markdown to `/tmp/gh-aw/agent/comment.md`, then submit its actual contents as
 JSON through the permitted `jq` command and the safe-output CLI:
 
+<!-- cspell:ignore gsub -->
+
 ```bash
 jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|@(?<decorator>renamedFrom|typeChangedFrom|returnTypeChangedFrom|added|removed|madeOptional|madeRequired|versioned|useDependency)\\b"; .url // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
 ```
