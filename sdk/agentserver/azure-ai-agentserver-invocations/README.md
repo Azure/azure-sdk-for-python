@@ -417,6 +417,8 @@ reconnect state.
 
 ### Voice tracing
 
+Bridge protocol remains `1.0`. `UserMessage.content` contains ordered `InputTextPart` and `InputDataPart` values. `InputDataPart.data` is a deeply immutable application JSON object. Applications can send `ResponseOutputDataDone(response_id=..., item_id=..., data=...)` after `ResponseCreated`, then explicitly finish with `ResponseDone`. Each data item is complete in one frame and cannot interrupt an unfinished text item; it produces no speech. After a successful operation requiring no output, explicitly send `ResponseNone(in_reply_to=(event.item_id,), reason="acknowledged")` only after required persistence finishes. The relay never infers business completion from callback return. Update both the Bridge and SDK before using these additions; there is no version change or runtime negotiation.
+
 The typed Voice endpoint extracts W3C context from each WebSocket upgrade and
 creates one `agentserver.connection` span for the physical connection. Each
 registered event dispatch creates a sibling `voice.callback` span. Application

@@ -51,6 +51,57 @@ def _frame(message_type: str, **fields):
     )
 
 
+class TestDataPassthrough:
+    def test_decode_preserves_mixed_content_and_freezes_data(self) -> None:
+        event = decode_inbound_message(
+            _frame(
+                "user.message",
+                item_id="in_data",
+                content=[
+                    {"type": "input_text", "text": "hello"},
+                    {"type": "input_data", "data": {"nested": [1, True, None, {"key": "value"}]}},
+                ],
+            )
+        )
+        assert isinstance(event, UserMessage)
+        assert len(event.content) == 2
+        assert event.content[1].data["nested"] == (1, True, None, {"key": "value"})
+        with pytest.raises(TypeError):
+            event.content[1].data["nested"][3]["key"] = "changed"
+
+    @pytest.mark.parametrize("payload", [None, [], "text", 1])
+    def test_decode_rejects_non_object_data(self, payload: object) -> None:
+        with pytest.raises(VoiceProtocolError):
+            decode_inbound_message(
+                _frame(
+                    "user.message",
+                    item_id="in_data",
+                    content=[{"type": "input_data", "data": payload}],
+                )
+            )
+
+    def test_encode_data_item_copies_payload_and_redacts_repr(self) -> None:
+        payload = {"type": "hubagent.metadata", "data": {"secret": ["private-value"]}}
+        message = voice.ResponseOutputDataDone(response_id="r_data", item_id="it_data", data=payload)
+        payload["data"]["secret"].append("mutated")
+        encoded = json.loads(encode_outbound_message(message))
+        assert encoded["type"] == "response.output_data.done"
+        assert encoded["data"]["data"]["secret"] == ["private-value"]
+        assert "private-value" not in repr(message)
+
+    def test_empty_data_object_is_valid(self) -> None:
+        event = decode_inbound_message(
+            _frame(
+                "user.message",
+                item_id="in_data",
+                content=[{"type": "input_data", "data": {}}],
+            )
+        )
+        assert event.content[0].data == {}
+        message = voice.ResponseOutputDataDone(response_id="r_data", item_id="it_data", data={})
+        assert json.loads(encode_outbound_message(message))["data"] == {}
+
+
 @pytest.mark.parametrize(
     "frame",
     [
@@ -338,13 +389,14 @@ def test_session_start_reconnect_rejects_present_greeting():
         )
 
 
-def test_selected_registry_is_exactly_ten_each_direction():
+def test_selected_registry_includes_data_output() -> None:
     inbound = InboundVoiceMessage.__args__
     outbound = OutboundVoiceMessage.__args__
     assert len(inbound) == 10
-    assert len(outbound) == 10
+    assert len(outbound) == 11
+    assert voice.ResponseOutputDataDone in outbound
     assert len({message.type for message in inbound}) == 10
-    assert len({message.type for message in outbound}) == 10
+    assert len({message.type for message in outbound}) == 11
 
 
 def test_all_public_voice_callables_are_experimental():

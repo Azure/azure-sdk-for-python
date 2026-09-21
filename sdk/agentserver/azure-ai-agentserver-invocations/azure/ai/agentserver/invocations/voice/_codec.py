@@ -21,6 +21,7 @@ from ._models import (
     EndCall,
     EndCallMode,
     InboundVoiceMessage,
+    InputDataPart,
     InputTextPart,
     OutboundVoiceMessage,
     ResponseAccepted,
@@ -30,6 +31,7 @@ from ._models import (
     ResponseDone,
     ResponseDropped,
     ResponseNone,
+    ResponseOutputDataDone,
     ResponseOutputTextDelta,
     ResponseOutputTextDone,
     ResponseTimeout,
@@ -134,6 +136,7 @@ _OUTBOUND_TYPES = {
     "response.created",
     "response.done",
     "response.none",
+    "response.output_data.done",
     "response.output_text.delta",
     "response.output_text.done",
     "session.ready",
@@ -249,6 +252,7 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
             SessionRejected,
             ResponseCreated,
             ResponseNone,
+            ResponseOutputDataDone,
             ResponseOutputTextDelta,
             ResponseOutputTextDone,
             ResponseDone,
@@ -297,6 +301,12 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
             text=_validate_string_value(message.text, "text"),
         )
         _put_optional_voice(payload, message.voice)
+    elif isinstance(message, ResponseOutputDataDone):
+        payload.update(
+            response_id=_validate_prefixed_identifier_value(message.response_id, "response_id", "r_"),
+            item_id=_validate_prefixed_identifier_value(message.item_id, "item_id", "it_"),
+            data=_thaw_json(message.data),
+        )
     elif isinstance(message, ResponseDone):
         payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
     elif isinstance(message, ResponseCancel):
@@ -370,13 +380,15 @@ def _parse_user_message(payload: Mapping[str, Any], common: Mapping[str, str]) -
     raw_content = payload.get("content")
     if not isinstance(raw_content, list) or not raw_content:
         raise VoiceProtocolError("user.message content must be a non-empty array")
-    content: list[InputTextPart] = []
+    content: list[InputTextPart | InputDataPart] = []
     for raw_part in raw_content:
         if not isinstance(raw_part, dict):
             raise VoiceProtocolError("user.message content parts must be objects")
         part_type = raw_part.get("type")
         if part_type == "input_text":
             content.append(InputTextPart(text=_required_string(raw_part, "text")))
+        elif part_type == "input_data":
+            content.append(InputDataPart(data=_required_mapping(raw_part, "data")))
         elif part_type == "input_image":
             raise VoiceUnsupportedMessageError("Image content is not supported by this profile")
         elif not isinstance(part_type, str):

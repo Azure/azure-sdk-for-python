@@ -191,6 +191,27 @@ class InputTextPart:
 
 @experimental
 @dataclass(frozen=True, kw_only=True, repr=False)
+class InputDataPart:
+    """One immutable application JSON object in an ordered user message.
+
+    :ivar data: Application-defined JSON object, copied and deeply frozen.
+    :vartype data: Mapping[str, Any]
+    :ivar type: Content discriminator, always ``input_data``.
+    :vartype type: str
+    """
+
+    data: Mapping[str, Any]
+    type: Literal["input_data"] = field(default="input_data", init=False)
+    __repr__ = _voice_model_repr
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.data, Mapping):
+            raise TypeError("data must be a JSON object")
+        object.__setattr__(self, "data", _freeze_json(self.data, "data", require_finite_numbers=True))
+
+
+@experimental
+@dataclass(frozen=True, kw_only=True, repr=False)
 class SessionDisconnected:
     """Local transport-disconnect event.
 
@@ -277,7 +298,7 @@ class SessionStart(_InboundMessage):
 @experimental
 @dataclass(frozen=True, kw_only=True, repr=False)
 class UserMessage(_InboundMessage):
-    """Completed user text turn.
+    """Completed user turn containing ordered text and application data.
 
     :ivar id: Wire message identifier.
     :vartype id: str
@@ -285,13 +306,13 @@ class UserMessage(_InboundMessage):
     :vartype ts: str
     :ivar item_id: Bridge-allocated input item identifier.
     :vartype item_id: str
-    :ivar content: Supported text parts in wire order.
-    :vartype content: tuple[InputTextPart, ...]
+    :ivar content: Supported text and data parts in wire order.
+    :vartype content: tuple[InputTextPart | InputDataPart, ...]
     """
 
     type: ClassVar[str] = "user.message"
     item_id: str
-    content: tuple[InputTextPart, ...]
+    content: tuple[InputTextPart | InputDataPart, ...]
 
 
 @experimental
@@ -620,6 +641,34 @@ class ResponseOutputTextDone(_OutboundMessage):
 
 @experimental
 @dataclass(frozen=True, kw_only=True, repr=False)
+class ResponseOutputDataDone(_OutboundMessage):
+    """Complete one non-audio application-data output item.
+
+    :ivar id: Generated wire message identifier.
+    :vartype id: str
+    :ivar ts: Generated sender timestamp.
+    :vartype ts: str
+    :ivar response_id: Owning response identifier.
+    :vartype response_id: str
+    :ivar item_id: Output item identifier.
+    :vartype item_id: str
+    :ivar data: Application-defined JSON object, copied and deeply frozen.
+    :vartype data: Mapping[str, Any]
+    """
+
+    type: ClassVar[str] = "response.output_data.done"
+    response_id: str
+    item_id: str
+    data: Mapping[str, Any]
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.data, Mapping):
+            raise TypeError("data must be a JSON object")
+        object.__setattr__(self, "data", _freeze_json(self.data, "data", require_finite_numbers=True))
+
+
+@experimental
+@dataclass(frozen=True, kw_only=True, repr=False)
 class ResponseDone(_OutboundMessage):
     """Explicit normal response-level terminator.
 
@@ -711,6 +760,7 @@ class AgentError(_OutboundMessage):
 
 _document_dataclass_defaults(
     ResponseTimeouts,
+    InputDataPart,
     InputTextPart,
     SessionDisconnected,
     SessionStart,
@@ -727,6 +777,7 @@ _document_dataclass_defaults(
     SessionRejected,
     ResponseCreated,
     ResponseNone,
+    ResponseOutputDataDone,
     ResponseOutputTextDelta,
     ResponseOutputTextDone,
     ResponseDone,
@@ -741,6 +792,7 @@ OutboundVoiceMessage = (
     | SessionRejected
     | ResponseCreated
     | ResponseNone
+    | ResponseOutputDataDone
     | ResponseOutputTextDelta
     | ResponseOutputTextDone
     | ResponseDone
