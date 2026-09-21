@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerserviceaimanager import ContainerServiceAIManagerMgmtCl
     pip install azure-identity
     pip install azure-mgmt-containerserviceaimanager
 # USAGE
-    python operations_list.py
+    python ai_managers_create_or_update_byo.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +31,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.ai_managers.begin_create_or_update(
+        resource_group_name="rg1",
+        ai_manager_name="aimanager1",
+        resource={
+            "identity": {"type": "SystemAssigned"},
+            "location": "eastus",
+            "properties": {
+                "clusterResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/managedClusters/existing-aks",
+                "deletePolicy": "Keep",
+            },
+            "tags": {"key1": "value1"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-09-02-preview/Operations_List.json
+# x-ms-original-file: 2026-09-02-preview/AIManagers_CreateOrUpdate_BYO.json
 if __name__ == "__main__":
     main()
