@@ -336,7 +336,6 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                             "desiredLocations": ["str"],
                             "desiredSizes": ["str"],
                         },
-                        "optimizationPreference": "str",
                         "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                         "verifyVmAgentHealth": bool,
                     },
@@ -926,7 +925,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                     ],
                     "zoneAllocationPolicy": {
                         "distributionStrategy": "str",
-                        "zonePreferences": [{"rank": 0, "zone": "str"}],
+                        "zonePreferences": [{"rank": 0, "zone": "str", "targetMaxCapacity": 0}],
                     },
                 },
                 "systemData": {
@@ -978,7 +977,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
             location="str",
             name="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
