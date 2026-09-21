@@ -5,7 +5,7 @@
 The non-resilient (in-process fallback) streaming path emits the terminal
 ``response.completed`` event to the client and closes the wire stream BEFORE
 performing the terminal provider write. This moves the ~storage-write
-round-trip off the client's last-byte (TTLB) path.
+round-trip off the client's last-byte path.
 
 Validated behavior:
 - The terminal event reaches the client without waiting for a slow terminal
@@ -54,13 +54,17 @@ class _ControllableProvider:
         inner: ResponseProviderProtocol,
         *,
         release: asyncio.Event | None = None,
+        create_release: asyncio.Event | None = None,
         fail_on_update: bool = False,
     ) -> None:
         self._inner = inner
         self._release = release
+        self._create_release = create_release
         self.fail_on_update = fail_on_update
+        self.create_started = asyncio.Event()
         self.update_started = asyncio.Event()
         self.update_completed = False
+        self.delete_started = asyncio.Event()
 
     async def create_response(
         self,
@@ -70,6 +74,9 @@ class _ControllableProvider:
         *,
         context: Any = None,
     ) -> None:
+        self.create_started.set()
+        if self._create_release is not None:
+            await self._create_release.wait()
         return await self._inner.create_response(response, input_items, history_item_ids, context=context)
 
     async def update_response(self, response: Any, *, context: Any = None) -> None:
@@ -85,6 +92,7 @@ class _ControllableProvider:
         return await self._inner.get_response(response_id, context=context)
 
     async def delete_response(self, response_id: str, *, context: Any = None) -> None:
+        self.delete_started.set()
         return await self._inner.delete_response(response_id, context=context)
 
     async def get_history_item_ids(
@@ -162,6 +170,71 @@ def _parse_sse_bytes(body: bytes) -> list[dict[str, Any]]:
 
 class TestAsyncTerminalPersist:
     """The in-process streaming path defers the terminal write off the wire."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("background", [False, True])
+    @pytest.mark.parametrize("empty_handler", [False, True])
+    @pytest.mark.parametrize("cancel_delete", [False, True])
+    async def test_delete_waits_for_deferred_write_without_resurrecting_response(
+        self, background: bool, empty_handler: bool, cancel_delete: bool
+    ) -> None:
+        release = asyncio.Event()
+        inner = InMemoryResponseProvider()
+        provider = _ControllableProvider(
+            inner,
+            release=None if empty_handler else release,
+            create_release=release if empty_handler else None,
+        )
+        app = _make_app(provider)
+        if empty_handler:
+
+            async def handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+                for event in ():
+                    yield event
+
+            app.response_handler(handler)
+        client = _AsyncAsgiClient(app)
+        post_response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True, "background": background},
+        )
+        assert post_response.status_code == 200
+        events = _parse_sse_bytes(post_response.body)
+        assert "response.completed" in [event["type"] for event in events]
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+        started = provider.create_started if empty_handler else provider.update_started
+        await asyncio.wait_for(started.wait(), 5)
+        record = await app._endpoint._runtime_state.get(response_id)
+        assert record is not None and record.execution_task is not None
+        execution_task = record.execution_task
+        delete_task = asyncio.create_task(client.delete(f"/responses/{response_id}"))
+        try:
+            await asyncio.sleep(0)
+            assert not delete_task.done()
+            assert not provider.delete_started.is_set()
+            if cancel_delete:
+                delete_task.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await delete_task
+                assert not execution_task.done()
+                delete_task = asyncio.create_task(client.delete(f"/responses/{response_id}"))
+                await asyncio.sleep(0)
+                assert not delete_task.done()
+            release.set()
+            deleted = await asyncio.wait_for(delete_task, 5)
+            assert deleted.status_code == 200
+            assert deleted.json()["deleted"] is True
+            assert execution_task.done()
+            assert provider.delete_started.is_set()
+            assert (await client.get(f"/responses/{response_id}")).status_code == 404
+            with pytest.raises(KeyError):
+                await inner.get_response(response_id)
+            restarted_client = _AsyncAsgiClient(ResponsesAgentServerHost(store=inner))
+            assert (await restarted_client.get(f"/responses/{response_id}")).status_code == 404
+        finally:
+            release.set()
+            await asyncio.wait_for(asyncio.gather(execution_task, delete_task, return_exceptions=True), 5)
 
     def test_terminal_completed_emitted_before_slow_write(self) -> None:
         """Client receives ``response.completed`` while the terminal write is
@@ -282,7 +355,9 @@ class TestAsyncTerminalPersist:
         # The terminal is durably persisted in the backing provider.
         persisted = await provider._inner.get_response(response_id)  # pylint: disable=protected-access
         assert persisted is not None
-        persisted_status = persisted.get("status") if isinstance(persisted, dict) else getattr(persisted, "status", None)
+        persisted_status = (
+            persisted.get("status") if isinstance(persisted, dict) else getattr(persisted, "status", None)
+        )
         assert persisted_status == "completed"
 
     @pytest.mark.asyncio
@@ -375,7 +450,8 @@ class TestAsyncTerminalPersist:
         assert failed_body.get("error", {}).get("code") == "storage_error"
 
     @pytest.mark.asyncio
-    async def test_fallback_registers_drainable_record_before_first_event(self) -> None:
+    @pytest.mark.parametrize("background", [False, True])
+    async def test_fallback_registers_drainable_record_before_first_event(self, background: bool) -> None:
         """The in-process fallback must publish a drainable record BEFORE the
         handler's first event.
 
@@ -386,15 +462,13 @@ class TestAsyncTerminalPersist:
         carrying its live ``execution_task`` up front."""
         first_gate = asyncio.Event()
 
-        async def _gated_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+        async def _gated_handler(request: Any, context: Any, _cancellation_signal: asyncio.Event):
             async def _events():
                 # Block before the first event so the pre-registration window
                 # (fallback started; nothing published by _register_bg_execution
                 # yet) stays open for the assertions below.
                 await first_gate.wait()
-                stream = ResponseEventStream(
-                    response_id=context.response_id, model=getattr(request, "model", None)
-                )
+                stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 for evt in stream.output_item_message("Hello, world!"):
                     yield evt
@@ -418,6 +492,7 @@ class TestAsyncTerminalPersist:
                     "input": [{"role": "user", "content": "hi"}],
                     "stream": True,
                     "store": True,
+                    "background": background,
                 },
             )
         )
@@ -437,6 +512,9 @@ class TestAsyncTerminalPersist:
             # drains it instead of racing loop teardown.
             assert record.execution_task is not None, "pre-registered record has no execution_task"
             assert not record.execution_task.done()
+            assert not provider.create_started.is_set()
+            assert (await client.get(f"/responses/{record.response_id}")).status_code == 404
+            assert (await client.delete(f"/responses/{record.response_id}")).status_code == 404
         finally:
             first_gate.set()
 
@@ -444,3 +522,74 @@ class TestAsyncTerminalPersist:
         assert resp.status_code == 200
         events = _parse_sse_bytes(resp.body)
         assert "response.completed" in [e["type"] for e in events]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("background", [False, True])
+    async def test_pre_creation_error_discards_pending_shutdown_record(self, background: bool) -> None:
+        async def handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+            for event in ():
+                yield event
+            raise RuntimeError("failure before response.created")
+
+        provider = _ControllableProvider(InMemoryResponseProvider())
+        app = ResponsesAgentServerHost(store=provider)
+        app.response_handler(handler)
+        client = _AsyncAsgiClient(app)
+        response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True, "background": background},
+        )
+        assert response.status_code == 200
+        assert [event["type"] for event in _parse_sse_bytes(response.body)] == ["error"]
+        assert not provider.create_started.is_set()
+        assert await app._endpoint._runtime_state.list_records() == []
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("background", [False, True])
+    async def test_shutdown_before_first_event_drains_write_and_preserves_terminal(self, background: bool) -> None:
+        started = asyncio.Event()
+        first_gate = asyncio.Event()
+        write_gate = asyncio.Event()
+
+        async def handler(_request: Any, context: Any, _cancellation_signal: Any) -> Any:
+            started.set()
+            await first_gate.wait()
+            stream = ResponseEventStream(response_id=context.response_id, model="m")
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        inner = InMemoryResponseProvider()
+        provider = _ControllableProvider(inner, release=write_gate)
+        app = ResponsesAgentServerHost(store=provider)
+        app.response_handler(handler)
+        client = _AsyncAsgiClient(app)
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True, "background": background},
+            )
+        )
+        shutdown_task = None
+        try:
+            await asyncio.wait_for(started.wait(), 5)
+            shutdown_task = asyncio.create_task(app._endpoint.handle_shutdown())
+            await asyncio.sleep(0)
+            assert not shutdown_task.done()
+            first_gate.set()
+            response = await asyncio.wait_for(post_task, 5)
+            assert response.status_code == 200
+            await asyncio.wait_for(provider.update_started.wait(), 5)
+            assert not shutdown_task.done()
+            write_gate.set()
+            await asyncio.wait_for(shutdown_task, 5)
+            events = _parse_sse_bytes(response.body)
+            response_id = _extract_response_id(events)
+            assert response_id is not None
+            terminal = events[-1]["data"]["response"]
+            persisted = await inner.get_response(response_id)
+            assert persisted["status"] == terminal["status"]
+        finally:
+            first_gate.set()
+            write_gate.set()
+            tasks = [post_task] if shutdown_task is None else [post_task, shutdown_task]
+            await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), 5)

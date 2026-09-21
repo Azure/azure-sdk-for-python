@@ -1317,7 +1317,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
     return record
 
 
-class _PipelineState:
+class _PipelineState:  # pylint: disable=too-many-instance-attributes
     """Mutable in-flight state for a single create-response invocation.
 
     Intentionally separate from :class:`_ExecutionContext` (which is a pure
@@ -2016,6 +2016,8 @@ class _ResponseOrchestrator:
         :rtype: None
         """
         response_payload = await self._prepare_terminal_resolution(ctx, state, record)
+        if response_payload is not None:
+            await self._runtime_state.add(record)
         await self._emit_pending_terminal_to_stream(ctx, state)
         if response_payload is None or not (ctx.store and record.response is not None):
             return
@@ -2036,6 +2038,26 @@ class _ResponseOrchestrator:
 
         state.deferred_terminal_persist = _deferred_terminal_persist
         state.defer_evict = True
+
+    async def _drain_deferred_terminal_persist(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
+        """Persist the terminal after closing the wire, then release runtime state.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :return: None
+        :rtype: None
+        """
+        persist = state.deferred_terminal_persist
+        if persist is None:
+            return
+        await persist()
+        state.deferred_terminal_persist = None
+        state.defer_evict = False
+        record = await self._runtime_state.get(ctx.response_id)
+        if record is not None and record.is_terminal and not record.persistence_failed:
+            await self._runtime_state.try_evict(ctx.response_id)
 
     async def _persist_and_resolve_terminal(
         self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
@@ -3203,19 +3225,11 @@ class _ResponseOrchestrator:
                 # prevents the shutdown wait loop from returning before the
                 # deferred terminal write below completes.
                 state.execution_task = asyncio.current_task()
-                # Close the pre-first-event shutdown race: until the handler's
-                # first event triggers ``_register_bg_execution``, no record is
-                # published to runtime_state, so a shutdown that snapshots
-                # ``list_records()`` in this window would see no task and could
-                # cancel this fallback before the deferred terminal write below.
-                # Publish ``start_record`` (carrying this task) now so it is in
-                # that snapshot and shutdown waits for it. ``_register_bg_execution``
-                # later overwrites this id and copies ``state.execution_task`` onto
-                # the canonical record, so the live task is never dropped; the
-                # ``add`` here is idempotent-by-id, not a duplicate.
+                # Track shutdown work before the first event without making a
+                # response publicly visible before response.created.
                 start_record.execution_task = state.execution_task
                 state.bg_record = start_record
-                await self._runtime_state.add(start_record)
+                await self._runtime_state.add_pending(start_record)
                 try:
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
@@ -3238,19 +3252,16 @@ class _ResponseOrchestrator:
                         r.execution_task = state.execution_task
                         await self._resolve_emit_and_defer_terminal_persist(ctx, state, r)
                 finally:
-                    await self._finalize_stream(ctx, state)
-                    await self._safe_close(wire_stream)
-                    if state.deferred_terminal_persist is not None:
-                        await state.deferred_terminal_persist()
-                        state.deferred_terminal_persist = None
-                        state.defer_evict = False
-                        terminal_record = await self._runtime_state.get(ctx.response_id)
-                        if terminal_record is not None and terminal_record.is_terminal and not terminal_record.persistence_failed:
-                            await self._runtime_state.try_evict(ctx.response_id)
+                    try:
+                        await self._finalize_stream(ctx, state)
+                        await self._safe_close(wire_stream)
+                        await self._drain_deferred_terminal_persist(ctx, state)
+                    finally:
+                        await self._runtime_state.discard_pending(ctx.response_id)
 
             # Minimal record only for ``_start_resilient_background``'s parameter
-            # shape. It is NOT added to runtime_state — the resilient body (or the
-            # fallback) creates the canonical record via ``_register_bg_execution``.
+            # shape. The fallback tracks it as unpublished shutdown work until
+            # the handler publishes a canonical response record.
             start_record = ResponseExecution(
                 response_id=ctx.response_id,
                 mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
