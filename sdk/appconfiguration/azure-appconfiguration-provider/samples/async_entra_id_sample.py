@@ -6,7 +6,6 @@
 import os
 import asyncio
 from sample_utilities import get_authority, get_credential, get_client_modifications
-from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 
 

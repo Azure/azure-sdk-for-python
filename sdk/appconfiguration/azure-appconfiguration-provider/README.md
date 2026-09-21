@@ -23,7 +23,7 @@ endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using Entra ID
-config = load(endpoint=endpoint, credential=credential, **kwargs)
+config = load(endpoint=endpoint, credential=credential)
 ```
 
 <!-- END SNIPPET -->
@@ -93,7 +93,6 @@ config = load(
     selects=selects,
     feature_flag_enabled=True,
     feature_flag_selectors=None,
-    **kwargs,
 )
 ```
 
@@ -112,7 +111,7 @@ from azure.appconfiguration.provider import load, SettingSelector
 
 # Filtering by tags
 selects = [SettingSelector(key_filter="*", tag_filters=["env=prod"])]
-config = load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
+config = load(endpoint=endpoint, credential=credential, selects=selects)
 ```
 
 <!-- END SNIPPET -->
@@ -194,7 +193,7 @@ from azure.appconfiguration.provider import load
 
 # Connecting to Azure App Configuration using Entra ID and trim key prefixes
 trimmed = ["test."]
-config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
+config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
 ```
 
 <!-- END SNIPPET -->
@@ -295,7 +294,7 @@ Replica discovery is enabled by default. If you want to disable it, you can set 
 from azure.appconfiguration.provider import load
 
 # Disabling replica discovery
-config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False, **kwargs)
+config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False)
 ```
 
 <!-- END SNIPPET -->
@@ -308,7 +307,7 @@ You can also enable load balancing to distribute requests across replicas by set
 from azure.appconfiguration.provider import load
 
 # Enabling load balancing across replicas
-config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True, **kwargs)
+config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True)
 ```
 
 <!-- END SNIPPET -->
@@ -322,7 +321,7 @@ Feature Flags can be loaded from config stores using the provider. Feature flags
 ```python
 from azure.appconfiguration.provider import load
 
-config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
+config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True)
 feature_flags = config["feature_management"]["feature_flags"]
 alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
@@ -342,7 +341,6 @@ config = load(
     credential=credential,
     feature_flag_enabled=True,
     feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
-    **kwargs,
 )
 feature_flags = config["feature_management"]["feature_flags"]
 alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
@@ -383,7 +381,7 @@ Configuration settings with a JSON content type (e.g., `application/json`) are a
 from azure.appconfiguration.provider import load
 
 # Settings with JSON content type are automatically deserialized
-config = load(endpoint=endpoint, credential=credential, **kwargs)
+config = load(endpoint=endpoint, credential=credential)
 app_config = config["app/config"]  # Returns a dict if the value is JSON
 print(app_config["timeout"])
 ```
@@ -405,7 +403,7 @@ def my_mapper(setting):
     setting.value = setting.value.strip()
 
 
-config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
+config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper)
 ```
 
 <!-- END SNIPPET -->
@@ -419,7 +417,7 @@ The provider supports configurable startup timeout with automatic retry. By defa
 ```python
 from azure.appconfiguration.provider import load
 
-config = load(endpoint=endpoint, credential=credential, startup_timeout=200, **kwargs)
+config = load(endpoint=endpoint, credential=credential, startup_timeout=200)
 ```
 
 <!-- END SNIPPET -->
