@@ -46,7 +46,7 @@
 
 # ServiceLabel: %AI Model Inference %Service Attention
 # PRLabel: %AI Model Inference
-/sdk/ai/azure-ai-inference/    @dargilco @trangevi
+/sdk/ai/azure-ai-inference/    @dargilco @trangevi @Azure/ai-foundry-devex
 
 # ServiceLabel: %AI Projects %Service Attention
 # PRLabel: %AI Projects
