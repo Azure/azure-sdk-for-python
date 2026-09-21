@@ -163,6 +163,11 @@ class AsyncTransportMixin:
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
             return sslopts
+        if isinstance(sslopts, ssl.SSLContext):
+            # A previous connect() already converted the options dict to an
+            # SSLContext; pass it through unchanged so reconnects do not fail
+            # with TypeError while evaluating `"context" in sslopts`.
+            return sslopts
         try:
             if "context" in sslopts:
                 return sslopts["context"]
@@ -418,6 +423,11 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         self._use_tls = use_tls
 
     async def connect(self):
+        # Close any session left over from a previous connect attempt FIRST.
+        # A reconnect can fail inside _build_ssl_opts (e.g. the previous
+        # connect replaced the options dict with an SSLContext, and converting
+        # it again raises TypeError), so the cleanup must not sit behind it.
+        await self._close_session_safely()
         self.sslopts = self._build_ssl_opts(self.sslopts)
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
@@ -445,10 +455,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
 
             http_proxy_auth = BasicAuth(login=username, password=password)
 
-        # Close any session left over from a previous connect attempt so that
-        # the aiohttp ClientSession is not leaked on reconnect.
-        await self._close_session_safely()
-
+        # Create the new session only after any leftover one was closed above.
         self.session = ClientSession()
         if self._custom_endpoint:
             url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
@@ -476,6 +483,13 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 ssl=self.sslopts if self._use_tls else None,
                 heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
             )
+        except asyncio.CancelledError:
+            # Cancellation derives from BaseException, so it bypasses
+            # `except Exception` below and would leak the new session.
+            # Clean up under a shield so a second cancellation cannot interrupt
+            # the close, then re-raise so cancellation still propagates.
+            await asyncio.shield(self._close_session_safely())
+            raise
         except ClientConnectorError as exc:
             _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
             await self._close_session_safely()
@@ -494,17 +508,26 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         self.connected = True
 
     async def _close_session_safely(self):
-        """Close ``self.session`` if set, suppressing and logging any errors."""
-        if self.session is not None:
-            try:
-                await self.session.close()
-            except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.debug(
-                    "Error closing aiohttp session: %r",
-                    e,
-                    extra=self.network_trace_params,
-                )
-            self.session = None
+        """Close ``self.session`` if set, suppressing and logging any errors.
+
+        The session reference is cleared *before* awaiting ``close()`` and the
+        close itself is shielded, so cancellation cannot interrupt the close
+        and recreate the leak. Cancellation is never suppressed: because
+        ``asyncio.CancelledError`` derives from ``BaseException`` rather than
+        ``Exception``, it propagates to the caller while the shielded close
+        still runs to completion.
+        """
+        session, self.session = self.session, None
+        if session is None:
+            return
+        try:
+            await asyncio.shield(session.close())
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug(
+                "Error closing aiohttp session: %r",
+                e,
+                extra=self.network_trace_params,
+            )
 
     async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer.
@@ -551,9 +574,17 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 _LOGGER.debug(
                     "Error closing websocket: %r", e, extra=self.network_trace_params
                 )
-            self.sock = None
-            await self._close_session_safely()
-        self.connected = False
+            finally:
+                # Cancellation while awaiting sock.close() raises
+                # asyncio.CancelledError, which bypasses `except Exception`;
+                # the finally guarantees cleanup and state reset still run.
+                self.sock = None
+                try:
+                    # Shielded so cancellation cannot interrupt session cleanup
+                    # and recreate the leak; cancellation still propagates.
+                    await asyncio.shield(self._close_session_safely())
+                finally:
+                    self.connected = False
 
     async def _write(self, s):
         """Completely write a string (byte array) to the peer.

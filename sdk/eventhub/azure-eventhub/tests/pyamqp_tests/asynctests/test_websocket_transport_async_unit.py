@@ -8,6 +8,9 @@ These tests do not require a live Event Hubs instance; aiohttp is mocked so that
 the cleanup behavior of WebSocketTransportAsync can be exercised in isolation.
 """
 
+import asyncio
+import ssl
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -147,4 +150,93 @@ async def test_connect_closes_new_session_on_unexpected_exception():
         await transport.connect()
 
     fake_session.close.assert_awaited_once()
+    assert transport.session is None
+
+@pytest.mark.asyncio
+async def test_connect_reconnect_with_already_converted_ssl_opts():
+    """A reconnect must not fail inside _build_ssl_opts when self.sslopts is
+    already an SSLContext (converted by the previous connect), and the previous
+    session must still be closed."""
+    from aiohttp import ClientConnectorError
+
+    transport = _make_transport()
+    # Simulate the state left behind by a previous connect(): sslopts was
+    # replaced with the converted SSLContext and a session is still assigned.
+    transport.sslopts = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    previous_session = MagicMock()
+    previous_session.close = AsyncMock()
+    transport.session = previous_session
+
+    fake_session = MagicMock()
+    fake_session.ws_connect = AsyncMock(
+        side_effect=ClientConnectorError(MagicMock(), OSError("nope"))
+    )
+    fake_session.close = AsyncMock()
+
+    with patch(
+        "aiohttp.ClientSession", return_value=fake_session
+    ), pytest.raises(ConnectionError):
+        await transport.connect()
+
+    # No TypeError from `"context" in sslopts`; the previous session was closed.
+    previous_session.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_connect_closes_session_on_cancellation():
+    """Cancellation during ws_connect() must close the new ClientSession and
+    clear the reference, while CancelledError still propagates to the caller."""
+    transport = _make_transport()
+    transport.session = None
+
+    fake_session = MagicMock()
+    fake_session.ws_connect = AsyncMock(side_effect=asyncio.CancelledError())
+    fake_session.close = AsyncMock()
+
+    with patch(
+        "aiohttp.ClientSession", return_value=fake_session
+    ), pytest.raises(asyncio.CancelledError):
+        await transport.connect()
+
+    fake_session.close.assert_awaited_once()
+    assert transport.session is None
+
+
+@pytest.mark.asyncio
+async def test_close_cleans_up_when_sock_close_is_cancelled():
+    """Cancellation while awaiting sock.close() must still run session cleanup
+    and reset state, while CancelledError propagates to the caller."""
+    transport = _make_transport()
+    sock = MagicMock()
+    sock.close = AsyncMock(side_effect=asyncio.CancelledError())
+    session = MagicMock()
+    session.close = AsyncMock()
+    transport.sock = sock
+    transport.session = session
+    transport.connected = True
+
+    with pytest.raises(asyncio.CancelledError):
+        await transport.close()
+
+    sock.close.assert_awaited_once()
+    session.close.assert_awaited_once()
+    assert transport.sock is None
+    assert transport.session is None
+    assert transport.connected is False
+
+
+@pytest.mark.asyncio
+async def test_close_session_safely_clears_reference_before_close():
+    """If session.close() itself is cancelled, the transport must not retain
+    the reference: clearing it first guarantees no leak even though the
+    CancelledError propagates."""
+    transport = _make_transport()
+    session = MagicMock()
+    session.close = AsyncMock(side_effect=asyncio.CancelledError())
+    transport.session = session
+
+    with pytest.raises(asyncio.CancelledError):
+        await transport._close_session_safely()
+
+    session.close.assert_awaited_once()
     assert transport.session is None
