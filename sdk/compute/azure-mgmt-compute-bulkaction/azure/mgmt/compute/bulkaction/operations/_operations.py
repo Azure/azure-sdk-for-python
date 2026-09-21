@@ -1496,15 +1496,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1525,15 +1527,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1554,15 +1558,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1581,16 +1587,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteDeallocateContent, _types.ExecuteDeallocateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeallocateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Is either a ExecuteDeallocateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent or IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
@@ -1675,15 +1682,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1704,15 +1713,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1733,15 +1744,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1760,16 +1773,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteHibernateContent, _types.ExecuteHibernateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteHibernateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Is either a ExecuteHibernateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent or IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
@@ -1854,15 +1868,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1883,15 +1899,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1912,15 +1930,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1939,16 +1959,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteStartContent, _types.ExecuteStartContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteStartContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Is either a ExecuteStartContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
@@ -2033,15 +2054,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2062,15 +2085,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2091,15 +2116,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2118,16 +2145,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteDeleteContent, _types.ExecuteDeleteContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeleteContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Is either a ExecuteDeleteContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent or IO[bytes]
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
@@ -2212,15 +2240,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2241,15 +2269,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2270,15 +2298,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2297,16 +2325,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.GetOperationStatusContent, _types.GetOperationStatusContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a GetOperationStatusContent type or a
-         IO[bytes] type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Is either a GetOperationStatusContent type or a IO[bytes]
+         type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent or
          ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent or IO[bytes]
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
@@ -2391,14 +2419,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2419,14 +2449,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2447,14 +2479,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2473,15 +2507,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.CancelOperationsContent, _types.CancelOperationsContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a CancelOperationsContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel. Is
+         either a CancelOperationsContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent or
          ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent or IO[bytes]
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
@@ -2566,15 +2601,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2595,15 +2634,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2624,15 +2667,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2665,16 +2712,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteReimageRequest, _types.ExecuteReimageRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteReimageRequest type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Is either a ExecuteReimageRequest type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest or
          ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest or IO[bytes]
         :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
