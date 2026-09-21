@@ -1,5 +1,10 @@
 # Release History
 
+## 1.35.2 (unreleased)
+
+### Features Added
+- Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
+
 ## 1.35.1 (2026-09-30)
 
 ### Bugs Fixed
