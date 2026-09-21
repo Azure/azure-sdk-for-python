@@ -6,3 +6,8 @@ http://localhost:8000/samples/pyodide_integration
 https://pypi.org/project/azure-mynewpackage/
 https://aka.ms/azsdk/python/migrate/my-new-package
 https://github.com/Azure/azure-sdk-for-python/compare/main..
+https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice
+https://pypi.org/project/azure-messaging-webpubsubchatservice/
+https://learn.microsoft.com/python/api/overview/azure/messaging-webpubsubchatservice-readme?view=azure-python-preview
+https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples
+https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/CHANGELOG.md

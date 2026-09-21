@@ -1484,6 +1484,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
+        # The wire may already be closed while terminal persistence is pending.
+        # Drain the producer before deleting; cancelling DELETE must not cancel it.
+        execution_task = record.execution_task
+        if execution_task is not None:
+            if not execution_task.done():
+                await asyncio.wait({execution_task})
+            if not execution_task.cancelled():
+                error = execution_task.exception()
+                if error is not None:
+                    logger.warning(
+                        "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
+                    )
+
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
             # Race: the background task's eager eviction (try_evict) removed
@@ -1895,11 +1908,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         deadline = asyncio.get_running_loop().time() + float(self._runtime_options.shutdown_grace_period_seconds)
         while True:
             pending = [
-                record
-                for record in records
-                if record.mode_flags.background
-                and record.execution_task is not None
-                and record.status in {"queued", "in_progress"}
+                record for record in records if record.execution_task is not None and not record.execution_task.done()
             ]
             if not pending:
                 break
@@ -1910,7 +1919,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # After grace period: mark non-resilient-background responses as failed.
         # Resilient+background responses are left as-is — the resilient task
         # framework will re-invoke the handler on restart.
-        for record in records:
+        # Pending records may have been replaced or evicted while draining.
+        for record in await self._runtime_state.list_records():
             if record.status not in {"queued", "in_progress"}:
                 continue
             is_resilient_background = is_resilient_server and record.mode_flags.store and record.mode_flags.background

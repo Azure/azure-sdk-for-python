@@ -16,7 +16,7 @@
 * Made `TracesDataGenerationJobOptions.max_samples` optional.
 * Added read-only agent lifecycle properties `AgentDetails.configuration_state` and `AgentSessionResource.stopped_at`.
 
-### Breaking Changes
+### Breaking Changes 
 
 Breaking changes in beta classes:
 

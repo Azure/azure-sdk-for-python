@@ -10,6 +10,17 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AcsDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The canonical decision returned by Agent Control Specification policy evaluation."""
+
+    ALLOW = "allow"
+    """Allow the original content."""
+    DENY = "deny"
+    """Deny the content."""
+    TRANSFORM = "transform"
+    """Apply an allowed canonical transform."""
+
+
 class AnalyzeImageOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of image analysis output."""
 
@@ -26,19 +37,96 @@ class AnalyzeTextOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output severities in eight levels, the value could be 0,1,2,3,4,5,6,7."""
 
 
+class DetectedProvenanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Detected provenance record type."""
+
+    C2_PA = "C2PA"
+    """Provenance came from a C2PA Content Credential (manifest)."""
+    WATERMARK = "Watermark"
+    """Provenance came from an imperceptible watermark."""
+
+
+class DetectOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Top-level outcome of a Content Provenance Detection operation."""
+
+    NO_PROVENANCE_DETECTED = "NoProvenanceDetected"
+    """No supported Microsoft-issued C2PA or imperceptible watermark signal was detected. This doesn't
+    necessarily mean the content wasn't AI-generated; it means no supported signal was found."""
+    PROVENANCE_DETECTED = "ProvenanceDetected"
+    """At least one supported Microsoft-issued C2PA or imperceptible watermark signal was detected."""
+
+
 class ImageCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Image analyze category."""
+    """The harm category supported in Image content analysis."""
 
     HATE = "Hate"
+    """The harm category for Image - Hate."""
     SELF_HARM = "SelfHarm"
+    """The harm category for Image - SelfHarm."""
     SEXUAL = "Sexual"
+    """The harm category for Image - Sexual."""
     VIOLENCE = "Violence"
+    """The harm category for Image - Violence."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
+
+
+class ProvenanceOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of asynchronous Content Provenance Detection operation."""
+
+    DETECT = "Detect"
+    """Content Provenance Detection operation."""
 
 
 class TextCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text analyze category."""
+    """The harm category supported in Text content analysis."""
 
     HATE = "Hate"
+    """The harm category for Text - Hate."""
     SELF_HARM = "SelfHarm"
+    """The harm category for Text - SelfHarm."""
     SEXUAL = "Sexual"
+    """The harm category for Text - Sexual."""
     VIOLENCE = "Violence"
+    """The harm category for Text - Violence."""
+
+
+class UnifiedModerateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The workload event source evaluated by Unified Moderate."""
+
+    INPUT = "input"
+    """Input submitted to a model or agent. The content field must contain nonempty plain text. Tool
+    fields do not apply."""
+    OUTPUT = "output"
+    """Output produced by a model or agent. The content field must contain nonempty plain text. Tool
+    fields do not apply."""
+    PRE_TOOL_CALL = "pre_tool_call"
+    """A proposed tool invocation before it is executed. The content field must be a string containing
+    a JSON-encoded object with the proposed tool arguments. toolName is required; toolCallId is
+    optional; post-call fields do not apply."""
+    POST_TOOL_CALL = "post_tool_call"
+    """A tool result after the invocation completes. The content field must be a string containing the
+    JSON-encoded tool result. toolName is required; toolCallId, toolArguments, toolResultIsError,
+    and toolDurationMs are optional."""
+
+
+class UnifiedModerateVerdict(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The caller-facing enforcement result returned by Unified Moderate."""
+
+    ALLOWED = "allowed"
+    """The content is allowed, including content modified by an allowed policy transform."""
+    BLOCKED = "blocked"
+    """The content is blocked by policy."""
