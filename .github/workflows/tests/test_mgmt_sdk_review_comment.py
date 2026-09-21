@@ -17,9 +17,10 @@ GUARD = textwrap.dedent(
 )
 MARKER = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
 NO_ENTRIES = "**Breaking-change attribution:** No newly added or modified entries."
+CHECKS = "Version consistency; Client signature; README snippets; API-version drift"
 SUMMARY = (
     "| Package | Completed checks |\n| --- | --- |\n"
-    "| azure-mgmt-example | Version consistency, client signature, README, and API-version drift |"
+    f"| azure-mgmt-example | {CHECKS} |"
 )
 ATTRIBUTION = (
     "**Package: azure-mgmt-example | Release: 1.0.0**\n\n"
@@ -134,7 +135,7 @@ class ReviewCommentTests(unittest.TestCase):
             "_Full_ **review** `pending`", "**Full   review pending.**",
         ):
             bodies = (
-                REVIEW.replace("Version consistency, client signature, README, and API-version drift", placeholder),
+                REVIEW.replace(CHECKS, placeholder),
                 REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Removed Widget", placeholder)),
                 REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Needs human review: baseline unavailable", placeholder)),
                 REVIEW.replace(NO_ENTRIES,
@@ -154,6 +155,59 @@ class ReviewCommentTests(unittest.TestCase):
         payload = {"items": [{"type": "add_comment", "body": body}]}
         self.run_guard(payload)
         self.assertEqual(body, payload["items"][0]["body"])
+        for evidence in ("`<Widget>`", "<https://github.com/Azure/example>", "`value & other`"):
+            with self.subTest(evidence=evidence):
+                body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
+                    "Needs human review: baseline unavailable", evidence
+                ))
+                self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+
+    def test_rendered_placeholders_are_rejected(self):
+        for placeholder in (
+            "None!", "Done?!", "[None.](https://example.invalid)", "![None.](https://example.invalid/image.png)",
+            "<strong>None.</strong>", "<em>Full review pending!</em>", "&#78;one&#33;",
+            "[**None!**](https://example.invalid)", "<strong>&#78;one!</strong>",
+        ):
+            for body in (
+                REVIEW.replace(CHECKS, placeholder),
+                REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace("Needs human review: baseline unavailable", placeholder)),
+                REVIEW.replace(NO_ENTRIES, "**Package: azure-mgmt-example | Release: unverified**\n\n"
+                               "**Needs human review:** " + placeholder),
+            ):
+                with self.subTest(placeholder=placeholder, body=body):
+                    self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+
+    def test_handoff_is_one_wrapped_prose_paragraph(self):
+        handoff = (
+            "**Package: azure-mgmt-example | Release: unverified**\n\n"
+            "**Needs human review:** The [changelog](https://github.com/Azure/example/blob/"
+            + "a" * 40 + "/CHANGELOG.md#L1) was truncated\n"
+            "before the <strong>release heading</strong> &amp; entry evidence."
+        )
+        self.run_guard({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
+        for trailing in (
+            "\n| Bad | Table |", "\nBad | Table", "\n### Extra heading", "\n## Extra heading",
+            "\n\nAnother paragraph.", "\n- Extra list", "\n```text\nExtra block\n```", "\n---",
+            "\n<table><tr><td>Bad table</td></tr></table>",
+        ):
+            with self.subTest(trailing=trailing):
+                self.assert_rejected({"items": [{"type": "add_comment",
+                                                "body": REVIEW.replace(NO_ENTRIES, handoff + trailing)}]})
+
+    def test_completed_checks_use_positive_reporting_names(self):
+        for checks in (
+            "Unable to complete review because the evidence tool failed",
+            "README snippets; Unable to complete review because the evidence tool failed",
+            "README snippets;", "README snippets; README snippets", "Everything looks fine",
+        ):
+            with self.subTest(checks=checks):
+                self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(CHECKS, checks)}]})
+        for check in (
+            "Management package discovery", "Version consistency", "Preview version", "Changelog date",
+            "Stability flags", "Client signature", "Client name consistency", "README snippets", "API-version drift",
+        ):
+            with self.subTest(check=check):
+                self.run_guard({"items": [{"type": "add_comment", "body": REVIEW.replace(CHECKS, check)}]})
 
     def test_optional_none_headings_allow_trailing_whitespace(self):
         for unverified_suffix in ("", "   ", "\t", " \t "):
@@ -189,10 +243,10 @@ class ReviewCommentTests(unittest.TestCase):
             SUMMARY.rsplit("\n", 1)[0],
             SUMMARY.replace("azure-mgmt-example", "example"),
             SUMMARY.replace("azure-mgmt-example", ""),
-            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "None."),
-            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "Full review pending"),
-            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", ""),
-            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "Done"),
+            SUMMARY.replace(CHECKS, "None."),
+            SUMMARY.replace(CHECKS, "Full review pending"),
+            SUMMARY.replace(CHECKS, ""),
+            SUMMARY.replace(CHECKS, "Done"),
             SUMMARY + "\n" + SUMMARY.splitlines()[-1],
         ):
             with self.subTest(summary=summary):
@@ -204,14 +258,15 @@ class ReviewCommentTests(unittest.TestCase):
             "**Needs human review:** Changelog collection was truncated before the release heading."
         )
         body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION + "\n\n" + handoff).replace(
-            SUMMARY, SUMMARY + "\n| `sdk/another/azure-mgmt-another` | API-version drift and README signatures |"
+            SUMMARY, SUMMARY + "\n| `sdk/another/azure-mgmt-another` | API-version drift; README snippets |"
         )
         self.run_guard({"items": [{"type": "add_comment", "body": body}]})
         self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
         handoff = handoff.replace("azure-mgmt-another", "azure-mgmt-example")
         limited_review = REVIEW.replace(NO_ENTRIES, handoff).replace(
-            "Version consistency, client signature, README, and API-version drift", "README"
-        )
+            CHECKS, "README snippets"
+        ).replace("**Unverified checks:** None.",
+                  "| Check | Reason |\n| --- | --- |\n| Client signature | Client file unavailable |")
         self.run_guard({"items": [{"type": "add_comment", "body": limited_review}]})
         for reason in ("None.", "Full review pending", "", "| Header | Reason |"):
             invalid = handoff.split("**Needs human review:**", 1)[0] + "**Needs human review:** " + reason

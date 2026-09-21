@@ -89,19 +89,41 @@ safe-outputs:
       shell: bash
       run: |
         python - <<'PY'
+        from html import escape
+        from html.parser import HTMLParser
         import json
         import os
         from pathlib import Path
         import re
+        import string
 
         def require(condition, message):
             if not condition:
                 raise ValueError(message)
 
+        def comparison_text(text):
+            # Bounded rendering of inline links, HTML, and formatting, for comparison only.
+            text = re.sub(r"!?\[([^\]\n]*)\]\((?:[^()\n]|\([^()\n]*\))*\)", r"\1", text)
+            text = re.sub(r"(\x60+)(.*?)\1", lambda match: escape(match[2]), text)
+            text = re.sub(r"<(https?://[^<>\s]+)>", r"\1", text)
+            class VisibleText(HTMLParser):
+                def __init__(self):
+                    super().__init__(convert_charrefs=True)
+                    self.parts = []
+                def handle_data(self, data):
+                    self.parts.append(data)
+                def handle_starttag(self, tag, attrs):
+                    if tag in {"br", "p"}:
+                        self.parts.append(" ")
+            parser = VisibleText()
+            parser.feed(text)
+            parser.close()
+            visible = re.sub(r"[*_\x60~]", "", "".join(parser.parts))
+            return " ".join(visible.lower().split()).strip(string.punctuation + " ")
+
         def substantive(text):
-            # Normalize only for placeholder comparison; never rewrite submitted evidence.
             lines = [
-                " ".join(re.sub(r"[*_\x60~]", "", line).lower().split()).strip(". ")
+                comparison_text(line)
                 for line in text.splitlines()
                 if line.strip() and not line.startswith(("#", "<!--"))
             ]
@@ -149,8 +171,13 @@ safe-outputs:
                 evidence = evidence.strip()
                 if evidence.startswith("**Needs human review:** "):
                     reason = evidence.removeprefix("**Needs human review:** ").strip()
-                    require(substantive(reason) and len(reason.split()) >= 3 and not reason.startswith("|"),
-                            "Incomplete collection requires a specific missing-evidence reason.")
+                    require(
+                        substantive(reason) and len(comparison_text(reason).split()) >= 3
+                        and not re.search(r"\n\s*\n|(?<!\\)\|", reason)
+                        and not re.search(
+                            r"(?mi)^\s*(?:[#>]|[-+*]\s|\d+[.)]\s|[\x60~]{3}|[-=]{3,}\s*$|"
+                            r"<(?:table|h[1-6]|pre|div)\b)", reason),
+                        "Incomplete collection requires one reason paragraph, without table or heading blocks.")
                 else:
                     require(table(evidence, ["Changelog entry", "Cause", "Evidence and explanation", "Confidence"]),
                             "Attribution requires a populated four-column table or an explicit incomplete-collection reason.")
@@ -160,11 +187,20 @@ safe-outputs:
             require(table(text, ["Package", "Completed checks"]),
                     "Review summary requires a Package / Completed checks table with at least one populated row.")
             packages = set()
+            allowed_checks = {
+                "Management package discovery", "Version consistency", "Preview version",
+                "Changelog date", "Stability flags", "Client signature", "Client name consistency",
+                "README snippets", "API-version drift",
+            }
             lines = [line.strip() for line in text.splitlines() if line.strip()]
             for line in lines[2:]:
-                name = package_name(cells(line)[0])
+                package, completed = cells(line)
+                name = package_name(package)
                 require(name not in packages, "Review summary must list each package only once.")
                 packages.add(name)
+                checks = [check.strip() for check in completed.split(";")]
+                require(all(check in allowed_checks for check in checks) and len(checks) == len(set(checks)),
+                        "Completed checks must be a semicolon-separated list of documented check names.")
             require(attributed_packages <= packages, "Review summary is missing an attribution package.")
 
         def validate(payload):
@@ -436,19 +472,31 @@ entries.` Do not merge attribution rows into the findings table.
 If collection is incomplete and no entry rows can be produced for a package/release, retain its
 `**Package: azure-mgmt-example | Release: release heading**` group label (use `unverified` if the
 release is unknown), followed by `**Needs human review:**` and a specific missing-evidence reason.
-Name the affected changelog when known. Do not imply that all introduced entries were checked.
+Use one prose paragraph (line wrapping and inline evidence links are allowed), not additional
+tables, headings, lists, or fenced blocks. Name the affected changelog when known.
+Do not imply that all introduced entries were checked.
 Do not add a separate attribution limitations table or repeat handoff reasons under unverified checks.
 
 Finish with `### Review summary` and a table with exactly these columns:
 
 | Package | Completed checks |
 | --- | --- |
-| azure-mgmt-example | Version consistency, client signature, and API-version drift |
+| azure-mgmt-example | Version consistency; Client signature; API-version drift |
 
 Use one row per affected management SDK package, naming the checks actually completed; do not
-copy the example checks without evidence. The publication gate validates this structure and
+copy the example checks without evidence. In `Completed checks`, use a semicolon-separated list
+of these exact reporting names: `Management package discovery`, `Version consistency`,
+`Preview version`, `Changelog date`, `Stability flags`, `Client signature`,
+`Client name consistency`, `README snippets`, `API-version drift`. These are reporting labels
+for the current review rules, not a replacement for the authoritative rules. A partial review
+may list only the checks completed; put incomplete required checks under `Unverified checks`.
+If no checks could be completed, report incomplete rather than claiming a completed review.
+The publication gate validates this structure and
 cross-checks attribution package names against the summary, not factual completeness against
 the collected context. You must still include every `affectedPackages` entry from the context.
+Placeholder comparison handles inline Markdown links/images, HTML formatting/entities, emphasis,
+inline code, and terminal ASCII punctuation without changing submitted evidence. It is not a
+general Markdown renderer or semantic verification of the review.
 
 ### Submit the complete body
 
