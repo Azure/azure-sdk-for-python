@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.relationships import RelationshipsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-relationships
 # USAGE
-    python service_group_member_relationships_delete.py
+    python contains_relationships_list_by_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.service_group_member_relationships.begin_delete(
-        resource_uri="subscriptions/a925f2f7-5c63-4b7b-8799-25a5f97bc3b2/resourceGroups/testrg/providers/Microsoft.DocumentDb/databaseAccounts/test-db-account",
-        name="sg1",
-    ).result()
+    response = client.contains_relationships.list_by_resource_group(
+        resource_group_name="testrg",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-01/ServiceGroupMemberRelationships_Delete.json
+# x-ms-original-file: 2026-08-01/ContainsRelationships_ListByResourceGroup.json
 if __name__ == "__main__":
     main()
