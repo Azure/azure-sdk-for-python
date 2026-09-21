@@ -9,6 +9,14 @@
 
 ### Bugs Fixed
 
+- A failed response no longer contributes its own input and output items to the
+  history resolved for later turns in the same conversation or chained through
+  `previous_response_id`. Previously the input that made a turn fail (for example a
+  `function_call_output` with no matching call) was replayed into every subsequent
+  request, which then failed the same way. The failed response and its input items
+  remain retrievable through `GET /responses/{id}` and `GET /responses/{id}/input_items`.
+  Applies to the in-memory and file response stores
+  ([#48929](https://github.com/Azure/azure-sdk-for-python/issues/48929)).
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
