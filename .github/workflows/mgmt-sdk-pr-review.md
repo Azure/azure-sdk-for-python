@@ -78,9 +78,102 @@ steps:
 tools:
   github:
     toolsets: [context, repos, pull_requests]
-  bash: ["cat", "head", "tail", "wc"]
+  bash: ["cat", "head", "tail", "wc", "jq"]
 
 safe-outputs:
+  # Fail before the built-in handler can publish or hide any previous review.
+  steps:
+    - name: Validate management SDK review comment
+      env:
+        GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
+      shell: bash
+      run: |
+        python - <<'PY'
+        import json
+        import os
+        from pathlib import Path
+        import re
+
+        def require(condition, message):
+            if not condition:
+                raise ValueError(message)
+
+        def substantive(text):
+            lines = [
+                line.strip() for line in text.splitlines()
+                if line.strip() and not line.startswith(("#", "<!--"))
+            ]
+            return bool(lines) and all(
+                line.lower() not in {"-", "...", "todo", "tbd", "n/a"}
+                for line in lines
+            ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
+
+        def table(text, header):
+            lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+            columns = len(header)
+            def cells(line):
+                return [cell.strip() for cell in re.split(r"(?<!\\)\|", line.strip("|"))]
+            return (
+                len(lines) >= 3
+                and cells(lines[0]) == header
+                and len(cells(lines[1])) == columns
+                and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells(lines[1]))
+                and all(len(cells(line)) == columns and all(substantive(cell) for cell in cells(line))
+                        for line in lines[2:])
+            )
+
+        def validate(payload):
+            require(isinstance(payload, dict), "Expected an agent output object.")
+            items = payload.get("items")
+            require(isinstance(items, list) and len(items) == 1,
+                    "Expected exactly one completed review; missing, duplicate, or diagnostic outputs cannot be published.")
+            item = items[0]
+            require(isinstance(item, dict) and item.get("type") == "add_comment",
+                    "Expected add_comment, not an incomplete review or diagnostic.")
+            body = item.get("body")
+            require(isinstance(body, str) and 0 < len(body) <= 65000, "Expected a nonempty review body.")
+            body = body.strip().replace("\r\n", "\n")
+            # gh-aw sanitizes HTML comments out of the artifact and restores its own marker on publication.
+            marker = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
+            if body.startswith(marker):
+                body = body[len(marker):].lstrip()
+            not_applicable = (
+                "## Management SDK review not applicable\n\n"
+                "This pull request does not change a package matching \x60sdk/*/azure-mgmt-*\x60."
+            )
+            if body == not_applicable:
+                return
+            prefix = "## Management SDK PR review\n"
+            require(body.startswith(prefix), "Missing Management SDK PR review heading.")
+            content = body[len(prefix):].strip()
+            # Keep both documented None forms compatible, with or without their section heading.
+            for heading, none in (
+                ("Unverified checks", "**Unverified checks:** None."),
+                ("Breaking-change attribution", "**Breaking-change attribution:** No newly added or modified entries."),
+            ):
+                if "\n### " + heading + "\n" not in "\n" + content:
+                    content = content.replace(none, "### " + heading + "\n\n" + none, 1)
+            sections = re.split(r"(?m)^### (Unverified checks|Breaking-change attribution|Review summary)\s*\n", content)
+            require(len(sections) == 7 and sections[1::2] ==
+                    ["Unverified checks", "Breaking-change attribution", "Review summary"],
+                    "Missing, repeated, or out-of-order review sections.")
+            findings, unverified, attribution, summary = (section.strip() for section in sections[::2])
+            require(findings == "**Findings:** None." or table(findings,
+                    ["Severity", "Finding", "Location", "Evidence", "Rule", "Remediation"]),
+                    "Findings must contain the findings table with evidence or **Findings:** None.")
+            require(unverified == "**Unverified checks:** None." or table(unverified, ["Check", "Reason"]),
+                    "Unverified checks must contain a populated table or **Unverified checks:** None.")
+            require(substantive(attribution), "Breaking-change attribution is empty or a placeholder.")
+            require(substantive(summary), "Review summary is empty or a placeholder.")
+
+        try:
+            validate(json.loads(Path(os.environ["GH_AW_AGENT_OUTPUT"]).read_text(encoding="utf-8")))
+        except (OSError, ValueError) as error:
+            raise SystemExit(
+                f"::error::Management SDK review rejected: {error} "
+                "No review will be published or hidden. Inspect the agent artifact and rerun after correcting the submission."
+            ) from error
+        PY
   add-comment:
     max: 1
     target: "${{ github.event.pull_request.number }}"
@@ -301,6 +394,27 @@ section as needing human review; do not imply that all introduced entries were c
 add a separate attribution limitations table or repeat handoff reasons under unverified checks.
 
 Finish with a brief `### Review summary` naming every affected package and the checks completed.
+
+### Submit the complete body
+
+Write the final Markdown to `/tmp/gh-aw/agent/comment.md`, then submit its actual contents as
+JSON through the permitted `jq` command and the safe-output CLI:
+
+```bash
+jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|@(?<decorator>renamedFrom|typeChangedFrom|returnTypeChangedFrom|added|removed|madeOptional|madeRequired|versioned|useDependency)\\b"; .url // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
+```
+
+This removes only the `@` sigil from the listed TypeSpec decorators, preserving their names,
+arguments, and evidence links without counting them as GitHub mentions. Refer to other decorators
+by name without the `@` sigil as well. Do not mention GitHub users in the review.
+The final `.` reads a JSON object from stdin. Never use `--body -` or `@filename`: those submit
+literal placeholder text, not the file contents. Do not submit a test or placeholder comment;
+only one submission is allowed per run. If submission fails, use `report_incomplete` with the
+exact error rather than claiming the review was published.
+
+The publisher independently rejects missing, placeholder, structurally incomplete, or diagnostic
+outputs before posting a comment or hiding earlier reviews. Keep the required sections and
+explicit `None` statements even when there are no findings.
 
 ## Constraints
 
