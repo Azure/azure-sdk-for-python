@@ -156,9 +156,9 @@ safe-outputs:
             return bool(lines) and all(
                 line not in {
                     "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
-                    "unable to complete review because",
+                    "unable to complete review", "unable to complete review because",
                 }
-                and not re.match(r"(?:(?:full )?review (?:is )?pending|pending review)\b", line)
+                and not re.match(r"(?:(?:the |a )?(?:full )?review (?:is )?pending|pending review)\b", line)
                 for line in [comparison_text(text), *lines]
             ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
 
@@ -563,8 +563,11 @@ reporting label. The reviewer must still account for every applicable rule.
 Placeholder comparison handles inline Markdown links/images, HTML formatting/entities, emphasis,
 inline code, and terminal punctuation (including Unicode punctuation) without changing submitted evidence.
 Adjacent inline HTML elements do not introduce spaces that are absent from the rendered text.
-It is not a
-general Markdown renderer or semantic verification of the review.
+Diagnostic matching is deliberately bounded: it rejects prefixes matching
+`[the |a ][full ]review [is ]pending` or `pending review` (brackets denote optional words),
+and the exact reason-free phrases `Unable to complete review` and `Unable to complete review because`.
+Concrete missing-evidence explanations after `because` remain valid for partial reviews.
+This is not exhaustive paraphrase detection, a general Markdown renderer, or semantic verification of the review.
 
 ### Submit the complete body
 

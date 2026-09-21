@@ -238,7 +238,10 @@ class ReviewCommentTests(unittest.TestCase):
 
     def test_pending_variants_are_not_evidence(self):
         functions = self.comparison_functions()
-        for placeholder in ("Full review is pending", "pending review", "Unable to complete review because ..."):
+        for placeholder in (
+            "Full review is pending", "pending review", "Unable to complete review because ...",
+            "Unable to complete review", "The full review is pending", "A review is pending",
+        ):
             with self.subTest(placeholder=placeholder):
                 self.assertFalse(functions["substantive"](placeholder))
             for body in (
