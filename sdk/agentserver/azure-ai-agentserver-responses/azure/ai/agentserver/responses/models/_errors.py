@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from . import ApiErrorResponse, Error
+from . import _generated as _generated_models
 
 
 class RequestValidationError(ValueError):
@@ -30,17 +30,17 @@ class RequestValidationError(ValueError):
         self.debug_info = debug_info
         self.details = details
 
-    def to_error(self) -> Error:
+    def to_error(self) -> _generated_models.Error:
         """Convert this validation error to an error wire payload.
 
         :returns: An error payload populated from this validation error's fields.
         :rtype: Error
         """
-        detail_errors: list[Error] | None = None
+        detail_errors: list[_generated_models.Error] | None = None
         if self.details:
             detail_errors = [
                 cast(
-                    Error,
+                    "_generated_models.Error",
                     {
                         "code": d.get("code", "invalid_value"),
                         "message": d.get("message", ""),
@@ -51,7 +51,7 @@ class RequestValidationError(ValueError):
                 for d in self.details
             ]
         error = cast(
-            Error,
+            "_generated_models.Error",
             {
                 "code": self.code,
                 "message": self.message,
@@ -65,10 +65,10 @@ class RequestValidationError(ValueError):
             error["debugInfo"] = self.debug_info
         return error
 
-    def to_api_error_response(self) -> ApiErrorResponse:
+    def to_api_error_response(self) -> _generated_models.ApiErrorResponse:
         """Convert this validation error to the API error envelope.
 
         :returns: An ``ApiErrorResponse`` wrapping the error payload.
         :rtype: ApiErrorResponse
         """
-        return cast(ApiErrorResponse, {"error": self.to_error()})
+        return cast("_generated_models.ApiErrorResponse", {"error": self.to_error()})

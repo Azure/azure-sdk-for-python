@@ -33,12 +33,12 @@ def main():
     response = client.occurrences.list_resources(
         resource_group_name="rgcompute",
         scheduled_action_name="myScheduledAction",
-        occurrence_id="CB26D7CB-3E27-465F-99C8-EAF7A4118245",
+        occurrence_id="67b5bada-4772-43fc-8dbb-402476d98a45",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-08-06-preview/Occurrences_ListResources_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/Occurrences_ListResources_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

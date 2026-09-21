@@ -23,6 +23,7 @@ if TYPE_CHECKING:
         AddressUpdateAction,
         AdminState,
         AdvertisedPublicPrefixPropertiesValidationState,
+        ApplicationGatewayAdvancedRoutingConditionType,
         ApplicationGatewayClientAuthVerificationModes,
         ApplicationGatewayClientRevocationOptions,
         ApplicationGatewayCookieBasedAffinity,
@@ -83,7 +84,6 @@ if TYPE_CHECKING:
         Direction,
         DisableBgpRoutePropagation,
         DisablePeeringRoute,
-        EnableOnlyIpv6PeeringState,
         EndpointType,
         ExceptionEntryMatchVariable,
         ExceptionEntrySelectorMatchOperator,
@@ -164,6 +164,7 @@ if TYPE_CHECKING:
         NspProvisioningState,
         NvaNicType,
         OfficeTrafficCategory,
+        OnUnauthenticatedRequest,
         OutputType,
         OwaspCrsExclusionEntryMatchVariable,
         OwaspCrsExclusionEntrySelectorMatchOperator,
@@ -217,6 +218,7 @@ if TYPE_CHECKING:
         ServiceProviderProvisioningState,
         ServiceType,
         ServiceUpdateAction,
+        SessionRecordingIdentityType,
         SharingScope,
         SlotType,
         SubgroupProfileScope,
@@ -224,6 +226,7 @@ if TYPE_CHECKING:
         TransportProtocol,
         UpdateAction,
         UseHubGateway,
+        UserTrustProviderType,
         VerbosityLevel,
         VirtualNetworkApplianceIpVersionType,
         VirtualNetworkEncryptionEnforcement,
@@ -258,6 +261,7 @@ if TYPE_CHECKING:
         WebApplicationFirewallMode,
         WebApplicationFirewallOperator,
         WebApplicationFirewallPolicyResourceState,
+        WebApplicationFirewallPolicyTier,
         WebApplicationFirewallRuleType,
         WebApplicationFirewallScrubbingState,
         WebApplicationFirewallState,
@@ -688,6 +692,40 @@ class ApplicationGateway(Resource):
     """The identity of the application gateway, if configured."""
 
 
+class ApplicationGatewayAdvancedRoutingCondition(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A condition evaluated as part of an advanced routing condition set.
+
+    :ivar conditionType: The type of request property the condition is evaluated against. Required.
+     Known values are: "Header", "QueryString", "Path", "ClientIP", and "Method".
+    :vartype conditionType: Union[str, "ApplicationGatewayAdvancedRoutingConditionType"]
+    :ivar propertyName: Name of the request property the condition is evaluated against. Required
+     when conditionType is Header or QueryString, and not applicable when conditionType is Path,
+     ClientIP or Method.
+    :vartype propertyName: str
+    :ivar propertyValues: Values the request property is matched against. Exactly one of
+     propertyValues or propertyValueMatcher must be specified.
+    :vartype propertyValues: list[str]
+    :ivar propertyValueMatcher: Pattern the request property is matched against. Exactly one of
+     propertyValues or propertyValueMatcher must be specified. Not applicable when conditionType is
+     ClientIP or Method.
+    :vartype propertyValueMatcher: "ApplicationGatewayAdvancedRoutingPropertyValueMatcher"
+    """
+
+    conditionType: Required[Union[str, "ApplicationGatewayAdvancedRoutingConditionType"]]
+    """The type of request property the condition is evaluated against. Required. Known values are:
+     \"Header\", \"QueryString\", \"Path\", \"ClientIP\", and \"Method\"."""
+    propertyName: str
+    """Name of the request property the condition is evaluated against. Required when conditionType is
+     Header or QueryString, and not applicable when conditionType is Path, ClientIP or Method."""
+    propertyValues: list[str]
+    """Values the request property is matched against. Exactly one of propertyValues or
+     propertyValueMatcher must be specified."""
+    propertyValueMatcher: "ApplicationGatewayAdvancedRoutingPropertyValueMatcher"
+    """Pattern the request property is matched against. Exactly one of propertyValues or
+     propertyValueMatcher must be specified. Not applicable when conditionType is ClientIP or
+     Method."""
+
+
 class SubResource(TypedDict, total=False):
     """Reference to another subresource.
 
@@ -697,6 +735,259 @@ class SubResource(TypedDict, total=False):
 
     id: str
     """Resource ID."""
+
+
+class ApplicationGatewayAdvancedRoutingConditionSet(SubResource):  # pylint: disable=name-too-long
+    """Advanced routing condition set of an application gateway. Referenced by advanced routing rules
+    to determine whether a request matches.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing condition set.
+    :vartype properties: "ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat"
+    :ivar name: Name of the advanced routing condition set that is unique within an Application
+     Gateway.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: "ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat"
+    """Properties of the application gateway advanced routing condition set."""
+    name: str
+    """Name of the advanced routing condition set that is unique within an Application Gateway."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: str
+    """Type of the resource."""
+
+
+class ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat(
+    TypedDict, total=False
+):  # pylint: disable=name-too-long
+    """Properties of advanced routing condition set of the application gateway.
+
+    :ivar routingConditions: Routing conditions of the condition set. All conditions must be
+     satisfied for the referencing advanced routing rule to match. Required.
+    :vartype routingConditions: list["ApplicationGatewayAdvancedRoutingCondition"]
+    :ivar provisioningState: The provisioning state of the advanced routing condition set resource.
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    routingConditions: Required[list["ApplicationGatewayAdvancedRoutingCondition"]]
+    """Routing conditions of the condition set. All conditions must be satisfied for the referencing
+     advanced routing rule to match. Required."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the advanced routing condition set resource. Known values are:
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
+class ApplicationGatewayAdvancedRoutingMap(SubResource):
+    """Advanced routing map of an application gateway. Holds the advanced routing rules evaluated for
+    requests handled by an AdvancedRouting request routing rule, along with the configuration
+    applied when no rule matches.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing map.
+    :vartype properties: "ApplicationGatewayAdvancedRoutingMapPropertiesFormat"
+    :ivar name: Name of the advanced routing map that is unique within an Application Gateway.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: "ApplicationGatewayAdvancedRoutingMapPropertiesFormat"
+    """Properties of the application gateway advanced routing map."""
+    name: str
+    """Name of the advanced routing map that is unique within an Application Gateway."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: str
+    """Type of the resource."""
+
+
+class ApplicationGatewayAdvancedRoutingMapPropertiesFormat(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties of advanced routing map of the application gateway.
+
+    :ivar defaultBackendAddressPool: Default backend address pool resource of the advanced routing
+     map. Required unless defaultRedirectConfiguration is specified.
+    :vartype defaultBackendAddressPool: "SubResource"
+    :ivar defaultBackendHttpSettings: Default backend http settings resource of the advanced
+     routing map. Required unless defaultRedirectConfiguration is specified.
+    :vartype defaultBackendHttpSettings: "SubResource"
+    :ivar defaultRedirectConfiguration: Default redirect configuration resource of the advanced
+     routing map. Cannot be combined with defaultBackendAddressPool or defaultBackendHttpSettings.
+    :vartype defaultRedirectConfiguration: "SubResource"
+    :ivar defaultRewriteRuleSet: Default rewrite rule set resource of the advanced routing map.
+    :vartype defaultRewriteRuleSet: "SubResource"
+    :ivar defaultAuthConfigs: Default authentication configuration bindings of the advanced routing
+     map. Only one authentication configuration is supported. Authentication configuration names
+     must be unique across the Application Gateway, and an Application Gateway can reference at most
+     100 distinct authentication policies. Authentication policies can only be bound to Application
+     Gateways using the Standard_v2 or WAF_v2 SKU.
+    :vartype defaultAuthConfigs: list["ApplicationGatewayAuthConfig"]
+    :ivar advancedRoutingRules: Advanced routing rules of the advanced routing map. Each rule must
+     specify a priority that is unique within the map. Required.
+    :vartype advancedRoutingRules: list["ApplicationGatewayAdvancedRoutingRule"]
+    :ivar provisioningState: The provisioning state of the advanced routing map resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    defaultBackendAddressPool: "SubResource"
+    """Default backend address pool resource of the advanced routing map. Required unless
+     defaultRedirectConfiguration is specified."""
+    defaultBackendHttpSettings: "SubResource"
+    """Default backend http settings resource of the advanced routing map. Required unless
+     defaultRedirectConfiguration is specified."""
+    defaultRedirectConfiguration: "SubResource"
+    """Default redirect configuration resource of the advanced routing map. Cannot be combined with
+     defaultBackendAddressPool or defaultBackendHttpSettings."""
+    defaultRewriteRuleSet: "SubResource"
+    """Default rewrite rule set resource of the advanced routing map."""
+    defaultAuthConfigs: list["ApplicationGatewayAuthConfig"]
+    """Default authentication configuration bindings of the advanced routing map. Only one
+     authentication configuration is supported. Authentication configuration names must be unique
+     across the Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
+    advancedRoutingRules: Required[list["ApplicationGatewayAdvancedRoutingRule"]]
+    """Advanced routing rules of the advanced routing map. Each rule must specify a priority that is
+     unique within the map. Required."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the advanced routing map resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
+class ApplicationGatewayAdvancedRoutingPropertyValueMatcher(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Matches the value of a request property against a fixed string or regular expression.
+
+    :ivar pattern: The pattern, either fixed string or regular expression, that the request
+     property value is evaluated against. Required.
+    :vartype pattern: str
+    :ivar ignoreCase: Setting this parameter to truth value with force the pattern to do a case
+     in-sensitive comparison.
+    :vartype ignoreCase: bool
+    :ivar negate: Setting this value as truth will force to check the negation of the condition
+     given by the user in the pattern field.
+    :vartype negate: bool
+    """
+
+    pattern: Required[str]
+    """The pattern, either fixed string or regular expression, that the request property value is
+     evaluated against. Required."""
+    ignoreCase: bool
+    """Setting this parameter to truth value with force the pattern to do a case in-sensitive
+     comparison."""
+    negate: bool
+    """Setting this value as truth will force to check the negation of the condition given by the user
+     in the pattern field."""
+
+
+class ApplicationGatewayAdvancedRoutingRule(SubResource):
+    """Advanced routing rule of an application gateway.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing rule.
+    :vartype properties: "ApplicationGatewayAdvancedRoutingRulePropertiesFormat"
+    :ivar name: Name of the advanced routing rule that is unique within an advanced routing map.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: "ApplicationGatewayAdvancedRoutingRulePropertiesFormat"
+    """Properties of the application gateway advanced routing rule."""
+    name: str
+    """Name of the advanced routing rule that is unique within an advanced routing map."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: str
+    """Type of the resource."""
+
+
+class ApplicationGatewayAdvancedRoutingRulePropertiesFormat(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties of advanced routing rule of the application gateway.
+
+    :ivar priority: Priority of the advanced routing rule. Must be unique within the containing
+     advanced routing map. Rules are evaluated in ascending priority order. Required.
+    :vartype priority: int
+    :ivar advancedRoutingConditionSet: Advanced routing condition set resource evaluated by this
+     rule.
+    :vartype advancedRoutingConditionSet: "SubResource"
+    :ivar backendAddressPool: Backend address pool resource of the advanced routing rule. Required
+     unless redirectConfiguration is specified.
+    :vartype backendAddressPool: "SubResource"
+    :ivar backendHttpSettings: Backend http settings resource of the advanced routing rule.
+     Required unless redirectConfiguration is specified.
+    :vartype backendHttpSettings: "SubResource"
+    :ivar redirectConfiguration: Redirect configuration resource of the advanced routing rule.
+     Cannot be combined with backendAddressPool or backendHttpSettings.
+    :vartype redirectConfiguration: "SubResource"
+    :ivar rewriteRuleSet: Rewrite rule set resource of the advanced routing rule.
+    :vartype rewriteRuleSet: "SubResource"
+    :ivar authConfigs: Authentication configuration bindings of the advanced routing rule. Only one
+     authentication configuration is supported. Authentication configuration names must be unique
+     across the Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU.
+    :vartype authConfigs: list["ApplicationGatewayAuthConfig"]
+    :ivar provisioningState: The provisioning state of the advanced routing rule resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    priority: Required[int]
+    """Priority of the advanced routing rule. Must be unique within the containing advanced routing
+     map. Rules are evaluated in ascending priority order. Required."""
+    advancedRoutingConditionSet: "SubResource"
+    """Advanced routing condition set resource evaluated by this rule."""
+    backendAddressPool: "SubResource"
+    """Backend address pool resource of the advanced routing rule. Required unless
+     redirectConfiguration is specified."""
+    backendHttpSettings: "SubResource"
+    """Backend http settings resource of the advanced routing rule. Required unless
+     redirectConfiguration is specified."""
+    redirectConfiguration: "SubResource"
+    """Redirect configuration resource of the advanced routing rule. Cannot be combined with
+     backendAddressPool or backendHttpSettings."""
+    rewriteRuleSet: "SubResource"
+    """Rewrite rule set resource of the advanced routing rule."""
+    authConfigs: list["ApplicationGatewayAuthConfig"]
+    """Authentication configuration bindings of the advanced routing rule. Only one authentication
+     configuration is supported. Authentication configuration names must be unique across the
+     Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the advanced routing rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
+class ApplicationGatewayAuthConfig(TypedDict, total=False):
+    """An authentication configuration binding for an Application Gateway routing rule or routing map.
+
+    :ivar name: The name of the auth configuration. Required.
+    :vartype name: str
+    :ivar authenticationPolicy: Reference to the authentication policy
+     (Microsoft.Network/authenticationPolicies) resource. Required.
+    :vartype authenticationPolicy: "SubResource"
+    """
+
+    name: Required[str]
+    """The name of the auth configuration. Required."""
+    authenticationPolicy: Required["SubResource"]
+    """Reference to the authentication policy (Microsoft.Network/authenticationPolicies) resource.
+     Required."""
 
 
 class ApplicationGatewayAuthenticationCertificate(SubResource):  # pylint: disable=name-too-long
@@ -2111,12 +2402,20 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
      `Application Gateway limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :vartype urlPathMaps: list["ApplicationGatewayUrlPathMap"]
+    :ivar advancedRoutingMaps: Advanced routing maps of the application gateway resource. For
+     default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+    :vartype advancedRoutingMaps: list["ApplicationGatewayAdvancedRoutingMap"]
     :ivar requestRoutingRules: Request routing rules of the application gateway resource.
     :vartype requestRoutingRules: list["ApplicationGatewayRequestRoutingRule"]
     :ivar routingRules: Routing rules of the application gateway resource.
     :vartype routingRules: list["ApplicationGatewayRoutingRule"]
     :ivar rewriteRuleSets: Rewrite rules for the application gateway resource.
     :vartype rewriteRuleSets: list["ApplicationGatewayRewriteRuleSet"]
+    :ivar advancedRoutingConditionSets: Advanced routing condition sets of the application gateway
+     resource. For default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+    :vartype advancedRoutingConditionSets: list["ApplicationGatewayAdvancedRoutingConditionSet"]
     :ivar redirectConfigurations: Redirect configurations of the application gateway resource. For
      default limits, see `Application Gateway limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
@@ -2132,6 +2431,9 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
     :vartype enableFips: bool
     :ivar autoscaleConfiguration: Autoscale Configuration.
     :vartype autoscaleConfiguration: "ApplicationGatewayAutoscaleConfiguration"
+    :ivar reservedCapacity: The reserved capacity of the application gateway resource. Applicable
+     to the Basic_v2 and Basic_WAF_v2 SKU tiers.
+    :vartype reservedCapacity: int
     :ivar privateLinkConfigurations: PrivateLink configurations on application gateway.
     :vartype privateLinkConfigurations: list["ApplicationGatewayPrivateLinkConfiguration"]
     :ivar privateEndpointConnections: Private Endpoint connections on application gateway.
@@ -2226,12 +2528,20 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
     """URL path map of the application gateway resource. For default limits, see `Application Gateway
      limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
+    advancedRoutingMaps: list["ApplicationGatewayAdvancedRoutingMap"]
+    """Advanced routing maps of the application gateway resource. For default limits, see `Application
+     Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
     requestRoutingRules: list["ApplicationGatewayRequestRoutingRule"]
     """Request routing rules of the application gateway resource."""
     routingRules: list["ApplicationGatewayRoutingRule"]
     """Routing rules of the application gateway resource."""
     rewriteRuleSets: list["ApplicationGatewayRewriteRuleSet"]
     """Rewrite rules for the application gateway resource."""
+    advancedRoutingConditionSets: list["ApplicationGatewayAdvancedRoutingConditionSet"]
+    """Advanced routing condition sets of the application gateway resource. For default limits, see
+     `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
     redirectConfigurations: list["ApplicationGatewayRedirectConfiguration"]
     """Redirect configurations of the application gateway resource. For default limits, see
      `Application Gateway limits
@@ -2246,6 +2556,9 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
     """Whether FIPS is enabled on the application gateway resource."""
     autoscaleConfiguration: "ApplicationGatewayAutoscaleConfiguration"
     """Autoscale Configuration."""
+    reservedCapacity: int
+    """The reserved capacity of the application gateway resource. Applicable to the Basic_v2 and
+     Basic_WAF_v2 SKU tiers."""
     privateLinkConfigurations: list["ApplicationGatewayPrivateLinkConfiguration"]
     """PrivateLink configurations on application gateway."""
     privateEndpointConnections: list["ApplicationGatewayPrivateEndpointConnection"]
@@ -2368,7 +2681,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
 class ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties of request routing rule of the application gateway.
 
-    :ivar ruleType: Rule type. Known values are: "Basic" and "PathBasedRouting".
+    :ivar ruleType: Rule type. Known values are: "Basic", "PathBasedRouting", and
+     "AdvancedRouting".
     :vartype ruleType: Union[str, "ApplicationGatewayRequestRoutingRuleType"]
     :ivar priority: Priority of the request routing rule.
     :vartype priority: int
@@ -2380,6 +2694,8 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=Fals
     :vartype httpListener: "SubResource"
     :ivar urlPathMap: URL path map resource of the application gateway.
     :vartype urlPathMap: "SubResource"
+    :ivar advancedRoutingMap: Advanced routing map resource of the application gateway.
+    :vartype advancedRoutingMap: "SubResource"
     :ivar rewriteRuleSet: Rewrite Rule Set resource in Basic rule of the application gateway.
     :vartype rewriteRuleSet: "SubResource"
     :ivar redirectConfiguration: Redirect configuration resource of the application gateway.
@@ -2389,13 +2705,19 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=Fals
     :ivar entraJWTValidationConfig: Entra JWT validation configuration resource of the application
      gateway.
     :vartype entraJWTValidationConfig: "SubResource"
+    :ivar authConfigs: Authentication configuration bindings of the request routing rule. Only one
+     authentication configuration is supported. Authentication configuration names must be unique
+     across the Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU.
+    :vartype authConfigs: list["ApplicationGatewayAuthConfig"]
     :ivar provisioningState: The provisioning state of the request routing rule resource. Known
      values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     ruleType: Union[str, "ApplicationGatewayRequestRoutingRuleType"]
-    """Rule type. Known values are: \"Basic\" and \"PathBasedRouting\"."""
+    """Rule type. Known values are: \"Basic\", \"PathBasedRouting\", and \"AdvancedRouting\"."""
     priority: int
     """Priority of the request routing rule."""
     backendAddressPool: "SubResource"
@@ -2406,6 +2728,8 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=Fals
     """Http listener resource of the application gateway."""
     urlPathMap: "SubResource"
     """URL path map resource of the application gateway."""
+    advancedRoutingMap: "SubResource"
+    """Advanced routing map resource of the application gateway."""
     rewriteRuleSet: "SubResource"
     """Rewrite Rule Set resource in Basic rule of the application gateway."""
     redirectConfiguration: "SubResource"
@@ -2414,6 +2738,12 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=Fals
     """Load Distribution Policy resource of the application gateway."""
     entraJWTValidationConfig: "SubResource"
     """Entra JWT validation configuration resource of the application gateway."""
+    authConfigs: list["ApplicationGatewayAuthConfig"]
+    """Authentication configuration bindings of the request routing rule. Only one authentication
+     configuration is supported. Authentication configuration names must be unique across the
+     Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the request routing rule resource. Known values are: \"Failed\",
      \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
@@ -2558,7 +2888,8 @@ class ApplicationGatewayRoutingRule(SubResource):
 class ApplicationGatewayRoutingRulePropertiesFormat(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties of routing rule of the application gateway.
 
-    :ivar ruleType: Rule type. Known values are: "Basic" and "PathBasedRouting".
+    :ivar ruleType: Rule type. Known values are: "Basic", "PathBasedRouting", and
+     "AdvancedRouting".
     :vartype ruleType: Union[str, "ApplicationGatewayRequestRoutingRuleType"]
     :ivar priority: Priority of the routing rule. Required.
     :vartype priority: int
@@ -2574,7 +2905,7 @@ class ApplicationGatewayRoutingRulePropertiesFormat(TypedDict, total=False):  # 
     """
 
     ruleType: Union[str, "ApplicationGatewayRequestRoutingRuleType"]
-    """Rule type. Known values are: \"Basic\" and \"PathBasedRouting\"."""
+    """Rule type. Known values are: \"Basic\", \"PathBasedRouting\", and \"AdvancedRouting\"."""
     priority: Required[int]
     """Priority of the routing rule. Required."""
     backendAddressPool: "SubResource"
@@ -2592,11 +2923,11 @@ class ApplicationGatewaySku(TypedDict, total=False):
     """SKU of an application gateway.
 
     :ivar name: Name of an application gateway SKU. Known values are: "Standard_Small",
-     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
-     "Basic".
+     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2",
+     "Basic", "Basic_v2", and "Basic_WAF_v2".
     :vartype name: Union[str, "ApplicationGatewaySkuName"]
     :ivar tier: Tier of an application gateway. Known values are: "Standard", "WAF", "Standard_v2",
-     "WAF_v2", and "Basic".
+     "WAF_v2", "Basic", "Basic_v2", and "Basic_WAF_v2".
     :vartype tier: Union[str, "ApplicationGatewayTier"]
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
@@ -2607,10 +2938,11 @@ class ApplicationGatewaySku(TypedDict, total=False):
 
     name: Union[str, "ApplicationGatewaySkuName"]
     """Name of an application gateway SKU. Known values are: \"Standard_Small\", \"Standard_Medium\",
-     \"Standard_Large\", \"WAF_Medium\", \"WAF_Large\", \"Standard_v2\", \"WAF_v2\", and \"Basic\"."""
+     \"Standard_Large\", \"WAF_Medium\", \"WAF_Large\", \"Standard_v2\", \"WAF_v2\", \"Basic\",
+     \"Basic_v2\", and \"Basic_WAF_v2\"."""
     tier: Union[str, "ApplicationGatewayTier"]
     """Tier of an application gateway. Known values are: \"Standard\", \"WAF\", \"Standard_v2\",
-     \"WAF_v2\", and \"Basic\"."""
+     \"WAF_v2\", \"Basic\", \"Basic_v2\", and \"Basic_WAF_v2\"."""
     capacity: int
     """Capacity (instance count) of an application gateway."""
     family: Union[str, "ApplicationGatewaySkuFamily"]
@@ -3109,6 +3441,191 @@ class ApplicationSecurityGroupPropertiesFormat(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the application security group resource. Known values are:
      \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
+class ApprovalReference(TypedDict, total=False):
+    """Reference to an existing approved private endpoint used to inherit its connection approval
+    state.
+
+    :ivar privateEndpointId: The ARM resource id of an existing approved private endpoint whose
+     approval state is inherited by this connection.
+    :vartype privateEndpointId: str
+    """
+
+    privateEndpointId: str
+    """The ARM resource id of an existing approved private endpoint whose approval state is inherited
+     by this connection."""
+
+
+class AuthenticationPolicy(Resource):
+    """Authentication policy resource for identity integration.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the authentication policy.
+    :vartype properties: "AuthenticationPolicyPropertiesFormat"
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar identity: The user-assigned identity used by a user sign-in policy to access its Key
+     Vault client secret.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar systemData: The system metadata related to this resource.
+    :vartype systemData: "SystemData"
+    """
+
+    properties: "AuthenticationPolicyPropertiesFormat"
+    """Properties of the authentication policy."""
+    etag: str
+    """A unique read-only string that changes whenever the resource is updated."""
+    identity: "ManagedServiceIdentity"
+    """The user-assigned identity used by a user sign-in policy to access its Key Vault client secret."""
+    systemData: "SystemData"
+    """The system metadata related to this resource."""
+
+
+class AuthenticationPolicyPropertiesFormat(TypedDict, total=False):
+    """Properties of the authentication policy.
+
+    :ivar userTrustProviderType: The type of the user trust provider. Only Microsoft Entra is
+     supported, using the serialized value ``entra``. Required. "entra"
+    :vartype userTrustProviderType: Union[str, "UserTrustProviderType"]
+    :ivar onUnauthenticatedRequest: The action to take when a request is unauthenticated. When
+     omitted, user sign-in policies default to ``authenticate`` and JWT validation policies default
+     to ``deny``. Known values are: "allow", "authenticate", and "deny".
+    :vartype onUnauthenticatedRequest: Union[str, "OnUnauthenticatedRequest"]
+    :ivar authenticationProperties: The authentication provider configuration for the policy.
+     Required.
+    :vartype authenticationProperties: "AuthenticationProviderProperties"
+    :ivar associatedResources: A collection of resource IDs that reference this authentication
+     policy.
+    :vartype associatedResources: list[str]
+    :ivar provisioningState: The provisioning state of the authentication policy resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceGuid: The resource GUID property of the authentication policy resource.
+    :vartype resourceGuid: str
+    """
+
+    userTrustProviderType: Required[Union[str, "UserTrustProviderType"]]
+    """The type of the user trust provider. Only Microsoft Entra is supported, using the serialized
+     value ``entra``. Required. \"entra\""""
+    onUnauthenticatedRequest: Union[str, "OnUnauthenticatedRequest"]
+    """The action to take when a request is unauthenticated. When omitted, user sign-in policies
+     default to ``authenticate`` and JWT validation policies default to ``deny``. Known values are:
+     \"allow\", \"authenticate\", and \"deny\"."""
+    authenticationProperties: Required["AuthenticationProviderProperties"]
+    """The authentication provider configuration for the policy. Required."""
+    associatedResources: list[str]
+    """A collection of resource IDs that reference this authentication policy."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the authentication policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    resourceGuid: str
+    """The resource GUID property of the authentication policy resource."""
+
+
+class AuthenticationPolicyUpdateParameters(TypedDict, total=False):
+    """Parameters supplied to update an authentication policy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The user-assigned identity used by a user sign-in policy to access its Key
+     Vault client secret.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    identity: "ManagedServiceIdentity"
+    """The user-assigned identity used by a user sign-in policy to access its Key Vault client secret."""
+
+
+class AuthenticationProviderProperties(TypedDict, total=False):
+    """Properties for authentication provider configuration. A policy must configure either JWT
+    validation fields or user sign-in fields; the two configurations are mutually exclusive and
+    cannot be combined.
+
+    :ivar issuer: The absolute HTTPS URL of the Secure Token Service. Include a trailing slash at
+     the end of the value. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/. Required.
+    :vartype issuer: str
+    :ivar jwksUri: The JSON Web Key Set (JWKS) URI used to retrieve the public keys for JWT
+     validation. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/discovery/v2.0/keys.
+    :vartype jwksUri: str
+    :ivar audience: The intended audience for the JWT. Only a single audience value is supported in
+     this API version. Example: `https://audience.com/{application-id}
+     <https://audience.com/{application-id}>`_.
+    :vartype audience: str
+    :ivar clientId: The Application (client) ID for the related application registered in Microsoft
+     Entra ID, formatted as a GUID. Required.
+    :vartype clientId: str
+    :ivar clientSecret: The absolute HTTPS Key Vault secret URL identifying the client secret used
+     for authentication. This property is required for user sign-in policies. It holds only the Key
+     Vault reference; the secret value itself is never accepted or returned by this API and is read
+     from Key Vault at runtime using the resource's user-assigned identity. The secret value stored
+     in Key Vault can contain up to 4096 characters. Example:
+     `https://myvault.vault.azure.net/secrets/mysecret
+     <https://myvault.vault.azure.net/secrets/mysecret>`_.
+    :vartype clientSecret: str
+    :ivar scope: The scopes used by an application during authentication to authorize access to a
+     user's details. A maximum of 10 scopes is supported, each scope can contain up to 128
+     characters, and all scopes can contain up to 256 characters combined.
+    :vartype scope: list[str]
+    :ivar sessionTimeout: The timeout of the session cookie used for user authentication. The
+     service accepts and returns this value as a string containing a base-10 unsigned integer number
+     of seconds with no sign, decimal point, unit suffix, or whitespace (for example ``86400``). The
+     supported range is 1 to 604800 seconds, and the default is 86400 seconds. Applicable to the
+     Application Gateway post-OIDC workflow.
+    :vartype sessionTimeout: str
+    :ivar sessionCookieName: The name of the session cookie used for user authentication.
+     Applicable to the Application Gateway post-OIDC workflow.
+    :vartype sessionCookieName: str
+    """
+
+    issuer: Required[str]
+    """The absolute HTTPS URL of the Secure Token Service. Include a trailing slash at the end of the
+     value. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/. Required."""
+    jwksUri: str
+    """The JSON Web Key Set (JWKS) URI used to retrieve the public keys for JWT validation. Example:
+     `https://login.microsoftonline.com/{Microsoft <https://login.microsoftonline.com/{Microsoft>`_
+     Entra Tenant ID}/discovery/v2.0/keys."""
+    audience: str
+    """The intended audience for the JWT. Only a single audience value is supported in this API
+     version. Example: `https://audience.com/{application-id}
+     <https://audience.com/{application-id}>`_."""
+    clientId: Required[str]
+    """The Application (client) ID for the related application registered in Microsoft Entra ID,
+     formatted as a GUID. Required."""
+    clientSecret: str
+    """The absolute HTTPS Key Vault secret URL identifying the client secret used for authentication.
+     This property is required for user sign-in policies. It holds only the Key Vault reference; the
+     secret value itself is never accepted or returned by this API and is read from Key Vault at
+     runtime using the resource's user-assigned identity. The secret value stored in Key Vault can
+     contain up to 4096 characters. Example: `https://myvault.vault.azure.net/secrets/mysecret
+     <https://myvault.vault.azure.net/secrets/mysecret>`_."""
+    scope: list[str]
+    """The scopes used by an application during authentication to authorize access to a user's
+     details. A maximum of 10 scopes is supported, each scope can contain up to 128 characters, and
+     all scopes can contain up to 256 characters combined."""
+    sessionTimeout: str
+    """The timeout of the session cookie used for user authentication. The service accepts and returns
+     this value as a string containing a base-10 unsigned integer number of seconds with no sign,
+     decimal point, unit suffix, or whitespace (for example ``86400``). The supported range is 1 to
+     604800 seconds, and the default is 86400 seconds. Applicable to the Application Gateway
+     post-OIDC workflow."""
+    sessionCookieName: str
+    """The name of the session cookie used for user authentication. Applicable to the Application
+     Gateway post-OIDC workflow."""
 
 
 class AuthorizationPropertiesFormat(TypedDict, total=False):
@@ -3650,6 +4167,9 @@ class AzureFirewallPropertiesFormat(TypedDict, total=False):
     :vartype autoscaleConfiguration: "AzureFirewallAutoscaleConfiguration"
     :ivar afcConfiguration: AFC configuration for the Azure Firewall.
     :vartype afcConfiguration: "AfcConfiguration"
+    :ivar aiSecurityAddOn: Indicates whether the AI security add-on is enabled for the Azure
+     Firewall.
+    :vartype aiSecurityAddOn: bool
     """
 
     applicationRuleCollections: list["AzureFirewallApplicationRuleCollection"]
@@ -3683,6 +4203,8 @@ class AzureFirewallPropertiesFormat(TypedDict, total=False):
     """Properties to provide a custom autoscale configuration to this azure firewall."""
     afcConfiguration: "AfcConfiguration"
     """AFC configuration for the Azure Firewall."""
+    aiSecurityAddOn: bool
+    """Indicates whether the AI security add-on is enabled for the Azure Firewall."""
 
 
 class AzureFirewallPublicIPAddress(TypedDict, total=False):
@@ -3874,6 +4396,8 @@ class BastionHost(Resource):
     :vartype etag: str
     :ivar sku: The sku of this Bastion Host.
     :vartype sku: "Sku"
+    :ivar identity: The identity assigned to the Bastion Host resource.
+    :vartype identity: "ManagedServiceIdentity"
     """
 
     properties: "BastionHostPropertiesFormat"
@@ -3884,6 +4408,8 @@ class BastionHost(Resource):
     """A unique read-only string that changes whenever the resource is updated."""
     sku: "Sku"
     """The sku of this Bastion Host."""
+    identity: "ManagedServiceIdentity"
+    """The identity assigned to the Bastion Host resource."""
 
 
 class BastionHostIPConfiguration(SubResource):
@@ -3974,6 +4500,9 @@ class BastionHostPropertiesFormat(TypedDict, total=False):
     :ivar enablePrivateOnlyBastion: Enable/Disable Private Only feature of the Bastion Host
      resource.
     :vartype enablePrivateOnlyBastion: bool
+    :ivar sessionRecordingConfiguration: The storage account and identity to use for session
+     recording.
+    :vartype sessionRecordingConfiguration: "BastionSessionRecordingConfiguration"
     """
 
     ipConfigurations: list["BastionHostIPConfiguration"]
@@ -4004,6 +4533,8 @@ class BastionHostPropertiesFormat(TypedDict, total=False):
     """Enable/Disable Session Recording feature of the Bastion Host resource."""
     enablePrivateOnlyBastion: bool
     """Enable/Disable Private Only feature of the Bastion Host resource."""
+    sessionRecordingConfiguration: "BastionSessionRecordingConfiguration"
+    """The storage account and identity to use for session recording."""
 
 
 class BastionHostPropertiesFormatNetworkAcls(TypedDict, total=False):
@@ -4015,6 +4546,41 @@ class BastionHostPropertiesFormatNetworkAcls(TypedDict, total=False):
 
     ipRules: list["IPRule"]
     """Sets the IP ACL rules for Developer Bastion Host."""
+
+
+class BastionHostUpdate(TypedDict, total=False):
+    """Parameters supplied to update the Bastion Host identity or tags.
+
+    :ivar identity: The identity of the BastionHost, if configured.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The identity of the BastionHost, if configured."""
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class BastionSessionRecordingConfiguration(TypedDict, total=False):
+    """Bastion Session Recording Configuration.
+
+    :ivar identity: The identity to use for accessing the blob container where recordings will be
+     stored. Required.
+    :vartype identity: "SessionRecordingIdentity"
+    :ivar blobContainerUri: The blob container to store the recordings. Ex:
+     `https://contosostorage.blob.core.windows.net/contosorecordings
+     <https://contosostorage.blob.core.windows.net/contosorecordings>`_. Required.
+    :vartype blobContainerUri: str
+    """
+
+    identity: Required["SessionRecordingIdentity"]
+    """The identity to use for accessing the blob container where recordings will be stored. Required."""
+    blobContainerUri: Required[str]
+    """The blob container to store the recordings. Ex:
+     `https://contosostorage.blob.core.windows.net/contosorecordings
+     <https://contosostorage.blob.core.windows.net/contosorecordings>`_. Required."""
 
 
 class BastionShareableLink(TypedDict, total=False):
@@ -6481,6 +7047,9 @@ class ExpressRouteCircuitPropertiesFormat(TypedDict, total=False):
     :ivar expressRoutePort: The reference to the ExpressRoutePort resource when the circuit is
      provisioned on an ExpressRoutePort resource.
     :vartype expressRoutePort: "SubResource"
+    :ivar expressRouteLag: The reference to the ExpressRouteLag resource when the circuit is
+     provisioned on an ExpressRouteLag resource.
+    :vartype expressRouteLag: "SubResource"
     :ivar bandwidthInGbps: The bandwidth of the circuit when the circuit is provisioned on an
      ExpressRoutePort resource.
     :vartype bandwidthInGbps: float
@@ -6530,6 +7099,9 @@ class ExpressRouteCircuitPropertiesFormat(TypedDict, total=False):
     expressRoutePort: "SubResource"
     """The reference to the ExpressRoutePort resource when the circuit is provisioned on an
      ExpressRoutePort resource."""
+    expressRouteLag: "SubResource"
+    """The reference to the ExpressRouteLag resource when the circuit is provisioned on an
+     ExpressRouteLag resource."""
     bandwidthInGbps: float
     """The bandwidth of the circuit when the circuit is provisioned on an ExpressRoutePort resource."""
     stag: int
@@ -7023,7 +7595,7 @@ class ExpressRouteLag(Resource):
     """The identity of ExpressRouteLag, if configured."""
 
 
-class ExpressRouteLagLink(SubResource):
+class ExpressRouteLagLink(TypedDict, total=False):
     """ExpressRouteLagLink.
 
     :ivar properties: ExpressRouteLagLink properties.
@@ -7084,7 +7656,7 @@ class ExpressRouteLagLinkPropertiesFormat(TypedDict, total=False):
     """ExpressRouteLagMember Sub-Resources."""
 
 
-class ExpressRouteLagMember(SubResource):
+class ExpressRouteLagMember(TypedDict, total=False):
     """ExpressRouteLagMember.
 
     :ivar properties: ExpressRouteLagMember properties.
@@ -7169,6 +7741,9 @@ class ExpressRouteLagPropertiesFormat(TypedDict, total=False):
     :vartype etherType: str
     :ivar links: ExpressRouteLagLink Sub-Resources.
     :vartype links: list["ExpressRouteLagLink"]
+    :ivar circuits: Reference the ExpressRoute circuit(s) that are provisioned on this
+     ExpressRouteLag resource.
+    :vartype circuits: list["SubResource"]
     :ivar allocationDate: The date and time when the ExpressRouteLag was allocated.
     :vartype allocationDate: str
     :ivar provisioningState: The provisioning state of the express route LAG resource. Known values
@@ -7201,6 +7776,8 @@ class ExpressRouteLagPropertiesFormat(TypedDict, total=False):
     """Ether type of the LAG."""
     links: list["ExpressRouteLagLink"]
     """ExpressRouteLagLink Sub-Resources."""
+    circuits: list["SubResource"]
+    """Reference the ExpressRoute circuit(s) that are provisioned on this ExpressRouteLag resource."""
     allocationDate: str
     """The date and time when the ExpressRouteLag was allocated."""
     provisioningState: Union[str, "ProvisioningState"]
@@ -9018,9 +9595,8 @@ class HubVirtualNetworkConnectionProperties(TypedDict, total=False):
     :ivar routingConfiguration: The Routing Configuration indicating the associated and propagated
      route tables on this connection.
     :vartype routingConfiguration: "RoutingConfiguration"
-    :ivar enableOnlyIpv6Peering: Enable Only IPv6 Peering for this connection. Known values are:
-     "Enabled" and "Disabled".
-    :vartype enableOnlyIpv6Peering: Union[str, "EnableOnlyIpv6PeeringState"]
+    :ivar enableOnlyIPv6Peering: Enable Only IPv6 Peering for this connection.
+    :vartype enableOnlyIPv6Peering: bool
     :ivar provisioningState: The provisioning state of the hub virtual network connection resource.
      Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioningState: Union[str, "ProvisioningState"]
@@ -9039,8 +9615,8 @@ class HubVirtualNetworkConnectionProperties(TypedDict, total=False):
     routingConfiguration: "RoutingConfiguration"
     """The Routing Configuration indicating the associated and propagated route tables on this
      connection."""
-    enableOnlyIpv6Peering: Union[str, "EnableOnlyIpv6PeeringState"]
-    """Enable Only IPv6 Peering for this connection. Known values are: \"Enabled\" and \"Disabled\"."""
+    enableOnlyIPv6Peering: bool
+    """Enable Only IPv6 Peering for this connection."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the hub virtual network connection resource. Known values are:
      \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
@@ -9585,6 +10161,14 @@ class IpamPoolProperties(TypedDict, total=False):
     :ivar provisioningState: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar minAllocationSize: Minimum number of IP addresses required for allocations from this
+     IpamPool to be compliant. Must be less than or equal to the maximum allocation size. If not
+     specified or empty, no minimum is enforced.
+    :vartype minAllocationSize: str
+    :ivar maxAllocationSize: Maximum number of IP addresses allowed for allocations from this
+     IpamPool to be compliant. Must be greater than or equal to the minimum allocation size. If not
+     specified or empty, no maximum is enforced.
+    :vartype maxAllocationSize: str
     """
 
     description: str
@@ -9599,6 +10183,14 @@ class IpamPoolProperties(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
      \"Creating\", \"Updating\", and \"Deleting\"."""
+    minAllocationSize: str
+    """Minimum number of IP addresses required for allocations from this IpamPool to be compliant.
+     Must be less than or equal to the maximum allocation size. If not specified or empty, no
+     minimum is enforced."""
+    maxAllocationSize: str
+    """Maximum number of IP addresses allowed for allocations from this IpamPool to be compliant. Must
+     be greater than or equal to the minimum allocation size. If not specified or empty, no maximum
+     is enforced."""
 
 
 class IpamPoolUpdate(TypedDict, total=False):
@@ -9623,11 +10215,27 @@ class IpamPoolUpdateProperties(TypedDict, total=False):
     :vartype description: str
     :ivar displayName: String representing a friendly name for the resource.
     :vartype displayName: str
+    :ivar minAllocationSize: Minimum number of IP addresses required for allocations from this
+     IpamPool to be compliant. Must be less than or equal to the maximum allocation size. Omit to
+     leave the current value unchanged; set to an empty string to clear it.
+    :vartype minAllocationSize: str
+    :ivar maxAllocationSize: Maximum number of IP addresses allowed for allocations from this
+     IpamPool to be compliant. Must be greater than or equal to the minimum allocation size. Omit to
+     leave the current value unchanged; set to an empty string to clear it.
+    :vartype maxAllocationSize: str
     """
 
     description: str
     displayName: str
     """String representing a friendly name for the resource."""
+    minAllocationSize: str
+    """Minimum number of IP addresses required for allocations from this IpamPool to be compliant.
+     Must be less than or equal to the maximum allocation size. Omit to leave the current value
+     unchanged; set to an empty string to clear it."""
+    maxAllocationSize: str
+    """Maximum number of IP addresses allowed for allocations from this IpamPool to be compliant. Must
+     be greater than or equal to the minimum allocation size. Omit to leave the current value
+     unchanged; set to an empty string to clear it."""
 
 
 class IPConfiguration(SubResource):
@@ -10505,12 +11113,12 @@ class ManagedRuleSetRuleGroup(TypedDict, total=False):
     :ivar ruleGroupName: Name of the rule group. Required.
     :vartype ruleGroupName: str
     :ivar rules: List of rules within the rule group.
-    :vartype rules: list[str]
+    :vartype rules: list[int]
     """
 
     ruleGroupName: Required[str]
     """Name of the rule group. Required."""
-    rules: list[str]
+    rules: list[int]
     """List of rules within the rule group."""
 
 
@@ -10612,6 +11220,41 @@ class MatchVariable(TypedDict, total=False):
      \"PostArgs\", \"RequestUri\", \"RequestHeaders\", \"RequestBody\", and \"RequestCookies\"."""
     selector: str
     """The selector of match variable."""
+
+
+class MigrateExpressRouteCircuitRequest(TypedDict, total=False):
+    """Request model for express route circuit migration operations.
+
+    :ivar targetPeeringLocation: The target peering location for circuit migration.
+    :vartype targetPeeringLocation: str
+    :ivar targetPortMapping: The source-to-target port mappings for circuit migration.
+    :vartype targetPortMapping: list["PortMapping"]
+    :ivar portId: The port identifier used for shutDownBgp, migrate, restoreBgp, and rollback
+     operations.
+    :vartype portId: str
+    """
+
+    targetPeeringLocation: str
+    """The target peering location for circuit migration."""
+    targetPortMapping: list["PortMapping"]
+    """The source-to-target port mappings for circuit migration."""
+    portId: str
+    """The port identifier used for shutDownBgp, migrate, restoreBgp, and rollback operations."""
+
+
+class MigrateExpressRouteCircuitValidateAndHealthCheckRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Request model used by validate and health check circuit migration operations.
+
+    :ivar targetPeeringLocation: The target peering location for circuit migration. Required.
+    :vartype targetPeeringLocation: str
+    :ivar targetPortMapping: The source-to-target port mappings for circuit migration. Required.
+    :vartype targetPortMapping: list["PortMapping"]
+    """
+
+    targetPeeringLocation: Required[str]
+    """The target peering location for circuit migration. Required."""
+    targetPortMapping: Required[list["PortMapping"]]
+    """The source-to-target port mappings for circuit migration. Required."""
 
 
 class MigrateLoadBalancerToIpBasedRequest(TypedDict, total=False):
@@ -11640,6 +12283,12 @@ class NetworkRule(TypedDict, total=False):
     :vartype destinationFqdns: list[str]
     :ivar sourceKubeSelectorGroups: List of source Kubernetes Selector Groups for this rule.
     :vartype sourceKubeSelectorGroups: list[str]
+    :ivar sourceGeoLocations: List of source geographic location filters (ISO 3166-1 alpha-2
+     country codes, e.g. "US", "CA") for this rule.
+    :vartype sourceGeoLocations: list[str]
+    :ivar destinationGeoLocations: List of destination geographic location filters (ISO 3166-1
+     alpha-2 country codes, e.g. "US", "CA") for this rule.
+    :vartype destinationGeoLocations: list[str]
     :ivar ruleType: Rule Type. Required. NetworkRule.
     :vartype ruleType: Literal[FirewallPolicyRuleType.NETWORK_RULE]
     """
@@ -11664,6 +12313,12 @@ class NetworkRule(TypedDict, total=False):
     """List of destination FQDNs."""
     sourceKubeSelectorGroups: list[str]
     """List of source Kubernetes Selector Groups for this rule."""
+    sourceGeoLocations: list[str]
+    """List of source geographic location filters (ISO 3166-1 alpha-2 country codes, e.g. \"US\",
+     \"CA\") for this rule."""
+    destinationGeoLocations: list[str]
+    """List of destination geographic location filters (ISO 3166-1 alpha-2 country codes, e.g. \"US\",
+     \"CA\") for this rule."""
     ruleType: Required[Literal[FirewallPolicyRuleType.NETWORK_RULE]]
     """Rule Type. Required. NetworkRule."""
 
@@ -13385,6 +14040,21 @@ class PolicySettingsLogScrubbing(TypedDict, total=False):
     """The rules that are applied to the logs for scrubbing."""
 
 
+class PortMapping(TypedDict, total=False):
+    """A mapping between source and target ports for migration.
+
+    :ivar sourcePortId: The source port identifier. Required.
+    :vartype sourcePortId: str
+    :ivar targetPortId: The target port identifier. Required.
+    :vartype targetPortId: str
+    """
+
+    sourcePortId: Required[str]
+    """The source port identifier. Required."""
+    targetPortId: Required[str]
+    """The target port identifier. Required."""
+
+
 class PrepareNetworkPoliciesRequest(TypedDict, total=False):
     """Details of PrepareNetworkPolicies for Subnet.
 
@@ -13741,6 +14411,9 @@ class PrivateLinkServiceConnectionProperties(TypedDict, total=False):
     :ivar privateLinkServiceConnectionState: A collection of read-only information about the state
      of the connection to the remote resource.
     :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar approvalReference: A reference to an existing approved private endpoint whose connection
+     approval state should be inherited by this connection at creation time.
+    :vartype approvalReference: "ApprovalReference"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -13756,6 +14429,9 @@ class PrivateLinkServiceConnectionProperties(TypedDict, total=False):
      to 140 chars."""
     privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
     """A collection of read-only information about the state of the connection to the remote resource."""
+    approvalReference: "ApprovalReference"
+    """A reference to an existing approved private endpoint whose connection approval state should be
+     inherited by this connection at creation time."""
 
 
 class PrivateLinkServiceConnectionState(TypedDict, total=False):
@@ -16242,6 +16918,29 @@ class SessionIds(TypedDict, total=False):
     """List of session IDs."""
 
 
+class SessionRecordingIdentity(TypedDict, total=False):
+    """The identity to use for accessing the blob container where recordings will be stored.
+
+    :ivar type: The type of identity to use. Required. Known values are: "SystemAssigned" and
+     "UserAssigned".
+    :vartype type: Union[str, "SessionRecordingIdentityType"]
+    :ivar userAssignedIdentityId: User assigned identity to use for accessing blob container Uri.
+     Ex: /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identity type systemAssigned.
+    :vartype userAssignedIdentityId: str
+    """
+
+    type: Required[Union[str, "SessionRecordingIdentityType"]]
+    """The type of identity to use. Required. Known values are: \"SystemAssigned\" and
+     \"UserAssigned\"."""
+    userAssignedIdentityId: str
+    """User assigned identity to use for accessing blob container Uri. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identity type systemAssigned."""
+
+
 class SharedKeyProperties(TypedDict, total=False):
     """Parameters for SharedKey.
 
@@ -16468,31 +17167,6 @@ class StaticRoutesConfig(TypedDict, total=False):
     vnetLocalRouteOverrideCriteria: Union[str, "VnetLocalRouteOverrideCriteria"]
     """Parameter determining whether NVA in spoke vnet is bypassed for traffic with destination in
      spoke. Known values are: \"Contains\" and \"Equal\"."""
-
-
-class StopCircuitLinkFailoverTestParameterBody(TypedDict, total=False):
-    """StopCircuitLinkFailoverTestParameterBody.
-
-    :ivar stopParameters: Parameters supplied to stop the link failover simulation on the express
-     route circuit. Required.
-    :vartype stopParameters: "ExpressRouteLinkFailoverStopApiParameters"
-    """
-
-    stopParameters: Required["ExpressRouteLinkFailoverStopApiParameters"]
-    """Parameters supplied to stop the link failover simulation on the express route circuit.
-     Required."""
-
-
-class StopSiteFailoverTestParameterBody(TypedDict, total=False):
-    """StopSiteFailoverTestParameterBody.
-
-    :ivar stopParameters: Parameters supplied to stop the failover simulation on the express route
-     gateway. Required.
-    :vartype stopParameters: "ExpressRouteFailoverStopApiParameters"
-    """
-
-    stopParameters: Required["ExpressRouteFailoverStopApiParameters"]
-    """Parameters supplied to stop the failover simulation on the express route gateway. Required."""
 
 
 class StorageAccountSettings(TypedDict, total=False):
@@ -18033,15 +18707,18 @@ class VirtualNetworkGatewayIPConfigurationPropertiesFormat(TypedDict, total=Fals
 class VirtualNetworkGatewayMigrationParameters(TypedDict, total=False):
     """Virtual network gateway migration parameters.
 
-    :ivar migrationType: MigrationType for the virtual network gateway. Required.
-     "UpgradeDeploymentToStandardIP"
+    :ivar migrationType: MigrationType for the virtual network gateway. Required. Known values are:
+     "UpgradeDeploymentToStandardIP", "UpgradeGatewayToDualStack", and
+     "MigrateGatewayForPointToSiteProfile".
     :vartype migrationType: Union[str, "VirtualNetworkGatewayMigrationType"]
     :ivar resourceUrl: Resource url that needs to be passed in to migration.
     :vartype resourceUrl: str
     """
 
     migrationType: Required[Union[str, "VirtualNetworkGatewayMigrationType"]]
-    """MigrationType for the virtual network gateway. Required. \"UpgradeDeploymentToStandardIP\""""
+    """MigrationType for the virtual network gateway. Required. Known values are:
+     \"UpgradeDeploymentToStandardIP\", \"UpgradeGatewayToDualStack\", and
+     \"MigrateGatewayForPointToSiteProfile\"."""
     resourceUrl: str
     """Resource url that needs to be passed in to migration."""
 
@@ -20219,6 +20896,9 @@ class WebApplicationFirewallPolicyPropertiesFormat(TypedDict, total=False):  # p
      containers.
     :vartype applicationGatewayForContainers:
      list["ApplicationGatewayForContainersReferenceDefinition"]
+    :ivar tier: Tier of a web application firewall policy. Known values are: "Standard" and
+     "Basic".
+    :vartype tier: Union[str, "WebApplicationFirewallPolicyTier"]
     """
 
     policySettings: "PolicySettings"
@@ -20241,6 +20921,8 @@ class WebApplicationFirewallPolicyPropertiesFormat(TypedDict, total=False):  # p
     """A collection of references to application gateway path rules."""
     applicationGatewayForContainers: list["ApplicationGatewayForContainersReferenceDefinition"]
     """A collection of references to application gateway for containers."""
+    tier: Union[str, "WebApplicationFirewallPolicyTier"]
+    """Tier of a web application firewall policy. Known values are: \"Standard\" and \"Basic\"."""
 
 
 class WebApplicationFirewallScrubbingRules(TypedDict, total=False):

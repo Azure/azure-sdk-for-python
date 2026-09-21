@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -763,6 +763,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -783,6 +786,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -1007,6 +1013,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1027,6 +1036,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1577,6 +1589,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -2791,6 +2804,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "approvalReference": {"privateEndpointId": "str"},
                                                         "groupIds": ["str"],
                                                         "privateLinkServiceConnectionState": {
                                                             "actionsRequired": "str",
@@ -2995,7 +3009,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3008,7 +3022,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -3020,7 +3034,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3031,7 +3045,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3041,7 +3055,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3054,7 +3068,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -3066,7 +3080,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3078,7 +3092,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_list_ddos_protection_status(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3095,7 +3109,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                     {"sourceIpConfiguration": {"id": "str"}, "targetIpConfiguration": {"id": "str"}}
                 ]
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

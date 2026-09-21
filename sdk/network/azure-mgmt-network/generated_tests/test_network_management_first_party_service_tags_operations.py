@@ -24,7 +24,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
         response = self.client.first_party_service_tags.get(
             resource_group_name=resource_group.name,
             first_party_service_tag_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             first_party_service_tag_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
         response = self.client.first_party_service_tags.begin_delete(
             resource_group_name=resource_group.name,
             first_party_service_tag_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
     def test_first_party_service_tags_list(self, resource_group):
         response = self.client.first_party_service_tags.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestNetworkManagementFirstPartyServiceTagsOperations(AzureMgmtRecordedTest
     @recorded_by_proxy
     def test_first_party_service_tags_list_all(self, resource_group):
         response = self.client.first_party_service_tags.list_all(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
