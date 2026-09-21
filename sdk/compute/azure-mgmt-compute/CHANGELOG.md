@@ -1,6 +1,6 @@
 # Release History
 
-## 38.4.0 (2026-09-16)
+## 38.4.0 (2026-09-21)
 
 ### Features Added
 
