@@ -104,23 +104,66 @@ safe-outputs:
                 if line.strip() and not line.startswith(("#", "<!--"))
             ]
             return bool(lines) and all(
-                line.lower() not in {"-", "...", "todo", "tbd", "n/a"}
+                line.lower().strip(".* ") not in {
+                    "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
+                }
                 for line in lines
             ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
+
+        def cells(line):
+            return [cell.strip() for cell in re.split(r"(?<!\\)\|", line.strip("|"))]
 
         def table(text, header):
             lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
             columns = len(header)
-            def cells(line):
-                return [cell.strip() for cell in re.split(r"(?<!\\)\|", line.strip("|"))]
             return (
                 len(lines) >= 3
                 and cells(lines[0]) == header
                 and len(cells(lines[1])) == columns
                 and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells(lines[1]))
-                and all(len(cells(line)) == columns and all(substantive(cell) for cell in cells(line))
+                and all(len(cells(line)) == columns and all(
+                            substantive(cell) or (column == "Confidence" and cell.strip("\x60") == "N/A")
+                            for column, cell in zip(header, cells(line)))
                         for line in lines[2:])
             )
+
+        def package_name(value):
+            name = value.strip("\x60")
+            require(re.fullmatch(r"(?:sdk/[^/\s]+/)?azure-mgmt-[a-z0-9]+(?:-[a-z0-9]+)*", name),
+                    "Expected a management SDK package name.")
+            return name.rsplit("/", 1)[-1]
+
+        def attribution_packages(text):
+            if text == "**Breaking-change attribution:** No newly added or modified entries.":
+                return set()
+            groups = re.split(r"(?m)^\*\*Package: ([^|\n]+) \| Release: ([^\n]+)\*\*\s*\n", text)
+            require(len(groups) >= 4 and not groups[0].strip() and (len(groups) - 1) % 3 == 0,
+                    "Attribution requires package/release groups with populated evidence tables.")
+            packages = set()
+            for index in range(1, len(groups), 3):
+                package, release, evidence = groups[index:index + 3]
+                packages.add(package_name(package.strip()))
+                require(substantive(release), "Attribution release is missing or a placeholder; use unverified if unknown.")
+                evidence = evidence.strip()
+                if evidence.startswith("**Needs human review:** "):
+                    reason = evidence.removeprefix("**Needs human review:** ").strip()
+                    require(substantive(reason) and len(reason.split()) >= 3 and not reason.startswith("|"),
+                            "Incomplete collection requires a specific missing-evidence reason.")
+                else:
+                    require(table(evidence, ["Changelog entry", "Cause", "Evidence and explanation", "Confidence"]),
+                            "Attribution requires a populated four-column table or an explicit incomplete-collection reason.")
+            return packages
+
+        def validate_summary(text, attributed_packages):
+            require(table(text, ["Package", "Completed checks"]),
+                    "Review summary requires a Package / Completed checks table with at least one populated row.")
+            packages = set()
+            lines = [line.strip() for line in text.splitlines() if line.strip()]
+            for line in lines[2:]:
+                name = package_name(cells(line)[0])
+                require(name not in packages, "Review summary must list each package only once.")
+                packages.add(name)
+            require(attributed_packages <= packages, "Review summary is missing an attribution package.")
 
         def validate(payload):
             require(isinstance(payload, dict), "Expected an agent output object.")
@@ -163,8 +206,7 @@ safe-outputs:
                     "Findings must contain the findings table with evidence or **Findings:** None.")
             require(unverified == "**Unverified checks:** None." or table(unverified, ["Check", "Reason"]),
                     "Unverified checks must contain a populated table or **Unverified checks:** None.")
-            require(substantive(attribution), "Breaking-change attribution is empty or a placeholder.")
-            require(substantive(summary), "Review summary is empty or a placeholder.")
+            validate_summary(summary, attribution_packages(attribution))
 
         try:
             validate(json.loads(Path(os.environ["GH_AW_AGENT_OUTPUT"]).read_text(encoding="utf-8")))
@@ -389,11 +431,22 @@ or release in a table column. Use one row per introduced entry. Preserve multili
 and collection completed, write `**Breaking-change attribution:** No newly added or modified
 entries.` Do not merge attribution rows into the findings table.
 
-If collection is incomplete, identify the affected package or changelog under this attribution
-section as needing human review; do not imply that all introduced entries were checked. Do not
-add a separate attribution limitations table or repeat handoff reasons under unverified checks.
+If collection is incomplete and no entry rows can be produced for a package/release, retain its
+`**Package: azure-mgmt-example | Release: release heading**` group label (use `unverified` if the
+release is unknown), followed by `**Needs human review:**` and a specific missing-evidence reason.
+Name the affected changelog when known. Do not imply that all introduced entries were checked.
+Do not add a separate attribution limitations table or repeat handoff reasons under unverified checks.
 
-Finish with a brief `### Review summary` naming every affected package and the checks completed.
+Finish with `### Review summary` and a table with exactly these columns:
+
+| Package | Completed checks |
+| --- | --- |
+| azure-mgmt-example | Version consistency, client signature, and API-version drift |
+
+Use one row per affected management SDK package, naming the checks actually completed; do not
+copy the example checks without evidence. The publication gate validates this structure and
+cross-checks attribution package names against the summary, not factual completeness against
+the collected context. You must still include every `affectedPackages` entry from the context.
 
 ### Submit the complete body
 

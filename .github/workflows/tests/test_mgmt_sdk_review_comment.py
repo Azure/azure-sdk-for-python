@@ -16,6 +16,17 @@ GUARD = textwrap.dedent(
     SOURCE.split("python - <<'PY'")[2].split("\n        PY", 1)[0]
 )
 MARKER = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
+NO_ENTRIES = "**Breaking-change attribution:** No newly added or modified entries."
+SUMMARY = (
+    "| Package | Completed checks |\n| --- | --- |\n"
+    "| azure-mgmt-example | Version consistency, client signature, README, and API-version drift |"
+)
+ATTRIBUTION = (
+    "**Package: azure-mgmt-example | Release: 1.0.0**\n\n"
+    "| Changelog entry | Cause | Evidence and explanation | Confidence |\n"
+    "| --- | --- | --- | --- |\n"
+    "| Removed Widget | Human review | Needs human review: baseline unavailable | N/A |"
+)
 REVIEW = (
     MARKER + "\n\n## Management SDK PR review\n\n"
     "**Findings:** None.\n\n"
@@ -23,7 +34,7 @@ REVIEW = (
     "### Breaking-change attribution\n\n"
     "**Breaking-change attribution:** No newly added or modified entries.\n\n"
     "### Review summary\n\n"
-    "Reviewed azure-mgmt-example: version consistency, client signature, README, and API-version drift.\n"
+    + SUMMARY + "\n"
 )
 NOT_APPLICABLE = (
     MARKER + "\n## Management SDK review not applicable\n\n"
@@ -74,10 +85,7 @@ class ReviewCommentTests(unittest.TestCase):
             "| Check | Reason |\n| --- | --- |\n| README | File was truncated |",
         ).replace(
             "**Breaking-change attribution:** No newly added or modified entries.",
-            "**Package: azure-mgmt-example | Release: 1.0.0**\n\n"
-            "| Changelog entry | Cause | Evidence and explanation | Confidence |\n"
-            "| --- | --- | --- | --- |\n"
-            "| Removed Widget | Human review | Needs human review: baseline unavailable | N/A |",
+            ATTRIBUTION,
         )
         self.run_guard({"items": [{"type": "add_comment", "body": body}]})
 
@@ -96,7 +104,7 @@ class ReviewCommentTests(unittest.TestCase):
             "**Findings:** None.",
             "**Unverified checks:** None.",
             "**Breaking-change attribution:** No newly added or modified entries.",
-            "Reviewed azure-mgmt-example: version consistency, client signature, README, and API-version drift.",
+            SUMMARY,
         ):
             with self.subTest(content=content):
                 self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(content, "-")}]})
@@ -113,6 +121,58 @@ class ReviewCommentTests(unittest.TestCase):
         for body in bodies:
             with self.subTest(body=body):
                 self.assert_rejected({"items": [{"type": "add_comment", "body": body}]})
+
+    def test_diagnostic_attribution_and_summary_are_rejected(self):
+        for placeholder in ("Full review pending", "None.", "**None.**", "Review pending", "TBD"):
+            for section in (NO_ENTRIES, SUMMARY):
+                with self.subTest(placeholder=placeholder, section=section):
+                    self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(section, placeholder)}]})
+
+    def test_attribution_requires_package_release_and_populated_table(self):
+        for attribution in (
+            "**Package: azure-mgmt-example | Release: 1.0.0**",
+            ATTRIBUTION.rsplit("\n", 1)[0],
+            ATTRIBUTION.replace("**Package: azure-mgmt-example | Release: 1.0.0**\n\n", ""),
+            ATTRIBUTION.replace("Release: 1.0.0", "Release: None."),
+            ATTRIBUTION.replace("Needs human review: baseline unavailable", "Full review pending"),
+            ATTRIBUTION.replace("Removed Widget", ""),
+            ATTRIBUTION.replace("Evidence and explanation", "Evidence"),
+        ):
+            with self.subTest(attribution=attribution):
+                self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, attribution)}]})
+
+    def test_summary_requires_package_names_and_completed_checks(self):
+        for summary in (
+            SUMMARY.rsplit("\n", 1)[0],
+            SUMMARY.replace("azure-mgmt-example", "example"),
+            SUMMARY.replace("azure-mgmt-example", ""),
+            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "None."),
+            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "Full review pending"),
+            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", ""),
+            SUMMARY.replace("Version consistency, client signature, README, and API-version drift", "Done"),
+            SUMMARY + "\n" + SUMMARY.splitlines()[-1],
+        ):
+            with self.subTest(summary=summary):
+                self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(SUMMARY, summary)}]})
+
+    def test_multi_package_review_and_incomplete_collection(self):
+        handoff = (
+            "**Package: azure-mgmt-another | Release: unverified**\n\n"
+            "**Needs human review:** Changelog collection was truncated before the release heading."
+        )
+        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION + "\n\n" + handoff).replace(
+            SUMMARY, SUMMARY + "\n| `sdk/another/azure-mgmt-another` | API-version drift and README signatures |"
+        )
+        self.run_guard({"items": [{"type": "add_comment", "body": body}]})
+        self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, handoff)}]})
+        handoff = handoff.replace("azure-mgmt-another", "azure-mgmt-example")
+        limited_review = REVIEW.replace(NO_ENTRIES, handoff).replace(
+            "Version consistency, client signature, README, and API-version drift", "README"
+        )
+        self.run_guard({"items": [{"type": "add_comment", "body": limited_review}]})
+        for reason in ("None.", "Full review pending", "", "| Header | Reason |"):
+            invalid = handoff.split("**Needs human review:**", 1)[0] + "**Needs human review:** " + reason
+            self.assert_rejected({"items": [{"type": "add_comment", "body": REVIEW.replace(NO_ENTRIES, invalid)}]})
 
     def test_missing_multiple_and_diagnostic_outputs_are_rejected(self):
         comment = {"type": "add_comment", "body": REVIEW}
@@ -173,9 +233,9 @@ class ReviewCommentTests(unittest.TestCase):
             + "\nhttps://github.com/Azure/example/blob/" + "b" * 40 + "/@renamedFrom.tsp#L1"
             + '\nQuoted "text", escaped \\ path, and Markdown | delimiters.'
         )
-        body = REVIEW.replace(
-            "**Breaking-change attribution:** No newly added or modified entries.", evidence
-        )
+        body = REVIEW.replace(NO_ENTRIES, ATTRIBUTION.replace(
+            "Needs human review: baseline unavailable", evidence.replace("\n", "<br>").replace("|", "\\|")
+        ))
         result = subprocess.run(
             [jq, "-Rs", command[1]], input=body, text=True, capture_output=True, check=True
         )
