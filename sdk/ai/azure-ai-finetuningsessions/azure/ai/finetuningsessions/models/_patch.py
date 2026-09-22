@@ -117,10 +117,10 @@ class SampleOperationResult(_models.SampleOperationResult, discriminator="sample
     rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
     """
 
-    prompt_logprobs: Optional[list[Optional[float]]] = rest_field(
+    prompt_logprobs: Optional[list[Optional[float]]] = rest_field(  # type: ignore[assignment]
         visibility=["read", "create", "update", "delete", "query"]
     )
-    topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = rest_field(
+    topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = rest_field(  # type: ignore[assignment]
         visibility=["read", "create", "update", "delete", "query"]
     )
 

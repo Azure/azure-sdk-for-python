@@ -409,7 +409,7 @@ def _classify_http_error(
     if status_code == 429:
         reason = body.get("reason") or "rate_limited"
         msg = body.get("message") or body.get("detail") or "Rate limited"
-        retry_after: Optional[float] = None
+        retry_after = None
         if body.get("retry_after_sec") is not None:
             try:
                 retry_after = float(body["retry_after_sec"])

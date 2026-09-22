@@ -94,6 +94,7 @@ def _prepare_client_options(
         if isinstance(credential, AzureKeyCredential):
             kwargs["authentication_policy"] = AzureKeyCredentialPolicy(credential, name="api-key")
         else:
+            policy_cls: Any
             if asynchronous:
                 policy_cls = (
                     _InsecureAsyncBearerTokenCredentialPolicy
@@ -124,7 +125,7 @@ def _patch_configuration(module: Any, *, asynchronous: bool = False) -> None:
     if getattr(generated, "_preview_configuration", False):
         return
 
-    class FineTuningSessionClientConfiguration(generated):
+    class FineTuningSessionClientConfiguration(generated):  # type: ignore[misc,valid-type]
         _preview_configuration = True
 
         def __init__(self, endpoint: str, credential: Any, *, allow_insecure_http: bool = False, **kwargs: Any) -> None:

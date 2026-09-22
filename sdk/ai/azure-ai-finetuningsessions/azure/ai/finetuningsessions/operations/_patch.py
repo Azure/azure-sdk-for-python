@@ -23,7 +23,7 @@ class SessionsOperations(_generated.SessionsOperations):
     @overload
     def begin_create(
         self,
-        body: _models.CreateSessionRequest,
+        session: _models.CreateSessionRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -33,7 +33,7 @@ class SessionsOperations(_generated.SessionsOperations):
     @overload
     def begin_create(
         self,
-        body: JSON,
+        session: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -43,7 +43,7 @@ class SessionsOperations(_generated.SessionsOperations):
     @overload
     def begin_create(
         self,
-        body: IO[bytes],
+        session: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -54,7 +54,7 @@ class SessionsOperations(_generated.SessionsOperations):
     @distributed_trace
     def begin_create(
         self,
-        body: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
+        session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -65,13 +65,13 @@ class SessionsOperations(_generated.SessionsOperations):
             _generated.build_sessions_create_request,
             dict(foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            session,
         )
 
     @distributed_trace
     def create(
         self,
-        body: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
+        session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -83,7 +83,7 @@ class SessionsOperations(_generated.SessionsOperations):
             dict(foundry_features=foundry_features, api_version=api_version),
             None,
             kwargs,
-            body,
+            session,
         )
 
     @distributed_trace
@@ -160,7 +160,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_forward_backward(
         self,
         session_id: str,
-        body: _models.ForwardBackwardRequest,
+        request: _models.ForwardBackwardRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -171,7 +171,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_forward_backward(
         self,
         session_id: str,
-        body: JSON,
+        request: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -182,7 +182,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_forward_backward(
         self,
         session_id: str,
-        body: IO[bytes],
+        request: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -194,7 +194,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_forward_backward(
         self,
         session_id: str,
-        body: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
+        request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -205,14 +205,14 @@ class TrainingOperations(_generated.TrainingOperations):
             _generated.build_training_forward_backward_request,
             dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            request,
         )
 
     @overload
     def begin_optim_step(
         self,
         session_id: str,
-        body: _models.OptimStepRequest,
+        request: _models.OptimStepRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -223,7 +223,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_optim_step(
         self,
         session_id: str,
-        body: JSON,
+        request: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -234,7 +234,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_optim_step(
         self,
         session_id: str,
-        body: IO[bytes],
+        request: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -246,7 +246,7 @@ class TrainingOperations(_generated.TrainingOperations):
     def begin_optim_step(
         self,
         session_id: str,
-        body: Union[_models.OptimStepRequest, JSON, IO[bytes]],
+        request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -257,7 +257,7 @@ class TrainingOperations(_generated.TrainingOperations):
             _generated.build_training_optim_step_request,
             dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            request,
         )
 
 
@@ -266,7 +266,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save(
         self,
         session_id: str,
-        body: _models.SaveCheckpointRequest,
+        checkpoint: _models.SaveCheckpointRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -277,7 +277,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save(
         self,
         session_id: str,
-        body: JSON,
+        checkpoint: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -288,7 +288,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save(
         self,
         session_id: str,
-        body: IO[bytes],
+        checkpoint: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -300,7 +300,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save(
         self,
         session_id: str,
-        body: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
+        checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -311,14 +311,14 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
             _generated.build_checkpoints_save_request,
             dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            checkpoint,
         )
 
     @overload
     def begin_save_sampler_weights(
         self,
         session_id: str,
-        body: _models.SaveSamplerWeightsRequest,
+        checkpoint: _models.SaveSamplerWeightsRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -329,7 +329,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save_sampler_weights(
         self,
         session_id: str,
-        body: JSON,
+        checkpoint: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -340,7 +340,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save_sampler_weights(
         self,
         session_id: str,
-        body: IO[bytes],
+        checkpoint: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -352,7 +352,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     def begin_save_sampler_weights(
         self,
         session_id: str,
-        body: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
+        checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -363,7 +363,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
             _generated.build_checkpoints_save_sampler_weights_request,
             dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            checkpoint,
         )
 
     @distributed_trace
@@ -412,7 +412,7 @@ class SamplingOperations(_generated.SamplingOperations):
     def begin_sample(
         self,
         session_id: str,
-        body: _models.SampleRequest,
+        sample: _models.SampleRequest,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -423,7 +423,7 @@ class SamplingOperations(_generated.SamplingOperations):
     def begin_sample(
         self,
         session_id: str,
-        body: JSON,
+        sample: JSON,
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -434,7 +434,7 @@ class SamplingOperations(_generated.SamplingOperations):
     def begin_sample(
         self,
         session_id: str,
-        body: IO[bytes],
+        sample: IO[bytes],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -446,7 +446,7 @@ class SamplingOperations(_generated.SamplingOperations):
     def begin_sample(
         self,
         session_id: str,
-        body: Union[_models.SampleRequest, JSON, IO[bytes]],
+        sample: Union[_models.SampleRequest, JSON, IO[bytes]],
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         api_version: str,
@@ -457,7 +457,7 @@ class SamplingOperations(_generated.SamplingOperations):
             _build_sampling_request,
             dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
             kwargs,
-            body,
+            sample,
         )
 
 

@@ -2,7 +2,9 @@
   "ignoreWords": [
     "finetuning", "finetuningsessions", "logprobs", "lora", "LoRA", "multimodal", "sampler",
     "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
-    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized"
+    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
+    "TCGC", "pygen", "falsey", "AICLIENT", "skyrl", "rhno", "ungated", "dedups",
+    "gethostbyaddr", "aabbccdd"
   ],
   "ignorePaths": ["tests/**", "*.json"]
 }
