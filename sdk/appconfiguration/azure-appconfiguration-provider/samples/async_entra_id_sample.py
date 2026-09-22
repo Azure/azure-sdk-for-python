@@ -5,22 +5,17 @@
 # -------------------------------------------------------------------------
 import os
 import asyncio
-from sample_utilities import get_authority, get_credential, get_client_modifications
-from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 
 
 async def main():
     endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
-    authority = get_authority(endpoint)
-    credential = get_credential(authority, is_async=True)
-    kwargs = get_client_modifications()
 
     # [START create_provider_entra_id_async]
     from azure.appconfiguration.provider.aio import load
 
     # Connecting to Azure App Configuration using Entra ID
-    config = await load(endpoint=endpoint, credential=credential, **kwargs)
+    config = await load(endpoint=endpoint, credential=credential)
     print(config["message"])
 
     await credential.close()
@@ -30,7 +25,7 @@ async def main():
     # [START trim_prefixes_entra_id_async]
     # Connecting to Azure App Configuration using Entra ID and trim key prefixes
     trimmed = ["test."]
-    config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
+    config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
     # [END trim_prefixes_entra_id_async]
 
     print(config["message"])
@@ -40,7 +35,7 @@ async def main():
 
     # Connection to Azure App Configuration using SettingSelector
     selects = [SettingSelector(key_filter="message*")]
-    config = await load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
+    config = await load(endpoint=endpoint, credential=credential, selects=selects)
 
     print("message found: " + str("message" in config))
     print("test.message found: " + str("test.message" in config))

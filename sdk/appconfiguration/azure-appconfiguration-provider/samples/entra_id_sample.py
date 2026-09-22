@@ -4,13 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import os
-from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration.provider import load, SettingSelector
-
-endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
-authority = get_authority(endpoint)
-credential = get_credential(authority)
-kwargs = get_client_modifications()
 
 # [START create_provider_entra_id]
 import os
@@ -21,7 +15,7 @@ endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using Entra ID
-config = load(endpoint=endpoint, credential=credential, **kwargs)
+config = load(endpoint=endpoint, credential=credential)
 # [END create_provider_entra_id]
 
 print(config["message"])
@@ -31,7 +25,7 @@ from azure.appconfiguration.provider import load
 
 # Connecting to Azure App Configuration using Entra ID and trim key prefixes
 trimmed = ["test."]
-config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
+config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
 # [END trim_prefixes_entra_id]
 
 print(config["message"])
@@ -60,27 +54,27 @@ from azure.appconfiguration.provider import load, SettingSelector
 
 # Filtering by tags
 selects = [SettingSelector(key_filter="*", tag_filters=["env=prod"])]
-config = load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
+config = load(endpoint=endpoint, credential=credential, selects=selects)
 # [END tag_filters]
 
 # [START geo_replication_disable_discovery]
 from azure.appconfiguration.provider import load
 
 # Disabling replica discovery
-config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False, **kwargs)
+config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False)
 # [END geo_replication_disable_discovery]
 
 # [START geo_replication_load_balancing]
 from azure.appconfiguration.provider import load
 
 # Enabling load balancing across replicas
-config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True, **kwargs)
+config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True)
 # [END geo_replication_load_balancing]
 
 # [START feature_flag_loading]
 from azure.appconfiguration.provider import load
 
-config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
+config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True)
 feature_flags = config["feature_management"]["feature_flags"]
 alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
@@ -105,7 +99,7 @@ print(alpha["enabled"])
 from azure.appconfiguration.provider import load
 
 # Settings with JSON content type are automatically deserialized
-config = load(endpoint=endpoint, credential=credential, **kwargs)
+config = load(endpoint=endpoint, credential=credential)
 app_config = config["app/config"]  # Returns a dict if the value is JSON
 print(app_config["timeout"])
 # [END json_content_type]
@@ -119,11 +113,11 @@ def my_mapper(setting):
     setting.value = setting.value.strip()
 
 
-config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
+config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper)
 # [END configuration_mapper]
 
 # [START startup_timeout]
 from azure.appconfiguration.provider import load
 
-config = load(endpoint=endpoint, credential=credential, startup_timeout=200, **kwargs)
+config = load(endpoint=endpoint, credential=credential, startup_timeout=200)
 # [END startup_timeout]
