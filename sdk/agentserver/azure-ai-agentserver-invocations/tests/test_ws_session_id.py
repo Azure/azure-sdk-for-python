@@ -99,3 +99,18 @@ def test_ws_session_id_uses_foundry_env_var(caplog, monkeypatch):
 
     session_ids = _session_ids_from_records(caplog.records)
     assert session_ids == ["platform-session-abc"] * 3
+
+
+def test_ws_session_id_replaces_invalid_foundry_env_var(caplog, monkeypatch):
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "private session sentinel")
+    app = _make_echo_ws_app()
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with TestClient(app).websocket_connect("/invocations_ws") as ws:
+            ws.send_text("ping")
+            ws.receive_text()
+
+    session_ids = _session_ids_from_records(caplog.records)
+    assert len(session_ids) == 1
+    uuid.UUID(session_ids[0])
+    assert "private session sentinel" not in caplog.text

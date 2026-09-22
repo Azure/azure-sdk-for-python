@@ -9,9 +9,7 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 import contextvars
 import inspect
 import logging
-import re
 import threading
-import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
@@ -38,7 +36,12 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 from azure.ai.agentserver.core._tracing import _BAGGAGE_SESSION_ID
 
 from ._constants import InvocationConstants
-from ._invocation_ws import _WSHandlerMixin
+from ._invocation_ws import (  # pylint: disable=unused-import
+    _MAX_ID_LENGTH,
+    _WSHandlerMixin,
+    _sanitize_id,
+    uuid,
+)
 from ._sse import _with_keep_alive
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -89,11 +92,6 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
         return _ERROR_SOURCE_PLATFORM, detail
     return _ERROR_SOURCE_UPSTREAM, None
 
-# Maximum length and allowed characters for user-provided IDs (defense in depth).
-_MAX_ID_LENGTH = 256
-_VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
-
-
 # Context variables for structured logging — concurrency-safe alternative to logger filters.
 _invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("invocation_id", default="")
 _session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("session_id", default="")
@@ -127,26 +125,6 @@ def _ensure_log_filter() -> None:
             return
         logger.addFilter(_InvocationLogFilter())
         _log_filter_installed = True
-
-
-def _sanitize_id(value: str, fallback: str | None = None) -> str:
-    """Validate a user-provided ID string.
-
-    Returns *value* unchanged when it passes validation, otherwise uses
-    *fallback* or generates a UUID when it is omitted. This prevents malformed IDs from
-    propagating into headers, span attributes, and log messages.
-
-    :param value: The raw ID from a header or query parameter.
-    :type value: str
-    :param fallback: A safe fallback value, or ``None`` to generate a UUID only
-        when *value* fails validation.
-    :type fallback: str | None
-    :return: The validated ID or the fallback.
-    :rtype: str
-    """
-    if not value or len(value) > _MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
-        return fallback if fallback is not None else str(uuid.uuid4())
-    return value
 
 
 def _platform_context_from_request(

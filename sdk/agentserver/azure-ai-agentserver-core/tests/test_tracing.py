@@ -132,6 +132,25 @@ def test_trace_context_middleware_propagates_process_control_exceptions() -> Non
             asyncio.run(middleware(scope, None, None))
 
 
+def test_trace_context_middleware_logs_fail_open_propagation_failure(caplog) -> None:
+    called = False
+
+    async def app(_scope, _receive, _send):
+        nonlocal called
+        called = True
+
+    scope = {"type": "websocket", "headers": []}
+    middleware = TraceContextMiddleware(app)
+
+    with caplog.at_level("DEBUG", logger="azure.ai.agentserver"):
+        with mock.patch("opentelemetry.propagate.extract", side_effect=RuntimeError("private-value")):
+            asyncio.run(middleware(scope, None, None))
+
+    assert called is True
+    assert "Failed to propagate incoming trace context" in caplog.text
+    assert "private-value" not in caplog.text
+
+
 # ------------------------------------------------------------------ #
 # Tracing enabled / disabled
 # ------------------------------------------------------------------ #

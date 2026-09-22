@@ -527,6 +527,18 @@ def test_voice_upgrade_ignores_context_attachment_failure(monkeypatch):
         assert websocket.receive_json()["type"] == "session.ready"
 
 
+def test_voice_session_baggage_propagates_process_control_exception(monkeypatch):
+    def fail_baggage(*_args, **_kwargs):
+        raise SystemExit
+
+    monkeypatch.setattr(voice_host_module, "_websocket_session_context", fail_baggage)
+    app = VoiceAgentServerHost(configure_observability=None)
+    websocket = _websocket_with_headers([])
+
+    with pytest.raises(SystemExit):
+        asyncio.run(app._ws_endpoint(websocket))  # pylint: disable=protected-access
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("inbound", "expected_code"),

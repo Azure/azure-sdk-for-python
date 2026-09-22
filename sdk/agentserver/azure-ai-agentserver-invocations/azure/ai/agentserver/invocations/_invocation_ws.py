@@ -23,6 +23,7 @@ the user handler with:
 
 import inspect
 import logging
+import re
 import time
 import uuid
 from collections.abc import Awaitable, Callable
@@ -59,6 +60,23 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
+_MAX_ID_LENGTH = 256
+_VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
+
+
+def _sanitize_id(value: str, fallback: str | None = None) -> str:
+    """Validate an invocation protocol identifier.
+
+    :param value: The raw identifier.
+    :type value: str
+    :param fallback: A safe fallback, or ``None`` to generate a UUID.
+    :type fallback: str or None
+    :return: The validated identifier or fallback.
+    :rtype: str
+    """
+    if not value or len(value) > _MAX_ID_LENGTH or not _VALID_ID_RE.match(value):
+        return fallback if fallback is not None else str(uuid.uuid4())
+    return value
 
 
 def _websocket_session_context(session_id: str, *, context: Any = None) -> Any:
@@ -234,7 +252,7 @@ class _WSHandlerMixin(_MixinBase):
         # not inject one.  Matches the precedence used by the HTTP
         # ``POST /invocations`` endpoint (minus the query-param override,
         # which has no equivalent ergonomic on a long-lived WS connection).
-        session_id = self.config.session_id or str(uuid.uuid4())
+        session_id = _sanitize_id(self.config.session_id or "")
         start_ns = time.monotonic_ns()
 
         # Preserve caller baggage extracted by TraceContextMiddleware and add

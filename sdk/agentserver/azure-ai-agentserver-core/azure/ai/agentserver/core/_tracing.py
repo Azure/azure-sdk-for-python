@@ -548,6 +548,7 @@ class TraceContextMiddleware:
 
             token = _otel_context.attach(ctx)
         except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Failed to propagate incoming trace context")
             await self.app(scope, receive, send)
             return
 
