@@ -542,15 +542,15 @@ the custom poller if a new public API has been added. The custom poller should a
 
 
 [rest_api_guidelines_lro]: https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#long-running-operations--jobs
-[operation_resource_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L178
-[location_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L277
-[status_check_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L325
+[operation_resource_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L311
+[location_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L456
+[status_check_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L538
 [lro_poller]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.LROPoller
-[lro_base_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L357
-[long_running_operation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L121-L161
+[lro_base_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L896
+[long_running_operation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/base_polling.py#L228-L310
 [polling_method]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.PollingMethod
 [async_polling_method]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.AsyncPollingMethod
 [async_lro_poller]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.AsyncLROPoller
-[async_lro_base_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/async_base_polling.py#L40
+[async_lro_base_polling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/polling/async_base_polling.py#L58
 [no_polling]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.NoPolling
 [async_no_polling]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.polling.html#azure.core.polling.AsyncNoPolling

@@ -22,6 +22,8 @@ Alternatively, install it globally:
 npm install -g @chronus/chronus
 ```
 
+> **Tip:** You can also use the `azpysdk changelog` wrapper (from the [`azpysdk` CLI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)), which automatically installs the pinned Chronus version and resolves package names for you: `azpysdk changelog add`, `azpysdk changelog verify`, `azpysdk changelog create`, and `azpysdk changelog status` map to the `npx chronus` commands described below.
+
 ## Adding a Change Description
 
 When you make changes to a package that has a `pyproject.toml`, run `chronus add` from the root of the repository:

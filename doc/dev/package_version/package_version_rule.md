@@ -9,11 +9,11 @@ The package version contains two parts:
 
 If Python SDK contains preview api-version (like "2020-01-01-preview"), its version is preview; Otherwise, it should be stable.
 
-(1) For single-api package(for example: [confidentialledger](https://github.com/azure-sdk/azure-sdk-for-python/blob/a56c4b44911e173a89cb051aefc588e189e42654/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L39)),
+(1) For single-api package(for example: [confidentialledger](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L51)),
  as long as it contains preview api-version, the package version should be preview
 
-(2) For multi-api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)),
-there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of network](https://github.com/Azure/azure-sdk-for-python/blob/0b3fb9ef0bee54f23beb7a4913faaaef5be90d9b/sdk/network/azure-mgmt-network/azure/mgmt/network/_network_management_client.py#L57)).
+(2) For multi-api package(for example: [kubernetesconfiguration](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/kubernetesconfiguration/azure-mgmt-kubernetesconfiguration)),
+there will be `DEFAULT_API_VERSION`(for example: [`DEFAULT_API_VERSION` of kubernetesconfiguration](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/kubernetesconfiguration/azure-mgmt-kubernetesconfiguration/azure/mgmt/kubernetesconfiguration/_source_control_configuration_client.py#L56)).
 As long as it is preview, then the package version is preview.
 
 (note2: preview package version contains `b`, for example: `1.0.0b1`)
