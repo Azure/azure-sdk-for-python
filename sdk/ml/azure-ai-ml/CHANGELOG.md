@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed registry-backed `MLClient` sending online endpoint/deployment calls to the registry's resource group instead of the workspace's, causing `ResourceNotFound` for cross-resource-group workspaces.
 
 ## 1.35.0 (2026-09-08)
 
