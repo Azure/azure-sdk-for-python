@@ -24,7 +24,7 @@
   - Added model `SecretsProvisioningComponent`
   - Added enum `SecretsProvisioningComponentName`
   - Added model `SecretsProvisioningSettings`
-  - Model `GalleryImageVersionsOperations` added parameter `bypass_soft_delete` in method `begin_delete`
+  - Operation group `GalleryImageVersionsOperations` added parameter `bypass_soft_delete` in method `begin_delete`
 
 ## 38.3.0 (2026-08-12)
 
