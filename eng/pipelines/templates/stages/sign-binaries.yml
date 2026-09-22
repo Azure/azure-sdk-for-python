@@ -278,3 +278,71 @@ stages:
             parameters:
               ArtifactPath: '$(Build.ArtifactStagingDirectory)/signed'
               ArtifactName: 'packages_${{ parameters.Artifact.safeName }}_signed'
+
+      # Smoke_macOS and Smoke_Windows are the only jobs in this stage that actually run on the
+      # signed wheel's real target OS. Everything upstream (extract/sign/repackage/Assemble)
+      # runs on Linux and never installs or imports the signed binary, so a binary corrupted by
+      # signing, or a repackaging bug that swaps in the wrong file, would otherwise only be
+      # discovered after release. These jobs install the signed wheel produced by Sign_macOS /
+      # Sign_Windows and import its compiled extension module(s); they intentionally do not
+      # rerun the package's full test suite, which already runs against the unsigned wheel on
+      # the same OS during Build_<platform>.
+      - job: Smoke_macOS
+        displayName: Smoke test signed macOS wheel
+        dependsOn:
+          - ResolveTargeting
+          - Sign_macOS
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(MACPOOL)
+          vmImage: $(MACVMIMAGE)
+          os: macOS
+        steps:
+          # The default sparse checkout always includes /eng, which is all this job needs.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(PythonVersion)"
+            inputs:
+              versionSpec: $(PythonVersion)
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed mac wheel
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_mac_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/mac_signed
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/smoke_test_signed_wheel.py `
+                --wheel-dir "$(Build.ArtifactStagingDirectory)/mac_signed"
+            displayName: Install and import signed mac wheel
+
+      - job: Smoke_Windows
+        displayName: Smoke test signed Windows wheel
+        dependsOn:
+          - ResolveTargeting
+          - Sign_Windows
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
+        pool:
+          name: $(WINDOWSPOOL)
+          image: $(WINDOWSVMIMAGE)
+          os: windows
+        steps:
+          # The default sparse checkout always includes /eng, which is all this job needs.
+          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+          - task: UsePythonVersion@0
+            displayName: "Use Python $(PythonVersion)"
+            inputs:
+              versionSpec: $(PythonVersion)
+
+          - task: DownloadPipelineArtifact@2
+            displayName: Download signed windows wheel
+            inputs:
+              artifactName: packages_${{ parameters.Artifact.safeName }}_win_signed
+              targetPath: $(Build.ArtifactStagingDirectory)/win_signed
+
+          - pwsh: |
+              python eng/scripts/wheel_signing/smoke_test_signed_wheel.py `
+                --wheel-dir "$(Build.ArtifactStagingDirectory)/win_signed"
+            displayName: Install and import signed windows wheel

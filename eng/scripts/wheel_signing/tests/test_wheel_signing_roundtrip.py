@@ -241,3 +241,59 @@ def test_mac_round_trip_only_collects_mac_suffixes(tmp_path, monkeypatch):
     assert rebuilt["pkg/__init__.py"] == b"# not signable"
 
     _assert_record_matches_contents(rebuilt, "pkg-1.0.0.dist-info")
+
+
+def test_repackage_rejects_noop_signing(tmp_path, monkeypatch):
+    """If the "signed" payload comes back byte-identical to the unsigned input (e.g. ESRP
+    silently failed/no-op'd), repackage_signed_wheels must refuse to publish it rather than
+    silently ship an unsigned binary as if it were signed."""
+    wheels_dir = tmp_path / "wheels"
+    _build_wheel(
+        wheels_dir / "pkg-1.0.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "pkg-1.0.0.dist-info",
+        {
+            "pkg/native.so": b"unsigned-so",
+            "pkg/__init__.py": b"# not signable",
+        },
+    )
+
+    work_dir = tmp_path / "work"
+    sign_input_zip = tmp_path / "mac-sign-input.zip"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "extract_sign_inputs.py",
+            "--platform",
+            "mac",
+            "--wheels-dir",
+            str(wheels_dir),
+            "--work-dir",
+            str(work_dir),
+            "--sign-input-zip",
+            str(sign_input_zip),
+        ],
+    )
+    extract_sign_inputs.main()
+
+    # Do NOT mutate the payload: this simulates ESRP returning the binary unchanged.
+    output_wheels_dir = tmp_path / "output-wheels"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "repackage_signed_wheels.py",
+            "--platform",
+            "mac",
+            "--work-dir",
+            str(work_dir),
+            "--signed-input-zip",
+            str(sign_input_zip),
+            "--output-wheels-dir",
+            str(output_wheels_dir),
+        ],
+    )
+
+    with pytest.raises(RuntimeError, match="byte-identical"):
+        repackage_signed_wheels.main()

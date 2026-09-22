@@ -13,8 +13,7 @@ from typing import Dict, List
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Reinsert signed binaries into unpacked wheel trees and rebuild wheel files "
-            "with original filenames."
+            "Reinsert signed binaries into unpacked wheel trees and rebuild wheel files " "with original filenames."
         )
     )
     parser.add_argument("--platform", choices=["mac", "windows"], required=True)
@@ -68,9 +67,7 @@ def get_digest_and_size(file_path: Path) -> List[str]:
 def find_record_path(unpacked_wheel_dir: Path) -> Path:
     candidates = sorted(unpacked_wheel_dir.glob("*.dist-info/RECORD"))
     if len(candidates) != 1:
-        raise RuntimeError(
-            f"Expected exactly one RECORD file under {unpacked_wheel_dir}, found {len(candidates)}."
-        )
+        raise RuntimeError(f"Expected exactly one RECORD file under {unpacked_wheel_dir}, found {len(candidates)}.")
     return candidates[0]
 
 
@@ -159,6 +156,17 @@ def main() -> None:
                 raise FileNotFoundError(f"Signed binary missing: {source_signed_binary}")
             if not target_binary.is_file():
                 raise FileNotFoundError(f"Target binary missing in unpacked wheel: {target_binary}")
+
+            # Guard against ESRP silently no-op'ing: a "signed" binary that is byte-identical to
+            # the unsigned input it replaces almost certainly was never signed at all.
+            unsigned_digest = hashlib.sha256(target_binary.read_bytes()).hexdigest()
+            signed_digest = hashlib.sha256(source_signed_binary.read_bytes()).hexdigest()
+            if unsigned_digest == signed_digest:
+                raise RuntimeError(
+                    "Signed binary is byte-identical to the unsigned input; signing appears to "
+                    f"have had no effect for wheel={wheel_filename} relative_path={relative_path} "
+                    f"payload={payload_path}."
+                )
 
             shutil.copy2(source_signed_binary, target_binary)
             print(
