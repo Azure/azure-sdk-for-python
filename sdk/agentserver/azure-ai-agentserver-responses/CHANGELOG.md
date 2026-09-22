@@ -9,6 +9,8 @@
 
 ### Bugs Fixed
 
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the
