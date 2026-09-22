@@ -124,6 +124,56 @@ class TestGetPackageWheelPath:
         result = get_package_wheel_path("/my/pkg")
         assert result == "/my/pkg"
 
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    def test_prebuilt_dir_prefers_linux_whl_when_multiple_platform_whls_present(
+        self, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple platform-specific wheels are present (e.g. Build_Extended combining
+        Windows/macOS/Linux artifacts for a signed-binary package), deterministically pick the
+        Linux/manylinux wheel instead of relying on find_whl's interpreter-tag matching."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-macosx_11_0_arm64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-1.0.0-cp39-cp39-manylinux_2_17_x86_64.whl")
+        # find_whl (the ambiguous interpreter-tag matching path) should not be needed at all.
+        mock_find_whl.assert_not_called()
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    def test_prebuilt_dir_falls_back_to_find_whl_when_no_linux_whl_present(
+        self, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple platform wheels are present but none are Linux-tagged, fall back to
+        find_whl's existing interpreter-tag matching/error handling."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-macosx_11_0_arm64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+        mock_find_whl.return_value = "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl")
+        mock_find_whl.assert_called_once_with(prebuilt, "azure-storage-extensions", "1.0.0")
+
 
 # ── run() output directory logic ─────────────────────────────────────────
 
