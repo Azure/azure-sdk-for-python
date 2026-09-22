@@ -238,7 +238,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         # (e.g. AuthorizationCodeCredential) use this to bind later cache lookups to this account. Extract it before
         # 'cache.add' below, which mutates 'content'.
         self.token_exchanged = True
-        self.last_home_account_id = _get_home_account_id(content)
+        home_account_id = _get_home_account_id(content)
+        if home_account_id:
+            self.last_home_account_id = home_account_id
 
         # caching is the final step because 'add' mutates 'content'
         cache.add(
