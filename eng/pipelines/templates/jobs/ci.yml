@@ -79,6 +79,22 @@ jobs:
             enabled: true
 
     steps:
+    - pwsh: |
+        if (Get-Command Test-NetConnection -ErrorAction SilentlyContinue) {
+          Test-NetConnection api-review-hub.azurewebsites.net -Port 443
+        } else {
+          # Test-NetConnection (NetTCPIP module) is Windows-only; fall back to a raw TCP test.
+          $client = [System.Net.Sockets.TcpClient]::new()
+          try {
+            $client.Connect('api-review-hub.azurewebsites.net', 443)
+            Write-Host "TcpTestSucceeded : $($client.Connected)"
+          } finally {
+            $client.Dispose()
+          }
+        }
+      displayName: 'Check connectivity to api-review-hub.azurewebsites.net'
+      continueOnError: true
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -98,6 +114,22 @@ jobs:
       os: windows
 
     steps:
+    - pwsh: |
+        if (Get-Command Test-NetConnection -ErrorAction SilentlyContinue) {
+          Test-NetConnection api-review-hub.azurewebsites.net -Port 443
+        } else {
+          # Test-NetConnection (NetTCPIP module) is Windows-only; fall back to a raw TCP test.
+          $client = [System.Net.Sockets.TcpClient]::new()
+          try {
+            $client.Connect('api-review-hub.azurewebsites.net', 443)
+            Write-Host "TcpTestSucceeded : $($client.Connected)"
+          } finally {
+            $client.Dispose()
+          }
+        }
+      displayName: 'Check connectivity to api-review-hub.azurewebsites.net'
+      continueOnError: true
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -124,6 +156,22 @@ jobs:
             justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
 
     steps:
+    - pwsh: |
+        if (Get-Command Test-NetConnection -ErrorAction SilentlyContinue) {
+          Test-NetConnection api-review-hub.azurewebsites.net -Port 443
+        } else {
+          # Test-NetConnection (NetTCPIP module) is Windows-only; fall back to a raw TCP test.
+          $client = [System.Net.Sockets.TcpClient]::new()
+          try {
+            $client.Connect('api-review-hub.azurewebsites.net', 443)
+            Write-Host "TcpTestSucceeded : $($client.Connected)"
+          } finally {
+            $client.Dispose()
+          }
+        }
+      displayName: 'Check connectivity to api-review-hub.azurewebsites.net'
+      continueOnError: true
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
