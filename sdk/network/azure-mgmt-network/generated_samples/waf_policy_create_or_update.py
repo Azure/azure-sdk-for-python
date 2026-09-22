@@ -235,12 +235,13 @@ def main():
                         "state": "Enabled",
                     },
                 },
+                "tier": "Standard",
             },
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: 2026-01-01/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

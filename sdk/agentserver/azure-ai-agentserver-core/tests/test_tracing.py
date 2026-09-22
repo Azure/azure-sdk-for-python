@@ -4,6 +4,7 @@
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 import asyncio
 import os
+from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from threading import Event, Thread
 from typing import Any, Optional
@@ -15,7 +16,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
 
-from azure.ai.agentserver.core import AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost, _tracing
 from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
@@ -1025,3 +1026,192 @@ class TestBaggageLogRecordProcessor:
         assert attrs["gen_ai.agent.name"] == "existing-name"
         assert attrs["gen_ai.agent.version"] == "0.0.1"
         assert attrs["microsoft.session.id"] == "existing-session"
+
+
+# ------------------------------------------------------------------ #
+# flush_spans_async / schedule_flush_spans (non-blocking flush)
+# ------------------------------------------------------------------ #
+
+
+class _BlockingFlushProvider:
+    """Fake TracerProvider whose force_flush blocks until released.
+
+    Records each timeout it is called with so tests can assert pass-through
+    and coalescing behaviour.
+    """
+
+    def __init__(self, block_first: bool = False) -> None:
+        self.calls: list = []
+        self._block_first = block_first
+        self.started = Event()
+        self.release = Event()
+
+    def force_flush(self, timeout_millis: int = 30000) -> bool:
+        first = len(self.calls) == 0
+        self.calls.append(timeout_millis)
+        if first:
+            self.started.set()
+            if self._block_first:
+                self.release.wait(5)
+        return True
+
+
+async def _wait_for(flag: Event, *, timeout_s: float = 5.0) -> None:
+    """Yield to the event loop until *flag* is set (proves the loop is free)."""
+    deadline = asyncio.get_running_loop().time() + timeout_s
+    while not flag.is_set():
+        assert asyncio.get_running_loop().time() < deadline, "flag never set"
+        await asyncio.sleep(0.001)
+
+
+class TestFlushSpansAsync:
+    """`flush_spans_async` offloads the blocking export off the event loop."""
+
+    @pytest.mark.asyncio
+    async def test_does_not_block_event_loop_and_passes_timeout(self) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+            flush_task = asyncio.create_task(_tracing.flush_spans_async(1234))
+            # If force_flush ran inline it would block here; instead this
+            # coroutine keeps running while the export blocks in a worker thread.
+            await _wait_for(provider.started)
+            assert not flush_task.done(), "flush should still be draining off-loop"
+            provider.release.set()
+            await flush_task
+        assert provider.calls == [1234]  # timeout argument forwarded
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("queued", [False, True])
+    @pytest.mark.parametrize("exporter_fails", [False, True])
+    async def test_cancellation_drains_queued_or_running_flush(self, queued: bool, exporter_fails: bool) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        worker_started = Event()
+        release_worker = Event()
+        loop = asyncio.get_running_loop()
+
+        def occupy_worker() -> None:
+            worker_started.set()
+            assert release_worker.wait(5)
+
+        def force_flush(timeout_millis: int) -> None:
+            provider.force_flush(timeout_millis)
+            if exporter_fails:
+                raise RuntimeError("export failed during cancellation")
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            loop.set_default_executor(executor)
+            blocker = loop.run_in_executor(None, occupy_worker) if queued else None
+            with mock.patch.object(
+                _tracing.trace, "get_tracer_provider", return_value=mock.Mock(force_flush=force_flush)
+            ):
+                flush_task = asyncio.create_task(_tracing.flush_spans_async(1234))
+                try:
+                    await asyncio.sleep(0)
+                    if queued:
+                        await _wait_for(worker_started)
+                    else:
+                        await _wait_for(provider.started)
+                    for _ in range(2):
+                        flush_task.cancel()
+                        await asyncio.sleep(0)
+                    assert not flush_task.done()
+                    if queued:
+                        assert not provider.started.is_set()
+                    release_worker.set()
+                    await _wait_for(provider.started)
+                    assert not flush_task.done()
+                finally:
+                    release_worker.set()
+                    provider.release.set()
+                    if blocker is not None:
+                        await blocker
+                    result = (await asyncio.gather(flush_task, return_exceptions=True))[0]
+                assert isinstance(result, asyncio.CancelledError)
+                assert provider.calls == [1234]
+
+    @pytest.mark.asyncio
+    async def test_swallows_exceptions(self) -> None:
+        class _BoomProvider:
+            def force_flush(self, timeout_millis: int = 30000) -> bool:
+                raise RuntimeError("boom")
+
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=_BoomProvider()):
+            await _tracing.flush_spans_async()  # must not raise
+
+    @pytest.mark.asyncio
+    async def test_noop_when_provider_has_no_force_flush(self) -> None:
+        class _NoFlushProvider:
+            pass
+
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=_NoFlushProvider()):
+            await _tracing.flush_spans_async()  # must not raise
+
+
+class TestScheduleFlushSpans:
+    """`schedule_flush_spans` runs a single coalesced background flush."""
+
+    def setup_method(self) -> None:
+        _tracing._bg_flush_task = None
+        _tracing._bg_flush_pending = False
+        _tracing._bg_flush_pending_timeout_millis = 0
+
+    def teardown_method(self) -> None:
+        _tracing._bg_flush_task = None
+        _tracing._bg_flush_pending = False
+        _tracing._bg_flush_pending_timeout_millis = 0
+
+    def test_falls_back_to_sync_without_running_loop(self) -> None:
+        with mock.patch.object(_tracing, "flush_spans") as m_sync:
+            _tracing.schedule_flush_spans(777)
+        m_sync.assert_called_once_with(777)
+        assert _tracing._bg_flush_task is None
+
+    @pytest.mark.asyncio
+    async def test_coalesces_concurrent_requests_into_one_followup(self) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+            # First call spawns exactly one background flush task.
+            _tracing.schedule_flush_spans()
+            task = _tracing._bg_flush_task
+            assert task is not None
+            await _wait_for(provider.started)
+            # 50 requests arrive while the flush is in flight. They must NOT
+            # each spawn a task (bounded); they coalesce into one pending pass.
+            for _ in range(50):
+                _tracing.schedule_flush_spans()
+            assert _tracing._bg_flush_task is task
+            assert _tracing._bg_flush_pending is True
+            provider.release.set()
+            await task
+        # Initial flush + one coalesced follow-up == 2 exports, not 51.
+        assert len(provider.calls) == 2
+        assert _tracing._bg_flush_pending is False
+
+    @pytest.mark.asyncio
+    async def test_coalesced_followup_uses_max_requested_timeout(self) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+            # First caller starts the in-flight flush with its own timeout.
+            _tracing.schedule_flush_spans(10)
+            task = _tracing._bg_flush_task
+            assert task is not None
+            await _wait_for(provider.started)
+            # Two callers coalesce while the flush is in flight, requesting
+            # different bounds. The follow-up must honour the largest (5000) so
+            # the 1 ms caller cannot shrink the batch's timeout.
+            _tracing.schedule_flush_spans(1)
+            _tracing.schedule_flush_spans(5000)
+            assert _tracing._bg_flush_pending is True
+            provider.release.set()
+            await task
+        # First caller's own timeout, then the max of the coalesced batch.
+        assert provider.calls == [10, 5000]
+        assert _tracing._bg_flush_pending is False
+
+    @pytest.mark.asyncio
+    async def test_single_request_flushes_once(self) -> None:
+        provider = _BlockingFlushProvider(block_first=False)
+        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+            _tracing.schedule_flush_spans()
+            await _tracing._bg_flush_task
+        assert len(provider.calls) == 1
