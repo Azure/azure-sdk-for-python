@@ -11,7 +11,12 @@ APIView comments were also retrieved through Azure SDK MCP; none were present.
 ## Decisions for every inline comment
 
 Each identifier links to the original comment. Duplicate findings share a fix,
-but each original thread is assessed and receives an individual reply.
+but each original thread is assessed individually. **All 64 individual replies
+remain local drafts; none was publicly posted.** Public posting failed with
+HTTP 403 because the authenticated account is an Enterprise Managed User (EMU).
+The assessment and local drafts do not constitute posted replies, a posted
+handoff, or resolved threads. No authentication bypass was attempted; posting
+requires an authorized, supported account/workflow.
 
 | Comment | Decision and evidence |
 |---|---|
@@ -87,8 +92,8 @@ but each original thread is assessed and receives an individual reply.
 - Human shared-lock request [4711371552](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711371552): shared TypeSpec-client lock delta is already absent. The new package-local emitter lock is deliberate reproducibility input for the pinned old emitter, not unrelated shared dependency churn.
 - Human spelling request [4711438302](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711438302): package dictionary exists and now contains legitimate terms; CI explicitly loads the root configuration, so a package-scoped root override is necessary too. Tests are not broadly excluded to hide misspellings.
 - Stale/closure notices [5365466456](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-5365466456) and [5448718968](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-5448718968): historical; PR is open and updated. No reopen/state mutation needed.
-- Seven pipeline-analysis comments (5734582572, 5768011529, 5768551504, 5769203598, 5769685768, 5772655667, 5776391975): rechecked current code rather than trusting stale line numbers. README sections, spelling, real typing issues, payload-safe logs, malformed checkpoint docstrings and duplicate reason docs were addressed. Removed legacy modules/duplicate classes are obsolete findings. Intentional legacy parameter/model overrides retain narrow explained type exceptions rather than changing the customer API to match an internal generated base. Remaining legacy Pylint style/complexity findings are not suppressed wholesale and remain an explicit quality-gate follow-up.
-- All eight review summaries were read, including suppressed/previously-missed findings embedded only in their bodies. These additional findings are assessed below. Human changes-requested state remains for the reviewer; no automated approval or thread-resolution claim is made.
+- Seven pipeline-analysis comments (5734582572, 5768011529, 5768551504, 5769203598, 5769685768, 5772655667, 5776391975): rechecked current code rather than trusting stale line numbers. README sections, spelling, real typing issues, payload-safe logs, malformed checkpoint docstrings and duplicate reason docs were addressed. Removed legacy modules/duplicate classes are obsolete findings. Intentional legacy parameter/model overrides retain narrow explained type exceptions rather than changing the customer API to match an internal generated base. The remaining Pylint style/complexity failures reported at that review stage are historical: the current local check passes with genuine fixes and explicit line/function exceptions detailed below, not wholesale refactoring or zero exceptions.
+- All eight original review summaries and the additional review summary were read, including suppressed/previously-missed findings embedded only in their bodies. These additional findings are assessed below. Human changes-requested state remains for the reviewer; no automated approval or thread-resolution claim is made.
 
 ## Findings embedded in review summaries
 
@@ -116,15 +121,71 @@ existing security/CI/lifecycle requests above. All remain in the response invent
 
 ## Validation and limitations
 
-The maintained runtime passes source regression tests and both pinned mypy
-and Pyright checks. The strict Sphinx content build passes using repository
-templates and pinned dependencies, with external inventory downloads disabled;
-the full dependency-installing wrapper remains blocked by feed TLS. README and
-scoped spelling checks pass. Exact installed-wheel/regeneration results and
-commit links are posted in the PR handoff. The baseline's original 434 tests are not removed: two helper
-mocks are adapted and new focused tests are added. The verifier permits only
-the exact three fixture contracts listed in the review-delta manifest (direct
-headers, dual-auth typing, and the already-supported multimodal input typing).
+### Historical CI and current local repair snapshot (2026-09-22)
+
+The baseline's acceptance results, earlier review-stage installed-wheel results,
+and pinned mypy/Pyright passes remain historical evidence. They are not a final
+validation of the in-progress CI-repair batch. No results or commit-link handoff
+were posted publicly: the EMU HTTP 403 blocker above remains.
+
+- **SDK baseline CI build `6867846`:** Python 3.10 failed when a surface test
+	imported `typing.get_overloads`. The repair uses AST overload inspection on
+	all Python versions. Current local tests: **Python 3.10, 500 passed and 1
+	skipped** (the eager-task test requires Python 3.12+); **Python 3.13, 501
+	passed**. Other supported-Python remote jobs are not certified by these runs.
+- **Pylint 4.0.4 + Azure checker 0.5.7: local PASS.** Real helper documentation
+	and dictionary-literal fixes address applicable findings. Explicit
+	line/function-level exceptions retain the preview API parameter renames and
+	private hook integration, 19 class-alias/constant false positives, actual
+	`asyncio.Task` use required by the return contract, a long public name, and
+	existing complex state machines. The pass is not exception-free and does not
+	mean all findings were refactored away.
+- **Strict Sphinx 8.2: local PASS against the actual sdist.** The repository
+	documentation override supplies five namespace RST pages; all verification
+	scripts remain in the sdist. Only external intersphinx inventory downloads
+	were disabled for offline operation, not the strict content checks.
+- **Actual MCP README check: PASS.** The last completed root-configuration
+	CSpell run checked **84 files with 0 issues**. Neither result is a claim of
+	full remote README/documentation or repository CI success.
+- **TypeSpec compiler 1.16: local PASS with warnings treated as errors** for
+	both full REST and Python entry points. All changed TypeSpec files pass formatting.
+	Exact REST comparison permits only three expected error-field descriptions
+	for `OpenAI.Error.details`, `additionalInfo`, and `debugInfo`; HTTP, structural
+	schemas, and protocol are unchanged.
+- **Compatibility exceptions remain reviewable:** the standard-RPC trial was
+	rejected after introducing path warnings. There are 15 raw-operation plus 13
+	facade `use-standard-operations` exceptions, 9 legacy-augment exceptions, and
+	1 inheritance exception, each on its exact node with a known compatibility
+	rationale. Human approval is still required. The 14 C#-only `clientName`
+	`Content`/`Result` mappings address non-Python naming lint without changing
+	Python or wire types; other languages still require CI validation.
+- **Actual MCP SDK generation: PASS.** Clean output now enables
+	`generate-packaging-files=true`; maintained-SDK generation explicitly uses
+	`generate-packaging-files=false` to preserve its packaging. A separate pinned
+	emission currently matches all 21 generated inventory entries, including the
+	generated model documentation-only update. Final two-emission provenance
+	validation and all paired API/behavior checks pass.
+
+The baseline's original **434 tests** are not removed: two helper mocks are
+adapted and new focused tests are added. Three original test files contain only
+an added final newline; their exact hashes are explicitly recorded. The verifier permits only the exact
+three fixture contracts listed in the review-delta manifest (direct headers,
+dual-auth typing, and the already-supported multimodal input typing).
+
+### Pending work and external blockers
+
+Formatting and repeated generation/provenance checks pass locally. The final
+source pointer is recorded in package provenance. Remote CI must rerun on the
+pushed commits; local passes do not make the PR fully green.
+
+- The PyPI package name is **not reserved**; reservation requires the approved
+	pipeline, not a code-only change or direct publication.
+- REST `api-doc-preview` is blocked by a missing repository script and an
+	invalid infrastructure AAD client secret. These require infrastructure-owner
+	repair, not a fabricated SDK/specification fix or authentication bypass.
+- The 64 review replies remain local drafts because public posting failed with
+	EMU HTTP 403. Human review, exception approval, and other-language CI remain
+	outstanding.
 
 No live GPU jobs, deployments, package publication, force-pushes, PR merges,
 Loom edits, security-policy weakening, or invented server deduplication are used.

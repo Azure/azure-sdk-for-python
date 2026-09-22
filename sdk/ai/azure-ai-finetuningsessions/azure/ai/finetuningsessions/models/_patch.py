@@ -58,7 +58,8 @@ class FromCheckpoint(_Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    # A concrete implementation is required for the two preview overloads.
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-parent-delegation
         super().__init__(*args, **kwargs)
 
 

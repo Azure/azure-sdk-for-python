@@ -71,6 +71,11 @@ def _is_local_endpoint(endpoint: str) -> bool:
     Used to bound ``allow_insecure_http``: skipping HTTPS enforcement is only
     ever appropriate against a local dev server, never against a real regional
     ``loom_api`` reached on the direct (non-APIM) path.
+
+    :param endpoint: Endpoint URL to inspect.
+    :type endpoint: str
+    :return: Whether the URL uses HTTP and a recognized loopback host.
+    :rtype: bool
     """
     try:
         parsed = urlparse(endpoint)
@@ -81,7 +86,13 @@ def _is_local_endpoint(endpoint: str) -> bool:
 
 
 def _is_http_endpoint(endpoint: str) -> bool:
-    """Return True when ``endpoint`` explicitly uses plaintext HTTP."""
+    """Return True when ``endpoint`` explicitly uses plaintext HTTP.
+
+    :param endpoint: Endpoint URL to inspect.
+    :type endpoint: str
+    :return: Whether the URL explicitly uses the HTTP scheme.
+    :rtype: bool
+    """
     try:
         return urlparse(endpoint).scheme.casefold() == "http"
     except ValueError:
@@ -112,7 +123,21 @@ def _prepare_client_options(
     allow_insecure_http: bool = False,
     asynchronous: bool = False,
 ) -> dict[str, Any]:
-    """Translate the frozen configuration behavior into supported policy kwargs."""
+    """Translate the frozen configuration behavior into supported policy kwargs.
+
+    :param endpoint: Service endpoint for policy scope and local-development validation.
+    :type endpoint: str
+    :param credential: Token or API-key credential supplied by the caller.
+    :type credential: ~typing.Any
+    :param options: Caller options, copied before adding preview-compatible defaults.
+    :type options: dict[str, ~typing.Any]
+    :keyword allow_insecure_http: Permit bearer authentication on loopback HTTP only.
+    :paramtype allow_insecure_http: bool
+    :keyword asynchronous: Select policies compatible with the async pipeline.
+    :paramtype asynchronous: bool
+    :return: Prepared constructor options, preserving caller-owned policies and pipelines.
+    :rtype: dict[str, ~typing.Any]
+    """
     if endpoint is None:
         raise ValueError("Parameter 'endpoint' must not be None.")
     if credential is None:
@@ -168,6 +193,11 @@ def _patch_configuration(module: Any, *, asynchronous: bool = False) -> None:
 
     Public clients use constructor options. This hook also preserves existing
     direct configuration callers, including the unmodified upstream tests.
+
+    :param module: Generated configuration module whose compatibility exports are populated.
+    :type module: ~typing.Any
+    :keyword asynchronous: Whether this is the async configuration module.
+    :paramtype asynchronous: bool
     """
     generated = module.FineTuningSessionClientConfiguration
     if getattr(generated, "_preview_configuration", False):
@@ -192,6 +222,9 @@ def _patch_configuration(module: Any, *, asynchronous: bool = False) -> None:
                 self.api_version = kwargs.get("api_version", "v1")
 
     module.FineTuningSessionClientConfiguration = FineTuningSessionClientConfiguration
+    # These exact private exports preserve direct configuration imports from
+    # the tested preview; they are not accesses to a third-party client's state.
+    # pylint: disable=protected-access
     module._is_local_endpoint = _is_local_endpoint
     module._is_http_endpoint = _is_http_endpoint
     module._LOCAL_HOSTS = _LOCAL_HOSTS
@@ -199,3 +232,4 @@ def _patch_configuration(module: Any, *, asynchronous: bool = False) -> None:
         module._InsecureAsyncBearerTokenCredentialPolicy = _InsecureAsyncBearerTokenCredentialPolicy
     else:
         module._InsecureBearerTokenCredentialPolicy = _InsecureBearerTokenCredentialPolicy
+    # pylint: enable=protected-access

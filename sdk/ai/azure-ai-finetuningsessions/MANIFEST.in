@@ -16,6 +16,7 @@ include REVIEW.md
 include api.md
 include api.metadata.yml
 include azure/ai/finetuningsessions/py.typed
+recursive-include doc *.rst
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py

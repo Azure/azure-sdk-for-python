@@ -25,8 +25,9 @@ JSON = MutableMapping[str, Any]
 
 
 class SessionsOperations(_generated.SessionsOperations):
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_create(
+    async def begin_create(  # pylint: disable=arguments-renamed
         self,
         body: _models.CreateSessionRequest,
         *,
@@ -36,7 +37,7 @@ class SessionsOperations(_generated.SessionsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_create(
+    async def begin_create(  # pylint: disable=arguments-renamed
         self,
         body: JSON,
         *,
@@ -46,7 +47,7 @@ class SessionsOperations(_generated.SessionsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_create(
+    async def begin_create(  # pylint: disable=arguments-renamed
         self,
         body: IO[bytes],
         *,
@@ -65,10 +66,11 @@ class SessionsOperations(_generated.SessionsOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _builders.build_sessions_create_request,
-            dict(foundry_features=foundry_features, api_version=api_version),
+            {"foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
@@ -85,7 +87,7 @@ class SessionsOperations(_generated.SessionsOperations):
         return await _read_async(
             self,
             _builders.build_sessions_create_request,
-            dict(foundry_features=foundry_features, api_version=api_version),
+            {"foundry_features": foundry_features, "api_version": api_version},
             None,
             kwargs,
             body,
@@ -104,7 +106,12 @@ class SessionsOperations(_generated.SessionsOperations):
         return await _read_async(
             self,
             _builders.build_sessions_list_request,
-            dict(foundry_features=foundry_features, api_version=api_version, limit=limit, offset=offset),
+            {
+                "foundry_features": foundry_features,
+                "api_version": api_version,
+                "limit": limit,
+                "offset": offset,
+            },
             _models.SessionList,
             kwargs,
         )
@@ -121,7 +128,7 @@ class SessionsOperations(_generated.SessionsOperations):
         return await _read_async(
             self,
             _builders.build_sessions_get_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             _models.Session,
             kwargs,
         )
@@ -138,7 +145,7 @@ class SessionsOperations(_generated.SessionsOperations):
         return await _begin_async(
             self,
             _builders.build_sessions_unload_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
         )
 
@@ -154,15 +161,16 @@ class SessionsOperations(_generated.SessionsOperations):
         return await _read_async(
             self,
             _builders.build_sessions_heartbeat_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             _models.HeartbeatResponse,
             kwargs,
         )
 
 
 class TrainingOperations(_generated.TrainingOperations):
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_forward_backward(
+    async def begin_forward_backward(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: _models.ForwardBackwardRequest,
@@ -173,7 +181,7 @@ class TrainingOperations(_generated.TrainingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_forward_backward(
+    async def begin_forward_backward(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: JSON,
@@ -184,7 +192,7 @@ class TrainingOperations(_generated.TrainingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_forward_backward(
+    async def begin_forward_backward(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: IO[bytes],
@@ -205,16 +213,18 @@ class TrainingOperations(_generated.TrainingOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _builders.build_training_forward_backward_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
 
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_optim_step(
+    async def begin_optim_step(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: _models.OptimStepRequest,
@@ -225,7 +235,7 @@ class TrainingOperations(_generated.TrainingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_optim_step(
+    async def begin_optim_step(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: JSON,
@@ -236,7 +246,7 @@ class TrainingOperations(_generated.TrainingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_optim_step(
+    async def begin_optim_step(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: IO[bytes],
@@ -257,18 +267,20 @@ class TrainingOperations(_generated.TrainingOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _builders.build_training_optim_step_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
 
 
 class CheckpointsOperations(_generated.CheckpointsOperations):
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_save(
+    async def begin_save(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: _models.SaveCheckpointRequest,
@@ -279,7 +291,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_save(
+    async def begin_save(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: JSON,
@@ -290,7 +302,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_save(
+    async def begin_save(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: IO[bytes],
@@ -311,16 +323,18 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _builders.build_checkpoints_save_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
 
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_save_sampler_weights(
+    async def begin_save_sampler_weights(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: _models.SaveSamplerWeightsRequest,
@@ -331,7 +345,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_save_sampler_weights(
+    async def begin_save_sampler_weights(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: JSON,
@@ -342,7 +356,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_save_sampler_weights(
+    async def begin_save_sampler_weights(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: IO[bytes],
@@ -363,10 +377,11 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _builders.build_checkpoints_save_sampler_weights_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
@@ -383,7 +398,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         return await _read_async(
             self,
             _builders.build_checkpoints_list_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             _models.CheckpointList,
             kwargs,
         )
@@ -401,20 +416,21 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
         return await _read_async(
             self,
             _builders.build_checkpoints_get_request,
-            dict(
-                session_id=session_id,
-                checkpoint_id=checkpoint_id,
-                foundry_features=foundry_features,
-                api_version=api_version,
-            ),
+            {
+                "session_id": session_id,
+                "checkpoint_id": checkpoint_id,
+                "foundry_features": foundry_features,
+                "api_version": api_version,
+            },
             _models.CheckpointInfo,
             kwargs,
         )
 
 
 class SamplingOperations(_generated.SamplingOperations):
+    # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
-    async def begin_sample(
+    async def begin_sample(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: _models.SampleRequest,
@@ -425,7 +441,7 @@ class SamplingOperations(_generated.SamplingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_sample(
+    async def begin_sample(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: JSON,
@@ -436,7 +452,7 @@ class SamplingOperations(_generated.SamplingOperations):
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]: ...
     @overload
-    async def begin_sample(
+    async def begin_sample(  # pylint: disable=arguments-renamed
         self,
         session_id: str,
         body: IO[bytes],
@@ -457,16 +473,18 @@ class SamplingOperations(_generated.SamplingOperations):
         api_version: str,
         **kwargs: Any,
     ) -> AsyncLROPoller[_models.OperationResult]:
+        # pylint: disable=arguments-renamed
         return await _begin_async(
             self,
             _build_sampling_request,
-            dict(session_id=session_id, foundry_features=foundry_features, api_version=api_version),
+            {"session_id": session_id, "foundry_features": foundry_features, "api_version": api_version},
             kwargs,
             body,
         )
 
 
 class Operations(_generated.Operations):
+    # Preserve the published preview 'operation_id' keyword.
     @distributed_trace_async
     async def get(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
@@ -477,15 +495,16 @@ class Operations(_generated.Operations):
         api_version: str,
         **kwargs: Any,
     ) -> _models.OperationResult:
+        # pylint: disable=arguments-renamed
         return await _read_async(
             self,
             _builders.build_operations_get_request,
-            dict(
-                session_id=session_id,
-                request_id_parameter=operation_id,
-                foundry_features=foundry_features,
-                api_version=api_version,
-            ),
+            {
+                "session_id": session_id,
+                "request_id_parameter": operation_id,
+                "foundry_features": foundry_features,
+                "api_version": api_version,
+            },
             _models.OperationResult,
             kwargs,
         )

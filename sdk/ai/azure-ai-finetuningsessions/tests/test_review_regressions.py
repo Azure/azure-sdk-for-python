@@ -396,7 +396,9 @@ def test_image_mapping_uses_image_validation(value):
 
 
 def test_multimodal_constructor_and_annotation():
-    from typing import get_args, get_overloads
+    import ast
+    import inspect
+    from typing import get_args
     from azure.ai.finetuningsessions.models import ImageChunk, ModelInput, ModelInputChunk
 
     image = ImageChunk(data=b"\xff\xd8\xffvalid", format="jpeg", expected_tokens=1)
@@ -404,4 +406,15 @@ def test_multimodal_constructor_and_annotation():
     assert value.as_dict()["chunks"][1]["type"] == "image"
     annotation = ModelInput.__annotations__["chunks"]
     assert ImageChunk in get_args(get_args(annotation)[0])
-    assert len(get_overloads(ModelInput.__init__)) == 2
+    # Python 3.9/3.10 do not retain typing.overload definitions at runtime.
+    # Inspect the shipped source on every supported version, rather than
+    # skipping the overload contract or requiring Python 3.11's get_overloads.
+    definition = ast.parse(inspect.getsource(ModelInput)).body[0]
+    overloads = [
+        method
+        for method in definition.body
+        if isinstance(method, ast.FunctionDef)
+        and method.name == "__init__"
+        and any(isinstance(decorator, ast.Name) and decorator.id == "overload" for decorator in method.decorator_list)
+    ]
+    assert len(overloads) == 2

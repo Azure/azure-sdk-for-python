@@ -6,11 +6,20 @@
   "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"],
   "adapted_upstream_tests": {
     "tests/test_create_session_id_normalization.py": "64ef8fbd9f20fe1d5405a78df6d2a25537814f2d0915f097a4d537137468a699",
-    "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db"
+    "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db",
+    "tests/test_forward_backward_waves.py": "81c6909c59c6c0b4438cacbce8ca874a461d5bb67df5453aa94a5839f5135540",
+    "tests/test_forward_result.py": "5045dc1800820408004e96bce747bae2d51521db23ab01fd67418654f611311a",
+    "tests/test_image_chunks.py": "2bfb0ab7733381e086b7b2f07f50227ea976560652577033f8d2edacfaacdb77"
+  },
+  "ci_test_source_changes": {
+    "tests/test_forward_backward_waves.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_forward_result.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_image_chunks.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_review_regressions.py": "Inspect shipped overload definitions using AST instead of Python 3.11-only typing.get_overloads; assertion retained on Python 3.10."
   },
   "added_tests": {
     "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
-    "tests/test_review_regressions.py": "12f871a59a03cc8bc47c5a6dc566d109f6501b671004afe634a0fca0dc1e1687"
+    "tests/test_review_regressions.py": "0f2b9f3a3a76abfa8dbbe328d8d3e5f80d45f1ea3dd7112b125d38a15b1fc16f"
   },
   "changes": [
     {"comments": [4049473889, 4049474086, 4049474688, 4066580814], "change": "Reuse one generated sync pipeline; custom policies work and normal close releases the session transport."},

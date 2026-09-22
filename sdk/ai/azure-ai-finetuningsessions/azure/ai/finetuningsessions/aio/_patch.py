@@ -28,7 +28,9 @@ Usage::
 """
 from __future__ import annotations
 
-import asyncio
+# The public API returns asyncio.Task; create_task, shield, semaphores and
+# to_thread require asyncio, not merely a transport-provided sleep method.
+import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars as _contextvars
 import json as _json
 import logging as _logging
@@ -133,7 +135,12 @@ class _ClientBase(_GeneratedClient):
         await super().close()
 
     async def __aexit__(self, *args: Any) -> None:
-        """Close the client and its background heartbeats on context exit."""
+        """Close the client and its background heartbeats on context exit.
+
+        :param args: Exception type, value, and traceback supplied by the context manager.
+            These arguments are not used when closing the client.
+        :type args: ~typing.Any
+        """
         await self.close()
 
 
@@ -160,12 +167,22 @@ operation_label_var: _contextvars.ContextVar[str] = _contextvars.ContextVar("loo
 
 
 def set_operation_label(label: str) -> "_contextvars.Token[str]":
-    """Set the operation timeline label for the current context."""
+    """Set the operation timeline label for the current context.
+
+    :param label: Correlation label included in operation timeline logs for this context.
+    :type label: str
+    :return: A context token that can restore the previous label with ``reset_operation_label``.
+    :rtype: ~contextvars.Token[str]
+    """
     return operation_label_var.set(label)
 
 
 def reset_operation_label(token: "_contextvars.Token[str]") -> None:
-    """Restore the operation timeline label to its previous value."""
+    """Restore the operation timeline label to its previous value.
+
+    :param token: Context token returned by the corresponding ``set_operation_label`` call.
+    :type token: ~contextvars.Token[str]
+    """
     operation_label_var.reset(token)
 
 
@@ -181,7 +198,19 @@ async def _to_thread_and_drain_on_cancel(
     task_name: str,
     **kwargs: Any,
 ) -> Any:
-    """Run work off-loop without orphaning its thread when the caller is cancelled."""
+    """Run work off-loop without orphaning its thread when the caller is cancelled.
+
+    Calls the synchronous ``function`` in a worker thread, forwarding ``args``
+    and ``kwargs`` to it. Cancellation waits for the worker to finish before
+    propagating to the caller.
+
+    :param args: Positional arguments forwarded to the worker function.
+    :type args: ~typing.Any
+    :keyword task_name: Name assigned to the worker task for diagnostics.
+    :paramtype task_name: str
+    :return: The value returned by the worker function.
+    :rtype: ~typing.Any
+    """
     worker = asyncio.create_task(
         asyncio.to_thread(function, *args, **kwargs),
         name=task_name,
@@ -191,13 +220,20 @@ async def _to_thread_and_drain_on_cancel(
     except asyncio.CancelledError:
         try:
             await worker
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Log any worker failure without replacing the caller's cancellation.
             _logger.exception("[%s] worker failed while draining after cancellation", task_name)
         raise
 
 
 async def _chunk_data_async(batch: List[Datum]) -> List[List[Datum]]:
-    """Build chunks off-loop and drain work on cancellation."""
+    """Build chunks off-loop and drain work on cancellation.
+
+    :param batch: Training data to split into request-sized chunks.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :return: The lists of training data produced by the batch chunker.
+    :rtype: list[list[~azure.ai.finetuningsessions.models.Datum]]
+    """
     return await _to_thread_and_drain_on_cancel(
         _chunk_data,
         batch,
@@ -206,7 +242,15 @@ async def _chunk_data_async(batch: List[Datum]) -> List[List[Datum]]:
 
 
 async def _completed_result_task(result: OperationResult, name: str) -> "asyncio.Task[OperationResult]":
-    """Return the promised Task interface for an already-completed wave."""
+    """Return the promised Task interface for an already-completed wave.
+
+    :param result: Completed operation result to expose through the task.
+    :type result: ~azure.ai.finetuningsessions.models.OperationResult
+    :param name: Name assigned to the completed task for diagnostics.
+    :type name: str
+    :return: An already-completed task whose result is the supplied operation result.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
+    """
 
     async def completed() -> OperationResult:
         return result
@@ -225,6 +269,9 @@ _DEFAULT_POST_CONCURRENCY = 64
 
 def _ensure_async_state(self: "FineTuningSessionClient") -> None:
     """Lazily initialize async state on the client instance."""
+    # This module owns the private state used by its patched client methods;
+    # exposing that state as public attributes would change the API.
+    # pylint: disable=protected-access
     if not hasattr(self, "_heartbeat_tasks"):
         self._heartbeat_tasks = {}
     if not hasattr(self, "_heartbeat_shutdowns"):
@@ -247,7 +294,8 @@ def _client_resource_session_id(
 ) -> str:
     _ensure_async_state(self)
     canonical_session_id = _canonical_session_id(session_id)
-    return self._session_resource_ids.get(
+    # This module owns the client's private canonical-to-resource ID cache.
+    return self._session_resource_ids.get(  # pylint: disable=protected-access
         canonical_session_id,
         _resource_session_id(session_id),
     )
@@ -273,7 +321,13 @@ def _start_heartbeat(
     session_id: str,
     interval_sec: float = 30.0,
 ) -> None:
-    """Start an asyncio task that sends heartbeat every interval_sec."""
+    """Start an asyncio task that sends heartbeat every interval_sec.
+
+    :param session_id: Identifier of the session to keep alive.
+    :type session_id: str
+    :param interval_sec: Seconds between heartbeat sends. Defaults to 30.0.
+    :type interval_sec: float
+    """
     _ensure_async_state(self)
     session_id = _canonical_session_id(session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
@@ -297,7 +351,8 @@ def _start_heartbeat(
                     )
             except asyncio.CancelledError:
                 return
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                # Keep best-effort heartbeats running after custom transport failures.
                 _logger.warning(
                     "[heartbeat] failed for %s: %s",
                     session_id,
@@ -305,7 +360,8 @@ def _start_heartbeat(
                 )
 
     task = asyncio.create_task(_heartbeat_loop(), name=f"fts-heartbeat-{session_id}")
-    self._heartbeat_tasks[session_id] = task
+    # The client lifecycle helpers in this module own this private task registry.
+    self._heartbeat_tasks[session_id] = task  # pylint: disable=protected-access
     _logger.info(
         "[heartbeat] started (interval=%.0fs, session=%s)",
         interval_sec,
@@ -318,7 +374,12 @@ async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> N
 
     Concurrent callers share a shielded shutdown task, so cancelling one waiter
     cannot interrupt transport cleanup or let another waiter send early.
+
+    :param session_id: Identifier of the session whose heartbeat must be cancelled and drained.
+    :type session_id: str
     """
+    # This lifecycle helper and its drain task own the client's private heartbeat registries.
+    # pylint: disable=protected-access
     _ensure_async_state(self)
     session_id = _canonical_session_id(session_id)
     shutdown = self._heartbeat_shutdowns.get(session_id)
@@ -334,7 +395,8 @@ async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> N
                 await task
             except asyncio.CancelledError:
                 pass
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Log any task failure so registry cleanup and lifecycle shutdown can finish.
                 _logger.exception("[heartbeat] failed during shutdown for %s", session_id)
             finally:
                 if self._heartbeat_tasks.get(session_id) is task:
@@ -357,10 +419,16 @@ def _classify_and_raise(resp: Any, sc: int) -> None:
     ``_classify_http_error``. Raises the typed exception when the status is
     specifically classifiable; otherwise returns so the caller can fall
     through to its own ``resp.raise_for_status()``.
+
+    :param resp: HTTP response whose body is inspected for a classifiable service error.
+    :type resp: ~typing.Any
+    :param sc: HTTP status code used to classify the error.
+    :type sc: int
     """
     try:
         resp_body = resp.json()
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
+        # Custom response JSON errors must not bypass typed or HTTP-status handling.
         resp_body = None
     typed = _classify_http_error(sc, resp_body, response=resp)
     if typed is not None:
@@ -379,7 +447,20 @@ async def _post(
     Retries on 408/429/5xx (and unclassified 409s) with exponential backoff.
     A 409 that classifies to a terminal typed error (e.g. engine_dead) is
     non-retryable and raised on the first response.
+
+    :param subpath: Operation path relative to the configured endpoint.
+    :type subpath: str
+    :param body_model: Request model or JSON-serializable body to encode with the SDK JSON encoder.
+    :type body_model: ~typing.Any
+    :param extra_params: Additional query parameters merged with the default API version.
+        Defaults to ``None``.
+    :type extra_params: dict[str, ~typing.Any] or None
+    :return: The server-assigned request ID and the operation type used to interpret its result.
+    :rtype: tuple[str, str]
     """
+    # Keep the preview submission state machine intact: classification, retry
+    # tracking, semaphore lifetime, and backoff ordering must remain unchanged.
+    # pylint: disable=too-many-statements,too-many-nested-blocks
     _ensure_async_state(self)
     subpath = _client_resource_subpath(self, subpath)
     body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -405,10 +486,11 @@ async def _post(
     # never succeed on retry. Surface a typed exception immediately.
     _NON_RETRYABLE = frozenset({400, 413, 422})
 
-    async with self._post_semaphore:
+    # This module-level client implementation owns the private POST gate.
+    async with self._post_semaphore:  # pylint: disable=protected-access
         submit_started = _time.monotonic()
         _logger.info(
-            "[operation_timeline] submit_started session_id=%s op=%s path=%s " "queue_wait_ms=%.1f%s",
+            "[operation_timeline] submit_started session_id=%s op=%s path=%s queue_wait_ms=%.1f%s",
             timeline_session_id,
             op_type,
             subpath,
@@ -497,7 +579,7 @@ async def _post(
                 resp.raise_for_status()
                 data = resp.json()
                 _logger.info(
-                    "[operation_timeline] submit_completed session_id=%s request_id=%s " "op=%s elapsed_ms=%.1f%s",
+                    "[operation_timeline] submit_completed session_id=%s request_id=%s op=%s elapsed_ms=%.1f%s",
                     data.get("session_id", timeline_session_id),
                     data["request_id"],
                     op_type,
@@ -554,7 +636,20 @@ async def _post_sample(
     ``_sample_semaphore``; ``_post_semaphore`` is taken only around each
     individual send — never across a throttle sleep or fault backoff — so a
     throttled/backing-off sample never head-of-line-blocks other POSTs.
+
+    :param subpath: Sampling operation path relative to the configured endpoint.
+    :type subpath: str
+    :param body_model: Sampling request model or JSON-serializable request body.
+    :type body_model: ~typing.Any
+    :param extra_params: Additional query parameters merged with the default API version.
+        Defaults to ``None``.
+    :type extra_params: dict[str, ~typing.Any] or None
+    :return: The server-assigned request ID and the sampling operation type.
+    :rtype: tuple[str, str]
     """
+    # Preserve the preview ordering of JWT recovery, terminal classification,
+    # throttle/fault budgets, and semaphore release before backoff.
+    # pylint: disable=too-many-statements
     _ensure_async_state(self)
     subpath = _client_resource_subpath(self, subpath)
     body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -588,7 +683,8 @@ async def _post_sample(
         )
         try:
             # Hold _post_semaphore only around the send, never across a sleep.
-            async with self._post_semaphore:
+            # This module's client helpers own the private POST semaphore.
+            async with self._post_semaphore:  # pylint: disable=protected-access
                 resp = await self.send_request(post_req, connection_timeout=request_timeout)
         except (_ServiceRequestError, _ServiceResponseError) as exc:
             if fault_attempt < max_retries:
@@ -717,7 +813,37 @@ async def _poll(
     CLEARS the budget, while a sustained streak of 5xx / 408 / 429 / transient
     network errors longer than the budget raises ``TimeoutError``. Pass ``None``
     to disable it (retry forever).
+
+    :param session_id: Identifier of the session that owns the queued request.
+    :type session_id: str
+    :param request_id: Identifier of the submitted request to poll.
+    :type request_id: str
+    :param op_type: Operation type used for result normalization and diagnostics.
+    :type op_type: str
+    :param extra_result_fields: Fallback result fields used when a normalized field is missing
+        or evaluates to false. Defaults to ``None``.
+    :type extra_result_fields: dict[str, ~typing.Any] or None
+    :param error_budget_sec: Maximum seconds in a continuous transient-error streak.
+        ``None`` disables this error budget.
+    :type error_budget_sec: float or None
+    :param operation_started_at: Monotonic timestamp for the start of the overall operation,
+        used to log total latency. ``None`` reports only the polling duration.
+    :type operation_started_at: float or None
+    :param poll_started_at: Monotonic timestamp for the start of polling, retained across
+        resubmissions. ``None`` uses the current time.
+    :type poll_started_at: float or None
+    :param poll_min_sec: Minimum pending-result poll interval in seconds.
+        ``None`` uses the default minimum interval.
+    :type poll_min_sec: float or None
+    :param poll_max_sec: Maximum pending-result poll interval in seconds.
+        ``None`` uses the default maximum interval.
+    :type poll_max_sec: float or None
+    :return: The normalized and deserialized result of the completed operation.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
+    # Preserve the preview poll state machine: pending progress resets the
+    # error budget, while retry classification and result normalization stay ordered.
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements,too-many-nested-blocks
     effective_poll_min = _RETRIEVE_POLL_MIN if poll_min_sec is None else poll_min_sec
     effective_poll_max = _RETRIEVE_POLL_MAX if poll_max_sec is None else poll_max_sec
     if effective_poll_min <= 0:
@@ -835,7 +961,8 @@ async def _poll(
                 body: Optional[Any] = None
                 try:
                     body = resp.json()
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-caught
+                    # Custom response JSON failures must not change status-based retry/backoff.
                     body = None
                 _log_http(
                     "response",
@@ -876,7 +1003,8 @@ async def _poll(
             )
             try:
                 poll_body = resp.json()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Preserve typed/status error fallthrough for any custom response JSON failure.
                 poll_body = None
             typed = _classify_http_error(resp.status_code, poll_body, response=resp, session_id=session_id)
             if typed is not None:
@@ -929,6 +1057,35 @@ async def _poll_with_resubmit(
     Retry is driven purely by the flag; the SDK never resubmits an operation
     the server has not marked retryable, so ordering-sensitive training ops
     (which the server never flags) are unaffected.
+
+    :param session_id: Identifier of the session that owns the queued request.
+    :type session_id: str
+    :param request_id: Identifier of the request already accepted by the service.
+    :type request_id: str
+    :param op_type: Operation type used for result normalization and diagnostics.
+    :type op_type: str
+    :param subpath: Original operation path, relative to the endpoint, reused on resubmission.
+    :type subpath: str
+    :param body_model: Original request body reused when the service permits resubmission.
+    :type body_model: ~typing.Any
+    :param extra_params: Additional query parameters reused on resubmission. Defaults to ``None``.
+    :type extra_params: dict[str, ~typing.Any] or None
+    :param extra_result_fields: Fallback result fields used when a normalized field is missing
+        or evaluates to false. Defaults to ``None``.
+    :type extra_result_fields: dict[str, ~typing.Any] or None
+    :param post_fn: Async submit callable used for resubmissions. ``None`` uses ``_post``.
+    :type post_fn: ~typing.Callable[..., ~typing.Awaitable[tuple[str, str]]] or None
+    :param operation_started_at: Monotonic timestamp for the original operation start,
+        used to log total latency. ``None`` reports only polling latency.
+    :type operation_started_at: float or None
+    :param poll_min_sec: Minimum pending-result poll interval in seconds.
+        ``None`` uses the default minimum interval.
+    :type poll_min_sec: float or None
+    :param poll_max_sec: Maximum pending-result poll interval in seconds.
+        ``None`` uses the default maximum interval.
+    :type poll_max_sec: float or None
+    :return: The completed operation result from the original request or a successful resubmission.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
     attempt = 0
     poll_started_at = _time.monotonic()
@@ -988,6 +1145,21 @@ async def _post_and_poll(
     ``retry_after_sec`` hint with jitter. Retry is driven purely by the
     server's ``should_retry`` signal — the SDK does not gate on operation type
     or error code — so the server only sets the flag on recoverable failures.
+
+    :param session_id: Identifier of the session that owns the operation.
+    :type session_id: str
+    :param subpath: Operation path relative to the configured endpoint.
+    :type subpath: str
+    :param body_model: Request model or JSON-serializable body to submit.
+    :type body_model: ~typing.Any
+    :param extra_params: Additional query parameters used for submission and resubmission.
+        Defaults to ``None``.
+    :type extra_params: dict[str, ~typing.Any] or None
+    :param extra_result_fields: Fallback result fields used when a normalized field is missing
+        or evaluates to false. Defaults to ``None``.
+    :type extra_result_fields: dict[str, ~typing.Any] or None
+    :return: The normalized and deserialized result of the completed operation.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
     operation_started_at = _time.monotonic()
     request_id, op_type = await _post(self, subpath, body_model, extra_params)
@@ -1041,6 +1213,9 @@ async def create_session(
     :return: The ``session_id`` string (e.g. ``"session_abc12345"``).
     :rtype: str
     """
+    # Preserve the preview create/load state machine, including deadline checks,
+    # resource-ID mapping, error classification, and heartbeat startup ordering.
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     _ensure_async_state(self)
 
     body = _json.loads(
@@ -1082,7 +1257,8 @@ async def create_session(
     if post_resp.status_code >= 400:
         try:
             resp_body = post_resp.json()
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Preserve create-response HTTP classification if a custom JSON decoder fails.
             resp_body = None
         typed = _classify_http_error(post_resp.status_code, resp_body, response=post_resp)
         if typed is not None:
@@ -1099,7 +1275,8 @@ async def create_session(
 
     session_id = _canonical_session_id(raw_session_id)
     resource_session_id = _resource_session_id(raw_session_id)
-    self._session_resource_ids[session_id] = resource_session_id
+    # Bound below as a client method; maintain its own private resource-ID map.
+    self._session_resource_ids[session_id] = resource_session_id  # pylint: disable=protected-access
     _logger.info(
         "[create_session] session_id transformed: raw=%s -> session_id=%s, resource_session_id=%s",
         raw_session_id,
@@ -1201,7 +1378,8 @@ async def create_session(
             # Non-retryable error.
             try:
                 poll_body = poll_resp.json()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Keep model-load HTTP error fallthrough for any custom response JSON failure.
                 poll_body = None
             typed = _classify_http_error(poll_resp.status_code, poll_body, response=poll_resp, session_id=session_id)
             if typed is not None:
@@ -1524,6 +1702,9 @@ async def forward_async(
     :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult] or
         ~asyncio.Future[~azure.ai.finetuningsessions.models.OperationResult]
     """
+    # PendingRequests is this module's opaque handle; its private posted list
+    # keeps the existing multi-chunk completion barrier without a new public API.
+    # pylint: disable=protected-access
     pending = await forward_post(self, session_id, batch, loss_fn=loss_fn, loss_fn_config=loss_fn_config)
 
     if len(pending._posted) > 1:
@@ -1641,7 +1822,17 @@ class PendingRequests:
         poll_min_sec: Optional[float] = None,
         poll_max_sec: Optional[float] = None,
     ) -> List[OperationResult]:
-        """Poll all requests and return their uncombined results in POST order."""
+        """Poll all requests and return their uncombined results in POST order.
+
+        :keyword poll_min_sec: Minimum pending-result poll interval in seconds.
+            ``None`` uses the default minimum interval.
+        :paramtype poll_min_sec: float or None
+        :keyword poll_max_sec: Maximum pending-result poll interval in seconds.
+            ``None`` uses the default maximum interval.
+        :paramtype poll_max_sec: float or None
+        :return: Uncombined operation results in the order their requests were posted.
+        :rtype: list[~azure.ai.finetuningsessions.models.OperationResult]
+        """
         poll_kwargs: dict[str, float] = {}
         if poll_min_sec is not None:
             poll_kwargs["poll_min_sec"] = poll_min_sec
@@ -1749,7 +1940,20 @@ async def _forward_backward_chunks_post(
     loss_fn: Union[str, LossFn],
     loss_fn_config: Optional[LossFnConfig],
 ) -> PendingRequests:
-    """POST precomputed forward/backward chunks sequentially."""
+    """POST precomputed forward/backward chunks sequentially.
+
+    :param session_id: Identifier of the training session that will process the chunks.
+    :type session_id: str
+    :param chunks: Precomputed request-sized chunks of training data. The list and each
+        chunk must be nonempty.
+    :type chunks: list[list[~azure.ai.finetuningsessions.models.Datum]]
+    :keyword loss_fn: Loss function applied to each chunk.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyperparameters applied to each chunk.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :return: A handle for polling the submitted chunks and combining their results.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
+    """
     if not chunks or any(not chunk for chunk in chunks):
         raise ValueError("Training batch must not be empty")
     subpath = f"/fine_tuning/sessions/{session_id}/forward_backward"
@@ -1828,6 +2032,9 @@ async def forward_backward_async(
     :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult] or
         ~asyncio.Future[~azure.ai.finetuningsessions.models.OperationResult]
     """
+    # PendingRequests is this module's opaque handle; its private chunk poller
+    # and posted list preserve wave aggregation and completion ordering.
+    # pylint: disable=protected-access
     if max_chunks_per_wave is not None and max_chunks_per_wave <= 0:
         raise ValueError("max_chunks_per_wave must be positive when set")
 
@@ -2071,7 +2278,19 @@ async def _save_weights_for_sampler_post(
     sampling_session_seq_id: Optional[int] = None,
     path: Optional[str] = None,
 ) -> "PendingRequests":
-    """Internal: POST a save-weights-for-sampler request without polling."""
+    """Internal: POST a save-weights-for-sampler request without polling.
+
+    :param session_id: Identifier of the session whose weights are saved for sampling.
+    :type session_id: str
+    :keyword sampling_session_seq_id: Sequence ID for an ephemeral sampler update.
+        ``None`` requests a persisted sampler checkpoint.
+    :paramtype sampling_session_seq_id: int or None
+    :keyword path: Optional checkpoint name/path, also used as a fallback checkpoint
+        identifier in the result. Defaults to ``None``.
+    :paramtype path: str or None
+    :return: A handle for polling the submitted sampler-weight save operation.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
+    """
     subpath = f"/fine_tuning/sessions/{session_id}/checkpoint_sample"
     body = SaveSamplerWeightsRequest(
         seq_id=0,
@@ -2143,6 +2362,9 @@ async def save_weights_and_get_sampling_client_async(
         ``checkpoint_id`` set to *name*.
     :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
     """
+    # Preserve the existing 42-character public preview API name for callers.
+    # Bound below as a client method; its per-session sequence counter stays private.
+    # pylint: disable=name-too-long,protected-access
     _ensure_async_state(self)
     seq = self._sampling_session_seq.get(session_id, 0) + 1
     self._sampling_session_seq[session_id] = seq
@@ -2223,7 +2445,8 @@ async def sample(
     # samples. Permit is released only when this sample fully resolves (success,
     # throttle-cap, or error) — samples are independent, so there is no
     # hold-and-wait cycle and thus no deadlock.
-    async with self._sample_semaphore:
+    # Bound below as a client method; this is its own lifecycle semaphore.
+    async with self._sample_semaphore:  # pylint: disable=protected-access
         request_id, op_type = await _post_sample(
             self,
             subpath,
@@ -2288,6 +2511,8 @@ async def delete_session(
     :return: None.
     :rtype: None
     """
+    # Bound below as a client method; both delete paths clear its private resource-ID cache.
+    # pylint: disable=protected-access
     session_id = _canonical_session_id(session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
     await _stop_heartbeat(self, session_id)
@@ -2304,7 +2529,8 @@ async def delete_session(
     if resp.status_code >= 400:
         try:
             resp_body = resp.json()
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Preserve delete-response HTTP classification if a custom JSON decoder fails.
             resp_body = None
         typed = _classify_http_error(resp.status_code, resp_body, response=resp)
         if typed is not None:
@@ -2327,6 +2553,9 @@ class FineTuningSessionClient(_ClientBase):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
     """
 
+    # azure-pylint-guidelines-checker 0.5.7 treats these method aliases as
+    # constants. They bind the existing snake_case public methods, not constants.
+    # pylint: disable=client-incorrect-naming-convention
     create_session = create_session
     create_session_from_checkpoint = create_session_from_checkpoint
     forward_backward = forward_backward
@@ -2346,6 +2575,7 @@ class FineTuningSessionClient(_ClientBase):
     sample = sample
     close_session = close_session
     delete_session = delete_session
+    # pylint: enable=client-incorrect-naming-convention
 
 
 # -- Patch private compatibility imports ---------------------------------------

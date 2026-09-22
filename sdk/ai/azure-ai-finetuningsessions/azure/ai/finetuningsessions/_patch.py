@@ -127,7 +127,16 @@ _MAX_CONCURRENT_CHUNKS = 32
 
 
 def _estimate_bytes_count(datum: Datum) -> int:
-    """Estimate the serialised size of a single Datum."""
+    """Estimate the serialised size of a single Datum.
+
+    :param datum: Training datum whose model input chunks and loss-function
+        tensors contribute to the estimate.
+    :type datum: ~azure.ai.finetuningsessions.models.Datum
+    :return: Approximate payload size in bytes, counting ten bytes per token or
+        tensor element and base64 expansion for image data, excluding JSON
+        property names and punctuation.
+    :rtype: int
+    """
     size = 0
     # Token IDs average about 10 bytes in JSON; image bytes are base64 encoded.
     for chunk in datum.model_input.chunks:
@@ -145,7 +154,15 @@ def _estimate_bytes_count(datum: Datum) -> int:
 
 
 def _chunk_data(data: List[Datum]) -> List[List[Datum]]:
-    """Split Datum list into chunks respecting size limits."""
+    """Split Datum list into chunks respecting size limits.
+
+    :param data: Non-empty training batch to partition without reordering its datums.
+    :type data: list[~azure.ai.finetuningsessions.models.Datum]
+    :return: Consecutive chunks bounded by the datum-count and estimated-byte
+        limits. A single oversized datum is kept intact in its own chunk.
+    :rtype: list[list[~azure.ai.finetuningsessions.models.Datum]]
+    :raises ValueError: If the training batch is empty.
+    """
     if not data:
         raise ValueError("Training batch must not be empty")
     chunks: List[List[Datum]] = []
@@ -191,7 +208,15 @@ def _reduce_slack(xs: List[float], weights: Optional[List[int]] = None) -> float
 
 
 def _order_insensitive_hash(xs: list) -> int:
-    """Order-insensitive hash for metric deduplication."""
+    """Order-insensitive hash for metric deduplication.
+
+    :param xs: Metric values convertible to integers, or a list of sets whose
+        elements can be sorted and hashed together.
+    :type xs: list
+    :return: Hash of the sorted integer values, or of the sorted elements
+        flattened from the input sets. Repeated values retain their multiplicity.
+    :rtype: int
+    """
     if xs and isinstance(xs[0], set):
         return hash(tuple(sorted([y for x in xs for y in x])))
     return hash(tuple(sorted(int(x) for x in xs)))
@@ -215,6 +240,16 @@ def _metrics_reduction(
     """Reduce metrics across chunked forward_backward results.
 
     Uses ``chunk_sizes`` (number of datums per chunk) as weights.
+
+    :param results: Per-chunk forward/backward results containing the metrics to aggregate.
+    :type results: list[~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult]
+    :param chunk_sizes: Datum counts aligned with ``results``, used by the
+        ``mean`` and ``slack`` reductions.
+    :type chunk_sizes: list[int]
+    :return: Metrics reduced by their ``name:reduction`` suffixes, with token
+        and duration totals, recomputed throughput, and cache-hit counts when
+        available. Empty when ``results`` is empty.
+    :rtype: dict[str, typing.Any]
     """
     if not results:
         return {}
@@ -275,7 +310,17 @@ def _combine_fwd_bwd_results(
     results: List[ForwardBackwardOperationResult],
     chunk_sizes: List[int],
 ) -> ForwardBackwardOperationResult:
-    """Combine results from multiple forward_backward chunks."""
+    """Combine results from multiple forward_backward chunks.
+
+    :param results: Per-chunk forward/backward results in the original chunk order.
+    :type results: list[~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult]
+    :param chunk_sizes: Datum counts aligned with ``results``, used to weight metric reductions.
+    :type chunk_sizes: list[int]
+    :return: Result with concatenated per-datum outputs and log probabilities,
+        reduced metrics, and summed total loss when every chunk provides one.
+        Empty input produces a result with no loss and an empty output list.
+    :rtype: ~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult
+    """
     if not results:
         return ForwardBackwardOperationResult(
             total_loss=None,
@@ -318,6 +363,17 @@ def _normalize_loom_result(data: dict, op_type: str, request_id: str) -> dict:
     under namespaced keys like ``"total_loss:sum"``).  This function injects the
     discriminator and promotes metric fields so ``_deserialize(OperationResult, ...)``
     returns the correct typed subclass.
+
+    :param data: Engine result dictionary returned by the Loom poll endpoint.
+    :type data: dict[str, typing.Any]
+    :param op_type: SDK operation discriminator used to supply missing result
+        fields and select operation-specific normalization.
+    :type op_type: str
+    :param request_id: Request identifier used as ``operation_id`` when that field is absent.
+    :type request_id: str
+    :return: A shallow copy with SDK discriminator, identity, status, and
+        operation-specific fields populated for deserialization.
+    :rtype: dict[str, typing.Any]
     """
     out = dict(data)
     out.setdefault("type", op_type)
@@ -441,7 +497,16 @@ class _BoundedRetryState:
 
 
 def _is_proxy_jwt_rejection(response: Union["HttpResponse", "AsyncHttpResponse"]) -> bool:
-    """Match Envoy's local JWT rejection, not an application's auth failure."""
+    """Match Envoy's local JWT rejection, not an application's auth failure.
+
+    :param response: HTTP response whose status, headers, and error body are inspected.
+    :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
+    :return: ``True`` only for a 401 from ``istio-envoy`` with an
+        ``invalid_token`` challenge and the ``Jwt verification fails`` message.
+    :rtype: bool
+    """
+    # Keep the tested proxy-auth rejection guards explicit.
+    # pylint: disable=too-many-return-statements
     if response.status_code != 401:
         return False
     headers = {name.lower(): value for name, value in response.headers.items()}
@@ -483,7 +548,19 @@ class _ProxyJwtRetryState:
         method: str,
         path: str,
     ) -> Optional[float]:
-        """Update JWT retry state; return seconds to wait, or None for normal handling."""
+        """Update JWT retry state; return seconds to wait, or None for normal handling.
+
+        :param response: Latest submit or poll response; a 200 resets the retry window and backoff.
+        :type response: ~azure.core.rest.HttpResponse or ~azure.core.rest.AsyncHttpResponse
+        :keyword method: HTTP method included in retry warning messages.
+        :paramtype method: str
+        :keyword path: Request path included in retry warning messages.
+        :paramtype path: str
+        :return: Jittered backoff in seconds for a recognized proxy JWT rejection,
+            limited by the remaining retry window, or ``None`` for normal response
+            handling or an exhausted window.
+        :rtype: float or None
+        """
         if response.status_code == 200:
             self._deadline = None
             self._delay = 1.0
@@ -507,7 +584,7 @@ class _ProxyJwtRetryState:
 
         wait = min(self._delay * (1 + 0.25 * _random.random()), remaining)
         _logger.warning(
-            "[proxy-jwt] %s %s rejected before application; retry in %.1fs " "(apim_request_id=%s)",
+            "[proxy-jwt] %s %s rejected before application; retry in %.1fs (apim_request_id=%s)",
             method,
             path,
             wait,
@@ -518,11 +595,17 @@ class _ProxyJwtRetryState:
 
 
 def _retryable_resubmit_wait(retry_after_sec: Optional[float]) -> float:
-    """Wait (seconds) before resubmitting a ``should_retry`` failure.
+    """Compute seconds to wait before resubmitting a ``should_retry`` failure.
 
     Honors the server's ``retry_after_sec`` hint (falling back to a default),
     then adds up to 25% jitter so a fleet of simultaneously-failed
     requests doesn't stampede the rate limiter on the same tick.
+
+    :param retry_after_sec: Server-provided delay in seconds. A positive value
+        is used; otherwise the default resubmit delay is used.
+    :type retry_after_sec: float or None
+    :return: Selected delay in seconds with up to 25 percent positive jitter.
+    :rtype: float
     """
     base = retry_after_sec if retry_after_sec and retry_after_sec > 0 else _DEFAULT_RESUBMIT_WAIT_SEC
     return base * (1 + 0.25 * _random.random())
@@ -594,6 +677,18 @@ class _ErrorBudget:
 
         Shared by the sync and async poll loops so the exhaustion message lives
         in one place.
+
+        :param budget_sec: Maximum duration in seconds of a sustained polling
+            error streak; ``None`` disables exhaustion checks.
+        :type budget_sec: float or None
+        :keyword op_type: Operation type included in the exhaustion exception;
+            an empty string is displayed as ``"operation"``.
+        :paramtype op_type: str
+        :keyword request_id: Request identifier included in the exhaustion exception.
+        :paramtype request_id: str
+        :return: An initially unarmed polling error budget that raises
+            ``TimeoutError`` when a sustained error streak exhausts it.
+        :rtype: ~azure.ai.finetuningsessions._patch._ErrorBudget
         """
         return cls(
             budget_sec,
@@ -608,7 +703,12 @@ class _ErrorBudget:
         self._deadline = None
 
     def consume(self, reason: str) -> None:
-        """Arm on the first error, raise once the streak outlasts the budget."""
+        """Arm on the first error, raise once the streak outlasts the budget.
+
+        :param reason: Short label for the current error, passed to the
+            exhaustion exception factory if the armed deadline has expired.
+        :type reason: str
+        """
         if self._budget is None:
             return
         now = _time.monotonic()
@@ -618,7 +718,15 @@ class _ErrorBudget:
             raise self._on_exhausted(reason, self._budget)
 
     def clamp_delay(self, delay: float) -> float:
-        """Bound an error wait to the remaining armed budget."""
+        """Bound an error wait to the remaining armed budget.
+
+        :param delay: Proposed wait in seconds; a non-finite or negative value
+            falls back to the minimum polling interval.
+        :type delay: float
+        :return: Sanitized wait in seconds, capped at the remaining armed budget
+            when one exists and reduced to zero if its deadline has elapsed.
+        :rtype: float
+        """
         delay = delay if _math.isfinite(delay) and delay >= 0 else _RETRIEVE_POLL_MIN
         if self._deadline is None:
             return delay
@@ -626,7 +734,22 @@ class _ErrorBudget:
 
 
 def _creation_wait(deadline: float, delay: float, timeout_sec: float, session_id: str) -> float:
-    """Clamp creation backoff and reject an already-expired deadline."""
+    """Clamp creation backoff and reject an already-expired deadline.
+
+    :param deadline: Absolute session-creation deadline from ``time.monotonic()``.
+    :type deadline: float
+    :param delay: Proposed wait in seconds; non-finite or negative values use
+        the minimum polling interval.
+    :type delay: float
+    :param timeout_sec: Original creation timeout in seconds, used in the timeout error message.
+    :type timeout_sec: float
+    :param session_id: Session identifier included in the timeout error message.
+    :type session_id: str
+    :return: Non-negative wait in seconds, no greater than the time remaining
+        before the creation deadline.
+    :rtype: float
+    :raises RuntimeError: If the creation deadline has already expired.
+    """
     remaining = deadline - _time.monotonic()
     if remaining <= 0:
         raise RuntimeError(f"Timed out after {timeout_sec}s waiting for session_id={session_id} to become ready")
@@ -647,7 +770,13 @@ def _resolve_poll_warn_sec() -> float:
     cold inference fleet warming a large base model), but it is also the first
     visible symptom of a wedged run -- a WARNING makes it stand out instead of
     being buried in INFO. Override via LOOM_POLL_WARN_SEC; <= 0 disables
-    escalation. Default 600s (10 min)."""
+    escalation. Default 600s (10 min).
+
+    :return: Pending-duration warning threshold in seconds from ``LOOM_POLL_WARN_SEC``,
+        or 600 seconds if it is unset or cannot be parsed as a float. A non-positive
+        threshold disables escalation.
+    :rtype: float
+    """
     raw = _os.environ.get("LOOM_POLL_WARN_SEC")
     if raw is None:
         return 600.0
@@ -675,7 +804,21 @@ def _maybe_log_poll_progress(
     op_type: str,
     elapsed: float,
 ) -> None:
-    """Emit a throttled poll-progress log for a pending request."""
+    """Emit a throttled poll-progress log for a pending request.
+
+    :param envelope: Pending poll response; ``phase="resuming_session"`` marks
+        time spent queued rather than actively executing.
+    :type envelope: dict[str, typing.Any]
+    :param session_id: Session identifier used in logs and progress-state keys.
+    :type session_id: str
+    :param request_id: Request identifier used to track active time and warning throttling.
+    :type request_id: str
+    :param op_type: Operation type included in logs and shared INFO throttling.
+    :type op_type: str
+    :param elapsed: Elapsed polling time in seconds to display for a queued
+        request; active time is tracked separately.
+    :type elapsed: float
+    """
     now = _time.monotonic()
     is_queued = envelope.get("phase") == "resuming_session"
     req_key = (session_id, request_id)
@@ -701,8 +844,7 @@ def _maybe_log_poll_progress(
     # sibling request of the same op completing cannot reset this window.
     if (
         not is_queued
-        and _POLL_WARN_SEC > 0
-        and display_elapsed >= _POLL_WARN_SEC
+        and 0 < _POLL_WARN_SEC <= display_elapsed
         and now - _poll_warn_last.get(warn_key, 0.0) >= _POLL_WARN_DEDUP_SEC
     ):
         _poll_warn_last[warn_key] = now
@@ -742,7 +884,16 @@ def _maybe_log_poll_progress(
 
 
 def _clear_poll_log_state(session_id: str, request_id: str, op_type: str) -> None:
-    """Drop poll-progress state for a finished request."""
+    """Drop poll-progress state for a finished request.
+
+    :param session_id: Session identifier used in the progress-state keys.
+    :type session_id: str
+    :param request_id: Finished request whose active-time and warning entries are removed.
+    :type request_id: str
+    :param op_type: Operation type whose session-level INFO entry and
+        request-level warning entry are removed.
+    :type op_type: str
+    """
     _request_active_since.pop((session_id, request_id), None)
     _poll_log_last.pop((session_id, op_type), None)
     _poll_warn_last.pop((session_id, op_type, request_id), None)
@@ -757,14 +908,29 @@ VERBOSE_HTTP: bool = _os.environ.get("FINETUNING_VERBOSE_HTTP", "").lower() in (
 
 
 def _log_http(direction: str, method: str, url: str, status: Optional[int] = None, body: Any = None) -> None:
-    """Log an HTTP request or response if VERBOSE_HTTP is enabled."""
+    """Log an HTTP request or response if VERBOSE_HTTP is enabled.
+
+    :param direction: ``"request"`` for an outbound request; other values select response logging.
+    :type direction: str
+    :param method: HTTP method written in the log entry.
+    :type method: str
+    :param url: Request URL or path written in the log entry.
+    :type url: str
+    :param status: Optional response status code, ignored for request logs.
+        Missing status codes are logged as zero.
+    :type status: int or None
+    :param body: Request or response body. Dictionaries and lists are formatted
+        as indented JSON and other values as text; ``None`` omits the body.
+    :type body: typing.Any
+    """
     if not VERBOSE_HTTP:
         return
     body_str = ""
     if body is not None:
         try:
             body_str = _json.dumps(body, indent=2) if isinstance(body, (dict, list)) else str(body)
-        except Exception:  # pragma: no cover
+        except Exception:  # pylint: disable=broad-exception-caught  # pragma: no cover
+            # Best-effort logging keeps its repr fallback for arbitrary formatting errors.
             body_str = repr(body)
         body_str = f"\n{body_str}"
     if direction == "request":
@@ -814,6 +980,13 @@ def _base_headers(extra: Optional[dict] = None) -> dict:
     The rest are listed in :data:`_DIRECT_PATH_HEADER_ENV`. Only
     ``azure-resource-location`` fails loudly; the others degrade silently, which
     is why they are plumbed explicitly rather than left to chance.
+
+    :param extra: Optional header overrides merged after the default and
+        environment-derived headers.
+    :type extra: dict[str, str] or None
+    :return: JSON acceptance and preview headers, available environment-derived
+        identity and resource headers, and caller overrides.
+    :rtype: dict[str, str]
     """
     headers: dict = {
         "Accept": "application/json",
@@ -925,13 +1098,19 @@ class FineTuningSession:
     # ── Background heartbeat ──────────────────────────────────────────────────
 
     def _start_heartbeat(self, interval_sec: float = 30.0) -> None:
-        """Start a daemon thread that sends heartbeat every interval_sec."""
+        """Start a daemon thread that sends periodic session heartbeats.
+
+        :param interval_sec: Seconds to wait before the first heartbeat and
+            between subsequent heartbeat attempts. Defaults to ``30.0``.
+        :type interval_sec: float
+        """
 
         def _heartbeat_loop() -> None:
             while not self._heartbeat_stop.wait(interval_sec):
                 try:
                     self.heartbeat(connection_timeout=5.0, read_timeout=5.0)
-                except Exception as exc:
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    # Isolate worker failures so subsequent heartbeat attempts still run.
                     _logger.warning("[heartbeat] failed for %s: %s", self._heartbeat_session_id, exc)
 
         self._heartbeat_thread = _threading.Thread(target=_heartbeat_loop, name="fts-heartbeat", daemon=True)
@@ -995,6 +1174,8 @@ class FineTuningSession:
         :return: A :class:`FineTuningSession` instance ready for training operations.
         :rtype: ~azure.ai.finetuningsessions.FineTuningSession
         """
+        # Keep the tested model-load retry and polling state machine intact.
+        # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         create_request = CreateSessionRequest(
             type=type,
             base_model=base_model,
@@ -1030,7 +1211,8 @@ class FineTuningSession:
         if post_resp.status_code >= 400:
             try:
                 resp_body = post_resp.json()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Keep the status-based fallback for arbitrary custom-transport JSON errors.
                 resp_body = None
             typed = _classify_http_error(post_resp.status_code, resp_body, response=post_resp)
             if typed is not None:
@@ -1157,7 +1339,8 @@ class FineTuningSession:
                 # Any other error — fail immediately
                 try:
                     poll_body = poll_resp.json()
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-caught
+                    # Keep the status-based fallback for arbitrary custom-transport JSON errors.
                     poll_body = None
                 typed = _classify_http_error(
                     poll_resp.status_code, poll_body, response=poll_resp, session_id=session_id
@@ -1247,6 +1430,14 @@ class FineTuningSession:
         the final 429 so the caller classifies it as ``RateLimitedError``.
         Sample submissions also retry the known pre-application Envoy JWT
         rejection within a separate bounded window. Other requests are a single send.
+
+        :param post_req: Prepared POST request reused for any sample-submission retries.
+        :type post_req: ~azure.core.rest.HttpRequest
+        :param subpath: Action path used to identify sample submissions and label retry logs.
+        :type subpath: str
+        :return: The raw HTTP response after any bounded sample-submission retries;
+            unsuccessful statuses are left for the caller to classify.
+        :rtype: ~azure.core.rest.HttpResponse
         """
         if not subpath.endswith("/sample"):
             return self._client.send_request(post_req)
@@ -1305,6 +1496,21 @@ class FineTuningSession:
         hint with jitter. Retry is driven purely by the server's ``should_retry``
         signal — the SDK does not gate on operation type or error code — so the
         server is responsible for only setting the flag on recoverable failures.
+
+        :param subpath: Action path relative to the client endpoint.
+        :type subpath: str
+        :param body_model: SDK model or mapping serialized as the submit request's JSON body.
+        :type body_model: typing.Any
+        :param extra_params: Optional query parameters merged into the submit
+            request after the default API version.
+        :type extra_params: dict[str, typing.Any] or None
+        :param extra_result_fields: Fallback result fields filled before
+            deserialization when the corresponding server values are missing or
+            false-valued.
+        :type extra_result_fields: dict[str, typing.Any] or None
+        :return: Typed result from the completed operation, after any permitted
+            resubmissions of server-marked retryable failures.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         attempt = 0
         timeline: dict[str, Optional[float]] = {
@@ -1343,14 +1549,14 @@ class FineTuningSession:
         extra_result_fields: Optional[dict] = None,
         timeline: Optional[dict[str, Optional[float]]] = None,
     ) -> OperationResult:
-        """POST to a loom action endpoint (returns 200 + request_id), then
-        long-poll GET /request/{request_id} until the GPU finishes.
+        """POST to a Loom action endpoint, then poll its request to completion.
 
         Loom returns 200 (not 202) with ``{request_id, session_id, status}``
-        from all mutating operations.  The poll endpoint blocks server-side
-        (up to 5 minutes) and returns the typed result directly.
+        from mutating operations. The poll endpoint returns a
+        ``{status, result, error}`` envelope immediately; pending responses
+        are polled again with adaptive backoff.
 
-        Retries 408 / 5xx / transient network errors. The timeout is an ERROR
+        Retries 408 / 429 / 5xx / transient network errors. The timeout is an ERROR
         budget, not a wall-clock budget — see below. Set
         AZURE_AI_FINETUNING_SESSIONS_OPERATION_TIMEOUT_SEC=0 to disable it.
 
@@ -1375,7 +1581,28 @@ class FineTuningSession:
           budget. Note this means a server that returns healthy-pending forever
           (never completes, never errors) will poll forever — guard against that
           with server-side stall detection, not this client timeout.
+
+        :param subpath: Action path relative to the client endpoint.
+        :type subpath: str
+        :param body_model: SDK model or mapping serialized as the submit request's JSON body.
+        :type body_model: typing.Any
+        :param extra_params: Optional query parameters merged into the submit
+            request after the default API version.
+        :type extra_params: dict[str, typing.Any] or None
+        :param extra_result_fields: Fallback result fields filled before
+            deserialization when the corresponding server values are missing or
+            false-valued.
+        :type extra_result_fields: dict[str, typing.Any] or None
+        :param timeline: Mutable timing state shared across resubmissions, containing
+            ``operation_started_at`` and ``poll_started_at`` monotonic timestamps.
+            An unset poll start is populated in place; ``None`` creates local state.
+        :type timeline: dict[str, typing.Optional[float]] or None
+        :return: Completed operation result after wire-format normalization and
+            insertion of caller-provided fallback fields.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        # Keep the tested submit/poll retry and error-budget state machine intact.
+        # pylint: disable=too-many-locals,too-many-branches,too-many-statements
         resource_session_id = getattr(
             self,
             "_resource_session_id",
@@ -1410,7 +1637,8 @@ class FineTuningSession:
         if post_resp.status_code >= 400:
             try:
                 resp_body = post_resp.json()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Keep the status-based fallback for arbitrary custom-transport JSON errors.
                 resp_body = None
             _log_http("response", "POST", subpath, status=post_resp.status_code, body=resp_body)
             typed = _classify_http_error(
@@ -1424,7 +1652,7 @@ class FineTuningSession:
         request_id = data["request_id"]
         session_id = _resource_session_id(data.get("session_id", resource_session_id))
         _logger.info(
-            "[operation_timeline] submit_completed session_id=%s request_id=%s " "op=%s elapsed_ms=%.1f",
+            "[operation_timeline] submit_completed session_id=%s request_id=%s op=%s elapsed_ms=%.1f",
             session_id,
             request_id,
             op_type,
@@ -1588,7 +1816,8 @@ class FineTuningSession:
                 _log_http("response", "GET", poll_path, status=poll_resp.status_code, body=None)
                 try:
                     poll_body = poll_resp.json()
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-caught
+                    # Keep the status-based fallback for arbitrary custom-transport JSON errors.
                     poll_body = None
                 typed = _classify_http_error(
                     poll_resp.status_code, poll_body, response=poll_resp, session_id=session_id
@@ -1651,6 +1880,8 @@ class FineTuningSession:
         :return: :class:`~azure.ai.finetuningsessions.models.OperationResult`.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         chunks = _chunk_data(batch)
         if len(chunks) <= 1:
             # Single chunk — no combining needed.
@@ -1717,6 +1948,8 @@ class FineTuningSession:
         :return: The result of applying the optimizer update.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         return self._post_and_poll(
             f"/fine_tuning/sessions/{self.session_id}/optim_step",
             OptimStepRequest(adam_params=adam_params),
@@ -1748,6 +1981,8 @@ class FineTuningSession:
         :return: :class:`~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult`.
         :rtype: ~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         # Server expects a ForwardRequest with `forward_input` wrapping the
         # shared ForwardBackwardInput payload.
         subpath = f"/fine_tuning/sessions/{self.session_id}/forward"
@@ -1810,6 +2045,8 @@ class FineTuningSession:
         :return: The result of saving the training checkpoint, including its checkpoint identifier.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         return self._post_and_poll(
             f"/fine_tuning/sessions/{self.session_id}/checkpoint",
             SaveCheckpointRequest(path=path),
@@ -1840,6 +2077,8 @@ class FineTuningSession:
         :return: The result of saving sampler weights, including the checkpoint identifier.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         if not path and sampling_session_seq_id is None:
             raise ValueError("Provide path or sampling_session_seq_id with seq_id before saving sampler weights")
         # Compute the checkpoint_id using the same formula the server uses
@@ -1905,7 +2144,10 @@ class FineTuningSession:
         jitter — until ``_SAMPLE_THROTTLE_TIMEOUT_SEC``, then a typed
         ``RateLimitedError`` is raised.
         """
-        with self._client._sample_semaphore:
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
+        # Same-SDK helper must share the client's lifecycle-scoped sampling limit.
+        with self._client._sample_semaphore:  # pylint: disable=protected-access
             return self._post_and_poll(
                 f"/fine_tuning/sessions/{self.session_id}/sample",
                 SampleRequest(
@@ -1951,6 +2193,8 @@ class FineTuningSession:
         :return: None.
         :rtype: None
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         self._stop_heartbeat()
         close_req = _HttpRequest(
             "POST",
@@ -1975,6 +2219,8 @@ class FineTuningSession:
         :return: None.
         :rtype: None
         """
+        # Keep **kwargs accepted and ignored for preview-call compatibility.
+        # pylint: disable=unused-argument
         self._stop_heartbeat()
         del_req = _HttpRequest(
             "DELETE",
@@ -1989,7 +2235,8 @@ class FineTuningSession:
         if resp.status_code >= 400:
             try:
                 resp_body = resp.json()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Keep the status-based fallback for arbitrary custom-transport JSON errors.
                 resp_body = None
             typed = _classify_http_error(resp.status_code, resp_body, response=resp)
             if typed is not None:

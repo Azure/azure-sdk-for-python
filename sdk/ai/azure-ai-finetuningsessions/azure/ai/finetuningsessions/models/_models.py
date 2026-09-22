@@ -69,35 +69,40 @@ class AdamParams(_Model):
 class ApiError(_Model):
     """ApiError.
 
-    :ivar code: Required.
+    :ivar code: Machine-readable error code. Required.
     :vartype code: str
-    :ivar message: Required.
+    :ivar message: Human-readable description of the error. Required.
     :vartype message: str
-    :ivar param:
+    :ivar param: Request parameter associated with the error.
     :vartype param: str
-    :ivar type:
+    :ivar type: Category of the error.
     :vartype type: str
-    :ivar details:
+    :ivar details: Nested error details associated with this error.
     :vartype details: list[~azure.ai.finetuningsessions.models.ApiError]
-    :ivar additional_info:
+    :ivar additional_info: Additional information associated with the error.
     :vartype additional_info: dict[str, any]
-    :ivar debug_info:
+    :ivar debug_info: Diagnostic information for troubleshooting the error.
     :vartype debug_info: dict[str, any]
     """
 
     code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Machine-readable error code. Required."""
     message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Human-readable description of the error. Required."""
     param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Request parameter associated with the error."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Category of the error."""
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nested error details associated with this error."""
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Additional information associated with the error."""
     debug_info: Optional[dict[str, Any]] = rest_field(
         name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Diagnostic information for troubleshooting the error."""
 
     @overload
     def __init__(
@@ -126,12 +131,12 @@ class ApiError(_Model):
 class ApiErrorResponse(_Model):
     """Error response for API failures.
 
-    :ivar error: Required.
+    :ivar error: Details of the API failure. Required.
     :vartype error: ~azure.ai.finetuningsessions.models.ApiError
     """
 
     error: "_models.ApiError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Details of the API failure. Required."""
 
     @overload
     def __init__(
@@ -154,18 +159,20 @@ class ApiErrorResponse(_Model):
 class Checkpoint(_Model):
     """A checkpoint item returned in GET /fine_tuning/sessions/{sessionId}/checkpoints.
 
-    :ivar checkpoint_id: Required.
+    :ivar checkpoint_id: Identifier of the saved checkpoint. Required.
     :vartype checkpoint_id: str
-    :ivar checkpoint_type: Required. Known values are: "training" and "sampler".
+    :ivar checkpoint_type: Type of checkpoint, such as training state or sampler-compatible
+     weights. Required. Known values are: "training" and "sampler".
     :vartype checkpoint_type: str or ~azure.ai.finetuningsessions.models.CheckpointType
     :ivar time: Timestamp when the checkpoint was saved. Required.
     :vartype time: ~datetime.datetime
     """
 
     checkpoint_id: str = rest_field(visibility=["read"])
-    """Required."""
+    """Identifier of the saved checkpoint. Required."""
     checkpoint_type: Union[str, "_models.CheckpointType"] = rest_field(visibility=["read"])
-    """Required. Known values are: \"training\" and \"sampler\"."""
+    """Type of checkpoint, such as training state or sampler-compatible weights. Required. Known
+     values are: \"training\" and \"sampler\"."""
     time: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
     """Timestamp when the checkpoint was saved. Required."""
 
@@ -173,19 +180,20 @@ class Checkpoint(_Model):
 class CheckpointInfo(_Model):
     """Detailed metadata for a single checkpoint.
 
-    :ivar base_model: Required.
+    :ivar base_model: Base model used to create the checkpoint. Required.
     :vartype base_model: str
-    :ivar is_lora: Required.
+    :ivar is_lora: Whether the checkpoint uses a LoRA adapter. Required.
     :vartype is_lora: bool
-    :ivar lora_rank:
+    :ivar lora_rank: LoRA adapter rank associated with the checkpoint.
     :vartype lora_rank: int
     """
 
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Base model used to create the checkpoint. Required."""
     is_lora: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Whether the checkpoint uses a LoRA adapter. Required."""
     lora_rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA adapter rank associated with the checkpoint."""
 
     @overload
     def __init__(
@@ -210,12 +218,12 @@ class CheckpointInfo(_Model):
 class CheckpointList(_Model):
     """List of all checkpoints for a session (no pagination).
 
-    :ivar checkpoints: Required.
+    :ivar checkpoints: Checkpoints belonging to the session. Required.
     :vartype checkpoints: list[~azure.ai.finetuningsessions.models.Checkpoint]
     """
 
     checkpoints: list["_models.Checkpoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Checkpoints belonging to the session. Required."""
 
     @overload
     def __init__(
@@ -240,12 +248,12 @@ class CreateSessionRequest(_Model):
 
     :ivar type: The session type. Required. "training"
     :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
-    :ivar base_model: Required.
+    :ivar base_model: Base model to use for the fine-tuning session. Required.
     :vartype base_model: str
     :ivar lora_config: LoRA adapter config. Rank is fixed server-side for v1; omit to use the
      server default.
     :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
-    :ivar user_metadata:
+    :ivar user_metadata: User-provided metadata associated with the session.
     :vartype user_metadata: dict[str, any]
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
@@ -257,10 +265,11 @@ class CreateSessionRequest(_Model):
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The session type. Required. \"training\""""
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Base model to use for the fine-tuning session. Required."""
     lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """LoRA adapter config. Rank is fixed server-side for v1; omit to use the server default."""
     user_metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-provided metadata associated with the session."""
     ejectable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Opt the session into idle hibernation. Default False."""
     training_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -364,23 +373,24 @@ class Datum(_Model):
 class ForwardBackwardInput(_Model):
     """Inner payload for a forward-backward request.
 
-    :ivar data: Required.
+    :ivar data: Training examples to process in the pass. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Required. Known values are: "cross_entropy", "importance_sampling", "ppo",
-     "cispo", and "sapo".
+    :ivar loss_fn: Loss function to apply to the training examples. Required. Known values are:
+     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config:
+    :ivar loss_fn_config: Hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
     data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Training examples to process in the pass. Required."""
     loss_fn: Union[str, "_models.LossFn"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"cross_entropy\", \"importance_sampling\", \"ppo\", \"cispo\", and
-     \"sapo\"."""
+    """Loss function to apply to the training examples. Required. Known values are: \"cross_entropy\",
+     \"importance_sampling\", \"ppo\", \"cispo\", and \"sapo\"."""
     loss_fn_config: Optional["_models.LossFnConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Hyper-parameters for the selected loss function."""
 
     @overload
     def __init__(
@@ -410,23 +420,26 @@ class OperationResult(_Model):
     ForwardBackwardOperationResult, OptimStepOperationResult, SampleOperationResult,
     SaveCheckpointOperationResult, SaveSamplerWeightsOperationResult
 
-    :ivar type: Required. Known values are: "forward_backward", "optim_step", "sample",
-     "save_checkpoint", and "save_sampler_weights".
+    :ivar type: Kind of asynchronous operation represented by this result. Required. Known values
+     are: "forward_backward", "optim_step", "sample", "save_checkpoint", and "save_sampler_weights".
     :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"forward_backward\", \"optim_step\", \"sample\",
-     \"save_checkpoint\", and \"save_sampler_weights\"."""
+    """Kind of asynchronous operation represented by this result. Required. Known values are:
+     \"forward_backward\", \"optim_step\", \"sample\", \"save_checkpoint\", and
+     \"save_sampler_weights\"."""
     operation_id: str = rest_field(visibility=["read"])
-    """Required."""
+    """Identifier of the asynchronous operation. Required."""
     status: Union[str, "_models.OperationStatus"] = rest_field(visibility=["read"])
-    """Required. Known values are: \"running\", \"succeeded\", and \"failed\"."""
+    """Current lifecycle status of the asynchronous operation. Required. Known values are:
+     \"running\", \"succeeded\", and \"failed\"."""
 
     @overload
     def __init__(
@@ -449,11 +462,13 @@ class OperationResult(_Model):
 class ForwardBackwardOperationResult(OperationResult, discriminator="forward_backward"):
     """ForwardBackwardOperationResult.
 
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Required. A forward-backward pass operation.
+    :ivar type: Identifies this result as a forward-backward operation. Required. A
+     forward-backward pass operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.FORWARD_BACKWARD
     :ivar total_loss: Aggregate training loss, or None when the operation does not report one.
     :vartype total_loss: float
@@ -461,14 +476,15 @@ class ForwardBackwardOperationResult(OperationResult, discriminator="forward_bac
     :vartype loss_fn_output_type: str
     :ivar loss_fn_outputs: Per-datum loss outputs, including token logprobs.
     :vartype loss_fn_outputs: list[dict[str, any]]
-    :ivar per_datum_logprobs:
+    :ivar per_datum_logprobs: Token log-probabilities for each training example.
     :vartype per_datum_logprobs: list[~azure.ai.finetuningsessions.models.TensorData]
-    :ivar metrics:
+    :ivar metrics: Metrics reported by the forward-backward operation.
     :vartype metrics: dict[str, any]
     """
 
     type: Literal[OperationType.FORWARD_BACKWARD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A forward-backward pass operation."""
+    """Identifies this result as a forward-backward operation. Required. A forward-backward pass
+     operation."""
     total_loss: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Aggregate training loss, or None when the operation does not report one."""
     loss_fn_output_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -480,7 +496,9 @@ class ForwardBackwardOperationResult(OperationResult, discriminator="forward_bac
     per_datum_logprobs: Optional[list["_models.TensorData"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Token log-probabilities for each training example."""
     metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metrics reported by the forward-backward operation."""
 
     @overload
     def __init__(
@@ -508,14 +526,15 @@ class ForwardBackwardOperationResult(OperationResult, discriminator="forward_bac
 class ForwardBackwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
 
-    :ivar forward_backward_input: Required.
+    :ivar forward_backward_input: Training examples and loss configuration for the forward-backward
+     pass. Required.
     :vartype forward_backward_input: ~azure.ai.finetuningsessions.models.ForwardBackwardInput
     """
 
     forward_backward_input: "_models.ForwardBackwardInput" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required."""
+    """Training examples and loss configuration for the forward-backward pass. Required."""
 
     @overload
     def __init__(
@@ -542,12 +561,12 @@ class ForwardInput(ForwardBackwardInput):
     that the forward endpoint has its own type in the SDK, allowing the
     contract to diverge later (e.g. making loss_fn optional for forward).
 
-    :ivar data: Required.
+    :ivar data: Training examples to process in the pass. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Required. Known values are: "cross_entropy", "importance_sampling", "ppo",
-     "cispo", and "sapo".
+    :ivar loss_fn: Loss function to apply to the training examples. Required. Known values are:
+     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config:
+    :ivar loss_fn_config: Hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
@@ -574,12 +593,12 @@ class ForwardInput(ForwardBackwardInput):
 class ForwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
 
-    :ivar forward_input: Required.
+    :ivar forward_input: Input data and loss configuration for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
     """
 
     forward_input: "_models.ForwardInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Input data and loss configuration for the forward-only pass. Required."""
 
     @overload
     def __init__(
@@ -602,12 +621,12 @@ class ForwardRequest(_Model):
 class HeartbeatResponse(_Model):
     """Response from POST /fine_tuning/sessions/{sessionId}/heartbeat.
 
-    :ivar session_id: Required.
+    :ivar session_id: Identifier of the session whose heartbeat was acknowledged. Required.
     :vartype session_id: str
     """
 
     session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Identifier of the session whose heartbeat was acknowledged. Required."""
 
     @overload
     def __init__(
@@ -839,27 +858,30 @@ class ModelInputChunk(_Model):
 class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
     """OptimStepOperationResult.
 
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Required. An optimizer step operation.
+    :ivar type: Identifies this result as an optimizer-step operation. Required. An optimizer step
+     operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.OPTIM_STEP
-    :ivar grad_norm: Required.
+    :ivar grad_norm: Gradient norm reported for the optimizer step. Required.
     :vartype grad_norm: float
-    :ivar step_count: Required.
+    :ivar step_count: Number of optimizer steps completed. Required.
     :vartype step_count: int
-    :ivar metrics:
+    :ivar metrics: Metrics reported by the optimizer step.
     :vartype metrics: dict[str, float]
     """
 
     type: Literal[OperationType.OPTIM_STEP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. An optimizer step operation."""
+    """Identifies this result as an optimizer-step operation. Required. An optimizer step operation."""
     grad_norm: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Gradient norm reported for the optimizer step. Required."""
     step_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Number of optimizer steps completed. Required."""
     metrics: Optional[dict[str, float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Metrics reported by the optimizer step."""
 
     @overload
     def __init__(
@@ -885,12 +907,12 @@ class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
 class OptimStepRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
 
-    :ivar adam_params: Required.
+    :ivar adam_params: Adam optimizer hyper-parameters to use for this step. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     """
 
     adam_params: "_models.AdamParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Adam optimizer hyper-parameters to use for this step. Required."""
 
     @overload
     def __init__(
@@ -913,19 +935,20 @@ class OptimStepRequest(_Model):
 class SampledSequence(_Model):
     """A single sampled sequence.
 
-    :ivar tokens: Required.
+    :ivar tokens: Token IDs in the generated sequence. Required.
     :vartype tokens: list[int]
     :ivar text: Decoded text of the generated sequence.
     :vartype text: str
-    :ivar logprobs:
+    :ivar logprobs: Log-probability of each generated token.
     :vartype logprobs: list[float]
     """
 
     tokens: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Token IDs in the generated sequence. Required."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Decoded text of the generated sequence."""
     logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Log-probability of each generated token."""
 
     @overload
     def __init__(
@@ -950,13 +973,14 @@ class SampledSequence(_Model):
 class SampleOperationResult(OperationResult, discriminator="sample"):
     """SampleOperationResult.
 
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Required. A sampling operation.
+    :ivar type: Identifies this result as a sampling operation. Required. A sampling operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAMPLE
-    :ivar sequences: Required.
+    :ivar sequences: Sequences generated by the sampling operation. Required.
     :vartype sequences: list[~azure.ai.finetuningsessions.models.SampledSequence]
     :ivar prompt_logprobs: Per-token log-probabilities for the prompt, if requested. None at
      positions where logprobs were not computed (e.g. the first prompt token).
@@ -972,9 +996,9 @@ class SampleOperationResult(OperationResult, discriminator="sample"):
     """
 
     type: Literal[OperationType.SAMPLE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A sampling operation."""
+    """Identifies this result as a sampling operation. Required. A sampling operation."""
     sequences: list["_models.SampledSequence"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Sequences generated by the sampling operation. Required."""
     prompt_logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Per-token log-probabilities for the prompt, if requested. None at positions where logprobs were
      not computed (e.g. the first prompt token)."""
@@ -1018,7 +1042,7 @@ class SampleRequest(_Model):
     :vartype num_samples: int
     :ivar prompt: Tokenised input prompt. Required.
     :vartype prompt: ~azure.ai.finetuningsessions.models.ModelInput
-    :ivar sampling_params: Required.
+    :ivar sampling_params: Parameters controlling token generation for this request. Required.
     :vartype sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
     :ivar sampling_session_id: Sampling session ID from a prior save_sampler_weights call.
     :vartype sampling_session_id: str
@@ -1038,7 +1062,7 @@ class SampleRequest(_Model):
     prompt: "_models.ModelInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tokenised input prompt. Required."""
     sampling_params: "_models.SamplingParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Parameters controlling token generation for this request. Required."""
     sampling_session_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sampling session ID from a prior save_sampler_weights call."""
     seq_id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1135,24 +1159,27 @@ class SamplingParams(_Model):
 class SaveCheckpointOperationResult(OperationResult, discriminator="save_checkpoint"):
     """SaveCheckpointOperationResult.
 
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Required. A training checkpoint save operation.
+    :ivar type: Identifies this result as a training checkpoint save operation. Required. A
+     training checkpoint save operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_CHECKPOINT
-    :ivar checkpoint_id: Required.
+    :ivar checkpoint_id: Identifier of the saved training checkpoint. Required.
     :vartype checkpoint_id: str
-    :ivar path: Required.
+    :ivar path: Path associated with the saved training checkpoint. Required.
     :vartype path: str
     """
 
     type: Literal[OperationType.SAVE_CHECKPOINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A training checkpoint save operation."""
+    """Identifies this result as a training checkpoint save operation. Required. A training checkpoint
+     save operation."""
     checkpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Identifier of the saved training checkpoint. Required."""
     path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Path associated with the saved training checkpoint. Required."""
 
     @overload
     def __init__(
@@ -1217,24 +1244,28 @@ class SaveCheckpointRequest(_Model):
 class SaveSamplerWeightsOperationResult(OperationResult, discriminator="save_sampler_weights"):
     """SaveSamplerWeightsOperationResult.
 
-    :ivar operation_id: Required.
+    :ivar operation_id: Identifier of the asynchronous operation. Required.
     :vartype operation_id: str
-    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
+    :ivar status: Current lifecycle status of the asynchronous operation. Required. Known values
+     are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Required. A sampler-weights save operation.
+    :ivar type: Identifies this result as a sampler-weights save operation. Required. A
+     sampler-weights save operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_SAMPLER_WEIGHTS
-    :ivar checkpoint_id: Required.
+    :ivar checkpoint_id: Identifier of the saved sampler checkpoint. Required.
     :vartype checkpoint_id: str
-    :ivar sampling_session_id: Required.
+    :ivar sampling_session_id: Identifier of the sampling session associated with the saved
+     weights. Required.
     :vartype sampling_session_id: str
     """
 
     type: Literal[OperationType.SAVE_SAMPLER_WEIGHTS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A sampler-weights save operation."""
+    """Identifies this result as a sampler-weights save operation. Required. A sampler-weights save
+     operation."""
     checkpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Identifier of the saved sampler checkpoint. Required."""
     sampling_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Identifier of the sampling session associated with the saved weights. Required."""
 
     @overload
     def __init__(
@@ -1340,16 +1371,16 @@ class Session(_Model):
 class SessionList(_Model):
     """Paginated list of fine-tuning sessions.
 
-    :ivar data: Required.
+    :ivar data: Session summaries in the current page. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.SessionSummary]
-    :ivar cursor: Required.
+    :ivar cursor: Pagination information for the session list. Required.
     :vartype cursor: ~azure.ai.finetuningsessions.models.Cursor
     """
 
     data: list["_models.SessionSummary"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Session summaries in the current page. Required."""
     cursor: "_models.Cursor" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Pagination information for the session list. Required."""
 
     @overload
     def __init__(
@@ -1373,18 +1404,20 @@ class SessionList(_Model):
 class SessionModelData(_Model):
     """Nested model sub-object within a session response.
 
-    :ivar base_model: Required.
+    :ivar base_model: Identifier of the base model used by this session. Required.
     :vartype base_model: str
-    :ivar lora_config:
+    :ivar lora_config: LoRA adapter configuration associated with the session.
     :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
-    :ivar model_name:
+    :ivar model_name: Name of the model associated with this session.
     :vartype model_name: str
     """
 
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """Identifier of the base model used by this session. Required."""
     lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA adapter configuration associated with the session."""
     model_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the model associated with this session."""
 
     @overload
     def __init__(

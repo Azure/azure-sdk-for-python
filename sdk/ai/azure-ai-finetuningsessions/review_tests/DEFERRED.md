@@ -1,9 +1,9 @@
 # Archived pre-parity public-SDK tests
 
 The active preview baseline preserves the tested Loom customer API and behavior
-identified by [../loom-source.json](../loom-source.json), using TypeSpec generation
+identified by [../loom-source.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/loom-source.json), using TypeSpec generation
 plus supported Python hooks. It is not the earlier public-only contract or the
-exact old internal file layout. See [../GENERATION.md](../GENERATION.md).
+exact old internal file layout. See [../GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/GENERATION.md).
 
 The Python files in this directory preserve the previous public-only tests for
 the next review stage. They are deliberately **not part of the active baseline

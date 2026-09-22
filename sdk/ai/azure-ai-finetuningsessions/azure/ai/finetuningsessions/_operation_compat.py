@@ -42,6 +42,12 @@ def _build_sampling_request(session_id, *, foundry_features, api_version, **kwar
 
     Modern REST sampling does. Keeping this one historical request shape in the
     compatibility hook avoids weakening the real required REST parameter.
+
+    :param str session_id: Identifier of the fine-tuning session to sample from.
+    :keyword str foundry_features: Value of the Foundry-Features preview opt-in header.
+    :keyword str api_version: API version to include in the request query.
+    :return: The HTTP POST request for the legacy sampling operation.
+    :rtype: ~azure.core.rest.HttpRequest
     """
     headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -68,6 +74,8 @@ def _error_map(options):
 
 
 def _request(operation, builder, arguments, body, options):
+    # The supported compatibility hook requires generated client, configuration, and serialization internals.
+    # pylint: disable=protected-access
     headers = case_insensitive_dict(options.pop("headers", {}) or {})
     params = options.pop("params", {}) or {}
     if body is not _NO_BODY:
@@ -93,6 +101,8 @@ def _raise_error(response, errors):
 
 
 def _read(operation, builder, arguments, response_type, options, body=_NO_BODY):
+    # The supported compatibility hook requires access to the generated client's internal pipeline.
+    # pylint: disable=protected-access
     errors = _error_map(options)
     request = _request(operation, builder, arguments, body, options)
     cls = options.pop("cls", None)
@@ -117,6 +127,8 @@ def _read(operation, builder, arguments, response_type, options, body=_NO_BODY):
 
 
 async def _read_async(operation, builder, arguments, response_type, options, body=_NO_BODY):
+    # The supported compatibility hook requires access to the generated client's internal pipeline.
+    # pylint: disable=protected-access
     errors = _error_map(options)
     request = _request(operation, builder, arguments, body, options)
     cls = options.pop("cls", None)
@@ -141,6 +153,8 @@ async def _read_async(operation, builder, arguments, response_type, options, bod
 
 
 def _poller_options(operation, options, has_body):
+    # The supported compatibility hook requires generated polling configuration and deserialization internals.
+    # pylint: disable=protected-access
     headers = case_insensitive_dict(options.pop("headers", {}) or {})
     params = options.pop("params", {}) or {}
     initial_options = {"headers": headers, "params": params}
@@ -163,6 +177,8 @@ def _poller_options(operation, options, has_body):
 
 
 def _initial(operation, builder, arguments, body, options):
+    # The supported compatibility hook requires the generated pipeline and deserialization internals.
+    # pylint: disable=protected-access
     errors = _error_map(options)
     request = _request(operation, builder, arguments, body, options)
     decompress = options.pop("decompress", True)
@@ -176,11 +192,16 @@ def _initial(operation, builder, arguments, body, options):
         _raise_error(response, errors)
     # Match the initial generated helper even when its callback discards these.
     operation._deserialize("str", response.headers.get("Operation-Location"))
-    response.iter_bytes() if decompress else response.iter_raw()
+    if decompress:
+        response.iter_bytes()
+    else:
+        response.iter_raw()
     return result
 
 
 async def _initial_async(operation, builder, arguments, body, options):
+    # The supported compatibility hook requires the generated pipeline and deserialization internals.
+    # pylint: disable=protected-access
     errors = _error_map(options)
     request = _request(operation, builder, arguments, body, options)
     decompress = options.pop("decompress", True)
@@ -196,11 +217,16 @@ async def _initial_async(operation, builder, arguments, body, options):
             pass
         _raise_error(response, errors)
     operation._deserialize("str", response.headers.get("Operation-Location"))
-    response.iter_bytes() if decompress else response.iter_raw()
+    if decompress:
+        response.iter_bytes()
+    else:
+        response.iter_raw()
     return result
 
 
 def _begin(operation, builder, arguments, options, body=_NO_BODY):
+    # The supported compatibility hook requires generated client, configuration, and serialization internals.
+    # pylint: disable=protected-access
     initial_options, polling, delay, token, deserialize = _poller_options(operation, options, body is not _NO_BODY)
     if token == "":
         raise ValueError("continuation_token must not be empty")
@@ -229,6 +255,8 @@ def _begin(operation, builder, arguments, options, body=_NO_BODY):
 
 
 async def _begin_async(operation, builder, arguments, options, body=_NO_BODY):
+    # The supported compatibility hook requires generated client, configuration, and serialization internals.
+    # pylint: disable=protected-access
     initial_options, polling, delay, token, deserialize = _poller_options(operation, options, body is not _NO_BODY)
     if token == "":
         raise ValueError("continuation_token must not be empty")

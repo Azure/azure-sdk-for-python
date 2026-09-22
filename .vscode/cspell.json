@@ -2155,7 +2155,14 @@
         "finetuningsessions", "AICLIENT", "CISPO", "SAPO", "TCGC", "pygen",
         "skyrl", "falsey", "ungated", "rhno", "sess", "coro", "dedups",
         "unconfigured", "chunker", "aabbccdd", "xffjpeg", "xffoffline", "xfftest",
-        "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
+        "gethostbyaddr", "WRONLY", "RDWR", "CREAT", "xffvalid", "nopolling", "undoc"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-finetuningsessions/{emitter-package-lock,cspell}.json",
+      "words": [
+        "chownr", "cliui", "esbuild", "fastq", "fsevents", "globby", "iojs", "isaacs",
+        "loong", "reusify", "sindresorhus", "sunos", "universalify", "upgrader", "yallist", "yargs"
       ]
     },
     {

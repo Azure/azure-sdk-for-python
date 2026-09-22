@@ -361,6 +361,9 @@ def _classify_http_error(
     :return: A typed exception for a recognized error, or ``None`` otherwise.
     :rtype: ~azure.ai.finetuningsessions.FineTuningSessionsError or None
     """
+    # Preserve the tested HTTP-status decision table and its legacy precedence.
+    # Splitting or merging branches can change which public exception wins.
+    # pylint: disable=too-many-return-statements,too-many-branches,too-many-statements
     if body is None:
         body = {}
 
@@ -518,7 +521,8 @@ def _classify_http_error(
             raw = None
             try:
                 raw = response.headers.get("Retry-After")
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # A custom transport's header failure must not mask the typed HTTP error.
                 raw = None
             if raw is not None:
                 try:
@@ -576,6 +580,8 @@ def _classify_poll_failure(
     :return: A typed exception for a recognized failure, or ``None`` otherwise.
     :rtype: ~azure.ai.finetuningsessions.FineTuningSessionsError or None
     """
+    # Ordered terminal/retryable classification is part of the preview contract.
+    # pylint: disable=too-many-return-statements
     error_code = envelope.get("error_code") or envelope.get("code")
     error_msg = envelope.get("error") or "Operation failed"
     debug_ref = envelope.get("debug_ref")
