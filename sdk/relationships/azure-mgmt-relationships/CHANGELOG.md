@@ -9,8 +9,8 @@
   - Added model `ContainsRelationship`
   - Added model `ContainsRelationshipProperties`
   - Added model `ServiceGroupMemberRelationshipPropertiesV2`
-  - Model `DependencyOfRelationshipsOperations` added method `list_by_parent`
-  - Model `ServiceGroupMemberRelationshipsOperations` added method `list_by_parent`
+  - Operation group `DependencyOfRelationshipsOperations` added method `list_by_parent`
+  - Operation group `ServiceGroupMemberRelationshipsOperations` added method `list_by_parent`
   - Added operation group `ContainsRelationshipsOperations`
   - Added operation group `DependencyOfRelationshipsByServiceGroupOperations`
 
