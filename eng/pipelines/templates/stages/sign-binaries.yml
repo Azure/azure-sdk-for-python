@@ -65,8 +65,43 @@ stages:
       - template: /eng/pipelines/templates/variables/image.yml
 
     jobs:
+      - job: ResolveTargeting
+        displayName: Resolve artifact targeting
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          - checkout: none
+
+          # packages_extended contains PackageInfo only for artifacts retained by the build's
+          # targeting resolution. Checking that output avoids duplicating its runtime-variable,
+          # glob, and indirect-package rules here.
+          - task: DownloadPipelineArtifact@2
+            displayName: Download artifact package info
+            inputs:
+              artifactName: packages_extended
+              itemPattern: 'PackageInfo/${{ parameters.Artifact.name }}.json'
+              targetPath: $(Build.ArtifactStagingDirectory)/targeting
+
+          - pwsh: |
+              $packageInfo = "$(Build.ArtifactStagingDirectory)/targeting/PackageInfo/${{ parameters.Artifact.name }}.json"
+
+              if (Test-Path $packageInfo) {
+                Write-Host "PackageInfo exists for '${{ parameters.Artifact.name }}'; signing will run."
+                Write-Host "##vso[task.setvariable variable=ArtifactTargeted;isOutput=true]true"
+              }
+              else {
+                Write-Host "No PackageInfo exists for '${{ parameters.Artifact.name }}'; skipping signing."
+                Write-Host "##vso[task.setvariable variable=ArtifactTargeted;isOutput=true]false"
+              }
+            name: resolve
+            displayName: Check artifact build output
+
       - job: Sign_macOS
         displayName: Sign macOS Wheels
+        dependsOn: ResolveTargeting
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)
@@ -117,6 +152,8 @@ stages:
 
       - job: Sign_Windows
         displayName: Sign Windows Wheels
+        dependsOn: ResolveTargeting
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)
@@ -167,8 +204,10 @@ stages:
       - job: Assemble
         displayName: Assemble signed artifact
         dependsOn:
+          - ResolveTargeting
           - Sign_macOS
           - Sign_Windows
+        condition: and(succeeded(), eq(dependencies.ResolveTargeting.outputs['resolve.ArtifactTargeted'], 'true'))
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)

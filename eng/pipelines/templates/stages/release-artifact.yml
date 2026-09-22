@@ -19,6 +19,11 @@ parameters:
   # Upstream stage. The build stage for ordinary packages, `Sign_<safeName>` when signing.
   - name: DependsOn
     type: string
+  # Signing stages skip cleanly when this artifact has no filtered PackageInfo build output.
+  # When set, release uses that stage's resolved targeting output to skip the release stage too.
+  - name: SignedArtifactTargetingStage
+    type: string
+    default: ''
   - name: ServiceDirectory
     type: string
     default: 'not-specified'
@@ -58,8 +63,12 @@ stages:
       - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
-    ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+    ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(parameters.SignedArtifactTargetingStage, '')) }}:
+      condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.ReleaseArtifact_${{ parameters.Artifact.safeName }}'], 'true'), eq(dependencies.${{ parameters.SignedArtifactTargetingStage }}.outputs['ResolveTargeting.resolve.ArtifactTargeted'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+    ${{ elseif and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
       condition: and(succeeded(), eq(dependencies.AutoReleasePrepare.outputs['ResolveAutoReleasePackages.resolve.ReleaseArtifact_${{ parameters.Artifact.safeName }}'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+    ${{ elseif ne(parameters.SignedArtifactTargetingStage, '') }}:
+      condition: and(succeeded(), eq(dependencies.${{ parameters.SignedArtifactTargetingStage }}.outputs['ResolveTargeting.resolve.ArtifactTargeted'], 'true'), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
     ${{ else }}:
       condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
     jobs:

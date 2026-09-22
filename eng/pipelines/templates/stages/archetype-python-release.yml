@@ -73,6 +73,7 @@ stages:
           ${{ if eq(artifact.signBinaries, true) }}:
             ArtifactName: packages_${{ artifact.safeName }}_signed
             DependsOn: Sign_${{ artifact.safeName }}
+            SignedArtifactTargetingStage: Sign_${{ artifact.safeName }}
           ${{ else }}:
             ArtifactName: ${{ parameters.ArtifactName }}
             DependsOn: ${{ parameters.DependsOn }}
