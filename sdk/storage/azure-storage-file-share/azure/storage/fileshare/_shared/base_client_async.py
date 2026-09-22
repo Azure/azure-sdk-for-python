@@ -170,6 +170,15 @@ class AsyncStorageAccountHostsMixin(object):
         if self._credential_policy:
             policies.append(self._credential_policy)  # type: ignore
 
+        for req in reqs:
+            for header_name, header_value in req.headers.items():
+                if header_value is not None:
+                    if "\r" in header_name or "\n" in header_name or "\r" in header_value or "\n" in header_value:
+                        raise ValueError(
+                            f"Invalid header {header_name!r} in batch sub-request: the header name or its value "
+                            r"contains a '\r' or '\n' character, which is not permitted."
+                        )
+
         request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 
         pipeline_response = await self._pipeline.run(request, **kwargs)

@@ -1592,6 +1592,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         blob_list = []
         container_client.delete_blobs(*blob_list)
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("value", ["\r", "\n", "\r\n"])
+    async def test_batch_delete_blobs_rejects_crlf_in_header(self, value):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+
+        with pytest.raises(ValueError):
+            await container_client.delete_blobs(
+                "blob1", if_tags_match_condition=f"\"tag1\"='first{value}x-ms-lease-id: injected'"
+            )
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_delete_blobs_simple(self, **kwargs):
