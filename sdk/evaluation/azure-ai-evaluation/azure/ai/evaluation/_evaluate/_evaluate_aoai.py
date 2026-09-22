@@ -841,26 +841,27 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
             wrapper_name = only_seg
             LOGGER.info(f"AOAI: All paths start with wrapper '{WRAPPER_KEY}', will strip from schema.")
 
-    effective_paths = referenced_paths
+    path_pairs = [(p, p) for p in referenced_paths]
     if strip_wrapper:
         stripped = []
         for p in referenced_paths:
             parts = p.split(".", 1)
             if len(parts) == 2:
-                stripped.append(parts[1])  # drop leading 'item.'
+                stripped.append((p, parts[1]))  # drop leading 'item.'
             else:
                 # Path was just 'item' (no leaf) – ignore; it doesn't define a leaf value.
                 continue
         # If stripping produced at least one usable path, adopt; else fall back to original.
         if stripped:
-            effective_paths = stripped
-            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {effective_paths}")
+            path_pairs = stripped
+            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {[p for _, p in path_pairs]}")
 
+    effective_paths = [p for _, p in path_pairs]
     LOGGER.info(f"AOAI: Building nested schema from {len(effective_paths)} effective paths...")
 
     # Infer leaf types from the DataFrame so nested schemas also get array/object types
     leaf_type_map: Dict[str, str] = {}
-    for ref_path, eff_path in zip(referenced_paths, effective_paths if strip_wrapper else referenced_paths):
+    for ref_path, eff_path in path_pairs:
         if ref_path in input_data_df:
             for candidate in input_data_df[ref_path]:
                 if isinstance(candidate, (list, dict)):

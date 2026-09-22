@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+
 ### Other Changes
 
 ## 1.18.5 (2026-09-02)
