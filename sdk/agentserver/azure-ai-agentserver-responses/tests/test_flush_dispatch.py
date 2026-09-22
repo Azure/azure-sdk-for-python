@@ -16,6 +16,12 @@ _MODE_TO_HELPER = {
 }
 
 
+@pytest.fixture(autouse=True)
+def _clear_invalid_flush_modes() -> None:
+    with eh._flush_mode_lock:
+        eh._invalid_flush_modes_warned.clear()
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "mode, expected_helper",
@@ -66,3 +72,14 @@ async def test_flush_mode_dispatch_awaits_async_helper() -> None:
     ) as m_async:
         await eh._flush_spans_for_mode("async")
     m_async.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_invalid_flush_mode_warns_once(caplog: pytest.LogCaptureFixture) -> None:
+    """Repeated requests with the same invalid mode emit one warning."""
+    with mock.patch.object(eh, "flush_spans_async", new_callable=mock.AsyncMock):
+        await eh._flush_spans_for_mode("invalid-mode")
+        await eh._flush_spans_for_mode(" INVALID-MODE ")
+
+    warnings = [record for record in caplog.records if record.levelname == "WARNING"]
+    assert len(warnings) == 1

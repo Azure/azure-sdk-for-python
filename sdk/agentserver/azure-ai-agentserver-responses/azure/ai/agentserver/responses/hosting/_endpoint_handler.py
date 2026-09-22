@@ -241,6 +241,34 @@ _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming"
 
 _FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
 _DEFAULT_FLUSH_MODE = "async"
+_FLUSH_MODES = frozenset({"async", "background", "sync"})
+_invalid_flush_modes_warned: set[str] = set()
+_flush_mode_lock = threading.Lock()
+
+
+def _resolve_flush_mode(mode: str) -> str:
+    """Normalize and validate a configured flush mode.
+
+    :param mode: The configured flush mode.
+    :type mode: str
+    :return: A supported flush mode.
+    :rtype: str
+    """
+    normalized = (mode or "").strip().lower()
+    if normalized in _FLUSH_MODES:
+        return normalized
+    if normalized:
+        with _flush_mode_lock:
+            should_warn = normalized not in _invalid_flush_modes_warned
+            _invalid_flush_modes_warned.add(normalized)
+        if should_warn:
+            logger.warning(
+                "Unrecognised %s=%r; falling back to %r flush mode.",
+                _FLUSH_MODE_ENV,
+                mode,
+                _DEFAULT_FLUSH_MODE,
+            )
+    return _DEFAULT_FLUSH_MODE
 
 
 async def _flush_spans_for_mode(mode: str) -> None:
@@ -263,19 +291,12 @@ async def _flush_spans_for_mode(mode: str) -> None:
     :param mode: The flush mode; matched case-insensitively.
     :type mode: str
     """
-    normalized = (mode or "").strip().lower()
+    normalized = _resolve_flush_mode(mode)
     if normalized == "sync":
         flush_spans()
     elif normalized == "background":
         schedule_flush_spans()
     else:
-        if normalized and normalized != _DEFAULT_FLUSH_MODE:
-            logger.warning(
-                "Unrecognised %s=%r; falling back to %r flush mode.",
-                _FLUSH_MODE_ENV,
-                mode,
-                _DEFAULT_FLUSH_MODE,
-            )
         await flush_spans_async()
 
 
@@ -461,6 +482,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Create a task that resolves when _shutdown_requested fires.
         # This avoids relying on the 0.5s poll interval for shutdown detection.
         shutdown_waiter = asyncio.create_task(self._shutdown_requested.wait())
+        poll_task: asyncio.Task[None] | None = None
         try:
             while not cancellation_signal.is_set():
                 if self._shutdown_requested.is_set():
@@ -468,7 +490,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         context.shutdown.set()
                     cancellation_signal.set()
                     return
-                if await request.is_disconnected():
+                disconnected = await request.is_disconnected()
+                # Starlette probes ``receive`` inside a pre-cancelled AnyIO
+                # scope, which can consume this task's cancellation on asyncio.
+                current_task = asyncio.current_task()
+                if current_task is not None and current_task.cancelling():
+                    raise asyncio.CancelledError
+                if disconnected:
                     # Client disconnect on foreground. If shutdown is also
                     # in progress, prefer SHUTTING_DOWN cause — the
                     # disconnect is a side effect of server shutdown
@@ -496,8 +524,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     cancellation_signal.set()
                     return
         finally:
-            if not shutdown_waiter.done():
-                shutdown_waiter.cancel()
+            child_tasks = [task for task in (poll_task, shutdown_waiter) if task is not None]
+            for task in child_tasks:
+                if not task.done():
+                    task.cancel()
+            for task in child_tasks:
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -890,8 +925,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         raise
                     finally:
                         reset_request_context(stream_ctx_token)
-                        if disconnect_task and not disconnect_task.done():
-                            disconnect_task.cancel()
+                        if disconnect_task:
+                            if not disconnect_task.done():
+                                disconnect_task.cancel()
+                            try:
+                                await disconnect_task
+                            except asyncio.CancelledError:
+                                pass
 
                 sse_response = _CreateStreamingResponse(
                     _iter_with_context(),
@@ -943,7 +983,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         ),
                     )
                 finally:
-                    disconnect_task.cancel()
+                    if not disconnect_task.done():
+                        disconnect_task.cancel()
+                    try:
+                        await disconnect_task
+                    except asyncio.CancelledError:
+                        pass
 
             snapshot = await self._orchestrator.run_background(ctx)
             logger.info(

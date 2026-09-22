@@ -43,7 +43,7 @@
 - Construct generated model types on demand while preserving real TypedDict contracts and public exports.
 - Avoid redundant event and recovery-seed copies while retaining validation and caller-owned mutation isolation.
 
-- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
 
