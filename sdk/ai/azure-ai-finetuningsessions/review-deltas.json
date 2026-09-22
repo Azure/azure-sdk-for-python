@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
+  "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
+  "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"],
+  "adapted_upstream_tests": {
+    "tests/test_create_session_id_normalization.py": "64ef8fbd9f20fe1d5405a78df6d2a25537814f2d0915f097a4d537137468a699",
+    "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db"
+  },
+  "added_tests": {
+    "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
+    "tests/test_review_regressions.py": "12f871a59a03cc8bc47c5a6dc566d109f6501b671004afe634a0fca0dc1e1687"
+  },
+  "changes": [
+    {"comments": [4049473889, 4049474086, 4049474688, 4066580814], "change": "Reuse one generated sync pipeline; custom policies work and normal close releases the session transport."},
+    {"comments": [4049474583, 4066580951], "change": "Drain cancelled heartbeat tasks before session close/delete and async client close; concurrent cancellation does not interrupt cleanup."},
+    {"comments": [4049473646, 4049473833, 4066929882], "change": "Default raw-operation pipelines receive existing environment-backed identity headers scoped to the configured origin and session path; caller overrides and custom pipelines are preserved."},
+    {"comments": [3411972606, 3411972633, 4066580877], "change": "Public credential annotations resolve and include the already-supported API-key credential; no authentication-policy tightening."},
+    {"comments": [4049474025, 4066580850], "change": "Explicit non-batch 413 fields retain generic handling; invalid/non-finite/negative 503 retry hints do not replace the typed service error."},
+    {"comments": [4049474057, 4066580978], "change": "Reject empty logical training batches before any POST or fabricated successful handle."},
+    {"comments": [3411972577, 4049474318], "change": "Require a sampler path or sampling-session ordinal instead of creating ssNone identifiers."},
+    {"comments": [4049474193, 4049474454, 4066580904], "change": "Creation polls reject malformed/unknown status and tolerate bounded request-store 404 without resubmitting creation."},
+    {"comments": [4049474244, 4049474375], "change": "Creation and sustained-error retry waits are clamped to remaining deadlines/budgets."},
+    {"comments": [4049474495, 4049474534, 4066929810], "change": "Forward chunking runs off-loop like forward/backward; synchronous chunk fan-out has a fixed 32-worker ceiling."},
+    {"comments": [4066580932], "change": "Deletion accepts only 2xx or idempotent 404; unhandled redirects fail without deleting async resource mappings."},
+    {"comments": [4067553898, 4067553921], "change": "Normal INFO create/completion logs contain identifiers rather than response payloads; explicit verbose body logging remains opt-in."},
+    {"comments": [], "change": "An empty raw continuation token raises ValueError before submission instead of an unbound-local implementation error."},
+    {"reviews": [5272424055, 5274881761], "change": "Sync heartbeat requests use bounded I/O options; if join times out, lifecycle raises and retains the live thread reference instead of racing close/delete."},
+    {"reviews": [5272424055], "change": "Image mappings pass through ImageChunk validation; invalid signatures and token counts cannot bypass the handwritten checks."},
+    {"reviews": [5274881761], "change": "Completed-wave and multichunk async methods return an actual completed Task, not a plain Future, matching their public annotation."},
+    {"reviews": [5272785483], "change": "Correct the lastResort message-only formatter documentation; no logging behavior change."},
+    {"comments": [4071315065], "change": "ModelInput field and constructor overload accept the already-supported ImageChunk alongside token chunks."}
+  ],
+  "deferred_contract_decisions": [
+    {"comments": [3411972551], "reason": "Changing heartbeat startup to opt-in changes the tested session-liveness default; retain until an explicit API/lifecycle decision."},
+    {"comments": [4049473726], "reason": "Remote API-key HTTP rejection changes an existing compatibility/authentication policy and requires security review; recommend HTTPS now."},
+    {"comments": [4066580692], "reason": "No verified server deduplication contract; changing non-idempotent submission recovery needs service-owner review and fault-injection validation. Do not claim existing retries are duplicate-safe."},
+    {"comments": [4071314957], "reason": "Replacing or removing the legacy raw async LRO API changes the explicitly preserved preview contract, including continuation/custom-poll semantics. Keep its documented limitation and use tested request-ID conveniences until an API decision."}
+  ]
+}

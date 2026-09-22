@@ -352,7 +352,7 @@ async def test_async_legacy_create_heartbeat_uses_server_resource_id(
         if len(client.requests) >= 3:
             break
         await asyncio.sleep(0)
-    _aio_patch._stop_heartbeat(client, session_id)
+    await _aio_patch._stop_heartbeat(client, session_id)
     await asyncio.sleep(0)
 
     assert session_id == "session_abc12345"

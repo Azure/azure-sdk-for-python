@@ -3,7 +3,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Supported async operation subclasses preserving the tested preview API."""
+"""Supported async operation subclasses preserving the tested preview API.
+
+The seven local override annotations document intentional legacy keyword
+replacements, not unchecked implementation or arbitrary API changes.
+"""
 
 from collections.abc import MutableMapping
 from typing import Any, IO, Literal, Optional, Union, overload
@@ -21,7 +25,7 @@ JSON = MutableMapping[str, Any]
 
 
 class SessionsOperations(_generated.SessionsOperations):
-    @overload
+    @overload  # type: ignore[override]
     async def begin_create(
         self,
         body: _models.CreateSessionRequest,
@@ -53,7 +57,7 @@ class SessionsOperations(_generated.SessionsOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_create(
+    async def begin_create(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         body: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
@@ -157,7 +161,7 @@ class SessionsOperations(_generated.SessionsOperations):
 
 
 class TrainingOperations(_generated.TrainingOperations):
-    @overload
+    @overload  # type: ignore[override]
     async def begin_forward_backward(
         self,
         session_id: str,
@@ -192,7 +196,7 @@ class TrainingOperations(_generated.TrainingOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_forward_backward(
+    async def begin_forward_backward(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         body: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
@@ -209,7 +213,7 @@ class TrainingOperations(_generated.TrainingOperations):
             body,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_optim_step(
         self,
         session_id: str,
@@ -244,7 +248,7 @@ class TrainingOperations(_generated.TrainingOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_optim_step(
+    async def begin_optim_step(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         body: Union[_models.OptimStepRequest, JSON, IO[bytes]],
@@ -263,7 +267,7 @@ class TrainingOperations(_generated.TrainingOperations):
 
 
 class CheckpointsOperations(_generated.CheckpointsOperations):
-    @overload
+    @overload  # type: ignore[override]
     async def begin_save(
         self,
         session_id: str,
@@ -298,7 +302,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_save(
+    async def begin_save(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         body: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
@@ -315,7 +319,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
             body,
         )
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_save_sampler_weights(
         self,
         session_id: str,
@@ -350,7 +354,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_save_sampler_weights(
+    async def begin_save_sampler_weights(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         body: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
@@ -409,7 +413,7 @@ class CheckpointsOperations(_generated.CheckpointsOperations):
 
 
 class SamplingOperations(_generated.SamplingOperations):
-    @overload
+    @overload  # type: ignore[override]
     async def begin_sample(
         self,
         session_id: str,
@@ -444,7 +448,7 @@ class SamplingOperations(_generated.SamplingOperations):
     ) -> AsyncLROPoller[_models.OperationResult]: ...
 
     @distributed_trace_async
-    async def begin_sample(
+    async def begin_sample(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         body: Union[_models.SampleRequest, JSON, IO[bytes]],
@@ -464,7 +468,7 @@ class SamplingOperations(_generated.SamplingOperations):
 
 class Operations(_generated.Operations):
     @distributed_trace_async
-    async def get(
+    async def get(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         session_id: str,
         operation_id: str,

@@ -361,6 +361,7 @@ def main():
     parser.add_argument("--candidate", type=Path)
     parser.add_argument("--worker", type=Path)
     parser.add_argument("--harness", type=Path, required=True)
+    parser.add_argument("--review-deltas", type=Path, help="Explicit, versioned post-baseline bug-fix contracts")
     args = parser.parse_args()
     if args.worker:
         with redirect_stdout(sys.stderr):
@@ -370,7 +371,7 @@ def main():
     if args.reference is None or args.candidate is None:
         parser.error("--reference and --candidate are required unless --worker is used")
     sys.path.insert(0, str(args.harness.parent))
-    from verify_loom_compatibility import _differences
+    from verify_loom_compatibility import _differences, _apply_review_header_contract
     reports = []
     for package in (args.reference, args.candidate):
         result = subprocess.run([sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()),
@@ -379,6 +380,30 @@ def main():
         if result.returncode:
             raise RuntimeError(result.stderr + result.stdout)
         reports.append(json.loads(result.stdout))
+    if args.review_deltas:
+        deltas = json.loads(args.review_deltas.read_text(encoding="utf-8"))
+        if deltas.get("fixture_contracts") != ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]:
+            raise RuntimeError("Unsupported review comparison contract")
+        reports[0]["raw"] = _apply_review_header_contract(reports[0]["raw"], raw=True)
+        for client, original in ((".FineTuningSessionClient", "TokenCredential"),
+                                 (".aio.FineTuningSessionClient", "AsyncTokenCredential")):
+            parameter = reports[0]["surface"]["clients"][client]["__init__"]["signature"]["parameters"][1]
+            if parameter["type"] != original:
+                raise RuntimeError("The immutable baseline credential annotation changed unexpectedly")
+            parameter["type"] = {"origin": "Union", "args": [original, "AzureKeyCredential"]}
+        model_input = reports[0]["surface"]["models"]["ModelInput"]
+        expected_chunks = {"origin": "list", "args": ["ModelInputChunk"]}
+        if model_input["fields"]["chunks"]["type"] != expected_chunks:
+            raise RuntimeError("The immutable token-only ModelInput annotation changed unexpectedly")
+        chunks = {"origin": "list", "args": [{"origin": "Union", "args": ["ModelInputChunk", "ImageChunk"]}]}
+        model_input["fields"]["chunks"]["type"] = chunks
+        model_input["overloads"] = [
+            {"parameters": [{"name": "chunks", "kind": "KEYWORD_ONLY", "type": chunks, "default": {"empty": True}}],
+             "returns": "None", "async": False},
+            {"parameters": [{"name": "mapping", "kind": "POSITIONAL_OR_KEYWORD", "type": {"origin": "Mapping", "args": ["str", "Any"]}, "default": {"empty": True}}],
+             "returns": "None", "async": False},
+        ]
+        print("Applied only recorded header, dual-auth, and multimodal typing contracts; all other fields remain exact.")
     differences = _differences(*reports)
     print(f"Public models/enums: {len(reports[0]['surface']['models'])}; raw cases: {len(reports[0]['raw'])}")
     for delta in differences[:60]:

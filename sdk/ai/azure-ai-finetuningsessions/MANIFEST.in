@@ -10,7 +10,11 @@ include emitter-package-lock.json
 include generator-requirements.txt
 include generation-provenance.json
 include tsp-location.yaml
-include review_tests/README.md
+include review_tests/DEFERRED.md
+include review-deltas.json
+include REVIEW.md
+include api.md
+include api.metadata.yml
 include azure/ai/finetuningsessions/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md

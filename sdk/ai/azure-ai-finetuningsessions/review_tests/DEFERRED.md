@@ -1,4 +1,4 @@
-# Deferred public-SDK review tests
+# Archived pre-parity public-SDK tests
 
 The active preview baseline preserves the tested Loom customer API and behavior
 identified by [../loom-source.json](../loom-source.json), using TypeSpec generation
@@ -9,8 +9,9 @@ The Python files in this directory preserve the previous public-only tests for
 the next review stage. They are deliberately **not part of the active baseline
 test suite**. Several require models or helpers that do not exist in the Loom
 snapshot. Do not interpret their exclusion as proof that the reviewed issues
-are fixed. In particular, the heartbeat shutdown correction is deferred and
-the snapshot retains Loom's cancel-only behavior.
+are fixed. The independently reproduced heartbeat shutdown regression has now
+been reactivated under the normal tests directory with the reviewed fix; the
+remaining historical tests still assume superseded public-only API shapes.
 
 Reintroduce each applicable test with its corresponding separately reviewed fix
 after baseline parity and TypeSpec reconciliation. The complete prior public

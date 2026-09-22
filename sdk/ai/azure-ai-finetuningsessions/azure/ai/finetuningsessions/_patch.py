@@ -13,8 +13,8 @@ SPEC_FOUNDRY_AICLIENT.md:
     fb_result  = session.forward_backward(batch, loss_fn="cross_entropy")
     opt_result = session.optim_step(AdamParams(learning_rate=1e-4))
     ckpt_result    = session.save_weights("my_checkpoint")
-    sampler_result = session.save_weights_for_sampler(seq_id=0)
-    sample_result  = session.sample(prompt_tokens, sampling_params, num_samples=4)
+    sampler_result = session.save_weights_for_sampler(seq_id=0, sampling_session_seq_id=0)
+    sample_result  = session.sample(prompt_tokens, sampling_params, checkpoint_id=sampler_result.checkpoint_id, num_samples=4)
     session.close()
 
 Each mutating method follows loom's two-step protocol:
@@ -32,26 +32,25 @@ from __future__ import annotations
 import concurrent.futures as _futures
 import json as _json
 import logging as _logging
+import math as _math
 import os as _os
 import random as _random
 import re as _re
 import threading as _threading
 import time as _time
-from typing import TYPE_CHECKING, Any, Callable, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable, List, Literal, Optional, Union, cast
 from urllib.request import parse_http_list as _parse_http_list
 
-from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError as _HttpResponseError
 from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
-from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest as _HttpRequest
 
 from ._client_options import _prepare_client_options
 from ._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
-    RequestRetryableError as _RequestRetryableError,
     RateLimitedError,
     BatchTooLargeError,
     ContentionError,
@@ -80,7 +79,6 @@ from .models import (
     ModelInput,
     ModelInputChunk,
     OperationResult,
-    OperationType,
     OptimStepRequest,
     SampleRequest,
     SamplingParams,
@@ -92,8 +90,9 @@ from .models import (
 from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
 from ._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder, _deserialize as _deserialize_model
 
+_RequestRetryableError = RequestRetryableError
+
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
     from azure.core.rest import AsyncHttpResponse, HttpResponse
 
 # Preserve the reference initializer's setup before import-time SDK warnings.
@@ -123,6 +122,9 @@ _MAX_CHUNK_LEN = 1024
 #: Approximate maximum payload size (bytes) for a single request.
 _MAX_CHUNK_BYTES = 5_000_000
 
+# Bound per-call synchronous fan-out independently of caller batch size.
+_MAX_CONCURRENT_CHUNKS = 32
+
 
 def _estimate_bytes_count(datum: Datum) -> int:
     """Estimate the serialised size of a single Datum."""
@@ -130,9 +132,9 @@ def _estimate_bytes_count(datum: Datum) -> int:
     # Token IDs average about 10 bytes in JSON; image bytes are base64 encoded.
     for chunk in datum.model_input.chunks:
         if hasattr(chunk, "tokens"):
-            size += len(chunk.tokens) * 10
+            size += len(cast(Any, chunk).tokens) * 10
         elif hasattr(chunk, "data"):
-            size += 4 * ((len(chunk.data) + 2) // 3)
+            size += 4 * ((len(cast(Any, chunk).data) + 2) // 3)
     # Loss function inputs — each TensorData field's data list × 10.
     lfi = datum.loss_fn_inputs
     for field_name in ("target_tokens", "weights", "advantages", "logprobs"):
@@ -144,6 +146,8 @@ def _estimate_bytes_count(datum: Datum) -> int:
 
 def _chunk_data(data: List[Datum]) -> List[List[Datum]]:
     """Split Datum list into chunks respecting size limits."""
+    if not data:
+        raise ValueError("Training batch must not be empty")
     chunks: List[List[Datum]] = []
     current: List[Datum] = []
     current_bytes = 0
@@ -193,7 +197,7 @@ def _order_insensitive_hash(xs: list) -> int:
     return hash(tuple(sorted(int(x) for x in xs)))
 
 
-_REDUCE_MAP = {
+_REDUCE_MAP: dict[str, Callable[..., Any]] = {
     "mean": _reduce_mean,
     "sum": _reduce_sum,
     "min": _reduce_min,
@@ -260,7 +264,7 @@ def _metrics_reduction(
     cache_key = "prefill_cache_hit_tokens"
     cache_values = [(getattr(result, "metrics", None) or {}).get(cache_key) for result in results]
     if cache_values and all(value is not None for value in cache_values):
-        res[cache_key] = sum(cache_values)
+        res[cache_key] = sum(cast(List[float], cache_values))
     elif any(cache_key in (getattr(result, "metrics", None) or {}) for result in results):
         res[cache_key] = None
 
@@ -293,7 +297,7 @@ def _combine_fwd_bwd_results(
         if lfo:
             combined_lfo.extend(lfo)
     losses = [r.total_loss for r in results]
-    total_loss = sum(losses) if all(loss is not None for loss in losses) else None
+    total_loss = sum(cast(List[float], losses)) if all(loss is not None for loss in losses) else None
     combined: dict = {
         "total_loss": total_loss,
         "loss_fn_output_type": next(
@@ -346,7 +350,9 @@ def _normalize_loom_result(data: dict, op_type: str, request_id: str) -> dict:
     return out
 
 
-_PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
+_PREVIEW: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW] = (
+    FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
+)
 _API_VERSION = "v1"
 _logger = _logging.getLogger(__name__)
 
@@ -608,8 +614,25 @@ class _ErrorBudget:
         now = _time.monotonic()
         if self._deadline is None:
             self._deadline = now + self._budget
-        elif now > self._deadline:
+        elif now >= self._deadline:
             raise self._on_exhausted(reason, self._budget)
+
+    def clamp_delay(self, delay: float) -> float:
+        """Bound an error wait to the remaining armed budget."""
+        delay = delay if _math.isfinite(delay) and delay >= 0 else _RETRIEVE_POLL_MIN
+        if self._deadline is None:
+            return delay
+        return min(delay, max(0.0, self._deadline - _time.monotonic()))
+
+
+def _creation_wait(deadline: float, delay: float, timeout_sec: float, session_id: str) -> float:
+    """Clamp creation backoff and reject an already-expired deadline."""
+    remaining = deadline - _time.monotonic()
+    if remaining <= 0:
+        raise RuntimeError(f"Timed out after {timeout_sec}s waiting for session_id={session_id} to become ready")
+    if not _math.isfinite(delay) or delay < 0:
+        delay = _RETRIEVE_POLL_MIN
+    return min(delay, remaining)
 
 
 # Poll-progress state shared by sync and async clients.
@@ -834,42 +857,32 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
      Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword allow_insecure_http: Allow bearer token authentication over HTTP for local loopback
+     endpoints only. Defaults to ``False``.
+    :paramtype allow_insecure_http: bool
+    :keyword polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
+    :paramtype polling_interval: int
     """
 
     def __init__(
-        self, endpoint: str, credential: "TokenCredential", *, allow_insecure_http: bool = False, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[TokenCredential, AzureKeyCredential],
+        *,
+        allow_insecure_http: bool = False,
+        **kwargs: Any,
     ) -> None:
-        provided_policies = kwargs.get("policies")
         original_kwargs = _prepare_client_options(endpoint, credential, kwargs, allow_insecure_http=allow_insecure_http)
-        super().__init__(endpoint=endpoint, credential=credential, **original_kwargs)
-        self._config.allow_insecure_http = allow_insecure_http
-        self._config.api_version = kwargs.get("api_version", "v1")
-
-        _policies = provided_policies
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**original_kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**original_kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**original_kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**original_kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-
-        # Keep the frozen preview's pipeline construction, including keyword
-        # collision behavior. Review fixes are deliberately a separate change.
-        self._session_client = PipelineClient(base_url=endpoint, policies=_policies, **original_kwargs)
-        self.sessions._client = self._session_client
+        # The generated base is token-only typed; the supplied policy handles
+        # the supported AzureKeyCredential without calling get_token on it.
+        super().__init__(endpoint=endpoint, credential=cast(TokenCredential, credential), **original_kwargs)
+        cast(Any, self._config).allow_insecure_http = allow_insecure_http
+        cast(Any, self._config).api_version = kwargs.get("api_version", "v1")
+        # One pipeline owns one transport. Inherited close/context-manager paths
+        # now release sessions as well, and custom policies are passed only once.
+        self._session_client = self._client
         # Lifecycle-scoped semaphore bounding concurrent sample() calls across
         # their full submit+poll lifecycle (shared by all sessions on this client).
         self._sample_semaphore = _threading.BoundedSemaphore(_MAX_CONCURRENT_SAMPLES)
@@ -882,7 +895,9 @@ class FineTuningSession:
     can write training loops without constructing raw request bodies.
 
     :param client: The generated ``FineTuningSessionClient``.
+    :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
     :param session_id: The session ID returned by the server after creating a session.
+    :type session_id: str
     """
 
     def __init__(
@@ -890,6 +905,15 @@ class FineTuningSession:
         client: "FineTuningSessionClient",
         session_id: str,
     ) -> None:
+        """Wrap an existing session and start its background heartbeat.
+
+        :param client: The generated ``FineTuningSessionClient``.
+        :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
+        :param session_id: The session ID returned by the server after creating a session.
+        :type session_id: str
+        :return: None.
+        :rtype: None
+        """
         self._client = client
         self.session_id = _canonical_session_id(session_id)
         self._resource_session_id = _resource_session_id(session_id)
@@ -906,7 +930,7 @@ class FineTuningSession:
         def _heartbeat_loop() -> None:
             while not self._heartbeat_stop.wait(interval_sec):
                 try:
-                    self.heartbeat()
+                    self.heartbeat(connection_timeout=5.0, read_timeout=5.0)
                 except Exception as exc:
                     _logger.warning("[heartbeat] failed for %s: %s", self._heartbeat_session_id, exc)
 
@@ -919,6 +943,8 @@ class FineTuningSession:
         self._heartbeat_stop.set()
         if self._heartbeat_thread is not None:
             self._heartbeat_thread.join(timeout=5.0)
+            if self._heartbeat_thread.is_alive():
+                raise RuntimeError("Heartbeat is still running; session lifecycle request was not sent")
             self._heartbeat_thread = None
 
     # ── Factory ───────────────────────────────────────────────────────────────
@@ -943,20 +969,31 @@ class FineTuningSession:
         completes, then returns a ready-to-use :class:`FineTuningSession`.
 
         :param client: The :class:`~azure.ai.finetuningsessions.FineTuningSessionClient`.
-        :param base_model: Name of the base model to load (e.g. ``"Llama-3.1-8B"``).
-        :param lora_config: Optional LoRA adapter config. Server default is used if omitted.
-        :param type: Session type string. Defaults to ``"training"``.
-        :param from_checkpoint: Optional :class:`FromCheckpoint` specifying the
+        :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
+        :keyword base_model: Name of the base model to load (e.g. ``"Llama-3.1-8B"``).
+        :paramtype base_model: str
+        :keyword lora_config: Optional LoRA adapter config. Server default is used if omitted.
+        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+        :keyword type: Session type string. Defaults to ``"training"``.
+        :paramtype type: str
+        :keyword from_checkpoint: Optional :class:`FromCheckpoint` specifying the
             source session and checkpoint to bootstrap from (continual fine-tuning
             / resume from checkpoint).
-        :param timeout_sec: Maximum seconds to wait for the model to load. Defaults to ``600.0``.
-        :param training_type: Training SKU type: ``"GlobalStandard"`` (default),
+        :paramtype from_checkpoint: ~azure.ai.finetuningsessions.models.FromCheckpoint or None
+        :keyword timeout_sec: Maximum seconds to wait for the model to load. Defaults to ``600.0``.
+        :paramtype timeout_sec: float
+        :keyword user_metadata: Optional user-defined metadata to associate with the session.
+            Defaults to ``None``.
+        :paramtype user_metadata: dict[str, typing.Any] or None
+        :keyword training_type: Training SKU type: ``"GlobalStandard"`` (default),
             ``"DatazoneStandard"``, or ``"DeveloperTier"``.
+        :paramtype training_type: str or None
         :note: Poll cadence is controlled by an internal adaptive backoff
             (``_RETRIEVE_POLL_MIN`` doubling up to ``_RETRIEVE_POLL_MAX``);
             it is not currently caller-configurable.
         :raises RuntimeError: If the server reports status ``"failed"`` or the timeout expires.
         :return: A :class:`FineTuningSession` instance ready for training operations.
+        :rtype: ~azure.ai.finetuningsessions.FineTuningSession
         """
         create_request = CreateSessionRequest(
             type=type,
@@ -1003,10 +1040,9 @@ class FineTuningSession:
         raw_session_id: str = data["session_id"]
         request_id: str = data["request_id"]
         _logger.info(
-            "[create] POST /fine_tuning/sessions response: raw_session_id=%s, request_id=%s, full_response=%s",
+            "[create] POST /fine_tuning/sessions response: raw_session_id=%s, request_id=%s",
             raw_session_id,
             request_id,
-            data,
         )
 
         session_id = _canonical_session_id(raw_session_id)
@@ -1028,7 +1064,9 @@ class FineTuningSession:
         _create_conn_backoff = 1.0
         _create_poll_backoff = _RETRIEVE_POLL_MIN
         _create_poll_start = _time.monotonic()
+        not_found_retry = _BoundedRetryState(limit_sec=120.0, base_delay_sec=1.0, max_delay_sec=10.0)
         while True:
+            _creation_wait(deadline, 0, timeout_sec, raw_session_id)
             try:
                 poll_req = _HttpRequest(
                     "GET",
@@ -1045,9 +1083,13 @@ class FineTuningSession:
                 _log_http("response", "GET", poll_path, status=poll_resp.status_code, body=envelope)
 
                 if poll_resp.status_code == 200:
+                    if not isinstance(envelope, dict):
+                        raise RuntimeError(f"Unexpected response envelope for create request {request_id}")
                     env_status = envelope.get("status")
                     if env_status == "completed":
-                        _logger.info("[create] model load completed: %s", envelope)
+                        _logger.info(
+                            "[create] model load completed: session_id=%s request_id=%s", session_id, request_id
+                        )
                         _clear_poll_log_state(session_id, request_id, "create_session")
                         break
                     if env_status == "failed":
@@ -1061,6 +1103,8 @@ class FineTuningSession:
                             f"{envelope.get('error') or 'unknown error'} "
                             f"(debug_ref={envelope.get('debug_ref') or 'n/a'})"
                         )
+                    if env_status != "pending":
+                        raise RuntimeError(f"Unexpected envelope status {env_status!r} for create request {request_id}")
                     # pending -> sleep with adaptive backoff and retry (subject to deadline).
                     if _time.monotonic() > deadline:
                         raise RuntimeError(
@@ -1069,9 +1113,15 @@ class FineTuningSession:
                     elapsed = _time.monotonic() - _create_poll_start
                     _maybe_log_poll_progress(envelope, session_id, request_id, "create_session", elapsed)
                     _create_conn_backoff = 1.0  # reset on successful HTTP exchange
-                    _time.sleep(_create_poll_backoff)
+                    _time.sleep(_creation_wait(deadline, _create_poll_backoff, timeout_sec, raw_session_id))
                     _create_poll_backoff = min(_create_poll_backoff * 2, _RETRIEVE_POLL_MAX)
                     continue
+
+                if poll_resp.status_code == 404:
+                    wait = not_found_retry.next_delay()
+                    if wait is not None:
+                        _time.sleep(_creation_wait(deadline, wait, timeout_sec, raw_session_id))
+                        continue
 
                 # Retry on 5xx and on transient client-side conditions:
                 #   408 Request Timeout  -- intermittent network/proxy timeout
@@ -1101,7 +1151,7 @@ class FineTuningSession:
                             poll_wait = _RETRIEVE_POLL_MIN
                     else:
                         poll_wait = _RETRIEVE_POLL_MIN
-                    _time.sleep(poll_wait)
+                    _time.sleep(_creation_wait(deadline, poll_wait, timeout_sec, raw_session_id))
                     continue
 
                 # Any other error — fail immediately
@@ -1127,12 +1177,12 @@ class FineTuningSession:
                     "[poller] retry on %s/%s after %s(%s) (%.0fs elapsed), backoff %.1fs",
                     session_id,
                     request_id,
-                    type(exc).__name__,
+                    exc.__class__.__name__,
                     exc,
                     elapsed,
                     _create_conn_backoff,
                 )
-                _time.sleep(_create_conn_backoff)
+                _time.sleep(_creation_wait(deadline, _create_conn_backoff, timeout_sec, raw_session_id))
                 _create_conn_backoff = min(_create_conn_backoff * 2, 30.0)
                 continue
 
@@ -1152,26 +1202,26 @@ class FineTuningSession:
         type: str = "training",
         timeout_sec: float = 600.0,
     ) -> "FineTuningSession":
-        """Create a session resumed from a previously saved training checkpoint.
+        """Create a session resumed from a saved training checkpoint.
 
-        This is a convenience wrapper around :meth:`create` that parses a
-        checkpoint path string and passes it as ``from_checkpoint``.
+        Accepts a source-session/checkpoint path or a loom:// source-session
+        weights path. The source weights, optimizer state, and scheduler step
+        are restored by the service through the create operation.
 
-        The new session's LoRA weights, optimizer state, and scheduler step are
-        all bootstrapped from the checkpoint — equivalent to calling ``create``
-        with ``from_checkpoint=FromCheckpoint(source_session_id=..., checkpoint_id=...)``.
-
-        :param client: The :class:`~azure.ai.finetuningsessions.FineTuningSessionClient`.
-        :param checkpoint_path: Reference to a saved training checkpoint.
-            Accepted formats:
-              - ``"<source_session_id>/<checkpoint_name>"``
-                            - ``"loom://<source_session_id>/weights/<checkpoint_name>"``
-        :param base_model: Base model name. Must match the checkpoint's source.
-        :param lora_config: Optional LoRA config override.
-        :param type: Session type. Defaults to ``"training"``.
-        :param timeout_sec: Maximum seconds to wait for model load.
-        :raises ValueError: If ``checkpoint_path`` cannot be parsed.
-        :return: A ready-to-use :class:`FineTuningSession`.
+        :param client: Client used to create the resumed session.
+        :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
+        :keyword checkpoint_path: Source-session/checkpoint reference.
+        :paramtype checkpoint_path: str
+        :keyword base_model: Base model matching the checkpoint source.
+        :paramtype base_model: str
+        :keyword lora_config: Optional LoRA configuration override.
+        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+        :keyword type: Session type, defaulting to training.
+        :paramtype type: str
+        :keyword timeout_sec: Maximum seconds to wait for model loading.
+        :paramtype timeout_sec: float
+        :return: The initialized fine-tuning session.
+        :rtype: ~azure.ai.finetuningsessions.FineTuningSession
         """
         source_session_id, checkpoint_id = _parse_checkpoint_path(checkpoint_path)
         return cls.create(
@@ -1314,7 +1364,7 @@ class FineTuningSession:
             or actively in progress — we keep polling indefinitely. A healthy
             poll CLEARS the error budget.
           * Errors ARE bounded. The first 5xx / 408 / 429 / transient network
-            error after a healthy poll arms the error deadline
+            error after a healthy poll ARMS the error deadline
             (``_DEFAULT_OPERATION_TIMEOUT_SEC`` from that moment). Further errors
             do NOT extend it; the next healthy 200 disarms it. If errors persist
             past the budget we raise ``TimeoutError`` so a real backend outage
@@ -1481,6 +1531,8 @@ class FineTuningSession:
                             f"{envelope.get('error') or 'no error message'} "
                             f"(debug_ref={envelope.get('debug_ref') or 'n/a'})"
                         )
+                    if env_status != "pending":
+                        raise RuntimeError(f"Unexpected envelope status {env_status!r} for request {request_id}")
                     # pending -> healthy progress: clear the error budget (queued
                     # / in-progress time is unbounded), then sleep with backoff.
                     elapsed = _time.monotonic() - poll_start
@@ -1529,7 +1581,7 @@ class FineTuningSession:
                             poll_wait = _RETRIEVE_POLL_MIN
                     else:
                         poll_wait = _RETRIEVE_POLL_MIN
-                    _time.sleep(poll_wait)
+                    _time.sleep(error_budget.clamp_delay(poll_wait))
                     continue
 
                 # Non-retryable HTTP error (4xx other than 408/429).
@@ -1558,7 +1610,7 @@ class FineTuningSession:
                     connection_error_backoff,
                 )
                 error_budget.consume(type(exc).__name__)
-                _time.sleep(connection_error_backoff)
+                _time.sleep(error_budget.clamp_delay(connection_error_backoff))
                 connection_error_backoff = min(connection_error_backoff * 2, 30.0)
                 continue
 
@@ -1591,9 +1643,13 @@ class FineTuningSession:
         Spec: ``fb_result = session.forward_backward(batch, loss_fn="cross_entropy")``
 
         :param batch: List of :class:`~azure.ai.finetuningsessions.models.Datum`.
-        :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-        :param loss_fn_config: Optional per-loss hyper-parameters.
+        :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+        :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+        :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+        :keyword loss_fn_config: Optional per-loss hyper-parameters.
+        :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
         :return: :class:`~azure.ai.finetuningsessions.models.OperationResult`.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         chunks = _chunk_data(batch)
         if len(chunks) <= 1:
@@ -1639,7 +1695,7 @@ class FineTuningSession:
 
         # Fire all chunks in parallel.
         # Wall-clock time ≈ max(chunk times) instead of sum.
-        with _futures.ThreadPoolExecutor(max_workers=len(chunks)) as pool:
+        with _futures.ThreadPoolExecutor(max_workers=min(len(chunks), _MAX_CONCURRENT_CHUNKS)) as pool:
             chunk_results = list(pool.map(_submit_chunk, enumerate(chunks)))
 
         chunk_sizes = [len(c) for c in chunks]
@@ -1655,6 +1711,11 @@ class FineTuningSession:
         Blocks until the GPU applies the weight update.
 
         Spec: ``opt_result = session.optim_step(AdamParams(learning_rate=1e-4))``
+
+        :param adam_params: Adam optimizer parameters to use for the weight update.
+        :type adam_params: ~azure.ai.finetuningsessions.models.AdamParams
+        :return: The result of applying the optimizer update.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         return self._post_and_poll(
             f"/fine_tuning/sessions/{self.session_id}/optim_step",
@@ -1679,9 +1740,13 @@ class FineTuningSession:
         Chunks are submitted in parallel and results are combined.
 
         :param batch: List of :class:`~azure.ai.finetuningsessions.models.Datum`.
-        :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-        :param loss_fn_config: Optional per-loss hyper-parameters.
+        :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+        :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+        :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+        :keyword loss_fn_config: Optional per-loss hyper-parameters.
+        :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
         :return: :class:`~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult`.
+        :rtype: ~azure.ai.finetuningsessions.models.ForwardBackwardOperationResult
         """
         # Server expects a ForwardRequest with `forward_input` wrapping the
         # shared ForwardBackwardInput payload.
@@ -1721,7 +1786,7 @@ class FineTuningSession:
                 metrics=getattr(result, "metrics", None),
             )
 
-        with _futures.ThreadPoolExecutor(max_workers=len(chunks)) as pool:
+        with _futures.ThreadPoolExecutor(max_workers=min(len(chunks), _MAX_CONCURRENT_CHUNKS)) as pool:
             chunk_results = list(pool.map(_submit_chunk, enumerate(chunks)))
 
         chunk_sizes = [len(c) for c in chunks]
@@ -1739,6 +1804,11 @@ class FineTuningSession:
         Blocks until the checkpoint is written to storage.
 
         Spec: ``ckpt_result = session.save_weights("sft_piglatin_v1")``
+
+        :param path: Name or identifier of the training checkpoint to save.
+        :type path: str
+        :return: The result of saving the training checkpoint, including its checkpoint identifier.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         return self._post_and_poll(
             f"/fine_tuning/sessions/{self.session_id}/checkpoint",
@@ -1758,12 +1828,20 @@ class FineTuningSession:
 
         Blocks until the sampler weights are ready.
 
-        Spec: ``sampler_result = session.save_weights_for_sampler(seq_id=step)``
+        Spec: ``sampler_result = session.save_weights_for_sampler(seq_id=step, sampling_session_seq_id=0)``
 
         :param seq_id: Training step index -- must match the ``seq_id`` passed to ``sample``.
-        :param sampling_session_seq_id: Ordinal of this sampling session in the run.
-        :param path: Optional explicit checkpoint identifier.
+        :type seq_id: int
+        :keyword sampling_session_seq_id: Ordinal of this sampling session in the run.
+        :paramtype sampling_session_seq_id: int or None
+        :keyword path: Optional explicit checkpoint identifier. Supply this or
+            ``sampling_session_seq_id``; no identifier is invented from ``None``.
+        :paramtype path: str or None
+        :return: The result of saving sampler weights, including the checkpoint identifier.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        if not path and sampling_session_seq_id is None:
+            raise ValueError("Provide path or sampling_session_seq_id with seq_id before saving sampler weights")
         # Compute the checkpoint_id using the same formula the server uses
         # (loom_sampling.py line 270).  The server doesn't echo it back in the
         # poll response, so we inject it before deserialization.
@@ -1801,13 +1879,23 @@ class FineTuningSession:
 
         :param prompt_tokens: Tokenised input prompt as a list of integer IDs, or a
             structured ``ModelInput`` for multimodal prompts.
+        :type prompt_tokens: list[int] or ~azure.ai.finetuningsessions.models.ModelInput
         :param sampling_params: Generation parameters (max_tokens, temperature, etc.).
-        :param checkpoint_id: Sampler checkpoint ID returned by ``save_weights_for_sampler``.
-        :param num_samples: Number of independent completions to generate. Default 1.
-        :param sampling_session_id: ID returned by a prior ``save_weights_for_sampler`` call.
-        :param seq_id: Training step index; must match the one used in ``save_weights_for_sampler``.
-        :param prompt_logprobs: If True, return per-token log-probabilities for the prompt.
-        :param topk_prompt_logprobs: Top-k log-probabilities per prompt token. 0 = none. Must be between 0 and 20 (default 20).
+        :type sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
+        :keyword checkpoint_id: Sampler checkpoint ID returned by ``save_weights_for_sampler``.
+        :paramtype checkpoint_id: str
+        :keyword num_samples: Number of independent completions to generate. Default 1.
+        :paramtype num_samples: int
+        :keyword sampling_session_id: ID returned by a prior ``save_weights_for_sampler`` call.
+        :paramtype sampling_session_id: str or None
+        :keyword seq_id: Training step index; must match the one used in ``save_weights_for_sampler``.
+        :paramtype seq_id: int or None
+        :keyword prompt_logprobs: If True, return per-token log-probabilities for the prompt.
+        :paramtype prompt_logprobs: bool
+        :keyword topk_prompt_logprobs: Top-k log-probabilities per prompt token. 0 = none. Must be between 0 and 20 (default 0).
+        :paramtype topk_prompt_logprobs: int
+        :return: The sampling result containing the generated completions.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
 
         Concurrency is bounded by a lifecycle-scoped semaphore (size
         ``_MAX_CONCURRENT_SAMPLES``). The permit is held for the FULL submit+poll
@@ -1839,7 +1927,13 @@ class FineTuningSession:
     # ── Session lifecycle ─────────────────────────────────────────────────────
 
     def heartbeat(self, **kwargs: Any) -> Any:
-        """Refresh an active session to prevent idle expiry."""
+        """Refresh an active session to prevent idle expiry.
+
+        Additional keyword arguments are forwarded to the client's session heartbeat operation.
+
+        :return: The session heartbeat response.
+        :rtype: ~azure.ai.finetuningsessions.models.HeartbeatResponse
+        """
         return self._client.sessions.heartbeat(
             session_id=self._resource_session_id,
             foundry_features=_PREVIEW,
@@ -1853,6 +1947,9 @@ class FineTuningSession:
         Stops the background heartbeat, then issues the complete request.
 
         Spec: ``session.close()``
+
+        :return: None.
+        :rtype: None
         """
         self._stop_heartbeat()
         close_req = _HttpRequest(
@@ -1874,6 +1971,9 @@ class FineTuningSession:
         non-2xx surfaces via the standard SDK error path.
 
         Spec: ``session.delete()``
+
+        :return: None.
+        :rtype: None
         """
         self._stop_heartbeat()
         del_req = _HttpRequest(
@@ -1895,6 +1995,9 @@ class FineTuningSession:
             if typed is not None:
                 raise typed
             resp.raise_for_status()
+
+        if not 200 <= resp.status_code < 300:
+            raise _HttpResponseError(response=resp)
 
 
 __all__: list[str] = [

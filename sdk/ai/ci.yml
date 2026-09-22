@@ -35,6 +35,8 @@ extends:
     Artifacts:
     - name: azure-ai-projects
       safeName: azureaiprojects
+    - name: azure-ai-finetuningsessions
+      safeName: azureaifinetuningsessions
     # - name: azure-ai-agents
     #   safeName: azureaiagents
     # These packages are deprecated:

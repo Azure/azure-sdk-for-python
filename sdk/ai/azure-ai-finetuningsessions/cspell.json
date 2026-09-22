@@ -2,7 +2,10 @@
   "ignoreWords": [
     "finetuning", "finetuningsessions", "logprobs", "lora", "LoRA", "multimodal", "sampler",
     "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
-    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized"
+    "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
+    "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
+    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd",
+    "xffjpeg", "xffoffline", "xfftest", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
   ],
-  "ignorePaths": ["tests/**", "*.json"]
+  "ignorePaths": ["**/__pycache__/**", ".mypy_cache/**", ".pytest_cache/**"]
 }

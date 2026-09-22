@@ -4,11 +4,13 @@ Preview client library for interactive supervised and reinforcement fine-tuning
 in Microsoft Foundry. Create a session, submit training or sampling requests,
 and save checkpoints with synchronous or asynchronous Python clients.
 
-This preview preserves the tested Loom SDK's public API and behavior at commit
-`485774df502642879fdf3a53777be4a0d95155dc`, with the agreed package/import rename.
+This preview starts from the tested Loom SDK at commit
+`485774df502642879fdf3a53777be4a0d95155dc`, with the agreed package/import rename,
+then applies separately tested fixes for lifecycle, bounded waits, validation,
+logging, and client integration.
 The public SDK is reproducibly generated from TypeSpec plus maintained Python
-customizations. See [GENERATION.md](GENERATION.md) for validation, local source
-provenance, and deliberately deferred review fixes.
+customizations. See the [generation and validation guide][generation-guide]
+for the reproducible baseline and explicitly documented review changes.
 
 ## Getting started
 
@@ -71,7 +73,19 @@ and client customization. HTTPS is the default. The `allow_insecure_http` option
 does not disable bearer-token HTTPS enforcement for remote endpoints; its HTTP
 exception is restricted to loopback development servers.
 
-## Create a session
+## Key concepts
+
+- A **session** holds model and adapter state for training and sampling.
+- A **request** is submitted once and then polled until its result is available;
+        a successful HTTP submission does not mean GPU work has completed.
+- A **checkpoint** persists training state or sampler weights. Sampling requires
+        a completed sampler checkpoint identifier.
+- Heartbeats keep sessions active. Close/delete sessions explicitly and close
+        clients or use their context managers to release HTTP resources.
+
+## Examples
+
+### Create a session
 
 ```python
 from azure.ai.finetuningsessions import FineTuningSession
@@ -85,8 +99,8 @@ session = FineTuningSession.create(
         training_type="GlobalStandard",
 )
 try:
-        # Submit forward_backward, optim_step, sample, and checkpoint requests here.
-        pass
+        sampler = session.save_weights_for_sampler(seq_id=0, sampling_session_seq_id=0)
+        print(sampler.checkpoint_id)
 finally:
         session.close()
         client.close()
@@ -132,11 +146,14 @@ additional models, methods, or adapters must use the Loom surface instead.
 `ApiError`, `ApiErrorResponse`, the top-level typed exceptions, and established
 convenience APIs remain available as in Loom.
 
-The awaited async heartbeat shutdown fix is intentionally deferred until after
-baseline parity: matching Loom does not mean that review finding has been fixed.
-See [GENERATION.md](GENERATION.md) for the exact source, limitations, and next stage.
+Async lifecycle methods now await heartbeat shutdown before sending close/delete,
+and closing the async client drains its heartbeat tasks. Empty batches and sampler
+requests missing both a path and sampling-session ordinal are rejected locally
+rather than producing an invalid request or a false successful no-op.
 
-## Inference error codes
+## Troubleshooting
+
+### Inference error codes
 
 Retryable inference failures use `request_timeout`, `request_orphaned`,
 `inference_request_rate_limited`, and `inference_unavailable`. The SDK exposes
@@ -145,7 +162,30 @@ the server's code on `RequestRetryableError.error_code` and resubmits based on
 Older services returning legacy inference codes remain supported by the same
 mechanism. `invalid_request` and `internal_error` remain terminal.
 
-## Local development
+### Retry and transport limitations
+
+Use HTTPS endpoints for both token and API-key credentials. The historical
+API-key/plain-HTTP behavior is retained pending security review; do not use it
+with real credentials. Automatic resubmission after ambiguous transport failures
+is also under service review: without a server deduplication contract, blindly
+retrying non-idempotent training submissions can duplicate work.
+
+Normal INFO progress logs include status and identifiers, not full create or
+completion payloads. `FINETUNING_VERBOSE_HTTP=1` explicitly enables body logging;
+do not enable it for sensitive customer data.
+
+When supplying a custom `policies` list or prebuilt pipeline, the caller owns
+header/auth policy configuration. Default pipelines propagate configured direct
+route context to raw session operations while preserving per-request overrides.
+
+## Next steps
+
+Use the returned sampler checkpoint ID with `FineTuningSession.sample`, and save
+training checkpoints before unloading a session. Review the
+[generation and validation guide][generation-guide] before changing maintained
+customizations or regenerating the package.
+
+### Local development
 
 From the Azure SDK for Python repository root, install this package in editable
 mode (after removing any older-named preview as described above):
@@ -155,14 +195,13 @@ python -m pip install --editable ./sdk/ai/azure-ai-finetuningsessions
 ```
 
 Run the package's tests with `pytest`; the package configuration enables asyncio
-tests. [verify_loom_snapshot.py](verify_loom_snapshot.py) verifies every runtime
-and upstream test file against the pinned Loom source. With `--loom-repo`, the
-check verifies the original Git blobs as well as the manifest hashes.
+tests. The [reference verifier][snapshot-check] verifies the immutable upstream
+Git blobs and manifest. Intentional review deltas are recorded separately from
+the reproducible baseline; current runtime is not claimed to be byte-identical.
 
-[verify_generation.py](verify_generation.py) separately emits TypeSpec twice into
-temporary directories. Generation drift is currently a real reconciliation gap,
-not an allowed snapshot difference. Do not generate over the preview runtime
-until this independent check passes. See [GENERATION.md](GENERATION.md).
+The [generation verifier][generation-check] emits TypeSpec twice with maintained
+customizations pre-seeded and compares the complete runtime. A changed or extra
+generated file is a failure, not an allowed review delta.
 
 ## Contributing
 
@@ -182,6 +221,9 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+[generation-guide]: https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/GENERATION.md
+[snapshot-check]: https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/verify_loom_snapshot.py
+[generation-check]: https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/verify_generation.py
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials

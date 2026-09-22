@@ -35,6 +35,7 @@ Exit codes: 0 = pass, 1 = case/comparison failure, 2 = setup/worker failure.
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import asyncio
 import base64
 from collections import deque
@@ -1580,6 +1581,30 @@ def _differences(left: Any, right: Any, path: str = "") -> list[str]:
     return [] if left == right else [f"{path}: Loom={_dump(left)}; public={_dump(right)}"]
 
 
+def _apply_review_header_contract(cases: dict, *, raw: bool) -> dict:
+    """Project only the reviewed direct-header fix onto the immutable fixture.
+
+    Expected values come from this verifier's fixed environment, not from the
+    candidate response. No headers or arbitrary differences are discarded.
+    """
+    result = deepcopy(cases)
+    context = {
+        "apim-subscription-id": "offline-subscription",
+        "azure-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
+        "azure-resource-tenant-id": "offline-tenant",
+        "azure-resource-location": "offline-region",
+        "x-workspace-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
+    }
+    for name, case in result.items():
+        for request in case["requests"]:
+            if raw or name in {"sync_generated_reads", "async_generated_reads"} or (
+                name in {"sync_lifecycle", "async_lifecycle"} and "/heartbeat?" in request["url"]
+            ):
+                for header, value in context.items():
+                    request["headers"].setdefault(header, value)
+    return result
+
+
 def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
@@ -1618,7 +1643,9 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
     return report
 
 
-def _compare(loom: dict, public: dict) -> int:
+def _compare(loom: dict, public: dict, *, reviewed: bool = False) -> int:
+    if reviewed:
+        loom = {**loom, "cases": _apply_review_header_contract(loom["cases"], raw=False)}
     failed = []
     for name in CASE_NAMES:
         left, right = loom["cases"][name], public["cases"][name]
@@ -1638,7 +1665,8 @@ def _compare(loom: dict, public: dict) -> int:
         if len(differences) > 20:
             print(f"  ... {len(differences) - 20} further differences; use --snapshot to inspect full actual records.")
     print("\nExplicitly allowed surface differences:")
-    print("  None. Customer-facing API and behavior must match; internal hook placement may differ.")
+    print("  " + ("Only the exact direct-context header additions recorded in review-deltas.json." if reviewed
+                  else "None. Customer-facing API and behavior must match; internal hook placement may differ."))
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1682,19 +1710,39 @@ def main() -> int:
             for path in (public_package / "tests").rglob("*")
             if path.is_file() and not {"__pycache__", ".pytest_cache"}.intersection(path.parts)
         }
-        if expected_tests != actual_tests:
-            raise ValueError("The complete upstream test inventory must remain byte-identical after naming normalization")
+        delta_path = PACKAGE / "review-deltas.json"
+        deltas = json.loads(delta_path.read_text(encoding="utf-8")) if delta_path.exists() else None
+        if deltas is None:
+            if expected_tests != actual_tests:
+                raise ValueError("The complete upstream test inventory must remain byte-identical after naming normalization")
+        else:
+            if deltas.get("fixture_contracts") != ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]:
+                raise ValueError("Unsupported review comparison contract")
+            adapted = deltas["adapted_upstream_tests"]
+            additions = deltas["added_tests"]
+            if actual_tests.keys() != expected_tests.keys() | additions.keys():
+                raise ValueError("Unexpected test inventory; no upstream tests may be removed")
+            for name, expected in expected_tests.items():
+                expected_hash = adapted.get(name) or hashlib.sha256(expected).hexdigest()
+                if hashlib.sha256(actual_tests[name]).hexdigest() != expected_hash:
+                    raise ValueError(f"Unrecorded upstream test change: {name}")
+            for name, expected_hash in additions.items():
+                if hashlib.sha256(actual_tests[name]).hexdigest() != expected_hash:
+                    raise ValueError(f"Unrecorded regression-test change: {name}")
         print(f"Immutable Loom reference verified: {manifest['source_commit']}\nPublic source: {public_package}")
         with reference_package(args.loom_repo, public_package) as reference:
             loom = _run_worker(_check_package(reference), legacy_routes=False)
             public = _run_worker(public_package, legacy_routes=False)
-            if _compare(loom, public):
+            if _compare(loom, public, reviewed=deltas is not None):
                 return 1
-            completed = subprocess.run([
+            command = [
                 sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "verify_loom_surface.py"),
                 "--reference", str(reference), "--candidate", str(public_package),
                 "--harness", str(Path(__file__).resolve()),
-            ], check=False)
+            ]
+            if deltas is not None:
+                command.extend(["--review-deltas", str(delta_path)])
+            completed = subprocess.run(command, check=False)
             return completed.returncode
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
         print(f"Verifier setup failed: {exc}", file=sys.stderr)

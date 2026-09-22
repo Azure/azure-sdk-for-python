@@ -8,7 +8,9 @@
     "manifest": "loom-source.json",
     "repository": "loom",
     "commit": "485774df502642879fdf3a53777be4a0d95155dc",
-    "comparison": "public-api-and-offline-behavior; internal-hook-layout-may-differ"
+    "comparison": "public-api-and-offline-behavior with explicit reviewed deltas; internal-hook-layout-may-differ",
+    "parity_baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
+    "review_deltas": "review-deltas.json"
   },
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
@@ -37,7 +39,8 @@
     "generated_inventory_fingerprint_sha256": "835921e7d14a9d5f99f3a4f226092e59431dc7f2cb918591aaca6e3238a3dabe",
     "runtime_files": 28,
     "runtime_python_modules": 27,
-    "runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
+    "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
+    "runtime_fingerprint_sha256": "86916ca1fbd2b4ddf477ee082d9467b17f23a07d5ae0ce455384ecb3b22a72ea",
     "maintained_modules": [
       "_patch.py",
       "aio/_patch.py",
@@ -54,6 +57,8 @@
   "validation": {
     "upstream_tests": 434,
     "upstream_test_files": 19,
+    "current_tests": 501,
+    "current_test_files": 21,
     "paired_convenience_cases": 20,
     "requests_per_sdk": 134,
     "checks_per_sdk": 2246,
@@ -65,7 +70,7 @@
     "python_emission_warnings": 99,
     "full_rest_warnings": 29,
     "live_service_tested": false,
-    "review_fixes_applied": false,
-    "scope": "preview-parity-baseline; subsequent review fixes must be recorded separately"
+    "review_fixes_applied": true,
+    "scope": "preview-parity-baseline plus explicit reviewed fixes recorded in review-deltas.json"
   }
 }

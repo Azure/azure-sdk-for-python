@@ -18,8 +18,8 @@ Mechanism: a :class:`logging.Filter` attached to each emitting logger.
 For each record, the filter walks the logger's parent chain (honoring
 ``propagate=False``) and asks "is any handler reachable?". If **no**
 handler is reachable, the record will fall through to
-``logging.lastResort`` -- whose hardcoded format string is
-``"%(levelname)s:%(name)s:%(message)s"`` -- and thus show no timestamp.
+``logging.lastResort`` -- which has no explicit formatter and uses Python's
+default message-only ``"%(message)s"`` format -- and thus show no timestamp.
 In that case the filter prepends ``[<iso-utc-ms>] `` to ``record.msg``
 so the rendered line includes a timestamp. If a handler **is** reachable,
 the filter is a no-op: the caller's formatter is responsible for the
@@ -68,6 +68,11 @@ _SDK_EMITTING_LOGGERS: Tuple[str, ...] = (
 
 
 def _enabled_from_env() -> bool:
+    """Read whether SDK timestamp enrichment is enabled by the environment.
+
+    :return: ``False`` for a recognized opt-out value; otherwise ``True``.
+    :rtype: bool
+    """
     raw = _os.environ.get(_ENV_VAR)
     if raw is None:
         return True
@@ -80,6 +85,10 @@ def _has_any_handler(name: str) -> bool:
     Walks parents until a handler is found or propagation breaks. Mirrors
     the lookup ``Logger.callHandlers`` does, so a ``False`` return means
     the record will be dispatched to ``logging.lastResort``.
+
+    :param str name: Name of the logger whose handler chain is checked.
+    :return: ``True`` if a handler is reachable; otherwise ``False``.
+    :rtype: bool
     """
     c: Optional[_logging.Logger] = _logging.getLogger(name)
     while c is not None:
@@ -97,6 +106,13 @@ class _SdkTimestampFilter(_logging.Filter):
     ``True`` -- enriches, never drops."""
 
     def filter(self, record: _logging.LogRecord) -> bool:
+        """Add a timestamp when no handler is reachable, without dropping the record.
+
+        :param record: Log record to enrich in place.
+        :type record: ~logging.LogRecord
+        :return: Always ``True`` so the record is not filtered out.
+        :rtype: bool
+        """
         if not _has_any_handler(record.name):
             ts = _datetime.fromtimestamp(record.created, _timezone.utc).isoformat(timespec="milliseconds")
             record.msg = f"[{ts}] {record.msg}"
@@ -106,12 +122,13 @@ class _SdkTimestampFilter(_logging.Filter):
 def install_default_logging(enabled: Optional[bool] = None) -> None:
     """Attach the timestamp filter to every SDK emitting logger.
 
-    :keyword enabled: If ``None`` (default), enablement is read from the
+    :param enabled: If ``None`` (default), enablement is read from the
         ``AZURE_AI_FINETUNING_SESSIONS_SDK_LOG_CONTEXT`` env var; the
         filter is on unless the var is set to a falsey value (``0``,
         ``false``, ``no``, ``off``, ``disable``, ``disabled``). Pass
         ``True`` / ``False`` to force-enable or force-disable
         programmatically.
+    :type enabled: bool or None
 
     Idempotent: a second call with ``enabled=True`` does not duplicate
     the filter; a call with ``enabled=False`` removes any previously

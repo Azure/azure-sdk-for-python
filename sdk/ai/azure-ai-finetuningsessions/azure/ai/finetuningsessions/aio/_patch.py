@@ -34,8 +34,11 @@ import json as _json
 import logging as _logging
 import random as _random
 import time as _time
-from typing import Awaitable, Callable, TYPE_CHECKING, Any, Dict, List, NamedTuple, Optional, Union
+from typing import Awaitable, Callable, Any, Dict, List, NamedTuple, Optional, Union, cast
 
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import HttpResponseError as _HttpResponseError
 from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
@@ -93,16 +96,23 @@ from .._patch import (
     _SAMPLE_THROTTLE_TIMEOUT_SEC,
     _BoundedRetryState,
     _ProxyJwtRetryState,
+    _creation_wait,
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
-
-class FineTuningSessionClient(_GeneratedClient):
+class _ClientBase(_GeneratedClient):
     """The generated async client with the tested preview authentication policies."""
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    _heartbeat_tasks: dict[str, asyncio.Task]
+    _heartbeat_shutdowns: dict[str, asyncio.Task]
+    _post_semaphore: asyncio.Semaphore
+    _sample_semaphore: asyncio.Semaphore
+    _sampling_session_seq: dict[str, int]
+    _session_resource_ids: dict[str, str]
+
+    def __init__(
+        self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
+    ) -> None:
         options = dict(kwargs)
         allow_insecure_http = options.pop("allow_insecure_http", False)
         options = _prepare_client_options(
@@ -112,8 +122,19 @@ class FineTuningSessionClient(_GeneratedClient):
             allow_insecure_http=allow_insecure_http,
             asynchronous=True,
         )
-        super().__init__(endpoint=endpoint, credential=credential, **options)
-        self._config.allow_insecure_http = allow_insecure_http
+        super().__init__(endpoint=endpoint, credential=cast(AsyncTokenCredential, credential), **options)
+        cast(Any, self._config).allow_insecure_http = allow_insecure_http
+
+    async def close(self) -> None:
+        """Drain all heartbeat tasks before closing the HTTP pipeline."""
+        _ensure_async_state(cast("FineTuningSessionClient", self))
+        for session_id in tuple(self._heartbeat_tasks):
+            await _stop_heartbeat(cast("FineTuningSessionClient", self), session_id)
+        await super().close()
+
+    async def __aexit__(self, *args: Any) -> None:
+        """Close the client and its background heartbeats on context exit."""
+        await self.close()
 
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
@@ -184,6 +205,17 @@ async def _chunk_data_async(batch: List[Datum]) -> List[List[Datum]]:
     )
 
 
+async def _completed_result_task(result: OperationResult, name: str) -> "asyncio.Task[OperationResult]":
+    """Return the promised Task interface for an already-completed wave."""
+
+    async def completed() -> OperationResult:
+        return result
+
+    task = asyncio.create_task(completed(), name=name)
+    await task
+    return task
+
+
 #: Default maximum concurrent POST requests.
 _DEFAULT_POST_CONCURRENCY = 64
 
@@ -194,17 +226,19 @@ _DEFAULT_POST_CONCURRENCY = 64
 def _ensure_async_state(self: "FineTuningSessionClient") -> None:
     """Lazily initialize async state on the client instance."""
     if not hasattr(self, "_heartbeat_tasks"):
-        self._heartbeat_tasks: dict[str, asyncio.Task] = {}
+        self._heartbeat_tasks = {}
+    if not hasattr(self, "_heartbeat_shutdowns"):
+        self._heartbeat_shutdowns = {}
     if not hasattr(self, "_post_semaphore"):
         self._post_semaphore = asyncio.Semaphore(_DEFAULT_POST_CONCURRENCY)
     if not hasattr(self, "_sampling_session_seq"):
-        self._sampling_session_seq: dict[str, int] = {}
+        self._sampling_session_seq = {}
     if not hasattr(self, "_sample_semaphore"):
         # Lifecycle-scoped semaphore bounding concurrent sample() calls across
         # their full submit+poll lifecycle.
         self._sample_semaphore = asyncio.Semaphore(_MAX_CONCURRENT_SAMPLES)
     if not hasattr(self, "_session_resource_ids"):
-        self._session_resource_ids: dict[str, str] = {}
+        self._session_resource_ids = {}
 
 
 def _client_resource_session_id(
@@ -279,12 +313,38 @@ def _start_heartbeat(
     )
 
 
-def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
-    """Cancel the background heartbeat task for a session."""
+async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
+    """Cancel once and drain heartbeat cleanup before lifecycle requests.
+
+    Concurrent callers share a shielded shutdown task, so cancelling one waiter
+    cannot interrupt transport cleanup or let another waiter send early.
+    """
     _ensure_async_state(self)
-    task = self._heartbeat_tasks.pop(_canonical_session_id(session_id), None)
-    if task is not None:
-        task.cancel()
+    session_id = _canonical_session_id(session_id)
+    shutdown = self._heartbeat_shutdowns.get(session_id)
+    if shutdown is None:
+        task = self._heartbeat_tasks.get(session_id)
+        if task is None:
+            return
+        if not task.done():
+            task.cancel()
+
+        async def drain() -> None:
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+            except Exception:
+                _logger.exception("[heartbeat] failed during shutdown for %s", session_id)
+            finally:
+                if self._heartbeat_tasks.get(session_id) is task:
+                    self._heartbeat_tasks.pop(session_id, None)
+                self._heartbeat_shutdowns.pop(session_id, None)
+
+        shutdown = asyncio.create_task(drain(), name=f"fts-heartbeat-shutdown-{session_id}")
+        if not shutdown.done():
+            self._heartbeat_shutdowns[session_id] = shutdown
+    await asyncio.shield(shutdown)
 
 
 # -- Low-level helpers ---------------------------------------------------------
@@ -467,6 +527,8 @@ async def _post(
                     await asyncio.sleep(wait)
                     continue
                 raise
+
+        raise RuntimeError("Submission retry loop ended without a response")
 
 
 async def _post_sample(
@@ -801,7 +863,7 @@ async def _poll(
                         poll_wait = _RETRIEVE_POLL_MIN
                 else:
                     poll_wait = _RETRIEVE_POLL_MIN
-                await asyncio.sleep(poll_wait)
+                await asyncio.sleep(error_budget.clamp_delay(poll_wait))
                 continue
 
             # Non-retryable HTTP error.
@@ -833,7 +895,7 @@ async def _poll(
                 conn_backoff,
             )
             error_budget.consume(type(exc).__name__)
-            await asyncio.sleep(conn_backoff)
+            await asyncio.sleep(error_budget.clamp_delay(conn_backoff))
             conn_backoff = min(conn_backoff * 2, 30.0)
             continue
 
@@ -958,18 +1020,26 @@ async def create_session(
 ) -> str:
     """Create a fine-tuning session and wait until the model is loaded.
 
-    :param base_model: Name of the base model to load.
-    :param lora_config: Optional LoRA adapter config.
-    :param type: Session type string. Defaults to ``"training"``.
-    :param from_checkpoint: Optional checkpoint to resume from.
-    :param timeout_sec: Maximum seconds to wait for model load.
-    :param user_metadata: Optional key/value metadata stored on the session
+    :keyword base_model: Name of the base model to load.
+    :paramtype base_model: str
+    :keyword lora_config: Optional LoRA adapter config.
+    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+    :keyword type: Session type string. Defaults to ``"training"``.
+    :paramtype type: str
+    :keyword from_checkpoint: Optional checkpoint to resume from.
+    :paramtype from_checkpoint: ~azure.ai.finetuningsessions.models.FromCheckpoint or None
+    :keyword timeout_sec: Maximum seconds to wait for model load.
+    :paramtype timeout_sec: float
+    :keyword user_metadata: Optional key/value metadata stored on the session
         record.
-    :param training_type: Training SKU type: ``"GlobalStandard"`` (default),
+    :paramtype user_metadata: dict[str, ~typing.Any] or None
+    :keyword training_type: Training SKU type: ``"GlobalStandard"`` (default),
         ``"DatazoneStandard"``, or ``"DeveloperTier"``. Global jobs can run on
         any worker; datazone jobs require a worker in the same datazone as the
         API's region; Developer Tier jobs use eligible development capacity.
+    :paramtype training_type: str or None
     :return: The ``session_id`` string (e.g. ``"session_abc12345"``).
+    :rtype: str
     """
     _ensure_async_state(self)
 
@@ -1042,7 +1112,9 @@ async def create_session(
     conn_backoff = 1.0
     poll_backoff = _RETRIEVE_POLL_MIN
     _create_poll_start = _time.monotonic()
+    not_found_retry = _BoundedRetryState(limit_sec=120.0, base_delay_sec=1.0, max_delay_sec=10.0)
     while True:
+        _creation_wait(deadline, 0, timeout_sec, raw_session_id)
         try:
             poll_req = _HttpRequest(
                 "GET",
@@ -1063,9 +1135,13 @@ async def create_session(
             )
 
             if poll_resp.status_code == 200:
+                if not isinstance(envelope, dict):
+                    raise RuntimeError(f"Unexpected response envelope for create request {request_id}")
                 env_status = envelope.get("status")
                 if env_status == "completed":
-                    _logger.info("[create_session] model load completed: %s", envelope)
+                    _logger.info(
+                        "[create_session] model load completed: session_id=%s request_id=%s", session_id, request_id
+                    )
                     _clear_poll_log_state(session_id, request_id, "create_session")
                     break
                 if env_status == "failed":
@@ -1079,6 +1155,8 @@ async def create_session(
                         f"{envelope.get('error') or 'unknown error'} "
                         f"(debug_ref={envelope.get('debug_ref') or 'n/a'})"
                     )
+                if env_status != "pending":
+                    raise RuntimeError(f"Unexpected envelope status {env_status!r} for create request {request_id}")
                 # pending -> adaptive backoff
                 if _time.monotonic() > deadline:
                     raise RuntimeError(
@@ -1087,9 +1165,15 @@ async def create_session(
                 elapsed = _time.monotonic() - _create_poll_start
                 _maybe_log_poll_progress(envelope, session_id, request_id, "create_session", elapsed)
                 conn_backoff = 1.0
-                await asyncio.sleep(poll_backoff)
+                await asyncio.sleep(_creation_wait(deadline, poll_backoff, timeout_sec, raw_session_id))
                 poll_backoff = min(poll_backoff * 2, _RETRIEVE_POLL_MAX)
                 continue
+
+            if poll_resp.status_code == 404:
+                wait = not_found_retry.next_delay()
+                if wait is not None:
+                    await asyncio.sleep(_creation_wait(deadline, wait, timeout_sec, raw_session_id))
+                    continue
 
             # Retryable HTTP status codes.
             if 500 <= poll_resp.status_code < 600 or poll_resp.status_code in (408, 429):
@@ -1106,7 +1190,12 @@ async def create_session(
                     elapsed,
                 )
                 conn_backoff = 1.0
-                await asyncio.sleep(_RETRIEVE_POLL_MIN)
+                retry_after = poll_resp.headers.get("Retry-After")
+                try:
+                    wait = float(retry_after) if retry_after is not None else _RETRIEVE_POLL_MIN
+                except (TypeError, ValueError):
+                    wait = _RETRIEVE_POLL_MIN
+                await asyncio.sleep(_creation_wait(deadline, wait, timeout_sec, raw_session_id))
                 continue
 
             # Non-retryable error.
@@ -1129,12 +1218,12 @@ async def create_session(
                 "[poller] retry on %s/%s after %s(%s) (%.0fs elapsed), backoff %.1fs",
                 session_id,
                 request_id,
-                type(exc).__name__,
+                exc.__class__.__name__,
                 exc,
                 elapsed,
                 conn_backoff,
             )
-            await asyncio.sleep(conn_backoff)
+            await asyncio.sleep(_creation_wait(deadline, conn_backoff, timeout_sec, raw_session_id))
             conn_backoff = min(conn_backoff * 2, 30.0)
             continue
 
@@ -1153,13 +1242,19 @@ async def create_session_from_checkpoint(
 ) -> str:
     """Create a session resumed from a previously saved training checkpoint.
 
-    :param checkpoint_path: Format: ``"<source_session_id>/<checkpoint_name>"``
+    :keyword checkpoint_path: Format: ``"<source_session_id>/<checkpoint_name>"``
         or ``"loom://<source_session_id>/weights/<checkpoint_name>"``.
-    :param base_model: Base model name.
-    :param lora_config: Optional LoRA config override.
-    :param type: Session type. Defaults to ``"training"``.
-    :param timeout_sec: Maximum seconds to wait for model load.
+    :paramtype checkpoint_path: str
+    :keyword base_model: Base model name.
+    :paramtype base_model: str
+    :keyword lora_config: Optional LoRA config override.
+    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+    :keyword type: Session type. Defaults to ``"training"``.
+    :paramtype type: str
+    :keyword timeout_sec: Maximum seconds to wait for model load.
+    :paramtype timeout_sec: float
     :return: The ``session_id`` string.
+    :rtype: str
     """
     source_session_id, checkpoint_id = _parse_checkpoint_path(checkpoint_path)
     return await create_session(
@@ -1192,10 +1287,15 @@ async def forward_backward(
     using ``asyncio.gather``.
 
     :param session_id: The session ID returned by ``create_session``.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
     :return: OperationResult.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
     chunks = await _chunk_data_async(batch)
     if len(chunks) <= 1:
@@ -1266,13 +1366,18 @@ async def forward(
     using ``asyncio.gather``.
 
     :param session_id: The session ID returned by ``create_session``.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
     :return: ForwardBackwardOperationResult with per-datum loss outputs.
         ``total_loss`` is None for forward-only operations.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
-    chunks = _chunk_data(batch)
+    chunks = await _chunk_data_async(batch)
     if len(chunks) <= 1:
         return await _post_and_poll(
             self,
@@ -1345,13 +1450,18 @@ async def forward_post(
     ``poll_result()`` can be awaited later.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
     :return: PendingRequests handle.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
     """
     subpath = f"/fine_tuning/sessions/{session_id}/forward"
-    chunks = _chunk_data(batch)
+    chunks = await _chunk_data_async(batch)
 
     if len(chunks) > 1:
         _logger.info(
@@ -1403,10 +1513,16 @@ async def forward_async(
     returning, matching the forward_backward_async behavior.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
     :return: An asyncio.Task whose result is an OperationResult.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult] or
+        ~asyncio.Future[~azure.ai.finetuningsessions.models.OperationResult]
     """
     pending = await forward_post(self, session_id, batch, loss_fn=loss_fn, loss_fn_config=loss_fn_config)
 
@@ -1416,9 +1532,7 @@ async def forward_async(
             len(pending._posted),
         )
         result = await pending.poll_result()
-        done: asyncio.Future[OperationResult] = asyncio.get_running_loop().create_future()
-        done.set_result(result)
-        return done  # type: ignore[return-value]
+        return await _completed_result_task(result, "fwd_poll_completed")
 
     return asyncio.create_task(pending.poll_result(), name="fwd_poll")
 
@@ -1431,8 +1545,11 @@ async def optim_step(
     """Apply accumulated gradients with Adam.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param adam_params: Optimizer hyper-parameters.
+    :type adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     :return: OperationResult.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
     return await _post_and_poll(
         self,
@@ -1496,6 +1613,15 @@ class PendingRequests:
         surfaces get the same recovery as the direct ``_post_and_poll`` path.
         ``poll_min_sec`` and ``poll_max_sec`` override the default pending-result
         backoff bounds.
+
+        :keyword poll_min_sec: Minimum pending-result poll interval in seconds.
+            ``None`` uses the default minimum interval.
+        :paramtype poll_min_sec: float or None
+        :keyword poll_max_sec: Maximum pending-result poll interval in seconds.
+            ``None`` uses the default maximum interval.
+        :paramtype poll_max_sec: float or None
+        :return: The operation result, combined across chunks when needed.
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
         poll_kwargs: dict[str, float] = {}
         if poll_min_sec is not None:
@@ -1507,7 +1633,7 @@ class PendingRequests:
             return chunk_results[0]
 
         chunk_sizes = [len(c) for c in self._chunks] if self._chunks else [1] * len(self._posted)
-        return _combine_fwd_bwd_results(chunk_results, chunk_sizes)
+        return _combine_fwd_bwd_results(cast(List[ForwardBackwardOperationResult], chunk_results), chunk_sizes)
 
     async def _poll_chunk_results(
         self,
@@ -1534,7 +1660,8 @@ class PendingRequests:
                 spec.extra_params,
                 extra_result_fields=self._extra_result_fields,
                 operation_started_at=spec.operation_started_at,
-                **poll_kwargs,
+                poll_min_sec=poll_min_sec,
+                poll_max_sec=poll_max_sec,
             )
             return [result]  # type: ignore[list-item]
 
@@ -1550,7 +1677,8 @@ class PendingRequests:
                 spec.extra_params,
                 extra_result_fields=self._extra_result_fields,
                 operation_started_at=spec.operation_started_at,
-                **poll_kwargs,
+                poll_min_sec=poll_min_sec,
+                poll_max_sec=poll_max_sec,
             )
             if isinstance(result, ForwardBackwardOperationResult):
                 return result
@@ -1585,10 +1713,15 @@ async def forward_backward_post(
     server *before* a subsequent ``optim_step_post``.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
     :return: PendingRequests handle.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
     """
     chunks = await _chunk_data_async(batch)
     if len(chunks) > 1:
@@ -1617,6 +1750,8 @@ async def _forward_backward_chunks_post(
     loss_fn_config: Optional[LossFnConfig],
 ) -> PendingRequests:
     """POST precomputed forward/backward chunks sequentially."""
+    if not chunks or any(not chunk for chunk in chunks):
+        raise ValueError("Training batch must not be empty")
     subpath = f"/fine_tuning/sessions/{session_id}/forward_backward"
 
     posted: List[_PostSpec] = []
@@ -1675,14 +1810,23 @@ async def forward_backward_async(
     forward/backward operation and one subsequent optimizer step.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param batch: List of Datum.
-    :param loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
-    :param loss_fn_config: Optional per-loss hyper-parameters.
-    :param poll_min_sec: Optional minimum pending-result poll interval.
-    :param poll_max_sec: Optional maximum pending-result poll interval.
-    :param max_chunks_per_wave: Maximum number of chunks to post before waiting
+    :type batch: list[~azure.ai.finetuningsessions.models.Datum]
+    :keyword loss_fn: Loss function name. Defaults to ``"cross_entropy"``.
+    :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
+    :keyword loss_fn_config: Optional per-loss hyper-parameters.
+    :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :keyword poll_min_sec: Optional minimum pending-result poll interval.
+    :paramtype poll_min_sec: float or None
+    :keyword poll_max_sec: Optional maximum pending-result poll interval.
+    :paramtype poll_max_sec: float or None
+    :keyword max_chunks_per_wave: Maximum number of chunks to post before waiting
         for their completion. ``None`` preserves the existing all-at-once behavior.
+    :paramtype max_chunks_per_wave: int or None
     :return: An asyncio.Task whose result is an OperationResult.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult] or
+        ~asyncio.Future[~azure.ai.finetuningsessions.models.OperationResult]
     """
     if max_chunks_per_wave is not None and max_chunks_per_wave <= 0:
         raise ValueError("max_chunks_per_wave must be positive when set")
@@ -1711,13 +1855,13 @@ async def forward_backward_async(
                 loss_fn=loss_fn,
                 loss_fn_config=loss_fn_config,
             )
-            chunk_results.extend(await pending._poll_chunk_results(**poll_kwargs))
+            chunk_results.extend(
+                cast(List[ForwardBackwardOperationResult], await pending._poll_chunk_results(**poll_kwargs))
+            )
             chunk_sizes.extend(len(chunk) for chunk in wave)
 
-        result = _combine_fwd_bwd_results(chunk_results, chunk_sizes)
-        done: asyncio.Future[OperationResult] = asyncio.get_running_loop().create_future()
-        done.set_result(result)
-        return done  # type: ignore[return-value]  # Future is awaitable like Task
+        wave_result = _combine_fwd_bwd_results(chunk_results, chunk_sizes)
+        return await _completed_result_task(wave_result, "fwd_bwd_wave_completed")
 
     pending = await _forward_backward_chunks_post(
         self,
@@ -1745,9 +1889,7 @@ async def forward_backward_async(
             len(pending._posted),
         )
         result = await pending.poll_result(**poll_kwargs)
-        done: asyncio.Future[OperationResult] = asyncio.get_running_loop().create_future()
-        done.set_result(result)
-        return done  # type: ignore[return-value]  # Future is awaitable like Task
+        return await _completed_result_task(result, "fwd_bwd_poll_completed")
 
     return asyncio.create_task(
         pending.poll_result(**poll_kwargs),
@@ -1766,8 +1908,11 @@ async def optim_step_post(
     can be awaited later.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param adam_params: Optimizer hyper-parameters.
+    :type adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     :return: PendingRequests handle.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
     """
     subpath = f"/fine_tuning/sessions/{session_id}/optim_step"
     body = OptimStepRequest(adam_params=adam_params)
@@ -1802,10 +1947,15 @@ async def optim_step_async(
     forward_backward_async calls.  Only the poll runs in the background.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param adam_params: Optimizer hyper-parameters.
-    :param poll_min_sec: Optional minimum pending-result poll interval.
-    :param poll_max_sec: Optional maximum pending-result poll interval.
+    :type adam_params: ~azure.ai.finetuningsessions.models.AdamParams
+    :keyword poll_min_sec: Optional minimum pending-result poll interval.
+    :paramtype poll_min_sec: float or None
+    :keyword poll_max_sec: Optional maximum pending-result poll interval.
+    :paramtype poll_max_sec: float or None
     :return: An asyncio.Task whose result is an OperationResult.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
     """
     pending = await optim_step_post(self, session_id, adam_params)
     poll_kwargs: dict[str, float] = {}
@@ -1830,8 +1980,11 @@ async def save_weights(
     """Save a training checkpoint (LoRA weights + optimizer state).
 
     :param session_id: The session ID.
+    :type session_id: str
     :param path: Checkpoint name/path.
+    :type path: str
     :return: OperationResult.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
     return await _post_and_poll(
         self,
@@ -1853,10 +2006,15 @@ async def save_weights_post(
     """POST a save-weights request without polling for completion.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param path: Checkpoint name/path.
-    :param step_number: Training step number for this checkpoint.
-    :param metrics: Evaluation metrics at checkpoint time.
+    :type path: str
+    :keyword step_number: Training step number for this checkpoint.
+    :paramtype step_number: int or None
+    :keyword metrics: Evaluation metrics at checkpoint time.
+    :paramtype metrics: dict[str, ~typing.Any] or None
     :return: PendingRequests handle.
+    :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
     """
     subpath = f"/fine_tuning/sessions/{session_id}/checkpoint"
     body = SaveCheckpointRequest(path=path, step_number=step_number, metrics=metrics)
@@ -1892,10 +2050,15 @@ async def save_weights_async(
     requests.  Only the poll runs in the background.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param path: Checkpoint name/path.
-    :param step_number: Training step number for this checkpoint.
-    :param metrics: Evaluation metrics at checkpoint time.
+    :type path: str
+    :keyword step_number: Training step number for this checkpoint.
+    :paramtype step_number: int or None
+    :keyword metrics: Evaluation metrics at checkpoint time.
+    :paramtype metrics: dict[str, ~typing.Any] or None
     :return: An asyncio.Task whose result is an OperationResult.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
     """
     pending = await save_weights_post(self, session_id, path, step_number=step_number, metrics=metrics)
     return asyncio.create_task(pending.poll_result(), name=f"save_{path}")
@@ -1944,9 +2107,12 @@ async def save_weights_for_sampler_async(
     is not set.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param name: Checkpoint name/identifier.
+    :type name: str
     :return: An asyncio.Task whose result is an OperationResult with
         ``checkpoint_id`` set to *name*.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
     """
     _ensure_async_state(self)
     pending = await _save_weights_for_sampler_post(
@@ -1970,9 +2136,12 @@ async def save_weights_and_get_sampling_client_async(
     never sees it.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param name: Checkpoint name/identifier (e.g. ``"step5"``).
+    :type name: str
     :return: An asyncio.Task whose result is an OperationResult with
         ``checkpoint_id`` set to *name*.
+    :rtype: ~asyncio.Task[~azure.ai.finetuningsessions.models.OperationResult]
     """
     _ensure_async_state(self)
     seq = self._sampling_session_seq.get(session_id, 0) + 1
@@ -2005,14 +2174,26 @@ async def sample(
     """Generate completions using current LoRA weights.
 
     :param session_id: The session ID.
+    :type session_id: str
     :param prompt_tokens: Tokenised prompt as a list of integer IDs, or a
         structured ``ModelInput`` for multimodal prompts.
+    :type prompt_tokens: list[int] or ~azure.ai.finetuningsessions.models.ModelInput
     :param sampling_params: Generation parameters.
-    :param checkpoint_id: Sampler checkpoint ID from ``save_weights_for_sampler``.
-    :param num_samples: Number of completions. Default 1.
-    :param prompt_logprobs: If True, return per-token log-probabilities for the prompt.
-    :param topk_prompt_logprobs: Top-k log-probabilities per prompt token. 0 = none. Must be between 0 and 20 (default 20).
+    :type sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
+    :keyword checkpoint_id: Sampler checkpoint ID from ``save_weights_for_sampler``.
+    :paramtype checkpoint_id: str
+    :keyword num_samples: Number of completions. Default 1.
+    :paramtype num_samples: int
+    :keyword sampling_session_id: Optional sampling session ID sent with the request.
+    :paramtype sampling_session_id: str or None
+    :keyword seq_id: Optional sequence ID sent with the sampling request.
+    :paramtype seq_id: int or None
+    :keyword prompt_logprobs: If True, return per-token log-probabilities for the prompt.
+    :paramtype prompt_logprobs: bool
+    :keyword topk_prompt_logprobs: Top-k log-probabilities per prompt token. 0 = none. Must be between 0 and 20 (default 0).
+    :paramtype topk_prompt_logprobs: int
     :return: OperationResult.
+    :rtype: ~azure.ai.finetuningsessions.models.OperationResult
 
     Concurrency is bounded by a lifecycle-scoped semaphore (size
     ``_MAX_CONCURRENT_SAMPLES``). The permit is held for the FULL submit+poll
@@ -2074,9 +2255,12 @@ async def close_session(
     Stops the background heartbeat, then issues the complete request.
 
     :param session_id: The session ID to close.
+    :type session_id: str
+    :return: None.
+    :rtype: None
     """
-    _stop_heartbeat(self, session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
+    await _stop_heartbeat(self, session_id)
     close_req = _HttpRequest(
         "POST",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/complete",
@@ -2100,10 +2284,13 @@ async def delete_session(
     non-2xx surfaces via the standard SDK error path.
 
     :param session_id: The session ID to delete.
+    :type session_id: str
+    :return: None.
+    :rtype: None
     """
     session_id = _canonical_session_id(session_id)
-    _stop_heartbeat(self, session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
+    await _stop_heartbeat(self, session_id)
     del_req = _HttpRequest(
         "DELETE",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}",
@@ -2123,10 +2310,45 @@ async def delete_session(
         if typed is not None:
             raise typed
         resp.raise_for_status()
+    if not 200 <= resp.status_code < 300:
+        raise _HttpResponseError(response=resp)
     self._session_resource_ids.pop(session_id, None)
 
 
-# -- Patch the public client ---------------------------------------------------
+# -- Statically visible supported public client -------------------------------
+
+
+class FineTuningSessionClient(_ClientBase):
+    """Async fine-tuning client with token/key authentication and training APIs.
+
+    :param endpoint: Foundry project endpoint.
+    :type endpoint: str
+    :param credential: Token credential or API key for the endpoint.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+    """
+
+    create_session = create_session
+    create_session_from_checkpoint = create_session_from_checkpoint
+    forward_backward = forward_backward
+    forward_backward_post = forward_backward_post
+    forward_backward_async = forward_backward_async
+    forward = forward
+    forward_post = forward_post
+    forward_async = forward_async
+    optim_step = optim_step
+    optim_step_post = optim_step_post
+    optim_step_async = optim_step_async
+    save_weights = save_weights
+    save_weights_post = save_weights_post
+    save_weights_async = save_weights_async
+    save_weights_for_sampler_async = save_weights_for_sampler_async
+    save_weights_and_get_sampling_client_async = save_weights_and_get_sampling_client_async
+    sample = sample
+    close_session = close_session
+    delete_session = delete_session
+
+
+# -- Patch private compatibility imports ---------------------------------------
 
 __all__: list[str] = ["FineTuningSessionClient"]
 
@@ -2137,26 +2359,6 @@ def patch_sdk():
     from .._client_options import _patch_configuration
 
     _patch_configuration(_configuration, asynchronous=True)
-
-    FineTuningSessionClient.create_session = create_session
-    FineTuningSessionClient.create_session_from_checkpoint = create_session_from_checkpoint
-    FineTuningSessionClient.forward_backward = forward_backward
-    FineTuningSessionClient.forward_backward_post = forward_backward_post
-    FineTuningSessionClient.forward_backward_async = forward_backward_async
-    FineTuningSessionClient.forward = forward
-    FineTuningSessionClient.forward_post = forward_post
-    FineTuningSessionClient.forward_async = forward_async
-    FineTuningSessionClient.optim_step = optim_step
-    FineTuningSessionClient.optim_step_post = optim_step_post
-    FineTuningSessionClient.optim_step_async = optim_step_async
-    FineTuningSessionClient.save_weights = save_weights
-    FineTuningSessionClient.save_weights_post = save_weights_post
-    FineTuningSessionClient.save_weights_async = save_weights_async
-    FineTuningSessionClient.save_weights_for_sampler_async = save_weights_for_sampler_async
-    FineTuningSessionClient.save_weights_and_get_sampling_client_async = save_weights_and_get_sampling_client_async
-    FineTuningSessionClient.sample = sample
-    FineTuningSessionClient.close_session = close_session
-    FineTuningSessionClient.delete_session = delete_session
 
     # Preserve the original private import path used by the upstream tests and
     # existing callers, while public construction uses the supported subclass.

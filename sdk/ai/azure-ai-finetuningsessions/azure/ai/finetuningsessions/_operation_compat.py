@@ -202,6 +202,9 @@ async def _initial_async(operation, builder, arguments, body, options):
 
 def _begin(operation, builder, arguments, options, body=_NO_BODY):
     initial_options, polling, delay, token, deserialize = _poller_options(operation, options, body is not _NO_BODY)
+    if token == "":
+        raise ValueError("continuation_token must not be empty")
+    result: Any = None
     if token is None:
         result = _initial(operation, builder, arguments, body, {**initial_options, **options})
         result.http_response.read()
@@ -227,6 +230,9 @@ def _begin(operation, builder, arguments, options, body=_NO_BODY):
 
 async def _begin_async(operation, builder, arguments, options, body=_NO_BODY):
     initial_options, polling, delay, token, deserialize = _poller_options(operation, options, body is not _NO_BODY)
+    if token == "":
+        raise ValueError("continuation_token must not be empty")
+    result: Any = None
     if token is None:
         result = await _initial_async(operation, builder, arguments, body, {**initial_options, **options})
         await result.http_response.read()

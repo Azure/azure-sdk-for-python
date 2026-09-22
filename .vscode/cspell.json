@@ -2150,6 +2150,15 @@
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     },
     {
+      "filename": "sdk/ai/azure-ai-finetuningsessions/**",
+      "words": [
+        "finetuningsessions", "AICLIENT", "CISPO", "SAPO", "TCGC", "pygen",
+        "skyrl", "falsey", "ungated", "rhno", "sess", "coro", "dedups",
+        "unconfigured", "chunker", "aabbccdd", "xffjpeg", "xffoffline", "xfftest",
+        "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
+      ]
+    },
+    {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
     },

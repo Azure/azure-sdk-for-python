@@ -9,8 +9,8 @@ Both public client subclasses use this helper instead of editing generated
 configuration or replacing a caller-supplied policy list or pipeline.
 """
 
-from typing import Any
-from urllib.parse import urlparse
+from typing import Any, Union
+from urllib.parse import urlparse, urlsplit
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
@@ -21,6 +21,48 @@ from ._version import VERSION
 
 #: Hostnames that count as "local dev" for the purpose of allowing plain http://.
 _LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
+
+
+class _DirectContextPolicy(policies.SansIOHTTPPolicy):
+    """Apply existing direct-route context only to this endpoint's session calls.
+
+    A retry policy placement ensures redirects are rechecked. Only headers added
+    by this policy are removed when a redirect leaves the configured endpoint.
+    Caller-supplied headers and custom pipeline policies remain caller-owned.
+    """
+
+    def __init__(self, endpoint: str) -> None:
+        self._endpoint = urlsplit(endpoint)
+        self._prefix = self._endpoint.path.rstrip("/") + "/fine_tuning/sessions"
+        self._context_key = f"finetuning-direct-headers-{id(self)}"
+
+    def on_request(self, request: Any) -> None:
+        target = urlsplit(request.http_request.url)
+        endpoint = self._endpoint
+
+        def origin(parts: Any) -> tuple:
+            return parts.scheme.lower(), parts.hostname, parts.port or (443 if parts.scheme == "https" else 80)
+
+        matches = origin(target) == origin(endpoint) and (
+            target.path == self._prefix or target.path.startswith(self._prefix + "/")
+        )
+        injected = request.context.get(self._context_key, {})
+        if not matches:
+            for name, value in injected.items():
+                if request.http_request.headers.get(name) == value:
+                    request.http_request.headers.pop(name, None)
+            request.context[self._context_key] = {}
+            return
+        # Lazy import avoids a root-patch/configuration import cycle.
+        from ._patch import _base_headers
+
+        for name, value in _base_headers().items():
+            if name.lower() in {"accept", "foundry-features"}:
+                continue
+            if name not in request.http_request.headers:
+                request.http_request.headers[name] = value
+                injected[name] = value
+        request.context[self._context_key] = injected
 
 
 def _is_local_endpoint(endpoint: str) -> bool:
@@ -90,10 +132,17 @@ def _prepare_client_options(
     kwargs = dict(options)
     kwargs.setdefault("sdk_moniker", "finetuning-sessions/{}".format(VERSION))
     kwargs.setdefault("credential_scopes", ["https://ai.azure.com/.default"])
+    # Explicit policy lists/pipelines remain owned by the caller. Default
+    # pipelines get the same environment context as the training conveniences.
+    if kwargs.get("policies") is None and kwargs.get("pipeline") is None:
+        custom = kwargs.get("per_retry_policies") or []
+        custom = list(custom) if isinstance(custom, (list, tuple)) else [custom]
+        kwargs["per_retry_policies"] = [*custom, _DirectContextPolicy(endpoint)]
     if credential and not kwargs.get("authentication_policy"):
         if isinstance(credential, AzureKeyCredential):
             kwargs["authentication_policy"] = AzureKeyCredentialPolicy(credential, name="api-key")
         else:
+            policy_cls: type[Union[policies.BearerTokenCredentialPolicy, policies.AsyncBearerTokenCredentialPolicy]]
             if asynchronous:
                 policy_cls = (
                     _InsecureAsyncBearerTokenCredentialPolicy
@@ -124,7 +173,9 @@ def _patch_configuration(module: Any, *, asynchronous: bool = False) -> None:
     if getattr(generated, "_preview_configuration", False):
         return
 
-    class FineTuningSessionClientConfiguration(generated):
+    # This private compatibility class deliberately wraps the runtime-selected
+    # sync/async generated configuration; no public type is weakened.
+    class FineTuningSessionClientConfiguration(generated):  # type: ignore[valid-type,misc]
         _preview_configuration = True
 
         def __init__(self, endpoint: str, credential: Any, *, allow_insecure_http: bool = False, **kwargs: Any) -> None:

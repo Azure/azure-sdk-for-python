@@ -1,5 +1,26 @@
 # Reproducible preview SDK generation
 
+## Reviewed fixes after the parity baseline
+
+The independently reproducible exact public-API parity baseline is SDK commit
+`39c2b3c882526897619785089074176b367099a6`, pinned to TypeSpec
+`d912f0d0bc6af9e87e0c0833922dd85fa32abf97`. Subsequent review fixes are listed in
+[review-deltas.json](review-deltas.json) and [REVIEW.md](REVIEW.md); the baseline
+results below remain historical evidence, not a claim of zero behavior changes.
+
+Current tests preserve all upstream cases, adapt two private heartbeat mocks to
+the now-awaitable helper, and add lifecycle/protocol/header regressions. The
+compatibility verifier checks those exact test hashes. Its only fixture changes
+are explicitly expected direct-context headers on raw calls, widened
+credential annotations for already-supported API keys, and multimodal input
+annotations matching the already-supported image chunks; all other API, payload,
+serialization, raw operation and convenience results remain exact.
+
+Heartbeat shutdown is now awaited, default sync pipeline ownership is unified,
+and creation/error waits are bounded. The security policy for remote API-key HTTP,
+non-idempotent submission retry contract, and opt-in heartbeat redesign are
+deliberately deferred for the reasons recorded in the review assessment.
+
 ## Customer artifact and compatibility target
 
 This package is generated from the Python-specific TypeSpec entry point in the
@@ -94,7 +115,7 @@ customizer classified the substantial handwritten integration as
 `ManualInterventionRequired`; it did not perform or validate this implementation.
 The documented Python subclass/`__all__`/`patch_sdk()` workflow was used instead.
 
-## Acceptance checks
+## Baseline acceptance checks (before review fixes)
 
 - [verify_generation.py](verify_generation.py): emits twice from independent
   source snapshots with only maintained customizations pre-seeded; compares all
@@ -136,7 +157,7 @@ in [generation-provenance.json](generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
 independently reproducible.
 
-Deferred public tests remain in [review_tests/](review_tests/README.md), and the
-earlier implementation is recoverable at SDK commit `8ebc1ea5c9`. Reapply heartbeat
-and other review corrections as separate tested changes after this baseline.
+Archived public-only tests remain in [review_tests/](review_tests/DEFERRED.md), and
+the earlier implementation is recoverable at SDK commit `8ebc1ea5c9`. The heartbeat
+regressions were reactivated with the separate tested review fixes.
 No Loom checkout/index changes, deployment, or publication are part of this work.

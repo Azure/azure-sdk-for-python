@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Dict, Literal, Mapping, Optional, overload
+from typing import Any, Dict, Literal, Mapping, Optional, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 from . import _models
@@ -117,10 +118,12 @@ class SampleOperationResult(_models.SampleOperationResult, discriminator="sample
     rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
     """
 
-    prompt_logprobs: Optional[list[Optional[float]]] = rest_field(
+    # The emitter drops nested nullability. These intentional mutable-field
+    # replacements preserve the published type, verified by round-trip tests.
+    prompt_logprobs: Optional[list[Optional[float]]] = rest_field(  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
     )
-    topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = rest_field(
+    topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = rest_field(  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleVariableOverride]
         visibility=["read", "create", "update", "delete", "query"]
     )
 
@@ -165,8 +168,28 @@ class SaveCheckpointRequest(_models.SaveCheckpointRequest):
 class ModelInput(_models.ModelInput):
     """Ordered text and image chunks for one model input."""
 
+    # The preview's supported image input is broader than the token-only
+    # generated base. Keep the published field and constructor consistent.
+    chunks: list[Union[_models.ModelInputChunk, ImageChunk]] = rest_field(  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleVariableOverride]
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(self, *, chunks: list[Union[_models.ModelInputChunk, ImageChunk]]) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        # ModelInputChunk preserves unknown wire fields as a Mapping. Validate
+        # image mappings through the same handwritten constructor as direct
+        # ImageChunk inputs, before retaining the existing wire representation.
+        for chunk in self.chunks:
+            if not isinstance(chunk, ImageChunk) and isinstance(chunk, Mapping) and chunk.get("type") == "image":
+                ImageChunk(
+                    data=chunk.get("data"), format=chunk.get("format"), expected_tokens=chunk.get("expected_tokens")
+                )
         image_count = sum(
             isinstance(chunk, ImageChunk) or (isinstance(chunk, Mapping) and chunk.get("type") == "image")
             for chunk in self.chunks

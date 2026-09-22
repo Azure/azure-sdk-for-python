@@ -33,6 +33,7 @@ body so callers can make decisions without string parsing.
 """
 from __future__ import annotations
 
+import math
 from typing import Any, Optional
 
 from azure.core.exceptions import HttpResponseError
@@ -43,6 +44,12 @@ class FineTuningSessionsError(HttpResponseError):
 
     Inherits from ``azure.core.exceptions.HttpResponseError`` so existing
     ``except HttpResponseError`` handlers still catch these.
+
+    Additional keyword arguments are forwarded to
+    :class:`~azure.core.exceptions.HttpResponseError`.
+
+    :param str message: Error message.
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(self, message: str, *, response: Any = None, **kwargs: Any) -> None:
@@ -57,6 +64,15 @@ class BatchTooLargeError(FineTuningSessionsError):
     Attributes:
         max_batch_size: The maximum batch size the server accepts (if reported).
         actual_batch_size: The batch size that was rejected (if reported).
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword max_batch_size: Maximum batch size accepted by the server, if reported.
+    :type max_batch_size: int or None
+    :keyword actual_batch_size: Rejected batch size, if reported.
+    :type actual_batch_size: int or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -81,7 +97,18 @@ class NoCapacityError(FineTuningSessionsError):
 
     Attributes:
         retry_after_sec: Suggested wait time in seconds before retrying.
-        reason: Server-reported reason string (e.g. ``"engine_busy"``).
+
+    The inherited ``reason`` attribute contains the server-reported reason
+    (for example, ``"engine_busy"``).
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword retry_after_sec: Suggested wait time in seconds before retrying, if provided.
+    :type retry_after_sec: float or None
+    :keyword reason: Server-reported reason, if provided.
+    :type reason: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -120,6 +147,17 @@ class TrainingEngineError(FineTuningSessionsError):
         session_id: The session that was being served.
         error_code: Server error code (e.g. ``"worker_crashed"``).
         debug_ref: Opaque reference for support tickets.
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword session_id: Identifier of the affected session, if known.
+    :type session_id: str or None
+    :keyword error_code: Server error code, if provided.
+    :type error_code: str or None
+    :keyword debug_ref: Opaque reference for support tickets, if provided.
+    :type debug_ref: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -151,6 +189,17 @@ class OperationResultUnavailableError(FineTuningSessionsError):
             as completed before its result payload became unavailable.
         error_code: Server error code identifying the payload-loss outcome.
         debug_ref: Opaque reference for support tickets.
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword bool operation_completed: Whether the server durably recorded the operation
+        as completed before its result payload became unavailable.
+    :keyword error_code: Server error code identifying the payload-loss outcome, if provided.
+    :type error_code: str or None
+    :keyword debug_ref: Opaque reference for support tickets, if provided.
+    :type debug_ref: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -176,7 +225,17 @@ class ContentionError(FineTuningSessionsError):
 
     Attributes:
         retry_after_sec: Suggested wait time before retrying.
-        reason: Server-reported reason string.
+
+    The inherited ``reason`` attribute contains the server-reported reason.
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword retry_after_sec: Suggested wait time in seconds before retrying, if provided.
+    :type retry_after_sec: float or None
+    :keyword reason: Server-reported reason, if provided.
+    :type reason: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -214,6 +273,17 @@ class RequestRetryableError(FineTuningSessionsError):
             ``should_retry``, not the code.
         retry_after_sec: Suggested wait before resubmitting, if provided.
         debug_ref: Opaque reference for support tickets.
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword error_code: Informational server error code, if provided.
+    :type error_code: str or None
+    :keyword retry_after_sec: Suggested wait time in seconds before resubmitting, if provided.
+    :type retry_after_sec: float or None
+    :keyword debug_ref: Opaque reference for support tickets, if provided.
+    :type debug_ref: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -241,6 +311,17 @@ class RequestValidationError(FineTuningSessionsError):
         field: The field that failed validation (e.g. ``"forward_backward_input.data"``).
         error_code: Server error code (e.g. ``"invalid_request"``).
         debug_ref: Opaque reference for support tickets.
+
+    Additional keyword arguments are forwarded to the base exception.
+
+    :param str message: Error message.
+    :keyword field: Field that failed validation, if provided.
+    :type field: str or None
+    :keyword error_code: Server error code, if provided.
+    :type error_code: str or None
+    :keyword debug_ref: Opaque reference for support tickets, if provided.
+    :type debug_ref: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
     def __init__(
@@ -270,6 +351,15 @@ def _classify_http_error(
 
     Returns ``None`` if the error doesn't match any known pattern (caller
     should fall through to generic error handling).
+
+    :param int status_code: HTTP status code of the failed request.
+    :param body: Decoded error response body, or ``None`` if unavailable.
+    :type body: dict or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
+    :keyword session_id: Session identifier to attach to engine errors, if known.
+    :type session_id: str or None
+    :return: A typed exception for a recognized error, or ``None`` otherwise.
+    :rtype: ~azure.ai.finetuningsessions.FineTuningSessionsError or None
     """
     if body is None:
         body = {}
@@ -291,14 +381,18 @@ def _classify_http_error(
             if m:
                 actual_size = int(m.group(1))
                 max_size = int(m.group(2))
-        if field and "data" in field:
+        if isinstance(field, str) and "data" in field.split("."):
             return BatchTooLargeError(
                 msg,
                 max_batch_size=max_size,
                 actual_batch_size=actual_size,
                 response=response,
             )
-        # 413 for metadata is not a batch error — return None to let generic handling take over
+        # An explicit non-batch field (notably user_metadata) is a payload
+        # rejection, not a request to split training data. Preserve the legacy
+        # fallback only when the server supplied no field discriminator.
+        if field:
+            return None
         return BatchTooLargeError(msg, max_batch_size=max_size, actual_batch_size=actual_size, response=response)
 
     # --- HTTP 503: No capacity / contention ---
@@ -316,7 +410,12 @@ def _classify_http_error(
         )
         retry_after: Optional[float] = None
         if effective.get("retry_after_sec") is not None:
-            retry_after = float(effective["retry_after_sec"])
+            try:
+                retry_after = float(effective["retry_after_sec"])
+            except (ValueError, TypeError, OverflowError):
+                retry_after = None
+            if retry_after is not None and (not math.isfinite(retry_after) or retry_after < 0):
+                retry_after = None
 
         # If the body is a plain string (legacy format), extract from detail
         if isinstance(msg, str) and ("capacity" in msg.lower() or "no engine" in msg.lower()):
@@ -409,7 +508,7 @@ def _classify_http_error(
     if status_code == 429:
         reason = body.get("reason") or "rate_limited"
         msg = body.get("message") or body.get("detail") or "Rate limited"
-        retry_after: Optional[float] = None
+        retry_after = None
         if body.get("retry_after_sec") is not None:
             try:
                 retry_after = float(body["retry_after_sec"])
@@ -470,6 +569,12 @@ def _classify_poll_failure(
     from a 409 or by polling an LRO.
 
     Returns ``None`` if the failure doesn't match any known pattern.
+
+    :param dict envelope: Failed operation envelope returned by the poll endpoint.
+    :keyword session_id: Session identifier to attach to engine errors, if known.
+    :type session_id: str or None
+    :return: A typed exception for a recognized failure, or ``None`` otherwise.
+    :rtype: ~azure.ai.finetuningsessions.FineTuningSessionsError or None
     """
     error_code = envelope.get("error_code") or envelope.get("code")
     error_msg = envelope.get("error") or "Operation failed"
