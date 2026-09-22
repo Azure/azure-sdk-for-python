@@ -3225,11 +3225,8 @@ class _ResponseOrchestrator:
                 # prevents the shutdown wait loop from returning before the
                 # deferred terminal write below completes.
                 state.execution_task = asyncio.current_task()
-                # Track shutdown work before the first event without making a
-                # response publicly visible before response.created.
                 start_record.execution_task = state.execution_task
                 state.bg_record = start_record
-                await self._runtime_state.add_pending(start_record)
                 try:
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
@@ -3277,6 +3274,16 @@ class _ResponseOrchestrator:
                 initial_agent_reference=ctx.agent_reference,
             )
             start_record.subject = wire_stream
+            # Close the admission race with graceful shutdown. The current
+            # request task is a temporary drain handle until resilient startup
+            # attaches the actual execution task to this same record.
+            request_task = asyncio.current_task()
+            assert request_task is not None
+            start_record.execution_task = request_task
+            if not await self._runtime_state.add_pending(start_record):
+                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
+                await self._safe_close(wire_stream)
+                return
 
             try:
                 await self._start_resilient_background(
@@ -3286,6 +3293,7 @@ class _ResponseOrchestrator:
                     disposition=_unified_disposition,
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
+                await self._runtime_state.discard_pending(ctx.response_id)
                 if not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.

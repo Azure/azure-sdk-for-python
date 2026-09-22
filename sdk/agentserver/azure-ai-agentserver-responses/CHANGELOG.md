@@ -9,6 +9,9 @@
 
 ### Bugs Fixed
 
+- Closed a graceful-shutdown admission race for stored streams and bounded
+  DELETE waits when deferred terminal persistence is stalled.
+
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the
