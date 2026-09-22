@@ -5,7 +5,8 @@
     "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
     "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
     "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd",
-    "xffjpeg", "xffoffline", "xfftest", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
+    "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "gethostbyaddr", "WRONLY", "RDWR", "CREAT",
+    "reusify", "universalify", "fsevents", "globby", "sindresorhus", "iojs", "isaacs", "chownr", "yallist", "yargs", "cliui"
   ],
   "ignorePaths": ["**/__pycache__/**", ".mypy_cache/**", ".pytest_cache/**"]
 }

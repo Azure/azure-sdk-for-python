@@ -396,7 +396,12 @@ def test_image_mapping_uses_image_validation(value):
 
 
 def test_multimodal_constructor_and_annotation():
-    from typing import get_args, get_overloads
+    from typing import get_args
+
+    try:
+        from typing import get_overloads
+    except ImportError:  # Python < 3.11
+        from typing_extensions import get_overloads
     from azure.ai.finetuningsessions.models import ImageChunk, ModelInput, ModelInputChunk
 
     image = ImageChunk(data=b"\xff\xd8\xffvalid", format="jpeg", expected_tokens=1)

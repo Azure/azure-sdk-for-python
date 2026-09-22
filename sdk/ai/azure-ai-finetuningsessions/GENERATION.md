@@ -5,7 +5,7 @@
 The independently reproducible exact public-API parity baseline is SDK commit
 `39c2b3c882526897619785089074176b367099a6`, pinned to TypeSpec
 `d912f0d0bc6af9e87e0c0833922dd85fa32abf97`. Subsequent review fixes are listed in
-[review-deltas.json](review-deltas.json) and [REVIEW.md](REVIEW.md); the baseline
+[review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/review-deltas.json) and [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/REVIEW.md); the baseline
 results below remain historical evidence, not a claim of zero behavior changes.
 
 Current tests preserve all upstream cases, adapt two private heartbeat mocks to
@@ -36,10 +36,10 @@ rename is the only transformation applied to that **reference**. The regenerated
 public implementation preserves its customer API and behavior through supported
 hooks; internal files and implementation locations are not byte-identical.
 
-[loom-source.json](loom-source.json) remains the original 48-file reference
+[loom-source.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/loom-source.json) remains the original 48-file reference
 manifest, not a claim that current runtime hashes equal Loom. It covers 29
 reference runtime files including Azure namespace parents, and 19 upstream test
-files. [generation-provenance.json](generation-provenance.json) separately records
+files. [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json) separately records
 the local TypeSpec fingerprint, emitter pins, and actual generated runtime.
 
 ## Source pipeline
@@ -70,8 +70,8 @@ clients/models/operations or copy the frozen SDK over the result.
 | Root and aio patch modules | Original Loom training, request-ID polling, retries, chunking, IDs, lifecycle, logging/exports; supported client subclasses |
 | Model patch module | Existing images/checkpoint helpers; exact nested nullable sampling tuple annotations and checkpoint `Dict` overload |
 | Sync/async operation patch modules | Exact public raw signatures and all overloads; JSON create and legacy pollers |
-| [_client_options.py](azure/ai/finetuningsessions/_client_options.py) | API key/token selection, loopback-only HTTP policy, moniker, preserved private configuration imports |
-| [_operation_compat.py](azure/ai/finetuningsessions/_operation_compat.py) | Legacy raw error/stream/result/continuation behavior using generated builders; one legacy sampling request builder |
+| [_client_options.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_client_options.py) | API key/token selection, loopback-only HTTP policy, moniker, preserved private configuration imports |
+| [_operation_compat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_operation_compat.py) | Legacy raw error/stream/result/continuation behavior using generated builders; one legacy sampling request builder |
 | Exception/logging modules | Tested upstream implementation, changed only by emitter formatting |
 
 The original training function bodies and exception/logging behavior were
@@ -95,11 +95,11 @@ included: cancel-only shutdown remains until the subsequent review stage.
 
 ## Pinned generation tools
 
-[emitter-package.json](emitter-package.json) and
-[emitter-package-lock.json](emitter-package-lock.json) pin the isolated JavaScript
+[emitter-package.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/emitter-package.json) and
+[emitter-package-lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/emitter-package-lock.json) pin the isolated JavaScript
 toolchain, including Python emitter `0.61.3`, `http-client-python` `0.28.3`,
 TypeSpec compiler `1.11.0`, and TCGC `0.67.3`.
-[generator-requirements.txt](generator-requirements.txt) records the Python backend
+[generator-requirements.txt](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/generator-requirements.txt) records the Python backend
 versions. The normal emitter bootstrap/local `pygen` package is still required;
 the requirements file does not add SDK runtime dependencies. Validation used the
 existing Node 24.14.1 and Python 3.13 tool environments.
@@ -117,19 +117,19 @@ The documented Python subclass/`__all__`/`patch_sdk()` workflow was used instead
 
 ## Baseline acceptance checks (before review fixes)
 
-- [verify_generation.py](verify_generation.py): emits twice from independent
+- [verify_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/verify_generation.py): emits twice from independent
   source snapshots with only maintained customizations pre-seeded; compares all
   **21 generated inventory entries** and the complete runtime. Missing, orphan,
   changed, or unstable files fail. It never updates the package.
-- [verify_loom_snapshot.py](verify_loom_snapshot.py): verifies all immutable
+- [verify_loom_snapshot.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/verify_loom_snapshot.py): verifies all immutable
   upstream Git blobs and exact name-normalized reference hashes. `--snapshot`
   optionally verifies an archived byte-identical reference, not this regenerated
   implementation.
-- [verify_loom_compatibility.py](verify_loom_compatibility.py): verifies the exact
+- [verify_loom_compatibility.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/verify_loom_compatibility.py): verifies the exact
   19 upstream test files, materializes the immutable reference, runs the original
   **20 paired cases / 134 requests / 2,246 checks per SDK**, then invokes the
   complete public-surface/raw-operation check. No API additions are allowed.
-- [verify_loom_surface.py](verify_loom_surface.py): isolated comparison of all
+- [verify_loom_surface.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/verify_loom_surface.py): isolated comparison of all
   **45 exported types (38 models and 7 enums)**, every field/visibility/type,
   constructor and method signature/overload, 11 exception types, **76 model
   construction/serialization cases**, and **336 raw-operation cases**. Includes
@@ -150,14 +150,14 @@ cross-language SDK readiness.
 
 ## Pinned source and next review stage
 
-[tsp-location.yaml](tsp-location.yaml) pins public TypeSpec commit
+[tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
 `d912f0d0bc6af9e87e0c0833922dd85fa32abf97`, which contains the validated model
 projection and client mappings. The source fingerprint is recorded separately
-in [generation-provenance.json](generation-provenance.json). The preview-parity
+in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
 independently reproducible.
 
-Archived public-only tests remain in [review_tests/](review_tests/DEFERRED.md), and
+Archived public-only tests remain in [review_tests/](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/review_tests/DEFERRED.md), and
 the earlier implementation is recoverable at SDK commit `8ebc1ea5c9`. The heartbeat
 regressions were reactivated with the separate tested review fixes.
 No Loom checkout/index changes, deployment, or publication are part of this work.
