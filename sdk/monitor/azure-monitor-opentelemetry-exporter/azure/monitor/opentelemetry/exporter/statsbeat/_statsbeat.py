@@ -56,7 +56,7 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     # It will only be None if never initialized
     if not current_config:
         return
-    # Get updated config from settings. Missing or invalid endpoint configuration falls back
+    # Get updated config from settings. Missing or invalid connection string configuration falls back
     # to the current built-in Breeze connection string in StatsbeatConfig.from_config.
     updated_config = StatsbeatConfig.from_config(current_config, settings)
     if updated_config:
