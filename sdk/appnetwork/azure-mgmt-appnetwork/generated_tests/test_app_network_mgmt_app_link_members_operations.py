@@ -46,6 +46,7 @@ class TestAppNetworkMgmtAppLinkMembersOperations(AzureMgmtRecordedTestCase):
                     "clusterType": "str",
                     "connectivityProfile": {
                         "eastWestGateway": {"visibility": "str"},
+                        "network": "str",
                         "privateConnect": {"subnetResourceId": "str"},
                     },
                     "observabilityProfile": {"metrics": {"metricsEndpoint": "str"}},
@@ -81,14 +82,10 @@ class TestAppNetworkMgmtAppLinkMembersOperations(AzureMgmtRecordedTestCase):
             app_link_member_name="str",
             properties={
                 "properties": {
-                    "connectivityProfile": {
-                        "eastWestGateway": {"visibility": "str"},
-                        "privateConnect": {"subnetResourceId": "str"},
-                    },
-                    "observabilityProfile": {"metrics": {"metricsEndpoint": "str"}},
+                    "connectivityProfile": {"eastWestGateway": {"visibility": "str"}, "network": "str"},
                     "upgradeProfile": {
-                        "mode": "str",
                         "fullyManagedUpgradeProfile": {"releaseChannel": "str"},
+                        "mode": "str",
                         "selfManagedUpgradeProfile": {"version": "str"},
                     },
                 },
