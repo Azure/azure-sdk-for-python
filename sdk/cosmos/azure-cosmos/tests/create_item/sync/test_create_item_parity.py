@@ -59,10 +59,10 @@ import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos import _cosmos_client_connection as _ccc_module
-from azure.cosmos._backend import binding as _rust_backend_module
+from azure.cosmos._backend import rust_backend as _rust_backend_module
 from azure.cosmos._backend.operations import OP_CREATE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
 from azure.cosmos._constants import _Constants
 
 from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
@@ -217,7 +217,7 @@ def test_intended_collection_rid_present_on_wire(container_for):
     # method that receives ``req_headers`` already fully populated
     # (intended-rid included) right before it hands the request to the
     # azure-core pipeline. Patching it on the class is symmetric with
-    # how we patch ``RustBinding.execute`` below.
+    # how we patch ``RustBackend.execute`` below.
     original_post = _ccc_module.CosmosClientConnection._CosmosClientConnection__Post  # type: ignore[attr-defined]
 
     def _capturing_post(self, path, request_params, body, req_headers, **kwargs):  # type: ignore[no-redef]
@@ -229,7 +229,7 @@ def test_intended_collection_rid_present_on_wire(container_for):
             core_request_headers.update(dict(req_headers))
         return original_post(self, path, request_params, body, req_headers, **kwargs)
 
-    original_execute = _rust_backend_module.RustBinding.execute
+    original_execute = _rust_backend_module.RustBackend.execute
 
     def _capturing_execute(self, prepared, *, deadline=None):  # type: ignore[no-redef]
         if prepared.op == "create_item":
@@ -259,7 +259,7 @@ def test_intended_collection_rid_present_on_wire(container_for):
         return cont.create_item(body=body)
 
     _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = _capturing_post  # type: ignore[attr-defined]
-    _rust_backend_module.RustBinding.execute = _capturing_execute  # type: ignore[method-assign]
+    _rust_backend_module.RustBackend.execute = _capturing_execute  # type: ignore[method-assign]
     try:
         def _factory(backend_name: str):
             return (
@@ -277,7 +277,7 @@ def test_intended_collection_rid_present_on_wire(container_for):
         cmp.print_report()
     finally:
         _ccc_module.CosmosClientConnection._CosmosClientConnection__Post = original_post  # type: ignore[attr-defined]
-        _rust_backend_module.RustBinding.execute = original_execute  # type: ignore[method-assign]
+        _rust_backend_module.RustBackend.execute = original_execute  # type: ignore[method-assign]
 
     # core-python: the wire header itself, captured from __Post's req_headers.
     core_val = core_request_headers.get(intended_rid_header)
@@ -572,7 +572,7 @@ def test_partitionless_container_rejected_by_rust_binding():
             "ever inspects the partition-key header."
         )
 
-    backend = RustBinding(endpoint=endpoint, master_key=master_key)
+    backend = RustBackend(endpoint=endpoint, master_key=master_key)
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,

@@ -152,7 +152,7 @@ class TestSessionTokenHelpers:
         for feed_range, session_token in split_ranges:
             actual_split_ranges.append((FeedRangeInternalEpk(Range(feed_range[0], feed_range[1],
                                                 True, False)).to_dict(), session_token))
-        target_feed_range = FeedRangeInternalEpk(Range(target_feed_range[0], target_feed_range[1][1],
+        target_feed_range = FeedRangeInternalEpk(Range(target_feed_range[0], target_feed_range[1],
                                                True, False)).to_dict()
         updated_session_token = setup[COLLECTION].get_latest_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token

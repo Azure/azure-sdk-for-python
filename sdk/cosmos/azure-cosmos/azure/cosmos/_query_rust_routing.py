@@ -57,7 +57,7 @@ from ._backend.operations import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
 )
-from ._backend.contracts import BackendResponse, PreparedQuery, QueryPage
+from ._backend.contracts import BackendResponse, PreparedPageRequest, BackendPage
 from ._constants import _Constants as Constants
 from ._cosmos_responses import CosmosDict
 from .exceptions import CosmosClientTimeoutError
@@ -109,7 +109,7 @@ def can_use_rust_backend_for_query_page(
     ``Constants.ReadItemsQueryLeg`` check below). It also says no when the
     caller used a feed_range, a prefix partition key, a custom read timeout, an
     availability strategy, full-text score scope, or query advice -- none of which
-    ``PreparedQuery`` has a field for, so the Rust path cannot represent them yet.
+    ``PreparedPageRequest`` has a field for, so the Rust path cannot represent them yet.
 
     Unlike those, the query *text* is deliberately not inspected here. This gate
     used to regex-scan the SQL for clauses (``ORDER BY`` / ``GROUP BY`` / ...) the
@@ -390,7 +390,7 @@ def _build_feed_request(
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
     query_payload: Optional[Union[str, Mapping[str, Any]]] = None,
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build a page from unsigned defaults/options, with one paging authority."""
     if resource_type in ("dbs", "colls"):
         timeout = options.get(Constants.Kwargs.TIMEOUT)
@@ -421,7 +421,7 @@ def _build_feed_request(
     if query_payload is not None:
         headers.pop(http_constants.HttpHeaders.IsQuery, None)
         settings = replace(settings, query=replace(settings.query, is_query=True))
-    return PreparedQuery(
+    return PreparedPageRequest(
         op=op,
         container_link=container_link,
         query=query_payload if isinstance(query_payload, str) else (
@@ -448,7 +448,7 @@ def build_query_items_prepared_query(
     query_payload: Union[str, dict[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build an item query directly from unsigned defaults and service options."""
     return _build_feed_request(
         op=OP_QUERY_ITEMS,
@@ -465,8 +465,8 @@ def build_read_all_items_prepared_query(
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
-    """Build the PreparedQuery for one read_all_items page dispatch.
+) -> PreparedPageRequest:
+    """Build the PreparedPageRequest for one read_all_items page dispatch.
 
     Python carries the requested scope without constructing SQL. The binding uses
     native read-feed for a logical partition and the legacy-compatible internal
@@ -485,7 +485,7 @@ def build_list_databases_prepared_query(
     *,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build the Rust request for one page of ``list_databases``."""
     return _build_feed_request(
         op=OP_LIST_DATABASES,
@@ -501,7 +501,7 @@ def build_query_databases_prepared_query(
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build the Rust request for one page of ``query_databases``."""
     return _build_feed_request(
         op=OP_QUERY_DATABASES,
@@ -530,7 +530,7 @@ def build_list_containers_prepared_query(
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build the Rust request for one page of ``list_containers``."""
     return _build_feed_request(
         op=OP_LIST_CONTAINERS,
@@ -547,7 +547,7 @@ def build_query_containers_prepared_query(
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedQuery:
+) -> PreparedPageRequest:
     """Build the Rust request for one page of ``query_containers``."""
     return _build_feed_request(
         op=OP_QUERY_CONTAINERS,
@@ -559,7 +559,7 @@ def build_query_containers_prepared_query(
     )
 
 
-def page_to_backend_response(page: QueryPage) -> BackendResponse:
+def page_to_backend_response(page: BackendPage) -> BackendResponse:
     """Adapt a page reply for the existing response/error parser."""
     return BackendResponse(
         status_code=page.status_code,
@@ -623,7 +623,7 @@ def finalize_rust_page_response(
 
 def process_query_page(  # pylint: disable=too-many-arguments
     *,
-    page: QueryPage,
+    page: BackendPage,
     client_connection: Any,
     req_headers: Mapping[str, Any],
     internal_headers_capture: Optional[dict[str, Any]],

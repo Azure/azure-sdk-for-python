@@ -5,13 +5,13 @@
 # -------------------------------------------------------------------------
 """Define how the synchronous Python wrapper calls the Python/Rust binding.
 
-Helpers that prepare Rust requests call execute or execute_pages directly.
+Helpers that build prepared requests call execute or execute_pages directly.
 Operations still supporting migration fallback use run_operation or
-run_page_operation. These still permit specific legacy Python calls before
-execution while migration is unfinished. They do not offer another release
-backend or repeat execution, parsing, or callback failures through legacy code.
+run_page_operation. These permit specific legacy-path calls before execution
+while migration is unfinished. They do not offer another release execution
+path or repeat execution, parsing, or callback failures through the legacy path.
 
-A single operation returns BackendResponse. A page fetch returns QueryPage,
+A single operation returns BackendResponse. A page fetch returns BackendPage,
 including a continuation token when available.
 """
 
@@ -25,9 +25,9 @@ from ._fallback_metrics import record_rust_compatibility_fallback
 from .contracts import (
     BackendResponse,
     ContainerMetadata,
-    PreparedQuery,
+    PreparedPageRequest,
     PreparedRequest,
-    QueryPage,
+    BackendPage,
 )
 from .errors import BindingProtocolError, PagePreflightError
 
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 class CosmosBackend(abc.ABC):
     """Shared Python methods used while legacy migration code remains.
 
-    RustBinding is part of the Python wrapper; it calls the compiled
+    RustBackend is part of the Python wrapper; it calls the compiled
     Python/Rust binding with prepared requests. LegacyBackend runs a supplied
     function using the original Python arguments; it overrides run_operation
     and run_page_operation and does not send PreparedRequest objects.
@@ -58,7 +58,7 @@ class CosmosBackend(abc.ABC):
     def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Send one prepared operation and return status, headers, and body.
+        """Send one prepared request and return a backend response.
 
         The caller parses BackendResponse, including successful empty bodies.
         No response object is an error. The Python wrapper chooses a
@@ -85,7 +85,7 @@ class CosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Run through Rust, or an explicitly allowed legacy migration call."""
+        """Execute through the Rust path or choose permitted legacy-path fallback."""
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -105,12 +105,12 @@ class CosmosBackend(abc.ABC):
         self,
         *,
         routing: OperationRouting,
-        build_request: Callable[[], PreparedQuery],
-        process_response: Callable[[QueryPage], Any],
+        build_request: Callable[[], PreparedPageRequest],
+        process_response: Callable[[BackendPage], Any],
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Fetch one page through Rust or an allowed legacy migration call."""
+        """Fetch one backend page through Rust or use permitted legacy-path fallback."""
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -152,22 +152,21 @@ class CosmosBackend(abc.ABC):
         return process_response(page)
 
     def execute_pages(
-        self, prepared: PreparedQuery, *, deadline: Optional[float] = None
-    ) -> Iterator[QueryPage]:
-        """Fetch results as QueryPage objects, or raise if unsupported.
+        self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
+    ) -> Iterator[BackendPage]:
+        """Fetch results as BackendPage objects, or raise if unsupported.
 
-        RustBinding yields one page per call. Some requests also pass the
-        binding's object containing saved query progress. When a deadline is
-        supplied, the Python wrapper passes the remaining seconds to the
-        binding. The retained LegacyBackend calls old Python code instead.
+        RustBackend yields one backend page per call. Retained paging also
+        passes a feed cursor to the binding. A supplied deadline contributes
+        its remaining seconds. LegacyBackend instead uses a legacy-path function.
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 
-    def validate_page_request(self, prepared: PreparedQuery) -> None:
-        """Check that a page fetch is supported without sending or creating a driver."""
+    def validate_page_request(self, prepared: PreparedPageRequest) -> None:
+        """Perform page preflight without a driver acquisition or page fetch."""
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create the binding's query-progress object without acquiring a Rust driver."""
+        """Create a feed cursor without acquiring a driver handle or fetching a page."""
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"
         )

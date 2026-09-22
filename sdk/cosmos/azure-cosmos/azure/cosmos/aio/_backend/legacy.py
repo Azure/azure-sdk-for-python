@@ -17,9 +17,9 @@ from typing import Awaitable, Any, Callable, Optional
 
 from azure.cosmos._backend.contracts import (
     BackendResponse,
-    PreparedQuery,
+    PreparedPageRequest,
     PreparedRequest,
-    QueryPage,
+    BackendPage,
 )
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
 
@@ -72,8 +72,8 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         self,
         *,
         routing: OperationRouting,
-        build_request: Callable[[], PreparedQuery],
-        process_response: Callable[[QueryPage], Any],
+        build_request: Callable[[], PreparedPageRequest],
+        process_response: Callable[[BackendPage], Any],
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:

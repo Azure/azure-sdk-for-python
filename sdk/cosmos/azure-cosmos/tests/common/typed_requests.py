@@ -14,7 +14,7 @@ shape that only these helpers can produce.
 from dataclasses import replace
 import json
 
-from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
+from azure.cosmos._backend.contracts import PreparedRequest, PreparedPageRequest
 from azure.cosmos._backend.request_settings import RequestSettings, HedgingSettings
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey, UNDEFINED_PARTITION_KEY
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings, _HEADER_FIELDS
@@ -28,7 +28,7 @@ def wire_headers(request):
     set the service would receive. Anything that is not a prepared request already keeps
     all of its headers together, so it is returned unchanged.
     """
-    if not isinstance(request, (PreparedRequest, PreparedQuery)):
+    if not isinstance(request, (PreparedRequest, PreparedPageRequest)):
         return request.headers
     result = dict(request.headers)
     settings = request.settings
@@ -49,7 +49,7 @@ def settings_options(request):
     the client acted on itself. Only values that were actually chosen appear, so a test
     can tell "left alone" apart from "set to something".
     """
-    if not isinstance(request, (PreparedRequest, PreparedQuery)):
+    if not isinstance(request, (PreparedRequest, PreparedPageRequest)):
         return request.request_options
     settings = request.settings
     result = {}

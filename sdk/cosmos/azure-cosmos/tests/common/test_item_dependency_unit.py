@@ -47,8 +47,8 @@ from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from common.test_connection_free_items_unit import Backend, AsyncBackend
 from create_item.test_create_item_contract_unit import point_create
 from read_item.test_read_item_contract_unit import point_read

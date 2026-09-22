@@ -17,7 +17,7 @@ from azure.cosmos._backend.factory import _make_backend
 
 from .cosmos_backend import AsyncCosmosBackend
 from .legacy import ASYNC_LEGACY_BACKEND
-from .binding import AsyncRustBinding
+from .rust_backend import AsyncRustBackend
 
 
 def make_async_backend(
@@ -46,7 +46,7 @@ def make_async_backend(
     """Build an asynchronous backend using the shared selection and startup policy."""
     return _make_backend(
         explicit,
-        rust_backend_type=AsyncRustBinding,
+        rust_backend_type=AsyncRustBackend,
         legacy_backend=ASYNC_LEGACY_BACKEND,
         url=url,
         credential=credential,

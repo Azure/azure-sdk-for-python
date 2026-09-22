@@ -18,7 +18,7 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.operations import OP_REPLACE_OFFER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_REPLACE_OFFER, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._helpers._request_offer import build_replace_offer_request
 from azure.cosmos._offer_rust_routing import can_use_rust_backend_for_replace_throughput, build_replace_offer_from_connection
 
@@ -100,7 +100,7 @@ def test_replace_preparation_never_uses_legacy_transport(monkeypatch, resource_l
     prepared = build_replace_offer_from_connection(**kwargs)
     forbidden.assert_not_called()
     assert (_OFFER, options) == original
-    assert prepared.op == OP_REPLACE_OFFER == OP_TO_BINDING_METHOD[OP_REPLACE_OFFER]
+    assert prepared.op == OP_REPLACE_OFFER == OP_TO_BINDING_FUNCTION_NAME[OP_REPLACE_OFFER]
     assert prepared.container_link == resource_link
     assert legacy_partition_key_from_request(prepared) == "[]"
     assert prepared.item_id == "AAAAAA=="

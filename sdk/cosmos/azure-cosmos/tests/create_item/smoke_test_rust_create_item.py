@@ -66,7 +66,7 @@ def main() -> int:
 
     from azure.cosmos._backend.operations import OP_CREATE_ITEM
     from azure.cosmos._backend.contracts import PreparedRequest
-    from azure.cosmos._backend.binding import RustBinding
+    from azure.cosmos._backend.rust_backend import RustBackend
 
     # 2. Make sure the target db + container exist (created via the legacy
     #    backend), then build a PreparedRequest by hand (one create,
@@ -89,9 +89,9 @@ def main() -> int:
     print(f"Endpoint : {ENDPOINT}")
     print(f"Container: dbs/{DB}/colls/{COLL}")
     print(f"Item id  : {item_id}")
-    print("Calling RustBinding.execute ...", flush=True)
+    print("Calling RustBackend.execute ...", flush=True)
 
-    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
     try:
         resp = backend.execute(prepared)
     except Exception as e:  # pylint: disable=broad-except

@@ -74,7 +74,7 @@ from ._backend.operations import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
 )
-from ._backend.contracts import PreparedQuery
+from ._backend.contracts import PreparedPageRequest
 from ._backend.capabilities import OperationRouting
 
 from ._backend.legacy import LEGACY_BACKEND
@@ -3521,7 +3521,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            def _build_query_page() -> PreparedQuery:
+            def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
                 prepared = build_query_databases_prepared_query(
                     query_payload=query,
@@ -3545,7 +3545,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            def _build_query_page() -> PreparedQuery:
+            def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
                 prepared = build_query_containers_prepared_query(
                     path=path,
@@ -3566,7 +3566,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type=resource_type,
             )
 
-            def _build_query_page() -> PreparedQuery:
+            def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
                 prepared = build_query_items_prepared_query(
                     path=path,

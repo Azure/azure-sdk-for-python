@@ -45,7 +45,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend.operations import OP_REPLACE_CONTAINER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_REPLACE_CONTAINER, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._base import _validate_resource
 from azure.cosmos._cosmos_responses import CosmosDict
@@ -498,7 +498,7 @@ def test_builder_registration_and_invalid_links():
     headers while the caller's own dictionary still holds it. The SDK reads
     options; it does not edit them.
     """
-    assert OP_TO_BINDING_METHOD[OP_REPLACE_CONTAINER] == "replace_container"
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_REPLACE_CONTAINER] == "replace_container"
     for link in ["", "dbs/db1", "dbs/db1/colls/", "dbs/db1/colls/c1/docs/i1"]:
         with pytest.raises(ValueError):
             build_replace_container_prepared(link, {"id": "c1", "partitionKey": PK}, {})

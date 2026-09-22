@@ -42,7 +42,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.operations import OP_DELETE_CONTAINER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_DELETE_CONTAINER, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._request_container import build_delete_container_prepared
@@ -197,7 +197,7 @@ def test_delete_dispatch_is_registered():
     If this mapping were missing or pointed elsewhere, the call would either
     fail to find a route or, worse, run the wrong operation.
     """
-    assert OP_TO_BINDING_METHOD[OP_DELETE_CONTAINER] == "delete_container"
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_DELETE_CONTAINER] == "delete_container"
 
 
 @pytest.mark.parametrize("legacy", [False, True])

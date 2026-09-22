@@ -31,8 +31,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import CosmosDict, _operation_deadline
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -123,7 +123,7 @@ def point_read(request, monkeypatch):
             get_container_metadata_async=MagicMock(side_effect=AssertionError("Unexpected metadata FFI call")),
         )
         monkeypatch.setattr(module, "_rust_module", binding)
-        backend_type = async_rust.AsyncRustBinding if async_mode else sync_rust.RustBinding
+        backend_type = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
         backend = backend_type("https://point-read.invalid", master_key="ZmFrZQ==")
         monkeypatch.setattr(backend, "_ensure_driver_handle", wrap(ensure_driver_handle))
     else:

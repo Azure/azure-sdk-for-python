@@ -2108,13 +2108,26 @@ class ContainerProxy:
             *,
             force_refresh: bool = False,
             **kwargs: Any
-    ) -> AsyncIterable[dict[str, Any]]:
-        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+    ) -> CosmosAsyncItemPaged:
+        """Return feed ranges for dividing a container's query or change-feed work.
+
+        Use ``async for`` on the result; do not await this method. Range discovery
+        starts when iteration begins. Each dictionary describes part of this
+        container; pass it unchanged to a supported ``feed_range`` argument.
+        It contains neither orders nor a continuation token.
 
         :keyword bool force_refresh:
-            Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
-        :returns: AsyncIterable representing the feed ranges in base64 encoded string
-        :rtype: AsyncIterable[dict[str, Any]]
+            False permits cached routing information. True requests a range-map
+            refresh when iteration starts. Both settings may
+            require network requests; create a new iterable to discover ranges again.
+            A cached map may be returned if refresh fails.
+        :returns: A lazy asynchronous iterable of feed-range dictionaries, with
+            available response headers accessible through get_response_headers().
+        :rtype: CosmosAsyncItemPaged
+        :raises TypeError: If force_refresh is not a boolean.
+        :raises NotImplementedError: When iteration encounters additional per-call
+            options unsupported by this range lookup.
+        :raises ValueError: If a continuation token is supplied through by_page.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
@@ -2136,17 +2149,28 @@ class ContainerProxy:
     ) -> str:
         """ **provisional** This method is still in preview and may be subject to breaking changes.
 
-        Gets the the most up to date session token from the list of session token and feed
-        range tuples for a specific target feed range. The feed range can be obtained from a partition key
-        or by reading the container feed ranges. This should only be used if maintaining own session token or else
-        the CosmosClient instance will keep track of session token. Session tokens and feed ranges are
-        scoped to a container. Only input session tokens and feed ranges obtained from the same container.
-        :param feed_ranges_to_session_tokens: List of feed range and session token tuples.
+        Combine session tokens when your application maintains observations across clients or processes.
+        A single CosmosClient normally tracks its own session tokens without this method.
+
+        Await this method to run a local calculation using only supplied observations whose feed ranges
+        overlap the target. It does not fetch the service's latest state, check complete target coverage,
+        or update a client's session-token cache. Pass the returned string as ``session_token`` on a later
+        read or query. The result may combine progress from several inputs rather than select one input token.
+
+        Obtain feed ranges with ``feed_range_from_partition_key`` or ``read_feed_ranges`` and pass their
+        dictionaries unchanged. All ranges and tokens must come from the same container; this method
+        cannot verify their origin.
+
+        :param feed_ranges_to_session_tokens: Pairs of feed-range dictionaries and captured session tokens.
         :type feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]]
-        :param target_feed_range: feed range to get most up to date session token.
+        :param target_feed_range: Feed range for which to combine the supplied observations.
         :type target_feed_range: dict[str, Any]
-        :returns: a session token
+        :returns: A session token, possibly containing comma-separated partition token segments.
         :rtype: str
+        :raises TypeError: An argument or pair contains an incorrect value type.
+        :raises ValueError: A range or overlapping token is malformed or unsupported, or no range overlaps.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Supplied vector token values cannot be merged.
+            This failure is local; no service request is made.
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 

@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Share Python wrapper preparation and cleanup across sync and async clients.
+"""Share setup, binding checks, and cleanup between the two Rust backends.
 
-The Python/Rust binding is the compiled extension that calls the Rust driver.
-It creates driver instances and shares the runtime, the Rust resources used
-to run their work.
-Proxy and connection timeout settings apply to that shared runtime.
+RustBackend and AsyncRustBackend reuse this Python code, but retain separate
+per-client fields. The compiled Python/Rust binding creates CosmosDriver objects
+through one CosmosDriverRuntime with shared connection settings.
 
-Constructing the Python wrapper object checks an existing runtime's settings without
-creating one or reserving settings. The first operation acquires a driver.
-The binding checks again then, because another client may have initialized
-the runtime in the meantime.
+Construction checks any completed CosmosDriverRuntime initialization without
+creating that object or reserving its settings. Driver acquisition checks again,
+because another client may have initialized CosmosDriverRuntime in the meantime.
 """
 from __future__ import annotations
 
@@ -27,9 +25,9 @@ from typing import Any, Callable, Iterator, Optional, Tuple, Type, Union
 from azure.core.exceptions import ServiceResponseError
 
 from ._binding_conversions import acquire_driver_handle_args
-from .contracts import PreparedClientConfig, PreparedQuery
+from .contracts import PreparedClientConfig, PreparedPageRequest
 from .errors import PagePreflightError, UnsupportedQueryError
-from .operations import get_page_binding_method
+from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,8 +44,8 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
 
     QueryPlanInterop is a compiled library that helps the driver decide how to
     run a query across partitions without asking the service backend for a plan.
-    It is packaged in .libs beside the Rust extension. Set the directory before
-    driver creation so the customer need not configure the packaged copy.
+    It is packaged in .libs beside the compiled extension file. Set the directory
+    before driver acquisition so the customer app need not configure the copy.
 
     An existing AZURE_COSMOS_QUERYPLANINTEROP_DIR setting wins. If .libs is
     absent, leave discovery to the driver. Finding the directory does not prove
@@ -105,18 +103,22 @@ def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingE
     """Return the binding class raised when the driver cannot finish a query.
 
     The Python wrapper translates it to ``UnsupportedQueryError``.
-    It is an execution failure, not permission to retry through Python.
+    It is an execution failure, not permission for fallback to the legacy path.
     """
     return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
 
 
 @contextmanager
-def page_dispatch_errors(
+def page_binding_call_errors(
     deadline: Optional[float],
     unsupported_query_error: _BindingErrorMatcher,
     transport_error: _BindingErrorMatcher,
 ) -> Iterator[None]:
-    """Convert page-fetch failures to public Python errors without catching cancellation."""
+    """Convert page binding call failures without catching cancellation.
+
+    This runs around execution, not preflight. None of the converted errors
+    authorizes repeating the operation through the legacy path.
+    """
     try:
         yield
     except TimeoutError as exc:
@@ -130,35 +132,39 @@ def page_dispatch_errors(
 
 
 def validate_page_request(
-    prepared: PreparedQuery,
+    prepared: PreparedPageRequest,
     binding: Optional[Any],
-    get_dispatch: Callable[[Optional[str]], Optional[Any]],
+    lookup_binding_function: Callable[[Optional[str]], Optional[Any]],
     backend_name: str,
     suffix: str = "",
 ) -> None:
-    """Check for the required page-fetch function without creating a driver."""
+    """Perform page preflight by checking the operation's binding function.
+
+    The prepared page request and its cursor mode select the function name.
+    This check neither acquires a driver handle nor fetches a page.
+    """
     if binding is None:
         raise PagePreflightError(
             f"{backend_name}.execute_pages: the compiled azure.cosmos._rust "
-            "module is not present in this environment. Build it with "
+            "binding is not present in this environment. Build it with "
             "`maturin develop` from the repo root."
         )
     uses_cursor = prepared.cursor is not None
-    method = get_page_binding_method(prepared.op, uses_cursor=uses_cursor)
-    dispatch = get_dispatch(method)
-    if uses_cursor and method is not None and dispatch is None:
+    binding_function_name = get_page_binding_function_name(prepared.op, uses_cursor=uses_cursor)
+    binding_function = lookup_binding_function(binding_function_name)
+    if uses_cursor and binding_function_name is not None and binding_function is None:
         raise RuntimeError(
-            f"The compiled azure.cosmos._rust extension does not export {method}{suffix}; "
+            f"The compiled azure.cosmos._rust binding does not export {binding_function_name}{suffix}; "
             "rebuild it from the current source."
         )
-    if dispatch is None:
+    if binding_function is None:
         raise PagePreflightError(
             f"{backend_name}.execute_pages does not yet support op={prepared.op!r}."
         )
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
-    """Release this client's use of an async-credential bridge.
+    """Release this client's use of an async credential bridge.
 
     The bridge runs async token requests for the binding. Its last user requests
     shutdown of the background thread. Log cleanup failures, and never close
@@ -173,7 +179,7 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
 
 
 def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
-    """Clean up an unused Python wrapper object's resources on another thread.
+    """Normally release an unreachable Python backend's resources on another thread.
 
     Pass only the credential and driver handle to that thread, not the Python
     object being deleted. If a thread cannot start, clean up on the calling thread.
@@ -200,7 +206,7 @@ def finalize_backend_resources(credential: Optional[Any], driver_handle: Optiona
         teardown()
 
 
-class RustBindingShared:
+class RustBackendShared:
     """Store client settings for both sync and async Python wrappers.
 
     Each Python wrapper object uses _init_shared during construction. The sync and async
@@ -214,20 +220,20 @@ class RustBindingShared:
         client_config: Optional[PreparedClientConfig],
         token_credential: Optional[Any],
     ) -> None:
-        """Store client state and check initialized runtime settings.
+        """Store client state and check initialized CosmosDriverRuntime settings.
 
-        This check does not create the shared Rust runtime or reserve its
+        This check does not create CosmosDriverRuntime or reserve its
         settings. Driver creation checks again in case another client got there
         first.
         """
         self._endpoint = endpoint
         self._master_key = master_key
-        # Async credentials arrive wrapped in a bridge that runs their token
+        # Async credentials arrive in an async credential bridge that runs token
         # requests on its own thread. Master-key clients have no token credential.
         self._token_credential = token_credential
         # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
-        # The binding returns a string identifying this client's driver on first
+        # The binding returns a driver handle identifying a CosmosDriver on first
         # use. Reuse it until close; the subclasses coordinate changes with this lock.
         self._driver_handle: Optional[str] = None
         self._driver_handle_lock = threading.Lock()
@@ -244,23 +250,23 @@ class RustBindingShared:
                 )
             validate_runtime(client_config)
         except BaseException:
-            # Construction failed; the factory will release the credential bridge.
+            # Construction failed; the factory will release the async credential bridge.
             self._token_credential = None
             raise
 
     def abort_construction(self) -> None:
-        """Mark a failed client construction closed and release its credential bridge."""
+        """Mark failed client construction closed and release its async credential bridge."""
         with self._driver_handle_lock:
             self._closing = True
         self._close_token_credential_bridge()
 
     def _initialize_driver(self, binding: Any) -> str:
-        """Acquire a driver; the caller handles close racing with this call."""
+        """Acquire a driver handle; the caller coordinates a concurrent close."""
         configure_packaged_query_plan_interop(binding)
         return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
-        """Build the same driver-creation arguments for sync and async clients."""
+        """Build the same driver-handle acquisition arguments for both client types."""
         return acquire_driver_handle_args(
             self._endpoint,
             self._master_key,
@@ -269,7 +275,7 @@ class RustBindingShared:
         )
 
     def _close_token_credential_bridge(self) -> None:
-        """Release this client's bridge once, leaving the customer's credential open."""
+        """Release this client's async credential bridge, not the customer's credential."""
         close_credential_bridge_quietly(self._take_token_credential_for_close())
 
     def _take_token_credential_for_close(self) -> Optional[Any]:

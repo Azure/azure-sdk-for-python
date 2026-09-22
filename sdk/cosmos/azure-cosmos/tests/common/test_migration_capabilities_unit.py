@@ -28,8 +28,8 @@ import pytest
 from azure.cosmos._backend.capabilities import CAPABILITIES, OperationRouting
 from azure.cosmos._backend.contracts import (
     BackendResponse,
-    PreparedQuery,
-    QueryPage,
+    PreparedPageRequest,
+    BackendPage,
     QueryScope,
 )
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
@@ -40,9 +40,9 @@ from azure.cosmos._backend.errors import (
     UnsupportedQueryError,
 )
 from azure.cosmos._backend.operations import (
-    OP_TO_BINDING_METHOD,
-    STATELESS_QUERY_TO_BINDING_METHOD,
-    CURSOR_QUERY_TO_BINDING_METHOD,
+    OP_TO_BINDING_FUNCTION_NAME,
+    STATELESS_PAGE_BINDING_FUNCTION_NAMES,
+    RETAINED_PAGE_BINDING_FUNCTION_NAMES,
 )
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
@@ -81,7 +81,7 @@ def dispatch(request):
         def execute_pages(self, prepared, *, deadline=None):
             try:
                 reply()
-                yield QueryPage(200)
+                yield BackendPage(200)
             finally:
                 state.closed += 1
 
@@ -92,7 +92,7 @@ def dispatch(request):
         async def execute_pages(self, prepared, *, deadline=None):
             try:
                 reply()
-                yield QueryPage(200)
+                yield BackendPage(200)
             finally:
                 state.closed += 1
 
@@ -104,7 +104,7 @@ def dispatch(request):
 
     def run(op="read_offer", *, supported=True, paged=False, capability=None):
         state.build.return_value = (
-            PreparedQuery(op=op, container_link="c")
+            PreparedPageRequest(op=op, container_link="c")
             if paged
             else SimpleNamespace(op=op)
         )
@@ -134,9 +134,9 @@ def test_dispatch_inventory_has_explicit_policy():
     This is what makes adding an operation without deciding its policy impossible.
     """
     operations = (
-        OP_TO_BINDING_METHOD.keys()
-        | STATELESS_QUERY_TO_BINDING_METHOD.keys()
-        | CURSOR_QUERY_TO_BINDING_METHOD.keys()
+        OP_TO_BINDING_FUNCTION_NAME.keys()
+        | STATELESS_PAGE_BINDING_FUNCTION_NAMES.keys()
+        | RETAINED_PAGE_BINDING_FUNCTION_NAMES.keys()
     )
     assert operations <= CAPABILITIES.keys()
 
@@ -308,7 +308,7 @@ def test_preflight_failure_cannot_switch_a_resumed_page(dispatch):
     So the refusal is raised, and the sequence ends where it stopped.
     """
     dispatch.preflight_error = PagePreflightError("missing export")
-    dispatch.build.side_effect = lambda: PreparedQuery(
+    dispatch.build.side_effect = lambda: PreparedPageRequest(
         op="query_items", container_link="c", continuation="existing-bookmark"
     )
     with pytest.raises(PagePreflightError):
@@ -371,7 +371,7 @@ def test_query_scope_is_typed_and_preserves_the_legacy_payload():
         "allow_cross_partition": False,
     }
     with pytest.raises(TypeError, match="typed QueryScope"):
-        PreparedQuery(op="query_items", container_link="c", query_scope={})
+        PreparedPageRequest(op="query_items", container_link="c", query_scope={})
     with pytest.raises(ValueError):
         QueryScope(["00", "FF"])
 

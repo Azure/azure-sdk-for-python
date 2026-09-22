@@ -15,7 +15,7 @@ from typing_extensions import assert_type
 
 from azure.cosmos import CosmosClient
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
-from azure.cosmos._backend.contracts import BackendResponse, PreparedRequest, PreparedQuery, QueryScope
+from azure.cosmos._backend.contracts import BackendResponse, PreparedRequest, PreparedPageRequest, QueryScope
 from azure.cosmos._backend.capabilities import OperationRouting
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
@@ -109,7 +109,7 @@ async def check_request_builder_types(backend: CosmosBackend, async_backend: Asy
     # Coroutine builders must remain type errors on both backends.
     backend.run_operation(build_request=build_request_awaitable, routing=routing, process_response=lambda response: response)  # type: ignore[arg-type]
     await async_backend.run_operation(build_request=build_request_awaitable, routing=routing, process_response=lambda response: response)  # type: ignore[arg-type]
-    PreparedQuery(op="query_items", container_link="c", cursor=backend.create_item_feed_cursor(), query_scope=QueryScope())
-    PreparedQuery(op="query_items", container_link="c", cursor={})  # type: ignore[arg-type]
-    PreparedQuery(op="query_items", container_link="c", query_scope={})  # type: ignore[arg-type]
+    PreparedPageRequest(op="query_items", container_link="c", cursor=backend.create_item_feed_cursor(), query_scope=QueryScope())
+    PreparedPageRequest(op="query_items", container_link="c", cursor={})  # type: ignore[arg-type]
+    PreparedPageRequest(op="query_items", container_link="c", query_scope={})  # type: ignore[arg-type]
     await async_backend.run_operation(build_request=build_request, routing=routing, process_response=lambda r: r, legacy_call=lambda: None)  # type: ignore[arg-type,return-value]

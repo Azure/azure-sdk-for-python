@@ -35,11 +35,16 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos._backend import _rust_backend_shared as shared_rust
+from azure.cosmos._backend import contracts as backend_contracts
+from azure.cosmos._backend import _binding_conversions as binding_conversions
+from azure.cosmos._backend import operations as backend_operations
+from azure.cosmos._backend import request_settings as backend_request_settings
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from azure.cosmos._backend.contracts import (
     BackendResponse,
-    PreparedQuery,
+    PreparedPageRequest,
     PreparedRequest,
 )
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
@@ -52,10 +57,10 @@ from azure.cosmos._backend.errors import (
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._backend.request_settings import RequestSettings
 from azure.cosmos._backend.operations import (
-    CURSOR_QUERY_TO_BINDING_METHOD,
-    OP_TO_BINDING_METHOD,
-    STATELESS_QUERY_TO_BINDING_METHOD,
-    get_page_binding_method,
+    RETAINED_PAGE_BINDING_FUNCTION_NAMES,
+    OP_TO_BINDING_FUNCTION_NAME,
+    STATELESS_PAGE_BINDING_FUNCTION_NAMES,
+    get_page_binding_function_name,
 )
 from azure.cosmos._helpers import _item_prep, _response_parse
 from azure.cosmos import _operation_deadline
@@ -76,10 +81,78 @@ from azure.cosmos.exceptions import (
 
 
 @pytest.mark.parametrize(
+    "module,current,retired",
+    [
+        (sync_rust, "RustBackend", "RustBinding"),
+        (async_rust, "AsyncRustBackend", "AsyncRustBinding"),
+        (shared_rust, "RustBackendShared", "RustBindingShared"),
+    ],
+)
+def test_python_backend_class_names_have_no_binding_aliases(module, current, retired):
+    backend_type = getattr(module, current)
+    assert inspect.isclass(backend_type)
+    assert backend_type.__name__ == current
+    assert not hasattr(module, retired)
+
+
+@pytest.mark.parametrize(
+    "module,backend_type,expected_module",
+    [
+        (sync_rust, sync_rust.RustBackend, "azure.cosmos._backend.rust_backend"),
+        (async_rust, async_rust.AsyncRustBackend, "azure.cosmos.aio._backend.rust_backend"),
+    ],
+)
+def test_python_backend_modules_are_not_named_as_the_compiled_binding(module, backend_type, expected_module):
+    assert module.__name__ == expected_module
+    assert backend_type.__module__ == expected_module
+    assert Path(module.__file__).name == "rust_backend.py"
+    assert not Path(module.__file__).with_name("binding.py").exists()
+
+
+def test_shared_backend_module_identifies_which_implementations_share_it():
+    expected_module = "azure.cosmos._backend._rust_backend_shared"
+    assert shared_rust.__name__ == expected_module
+    assert shared_rust.RustBackendShared.__module__ == expected_module
+    assert not Path(shared_rust.__file__).with_name("_shared.py").exists()
+
+
+@pytest.mark.parametrize(
+    "current,retired",
+    [
+        ("PreparedPageRequest", "PreparedQuery"),
+        ("BackendPage", "QueryPage"),
+    ],
+)
+def test_page_contracts_have_no_query_only_aliases(current, retired):
+    contract_type = getattr(backend_contracts, current)
+    assert inspect.isclass(contract_type)
+    assert contract_type.__name__ == current
+    assert not hasattr(backend_contracts, retired)
+
+
+@pytest.mark.parametrize(
+    "module,current,retired",
+    [
+        (shared_rust, "page_binding_call_errors", "page_dispatch_errors"),
+        (binding_conversions, "page_binding_call_arguments", "page_dispatch_arguments"),
+        (binding_conversions, "build_backend_page", "build_query_page"),
+        (backend_request_settings, "binding_settings_contract_error", "native_settings_contract_error"),
+        (backend_operations, "get_page_binding_function_name", "get_page_binding_method"),
+        (backend_operations, "OP_TO_BINDING_FUNCTION_NAME", "OP_TO_BINDING_METHOD"),
+        (backend_operations, "STATELESS_PAGE_BINDING_FUNCTION_NAMES", "STATELESS_QUERY_TO_BINDING_METHOD"),
+        (backend_operations, "RETAINED_PAGE_BINDING_FUNCTION_NAMES", "CURSOR_QUERY_TO_BINDING_METHOD"),
+    ],
+)
+def test_binding_call_helpers_use_canonical_names_without_retired_aliases(module, current, retired):
+    assert hasattr(module, current)
+    assert not hasattr(module, retired)
+
+
+@pytest.mark.parametrize(
     "method,request_type",
     [
         ("run_operation", PreparedRequest),
-        ("run_page_operation", PreparedQuery),
+        ("run_page_operation", PreparedPageRequest),
     ],
 )
 def test_sync_and_async_use_the_same_typed_builder(method, request_type):
@@ -122,7 +195,7 @@ def test_point_execution_is_direct_and_deadlines_belong_to_the_invocation():
             parameter = inspect.signature(method).parameters["deadline"]
             assert parameter.kind is inspect.Parameter.KEYWORD_ONLY
             assert parameter.default is None
-    for contract in (PreparedRequest, PreparedQuery):
+    for contract in (PreparedRequest, PreparedPageRequest):
         assert "deadline" not in {field.name for field in fields(contract)}
 
 
@@ -168,7 +241,7 @@ def executor(request, monkeypatch):
     """
     async_mode = request.param
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
+    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
     backend = object.__new__(backend_type)
     state = SimpleNamespace(now=100.0, init_delay=0.0)
 
@@ -199,7 +272,7 @@ def executor(request, monkeypatch):
 
     def run(prepared, *, deadline=None):
         async def collect():
-            if isinstance(prepared, PreparedQuery):
+            if isinstance(prepared, PreparedPageRequest):
                 return [
                     page
                     async for page in backend.execute_pages(prepared, deadline=deadline)
@@ -208,7 +281,7 @@ def executor(request, monkeypatch):
 
         if async_mode:
             return asyncio.run(collect())
-        if isinstance(prepared, PreparedQuery):
+        if isinstance(prepared, PreparedPageRequest):
             return list(backend.execute_pages(prepared, deadline=deadline))
         return backend.execute(prepared, deadline=deadline)
 
@@ -249,7 +322,7 @@ def test_executor_converts_the_same_deadline_after_initialization(
     above. Both single and paged calls behave the same.
     """
     prepared = (
-        PreparedQuery(
+        PreparedPageRequest(
             op="read_all_items",
             container_link="dbs/d/colls/c",
             cursor=SimpleNamespace(has_more=False, continuation_supported=True),
@@ -473,7 +546,7 @@ def test_patch_normalization_owns_mutation_and_validation_does_not():
 
 
 ALL_PAGE_OPS = sorted(
-    STATELESS_QUERY_TO_BINDING_METHOD.keys() | CURSOR_QUERY_TO_BINDING_METHOD.keys()
+    STATELESS_PAGE_BINDING_FUNCTION_NAMES.keys() | RETAINED_PAGE_BINDING_FUNCTION_NAMES.keys()
 )
 
 
@@ -499,7 +572,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     with nothing extra at all, so the two forms cannot quietly converge.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
+    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
     backend = object.__new__(backend_type)
     handle = (
         AsyncMock(return_value="handle")
@@ -510,9 +583,9 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
     cursor = SimpleNamespace(has_more=False, continuation_supported=True)
     cursor_factory = MagicMock(return_value=cursor)
     methods = (
-        CURSOR_QUERY_TO_BINDING_METHOD
+        RETAINED_PAGE_BINDING_FUNCTION_NAMES
         if uses_cursor
-        else STATELESS_QUERY_TO_BINDING_METHOD
+        else STATELESS_PAGE_BINDING_FUNCTION_NAMES
     )
     expected = methods.get(op)
     calls = []
@@ -530,7 +603,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
             dispatch_async if async_mode else dispatch
         )
     monkeypatch.setattr(module, "_rust_module", SimpleNamespace(**exports))
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op=op,
         container_link="dbs/d/colls/c",
         query="SELECT * FROM c",
@@ -549,7 +622,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
         )
 
     caplog.set_level(logging.DEBUG, logger=module.__name__)
-    assert get_page_binding_method(op, uses_cursor=uses_cursor) == expected
+    assert get_page_binding_function_name(op, uses_cursor=uses_cursor) == expected
     if expected is None:
         with pytest.raises(PagePreflightError):
             run()
@@ -558,7 +631,7 @@ def test_page_dispatch_is_selected_once_by_operation_and_cursor_mode(
         return
     assert len(run()) == 1
     assert len(calls) == 1
-    assert f"dispatch={expected}" + ("_async" if async_mode else "") in caplog.text
+    assert f"binding_function={expected}" + ("_async" if async_mode else "") in caplog.text
     if uses_cursor:
         assert calls[0][0][2] is cursor
         assert prepared.cursor is cursor
@@ -614,7 +687,7 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
     the fallback and taking a driver are traps, so this proves neither happened.
     """
     module = async_rust if async_mode else sync_rust
-    backend_type = module.AsyncRustBinding if async_mode else module.RustBinding
+    backend_type = module.AsyncRustBackend if async_mode else module.RustBackend
     backend = object.__new__(backend_type)
     forbidden = MagicMock(
         side_effect=AssertionError("driver acquisition or stateless dispatch")
@@ -625,7 +698,7 @@ def test_missing_cursor_export_is_a_rebuild_error_not_a_stateless_fallback(
         "_rust_module",
         SimpleNamespace(query_items=forbidden, query_items_async=forbidden),
     )
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op="query_items",
         container_link="dbs/d/colls/c",
         query="SELECT * FROM c",
@@ -661,7 +734,7 @@ def test_native_observation_and_contract_exports_are_explicitly_private():
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("method", sorted(set(OP_TO_BINDING_METHOD.values()) | set(STATELESS_QUERY_TO_BINDING_METHOD.values())))
+@pytest.mark.parametrize("method", sorted(set(OP_TO_BINDING_FUNCTION_NAME.values()) | set(STATELESS_PAGE_BINDING_FUNCTION_NAMES.values())))
 def test_native_entry_point_rejects_another_operations_request_before_work(method, async_mode):
     native = pytest.importorskip("azure.cosmos._rust")
     request = PreparedRequest(
@@ -688,12 +761,12 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception(monkeypa
     if async_mode:
         module._close_driver_handle_quietly(handle)
     else:
-        adapter = object.__new__(module.RustBinding)
+        adapter = object.__new__(module.RustBackend)
         adapter._driver_handle_lock = threading.Lock()
         adapter._driver_handle = handle
         monkeypatch.setattr(adapter, "_close_token_credential_bridge", lambda: None)
         adapter.close()
-    assert "releasing native resources" in caplog.text
+    assert "releasing the driver handle" in caplog.text
     assert handle not in caplog.text
     assert "credential-fingerprint" not in caplog.text
     assert all(record.exc_info is None for record in caplog.records)

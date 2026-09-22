@@ -5,15 +5,17 @@
 # -------------------------------------------------------------------------
 """Hold the Python wrapper's inputs to and results from the Python/Rust binding.
 
-Both client types use PreparedRequest and BackendResponse for single results,
-and PreparedQuery and QueryPage for pages. PreparedClientConfig holds client
-settings. Absolute deadlines and functions that call the legacy Python code
-are passed separately.
+Both client types use PreparedRequest for binding inputs and BackendResponse
+for converted binding results. Page fetches start with PreparedPageRequest,
+which the Python wrapper converts to PreparedRequest, and return BackendPage.
+PreparedClientConfig holds per-client settings. Absolute deadlines and
+legacy-path functions are passed separately.
 
 Fields cannot be reassigned after construction. Request headers and nested
 query values are also copied into read-only objects, so caller edits cannot
-change a pending request. Response headers can still be edited. The binding's
-saved query-progress object also changes as more pages are fetched.
+change a pending request. Response headers can still be edited. A feed cursor
+also changes as more pages are fetched; freezing its containing record does not
+freeze the cursor's progress.
 """
 
 from __future__ import annotations
@@ -47,12 +49,12 @@ class ContainerMetadata:
 
 @dataclass(frozen=True)
 class PreparedRequest:
-    """Inputs ready for the Python/Rust binding to perform one operation.
+    """Prepared inputs for an operation or page binding function.
 
     The binding may still validate values or fetch container properties before
     sending the request. This is not an HTTP request already sent to the service.
 
-    Retained legacy Python code uses a separate function with the original call
+    The legacy path uses a separate function with the original call
     arguments; those cannot always be reconstructed from this object.
     """
 
@@ -85,7 +87,7 @@ class PreparedRequest:
     #: leave it unset, in which case the binding reads the body itself.
     item_id: Optional[str] = None
 
-    #: Limits on which partition keys a query with saved progress may search,
+    #: Limits on which partition keys a retained item query may search,
     #: separate from the SQL and parameters sent in the JSON body.
     query_scope: Optional[QueryScope] = None
 
@@ -114,6 +116,7 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     """
 
     id: str
+    #: Rust driver test-rule label, such as "ReadItem", not Python's "read_item".
     operation_type: str
     status_code: int
     sub_status: int = 0
@@ -127,12 +130,12 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class PreparedClientConfig(_ValidatedSettings):
-    """Client settings passed to the binding when acquiring a Rust driver.
+    """Client settings passed to the binding when acquiring a driver handle.
 
     build_client_config checks the options and converts them to these fields.
     The binding uses them with the endpoint and credential to choose a shared
-    driver or create one. Proxy and connection/read timeout settings still
-    apply to the whole process, even when clients use different drivers.
+    CosmosDriver or create one. Proxy and connection/read timeout settings apply
+    to CosmosDriverRuntime, even when clients use different CosmosDriver objects.
     """
 
     #: Regions in the customer's preferred order, such as ("West US", "East US").
@@ -167,12 +170,12 @@ class PreparedClientConfig(_ValidatedSettings):
     #: The builder rejects BoundedStaleness and ConsistentPrefix.
     consistency_level: Optional[str] = None
 
-    #: Whether the shared Rust runtime may use environment proxy settings:
+    #: Whether CosmosDriverRuntime may use environment proxy settings:
     #: True allows them, False requires a direct connection, and None requests no change.
     proxy_allowed: Optional[bool] = None
 
     #: Requested seconds allowed to establish a connection. Applies to the
-    #: shared Rust runtime; None requests no override.
+    #: shared CosmosDriverRuntime; None requests no override.
     connection_timeout_seconds: Optional[float] = None
 
     #: Python's read_timeout, in seconds. It limits a complete HTTP
@@ -196,9 +199,9 @@ class PreparedClientConfig(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class BackendResponse:
-    """Result of one binding call, ready for Python wrapper response helpers.
+    """Python wrapper representation of a binding response tuple.
 
-    A supplied legacy Python function can return its public result directly,
+    A supplied legacy-path function can return its public result directly,
     without creating this object.
     """
 
@@ -254,8 +257,8 @@ class QueryScope:
 
 
 @dataclass(frozen=True)
-class PreparedQuery:
-    """Inputs for fetching a page from a query or listing operation.
+class PreparedPageRequest:
+    """Inputs for fetching one page of query, listing, or change-feed results.
 
     The driver may still validate the request, decide how to run the query,
     or fetch container properties. Returning pages does not promise immediate
@@ -264,8 +267,7 @@ class PreparedQuery:
 
     protocol_version: ClassVar[int] = 3
 
-    #: An operation supported by the page-fetch tables, with or without the
-    #: binding's saved query-progress object.
+    #: An operation name supported by the page-function tables for this cursor mode.
     op: str
 
     #: e.g. ``"dbs/{db}/colls/{coll}"`` -- the resource being queried. Empty for
@@ -277,7 +279,7 @@ class PreparedQuery:
     #: operations without SQL, such as read_all_items and list_databases.
     query: Optional[str] = None
 
-    #: Query parameters, such as {"name": "@k", "value": "northwind"}, in order.
+    #: Query parameters, such as {"name": "@customer", "value": "customer-17"}, in order.
     parameters: tuple = ()
 
     #: Partition-key selection. The default does not restrict the query to one key.
@@ -288,7 +290,8 @@ class PreparedQuery:
     #: Page-size hint (``x-ms-max-item-count``); ``None`` keeps the default.
     max_item_count: Optional[int] = None
 
-    #: Continuation token for this page, or None to start at the beginning.
+    #: Continuation token for this page, or None for no supplied token.
+    #: A feed cursor can still carry progress from an earlier fetch.
     continuation: Optional[str] = None
 
     #: Actual HTTP request headers only.
@@ -296,14 +299,14 @@ class PreparedQuery:
     #: Operation settings passed to the binding with the page request.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: The binding's _ItemFeedCursor object keeps the query plan and progress
-    #: between page requests. None means no such object; a token may still apply.
+    #: Feed cursor retained by this Python page iterator. None selects stateless
+    #: paging; a continuation token may still be supplied.
     cursor: Optional[_ItemFeedCursor] = None
     #: Change-feed settings: which changes to read, where to start, and which
     #: partition-key range to search. This is not SQL.
     change_feed: Optional[Mapping[str, Any]] = None
-    #: Partition-key restrictions for a query that keeps its progress between
-    #: page requests, including whether multiple partitions may be searched.
+    #: Partition-key restrictions for retained item queries, including whether
+    #: multiple partitions may be searched.
     query_scope: Optional[QueryScope] = None
 
     #: SQL and parameters already converted to JSON bytes for reuse across pages.
@@ -312,37 +315,38 @@ class PreparedQuery:
 
     def __post_init__(self) -> None:
         if not isinstance(self.settings, RequestSettings):
-            raise TypeError("PreparedQuery requires typed RequestSettings")
+            raise TypeError("PreparedPageRequest requires typed RequestSettings")
         for name in ("op", "container_link"):
             if not isinstance(getattr(self, name), str):
-                raise TypeError(f"PreparedQuery.{name} must be a string")
+                raise TypeError(f"PreparedPageRequest.{name} must be a string")
         for name in ("query", "continuation"):
             value = getattr(self, name)
             if value is not None and not isinstance(value, str):
-                raise TypeError(f"PreparedQuery.{name} must be a string or None")
+                raise TypeError(f"PreparedPageRequest.{name} must be a string or None")
         if self.max_item_count is not None and type(self.max_item_count) is not int:
-            raise TypeError("PreparedQuery.max_item_count must be an integer or None")
+            raise TypeError("PreparedPageRequest.max_item_count must be an integer or None")
         if not isinstance(self.parameters, (tuple, list)):
-            raise TypeError("PreparedQuery.parameters must be a list or tuple")
+            raise TypeError("PreparedPageRequest.parameters must be a list or tuple")
         if self.change_feed is not None and not isinstance(self.change_feed, Mapping):
-            raise TypeError("PreparedQuery.change_feed must be a mapping or None")
+            raise TypeError("PreparedPageRequest.change_feed must be a mapping or None")
         if not isinstance(self.partition_key, BindingPartitionKey):
-            raise TypeError("PreparedQuery requires a typed BindingPartitionKey")
+            raise TypeError("PreparedPageRequest requires a typed BindingPartitionKey")
         if self.query_body is not None and not isinstance(self.query_body, bytes):
-            raise TypeError("PreparedQuery.query_body must be immutable bytes")
+            raise TypeError("PreparedPageRequest.query_body must be immutable bytes")
         if self.query_scope is not None and not isinstance(
             self.query_scope, QueryScope
         ):
-            raise TypeError("PreparedQuery requires a typed QueryScope")
+            raise TypeError("PreparedPageRequest requires a typed QueryScope")
         object.__setattr__(self, "headers", freeze_headers(self.headers))
         object.__setattr__(self, "parameters", freeze_json(self.parameters))
         object.__setattr__(self, "change_feed", freeze_json(self.change_feed))
 
 
 @dataclass(frozen=True)
-class QueryPage:
-    """One query or listing response, with information for the next fetch.
+class BackendPage:
+    """One backend page response, with information for the next fetch.
 
+    Used for queries, listings, and change feeds, not only SQL query results.
     Keep the body as bytes so Python wrapper response helpers can parse the rows
     and turn service failures into the same exceptions used for other operations.
     """
@@ -350,9 +354,8 @@ class QueryPage:
     #: HTTP status code for the page fetch.
     status_code: int
 
-    #: Continuation token returned in ``x-ms-continuation``. Saved query
-    #: progress may allow another fetch without a resumable token;
-    #: check ``has_more`` as well.
+    #: Continuation token returned in ``x-ms-continuation``. A retained item query
+    #: may have more results without a resumable token; use its ``has_more`` value.
     continuation: Optional[str] = None
 
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
@@ -368,11 +371,11 @@ class QueryPage:
 
     #: Driver request diagnostics, exposed by response helpers as header text.
     diagnostics: Any = None
-    #: Saved query progress may allow another page even when the Rust driver
-    #: cannot produce a continuation token, so this can still be true.
+    #: Retained item queries can have more results without a continuation token.
+    #: None means this field does not decide completion for this page path.
     has_more: Optional[bool] = None
     continuation_supported: bool = True
 
 
 #: The reply shapes that are implemented.
-BackendReply = Union[BackendResponse, QueryPage]
+BackendReply = Union[BackendResponse, BackendPage]

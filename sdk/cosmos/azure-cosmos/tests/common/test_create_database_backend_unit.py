@@ -72,7 +72,7 @@ from azure.cosmos._backend.operations import (
     OP_CREATE_DATABASE,
     OP_DELETE_DATABASE,
     OP_READ_DATABASE,
-    OP_TO_BINDING_METHOD,
+    OP_TO_BINDING_FUNCTION_NAME,
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_client_connection import (
@@ -114,13 +114,13 @@ def _created_response() -> BackendResponse:
 def test_create_database_is_registered_as_single_response_operation():
     """Create-database is wired as a single-reply operation, so it is sent to the
     binding's ``create_database`` entry point rather than the paged query path."""
-    assert OP_TO_BINDING_METHOD[OP_CREATE_DATABASE] == "create_database"
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_CREATE_DATABASE] == "create_database"
 
 
 def test_create_database_if_not_exists_is_not_registered_in_the_binding():
     """The compound coordinator is not a wire op; its read primitive is."""
-    assert "create_database_if_not_exists" not in OP_TO_BINDING_METHOD
-    assert OP_TO_BINDING_METHOD[OP_READ_DATABASE] == "read_database"
+    assert "create_database_if_not_exists" not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_READ_DATABASE] == "read_database"
 
 
 @pytest.mark.parametrize("autoscale_mode", [False, True])
@@ -2280,8 +2280,8 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
     Without this, a one second timeout could take two seconds or more: one spent
     on setup and the full second again on the request.
     """
-    from azure.cosmos._backend import binding as sync_rust
-    from azure.cosmos.aio._backend import binding as async_rust
+    from azure.cosmos._backend import rust_backend as sync_rust
+    from azure.cosmos.aio._backend import rust_backend as async_rust
     from azure.cosmos._helpers import _request_database
     from azure.cosmos.exceptions import CosmosClientTimeoutError
     client = create_database_client
@@ -2303,10 +2303,10 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
     if is_async:
         async def execute(prepared, *, deadline=None):
-            return await async_rust.AsyncRustBinding.execute(backend, prepared, deadline=deadline)
+            return await async_rust.AsyncRustBackend.execute(backend, prepared, deadline=deadline)
     else:
         def execute(prepared, *, deadline=None):
-            return sync_rust.RustBinding.execute(backend, prepared, deadline=deadline)
+            return sync_rust.RustBackend.execute(backend, prepared, deadline=deadline)
     backend.execute = execute
     hook = MagicMock()
     if setup_seconds > 1:
@@ -2776,7 +2776,7 @@ def test_public_create_database_does_not_select_backend(client_type):
     That keeps engine selection entirely behind the coordinator, so the public method
     stays a thin delegate."""
     source = inspect.getsource(client_type.create_database)
-    assert "RustBinding" not in source
+    assert "RustBackend" not in source
     assert "can_use_rust" not in source
     assert "CreateDatabase(" not in source
 
@@ -2788,7 +2788,7 @@ def test_public_create_database_if_not_exists_does_not_orchestrate_backends(clie
     CreateDatabase call, so the read-then-create and the engine choice live entirely in
     the coordinator."""
     source = inspect.getsource(client_type.create_database_if_not_exists)
-    assert "RustBinding" not in source
+    assert "RustBackend" not in source
     assert "ReadDatabase(" not in source
     assert "CreateDatabase(" not in source
 
@@ -3385,8 +3385,8 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     Handing five seconds to each leg would let a three-step workflow run for
     fifteen seconds after the customer asked for five.
     """
-    from azure.cosmos._backend import binding as sync_rust
-    from azure.cosmos.aio._backend import binding as async_rust
+    from azure.cosmos._backend import rust_backend as sync_rust
+    from azure.cosmos.aio._backend import rust_backend as async_rust
     from azure.cosmos._helpers import _request_database
     client = create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
@@ -3417,10 +3417,10 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
 
     def sync_execute(prepared, *, deadline=None):
-        return sync_rust.RustBinding.execute(backend, prepared, deadline=deadline)
+        return sync_rust.RustBackend.execute(backend, prepared, deadline=deadline)
 
     async def async_execute(prepared, *, deadline=None):
-        return await async_rust.AsyncRustBinding.execute(backend, prepared, deadline=deadline)
+        return await async_rust.AsyncRustBackend.execute(backend, prepared, deadline=deadline)
 
     backend.execute = async_execute if is_async else sync_execute
     _call_create_database(client, "db1", method_name="create_database_if_not_exists", timeout=5)
@@ -4215,7 +4215,7 @@ def test_delete_database_invalid_guards_fail_before_dispatch(
 def test_delete_database_is_registered_as_single_response_operation():
     """Delete-database is a single-reply operation, so it is sent to the
     binding's ``delete_database`` entry point rather than the paged query path."""
-    assert OP_TO_BINDING_METHOD[OP_DELETE_DATABASE] == "delete_database"
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_DELETE_DATABASE] == "delete_database"
 
 
 @pytest.mark.parametrize(

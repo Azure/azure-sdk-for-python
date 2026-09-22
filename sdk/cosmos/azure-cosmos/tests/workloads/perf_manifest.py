@@ -10,7 +10,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-from perf_provenance import PACKAGE_ROOT, driver_commit, extension_details, source_digest
+from perf_build_details import PACKAGE_ROOT, driver_commit, extension_details, source_digest
 
 
 def write_manifest(directory, stamp, phase):

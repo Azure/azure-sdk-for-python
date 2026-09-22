@@ -97,7 +97,7 @@ A **Rust crate** is a Rust project containing source and build information.
 The **service backend** is the remote Cosmos DB service, not another component
 inside the Python package. **SDK** means the complete installed package.
 In code explanations, use the layer names above so ownership stays clear.
-For example, `_backend\binding.py` and its `RustBinding` class are Python
+For example, `_backend\rust_backend.py` and its `RustBackend` class are Python
 wrapper code; the compiled Python/Rust binding is exposed as `azure.cosmos._rust`.
 
 Rust is the only release backend. Private legacy selectors still present in
@@ -1394,7 +1394,7 @@ It means:
 
 > "Look in this directory when the driver needs to load QueryPlanInterop."
 
-The Python helper in `azure\cosmos\_backend\_shared.py` finds `.libs` beside
+The Python helper in `azure\cosmos\_backend\_rust_backend_shared.py` finds `.libs` beside
 the imported `_rust` extension. If that directory exists, it supplies the path
 to the driver unless the caller already provided an explicit runtime setting.
 

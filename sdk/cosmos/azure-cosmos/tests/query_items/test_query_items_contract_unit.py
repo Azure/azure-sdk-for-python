@@ -44,8 +44,8 @@ import pytest
 from common.typed_requests import legacy_partition_key_from_request
 
 from azure.cosmos import _operation_deadline
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._helpers import _read_all_items
@@ -140,7 +140,7 @@ def query(request, monkeypatch):
         fetch_page_with_cursor_async=AsyncMock(side_effect=page),
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    cls = async_rust.AsyncRustBinding if async_mode else sync_rust.RustBinding
+    cls = async_rust.AsyncRustBackend if async_mode else sync_rust.RustBackend
     backend = cls("https://queries.invalid", master_key="ZmFrZQ==")
     monkeypatch.setattr(
         backend,
@@ -533,12 +533,12 @@ def test_native_query_accepts_service_body_and_requires_separate_scope(async_mod
     """Exercise the installed binding without acquiring a driver or sending a request."""
     from dataclasses import replace
 
-    from azure.cosmos._backend.contracts import PreparedQuery, QueryScope
+    from azure.cosmos._backend.contracts import PreparedPageRequest, QueryScope
 
     native = pytest.importorskip("azure.cosmos._rust")
     cursor = native._ItemFeedCursor()
     body = b'{"query":"SELECT VALUE @p","parameters":[{"name":"@p","value":1}]}'
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op="query_items", container_link="dbs/db/colls/c",
         query="SELECT VALUE @p", parameters=({"name": "@p", "value": 1},),
         query_body=body, cursor=cursor, query_scope=QueryScope(("", "AA")),

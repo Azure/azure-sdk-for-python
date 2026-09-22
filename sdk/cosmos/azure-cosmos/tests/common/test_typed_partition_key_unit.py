@@ -24,7 +24,7 @@ import json
 
 import pytest
 
-from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
+from azure.cosmos._backend.contracts import PreparedRequest, PreparedPageRequest
 from azure.cosmos._backend.partition_key_input import (
     BindingPartitionKey,
     UNDEFINED_PARTITION_KEY,
@@ -478,7 +478,7 @@ def test_prepared_records_require_typed_keys():
     with pytest.raises(TypeError, match="BindingPartitionKey"):
         PreparedRequest("read_item", "dbs/d/colls/c", b"", '["tenant"]')
     with pytest.raises(TypeError, match="BindingPartitionKey"):
-        PreparedQuery("query_items", "dbs/d/colls/c", partition_key='["tenant"]')
+        PreparedPageRequest("query_items", "dbs/d/colls/c", partition_key='["tenant"]')
 
 
 @pytest.mark.parametrize(

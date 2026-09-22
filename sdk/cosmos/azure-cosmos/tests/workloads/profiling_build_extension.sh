@@ -30,7 +30,7 @@ export AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT
 AZURE_COSMOS_BUILD_PYTHON_COMMIT="$(git -C "${PY_REPO}" rev-parse HEAD)" || exit 2
 # Cargo resolves the pinned dependency, not the sibling checkout's HEAD.
 cargo fetch --locked --manifest-path "${PKG_ROOT}/Cargo.toml" || exit 2
-AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT="$(python3 ./perf_provenance.py driver-commit)" || exit 2
+AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT="$(python3 ./perf_build_details.py driver-commit)" || exit 2
 
 command -v maturin >/dev/null 2>&1 || {
   echo "ERROR: maturin is not installed in the perfdrill environment." >&2

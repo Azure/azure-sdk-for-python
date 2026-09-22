@@ -13,11 +13,11 @@ certificate setting is active.
 Both public constructors combine connection_policy settings with keyword
 overrides before this check, so nesting an option does not bypass validation.
 
-Connection and read timeouts pass through the Python/Rust binding and apply
-to the whole process. Keep None for an unspecified value instead of treating a Python
-default as a customer request. Construction checks an existing Rust runtime
-without creating it or reserving values. Driver acquisition checks again and
-initializes the runtime if needed.
+Connection and read timeouts pass through the binding to CosmosDriverRuntime.
+Keep None for an unspecified value instead of treating a Python default as a
+customer request. Construction checks completed CosmosDriverRuntime
+initialization without creating that object or reserving values.
+Driver acquisition checks again and initializes CosmosDriverRuntime if needed.
 
 Here, read_timeout limits the complete HTTP attempt, not just
 time spent waiting for more response data.
@@ -46,7 +46,9 @@ def reject_unsupported_transport_settings(
     Rust will not use that file.
 
     Default verification (True or None) is allowed. An empty proxies dictionary
-    requests no proxy. Other listed settings are rejected when non-None.
+    supplies no custom proxy configuration; it does not disable environment
+    proxies. The separate proxy_allowed setting controls that permission.
+    Other listed settings are rejected when non-None.
     """
     def _fail(setting: str, detail: str) -> None:
         """Name the unsupported setting and why it cannot be used."""
@@ -95,7 +97,7 @@ def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, A
     policy; otherwise return None for that setting.
 
     This function reads values only. The binding later checks them against
-    any existing shared Rust runtime; reading them does not reserve them.
+    the recorded CosmosDriverRuntime settings; reading them does not reserve them.
     """
     stock_policy = ConnectionPolicy()
     policy = kwargs.get("connection_policy") or stock_policy

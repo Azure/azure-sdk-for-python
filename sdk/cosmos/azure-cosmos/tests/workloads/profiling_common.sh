@@ -71,7 +71,7 @@ profiling_verify_extension_build() {
     return 2
   }
   python_commit="$(git -C "${python_repo}" rev-parse HEAD 2>/dev/null || echo unknown)"
-  rust_commit="$(python3 "$(dirname "${BASH_SOURCE[0]}")/perf_provenance.py" driver-commit)" || return 2
+  rust_commit="$(python3 "$(dirname "${BASH_SOURCE[0]}")/perf_build_details.py" driver-commit)" || return 2
 
   python3 - "${python_commit}" "${rust_commit}" <<'PY'
 import sys
@@ -132,7 +132,7 @@ profiling_load_session() {
     "${COSMOS_URI}" "${COSMOS_DATABASE}" "${COSMOS_CONTAINER}" <<'PY'
 import json
 import sys
-from perf_provenance import extension_details, source_digest
+from perf_build_details import extension_details, source_digest
 
 path, run_id, phase, uri, database, container = sys.argv[1:]
 try:

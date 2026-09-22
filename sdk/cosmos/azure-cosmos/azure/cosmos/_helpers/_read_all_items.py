@@ -25,7 +25,7 @@ from azure.core.exceptions import AzureError
 from azure.core.paging import PageIterator
 from azure.core.utils import CaseInsensitiveDict
 
-from .._backend.contracts import PreparedQuery, QueryPage
+from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._backend.operations import OP_READ_ALL_ITEMS
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosItemPaged
@@ -152,7 +152,7 @@ class ReadAllConfig:
 
     def prepared(
         self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
-    ) -> PreparedQuery:
+    ) -> PreparedPageRequest:
         if cursor is None:
             raise RuntimeError("Retained paging requires a pager-owned cursor.")
         options = dict(self.options)
@@ -165,7 +165,7 @@ class ReadAllConfig:
         remaining = remaining_timeout(deadline)
         if remaining is not None:
             settings = replace(settings, timeout_seconds=remaining)
-        return PreparedQuery(
+        return PreparedPageRequest(
             op=OP_READ_ALL_ITEMS,
             container_link=self.proxy.container_link,
             partition_key=BindingPartitionKey("cross_partition"),
@@ -237,7 +237,7 @@ class ReadAllPageState:
         if isinstance(body, Mapping):
             self.envelope = dict(body)
 
-    def parse(self, page: QueryPage) -> list[dict[str, Any]]:
+    def parse(self, page: BackendPage) -> list[dict[str, Any]]:
         result = process_backend_response(
             page_to_backend_response(page),
             response_state=(

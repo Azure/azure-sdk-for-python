@@ -32,9 +32,9 @@ from itertools import permutations
 
 import pytest
 
-from azure.cosmos._backend.contracts import PreparedRequest, PreparedQuery
-from azure.cosmos._backend.binding import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.binding import build_binding_request_from_page as async_page
+from azure.cosmos._backend.contracts import PreparedRequest, PreparedPageRequest
+from azure.cosmos._backend.rust_backend import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.rust_backend import build_binding_request_from_page as async_page
 from azure.cosmos._helpers import _request_item
 from azure.cosmos._helpers._document import serialize_document
 from common.typed_requests import legacy_preparation as prepare_request_headers
@@ -135,7 +135,7 @@ def test_page_adapter_preserves_separate_options_without_a_deadline(adapter):
     Both the sync and async adapters are checked, since they are written
     separately.
     """
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="read_all_items", container_link="dbs/d/colls/c",
         headers={"x-customer": "value"}, settings=legacy_settings({"excludedLocations": ["West US"]}),
         continuation="token", max_item_count=2,

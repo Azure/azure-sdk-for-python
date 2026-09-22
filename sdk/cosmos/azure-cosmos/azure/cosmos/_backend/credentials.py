@@ -5,9 +5,9 @@
 # -------------------------------------------------------------------------
 """Prepare the customer's credential in the Python wrapper for the binding.
 
-Accept a master key or an object that obtains access tokens. An async token
-credential needs a bridge, an object that runs its token requests on a
-background thread and lets the binding wait for their results.
+Accept an account key or an object that obtains access tokens. An asynchronous
+token credential needs an async credential bridge: a Python object that runs
+token requests on a background event loop and lets the binding wait for results.
 
 Both client types use this resolver. Unsupported credential forms, including
 resource tokens that grant access to particular resources, fail during
@@ -24,7 +24,7 @@ from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Tuple
 
 from ._async_credential_bridge import AsyncTokenCredentialBridge
-from ._shared import close_credential_bridge_quietly
+from ._rust_backend_shared import close_credential_bridge_quietly
 
 
 def _is_async_credential(credential: Any) -> bool:
@@ -76,7 +76,7 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
 
     A nonempty string, or a dictionary with a nonempty masterKey string, selects
     key authentication. An object with a synchronous get_token is passed through.
-    Async credentials are wrapped in AsyncTokenCredentialBridge instead.
+    Async credentials use the async credential bridge, AsyncTokenCredentialBridge.
 
     Resource-token authentication is intentionally excluded, not pending Rust
     driver support. Those forms and other unrecognized inputs raise ValueError here.
@@ -119,9 +119,9 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
 def resolved_credential(
     credential: Any,
 ) -> Iterator[Tuple[Optional[str], Optional[Any]]]:
-    """Prepare a credential and release its bridge if Python client setup fails.
+    """Prepare a credential and release its async credential bridge if setup fails.
 
-    An async bridge keeps a reference to the credential even before its thread
+    An async credential bridge retains the credential even before its thread
     starts. On success, the Python wrapper object must release its use
     of that bridge. On failure, release it here and propagate the original error
     without closing the customer's credential.

@@ -39,11 +39,15 @@ def can_use_rust_backend_for_read_feed_ranges(
     """Return True when ``read_feed_ranges`` can use the Rust backend."""
     if not is_rust_backend(backend):
         return False
-    # Legacy read_feed_ranges forwards unknown kwargs into routing-map reads.
-    # Keep those calls on legacy until each option is explicitly supported on Rust.
-    # This per-call gate is temporary migration code: it shrinks as options are
-    # supported on Rust and goes away once the Rust path reaches full parity.
+    # The driver's range lookup has no per-call options argument. Reject extra
+    # options through the operation policy, rather than running legacy Python.
     return len(kwargs) == 0
+
+
+def validate_read_feed_ranges_force_refresh(force_refresh: bool) -> None:
+    """Require an explicit boolean instead of changing the meaning by coercion."""
+    if not isinstance(force_refresh, bool):
+        raise TypeError("read_feed_ranges force_refresh must be a bool.")
 
 
 def build_read_feed_ranges_prepared_request(
@@ -52,8 +56,9 @@ def build_read_feed_ranges_prepared_request(
     force_refresh: bool,
 ) -> PreparedRequest:
     """Build the PreparedRequest consumed by the binding's read_feed_ranges entry point."""
+    validate_read_feed_ranges_force_refresh(force_refresh)
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
-    body_bytes = serialize_body_to_bytes({"forceRefresh": bool(force_refresh)})
+    body_bytes = serialize_body_to_bytes({"forceRefresh": force_refresh})
     return PreparedRequest(
         op=OP_READ_FEED_RANGES,
         container_link=normalized_container_link,
@@ -66,10 +71,12 @@ def build_read_feed_ranges_prepared_request(
 
 def parse_read_feed_ranges_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Convert the Rust payload ``{"PartitionKeyRanges":[...]}`` to public feed-range dicts."""
+    if not isinstance(payload, Mapping):
+        raise ValueError("read_feed_ranges Rust payload must be an object.")
     raw_ranges = payload.get("PartitionKeyRanges")
-    if not isinstance(raw_ranges, list):
+    if not isinstance(raw_ranges, list) or not raw_ranges:
         raise ValueError(
-            "read_feed_ranges Rust payload must include a list field 'PartitionKeyRanges'."
+            "read_feed_ranges Rust payload must include a nonempty list field 'PartitionKeyRanges'."
         )
 
     feed_ranges: list[dict[str, Any]] = []
@@ -89,9 +96,8 @@ def parse_read_feed_ranges_payload(payload: Mapping[str, Any]) -> list[dict[str,
             )
         # Legacy read_feed_ranges uppercases both EPK bounds (see
         # Range.PartitionKeyRangeToRange). The feed-range dict is an opaque value
-        # customers feed back into get_latest_session_token and compare across
-        # calls, so the Rust path must normalize identically or the base64 value
-        # diverges byte-for-byte between backends.
+        # customers pass back unchanged. Keep the dictionary values identical
+        # when comparing Rust results with the legacy implementation.
         feed_ranges.append(
             FeedRangeInternalEpk(
                 Range(min_inclusive.upper(), max_exclusive.upper(), True, False)

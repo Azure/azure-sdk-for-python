@@ -6,7 +6,7 @@
 //!
 //! Where this fits in the layering (same direction as a normal call):
 //!
-//!     Python client -> RustBinding (Python) -> a function here (binding)
+//!     Python client -> RustBackend (Python) -> a function here (binding)
 //!         -> looks up the rust driver by handle
 //!         -> runs the driver's work on the shared Tokio runtime
 //!
@@ -220,12 +220,12 @@ fn extract_feed_range_from_partition_key_inputs(
 //     cancellation. This does not guarantee immediate cleanup or undo service
 //     work already submitted.
 //
-// The Python async backend (`aio/_backend/binding.py`) dispatches to these.
+// The Python async backend (`aio/_backend/rust_backend.py`) dispatches to these.
 //
 // Layering (async path) -- same downward direction as the sync path, the tail
 // end just returns to asyncio instead of blocking:
 //
-//     async Python client -> AsyncRustBinding (Python) -> a *_item_async here
+//     async Python client -> AsyncRustBackend (Python) -> a *_item_async here
 //         -> look up the rust driver by handle (GIL held)
 //         -> spawn the driver's work on the shared Tokio runtime
 //         -> hand asyncio a Python awaitable (via pyo3-async-runtimes)

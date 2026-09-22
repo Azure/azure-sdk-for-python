@@ -19,8 +19,8 @@ import pytest
 from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from azure.cosmos._backend._binding_conversions import build_container_metadata
 from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.errors import BindingProtocolError
@@ -218,7 +218,7 @@ def metadata_case(request, monkeypatch):
         binding, "create_item_async" if asynchronous else "create_item"
     )
     monkeypatch.setattr(module, "_rust_module", binding)
-    backend = (async_rust.AsyncRustBinding if asynchronous else sync_rust.RustBinding)(
+    backend = (async_rust.AsyncRustBackend if asynchronous else sync_rust.RustBackend)(
         "https://metadata.invalid",
         master_key="ZmFrZQ==",
     )

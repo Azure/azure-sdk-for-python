@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal Helper functions for manipulating session tokens.
-"""
+"""Combine supplied session observations locally in the Python wrapper."""
+from collections.abc import Iterable
 from typing import Tuple, Any
 
 from azure.cosmos._routing.routing_range import Range
@@ -39,11 +39,8 @@ def merge_session_tokens_with_same_range(session_token1: str, session_token2: st
     pk_range_id1, vector_session_token1 = parse_session_token(session_token1)
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
-    # The partition key range id could be different in this scenario
-    #
-    # Ex. get_updated_session_token([(("AA", "BB"), "1:1#51")], ("AA", "DD")) -> "1:1#51"
-    # Then we input this back into get_updated_session_token after a merge happened
-    # get_updated_session_token([(("AA", "DD"), "1:1#51"), (("AA", "DD"), "0:1#55")], ("AA", "DD")) -> "0:1#55"
+    # After a partition merge, the same feed range can carry different physical
+    # partition IDs. Preserve the existing ID-selection rule based on global LSN.
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
             if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
@@ -54,8 +51,15 @@ def is_compound_session_token(session_token: str) -> bool:
     return "," in session_token
 
 def parse_session_token(session_token: str) -> Tuple[str, VectorSessionToken]:
+    if not isinstance(session_token, str):
+        raise TypeError("A session token must be a string.")
     tokens = session_token.split(":")
-    return tokens[0], VectorSessionToken.create(tokens[1])
+    if len(tokens) != 2 or not tokens[0]:
+        raise ValueError("A session token segment must contain a partition range ID and one ':' separator.")
+    vector_session_token = VectorSessionToken.create(tokens[1])
+    if vector_session_token is None:
+        raise ValueError("The session token does not contain a supported vector token value.")
+    return tokens[0], vector_session_token
 
 def split_compound_session_tokens(compound_session_tokens: list[Tuple[Range, str]]) -> list[str]:
     session_tokens = []
@@ -98,9 +102,13 @@ def merge_session_tokens_for_same_partition(session_tokens: list[str]) -> list[s
 # [("AA", "DD"), "1:1#57,2:1#58"]
 # 3. [(("AA", "BB"), "4:1#57"), (("BB", "DD"), "1:1#52"), (("AA", "DD"), "3:1#55")] ->
 # [("AA", "DD"), "4:1#57,1:1#52,3:1#55"]
-# goal here is to detect any obvious merges or splits that happened
-# compound session tokens are not considered will just pass them along
+# Compare a containing range with its smaller ranges using the supplied tokens.
+# A comma-separated token is retained for the final per-partition merge.
 def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> list[Tuple[Range, str]]:
+    # A containing range must precede its subsets, including when their minimum
+    # bounds match. Otherwise a child is removed before its parent can find it.
+    overlapping_ranges.sort(key=lambda pair: pair[0].max, reverse=True)
+    overlapping_ranges.sort(key=lambda pair: pair[0].min)
     processed_ranges = []
     while len(overlapping_ranges) != 0: # pylint: disable=too-many-nested-blocks
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
@@ -167,19 +175,43 @@ def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> li
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_latest_session_token(feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
-                             target_feed_range: dict[str, Any]):
+def _normalize_feed_range(feed_range: dict[str, Any], name: str) -> Range:
+    if not isinstance(feed_range, dict):
+        raise TypeError(f"{name} must be a feed-range dictionary returned by the SDK.")
+    bounds = feed_range.get("Range")
+    if not isinstance(bounds, dict):
+        raise ValueError(f"{name} must contain a Range dictionary.")
+    if not all(isinstance(bounds.get(key), str) for key in ("min", "max")):
+        raise ValueError(f"{name} must contain string range bounds.")
+    if not all(isinstance(bounds.get(key), bool) for key in ("isMinInclusive", "isMaxInclusive")):
+        raise ValueError(f"{name} must contain boolean range inclusivity values.")
+    if bounds["min"].upper() > bounds["max"].upper():
+        raise ValueError(f"{name} has a minimum greater than its maximum.")
+    return FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
 
-    target_feed_range_epk = FeedRangeInternalEpk.from_json(target_feed_range)
-    target_feed_range_normalized = target_feed_range_epk.get_normalized_range()
-    # filter out tuples that overlap with target_feed_range and normalizes all the ranges
+
+def get_latest_session_token(feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
+                             target_feed_range: dict[str, Any]) -> str:
+    """Merge supplied observations without reading or changing client state."""
+    target_feed_range_normalized = _normalize_feed_range(target_feed_range, "target_feed_range")
+    if isinstance(feed_ranges_to_session_tokens, (str, bytes, dict)) or not isinstance(
+        feed_ranges_to_session_tokens, Iterable
+    ):
+        raise TypeError("feed_ranges_to_session_tokens must contain feed-range and session-token pairs.")
     overlapping_ranges = []
-    for feed_range_to_session_token in feed_ranges_to_session_tokens:
-        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range_to_session_token[0])
-        if Range.overlaps(target_feed_range_normalized,
-                          feed_range_epk.get_normalized_range()):
-            overlapping_ranges.append((feed_range_epk.get_normalized_range(),
-                                       feed_range_to_session_token[1]))
+    for pair in feed_ranges_to_session_tokens:
+        if not isinstance(pair, (tuple, list)):
+            raise TypeError("Each feed_ranges_to_session_tokens entry must be a pair.")
+        if len(pair) != 2:
+            raise ValueError("Each feed_ranges_to_session_tokens entry must contain exactly two values.")
+        feed_range = _normalize_feed_range(pair[0], "feed_ranges_to_session_tokens entry")
+        if Range.overlaps(target_feed_range_normalized, feed_range):
+            session_token = pair[1]
+            if not isinstance(session_token, str):
+                raise TypeError("A session token must be a string.")
+            for segment in session_token.split(","):
+                parse_session_token(segment)
+            overlapping_ranges.append((feed_range, session_token))
 
     if len(overlapping_ranges) == 0:
         raise ValueError('There were no overlapping feed ranges with the target.')

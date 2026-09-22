@@ -22,7 +22,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from .. import _base, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._backend.contracts import PreparedQuery, QueryPage
+from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._backend.operations import OP_QUERY_ITEMS_CHANGE_FEED
 from .._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from .._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
@@ -335,7 +335,7 @@ class ChangeFeedPageState(ReadAllPageState):
         ] not in ("Now", "Beginning")
         self.poll_again = False
 
-    def prepared_page(self, deadline: Optional[float]) -> PreparedQuery:
+    def prepared_page(self, deadline: Optional[float]) -> PreparedPageRequest:
         return replace(
             self.config.prepared(self.inner_token, self.cursor, deadline),
             op=OP_QUERY_ITEMS_CHANGE_FEED,
@@ -358,7 +358,7 @@ class ChangeFeedPageState(ReadAllPageState):
             json.dumps(payload, separators=(",", ":")).encode("utf-8")
         ).decode("ascii").rstrip("=")
 
-    def parse(self, page: QueryPage) -> list[dict[str, Any]]:
+    def parse(self, page: BackendPage) -> list[dict[str, Any]]:
         result = process_backend_response(
             page_to_backend_response(page), response_state=self.config.response_state
         )

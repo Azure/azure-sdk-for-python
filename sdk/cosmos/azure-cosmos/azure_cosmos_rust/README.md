@@ -133,7 +133,7 @@ Offer replacement receives the offer RID, not the owning database/container RID.
 Existing offer timeouts remain driver-operation options, not a new absolute Python
 deadline spanning the entire read-modify-write workflow.
 
-Compatibility feed builders carry page size/continuation only in `PreparedQuery`.
+Compatibility feed builders carry page size/continuation only in `PreparedPageRequest`.
 Raw-header-only values are promoted; non-`None` typed options win conflicts.
 The Python backend adapter materializes those headers once for the native entry.
 The public retained item pagers and their bookmark contracts are unchanged.
@@ -409,7 +409,7 @@ Native exports retain `_async` where sync and async functions share this module.
 `_ItemFeedCursor` and `fetch_page_with_cursor` / `fetch_page_with_cursor_async`
 serve retained item queries, read-all and change feeds. Stateless pages use their
 own dispatch table; cursor dispatch depends on operation plus a non-`None`
-`PreparedQuery.cursor`. The pager creates its concretely typed `_ItemFeedCursor`
+`PreparedPageRequest.cursor`. The pager creates its concretely typed `_ItemFeedCursor`
 lazily through the backend factory and owns its release; execution no longer
 inserts it into a Python dictionary. Frozen `QueryScope` preserves the existing
 wire payload and bookmark identity. The old read-all cursor names and native
@@ -452,7 +452,7 @@ Start at `lib.rs` to see the exported surface, then read in this order:
 - **Build/packaging questions** (why the cdylib gets renamed, what
   `extension-module` and `abi3-py310` actually do, why a `.dll` ends up
   named `.pyd`): `../docs/PYTHON_RUST_PACKAGING.md`.
-- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/binding.py`
+- **Who calls this crate from the Python side**: `../azure/cosmos/_backend/rust_backend.py`
   builds the `PreparedRequest` and parses the backend tuple. Reading it
   alongside `lib.rs` shows exactly what every parameter and every return
   value carries.

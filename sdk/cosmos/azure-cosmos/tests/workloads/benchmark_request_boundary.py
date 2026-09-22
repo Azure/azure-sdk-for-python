@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from azure.cosmos._backend._binding_conversions import build_binding_request_from_page
-from azure.cosmos._backend.contracts import PreparedQuery
+from azure.cosmos._backend.contracts import PreparedPageRequest
 from azure.cosmos._helpers._document import serialize_document
 from azure.cosmos._helpers._request_item import (
     build_create_item_request,
@@ -60,7 +60,7 @@ def cases():
     def query(count):
         parameters = ({"name": "@values", "value": list(range(count))},)
         query_text = "SELECT * FROM c WHERE ARRAY_CONTAINS(@values, c.number)"
-        page = PreparedQuery(
+        page = PreparedPageRequest(
             op="query_items",
             container_link=link,
             query=query_text,

@@ -5,9 +5,9 @@
 # -------------------------------------------------------------------------
 """Let the Python/Rust binding obtain tokens from an async Python credential.
 
-This bridge is Python wrapper code, not part of the Rust driver.
+The async credential bridge is Python wrapper code, not part of the Rust driver.
 The credential's async methods need an event loop, which schedules their work.
-This bridge starts its own loop on a background thread when the first token is
+It starts its own loop on a background thread when the first token is
 requested, rather than using the customer app's loop.
 
 _start_token_request returns a Future, an object that receives the result
@@ -16,12 +16,12 @@ when the operation times out. Direct Python callers can instead use get_token,
 which blocks their calling thread until a result or error is available.
 
 Each acquire call needs one matching release. Calls for the same credential
-object share a bridge, though they need not share a Rust driver. The last
+object share an async credential bridge, not necessarily a CosmosDriver. The last
 release requests cancellation and thread shutdown, not immediate termination.
 The close timeout limits how long the caller waits for the thread; credential
 code that ignores cancellation may keep running.
 
-The customer app must close its own credential. This bridge does not make it
+The customer app must close its own credential. The async credential bridge does not make it
 safe to share a credential's loop-specific resources across event loops or
 guarantee that its token methods are called one at a time.
 """
@@ -52,8 +52,8 @@ class AsyncCredentialBridgeReentrantError(RuntimeError):
 JOIN_TIMEOUT_ENV_VAR = "COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT"
 _DEFAULT_JOIN_TIMEOUT_SECONDS = 5.0
 
-# Store one shared bridge per credential object. The lock protects its use count,
-# which counts acquire calls, not Python references or Rust drivers.
+# Store one async credential bridge per credential object. The lock protects its
+# acquisition count, not the number of Python references or CosmosDriver objects.
 _REGISTRY: Dict[int, "AsyncTokenCredentialBridge"] = {}
 _REGISTRY_LOCK = threading.Lock()
 
@@ -276,7 +276,7 @@ class AsyncTokenCredentialBridge:
         """Synchronously return the access token for ``scopes``.
 
         Return the credential's result unchanged. Check for timeout or bridge
-        closure between short waits. This method uses token_timeout, not a Python wrapper
+        closure between short waits. This uses _token_timeout, not a Python wrapper
         operation deadline, and does not limit time spent creating the async call.
         """
         deadline = None if self._token_timeout is None else time.monotonic() + self._token_timeout

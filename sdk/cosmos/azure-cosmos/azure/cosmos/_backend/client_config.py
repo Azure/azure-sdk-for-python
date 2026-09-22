@@ -7,12 +7,12 @@
 
 For example, a customer app may prefer West US and limit retries after the
 service asks it to slow down. build_client_config checks those options and
-returns a PreparedClientConfig shared by the sync and async setup code.
+returns a per-client PreparedClientConfig used by either sync or async setup.
 It returns None when no settings need to be passed.
 
 The Python wrapper validates the fields below; the binding performs further
 checks when acquiring a driver. Those checks include the User-Agent label
-and agreement with network settings already chosen for the process.
+and agreement with the connection settings recorded for CosmosDriverRuntime.
 """
 from __future__ import annotations
 
@@ -108,9 +108,9 @@ def build_client_config(
     proxy_allowed=False requires a direct connection; None requests no override.
     Region names become tuples, and an empty User-Agent suffix becomes None.
 
-    Network settings apply to the shared Rust runtime. In particular,
+    Connection settings apply to CosmosDriverRuntime. In particular,
     read_timeout limits a whole HTTP attempt, not just pauses while
-    reading a response. This builder does not create that runtime or reserve
+    reading a response. This builder does not create CosmosDriverRuntime or reserve
     its settings.
 
     Without an availability_strategy threshold, the binding disables sending

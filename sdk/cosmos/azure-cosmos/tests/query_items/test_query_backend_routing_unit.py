@@ -40,15 +40,15 @@ from azure.cosmos._backend.errors import (
     UnsupportedQueryError,
 )
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.contracts import BackendResponse, PreparedQuery, QueryPage
+from azure.cosmos._backend.contracts import BackendResponse, PreparedPageRequest, BackendPage
 from azure.cosmos._backend.operations import (
     OP_LIST_CONTAINERS, OP_LIST_DATABASES, OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES, OP_QUERY_ITEMS, OP_READ_ALL_ITEMS,
 )
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
-from azure.cosmos._backend.binding import build_binding_request_from_page as _sync_binding_request_from_page
-from azure.cosmos.aio._backend.binding import (
+from azure.cosmos._backend.rust_backend import build_binding_request_from_page as _sync_binding_request_from_page
+from azure.cosmos.aio._backend.rust_backend import (
     build_binding_request_from_page as _async_binding_request_from_page,
 )
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -74,7 +74,7 @@ class _CapturingSyncBackend(CosmosBackend):
     """A stand-in for the Rust backend that records the request and replies once.
 
     These tests never talk to a real Cosmos account. This class keeps whatever
-    ``PreparedQuery`` the routing code built, so a test can check exactly what
+    ``PreparedPageRequest`` the routing code built, so a test can check exactly what
     would have gone on the wire, and hands back one canned page. ``execute``
     raises because a paged operation must never be dispatched through the
     single-reply path.
@@ -86,7 +86,7 @@ class _CapturingSyncBackend(CosmosBackend):
 
     def execute_pages(self, prepared, *, deadline=None):
         self.prepared = prepared
-        yield QueryPage(
+        yield BackendPage(
             status_code=self._response.status_code,
             continuation=(
                 self._response.headers.get("x-ms-continuation")
@@ -112,7 +112,7 @@ class _CapturingAsyncBackend(AsyncCosmosBackend):
 
     async def execute_pages(self, prepared, *, deadline=None):
         self.prepared = prepared
-        yield QueryPage(
+        yield BackendPage(
             status_code=self._response.status_code,
             continuation=(
                 self._response.headers.get("x-ms-continuation")
@@ -146,7 +146,7 @@ class _SequencedSyncBackend(CosmosBackend):
     def execute_pages(self, prepared, *, deadline=None):
         self.prepared.append(prepared)
         if prepared.continuation is None:
-            yield QueryPage(
+            yield BackendPage(
                 status_code=200,
                 continuation="next-db-page",
                 headers=CaseInsensitiveDict({"x-ms-continuation": "next-db-page"}),
@@ -154,7 +154,7 @@ class _SequencedSyncBackend(CosmosBackend):
             )
 
         else:
-            yield QueryPage(
+            yield BackendPage(
                 status_code=200,
                 headers=CaseInsensitiveDict(),
                 body=b'{"Databases":[{"id":"db-2"}]}',
@@ -173,7 +173,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
     async def execute_pages(self, prepared, *, deadline=None):
         self.prepared.append(prepared)
         if prepared.continuation is None:
-            yield QueryPage(
+            yield BackendPage(
                 status_code=200,
                 continuation="next-db-page",
                 headers=CaseInsensitiveDict({"x-ms-continuation": "next-db-page"}),
@@ -181,7 +181,7 @@ class _SequencedAsyncBackend(AsyncCosmosBackend):
             )
 
         else:
-            yield QueryPage(
+            yield BackendPage(
                 status_code=200,
                 headers=CaseInsensitiveDict(),
                 body=b'{"Databases":[{"id":"db-2"}]}',
@@ -1254,7 +1254,7 @@ async def _run_async_read_feed(
 )
 def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
     """Typed paging fields are authoritative, including an explicit zero."""
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op=OP_READ_ALL_ITEMS,
         container_link="dbs/db/colls/c",
         continuation="typed-continuation",
@@ -1588,7 +1588,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
 
 
 def test_sync_query_backend_page_builds_prepared_request_and_updates_headers():
-    """Sync query page. A Rust-served page builds the right ``PreparedQuery`` (op,
+    """Sync query page. A Rust-served page builds the right ``PreparedPageRequest`` (op,
     container link, partition-key header, continuation, max item count, forwarded
     excluded-locations and timeout), returns the parsed Documents, decodes the
     index-utilization header, and updates both ``response_headers`` and the response
@@ -2846,7 +2846,7 @@ def test_sync_driver_unsupported_query_never_replays():
             raise UnsupportedQueryError("unsupported query plan")
             yield  # pragma: no cover
 
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op=OP_QUERY_ITEMS,
         container_link="dbs/db/colls/c",
         query="SELECT VALUE COUNT(1) FROM c",
@@ -2878,7 +2878,7 @@ def test_async_driver_unsupported_query_never_replays():
             yield  # pragma: no cover
 
     async def _run():
-        prepared = PreparedQuery(
+        prepared = PreparedPageRequest(
             op=OP_QUERY_ITEMS,
             container_link="dbs/db/colls/c",
             query="SELECT * FROM c ORDER BY c.ts",
@@ -2916,7 +2916,7 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed():
             raise NotImplementedError("unexpected parser failure")
             yield  # pragma: no cover
 
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op=OP_QUERY_ITEMS,
         container_link="dbs/db/colls/c",
         query="SELECT * FROM c",
@@ -2946,7 +2946,7 @@ def test_async_unrelated_not_implemented_error_is_not_replayed():
             yield  # pragma: no cover
 
     async def _run():
-        prepared = PreparedQuery(
+        prepared = PreparedPageRequest(
             op=OP_QUERY_ITEMS,
             container_link="dbs/db/colls/c",
             query="SELECT * FROM c",
@@ -2985,7 +2985,7 @@ def test_sync_empty_page_iterator_is_not_replayed():
     legacy_calls = []
     with pytest.raises(BindingProtocolError, match="returned no page"):
         _EmptyBackend().run_page_operation(
-            build_request=lambda: PreparedQuery(
+            build_request=lambda: PreparedPageRequest(
                 op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c"
             ),
             routing=OperationRouting(OP_QUERY_ITEMS, True),
@@ -3004,13 +3004,13 @@ def test_async_empty_page_iterator_is_not_replayed():
         async def execute_pages(self, prepared, *, deadline=None):
             del prepared
             if False:
-                yield QueryPage(status_code=200)
+                yield BackendPage(status_code=200)
 
     async def _run():
         legacy_calls = []
 
         def _prepare_request():
-            return PreparedQuery(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c")
+            return PreparedPageRequest(op=OP_QUERY_ITEMS, container_link="dbs/db/colls/c")
 
         async def _run_legacy():
             legacy_calls.append(1)
@@ -3285,7 +3285,7 @@ def test_sync_query_databases_backend_delegates_account_query(monkeypatch):
 def test_query_databases_binding_request_carries_the_query_body():
     """The Rust request contains the complete database query body."""
     binding_request = _sync_binding_request_from_page(
-        PreparedQuery(
+        PreparedPageRequest(
             op=OP_QUERY_DATABASES,
             container_link="",
             query="SELECT * FROM root r WHERE r.id = @id",

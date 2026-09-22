@@ -8,7 +8,7 @@
 ``replace_item`` is a first-class Rust operation: the driver exposes
 ``CosmosOperation::replace_item`` (mapped to ``OperationType::Replace``,
 an overwrite-only PUT), and the binding's ``replace_item`` entry point
-maps to it. ``RustBinding.execute`` therefore dispatches an
+maps to it. ``RustBackend.execute`` therefore dispatches an
 ``OP_REPLACE_ITEM`` request to ``_rust_module.replace_item`` -- the same
 dispatch shape create / read / delete / upsert use -- and wraps the
 returned 4-tuple as a ``BackendResponse``.
@@ -31,8 +31,8 @@ import pytest
 
 from azure.cosmos._backend.operations import OP_REPLACE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
-from azure.cosmos._backend.binding import RustBinding
-from azure.cosmos.aio._backend.binding import AsyncRustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
+from azure.cosmos.aio._backend.rust_backend import AsyncRustBackend
 
 
 def _replace_prepared() -> PreparedRequest:
@@ -54,9 +54,9 @@ def test_sync_rust_backend_dispatches_replace_to_binding(monkeypatch):
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.replace_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
-    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos._backend.rust_backend._rust_module", fake_module)
 
-    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     prepared = _replace_prepared()
     resp = backend.execute(prepared)
 
@@ -76,9 +76,9 @@ def test_sync_rust_backend_replace_surfaces_412(monkeypatch):
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     fake_module.replace_item.return_value = (412, 0, {}, b'{"message":"precondition failed"}')
-    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos._backend.rust_backend._rust_module", fake_module)
 
-    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     resp = backend.execute(_replace_prepared())
 
     assert resp.status_code == 412
@@ -94,10 +94,10 @@ def test_async_rust_backend_dispatches_replace_to_binding(monkeypatch):
     fake_module.replace_item_async = AsyncMock(
         return_value=(200, 0, {"etag": "v2"}, b'{"id":"order-42"}')
     )
-    monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", fake_module)
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust_backend._rust_module", fake_module)
 
     async def _run():
-        backend = AsyncRustBinding(endpoint="https://x.documents.azure.com", master_key="k")
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = _replace_prepared()
         resp = await backend.execute(prepared)
         fake_module.replace_item_async.assert_awaited_once_with("handle-1", prepared)
@@ -115,18 +115,18 @@ def test_sync_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
     """Before ``maturin develop`` builds ``_rust.pyd``, a replace on the
     Rust backend raises the same clear ``NotImplementedError`` every other
     op raises -- never a silent wrong-op dispatch."""
-    monkeypatch.setattr("azure.cosmos._backend.binding._rust_module", None)
-    backend = RustBinding(endpoint="https://x.documents.azure.com", master_key="k")
+    monkeypatch.setattr("azure.cosmos._backend.rust_backend._rust_module", None)
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
     with pytest.raises(NotImplementedError, match="not present"):
         backend.execute(_replace_prepared())
 
 
 def test_async_rust_backend_replace_raises_when_binding_not_built(monkeypatch):
     """Async sibling of the not-built guard."""
-    monkeypatch.setattr("azure.cosmos.aio._backend.binding._rust_module", None)
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust_backend._rust_module", None)
 
     async def _run():
-        backend = AsyncRustBinding(endpoint="https://x.documents.azure.com", master_key="k")
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
         with pytest.raises(NotImplementedError, match="not present"):
             await backend.execute(_replace_prepared())
 

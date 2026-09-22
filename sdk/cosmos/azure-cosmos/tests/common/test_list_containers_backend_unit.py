@@ -39,7 +39,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import exceptions
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos._backend.contracts import QueryPage
+from azure.cosmos._backend.contracts import BackendPage
 from azure.cosmos._backend.errors import PagePreflightError
 from azure.cosmos._backend.operations import OP_LIST_CONTAINERS
 from azure.cosmos._query_rust_routing import can_use_rust_backend_for_query_containers_page
@@ -65,7 +65,7 @@ def _page(ids, continuation=None, status=200):
     headers = CaseInsensitiveDict({"x-ms-request-charge": "2", "x-ms-activity-id": ",".join(ids) or "empty"})
     if continuation:
         headers["x-ms-continuation"] = continuation
-    return QueryPage(
+    return BackendPage(
         status_code=status, continuation=continuation, headers=headers,
         body=json.dumps({"DocumentCollections": [{"id": value} for value in ids]}).encode(),
     )

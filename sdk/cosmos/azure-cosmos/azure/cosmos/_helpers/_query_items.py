@@ -25,7 +25,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from .. import _utils, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._backend.contracts import QueryScope, PreparedQuery, QueryPage
+from .._backend.contracts import QueryScope, PreparedPageRequest, BackendPage
 from .._backend._immutable import freeze_json
 from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
@@ -239,7 +239,7 @@ class QueryConfig(ReadAllConfig):
 
     def prepared(
         self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
-    ) -> PreparedQuery:
+    ) -> PreparedPageRequest:
         return replace(
             super().prepared(self.decode(token), cursor, deadline),
             op=OP_QUERY_ITEMS,
@@ -276,7 +276,7 @@ class QueryPageState(ReadAllPageState):
                 headers[name] = decode(headers[name])
         super().capture(headers, body)
 
-    def parse(self, page: QueryPage) -> list[Any]:
+    def parse(self, page: BackendPage) -> list[Any]:
         if page.has_more is None:
             raise RuntimeError("Rust query page omitted retained cursor progress.")
         self.more = page.has_more

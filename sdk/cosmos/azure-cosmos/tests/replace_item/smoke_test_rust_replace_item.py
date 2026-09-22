@@ -49,7 +49,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_REPLACE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
-from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -130,7 +130,7 @@ def main() -> int:
 
     item_id = f"smoke-replace-{uuid.uuid4()}"
     print(f"Item id  : {item_id}")
-    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
 
     # ---- 1) create: brand-new id -> 201 Created ------------------------
     print("\n[1] create new id (expect 201) ...", flush=True)

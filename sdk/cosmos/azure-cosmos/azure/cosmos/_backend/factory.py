@@ -3,18 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Prepare the Python wrapper's Rust caller and its client settings.
+"""Construct RustBackend or AsyncRustBackend with prepared client settings.
 
-Rust is the only release backend. This checkout retains private controls
-for comparing unmigrated legacy Python code: _backend takes precedence over
+The Rust path is the only release execution path. This checkout retains private
+controls for comparing it with the legacy path: _backend takes precedence over
 COSMOS_BACKEND, and the current unset value still uses core-python. That
 temporary default and those controls must be removed before release; they
 are not customer configuration.
 
 This Python wrapper validates settings and prepares the credential before
-creating RustBinding or AsyncRustBinding. These are Python classes that call
-the Python/Rust binding. The binding acquires a Rust driver on first use.
-If construction fails, release any async-credential bridge acquired here.
+creating RustBackend or AsyncRustBackend. These are Python classes that call
+the binding. On first use, they acquire a driver handle through the binding.
+If construction fails, release any async credential bridge acquired here.
 """
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ from .constants import (
 )
 from .credentials import resolved_credential
 from .legacy import LEGACY_BACKEND
-from .binding import RustBinding
+from .rust_backend import RustBackend
 from .transport_settings import reject_unsupported_transport_settings
 
 _BackendT = TypeVar("_BackendT")
@@ -44,7 +44,7 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
     and ignore case, so " RUST " selects rust. A blank value selects the default,
     even if it was an explicit argument. Other unknown names or non-string
     arguments raise ValueError rather than silently running different code.
-    This function does not define a release-facing backend choice.
+    This function does not define a customer-facing execution-path choice.
     """
     raw = explicit if explicit is not None else os.environ.get(BACKEND_ENV_VAR)
     if raw is not None and not isinstance(raw, str):
@@ -93,12 +93,12 @@ def _make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
-    """Construct the Python wrapper object and clean up credentials on failure.
+    """Construct a Python backend and release its async credential bridge on failure.
 
     The retained legacy test branch skips Rust validation. The Rust branch
     requires a nonempty endpoint and supported network settings before
-    preparing credentials. The Python/Rust binding checks URL syntax later,
-    when a Rust driver is acquired.
+    preparing credentials. The binding checks URL syntax later, when a driver
+    handle is acquired.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -114,7 +114,7 @@ def _make_backend(
             ssl_config=ssl_config,
             transport=transport,
         )
-        # Release the async-credential bridge if later validation or construction
+        # Release the async credential bridge if later validation or construction
         # fails. Its thread may not have started, but it already holds the credential.
         with resolved_credential(credential) as (master_key, token_credential):
             return rust_backend_type(
@@ -164,7 +164,7 @@ def make_backend(
     """Build the synchronous Python wrapper object using shared preparation rules."""
     return _make_backend(
         explicit,
-        rust_backend_type=RustBinding,
+        rust_backend_type=RustBackend,
         legacy_backend=LEGACY_BACKEND,
         url=url,
         credential=credential,

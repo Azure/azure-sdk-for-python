@@ -31,9 +31,9 @@ from azure.cosmos._backend.errors import (
 from azure.cosmos._backend.contracts import (
     BackendResponse,
     ContainerMetadata,
-    PreparedQuery,
+    PreparedPageRequest,
     PreparedRequest,
-    QueryPage,
+    BackendPage,
 )
 from azure.cosmos._backend._fallback_metrics import record_rust_compatibility_fallback
 
@@ -55,7 +55,7 @@ class AsyncCosmosBackend(abc.ABC):
     operations through :meth:`run_operation` or :meth:`run_page_operation`
     without knowing which concrete backend it has. Driver selection and legacy
     fallback happen behind this
-    interface: a rust-backed client holds an :class:`AsyncRustBinding` and a
+    interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
     core-python client holds an
     :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend`, and every
     coordinator treats both the same -- none of them branch on ``None``, on
@@ -138,8 +138,8 @@ class AsyncCosmosBackend(abc.ABC):
         self,
         *,
         routing: OperationRouting,
-        build_request: Callable[[], PreparedQuery],
-        process_response: Callable[[QueryPage], Any],
+        build_request: Callable[[], PreparedPageRequest],
+        process_response: Callable[[BackendPage], Any],
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
@@ -185,11 +185,11 @@ class AsyncCosmosBackend(abc.ABC):
         return process_response(page)
 
     def execute_pages(
-        self, prepared: PreparedQuery, *, deadline: Optional[float] = None
-    ) -> AsyncIterator[QueryPage]:
-        """Return a paged query or read-feed result one ``QueryPage`` at a time.
+        self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
+    ) -> AsyncIterator[BackendPage]:
+        """Return a paged query or read-feed result one ``BackendPage`` at a time.
 
-        The default here raises; ``AsyncRustBinding`` overrides it using the
+        The default here raises; ``AsyncRustBackend`` overrides it using the
         stateless or retained-cursor dispatch table. A
         backend that does not implement this -- ``AsyncLegacyBackend`` never
         reaches it, since :meth:`run_page_operation` invokes the legacy call
@@ -201,7 +201,7 @@ class AsyncCosmosBackend(abc.ABC):
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 
-    def validate_page_request(self, prepared: PreparedQuery) -> None:
+    def validate_page_request(self, prepared: PreparedPageRequest) -> None:
         """Validate static page capability before execution; no I/O or driver acquisition."""
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:

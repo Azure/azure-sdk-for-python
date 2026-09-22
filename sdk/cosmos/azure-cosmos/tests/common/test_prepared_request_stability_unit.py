@@ -13,13 +13,13 @@ import pytest
 from azure.cosmos._backend.contracts import (
     PreparedClientConfig,
     PreparedFaultInjectionRule,
-    PreparedQuery,
+    PreparedPageRequest,
     PreparedRequest,
 )
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._backend.request_settings import RequestSettings
-from azure.cosmos._backend.binding import build_binding_request_from_page as sync_page
-from azure.cosmos.aio._backend.binding import build_binding_request_from_page as async_page
+from azure.cosmos._backend.rust_backend import build_binding_request_from_page as sync_page
+from azure.cosmos.aio._backend.rust_backend import build_binding_request_from_page as async_page
 
 
 def test_frozen_mapping_is_a_value_mapping_not_a_hash_key():
@@ -42,7 +42,7 @@ def point(**kwargs):
     )
 
 
-@pytest.mark.parametrize("factory", [point, lambda **kw: PreparedQuery(
+@pytest.mark.parametrize("factory", [point, lambda **kw: PreparedPageRequest(
     op="query_items", container_link="dbs/bank/colls/accounts", query="SELECT * FROM c", **kw
 )])
 @pytest.mark.parametrize("readonly_view", [False, True])
@@ -60,7 +60,7 @@ def test_headers_are_owned_and_readonly(factory, readonly_view):
 @pytest.mark.parametrize("adapter", [sync_page, async_page])
 def test_nested_query_parameters_keep_json_shape_and_previous_pages(adapter):
     parameters = [{"name": "@values", "value": {"values": [1, {"flag": True}, None]}}]
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items", container_link="dbs/bank/colls/accounts",
         query="SELECT VALUE @values", parameters=parameters,
         headers={"x-custom": "original"}, continuation="first",
@@ -86,7 +86,7 @@ def test_nested_query_parameters_keep_json_shape_and_previous_pages(adapter):
 def test_change_feed_snapshot_and_cursor_ownership(adapter):
     settings = {"mode": "LatestVersion", "feed_range": ["", "FF"]}
     cursor = object()
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items_change_feed", container_link="dbs/bank/colls/accounts",
         change_feed=settings, cursor=cursor,
     )
@@ -101,7 +101,7 @@ def test_change_feed_snapshot_and_cursor_ownership(adapter):
 
 def test_retained_query_reuses_exact_bytes():
     body = b'{"query":"SELECT @p","parameters":[{"name":"@p","value":[1,2]}]}'
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items", container_link="dbs/bank/colls/accounts",
         query="SELECT @p", parameters=({"name": "@p", "value": [1, 2]},),
         query_body=body,
@@ -112,7 +112,7 @@ def test_retained_query_reuses_exact_bytes():
 
 def test_nested_readonly_view_is_snapshotted_not_trusted():
     nested = {"values": [1, 2]}
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items", container_link="", query="SELECT @p",
         parameters=({"name": "@p", "value": MappingProxyType(nested)},),
     )
@@ -130,9 +130,9 @@ def test_cyclic_query_data_is_rejected_but_shared_children_are_allowed(kind):
     else:
         value.append(value)
     with pytest.raises(ValueError, match="Circular reference"):
-        PreparedQuery(op="query_items", container_link="", parameters=(value,))
+        PreparedPageRequest(op="query_items", container_link="", parameters=(value,))
     child = {"value": [1]}
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items", container_link="", query="SELECT @p",
         parameters=({"name": "@p", "value": [child, child]},),
     )
@@ -143,13 +143,13 @@ def test_cyclic_query_data_is_rejected_but_shared_children_are_allowed(kind):
 
 def test_unsupported_nested_values_are_not_silently_stringified():
     with pytest.raises(TypeError, match="Unsupported prepared JSON"):
-        PreparedQuery(
+        PreparedPageRequest(
             op="query_items", container_link="",
             parameters=({"name": "@p", "value": object()},),
         )
 
 
-@pytest.mark.parametrize("factory", [point, lambda **kw: PreparedQuery(
+@pytest.mark.parametrize("factory", [point, lambda **kw: PreparedPageRequest(
     op="query_items", container_link="dbs/bank/colls/accounts", **kw
 )])
 def test_settings_are_typed_and_reused_without_revalidation(factory):
@@ -230,7 +230,7 @@ def test_retained_native_reader_copies_body_without_python_iteration(async_mode)
             raise AssertionError("body must be copied directly")
 
     cursor = _rust._ItemFeedCursor()
-    page = PreparedQuery(
+    page = PreparedPageRequest(
         op="query_items", container_link="dbs/bank/colls/accounts",
         query_body=Body(b'{"query":"SELECT * FROM c"}'), cursor=cursor,
     )

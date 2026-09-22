@@ -24,7 +24,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
-import azure.cosmos.aio._backend.binding as async_rust_module
+import azure.cosmos.aio._backend.rust_backend as async_rust_module
 from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_RUST
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -36,7 +36,7 @@ ASYNC_URL = "https://close-async.documents.azure.com"
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mode):
     from types import SimpleNamespace
-    from azure.cosmos._backend.binding import RustBinding
+    from azure.cosmos._backend.rust_backend import RustBackend
 
     started, finish, finished = threading.Event(), threading.Event(), threading.Event()
     calls = []
@@ -49,7 +49,7 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
         finally:
             finished.set()
 
-    backend_type = async_rust_module.AsyncRustBinding if async_mode else RustBinding
+    backend_type = async_rust_module.AsyncRustBackend if async_mode else RustBackend
     backend = backend_type(
         SYNC_URL, token_credential=SimpleNamespace(_close_cosmos_async_bridge=blocking_close)
     )
@@ -67,7 +67,7 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
 def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
     from types import SimpleNamespace
 
-    class CheckedBackend(async_rust_module.AsyncRustBinding):
+    class CheckedBackend(async_rust_module.AsyncRustBackend):
         def __getattribute__(self, name):
             if name in ("_init_future", "_init_future_loop"):
                 assert object.__getattribute__(self, "_driver_handle_lock").locked()
@@ -123,7 +123,7 @@ def test_cancelling_one_initialization_waiter_does_not_cancel_others(monkeypatch
     native = SimpleNamespace(acquire_driver_handle=MagicMock(side_effect=acquire),
                              release_driver_handle=MagicMock())
     monkeypatch.setattr(async_rust_module, "_rust_module", native)
-    backend = async_rust_module.AsyncRustBinding(ASYNC_URL, master_key="key")
+    backend = async_rust_module.AsyncRustBackend(ASYNC_URL, master_key="key")
 
     async def run():
         first = asyncio.create_task(backend._ensure_driver_handle())
@@ -595,7 +595,7 @@ async def test_async_close_preserves_logged_native_and_bridge_errors(
     with caplog.at_level(logging.DEBUG):
         assert await client.close() is None
 
-    assert "Failed releasing native resources" in caplog.text
+    assert "Failed releasing the driver handle" in caplog.text
     assert "native cleanup failed" not in caplog.text
     assert "bridge cleanup failed" in caplog.text
     binding.release_driver_handle.assert_called_once()

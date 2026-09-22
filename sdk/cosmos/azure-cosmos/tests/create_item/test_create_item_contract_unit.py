@@ -32,8 +32,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from azure.cosmos import CosmosDict
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers import _item_prep, _document
 from azure.cosmos._helpers._item_context import ItemClientDefaults

@@ -1,13 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Limit the legacy Python calls that remain during migration.
+"""Limit fallback to the legacy path while migration is unfinished.
 
 For a call with several steps, such as reading and then replacing throughput,
 the Python wrapper checks whether Rust supports the complete call. These
-temporary rules permit some old Python calls only before execution, not as
-a customer backend choice. Rust is the only release backend.
-A failure during execution,
-response processing, or a customer callback is not retried through Python.
+temporary rules permit some legacy-path calls only before execution, not as
+a customer-facing execution choice. The Rust path is the only release path.
+A failure during execution, response processing, or a customer callback is
+not retried through the legacy path.
 """
 
 from __future__ import annotations
@@ -153,7 +153,11 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_READ_FEED_RANGES: OpCapability(
         frozenset({ops.OP_READ_FEED_RANGES}),
-        fallback_allowed=True,
+        unsupported_message=(
+            "read_feed_ranges cannot honor additional per-call options on Rust; "
+            "only force_refresh is supported by this range lookup. "
+            "The request will not be sent through legacy Python."
+        ),
     ),
     ops.OP_FEED_RANGE_FROM_PARTITION_KEY: OpCapability(
         frozenset({ops.OP_FEED_RANGE_FROM_PARTITION_KEY}),
@@ -195,11 +199,11 @@ CAPABILITIES: dict[str, OpCapability] = {
 
 @dataclass(frozen=True)
 class OperationRouting:
-    """Check this request against the operation's temporary legacy-call rule.
+    """Choose Rust or permitted legacy execution, not a service region or replica.
 
     ``capability`` can name a multi-step call whose rules differ from those of
     one step. For example, get-or-create must support both reading and creating.
-    The private legacy test branch skips Rust checks and request building.
+    The private legacy test branch skips Rust checks and prepared request building.
     """
 
     op: str

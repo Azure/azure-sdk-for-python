@@ -43,7 +43,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_UPSERT_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
-from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -108,7 +108,7 @@ def main() -> int:
 
     item_id = f"smoke-upsert-{uuid.uuid4()}"
     print(f"Item id  : {item_id}")
-    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
 
     # ---- 1) insert: brand-new id -> 201 Created ------------------------
     print("\n[1] upsert new id (expect 201 insert) ...", flush=True)

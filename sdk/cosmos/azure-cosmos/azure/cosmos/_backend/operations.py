@@ -8,18 +8,17 @@
 For example, OP_READ_ITEM identifies the binding's read_item function.
 The async Python wrapper uses the same table and adds the _async suffix.
 
-Page fetches use separate tables. The binding can keep an in-memory object
-containing a query's plan and progress between requests. Calls passing that
-object use CURSOR_QUERY_TO_BINDING_METHOD. Calls without it use
-STATELESS_QUERY_TO_BINDING_METHOD and may pass a continuation token instead.
+Page fetches use separate tables. Requests passing a feed cursor use
+RETAINED_PAGE_BINDING_FUNCTION_NAMES. Requests without a feed cursor use
+STATELESS_PAGE_BINDING_FUNCTION_NAMES and may still carry a continuation token.
 
-These tables choose functions, not whether Python fallback is allowed. That
-decision belongs to capabilities.py.
+These tables choose binding function names, not whether fallback to the legacy
+path is allowed. That decision belongs to capabilities.py.
 """
 
 from __future__ import annotations
 
-# Operation names stored in PreparedRequest.op and PreparedQuery.op.
+# Operation names stored in PreparedRequest.op and PreparedPageRequest.op.
 OP_CREATE_DATABASE = "create_database"
 OP_CREATE_CONTAINER = "create_container"
 OP_READ_CONTAINER = "read_container"
@@ -51,10 +50,9 @@ OP_REPLACE_OFFER = "replace_offer"
 # async Python wrappers so a new operation is connected in one place, not two.
 #
 # ``query_items`` / ``read_all_items`` / ``list_databases`` are deliberately NOT
-# here: they are multi-page feeds, not single-reply operations, so they are
-# registered in the applicable page tables below and called through
+# here: they are feeds, so they are registered in the page tables and called through
 # ``execute_pages``, never through ``execute``.
-OP_TO_BINDING_METHOD = {
+OP_TO_BINDING_FUNCTION_NAME = {
     OP_CREATE_DATABASE: "create_database",
     OP_READ_DATABASE: "read_database",
     OP_DELETE_DATABASE: "delete_database",
@@ -79,9 +77,9 @@ OP_TO_BINDING_METHOD = {
 }
 
 
-# Requests without the binding's query-progress object use this table, even
-# when they carry a continuation token. Requests with that object use the next table.
-STATELESS_QUERY_TO_BINDING_METHOD = {
+# Stateless page requests use this table even when they carry a continuation
+# token. Requests with a feed cursor use the retained-paging table below.
+STATELESS_PAGE_BINDING_FUNCTION_NAMES = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
     OP_LIST_DATABASES: "list_databases",
@@ -90,18 +88,23 @@ STATELESS_QUERY_TO_BINDING_METHOD = {
     OP_QUERY_CONTAINERS: "query_containers",
 }
 
-CURSOR_QUERY_TO_BINDING_METHOD = {
+RETAINED_PAGE_BINDING_FUNCTION_NAMES = {
     OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
     OP_QUERY_ITEMS: "fetch_page_with_cursor",
     OP_QUERY_ITEMS_CHANGE_FEED: "fetch_page_with_cursor",
 }
 
 
-def get_page_binding_method(op: str, *, uses_cursor: bool) -> str | None:
-    """Find the page-fetch function for requests with or without saved query progress."""
-    methods = (
-        CURSOR_QUERY_TO_BINDING_METHOD
+def get_page_binding_function_name(op: str, *, uses_cursor: bool) -> str | None:
+    """Return a binding function name for the operation and cursor mode.
+
+    For example, query_items uses query_items without a feed cursor and
+    fetch_page_with_cursor with one. None means this combination is unsupported,
+    not necessarily that the operation has no paging implementation.
+    """
+    binding_function_names = (
+        RETAINED_PAGE_BINDING_FUNCTION_NAMES
         if uses_cursor
-        else STATELESS_QUERY_TO_BINDING_METHOD
+        else STATELESS_PAGE_BINDING_FUNCTION_NAMES
     )
-    return methods.get(op)
+    return binding_function_names.get(op)

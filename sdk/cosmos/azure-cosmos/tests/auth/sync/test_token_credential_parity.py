@@ -22,7 +22,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
-from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
 
 from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 from auth._token_credentials import make_sync_token_credential, skip_unless_token_auth
@@ -87,16 +87,16 @@ def test_read_item_parity_with_token_credential(container_for):
 def test_engine_shared_for_one_credential_object():
     """The same credential object and endpoint produce equal driver-handle strings."""
     cred = make_sync_token_credential()
-    h1 = RustBinding(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
-    h2 = RustBinding(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
+    h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
+    h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"], token_credential=cred)._ensure_driver_handle()
     assert h1 == h2, "same credential object must reuse one engine handle"
 
 
 def test_engine_multiplied_for_distinct_credential_objects():
     """The two distinct credential objects produce different driver-handle strings."""
-    h1 = RustBinding(endpoint=os.environ["ACCOUNT_HOST"],
+    h1 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()
-    h2 = RustBinding(endpoint=os.environ["ACCOUNT_HOST"],
+    h2 = RustBackend(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()
     assert h1 != h2, "distinct credential objects must build distinct engine handles"
 

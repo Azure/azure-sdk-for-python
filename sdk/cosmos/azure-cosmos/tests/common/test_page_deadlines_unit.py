@@ -8,11 +8,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.cosmos._backend import binding as sync_rust
-from azure.cosmos.aio._backend import binding as async_rust
-from azure.cosmos._backend.contracts import PreparedQuery
-from azure.cosmos._backend.operations import STATELESS_QUERY_TO_BINDING_METHOD, CURSOR_QUERY_TO_BINDING_METHOD
-from azure.cosmos._backend.binding import build_binding_request_from_page
+from azure.cosmos._backend import rust_backend as sync_rust
+from azure.cosmos.aio._backend import rust_backend as async_rust
+from azure.cosmos._backend.contracts import PreparedPageRequest
+from azure.cosmos._backend.operations import STATELESS_PAGE_BINDING_FUNCTION_NAMES, RETAINED_PAGE_BINDING_FUNCTION_NAMES
+from azure.cosmos._backend.rust_backend import build_binding_request_from_page
 from azure.cosmos.exceptions import CosmosClientTimeoutError
 
 
@@ -20,14 +20,14 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError
 @pytest.mark.parametrize("budget", ["none", "future", "expired"])
 @pytest.mark.parametrize("uses_cursor,op,method", [
     (cursor, op, method)
-    for cursor, methods in ((False, STATELESS_QUERY_TO_BINDING_METHOD), (True, CURSOR_QUERY_TO_BINDING_METHOD))
+    for cursor, methods in ((False, STATELESS_PAGE_BINDING_FUNCTION_NAMES), (True, RETAINED_PAGE_BINDING_FUNCTION_NAMES))
     for op, method in methods.items()
 ])
 def test_every_page_dispatch_preserves_cursor_and_deadline_arguments(
     monkeypatch, async_mode, budget, uses_cursor, op, method
 ):
     module = async_rust if async_mode else sync_rust
-    cls = module.AsyncRustBinding if async_mode else module.RustBinding
+    cls = module.AsyncRustBackend if async_mode else module.RustBackend
     backend = object.__new__(cls)
     acquire = AsyncMock(return_value="handle") if async_mode else MagicMock(return_value="handle")
     monkeypatch.setattr(backend, "_ensure_driver_handle", acquire)
@@ -36,7 +36,7 @@ def test_every_page_dispatch_preserves_cursor_and_deadline_arguments(
     monkeypatch.setattr(module, "_rust_module", SimpleNamespace(
         **{method + ("_async" if async_mode else ""): dispatch}
     ))
-    prepared = PreparedQuery(
+    prepared = PreparedPageRequest(
         op=op, container_link="dbs/d/colls/c", query="SELECT * FROM c", change_feed={},
         cursor=SimpleNamespace(has_more=False, continuation_supported=True) if uses_cursor else None,
     )
@@ -97,7 +97,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
         "cancelled": asyncio.CancelledError,
     }[error_kind]("page dispatch failed")
     module = async_rust if async_mode else sync_rust
-    backend = object.__new__(module.AsyncRustBinding if async_mode else module.RustBinding)
+    backend = object.__new__(module.AsyncRustBackend if async_mode else module.RustBackend)
     mock = AsyncMock if async_mode else MagicMock
     monkeypatch.setattr(backend, "_ensure_driver_handle", mock(return_value="handle"))
     dispatch = mock(side_effect=error)
@@ -105,7 +105,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
     monkeypatch.setattr(module, "_rust_module", SimpleNamespace(**{method: dispatch}))
     monkeypatch.setattr(module, "_UNSUPPORTED_QUERY_ERROR", NativeUnsupportedQueryError)
     monkeypatch.setattr(module, "_DRIVER_TRANSPORT_ERROR", TransportError)
-    prepared = PreparedQuery(op="list_databases", container_link="")
+    prepared = PreparedPageRequest(op="list_databases", container_link="")
     deadline = time.monotonic() + 10 if has_deadline else None
     expected = {
         "timeout": CosmosClientTimeoutError if has_deadline else TimeoutError,
@@ -130,7 +130,7 @@ def test_page_error_translation_preserves_cause_and_cancellation(
 
 
 def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
-    backend = object.__new__(async_rust.AsyncRustBinding)
+    backend = object.__new__(async_rust.AsyncRustBackend)
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="handle"))
 
     async def run():
@@ -144,7 +144,7 @@ def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
                 stopped.set()
 
         monkeypatch.setattr(async_rust, "_rust_module", SimpleNamespace(list_databases_async=dispatch))
-        pages = backend.execute_pages(PreparedQuery(op="list_databases", container_link=""))
+        pages = backend.execute_pages(PreparedPageRequest(op="list_databases", container_link=""))
         pending = asyncio.create_task(pages.__anext__())
         try:
             await asyncio.wait_for(entered.wait(), timeout=1)
@@ -161,13 +161,13 @@ def test_async_page_cancellation_reaches_pending_native_await(monkeypatch):
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-@pytest.mark.parametrize("op,method", list(STATELESS_QUERY_TO_BINDING_METHOD.items()))
+@pytest.mark.parametrize("op,method", list(STATELESS_PAGE_BINDING_FUNCTION_NAMES.items()))
 def test_native_page_entry_validates_timeout_before_driver_lookup(op, method, async_mode):
     from azure.cosmos import _rust
 
     link = "" if "databases" in op else "dbs/d" if "containers" in op else "dbs/d/colls/c"
     prepared = build_binding_request_from_page(
-        PreparedQuery(op=op, container_link=link, query="SELECT * FROM c")
+        PreparedPageRequest(op=op, container_link=link, query="SELECT * FROM c")
     )
     call = getattr(_rust, method + ("_async" if async_mode else ""))
     with pytest.raises(ValueError, match="timeout_seconds"):

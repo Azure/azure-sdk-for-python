@@ -16,7 +16,7 @@ What these protect, and the customer behavior behind each:
   database name rides in ``item_id`` and the definition the caller assembled
   rides in the body. Get either wrong and the container is created in the wrong
   database or with the wrong policies.
-* the feed pages carrying the owning database. ``PreparedQuery`` has no field for
+* the feed pages carrying the owning database. ``PreparedPageRequest`` has no field for
   a database name, so the ``dbs/{id}`` link rides in ``container_link``. If the
   path cannot be parsed the gate must say no, so the call stays on the legacy
   path instead of running against nothing.
@@ -51,7 +51,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import _base as base
 from azure.cosmos import http_constants
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
-from azure.cosmos._backend.contracts import BackendResponse, QueryPage
+from azure.cosmos._backend.contracts import BackendResponse, BackendPage
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.operations import (
@@ -59,8 +59,8 @@ from azure.cosmos._backend.operations import (
     OP_LIST_CONTAINERS,
     OP_QUERY_CONTAINERS,
     OP_READ_CONTAINER,
-    OP_TO_BINDING_METHOD,
-    STATELESS_QUERY_TO_BINDING_METHOD,
+    OP_TO_BINDING_FUNCTION_NAME,
+    STATELESS_PAGE_BINDING_FUNCTION_NAMES,
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
@@ -1248,16 +1248,16 @@ def test_container_get_or_create_preflight_does_not_mutate_caller_options():
 
 def test_create_container_is_a_single_response_operation():
     """One create, one reply: it is sent through ``execute``, not the paged path."""
-    assert OP_TO_BINDING_METHOD[OP_CREATE_CONTAINER] == "create_container"
-    assert OP_CREATE_CONTAINER not in STATELESS_QUERY_TO_BINDING_METHOD
+    assert OP_TO_BINDING_FUNCTION_NAME[OP_CREATE_CONTAINER] == "create_container"
+    assert OP_CREATE_CONTAINER not in STATELESS_PAGE_BINDING_FUNCTION_NAMES
 
 
 def test_container_feeds_are_paged_operations():
     """Both feeds are sent through ``execute_pages``, never the single-reply path."""
-    assert STATELESS_QUERY_TO_BINDING_METHOD[OP_LIST_CONTAINERS] == "list_containers"
-    assert STATELESS_QUERY_TO_BINDING_METHOD[OP_QUERY_CONTAINERS] == "query_containers"
-    assert OP_LIST_CONTAINERS not in OP_TO_BINDING_METHOD
-    assert OP_QUERY_CONTAINERS not in OP_TO_BINDING_METHOD
+    assert STATELESS_PAGE_BINDING_FUNCTION_NAMES[OP_LIST_CONTAINERS] == "list_containers"
+    assert STATELESS_PAGE_BINDING_FUNCTION_NAMES[OP_QUERY_CONTAINERS] == "query_containers"
+    assert OP_LIST_CONTAINERS not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_QUERY_CONTAINERS not in OP_TO_BINDING_FUNCTION_NAME
 
 
 # --- create_container request shape --------------------------------------
@@ -1330,7 +1330,7 @@ def test_list_containers_sends_no_query_body():
     """A read feed has no SQL. The page adapter refuses a feed op that is not on its
     parameterless list, so leaving ``list_containers`` off it makes every
     ``list_containers`` call fail once it reaches the binding."""
-    from azure.cosmos._backend.binding import build_binding_request_from_page
+    from azure.cosmos._backend.rust_backend import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_list_containers_prepared_query(
@@ -1346,7 +1346,7 @@ def test_list_containers_sends_no_query_body():
 
 def test_query_containers_sends_the_query_body():
     """The query payload must arrive as JSON in ``body_bytes``, not as a URL parameter."""
-    from azure.cosmos._backend.binding import build_binding_request_from_page
+    from azure.cosmos._backend.rust_backend import build_binding_request_from_page
 
     request = build_binding_request_from_page(
         build_query_containers_prepared_query(
@@ -1680,7 +1680,7 @@ class _CapturingPagedBackend(CosmosBackend):
     def execute_pages(self, prepared, *, deadline=None):
         """Record the prepared query and yield one canned page."""
         self.prepared = prepared
-        yield QueryPage(
+        yield BackendPage(
             status_code=200,
             continuation=None,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "2.0"}),
@@ -1703,7 +1703,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
     async def execute_pages(self, prepared, *, deadline=None):
         """Record the prepared query and yield one canned page."""
         self.prepared = prepared
-        yield QueryPage(
+        yield BackendPage(
             status_code=200,
             continuation=None,
             headers=CaseInsensitiveDict({"x-ms-request-charge": "2.0"}),

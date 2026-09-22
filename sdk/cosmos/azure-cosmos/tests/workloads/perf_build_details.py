@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Resolve the driver Cargo actually selected and identify the loaded extension."""
+"""Identify the selected Rust driver, source files and loaded compiled extension."""
 
 import argparse
 import hashlib
@@ -23,7 +23,7 @@ def driver_commit():
     source = drivers[0].get("source") or ""
     match = re.search(r"#([0-9a-f]{40})$", source)
     if not source.startswith("git+") or not match:
-        raise ValueError("Profiling provenance currently requires the locked Git driver; local path overrides need their own build record")
+        raise ValueError("Profiling build details currently require the locked Git driver; local path overrides need their own build record")
     return match.group(1)
 
 

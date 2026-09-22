@@ -30,7 +30,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_PATCH_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
-from azure.cosmos._backend.binding import RustBinding
+from azure.cosmos._backend.rust_backend import RustBackend
 
 ENDPOINT = os.environ.get("ACCOUNT_HOST")
 KEY = os.environ.get("ACCOUNT_KEY")
@@ -90,7 +90,7 @@ def main() -> int:
     container_link = f"dbs/{DB}/colls/{COLL}"
     partition_key = BindingPartitionKey("components", ("smokeA",))
 
-    backend = RustBinding(endpoint=ENDPOINT, master_key=KEY)
+    backend = RustBackend(endpoint=ENDPOINT, master_key=KEY)
 
     # ---- create a row to patch -----------------------------------------
     create_prepared = PreparedRequest(
@@ -102,7 +102,7 @@ def main() -> int:
     )
 
     print(f"Item id  : {item_id}")
-    print("Calling RustBinding.execute(create) ...", flush=True)
+    print("Calling RustBackend.execute(create) ...", flush=True)
     try:
         create_resp = backend.execute(create_prepared)
     except Exception as e:  # pylint: disable=broad-except
@@ -128,7 +128,7 @@ def main() -> int:
         item_id=item_id,
     )
 
-    print("Calling RustBinding.execute(patch existing id) ...", flush=True)
+    print("Calling RustBackend.execute(patch existing id) ...", flush=True)
     try:
         patch_resp = backend.execute(patch_prepared)
     except Exception as e:  # pylint: disable=broad-except
@@ -166,7 +166,7 @@ def main() -> int:
         item_id=missing_id,
     )
 
-    print("Calling RustBinding.execute(patch missing id) ...", flush=True)
+    print("Calling RustBackend.execute(patch missing id) ...", flush=True)
     try:
         missing_resp = backend.execute(patch_missing_prepared)
     except Exception as e:  # pylint: disable=broad-except

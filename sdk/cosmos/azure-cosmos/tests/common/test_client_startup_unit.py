@@ -22,8 +22,8 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as sync_client
 import azure.cosmos.aio._cosmos_client as async_client
-from azure.cosmos._backend import binding as sync_backend
-from azure.cosmos.aio._backend import binding as async_backend
+from azure.cosmos._backend import rust_backend as sync_backend
+from azure.cosmos.aio._backend import rust_backend as async_backend
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._retry_options import RetryOptions
@@ -73,7 +73,7 @@ def test_factory_forwards_every_declared_option_to_shared_construction(monkeypat
     assert factory("rust", **options) is shared.return_value
     shared.assert_called_once_with(
         "rust",
-        rust_backend_type=module.AsyncRustBinding if async_mode else module.RustBinding,
+        rust_backend_type=module.AsyncRustBackend if async_mode else module.RustBackend,
         legacy_backend=module.ASYNC_LEGACY_BACKEND if async_mode else module.LEGACY_BACKEND,
         **options,
     )
@@ -115,7 +115,7 @@ def test_factory_keeps_credential_guard_active_through_construction(
     monkeypatch.setattr(sync_factory, "resolved_credential", guard)
     monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
     monkeypatch.setattr(
-        module, "AsyncRustBinding" if async_mode else "RustBinding", stage("constructor", result)
+        module, "AsyncRustBackend" if async_mode else "RustBackend", stage("constructor", result)
     )
     if failure_stage is None:
         assert factory("rust", url="https://startup.invalid", credential=credential) is result
@@ -206,7 +206,7 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
         module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
     assert len(retained) == 1
     assert retained[0]._closing
-    replacement = sync_backend.RustBinding(
+    replacement = sync_backend.RustBackend(
         "https://startup.invalid", master_key="ZmFrZQ==",
         client_config=PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=3,
                                           read_timeout_seconds=30),
@@ -218,11 +218,11 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
 def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
     validator = MagicMock()
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
-    first = sync_backend.RustBinding(
+    first = sync_backend.RustBackend(
         "https://first.invalid", master_key="key",
         client_config=PreparedClientConfig(read_timeout_seconds=20),
     )
-    other = sync_backend.RustBinding(
+    other = sync_backend.RustBackend(
         "https://other.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=30),
     )
@@ -245,7 +245,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
 
     binding = SimpleNamespace(acquire_driver_handle=initialize, release_driver_handle=MagicMock())
     monkeypatch.setattr(async_backend, "_rust_module", binding)
-    backend = async_backend.AsyncRustBinding(
+    backend = async_backend.AsyncRustBackend(
         "https://account.invalid", master_key="key",
         client_config=PreparedClientConfig(proxy_allowed=True),
     )
@@ -254,7 +254,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
         try:
             assert started.wait(10)
             close_backend(backend)
-            replacement = sync_backend.RustBinding(
+            replacement = sync_backend.RustBackend(
                 "https://account.invalid", master_key="key",
                 client_config=PreparedClientConfig(proxy_allowed=False),
             )
@@ -278,7 +278,7 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
     monkeypatch.setattr(
         sync_backend, "_rust_module", SimpleNamespace(acquire_driver_handle=acquire)
     )
-    backend = sync_backend.RustBinding("https://account.invalid", master_key="key")
+    backend = sync_backend.RustBackend("https://account.invalid", master_key="key")
     with pytest.raises(RuntimeError, match="driver failed"):
         backend._ensure_driver_handle()
     backend.close()
@@ -288,7 +288,7 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
         PreparedClientConfig(read_timeout_seconds=30),
     ):
         with pytest.raises(ValueError, match="runtime settings already initialized"):
-            sync_backend.RustBinding("https://other.invalid", master_key="key", client_config=config)
+            sync_backend.RustBackend("https://other.invalid", master_key="key", client_config=config)
 
 
 class AsyncCredential:

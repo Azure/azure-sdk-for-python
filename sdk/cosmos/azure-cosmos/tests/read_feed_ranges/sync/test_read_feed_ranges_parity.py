@@ -38,13 +38,8 @@ def container_for(request):
 
 
 def _normalize_feed_ranges(feed_ranges):
-    # Reduce each range to its (min, max) pair and sort, so the two engines compare equal
-    # regardless of ordering or incidental fields.
-    normalized = []
-    for feed_range in feed_ranges:
-        range_info = feed_range["Range"]
-        normalized.append((range_info["min"], range_info["max"]))
-    return sorted(normalized)
+    # Compare complete dictionaries, including boundary flags; ignore only order.
+    return sorted(feed_ranges, key=lambda value: (value["Range"]["min"], value["Range"]["max"]))
 
 
 def test_read_feed_ranges_baseline(container_for):
@@ -65,11 +60,12 @@ def test_read_feed_ranges_baseline(container_for):
 
 def test_read_feed_ranges_force_refresh(container_for):
     """Force-refresh read_feed_ranges stays equivalent on both backends."""
-    # force_refresh=True bypasses the cached routing map and re-fetches the ranges; without
-    # this, the rust force-refresh path could return stale or different ranges unnoticed.
+    # Exercise a refresh after discovery has populated the cache. This checks
+    # returned values, not split handling or freshness after a failed refresh.
 
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
+        list(container.read_feed_ranges())
         return _normalize_feed_ranges(list(container.read_feed_ranges(force_refresh=True)))
 
     comparison = run_on_both_backends(

@@ -25,6 +25,13 @@ PartitionKeyKind = Literal[
 
 @dataclass(frozen=True, eq=False)
 class BindingPartitionKey:
+    """Keep supplied partition-key values separate from instructions to the binding.
+
+    For example, components with ("customer-17",) supplies a value, while
+    extract asks the binding to obtain the value from the item's body.
+    The kind names are part of the binding contract, not interchangeable labels.
+    """
+
     kind: PartitionKeyKind
     values: tuple[PartitionKeyComponent, ...] = ()
 
@@ -65,7 +72,7 @@ class BindingPartitionKey:
             raise TypeError("Unsupported partition-key component type")
 
     def _identity(self) -> tuple:
-        # A saved query must distinguish True from 1, and 0.0 from -0.0.
+        # Partition-key equality must distinguish True from 1, and 0.0 from -0.0.
         return self.kind, tuple(
             (type(value), value.hex() if type(value) is float else value)
             for value in self.values

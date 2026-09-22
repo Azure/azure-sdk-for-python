@@ -5,8 +5,8 @@
 # -------------------------------------------------------------------------
 """Convert Python wrapper requests and Python/Rust binding responses.
 
-The binding is the compiled extension Python uses to call the Rust driver.
-It receives prepared request objects and returns tuples containing status,
+The binding adapts Python wrapper calls to the Rust driver. It receives
+PreparedRequest objects and returns tuples containing status,
 headers, body bytes, and diagnostics. Both synchronous and asynchronous
 Python wrappers use these conversions.
 """
@@ -20,7 +20,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from .contracts import (
     BackendResponse, ContainerMetadata, PreparedClientConfig,
-    PreparedQuery, PreparedRequest, QueryPage, QueryScope,
+    PreparedPageRequest, PreparedRequest, BackendPage, QueryScope,
 )
 from .errors import BindingProtocolError
 from ._immutable import json_mapping
@@ -35,13 +35,16 @@ from .._operation_deadline import remaining_timeout
 _PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 
-def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
-    """Build the binding request for one page fetch.
+def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRequest:
+    """Convert a prepared page request into the prepared request for the binding.
+
+    PreparedPageRequest -> body bytes and request headers -> PreparedRequest.
+    The feed cursor, when present, is passed separately to the binding function.
 
     Reuse query_body when the Python wrapper has converted the SQL and parameters
     to JSON bytes. Listing requests need no body; change-feed requests use their
     own settings instead of SQL. Copy headers before applying the page size and
-    continuation token, so the original prepared query is not changed.
+    continuation token, so the original prepared page request is not changed.
     """
     if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
         body = json.dumps(
@@ -53,7 +56,7 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
         body = prepared.query_body
     else:
         if prepared.query is None:
-            raise ValueError("{} requires PreparedQuery.query.".format(prepared.op))
+            raise ValueError("{} requires PreparedPageRequest.query.".format(prepared.op))
         payload: dict[str, Any] = {"query": prepared.query}
         if prepared.parameters:
             payload["parameters"] = list(prepared.parameters)
@@ -82,13 +85,18 @@ def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
     )
 
 
-def page_dispatch_arguments(
+def page_binding_call_arguments(
     driver_handle: str,
     request: PreparedRequest,
-    prepared: PreparedQuery,
+    prepared: PreparedPageRequest,
     deadline: Optional[float],
 ) -> tuple[tuple[Any, ...], dict[str, Optional[float]]]:
-    """Pass the driver handle, request, saved query progress, and remaining seconds."""
+    """Build page binding call arguments without invoking the function.
+
+    Stateless paging passes (driver_handle, request). Retained paging also
+    passes prepared.cursor. A supplied deadline contributes only its remaining
+    seconds, not a fresh operation budget.
+    """
     args: tuple[Any, ...] = (driver_handle, request)
     if prepared.cursor is not None:
         args += (prepared.cursor,)
@@ -100,10 +108,15 @@ def page_dispatch_arguments(
     return args, kwargs
 
 
-def build_query_page(prepared: PreparedQuery, response: BackendResponse) -> QueryPage:
-    """Add the continuation token and whether saved query progress allows more results."""
+def build_backend_page(prepared: PreparedPageRequest, response: BackendResponse) -> BackendPage:
+    """Convert a backend response into a backend page.
+
+    Copy the continuation token from response headers. For retained item
+    queries, also copy has_more and continuation_supported from the feed cursor.
+    Other page paths leave has_more as None and apply their own completion rules.
+    """
     cursor = prepared.cursor if prepared.op == OP_QUERY_ITEMS else None
-    return QueryPage(
+    return BackendPage(
         status_code=response.status_code,
         continuation=response.headers.get("x-ms-continuation") if response.headers else None,
         sub_status=response.sub_status,
@@ -208,7 +221,7 @@ def build_backend_response(
     The binding returns five elements:
     ``(status, sub_status, headers, body, diagnostics_or_none)``. The default
     diagnostics argument also allows tests to supply only four values. It does
-    not make an older compiled extension compatible with current requests.
+    not make an older binding compatible with current prepared requests.
     """
     return BackendResponse(
         status_code=int(status_code),

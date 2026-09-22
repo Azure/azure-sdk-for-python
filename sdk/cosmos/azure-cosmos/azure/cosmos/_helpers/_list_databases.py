@@ -14,7 +14,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from .. import http_constants
 from .._backend.errors import BindingProtocolError
-from .._backend.contracts import PreparedQuery, QueryPage
+from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import (
@@ -103,7 +103,7 @@ class ListDatabasesConfig:
             return self.operation_deadline
         return None if self.timeout is None else time.monotonic() + self.timeout
 
-    def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedQuery:
+    def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
         eligible = can_use_rust_backend_for_list_databases_page(
             options=self.options, kwargs=self.kwargs, is_query_plan=False,
             resource_type=http_constants.ResourceType.Database,
@@ -165,7 +165,7 @@ class QueryDatabasesConfig(ListDatabasesConfig):
         )
         super().__init__(client, kwargs)
 
-    def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedQuery:
+    def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
         if self.query_payload is not None and not self.query_mode_supported:
             raise SystemError("Unexpected query compatibility mode.")
         return super().prepared(token, deadline)
@@ -179,7 +179,7 @@ class ListDatabasesPageState:
         self.done = False
         self.lock = threading.Lock()
 
-    def parse(self, page: QueryPage) -> tuple[list[Any], CaseInsensitiveDict]:
+    def parse(self, page: BackendPage) -> tuple[list[Any], CaseInsensitiveDict]:
         result = process_backend_response(
             page_to_backend_response(page), response_state=self.config.response_state,
         )

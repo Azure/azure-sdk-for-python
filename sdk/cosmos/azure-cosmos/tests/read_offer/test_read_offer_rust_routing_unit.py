@@ -18,7 +18,7 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.operations import OP_READ_OFFER, OP_TO_BINDING_METHOD
+from azure.cosmos._backend.operations import OP_READ_OFFER, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._helpers._request_settings import (
     HEADERS_THE_DRIVER_REGENERATES,
     HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE,
@@ -168,7 +168,7 @@ def test_offer_read_preparation_never_uses_legacy_transport(monkeypatch, resourc
     prepared = build_read_offer_from_connection(**kwargs)
     forbidden.assert_not_called()
     assert (defaults, options, _OFFER_QUERY) == original
-    assert prepared.op == OP_READ_OFFER == OP_TO_BINDING_METHOD[OP_READ_OFFER]
+    assert prepared.op == OP_READ_OFFER == OP_TO_BINDING_FUNCTION_NAME[OP_READ_OFFER]
     assert prepared.container_link == resource_link.strip("/")
     assert legacy_partition_key_from_request(prepared) == "[]"
     assert prepared.item_id is None

@@ -50,7 +50,7 @@ def measurement(modules, **changes):
         "window_id": "window-1", "window_index": 1,
         "window_seconds": 60.0, "elapsed_seconds": 60.0,
         "driver_commit": "a" * 40, "config_backend": "rust",
-        "runtime_backend": "AsyncRustBinding", "rust_execute_calls": 2,
+        "runtime_backend": "AsyncRustBackend", "rust_execute_calls": 2,
         "binding_calls": 2, "attempt_calls": 2, "retry_calls": 0,
         "throttled_429": 0, "config_arrival_rate": 250,
         "config_concurrency": 1, "config_num_clients": 1,
@@ -341,37 +341,37 @@ def test_mixed_unknown_throttles_remain_unknown(modules):
     assert blended["rust"]["throttled_429"] is None
 
 
-def test_cargo_provenance_uses_resolved_git_revision(modules, monkeypatch):
-    provenance = importlib.import_module("perf_provenance")
+def test_cargo_build_details_use_resolved_git_revision(modules, monkeypatch):
+    build_details = importlib.import_module("perf_build_details")
     def metadata(command, **kwargs):
         assert command == ["cargo", "metadata", "--locked", "--offline", "--format-version", "1"]
         return json.dumps({"packages": [{
             "name": "azure_data_cosmos_driver",
             "source": "git+https://example.invalid/driver?rev=short#" + "a" * 40,
         }]})
-    monkeypatch.setattr(provenance.subprocess, "check_output", metadata)
-    assert provenance.driver_commit() == "a" * 40
+    monkeypatch.setattr(build_details.subprocess, "check_output", metadata)
+    assert build_details.driver_commit() == "a" * 40
 
 
 @pytest.mark.parametrize("source", [None, "path+local", "registry+crates.io", "git+url#short"])
-def test_cargo_provenance_rejects_unidentified_source(modules, monkeypatch, source):
-    provenance = importlib.import_module("perf_provenance")
-    monkeypatch.setattr(provenance.subprocess, "check_output", lambda *args, **kwargs:
+def test_cargo_build_details_reject_unidentified_source(modules, monkeypatch, source):
+    build_details = importlib.import_module("perf_build_details")
+    monkeypatch.setattr(build_details.subprocess, "check_output", lambda *args, **kwargs:
                         json.dumps({"packages": [{"name": "azure_data_cosmos_driver", "source": source}]}))
     with pytest.raises(ValueError, match="locked Git"):
-        provenance.driver_commit()
+        build_details.driver_commit()
 
 
 def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_path):
-    provenance = importlib.import_module("perf_provenance")
-    monkeypatch.setattr(provenance, "PACKAGE_ROOT", tmp_path)
+    build_details = importlib.import_module("perf_build_details")
+    monkeypatch.setattr(build_details, "PACKAGE_ROOT", tmp_path)
     source = tmp_path / "azure" / "cosmos" / "client.py"
     source.parent.mkdir(parents=True)
     source.write_text("value = 1\n")
-    before = provenance.source_digest()
-    assert before == provenance.source_digest()
+    before = build_details.source_digest()
+    assert before == build_details.source_digest()
     source.write_text("value = 2\n")
-    assert provenance.source_digest() != before
+    assert build_details.source_digest() != before
 
 
 def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, tmp_path):
@@ -462,10 +462,10 @@ def test_duplicate_processes_cannot_reuse_one_workload_id(modules):
 
 def test_wrong_python_sdk_checkout_is_rejected(modules, monkeypatch, tmp_path):
     import azure.cosmos as sdk
-    provenance = importlib.import_module("perf_provenance")
+    build_details = importlib.import_module("perf_build_details")
     monkeypatch.setattr(sdk, "__file__", str(tmp_path / "__init__.py"))
     with pytest.raises(ValueError, match="outside the selected checkout"):
-        provenance.extension_details()
+        build_details.extension_details()
 
 
 def test_existing_run_directory_is_not_reused(tmp_path):
