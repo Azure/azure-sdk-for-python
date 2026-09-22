@@ -4,10 +4,13 @@ import:
   - ../../.vscode/cspell.json
 words:
   - awps
+  - capsys
   - ctxt
+  - deser
   - deseralize
   - MQTT
   - Nify
   - psutil
+  - undoc
   - unflattened
   - wday

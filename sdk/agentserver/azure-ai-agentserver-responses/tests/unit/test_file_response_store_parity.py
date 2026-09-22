@@ -272,7 +272,7 @@ async def test_history_via_conversation_id(tmp_path: Path) -> None:
 
 @pytest.mark.asyncio
 async def test_history_combined_previous_and_conversation(tmp_path: Path) -> None:
-    """Both previous_response_id and conversation_id contribute (concatenated)."""
+    """Both previous_response_id and conversation_id contribute in order."""
     for _label, factory in _make_provider_factories(tmp_path):
         provider = factory()
         await provider.create_response(
@@ -288,6 +288,27 @@ async def test_history_combined_previous_and_conversation(tmp_path: Path) -> Non
         ids = await provider.get_history_item_ids("r_prev", "conv-1", limit=100)
         # previous_response_id contributions first, then conversation members.
         assert ids == ["prev_in", "prev_out", "a_in", "a_out"]
+
+
+@pytest.mark.asyncio
+async def test_history_combined_deduplicates_overlapping_items(tmp_path: Path) -> None:
+    """Overlapping previous-response and conversation history is returned once."""
+    for _label, factory in _make_provider_factories(tmp_path):
+        provider = factory()
+        await provider.create_response(
+            _response("r_prev", output=[_output_item("prev_out")], conversation_id="conv-1"),
+            [_input_item("prev_in")],
+            None,
+        )
+        await provider.create_response(
+            _response("r_next", output=[_output_item("next_out")], conversation_id="conv-1"),
+            [_input_item("next_in")],
+            history_item_ids=["prev_in", "prev_out"],
+        )
+
+        expected = ["prev_in", "prev_out", "next_in", "next_out"]
+        assert await provider.get_history_item_ids("r_prev", "conv-1", limit=-1) == expected
+        assert await provider.get_history_item_ids("r_prev", "conv-1", limit=3) == expected[-3:]
 
 
 @pytest.mark.asyncio

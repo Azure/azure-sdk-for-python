@@ -111,7 +111,7 @@ class TestVectorPolicy(unittest.TestCase):
         # against a populated container), route those through cls.data_client.
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.client.create_database(test_config.unique_database_id("vector-policy"))
 
     @classmethod
     def tearDownClass(cls):

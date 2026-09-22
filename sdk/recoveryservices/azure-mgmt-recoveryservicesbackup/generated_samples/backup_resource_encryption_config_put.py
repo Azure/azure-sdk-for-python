@@ -44,6 +44,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-07-01/BackupResourceEncryptionConfig_Put.json
+# x-ms-original-file: 2026-08-01/BackupResourceEncryptionConfig_Put.json
 if __name__ == "__main__":
     main()

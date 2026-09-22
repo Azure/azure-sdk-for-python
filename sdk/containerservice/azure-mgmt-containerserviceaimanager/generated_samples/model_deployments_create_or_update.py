@@ -38,7 +38,7 @@ def main():
         model_deployment_name="deployment-1",
         resource={
             "properties": {
-                "modelResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgaimanagers/providers/Microsoft.ContainerService/aiModels/9806f0c862fdd920",
+                "modelResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/aiModels/9806f0c862fdd920",
                 "modelSourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgaimanagers/providers/Microsoft.ContainerService/aiManagers/aimanager1/modelSources/huggingface",
                 "performanceMode": "Balanced",
                 "scale": {"autoscale": {"maxReplicas": 8, "minReplicas": 2}},
@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/ModelDeployments_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-02-preview/ModelDeployments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

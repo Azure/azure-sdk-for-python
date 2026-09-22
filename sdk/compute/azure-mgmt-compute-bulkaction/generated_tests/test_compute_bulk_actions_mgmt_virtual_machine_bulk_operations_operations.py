@@ -31,7 +31,6 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -56,7 +55,6 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -81,85 +79,11 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
                 "resources": {"ids": ["str"]},
                 "resourcesWithContext": {"resources": [{"resourceContext": "str", "resourceId": "str"}]},
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_bulk_operations_bulk_create_operation(self, resource_group):
-        response = self.client.virtual_machine_bulk_operations.bulk_create_operation(
-            resource_group_name=resource_group.name,
-            location="str",
-            request_body={
-                "executionParameters": {
-                    "capacityRecommendationParameters": {
-                        "availabilityZones": bool,
-                        "desiredLocations": ["str"],
-                        "desiredSizes": ["str"],
-                    },
-                    "optimizationPreference": "str",
-                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
-                    "verifyVmAgentHealth": bool,
-                },
-                "resourceConfigParameters": {
-                    "resourceCount": 0,
-                    "baseProfile": {"str": {}},
-                    "resourceOverrides": [{"str": {}}],
-                    "resourcePrefix": "str",
-                },
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_bulk_operations_bulk_vdi_flex_create_operation(self, resource_group):
-        response = self.client.virtual_machine_bulk_operations.bulk_vdi_flex_create_operation(
-            resource_group_name=resource_group.name,
-            location="str",
-            request_body={
-                "executionParameters": {
-                    "capacityRecommendationParameters": {
-                        "availabilityZones": bool,
-                        "desiredLocations": ["str"],
-                        "desiredSizes": ["str"],
-                    },
-                    "optimizationPreference": "str",
-                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
-                    "verifyVmAgentHealth": bool,
-                },
-                "resourceConfigParameters": {
-                    "flexProperties": {
-                        "osType": "str",
-                        "priorityProfile": {
-                            "allocationStrategy": "str",
-                            "evictionPolicy": "str",
-                            "maxPricePerVM": 0.0,
-                            "type": "str",
-                        },
-                        "vmSizeProfiles": [{"name": "str", "rank": 0}],
-                        "minCapacity": 0,
-                        "zoneAllocationPolicy": {
-                            "distributionStrategy": "str",
-                            "zonePreferences": [{"rank": 0, "zone": "str"}],
-                        },
-                    },
-                    "resourceCount": 0,
-                    "baseProfile": {"str": {}},
-                    "resourceOverrides": [{"str": {}}],
-                    "resourcePrefix": "str",
-                },
             },
         )
 
@@ -179,7 +103,6 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -229,7 +152,6 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -253,29 +175,6 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
                 "resources": {"ids": ["str"]},
                 "resourcesWithContext": {"resources": [{"resourceContext": "str", "resourceId": "str"}]},
             },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_bulk_operations_bulk_list_operation_errors(self, resource_group):
-        response = self.client.virtual_machine_bulk_operations.bulk_list_operation_errors(
-            resource_group_name=resource_group.name,
-            location="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_bulk_operations_bulk_acknowledge_operation_errors(self, resource_group):
-        response = self.client.virtual_machine_bulk_operations.bulk_acknowledge_operation_errors(
-            resource_group_name=resource_group.name,
-            location="str",
-            body={"operationIds": ["str"]},
         )
 
         # please add some check logic here by yourself

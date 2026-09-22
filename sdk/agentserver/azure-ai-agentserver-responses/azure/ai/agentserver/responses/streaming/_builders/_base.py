@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+
 from collections.abc import MutableMapping
 from copy import deepcopy
 from enum import Enum
@@ -150,7 +151,7 @@ class BaseOutputItemBuilder:
         item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
-            response_models.ResponseOutputItemAddedEvent,
+            "response_models.ResponseOutputItemAddedEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.output_item.added",
@@ -173,7 +174,7 @@ class BaseOutputItemBuilder:
         item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
-            response_models.ResponseOutputItemDoneEvent,
+            "response_models.ResponseOutputItemDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.output_item.done",

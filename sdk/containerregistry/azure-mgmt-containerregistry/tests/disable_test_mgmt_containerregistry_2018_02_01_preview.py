@@ -42,7 +42,6 @@ import azure.mgmt.storage
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-
 DEFAULT_LOCATION = "eastus"
 DEFAULT_REPLICATION_LOCATION = "southcentralus"
 DEFAULT_WEBHOOK_SERVICE_URI = "http://www.microsoft.com"

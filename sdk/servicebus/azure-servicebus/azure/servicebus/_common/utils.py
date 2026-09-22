@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+import time
 import datetime
 import logging
 import functools
@@ -42,6 +43,7 @@ from .constants import (
     MAX_SERVER_TIMEOUT_MS,
 )
 from ..amqp import AmqpAnnotatedMessage
+from ..exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
     try:
@@ -107,6 +109,81 @@ def get_server_timeout_ms(timeout: Optional[float]) -> int:
         return DEFAULT_SERVER_TIMEOUT_MS
     capped = min(timeout, MAX_SERVER_TIMEOUT_MS / 1000)
     return max(int(capped * 1000) - SERVER_TIMEOUT_BUFFER_MS, 0)
+
+
+def get_attempt_timeout(remaining_timeout: Optional[float], try_timeout: Optional[float]) -> Optional[float]:
+    """Return the timeout for a single attempt of a retryable operation.
+
+    Recomputed per attempt, so a slow attempt does not shrink later attempts' budgets.
+
+    :param float or None remaining_timeout: The caller's remaining timeout in seconds, or None.
+    :param float or None try_timeout: The per-attempt timeout in seconds. None or non-positive means off.
+    :rtype: float or None
+    :returns: The per-attempt timeout capped by the remaining timeout, or None if unbounded.
+    """
+    if try_timeout is None or try_timeout <= 0:
+        return remaining_timeout
+    if remaining_timeout is None:
+        return try_timeout
+    return min(try_timeout, remaining_timeout)
+
+
+def get_link_ready_deadline(timeout: Optional[float]) -> Optional[float]:
+    """Return the absolute time by which an AMQP link must report ready, or None if unbounded.
+
+    Only None means unbounded. A zero or negative timeout is an expired budget, not a
+    missing one, so it yields a deadline that has already passed.
+
+    :param float or None timeout: The per-attempt timeout in seconds, or None.
+    :rtype: float or None
+    :returns: The absolute deadline, or None when the wait is unbounded.
+    """
+    return (time.monotonic() + timeout) if timeout is not None else None
+
+
+def get_remaining_timeout(timeout: Optional[float], started: float) -> Optional[float]:
+    """Return the timeout left for the rest of an attempt after link acquisition.
+
+    Keeps one attempt bounded by a single budget rather than restarting it per phase.
+    Raises rather than returning zero, which both transports read as "wait forever".
+
+    :param float or None timeout: The attempt's timeout in seconds, or None if unbounded.
+    :param float started: The time the attempt began.
+    :rtype: float or None
+    :returns: The remaining timeout, or None when unbounded.
+    :raises ~azure.servicebus.exceptions.OperationTimeoutError: If no time is left.
+    """
+    if timeout is None:
+        return None
+    remaining = timeout - (time.monotonic() - started)
+    if remaining <= 0:
+        raise OperationTimeoutError(message="No time left for the operation after acquiring the AMQP link.")
+    return remaining
+
+
+def get_time_until_deadline(deadline: float) -> float:
+    """Return the seconds remaining before an absolute deadline.
+
+    Uses the same clock that created and checks the deadline, so all of the deadline
+    arithmetic moves together when a test fakes time.
+
+    :param float deadline: The absolute deadline.
+    :rtype: float
+    :returns: The seconds left, negative once the deadline has passed.
+    """
+    return deadline - time.monotonic()
+
+
+def check_link_ready_deadline(deadline: Optional[float]) -> None:
+    """Raise if an AMQP link has not reported ready by its deadline.
+
+    Reaching the deadline counts as expired. A strict comparison would also make a zero
+    budget depend on clock resolution, which is coarse on Windows.
+
+    :param float or None deadline: The absolute deadline, or None when unbounded.
+    """
+    if deadline is not None and time.monotonic() >= deadline:
+        raise OperationTimeoutError(message="Timed out waiting for the AMQP link to open.")
 
 
 def build_uri(address, entity):

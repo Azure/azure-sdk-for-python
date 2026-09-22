@@ -16,7 +16,9 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
-from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
+from ..models import _generated as _generated_models
+
+# type: ignore[attr-defined]
 from ._base import ResponseAlreadyExistsError
 from ._foundry_errors import FoundryBadRequestError, raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
@@ -250,8 +252,8 @@ class FoundryStorageProvider:
 
     async def create_response(
         self,
-        response: ResponseObject,
-        input_items: Iterable[OutputItem] | None,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         context: PlatformContext | None = None,
@@ -284,7 +286,9 @@ class FoundryStorageProvider:
                 raise ResponseAlreadyExistsError(response_id) from exc
             raise
 
-    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
         """Retrieve a stored response by its ID.
 
         :param response_id: The response identifier.
@@ -302,7 +306,9 @@ class FoundryStorageProvider:
         http_resp = await self._send_storage_request(request)
         return deserialize_response(http_resp.text())
 
-    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
         """Persist an updated response snapshot.
 
         :param response: The updated response model.  Must contain a valid ``id`` field.
@@ -343,7 +349,7 @@ class FoundryStorageProvider:
         before: str | None = None,
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem]:
+    ) -> list[_generated_models.OutputItem]:
         """Retrieve a page of input items for the given response.
 
         :param response_id: The response whose input items are being listed.
@@ -380,7 +386,7 @@ class FoundryStorageProvider:
 
     async def get_items(
         self, item_ids: Iterable[str], *, context: PlatformContext | None = None
-    ) -> list[OutputItem | None]:
+    ) -> list[_generated_models.OutputItem | None]:
         """Retrieve multiple items by their IDs in a single batch request.
 
         Positions in the returned list correspond to positions in *item_ids*.

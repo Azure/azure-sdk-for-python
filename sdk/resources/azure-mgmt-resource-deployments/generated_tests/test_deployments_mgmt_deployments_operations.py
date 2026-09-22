@@ -60,7 +60,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -149,7 +148,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -237,7 +235,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -309,7 +306,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -361,7 +357,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -377,6 +372,32 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                         }
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
+                    "resourcePredictions": [
+                        {
+                            "symbolicNamePath": ["str"],
+                            "apiVersion": "str",
+                            "extension": {
+                                "alias": "str",
+                                "config": {
+                                    "str": {
+                                        "keyVaultReference": {
+                                            "keyVault": {"id": "str"},
+                                            "secretName": "str",
+                                            "secretVersion": "str",
+                                        },
+                                        "value": {},
+                                    }
+                                },
+                                "configHash": "str",
+                                "configId": "str",
+                                "name": "str",
+                                "version": "str",
+                            },
+                            "identifiers": {},
+                            "resourceId": "str",
+                            "resourceType": "str",
+                        }
+                    ],
                     "template": {},
                     "templateLink": {
                         "contentVersion": "str",
@@ -454,7 +475,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -539,7 +559,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -592,7 +611,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -608,6 +626,32 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                         }
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
+                    "resourcePredictions": [
+                        {
+                            "symbolicNamePath": ["str"],
+                            "apiVersion": "str",
+                            "extension": {
+                                "alias": "str",
+                                "config": {
+                                    "str": {
+                                        "keyVaultReference": {
+                                            "keyVault": {"id": "str"},
+                                            "secretName": "str",
+                                            "secretVersion": "str",
+                                        },
+                                        "value": {},
+                                    }
+                                },
+                                "configHash": "str",
+                                "configId": "str",
+                                "name": "str",
+                                "version": "str",
+                            },
+                            "identifiers": {},
+                            "resourceId": "str",
+                            "resourceType": "str",
+                        }
+                    ],
                     "template": {},
                     "templateLink": {
                         "contentVersion": "str",
@@ -674,7 +718,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -758,7 +801,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -814,7 +856,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -830,6 +871,32 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                         }
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
+                    "resourcePredictions": [
+                        {
+                            "symbolicNamePath": ["str"],
+                            "apiVersion": "str",
+                            "extension": {
+                                "alias": "str",
+                                "config": {
+                                    "str": {
+                                        "keyVaultReference": {
+                                            "keyVault": {"id": "str"},
+                                            "secretName": "str",
+                                            "secretVersion": "str",
+                                        },
+                                        "value": {},
+                                    }
+                                },
+                                "configHash": "str",
+                                "configId": "str",
+                                "name": "str",
+                                "version": "str",
+                            },
+                            "identifiers": {},
+                            "resourceId": "str",
+                            "resourceType": "str",
+                        }
+                    ],
                     "template": {},
                     "templateLink": {
                         "contentVersion": "str",
@@ -899,7 +966,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -988,7 +1054,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -1045,7 +1110,6 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                                     "secretName": "str",
                                     "secretVersion": "str",
                                 },
-                                "type": "str",
                                 "value": {},
                             }
                         }
@@ -1061,6 +1125,32 @@ class TestDeploymentsMgmtDeploymentsOperations(AzureMgmtRecordedTestCase):
                         }
                     },
                     "parametersLink": {"uri": "str", "contentVersion": "str"},
+                    "resourcePredictions": [
+                        {
+                            "symbolicNamePath": ["str"],
+                            "apiVersion": "str",
+                            "extension": {
+                                "alias": "str",
+                                "config": {
+                                    "str": {
+                                        "keyVaultReference": {
+                                            "keyVault": {"id": "str"},
+                                            "secretName": "str",
+                                            "secretVersion": "str",
+                                        },
+                                        "value": {},
+                                    }
+                                },
+                                "configHash": "str",
+                                "configId": "str",
+                                "name": "str",
+                                "version": "str",
+                            },
+                            "identifiers": {},
+                            "resourceId": "str",
+                            "resourceType": "str",
+                        }
+                    ],
                     "template": {},
                     "templateLink": {
                         "contentVersion": "str",

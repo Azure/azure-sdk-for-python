@@ -12,19 +12,25 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
+from contextlib import aclosing
 import logging
+import os
 import threading
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, AsyncGenerator, cast
 
+from anyio import CancelScope
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.types import Message, Send
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
     flush_spans,
+    flush_spans_async,
     reset_request_context,
+    schedule_flush_spans,
     set_request_context,
 )
 from azure.ai.agentserver.core.tasks import (
@@ -43,15 +49,12 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
     streams,
 )
 
-from ..models._generated import (
-    AgentReference,
-    CreateResponse,
-)
+from ..models import _generated as _generated_models
 
 from .._id_generator import IdGenerator
 from .._egress import strip_internal_metadata
 from .._options import ResponsesServerOptions
-from .._response_context import PlatformContext, ResponseContext
+from .._response_context import PlatformContext, ResponseContext, _resolve_history_item_ids
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
     ResponseExecution,
@@ -117,6 +120,55 @@ if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+class _CreateStreamingResponse(StreamingResponse):
+    """Close request-owned iterators and flush before HTTP stream completion."""
+
+    def __init__(
+        self,
+        source: AsyncGenerator[str, None],
+        interval_seconds: float | None,
+        *,
+        headers: dict[str, str],
+    ) -> None:
+        self._source = source
+        self._stream = cast(AsyncGenerator[str, None], with_keep_alive(source, interval_seconds))
+        super().__init__(self._stream, media_type="text/event-stream", headers=headers)
+
+    async def stream_response(self, send: Send) -> None:
+        """Flush after stream work, including on send errors and disconnects.
+
+        :param send: The ASGI ``send`` callable for the response.
+        :type send: ~starlette.types.Send
+        """
+        finalized = False
+
+        async def finalize() -> None:
+            nonlocal finalized
+            if finalized:
+                return
+            finalized = True
+            # Starlette's older ASGI path cancels this task's AnyIO scope on
+            # disconnect. Finish iterator cleanup before flushing ended spans.
+            with CancelScope(shield=True):
+                try:
+                    await self._stream.aclose()
+                finally:
+                    try:
+                        await self._source.aclose()
+                    finally:
+                        await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+
+        async def send_with_flush(message: Message) -> None:
+            if message["type"] == "http.response.body" and not message.get("more_body", False):
+                await finalize()
+            await send(message)
+
+        try:
+            await super().stream_response(send_with_flush)
+        finally:
+            await finalize()
 
 
 def _extract_platform_context(request: Request) -> PlatformContext:
@@ -187,6 +239,67 @@ _conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("Conv
 _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
 
 
+_FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
+_DEFAULT_FLUSH_MODE = "async"
+_FLUSH_MODES = frozenset({"async", "background", "sync"})
+_invalid_flush_modes_warned: set[str] = set()
+_flush_mode_lock = threading.Lock()
+
+
+def _resolve_flush_mode(mode: str) -> str:
+    """Normalize and validate a configured flush mode.
+
+    :param mode: The configured flush mode.
+    :type mode: str
+    :return: A supported flush mode.
+    :rtype: str
+    """
+    normalized = (mode or "").strip().lower()
+    if normalized in _FLUSH_MODES:
+        return normalized
+    if normalized:
+        with _flush_mode_lock:
+            should_warn = normalized not in _invalid_flush_modes_warned
+            _invalid_flush_modes_warned.add(normalized)
+        if should_warn:
+            logger.warning(
+                "Unrecognised %s=%r; falling back to %r flush mode.",
+                _FLUSH_MODE_ENV,
+                mode,
+                _DEFAULT_FLUSH_MODE,
+            )
+    return _DEFAULT_FLUSH_MODE
+
+
+async def _flush_spans_for_mode(mode: str) -> None:
+    """Dispatch span flushing according to *mode* (see ``AGENTSERVER_FLUSH_MODE``).
+
+    ``force_flush`` blocks the calling thread until the exporter drains; doing
+    that inline on this ``async`` handler blocks the event loop and serialises
+    concurrent requests behind one export.  The mode selects the strategy:
+
+    * ``"async"`` (default) -> :func:`flush_spans_async`: off the event loop;
+      same durability, no head-of-line blocking under concurrency.
+    * ``"background"`` -> :func:`schedule_flush_spans`: return the response
+      first and flush in the background (lowest latency, but needs the platform
+      to grant a brief drain window before freezing).
+    * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
+
+    Any unrecognised value falls back to the ``"async"`` default (fail safe:
+    never silently drop telemetry).
+
+    :param mode: The flush mode; matched case-insensitively.
+    :type mode: str
+    """
+    normalized = _resolve_flush_mode(mode)
+    if normalized == "sync":
+        flush_spans()
+    elif normalized == "background":
+        schedule_flush_spans()
+    else:
+        await flush_spans_async()
+
+
 class _ResponseLogFilter(logging.Filter):
     """Attach response-scope IDs to every log record from context vars.
 
@@ -250,6 +363,26 @@ def _check_cancel_terminal_status(
         # Sentinel — caller builds the idempotent 200 itself.
         return JSONResponse({}, status_code=200, headers=headers)
     return None
+
+
+async def _stop_disconnect_monitor(
+    task: asyncio.Task[None] | None,
+    cancellation_signal: asyncio.Event,
+) -> None:
+    """Stop and await a request disconnect monitor.
+
+    :param task: Monitor task, or ``None`` when monitoring is disabled.
+    :type task: asyncio.Task[None] | None
+    :param cancellation_signal: Shared signal used to stop the monitor.
+    :type cancellation_signal: asyncio.Event
+    """
+    if task is None:
+        return
+    cancellation_signal.set()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
 
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
@@ -366,46 +499,30 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :keyword context: Optional response context to stamp cancellation cause.
         :paramtype context: ResponseContext | None
         """
-        # Create a task that resolves when _shutdown_requested fires.
-        # This avoids relying on the 0.5s poll interval for shutdown detection.
-        shutdown_waiter = asyncio.create_task(self._shutdown_requested.wait())
-        try:
-            while not cancellation_signal.is_set():
-                if self._shutdown_requested.is_set():
-                    if context is not None:
+        while not cancellation_signal.is_set():
+            if self._shutdown_requested.is_set():
+                if context is not None:
+                    context.shutdown.set()
+                cancellation_signal.set()
+                return
+            if await request.is_disconnected():
+                # Client disconnect on foreground. If shutdown is also
+                # in progress, prefer SHUTTING_DOWN cause — the
+                # disconnect is a side effect of server shutdown
+                # (Hypercorn closing connections during graceful
+                # drain), not an independent client action. (Spec 014
+                # Row 3 Path B / spec 024 Proposal #11.)
+                if context is not None:
+                    if self._shutdown_requested.is_set():
                         context.shutdown.set()
-                    cancellation_signal.set()
-                    return
-                if await request.is_disconnected():
-                    # Client disconnect on foreground. If shutdown is also
-                    # in progress, prefer SHUTTING_DOWN cause — the
-                    # disconnect is a side effect of server shutdown
-                    # (Hypercorn closing connections during graceful
-                    # drain), not an independent client action. (Spec 014
-                    # Row 3 Path B / spec 024 Proposal #11.)
-                    if context is not None:
-                        if self._shutdown_requested.is_set():
-                            context.shutdown.set()
-                        else:
-                            context.client_cancelled = True
-                    cancellation_signal.set()
-                    return
-                # Race: either shutdown fires or we poll again for disconnect
-                poll_task = asyncio.create_task(asyncio.sleep(0.5))
-                done, _ = await asyncio.wait(
-                    {shutdown_waiter, poll_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                if poll_task not in done:
-                    poll_task.cancel()
-                if shutdown_waiter in done:
-                    if context is not None:
-                        context.shutdown.set()
-                    cancellation_signal.set()
-                    return
-        finally:
-            if not shutdown_waiter.done():
-                shutdown_waiter.cancel()
+                    else:
+                        context.client_cancelled = True
+                cancellation_signal.set()
+                return
+            try:
+                await asyncio.wait_for(cancellation_signal.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                pass
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -414,9 +531,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     def _build_execution_context(
         self,
         *,
-        parsed: CreateResponse,
+        parsed: _generated_models.CreateResponse,
         response_id: str,
-        agent_reference: AgentReference | dict[str, Any],
+        agent_reference: _generated_models.AgentReference | dict[str, Any],
         agent_session_id: str | None = None,
         agent_session_guid: str | None = None,
         span: CreateSpan,
@@ -575,11 +692,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _hdrs = self._session_headers(agent_session_id)
         try:
             _context = ctx.context.platform_context if ctx.context else None
-            prefetched = await self._provider.get_history_item_ids(
+            prefetched = await _resolve_history_item_ids(
+                self._provider,
                 ctx.previous_response_id,
                 ctx.conversation_id,
                 self._runtime_options.default_fetch_history_count,
                 context=_context,
+                request_context=ctx.context,
             )
             ctx.prefetched_history_ids = prefetched
             if ctx.context is not None:
@@ -753,9 +872,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         platform_ctx_token = set_request_context(platform_context)
 
         disconnect_task: asyncio.Task[None] | None = None
+        stream_owns_flush = False
         try:
             if ctx.stream:
-                raw_iter = self._orchestrator.run_stream(ctx)
+                raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
 
                 # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
@@ -773,8 +893,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 async def _iter_with_context():  # type: ignore[return]
                     stream_ctx_token = set_request_context(platform_context)
                     try:
-                        async for chunk in raw_iter:
-                            yield chunk
+                        async with aclosing(raw_iter):
+                            async for chunk in raw_iter:
+                                yield chunk
                     except (asyncio.CancelledError, GeneratorExit):
                         # B17: Hypercorn cancels the generator when the client
                         # disconnects. For a NON-background stream, stamp
@@ -794,17 +915,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         raise
                     finally:
                         reset_request_context(stream_ctx_token)
-                        if disconnect_task and not disconnect_task.done():
-                            disconnect_task.cancel()
+                        await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
 
-                sse_response = StreamingResponse(
-                    with_keep_alive(
-                        _iter_with_context(),
-                        self._runtime_options.sse_keep_alive_interval_seconds,
-                    ),
-                    media_type="text/event-stream",
+                sse_response = _CreateStreamingResponse(
+                    _iter_with_context(),
+                    # Ephemeral orchestration already owns heartbeats. A second
+                    # pump would advance its handler ahead of HTTP sends.
+                    self._runtime_options.sse_keep_alive_interval_seconds if ctx.store else None,
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
+                stream_owns_flush = True
                 return sse_response
 
             if not ctx.background:
@@ -847,7 +967,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         ),
                     )
                 finally:
-                    disconnect_task.cancel()
+                    await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
 
             snapshot = await self._orchestrator.run_background(ctx)
             logger.info(
@@ -949,15 +1069,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
             reset_request_context(platform_ctx_token)
-            # Flush pending spans before the response is sent.
-            # BatchSpanProcessor exports on a timer; in hosted sandboxes
-            # the platform may freeze the process after the HTTP response,
-            # losing any buffered spans (e.g. LangGraph per-node spans).
-            flush_spans()
             try:
-                _otel_context.detach(baggage_token)
-            except ValueError:
-                pass
+                # Flush pending spans before the process may be frozen. A lazy
+                # streaming body owns its flush (see ``stream_owns_flush``): no
+                # handler spans exist yet and flushing here would delay the first
+                # real SSE event. Everything else flushes here.
+                # ``AGENTSERVER_FLUSH_MODE`` selects the strategy (see
+                # ``_flush_spans_for_mode``); the default keeps the flush off the
+                # event loop without dropping telemetry.
+                if not stream_owns_flush:
+                    await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+            finally:
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
 
     async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-branches
         """Route handler for ``GET /responses/{response_id}``.
@@ -1414,6 +1540,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
+        # The wire may already be closed while terminal persistence is pending.
+        # Drain the producer before deleting; cancelling DELETE must not cancel it.
+        execution_task = record.execution_task
+        if execution_task is not None:
+            if not execution_task.done():
+                await asyncio.wait({execution_task})
+            if not execution_task.cancelled():
+                error = execution_task.exception()
+                if error is not None:
+                    logger.warning(
+                        "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
+                    )
+
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
             # Race: the background task's eager eviction (try_evict) removed
@@ -1825,11 +1964,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         deadline = asyncio.get_running_loop().time() + float(self._runtime_options.shutdown_grace_period_seconds)
         while True:
             pending = [
-                record
-                for record in records
-                if record.mode_flags.background
-                and record.execution_task is not None
-                and record.status in {"queued", "in_progress"}
+                record for record in records if record.execution_task is not None and not record.execution_task.done()
             ]
             if not pending:
                 break
@@ -1840,7 +1975,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # After grace period: mark non-resilient-background responses as failed.
         # Resilient+background responses are left as-is — the resilient task
         # framework will re-invoke the handler on restart.
-        for record in records:
+        # Pending records may have been replaced or evicted while draining.
+        for record in await self._runtime_state.list_records():
             if record.status not in {"queued", "in_progress"}:
                 continue
             is_resilient_background = is_resilient_server and record.mode_flags.store and record.mode_flags.background

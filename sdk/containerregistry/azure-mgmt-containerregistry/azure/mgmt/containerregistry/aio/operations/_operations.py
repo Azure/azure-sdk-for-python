@@ -126,7 +126,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -239,7 +239,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RegistriesOperations:
+class RegistriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2238,7 +2238,7 @@ class RegistriesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ArchivesOperations:
+class ArchivesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2259,9 +2259,9 @@ class ArchivesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2271,7 +2271,7 @@ class ArchivesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -2351,9 +2351,9 @@ class ArchivesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2364,7 +2364,7 @@ class ArchivesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _create_initial(
         self,
@@ -2551,9 +2551,9 @@ class ArchivesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2564,7 +2564,7 @@ class ArchivesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_create(
         self,
@@ -2750,9 +2750,9 @@ class ArchivesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2763,7 +2763,7 @@ class ArchivesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def update(
         self,
@@ -2863,9 +2863,9 @@ class ArchivesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2874,7 +2874,7 @@ class ArchivesOperations:
                 "archive_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -2941,9 +2941,9 @@ class ArchivesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -2952,7 +2952,7 @@ class ArchivesOperations:
                 "archive_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -3020,9 +3020,9 @@ class ArchivesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3031,7 +3031,7 @@ class ArchivesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, package_type: str, **kwargs: Any
@@ -3138,7 +3138,7 @@ class ArchivesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ArchiveVersionsOperations:
+class ArchiveVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3159,9 +3159,9 @@ class ArchiveVersionsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3172,7 +3172,7 @@ class ArchiveVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def get(
         self,
@@ -3261,9 +3261,9 @@ class ArchiveVersionsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3274,7 +3274,7 @@ class ArchiveVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _create_initial(
         self,
@@ -3350,9 +3350,9 @@ class ArchiveVersionsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3363,7 +3363,7 @@ class ArchiveVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_create(
         self,
@@ -3445,9 +3445,9 @@ class ArchiveVersionsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3457,7 +3457,7 @@ class ArchiveVersionsOperations:
                 "archive_version_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -3531,9 +3531,9 @@ class ArchiveVersionsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3543,7 +3543,7 @@ class ArchiveVersionsOperations:
                 "archive_version_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_delete(
         self,
@@ -3620,9 +3620,9 @@ class ArchiveVersionsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3632,7 +3632,7 @@ class ArchiveVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, package_type: str, archive_name: str, **kwargs: Any
@@ -3744,7 +3744,7 @@ class ArchiveVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CacheRulesOperations:
+class CacheRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4574,7 +4574,7 @@ class CacheRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CredentialSetsOperations:
+class CredentialSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5413,7 +5413,7 @@ class CredentialSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConnectedRegistriesOperations:
+class ConnectedRegistriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6394,9 +6394,9 @@ class ConnectedRegistriesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6405,7 +6405,7 @@ class ConnectedRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def resync(
         self, resource_group_name: str, registry_name: str, connected_registry_name: str, **kwargs: Any
@@ -6482,7 +6482,7 @@ class ConnectedRegistriesOperations:
         return deserialized  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7075,7 +7075,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ReplicationsOperations:
+class ReplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7908,7 +7908,7 @@ class ReplicationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ScopeMapsOperations:
+class ScopeMapsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8737,7 +8737,7 @@ class ScopeMapsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TokensOperations:
+class TokensOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9558,7 +9558,7 @@ class TokensOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExportPipelinesOperations:
+class ExportPipelinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9579,9 +9579,9 @@ class ExportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9590,7 +9590,7 @@ class ExportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -9667,9 +9667,9 @@ class ExportPipelinesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9679,7 +9679,7 @@ class ExportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _create_initial(
         self,
@@ -9858,9 +9858,9 @@ class ExportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9870,7 +9870,7 @@ class ExportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_create(
         self,
@@ -9952,9 +9952,9 @@ class ExportPipelinesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9962,7 +9962,7 @@ class ExportPipelinesOperations:
                 "export_pipeline_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -10028,9 +10028,9 @@ class ExportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10038,7 +10038,7 @@ class ExportPipelinesOperations:
                 "export_pipeline_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, export_pipeline_name: str, **kwargs: Any
@@ -10103,11 +10103,11 @@ class ExportPipelinesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
@@ -10212,7 +10212,7 @@ class ExportPipelinesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ImportPipelinesOperations:
+class ImportPipelinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10233,9 +10233,9 @@ class ImportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10244,7 +10244,7 @@ class ImportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10321,9 +10321,9 @@ class ImportPipelinesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10333,7 +10333,7 @@ class ImportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _create_initial(
         self,
@@ -10512,9 +10512,9 @@ class ImportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10524,7 +10524,7 @@ class ImportPipelinesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_create(
         self,
@@ -10606,9 +10606,9 @@ class ImportPipelinesOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10616,7 +10616,7 @@ class ImportPipelinesOperations:
                 "import_pipeline_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10682,9 +10682,9 @@ class ImportPipelinesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10692,7 +10692,7 @@ class ImportPipelinesOperations:
                 "import_pipeline_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, import_pipeline_name: str, **kwargs: Any
@@ -10757,11 +10757,11 @@ class ImportPipelinesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
@@ -10866,7 +10866,7 @@ class ImportPipelinesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PipelineRunsOperations:
+class PipelineRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10887,9 +10887,9 @@ class PipelineRunsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10898,7 +10898,7 @@ class PipelineRunsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def get(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -10975,9 +10975,9 @@ class PipelineRunsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10987,7 +10987,7 @@ class PipelineRunsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _create_initial(
         self,
@@ -11163,9 +11163,9 @@ class PipelineRunsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11175,7 +11175,7 @@ class PipelineRunsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_create(
         self,
@@ -11257,9 +11257,9 @@ class PipelineRunsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11267,7 +11267,7 @@ class PipelineRunsOperations:
                 "pipeline_run_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -11333,9 +11333,9 @@ class PipelineRunsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": [
+            "2026-09-01-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11343,7 +11343,7 @@ class PipelineRunsOperations:
                 "pipeline_run_name",
             ]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, registry_name: str, pipeline_run_name: str, **kwargs: Any
@@ -11408,11 +11408,11 @@ class PipelineRunsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
+        method_added_on="2026-09-01-preview",
         params_added_on={
-            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
+            "2026-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "registry_name", "accept"]
         },
-        api_versions_list=["2026-03-01-preview"],
+        api_versions_list=["2026-09-01-preview"],
     )
     def list(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
@@ -11517,7 +11517,7 @@ class PipelineRunsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WebhooksOperations:
+class WebhooksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
