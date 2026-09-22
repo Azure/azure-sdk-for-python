@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# TypeSpec commit declaring the existing prompt_logprobs server default explicitly.
-commit: ad04115d8266b5d2929654132219526cab6ab559
+# Validated Python-specific preview inputs, including loom-models.tsp.
+commit: d912f0d0bc6af9e87e0c0833922dd85fa32abf97
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

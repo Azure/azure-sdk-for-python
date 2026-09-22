@@ -14,7 +14,6 @@ The poll loop uses an *error budget* rather than a flat wall-clock deadline:
   * Any healthy 200 in between disarms the budget, so intermittent blips never
     trip it.
 """
-
 from __future__ import annotations
 
 import itertools
@@ -74,7 +73,6 @@ class _FakeClient:
 @pytest.fixture
 def clock(monkeypatch):
     """Deterministic monotonic clock; ``sleep`` advances it by its argument."""
-
     class _Clock:
         now: float = 1000.0
 
@@ -172,12 +170,15 @@ def test_fresh_request_not_found_retries_then_completes(clock, caplog):
     assert len(sess._client.get_urls) == 2
     assert clock.now == 1001.0
     assert (
-        "transient request-store 404 for session_deadbeef/req-1 " "(op=optim_step, 0.0s/120.0s grace); retrying in 1.0s"
+        "transient request-store 404 for session_deadbeef/req-1 "
+        "(op=optim_step, 0.0s/120.0s grace); retrying in 1.0s"
     ) in caplog.text
 
 
 def test_request_not_found_stops_retrying_after_grace(clock):
-    sess = _make_session(itertools.repeat(_FakeResponse(404, {"detail": "Request not found"})))
+    sess = _make_session(
+        itertools.repeat(_FakeResponse(404, {"detail": "Request not found"}))
+    )
 
     with pytest.raises(AssertionError, match="unexpected raise_for_status on 404"):
         sess._post_and_poll(_SUBPATH, {})
@@ -210,7 +211,9 @@ def test_other_404_is_retried(clock):
     ],
 )
 def test_404_body_variants_are_retried(clock, body):
-    sess = _make_session([_FakeResponse(404, body), _FakeResponse(200, _COMPLETED)])
+    sess = _make_session(
+        [_FakeResponse(404, body), _FakeResponse(200, _COMPLETED)]
+    )
 
     result = sess._post_and_poll(_SUBPATH, {})
 
@@ -239,7 +242,10 @@ def test_request_not_found_retry_delay_is_exponential_then_capped(clock):
         base_delay_sec=1.0,
         max_delay_sec=10.0,
     )
-    assert [retry_state.next_delay() for _ in range(7)] == [1.0, 2.0, 4.0, 8.0, 10.0, 10.0, 10.0]
+    assert [
+        retry_state.next_delay()
+        for _ in range(7)
+    ] == [1.0, 2.0, 4.0, 8.0, 10.0, 10.0, 10.0]
 
 
 def test_disabled_budget_retries_through_errors(clock, monkeypatch):
@@ -296,7 +302,8 @@ def test_happy_path_operation_timeline_has_stable_fields(clock, caplog):
         "path=/fine_tuning/sessions/session_deadbeef/optim_step"
     ) in caplog.text
     assert (
-        "submit_completed session_id=session_deadbeef request_id=req-1 " "op=optim_step elapsed_ms=0.0"
+        "submit_completed session_id=session_deadbeef request_id=req-1 "
+        "op=optim_step elapsed_ms=0.0"
     ) in caplog.text
     assert (
         "result_consumed session_id=session_deadbeef request_id=req-1 op=optim_step "
@@ -304,7 +311,9 @@ def test_happy_path_operation_timeline_has_stable_fields(clock, caplog):
     ) in caplog.text
 
 
-def test_retryable_resubmit_preserves_operation_timeline(clock, caplog, monkeypatch):
+def test_retryable_resubmit_preserves_operation_timeline(
+    clock, caplog, monkeypatch
+):
     responses = [
         _FakeResponse(200, _FAILED_RETRYABLE),
         _FakeResponse(200, _COMPLETED),
@@ -318,7 +327,8 @@ def test_retryable_resubmit_preserves_operation_timeline(clock, caplog, monkeypa
     assert result is not None
     assert "submit_started session_id=session_deadbeef op=optim_step" in caplog.text
     assert (
-        "submit_completed session_id=session_deadbeef request_id=req-2 " "op=optim_step elapsed_ms=0.0"
+        "submit_completed session_id=session_deadbeef request_id=req-2 "
+        "op=optim_step elapsed_ms=0.0"
     ) in caplog.text
     assert (
         "result_consumed session_id=session_deadbeef request_id=req-2 op=optim_step "
@@ -344,6 +354,40 @@ def test_non_retryable_failure_is_not_resubmitted(clock):
 
     with pytest.raises(RuntimeError):
         sess._post_and_poll(_SUBPATH, {})
+    assert sess._client.post_count == 1
+
+
+def test_engine_dead_surfaces_as_a_typed_error_not_runtime_error(clock):
+    """End-to-end through the poller, not just the classifier.
+
+    The orphan sweep fails requests for a lease-expired model with
+    ``engine_dead``. If the poll classifier does not map that code it returns
+    None and the poller falls through to a bare RuntimeError, so the caller
+    cannot branch on the failure and the typed contract the synchronous 409
+    path already honours is silently lost on the LRO path.
+    """
+    from azure.ai.finetuningsessions import TrainingEngineError
+
+    responses = [
+        _FakeResponse(
+            200,
+            {
+                "status": "failed",
+                "error": "Model 'model_x' failed because its engine died.",
+                "error_code": "engine_dead",
+                "debug_ref": "cafebabe9876",
+            },
+        )
+    ]
+    sess = _make_session(responses)
+
+    with pytest.raises(TrainingEngineError) as exc_info:
+        sess._post_and_poll(_SUBPATH, {})
+
+    assert exc_info.value.error_code == "engine_dead"
+    assert exc_info.value.debug_ref == "cafebabe9876"
+    # The weights are gone — resubmitting cannot succeed, so the poller must
+    # not treat this as the retryable contract and re-POST.
     assert sess._client.post_count == 1
 
 
@@ -380,7 +424,8 @@ def test_classify_poll_failure_flags_should_retry():
     )
 
     typed = _classify_poll_failure(
-        {"status": "failed", "should_retry": True, "retry_after_sec": 45, "error": "timed out"}
+        {"status": "failed", "should_retry": True,
+         "retry_after_sec": 45, "error": "timed out"}
     )
     assert isinstance(typed, RequestRetryableError)
     assert typed.retry_after_sec == 45.0
@@ -394,7 +439,9 @@ def test_classify_no_retry_without_flag():
         RequestRetryableError,
     )
 
-    typed = _classify_poll_failure({"status": "failed", "code": "request_orphaned", "error": "gone"})
+    typed = _classify_poll_failure(
+        {"status": "failed", "code": "request_orphaned", "error": "gone"}
+    )
     assert not isinstance(typed, RequestRetryableError)
 
 
@@ -418,25 +465,25 @@ class TestErrorBudget:
 
     def test_sustained_streak_past_deadline_raises(self, clock):
         b = self._budget(5.0)
-        b.consume("HTTP 503")  # arm at t=1000 -> deadline 1005
-        clock.now += 6.0  # advance past the deadline
+        b.consume("HTTP 503")          # arm at t=1000 -> deadline 1005
+        clock.now += 6.0               # advance past the deadline
         with pytest.raises(TimeoutError, match="HTTP 503:5.0"):
             b.consume("HTTP 503")
 
     def test_clear_resets_the_streak(self, clock):
         b = self._budget(5.0)
-        b.consume("err")  # arm at 1000 -> deadline 1005
-        clock.now += 6.0  # would be past the deadline...
-        b.clear()  # ...but a healthy poll disarms it
-        b.consume("err")  # re-arms fresh; must not raise
+        b.consume("err")               # arm at 1000 -> deadline 1005
+        clock.now += 6.0               # would be past the deadline...
+        b.clear()                      # ...but a healthy poll disarms it
+        b.consume("err")               # re-arms fresh; must not raise
         clock.now += 1.0
-        b.consume("err")  # still within the new budget
+        b.consume("err")               # still within the new budget
 
     def test_none_budget_is_disabled(self, clock):
         b = self._budget(None)
         b.consume("err")
         clock.now += 10_000.0
-        b.consume("err")  # never raises when disabled
+        b.consume("err")               # never raises when disabled
 
     def test_exception_factory_controls_type(self, clock):
         b = self._budget(5.0, exc=RuntimeError)

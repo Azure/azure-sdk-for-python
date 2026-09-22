@@ -65,3 +65,4 @@ pytyped = ["py.typed"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+norecursedirs = ["review_tests", "build", "dist", ".*"]

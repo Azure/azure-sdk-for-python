@@ -8,8 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Literal, Mapping, overload
+from typing import Any, Dict, Literal, Mapping, Optional, overload
 
+from .._utils.model_base import Model as _Model, rest_field
 from . import _models
 
 MAX_IMAGE_BYTES = 10_000_000
@@ -21,7 +22,7 @@ _IMAGE_MAGIC_MATCHERS = {
 }
 
 
-class FromCheckpoint(_models.FromCheckpoint):
+class FromCheckpoint(_Model):
     """Identifies a saved training checkpoint to bootstrap a new session from.
 
     When passed to :meth:`~azure.ai.finetuningsessions.FineTuningSession.create`,
@@ -35,8 +36,32 @@ class FromCheckpoint(_models.FromCheckpoint):
     :vartype checkpoint_id: str
     """
 
+    source_session_id: str = rest_field()
+    """The ``session_<session_id>`` of the session that saved the checkpoint."""
 
-class ImageChunk(_models.ImageChunk):
+    checkpoint_id: str = rest_field()
+    """Name of the checkpoint within the source session."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_session_id: str,
+        checkpoint_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImageChunk(_Model):
     """Raw image bytes embedded in a model input.
 
     :ivar data: Encoded image bytes. Required.
@@ -46,6 +71,11 @@ class ImageChunk(_models.ImageChunk):
     :ivar expected_tokens: Number of image placeholder tokens. Required.
     :vartype expected_tokens: int
     """
+
+    type: Literal["image"] = rest_field()
+    data: bytes = rest_field()
+    format: str = rest_field()
+    expected_tokens: int = rest_field()
 
     @overload
     def __init__(
@@ -70,14 +100,66 @@ class ImageChunk(_models.ImageChunk):
         if self.format not in _IMAGE_MAGIC_MATCHERS:
             raise ValueError("image format must be jpeg, png, or webp")
         if not _IMAGE_MAGIC_MATCHERS[self.format](self.data):
-            image_format = getattr(self.format, "value", self.format)
-            raise ValueError(f"declared image format {image_format!r} does not match the image signature")
+            raise ValueError(f"declared image format {self.format!r} does not match the image signature")
         if self.expected_tokens < 1:
             raise ValueError("expected_tokens must be positive")
 
     @property
     def length(self) -> int:
         return self.expected_tokens
+
+
+class SampleOperationResult(_models.SampleOperationResult, discriminator="sample"):
+    """Sampling result with the tested preview's nested nullable annotations.
+
+    The pinned emitter cannot represent nested nullable tuple arrays. These
+    two fields therefore use the supported model override, not generated-file
+    rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
+    """
+
+    prompt_logprobs: Optional[list[Optional[float]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sequences: list[_models.SampledSequence],
+        prompt_logprobs: Optional[list[Optional[float]]] = None,
+        topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = None,
+        metrics: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SaveCheckpointRequest(_models.SaveCheckpointRequest):
+    """Keep the preview's published ``typing.Dict`` annotation and overload."""
+
+    metrics: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: str,
+        step_number: Optional[int] = None,
+        metrics: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ModelInput(_models.ModelInput):
@@ -97,6 +179,8 @@ __all__: list[str] = [
     "FromCheckpoint",
     "ImageChunk",
     "ModelInput",
+    "SampleOperationResult",
+    "SaveCheckpointRequest",
 ]
 
 

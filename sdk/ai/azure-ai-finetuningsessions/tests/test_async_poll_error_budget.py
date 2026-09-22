@@ -11,7 +11,6 @@ unit tests). These tests exercise the async loop integration: healthy pending
 200s are unbounded and clear the budget, while a sustained error streak past
 ``error_budget_sec`` raises ``TimeoutError``.
 """
-
 from __future__ import annotations
 
 import itertools
@@ -72,7 +71,6 @@ class _FakeAsyncPostPollClient:
 @pytest.fixture
 def clock(monkeypatch):
     """Deterministic monotonic clock; ``sleep`` advances it by its argument."""
-
     class _Clock:
         now: float = 1000.0
 
@@ -135,7 +133,9 @@ async def test_long_queue_wait_then_complete_does_not_time_out(clock):
     assert clock.now >= 1000.0 + _BUDGET
 
 
-async def test_async_operation_timeline_includes_label_and_stable_fields(clock, caplog):
+async def test_async_operation_timeline_includes_label_and_stable_fields(
+    clock, caplog
+):
     client = _FakeAsyncPostPollClient()
     token = _aio_mod.set_operation_label("step=4")
     try:
@@ -157,7 +157,8 @@ async def test_async_operation_timeline_includes_label_and_stable_fields(clock, 
         "label=step=4"
     ) in caplog.text
     assert (
-        "submit_completed session_id=session_deadbeef request_id=req-1 " "op=optim_step elapsed_ms=0.0 label=step=4"
+        "submit_completed session_id=session_deadbeef request_id=req-1 "
+        "op=optim_step elapsed_ms=0.0 label=step=4"
     ) in caplog.text
     assert (
         "result_consumed session_id=session_deadbeef request_id=req-1 op=optim_step "
@@ -165,7 +166,9 @@ async def test_async_operation_timeline_includes_label_and_stable_fields(clock, 
     ) in caplog.text
 
 
-async def test_result_timeline_separates_operation_and_poll_elapsed(clock, caplog):
+async def test_result_timeline_separates_operation_and_poll_elapsed(
+    clock, caplog
+):
     with caplog.at_level(logging.INFO, logger=_aio_mod.__name__):
         await _poll(
             [
@@ -243,7 +246,8 @@ async def test_fresh_request_not_found_retries_then_completes(clock, caplog):
     assert result is not None
     assert clock.now == 1001.0
     assert (
-        "transient request-store 404 for session_deadbeef/req-1 " "(op=optim_step, 0.0s/120.0s grace); retrying in 1.0s"
+        "transient request-store 404 for session_deadbeef/req-1 "
+        "(op=optim_step, 0.0s/120.0s grace); retrying in 1.0s"
     ) in caplog.text
 
 
@@ -275,7 +279,9 @@ async def test_other_404_is_retried(clock):
     ],
 )
 async def test_404_body_variants_are_retried(clock, body):
-    result = await _poll([_FakeResponse(404, body), _FakeResponse(200, _COMPLETED)])
+    result = await _poll(
+        [_FakeResponse(404, body), _FakeResponse(200, _COMPLETED)]
+    )
 
     assert result is not None
     assert clock.now == 1001.0
@@ -320,6 +326,26 @@ async def test_poll_raises_retryable_on_should_retry(clock):
     assert ei.value.retry_after_sec == 5.0
 
 
+async def test_poll_raises_engine_dead_as_typed_error(clock):
+    # The async poller must honour the same typed contract as the sync one:
+    # an unmapped code degrades to a bare RuntimeError and the caller loses the
+    # ability to branch on an engine death.
+    from azure.ai.finetuningsessions import TrainingEngineError
+
+    envelope = {
+        "status": "failed",
+        "error": "Model 'model_x' failed because its engine died.",
+        "error_code": "engine_dead",
+        "debug_ref": "cafebabe9876",
+    }
+
+    with pytest.raises(TrainingEngineError) as exc_info:
+        await _poll([_FakeResponse(200, envelope)])
+
+    assert exc_info.value.error_code == "engine_dead"
+    assert exc_info.value.debug_ref == "cafebabe9876"
+
+
 async def test_poll_raises_completed_result_unavailable_without_retry(clock):
     from azure.ai.finetuningsessions import OperationResultUnavailableError
 
@@ -342,7 +368,6 @@ async def test_poll_raises_completed_result_unavailable_without_retry(clock):
 # pipelined *_post()/*_async() public surfaces get the same recovery as the
 # direct _post_and_poll path (they all route through _poll_with_resubmit).
 # ---------------------------------------------------------------------------
-
 
 def _patch_poll_post(monkeypatch, *, poll_side_effects):
     """Stub _aio_mod._poll (scripted) and _aio_mod._post (records resubmits)."""
@@ -408,7 +433,9 @@ async def test_pending_requests_resubmit_exhausts_and_raises(clock, monkeypatch)
         _RRE("gone", error_code="request_orphaned", retry_after_sec=1.0)
         for _ in range(_aio_mod._MAX_REQUEST_RETRIES + 5)
     ]
-    poll_calls, post_calls, _ = _patch_poll_post(monkeypatch, poll_side_effects=always_retryable)
+    poll_calls, post_calls, _ = _patch_poll_post(
+        monkeypatch, poll_side_effects=always_retryable
+    )
 
     spec = _aio_mod._PostSpec("req-1", "optim_step", "/sub", object(), None)
     pending = _aio_mod.PendingRequests(None, "session_deadbeef", [spec])

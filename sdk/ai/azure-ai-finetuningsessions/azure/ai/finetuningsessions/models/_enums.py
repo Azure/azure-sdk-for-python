@@ -10,19 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class _MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of _MisalignmentErrorType."""
-
-    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
-    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
-    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
-    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
-    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
-    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
-    OTHER = "other"
-    """OTHER."""
-
-
 class CheckpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Fine-tuning checkpoint type."""
 
@@ -43,35 +30,10 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RED_TEAMS_V1_PREVIEW."""
     INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
     """INSIGHTS_V1_PREVIEW."""
-    AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
-    """AGENT_INSIGHTS_V1_PREVIEW."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
     """MEMORY_STORES_V1_PREVIEW."""
-    ROUTINES_V2_PREVIEW = "Routines=V2Preview"
-    """ROUTINES_V2_PREVIEW."""
-    SKILLS_V1_PREVIEW = "Skills=V1Preview"
-    """SKILLS_V1_PREVIEW."""
-    DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
-    """DATA_GENERATION_JOBS_V1_PREVIEW."""
-    MODELS_V1_PREVIEW = "Models=V1Preview"
-    """MODELS_V1_PREVIEW."""
-    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
-    """AGENTS_OPTIMIZATION_V2_PREVIEW."""
-    MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
-    """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
     FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
     """FINETUNING_SESSIONS_V1_PREVIEW."""
-
-
-class ImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported encodings for an image supplied as model input."""
-
-    JPEG = "jpeg"
-    """JPEG image encoding."""
-    PNG = "png"
-    """PNG image encoding."""
-    WEBP = "webp"
-    """WebP image encoding."""
 
 
 class LossFn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -90,29 +52,29 @@ class LossFn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Normalized state of an SDK convenience operation."""
+    """Lifecycle status of an async fine-tuning operation — standard Azure LRO values."""
 
     RUNNING = "running"
-    """Work is in progress."""
+    """Operation is in progress."""
     SUCCEEDED = "succeeded"
-    """Work completed successfully."""
+    """Operation completed successfully."""
     FAILED = "failed"
-    """Work failed."""
+    """Operation failed."""
 
 
 class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Discriminator for normalized SDK convenience results."""
+    """Discriminator values for async fine-tuning operation results."""
 
     FORWARD_BACKWARD = "forward_backward"
-    """A forward or forward-backward result."""
+    """A forward-backward pass operation."""
     OPTIM_STEP = "optim_step"
-    """An optimizer-step result."""
+    """An optimizer step operation."""
     SAMPLE = "sample"
-    """A sampling result."""
+    """A sampling operation."""
     SAVE_CHECKPOINT = "save_checkpoint"
-    """A saved training checkpoint."""
+    """A training checkpoint save operation."""
     SAVE_SAMPLER_WEIGHTS = "save_sampler_weights"
-    """Saved sampler weights."""
+    """A sampler-weights save operation."""
 
 
 class SessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,14 +100,3 @@ class SessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRAINING = "training"
     """A training session for fine-tuning a model."""
-
-
-class TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Training tiers available for fine-tuning sessions."""
-
-    GLOBAL_STANDARD = "GlobalStandard"
-    """Standard training using globally available capacity."""
-    DATAZONE_STANDARD = "DatazoneStandard"
-    """Standard training constrained to the applicable data zone."""
-    DEVELOPER_TIER = "DeveloperTier"
-    """Developer-tier training, subject to service eligibility."""

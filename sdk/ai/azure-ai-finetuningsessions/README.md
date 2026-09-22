@@ -4,6 +4,12 @@ Preview client library for interactive supervised and reinforcement fine-tuning
 in Microsoft Foundry. Create a session, submit training or sampling requests,
 and save checkpoints with synchronous or asynchronous Python clients.
 
+This preview preserves the tested Loom SDK's public API and behavior at commit
+`485774df502642879fdf3a53777be4a0d95155dc`, with the agreed package/import rename.
+The public SDK is reproducibly generated from TypeSpec plus maintained Python
+customizations. See [GENERATION.md](GENERATION.md) for validation, local source
+provenance, and deliberately deferred review fixes.
+
 ## Getting started
 
 ### Install the package
@@ -60,8 +66,8 @@ client = FineTuningSessionClient(
 ```
 
 `AzureKeyCredential` is also supported when API-key authentication is enabled for
-the endpoint. Credential selection is preserved in handwritten client hooks so
-it survives regeneration. HTTPS is the default. The `allow_insecure_http` option
+the endpoint. Credential selection is preserved exactly as in Loom's configuration
+and client customization. HTTPS is the default. The `allow_insecure_http` option
 does not disable bearer-token HTTPS enforcement for remote endpoints; its HTTP
 exception is restricted to loopback development servers.
 
@@ -95,20 +101,21 @@ model rather than assuming a client-side default.
 
 ## Generated operations versus convenience methods
 
-- Generated `sessions.create`, `training.forward`, `training.forward_backward`,
-    `training.optimizer_step`, checkpoint, and sampling methods expose the REST
-    submission response. HTTP 200 does **not** mean the GPU work has finished.
-- Poll `operations.get` with the returned `request_id`. The raw status is
-    `pending`, `completed`, or `failed`. Completed envelopes contain `result`;
-    failed envelopes can include retry and diagnostic hints.
-- Convenience methods handle this protocol and return normalized
-    `OperationResult` objects. They preserve the established `optim_step` name,
-    retries, chunking, heartbeat, session-ID handling, and typed errors.
-- Session list results retain `data` and the explicit `cursor`; advance `offset`
-    and `limit` yourself. Checkpoint lists return their complete envelope.
-- All generated and convenience requests use `/fine_tuning/sessions`, including
-    request polling. No route-selection flag or gateway rewrite is required to
-    select the existing route family.
+Use `FineTuningSession` or the async client's convenience methods for training,
+sampling, checkpoints, and session lifecycle operations, as in the tested Loom
+SDK. They submit HTTP 200 requests, poll the returned request identifier, and
+normalize results with the existing retries, chunking, heartbeat, and error handling.
+
+The older raw `begin_*` surface is retained through supported operation hooks,
+including its Azure LRO behavior; it is not a newly corrected request-ID poller. Likewise,
+raw `operations.get` still declares `OperationResult`, and raw `sessions.create`
+returns JSON rather than the public-only `CreateSessionResponse` model. These
+are known legacy behaviors, not proof that every raw operation matches
+the service's asynchronous protocol. HTTP 200 does not mean GPU work has finished.
+
+All generated and convenience requests use `/fine_tuning/sessions`. No route
+selection flag or gateway rewrite is needed. The public-only `use_legacy_routes`
+option and compatibility adapters are not included in this Loom parity baseline.
 
 ## Compatibility with earlier previews
 
@@ -118,37 +125,16 @@ helpers, and environment-variable names remain available. In particular,
 omitting `lora_config` still omits it from the convenience request; a service
 that requires an explicit rank can reject that request as before.
 
-The synchronous and asynchronous clients use `/fine_tuning/sessions` directly.
-The earlier `use_legacy_routes` constructor option remains accepted as a
-compatibility no-op: omitting it, setting `False`, and setting `True` all send
-the same routes. It does not install a rewrite policy or alter custom pipelines.
-The client never probes a second route or resubmits a POST merely because a
-route failed.
+Public operation keywords and model declarations match the pinned Loom
+API, including `body`, `operation_id`, and explicit per-call `api_version`.
+This replaces the public-only regenerated surface; callers that adopted its
+additional models, methods, or adapters must use the Loom surface instead.
+`ApiError`, `ApiErrorResponse`, the top-level typed exceptions, and established
+convenience APIs remain available as in Loom.
 
-Earlier operation keywords `body`, `operation_id`, and per-call `api_version`
-are accepted by handwritten adapters. Per-call API versions do not mutate the
-shared client or leak into transport options. `ApiError` and `ApiErrorResponse`
-remain importable from `models`.
-
-The legacy `sessions.begin_create`, `sessions.begin_unload`,
-`training.begin_forward_backward`, `training.begin_optim_step`,
-`checkpoints.begin_save`, `checkpoints.begin_save_sampler_weights`, and
-`sampling.begin_sample` names return Azure Core pollers over the real HTTP 200
-request-ID protocol. They submit once and poll the request; they do not invent
-an HTTP 202 or `Operation-Location` response. Sampling still needs a real
-`checkpoint_id`. `polling=False` returns the submitted handle without polling.
-Continuation tokens, custom polling strategies, and streamed responses are not
-supported by these adapters and are rejected before submission. Retryable
-terminal failures are surfaced, not automatically resubmitted by these pollers;
-the convenience methods retain their bounded resubmission behavior.
-
-This is **not** a claim that the older generated surface is identical:
-`operations.get` returns the real `pending/completed/failed` envelope, not the
-older normalized `OperationResult` projection. Use its `result` on completion,
-or use the convenience methods/pollers for normalized results. The generated
-create result is a typed, mapping-compatible `CreateSessionResponse` rather
-than a plain dictionary. See [GENERATION.md](GENERATION.md) for the exact
-side-by-side validation scope and remaining review boundaries.
+The awaited async heartbeat shutdown fix is intentionally deferred until after
+baseline parity: matching Loom does not mean that review finding has been fixed.
+See [GENERATION.md](GENERATION.md) for the exact source, limitations, and next stage.
 
 ## Inference error codes
 
@@ -169,10 +155,14 @@ python -m pip install --editable ./sdk/ai/azure-ai-finetuningsessions
 ```
 
 Run the package's tests with `pytest`; the package configuration enables asyncio
-tests. [verify_generation.py](verify_generation.py) emits the TypeSpec twice into
-temporary directories and compares generated files against this package without
-rewriting either source tree. See [GENERATION.md](GENERATION.md) for the pinned
-toolchain, review differences, and the pinned public TypeSpec source.
+tests. [verify_loom_snapshot.py](verify_loom_snapshot.py) verifies every runtime
+and upstream test file against the pinned Loom source. With `--loom-repo`, the
+check verifies the original Git blobs as well as the manifest hashes.
+
+[verify_generation.py](verify_generation.py) separately emits TypeSpec twice into
+temporary directories. Generation drift is currently a real reconciliation gap,
+not an allowed snapshot difference. Do not generate over the preview runtime
+until this independent check passes. See [GENERATION.md](GENERATION.md).
 
 ## Contributing
 

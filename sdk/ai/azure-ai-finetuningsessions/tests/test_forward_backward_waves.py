@@ -1,5 +1,4 @@
 """Bounded-wave behavior for async forward/backward chunk submission."""
-
 from __future__ import annotations
 
 import asyncio
@@ -37,7 +36,12 @@ def _realistic_batch(datum_count=96, shifts_per_datum=10, tokens_per_shift=128):
     logprobs = [-0.5] * sequence_length
     return [
         Datum(
-            model_input=ModelInput(chunks=[ModelInputChunk(tokens=shift_tokens) for _ in range(shifts_per_datum)]),
+            model_input=ModelInput(
+                chunks=[
+                    ModelInputChunk(tokens=shift_tokens)
+                    for _ in range(shifts_per_datum)
+                ]
+            ),
             loss_fn_inputs={
                 "target_tokens": TensorData(data=target_tokens),
                 "weights": TensorData(data=weights),
@@ -77,7 +81,9 @@ async def test_forward_backward_post_chunking_does_not_block_event_loop(monkeypa
     monkeypatch.setattr(_aio_mod, "_chunk_data", _slow_chunk_data)
     monkeypatch.setattr(_aio_mod, "_forward_backward_chunks_post", _post_chunks)
 
-    post_task = asyncio.create_task(_aio_mod.forward_backward_post(object(), "session_deadbeef", ["datum"]))
+    post_task = asyncio.create_task(
+        _aio_mod.forward_backward_post(object(), "session_deadbeef", ["datum"])
+    )
     ticker_task = asyncio.create_task(_ticker())
     await _wait_for_thread_event(chunking_started)
     for _ in range(10):
@@ -326,7 +332,7 @@ async def test_forward_backward_async_default_keeps_all_chunks_in_one_submission
 
     result_future = await _aio_mod.forward_backward_async(object(), "session_deadbeef", ["batch"])
 
-    assert calls == [[["a"], ["b"], ["c"]]]
+    assert calls == [[['a'], ['b'], ['c']]]
     assert (await result_future).total_loss == 1.0
 
 

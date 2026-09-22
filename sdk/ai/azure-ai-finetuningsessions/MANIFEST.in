@@ -1,5 +1,16 @@
 include *.md
 include LICENSE
+include loom-source.json
+include verify_loom_snapshot.py
+include verify_loom_compatibility.py
+include verify_loom_surface.py
+include verify_generation.py
+include emitter-package.json
+include emitter-package-lock.json
+include generator-requirements.txt
+include generation-provenance.json
+include tsp-location.yaml
+include review_tests/README.md
 include azure/ai/finetuningsessions/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md

@@ -15,7 +15,6 @@ These tests pin the contract at two layers:
 * the generated model preserves boolean values, and
 * the serialized ``create_session`` POST payload carries real JSON booleans.
 """
-
 from __future__ import annotations
 
 import asyncio

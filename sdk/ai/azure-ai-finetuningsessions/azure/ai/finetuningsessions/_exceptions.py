@@ -31,7 +31,6 @@ Customers should branch on exception type rather than grepping message strings:
 Each exception carries structured metadata extracted from the server's response
 body so callers can make decisions without string parsing.
 """
-
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -304,11 +303,20 @@ def _classify_http_error(
 
     # --- HTTP 503: No capacity / contention ---
     if status_code == 503:
-        reason = body.get("reason", "")
-        msg = body.get("message") or body.get("detail") or "No available engine capacity"
+        # FastAPI serializes HTTPException.detail as {"detail": {...}}. Keep
+        # accepting the flat form for compatibility with older API versions.
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
+        effective = detail or body
+        reason = effective.get("reason", "")
+        msg = (
+            effective.get("message")
+            or effective.get("error_message")
+            or (body.get("detail") if isinstance(body.get("detail"), str) else None)
+            or "No available engine capacity"
+        )
         retry_after: Optional[float] = None
-        if body.get("retry_after_sec") is not None:
-            retry_after = float(body["retry_after_sec"])
+        if effective.get("retry_after_sec") is not None:
+            retry_after = float(effective["retry_after_sec"])
 
         # If the body is a plain string (legacy format), extract from detail
         if isinstance(msg, str) and ("capacity" in msg.lower() or "no engine" in msg.lower()):
@@ -453,6 +461,14 @@ def _classify_poll_failure(
     The poll endpoint returns ``{"status": "failed", "error": "...", "error_code": "...", ...}``
     when a GPU operation fails. This function translates known error codes into typed exceptions.
 
+    A code the server can emit but this function does not map degrades to
+    ``None``, which both pollers turn into a bare ``RuntimeError``. Any code a
+    caller is expected to *branch on* therefore needs a mapping here; codes that
+    exist only to make a failure classifiable in telemetry do not.
+    ``engine_dead`` must additionally stay in step with :func:`_classify_http_error`,
+    so one underlying event reaches the caller as one type whether it is learned
+    from a 409 or by polling an LRO.
+
     Returns ``None`` if the failure doesn't match any known pattern.
     """
     error_code = envelope.get("error_code") or envelope.get("code")
@@ -498,7 +514,7 @@ def _classify_poll_failure(
             response=None,
         )
 
-    if error_code in ("worker_crashed", "engine_timeout"):
+    if error_code in ("worker_crashed", "engine_timeout", "engine_dead"):
         return TrainingEngineError(
             error_msg,
             session_id=session_id,

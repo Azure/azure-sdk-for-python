@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "status": "loom-preview-snapshot",
+  "source_repository": "loom",
+  "source_commit": "485774df502642879fdf3a53777be4a0d95155dc",
+  "source_directory": "azure-ai-finetuning-sessions",
+  "source_last_sdk_commit": "770f7e0d23c3533339f4dbd4b18849e627d91c3d",
+  "namespace": "azure.ai.finetuningsessions",
+  "package_name": "azure-ai-finetuningsessions",
+  "purpose": "immutable-source-oracle; file hashes describe the reference, not the regenerated runtime",
+  "generation_parity": "validated-public-api-and-offline-behavior",
+  "generation_provenance": "generation-provenance.json",
+  "normalizations": [
+    {
+      "from": "azure.ai.finetuning_sessions",
+      "to": "azure.ai.finetuningsessions"
+    },
+    {
+      "from": "azure/ai/finetuning_sessions",
+      "to": "azure/ai/finetuningsessions"
+    },
+    {
+      "from": "azure-ai-finetuning-sessions",
+      "to": "azure-ai-finetuningsessions"
+    },
+    {
+      "from": "ai-finetuning-sessions",
+      "to": "ai-finetuningsessions"
+    }
+  ],
+  "files": {
+    "azure/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/__init__.py",
+      "source_sha256": "6e94fbdd41bb9992ff26312a3306d8c7aabaf6303c27925ca2e9752dc0e89210",
+      "sha256": "6e94fbdd41bb9992ff26312a3306d8c7aabaf6303c27925ca2e9752dc0e89210"
+    },
+    "azure/ai/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/__init__.py",
+      "source_sha256": "6e94fbdd41bb9992ff26312a3306d8c7aabaf6303c27925ca2e9752dc0e89210",
+      "sha256": "6e94fbdd41bb9992ff26312a3306d8c7aabaf6303c27925ca2e9752dc0e89210"
+    },
+    "azure/ai/finetuningsessions/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/__init__.py",
+      "source_sha256": "2a5bd0388793da2debfe43f71c3142fdc047521d7a7a45d122542421c1b6e74e",
+      "sha256": "2a5bd0388793da2debfe43f71c3142fdc047521d7a7a45d122542421c1b6e74e"
+    },
+    "azure/ai/finetuningsessions/_client.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_client.py",
+      "source_sha256": "430d8e3f4c5b67a05b32bb13914c3951b07a541a1c17122a228e90b954298b0d",
+      "sha256": "803b0f332e911ddbc70e01fd640343fd2f0dfd2929e26aaadcdaf2830b3290f9"
+    },
+    "azure/ai/finetuningsessions/_configuration.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_configuration.py",
+      "source_sha256": "d6a347909db140e5f4ddf61436d472523ccdd035bca0e442e0372f51f00a53bd",
+      "sha256": "d6a347909db140e5f4ddf61436d472523ccdd035bca0e442e0372f51f00a53bd"
+    },
+    "azure/ai/finetuningsessions/_exceptions.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_exceptions.py",
+      "source_sha256": "d6f7e6c637436201624e87175386309ce2de2fec507d3a09304839335dd628fb",
+      "sha256": "fcb243bae0680028509b64fe704dc485551a26b0c52e3d005d3c44109574ee67"
+    },
+    "azure/ai/finetuningsessions/_logging_setup.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_logging_setup.py",
+      "source_sha256": "0dcde83afe0e39f2a90d15fd549043f8c21f831fcfffe35a7f9c8f9ab5747174",
+      "sha256": "6e4079a5e0c847ba4c0c3e977955ebd971cdf78f421dd96f81966e5dfddf487d"
+    },
+    "azure/ai/finetuningsessions/_patch.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_patch.py",
+      "source_sha256": "c219e1ff9e9da0e0106ae207f8674da2101a4ee41d855ab7d30fcca71ba73fe3",
+      "sha256": "b505822349911aae54ea3dc574ccd54e4d2744335a6b6ad82afd0e894da75c0d"
+    },
+    "azure/ai/finetuningsessions/_types.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_types.py",
+      "source_sha256": "afe8aaa6cb4eb281d2a9df879bb09bc43cb609e6377507c395a952237a854418",
+      "sha256": "afe8aaa6cb4eb281d2a9df879bb09bc43cb609e6377507c395a952237a854418"
+    },
+    "azure/ai/finetuningsessions/_utils/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_utils/__init__.py",
+      "source_sha256": "9e1e6cc135300817b7c6c6fd9fad1031cb89df777cf48b70c7babd57ea033941",
+      "sha256": "9e1e6cc135300817b7c6c6fd9fad1031cb89df777cf48b70c7babd57ea033941"
+    },
+    "azure/ai/finetuningsessions/_utils/model_base.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_utils/model_base.py",
+      "source_sha256": "993ca27e9843b534ef37335335904a0c70a6ee561b50f39ea2739b3191c6722a",
+      "sha256": "993ca27e9843b534ef37335335904a0c70a6ee561b50f39ea2739b3191c6722a"
+    },
+    "azure/ai/finetuningsessions/_utils/serialization.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_utils/serialization.py",
+      "source_sha256": "b3022813826de59536956a6cc9f8f0e6185bbd38d55c3bc5585022f8b211c5bc",
+      "sha256": "b3022813826de59536956a6cc9f8f0e6185bbd38d55c3bc5585022f8b211c5bc"
+    },
+    "azure/ai/finetuningsessions/_validation.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_validation.py",
+      "source_sha256": "923f07282614400df1a53960f6abc189b7c123234a13a9b13430c723fad9ca92",
+      "sha256": "923f07282614400df1a53960f6abc189b7c123234a13a9b13430c723fad9ca92"
+    },
+    "azure/ai/finetuningsessions/_version.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/_version.py",
+      "source_sha256": "3b84002aa52a77935880138c6a2a39365c897e1a21ac75dca95f1775ba6e879d",
+      "sha256": "3b84002aa52a77935880138c6a2a39365c897e1a21ac75dca95f1775ba6e879d"
+    },
+    "azure/ai/finetuningsessions/aio/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/__init__.py",
+      "source_sha256": "d14b1a74a99ee6f39c2e5641c7b747f4d1632cd8b3cd0f1682f1fa18424d17d1",
+      "sha256": "d14b1a74a99ee6f39c2e5641c7b747f4d1632cd8b3cd0f1682f1fa18424d17d1"
+    },
+    "azure/ai/finetuningsessions/aio/_client.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/_client.py",
+      "source_sha256": "352daeb05a33ffb65b335009afccd4778a527283768b3f14d831ba788575debc",
+      "sha256": "4d16320ccb5116415c2e5e5b2006f2032deea0d81d336178d3fbde6f78fd8582"
+    },
+    "azure/ai/finetuningsessions/aio/_configuration.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/_configuration.py",
+      "source_sha256": "c8a0271e9db7927b14fc61603a56fe516c1a276381420a92da889cf273680a3c",
+      "sha256": "c8a0271e9db7927b14fc61603a56fe516c1a276381420a92da889cf273680a3c"
+    },
+    "azure/ai/finetuningsessions/aio/_patch.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/_patch.py",
+      "source_sha256": "d00504c32e6c95dd5edde875c3da7974eff097bd2ecdc29ebad00416f847aa8d",
+      "sha256": "8c1c73f628d7f05a612179a2b824c36d7e6e4bce9a2fa3d83c60d29cf78c88bd"
+    },
+    "azure/ai/finetuningsessions/aio/operations/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/operations/__init__.py",
+      "source_sha256": "530c75ea14a94007b8f5e25cd5879789a85938d63dab3016b59e9aedb3e3cb8d",
+      "sha256": "530c75ea14a94007b8f5e25cd5879789a85938d63dab3016b59e9aedb3e3cb8d"
+    },
+    "azure/ai/finetuningsessions/aio/operations/_operations.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/operations/_operations.py",
+      "source_sha256": "4c9a42fc20efa18ee19c516499e02b9f9a57688bbcc64b6fc7636cfb66ca4cab",
+      "sha256": "50ab68e7653c10ee9447fbf256c712bcf93460c7db36332c35ba38dabdc184ba"
+    },
+    "azure/ai/finetuningsessions/aio/operations/_patch.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/aio/operations/_patch.py",
+      "source_sha256": "6d19a8aecf6bf626244753458e73016248fb3958671a8fbfae18e1ebb20c0291",
+      "sha256": "6d19a8aecf6bf626244753458e73016248fb3958671a8fbfae18e1ebb20c0291"
+    },
+    "azure/ai/finetuningsessions/models/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/models/__init__.py",
+      "source_sha256": "579ea59afefbf4ed9179931ce82a6ceca8f038261838f2745507c7dac5acf38f",
+      "sha256": "579ea59afefbf4ed9179931ce82a6ceca8f038261838f2745507c7dac5acf38f"
+    },
+    "azure/ai/finetuningsessions/models/_enums.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/models/_enums.py",
+      "source_sha256": "d9ed5e8b2f8f0b70daccd53d0db49a13f4da55f0402ea6ea88512bc3d0cb6770",
+      "sha256": "d9ed5e8b2f8f0b70daccd53d0db49a13f4da55f0402ea6ea88512bc3d0cb6770"
+    },
+    "azure/ai/finetuningsessions/models/_models.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/models/_models.py",
+      "source_sha256": "83881ea688a20297710b6d27831ba313273d46b21b65dec67d59d6c39cbd940a",
+      "sha256": "00440f97caba29d9cad14b5a85c0d41b280170125a9e8eed71ced666ba33c9d1"
+    },
+    "azure/ai/finetuningsessions/models/_patch.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/models/_patch.py",
+      "source_sha256": "1e0da7bfbcb5ba529a545f0197c2b5d2eab06d073259cd043a56cd10f8eb2ad6",
+      "sha256": "ea20a99bfc6d9441040ffdf17b35a57c613715066ac960f275bec2e20e50029b"
+    },
+    "azure/ai/finetuningsessions/operations/__init__.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/operations/__init__.py",
+      "source_sha256": "530c75ea14a94007b8f5e25cd5879789a85938d63dab3016b59e9aedb3e3cb8d",
+      "sha256": "530c75ea14a94007b8f5e25cd5879789a85938d63dab3016b59e9aedb3e3cb8d"
+    },
+    "azure/ai/finetuningsessions/operations/_operations.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/operations/_operations.py",
+      "source_sha256": "2c8b68319da9ec1d7a35636ac6f9af94e513afc04d60bf8b0d9359353e9eee34",
+      "sha256": "a1bf7dfcdfd2ec3241ff8f1bc8e29557bd7d8cd5d8691b7a484c5fde6e05c280"
+    },
+    "azure/ai/finetuningsessions/operations/_patch.py": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/operations/_patch.py",
+      "source_sha256": "6d19a8aecf6bf626244753458e73016248fb3958671a8fbfae18e1ebb20c0291",
+      "sha256": "6d19a8aecf6bf626244753458e73016248fb3958671a8fbfae18e1ebb20c0291"
+    },
+    "azure/ai/finetuningsessions/py.typed": {
+      "source_path": "azure-ai-finetuning-sessions/azure/ai/finetuning_sessions/py.typed",
+      "source_sha256": "75caeca89adc61f4d7f9c90b1493136a3ea60fc6837b6bb4b64406f996319c48",
+      "sha256": "75caeca89adc61f4d7f9c90b1493136a3ea60fc6837b6bb4b64406f996319c48"
+    },
+    "tests/test_async_poll_error_budget.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_async_poll_error_budget.py",
+      "source_sha256": "b07801efd5472199dfeb66793d04d0bc75605f1f03782653b419451b6f661746",
+      "sha256": "b3fed8205bc97920d04ccf6be99126c6c5ccf06b420e0839b3283466e1c5b00d"
+    },
+    "tests/test_checkpoint_results.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_checkpoint_results.py",
+      "source_sha256": "6288e2e1554c78d3955319079823b23c63883bd3dfbbd1db4460b5b31eb8f0a5",
+      "sha256": "65e09c0855f31b78f1bb667d423a1d5d930346aa872fd677cc1a8bd3d911ed8d"
+    },
+    "tests/test_create_session_id_normalization.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_create_session_id_normalization.py",
+      "source_sha256": "5ee4e8394ac11bba7036528cc4daeb6ae7b68f71bcba73fd32b64984c137cfb4",
+      "sha256": "78bbc947654eea87f7efce4e27ee0d49805af4c6643698d347f82827011dc2b9"
+    },
+    "tests/test_create_session_user_metadata.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_create_session_user_metadata.py",
+      "source_sha256": "140927ea426bab637d3c18441dc343137eaf75982c5ece9befce11cdad615ec3",
+      "sha256": "a94b5aeeb405ab09104dba800061c18191f9ab0bc0addfe0c95f1a07a4e68be5"
+    },
+    "tests/test_direct_path_headers.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_direct_path_headers.py",
+      "source_sha256": "7f166785407704a7f22346d04b97830196142f606a4ef91fd74d0733a500a84b",
+      "sha256": "9bf449c0a753cccf98edb81d1ddc149c5b19a5ffe6ed71f25e6343aa6ea6819b"
+    },
+    "tests/test_exceptions.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_exceptions.py",
+      "source_sha256": "3eb88fb23af46ab44d197851cbaac7207c283397bd53549611997cf7e1ba3083",
+      "sha256": "365ea9778885301d0708bd6df33d3a43e988f10833d15c5bc6c46539309927eb"
+    },
+    "tests/test_forward_backward_waves.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_forward_backward_waves.py",
+      "source_sha256": "beaadd7f14d510d6678a13009d98f83b62cd295ac56441ee25d5651106816ee0",
+      "sha256": "870bf77bac32d743fa0fbdc73de4c4a3f8e36a3d6d90ea8e6beab790faec1e9f"
+    },
+    "tests/test_forward_result.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_forward_result.py",
+      "source_sha256": "c86df83ee7b7e5795b23e1fbd0cb090ef35ad223dc3c79a1a03ff7653071b353",
+      "sha256": "ee1c53a820e0e97aedf24783881c6c279162af749083fe53b43324e83f1dbf08"
+    },
+    "tests/test_image_chunks.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_image_chunks.py",
+      "source_sha256": "579d70f3712baeba7ee84fe7e5d969258565f36d7f9d6b4dee3522b980df9bdd",
+      "sha256": "bf6ed7db9dfbdc68ec73761ede9fdb21e24aba5c4314d447b6e966aec2b20d62"
+    },
+    "tests/test_logging_setup.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_logging_setup.py",
+      "source_sha256": "2407b9e3241f3d887e818f9432eca3bf5216d1a2c262764772bd36e4a515cc45",
+      "sha256": "3fdd07b8b52caeee1006de2695a7ce9ec3388f8515ee18159d767a9a76708e4b"
+    },
+    "tests/test_lora_config.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_lora_config.py",
+      "source_sha256": "f35096fc72f42344775f59ad0d472d45bfa99f0978c00935b4d357918dd7f6c3",
+      "sha256": "895420f273f5f095fac60620d47fd3c4ed03ae8e18cd354aa2282dbab9998f0e"
+    },
+    "tests/test_maybe_log_poll_progress.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_maybe_log_poll_progress.py",
+      "source_sha256": "9750e94b50f0fda2defb9fd7668cc59f5ac9f1aca45cbf75755575ae73059274",
+      "sha256": "9890bbe10e33988421191af7740c1ac7d98189d1181bb9b74336a43b93269f32"
+    },
+    "tests/test_operation_label.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_operation_label.py",
+      "source_sha256": "f51f1e83c18ccc0925c3977e03640a0031b3738d5450d9b60ae2875560db9bdc",
+      "sha256": "327240e4dafb988fabd669d59e007ecd070c8c581823bc4448b647b485c810e9"
+    },
+    "tests/test_poll_error_budget_async.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_poll_error_budget_async.py",
+      "source_sha256": "88817b17d0aaef18117f3ae0a5bc84a7c19eb6e1d950b1b5a4cd222ad8be62d5",
+      "sha256": "cbf10e61eb6ef533bc7eed1660f48650083e6b65e05e9ac6f7716d098d46c875"
+    },
+    "tests/test_post_and_poll_error_budget.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_post_and_poll_error_budget.py",
+      "source_sha256": "da0e61f21e97012fd5619641f52ac8b9e454836f9ce0fde3daa2a5db6810ab66",
+      "sha256": "6303eb77a130d6f7174ef41ac32ebf26df53ed71e979affb31afc122ca687d33"
+    },
+    "tests/test_proxy_jwt_retry.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_proxy_jwt_retry.py",
+      "source_sha256": "9fa3f227f6cea6a7db85cbff543ec15b682ba67b56773916d4358037fd2ac920",
+      "sha256": "73c0f059e784910ae5e931b51ef564cebebf94e190ecb418656adeb5a818cf6c"
+    },
+    "tests/test_retry_policy.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_retry_policy.py",
+      "source_sha256": "80d1f6d436132b547d4d02a07b1e8405a4a774db3389f4bbe25cd68493977f28",
+      "sha256": "51abd7e6abd0852030f866c18d5dd8939815adef7d5c3a9a5a387ccba2d3ed50"
+    },
+    "tests/test_sampling_limits.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_sampling_limits.py",
+      "source_sha256": "6f206349a25b84949eb4905e64148416e3b9a0bdc098a35948641cc88a053a3a",
+      "sha256": "cde519438152804ad528ae2019c2fd4070e5efdf473f0c6271fd24c1de3f2e20"
+    },
+    "tests/test_session_delete.py": {
+      "source_path": "azure-ai-finetuning-sessions/tests/test_session_delete.py",
+      "source_sha256": "2064cb869d9d7da509e4561d581e50eec2b083fc700ea295b410430e4d8c0df4",
+      "sha256": "13bf72d3f1b369f4b20a1f83985a5fbdad340749a2d1a4cf741b50a292f73d32"
+    }
+  }
+}

@@ -14,7 +14,6 @@ Covers the two behaviors added for Redis-based server rate limiting:
 2. ``sample()`` holds a lifecycle-scoped semaphore across the FULL submit+poll
    lifecycle, bounding overall concurrent samples (not just the in-flight POST).
 """
-
 from __future__ import annotations
 
 import asyncio
@@ -32,10 +31,10 @@ from azure.ai.finetuningsessions import _patch as _patch_mod
 from azure.ai.finetuningsessions.aio import _patch as _aio_mod
 from azure.ai.finetuningsessions.aio._patch import _post, _post_sample, sample
 
+
 # ---------------------------------------------------------------------------
 # Exception typing / classification
 # ---------------------------------------------------------------------------
-
 
 def test_rate_limited_is_no_capacity_subclass():
     """RateLimitedError must remain catchable as NoCapacityError (back-compat)."""
@@ -59,7 +58,6 @@ def test_classify_429_falls_back_to_header_retry_after():
 # ---------------------------------------------------------------------------
 # Test doubles
 # ---------------------------------------------------------------------------
-
 
 class _FakeResponse:
     reason = None  # azure HttpResponseError reads this when response is passed
@@ -113,17 +111,14 @@ def clock(monkeypatch):
 # 429 throttle retry loop (async _post)
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_throttled_submit_retries_then_succeeds(clock):
     """429 that clears before the deadline is retried in place, then succeeds."""
-    client = _FakeAsyncClient(
-        [
-            _FakeResponse(429, retry_after="2"),
-            _FakeResponse(429, retry_after="2"),
-            _FakeResponse(200, {"request_id": "req-9"}),
-        ]
-    )
+    client = _FakeAsyncClient([
+        _FakeResponse(429, retry_after="2"),
+        _FakeResponse(429, retry_after="2"),
+        _FakeResponse(200, {"request_id": "req-9"}),
+    ])
     request_id, _op = await _post_sample(
         client,
         "/fine_tuning/sessions/session_deadbeef/sample",
@@ -137,7 +132,9 @@ async def test_throttled_submit_retries_then_succeeds(clock):
 async def test_throttled_submit_raises_rate_limited_past_deadline(clock, monkeypatch):
     """A sustained 429 past the throttle deadline raises RateLimitedError."""
     monkeypatch.setattr(_aio_mod, "_SAMPLE_THROTTLE_TIMEOUT_SEC", 10)
-    client = _FakeAsyncClient([_FakeResponse(429, {"reason": "budget"}, retry_after="5") for _ in range(100)])
+    client = _FakeAsyncClient(
+        [_FakeResponse(429, {"reason": "budget"}, retry_after="5") for _ in range(100)]
+    )
     with pytest.raises(RateLimitedError):
         await _post_sample(
             client,
@@ -157,7 +154,9 @@ async def test_throttle_sleep_clamped_to_remaining_deadline(clock, monkeypatch):
     """
     monkeypatch.setattr(_aio_mod, "_SAMPLE_THROTTLE_TIMEOUT_SEC", 10)
     start = clock.now
-    client = _FakeAsyncClient([_FakeResponse(429, {"reason": "budget"}, retry_after="3600") for _ in range(100)])
+    client = _FakeAsyncClient(
+        [_FakeResponse(429, {"reason": "budget"}, retry_after="3600") for _ in range(100)]
+    )
     with pytest.raises(RateLimitedError):
         await _post_sample(
             client,
@@ -173,7 +172,9 @@ async def test_throttle_sleep_clamped_to_remaining_deadline(clock, monkeypatch):
 @pytest.mark.asyncio
 async def test_non_sampling_429_is_not_held_in_place(clock):
     """On a non-sample endpoint, 429 is a normal fault (bounded retries)."""
-    client = _FakeAsyncClient([_FakeResponse(429, {"reason": "budget"}) for _ in range(10)])
+    client = _FakeAsyncClient(
+        [_FakeResponse(429, {"reason": "budget"}) for _ in range(10)]
+    )
     with pytest.raises(RateLimitedError):
         await _post(client, "/fine_tuning/sessions/session_deadbeef/optim_step", _aio_mod.SamplingParams())
     # max_retries=2 -> at most 3 attempts before giving up (not held forever).
@@ -188,16 +189,12 @@ async def test_sample_submit_retries_transient_5xx_then_succeeds(clock):
     fault-retry behavior as ``_post`` for non-429 transient failures, not fail
     the sample on the first blip.
     """
-    client = _FakeAsyncClient(
-        [
-            _FakeResponse(500, {"reason": "boom"}),
-            _FakeResponse(200, {"request_id": "req-ok"}),
-        ]
-    )
+    client = _FakeAsyncClient([
+        _FakeResponse(500, {"reason": "boom"}),
+        _FakeResponse(200, {"request_id": "req-ok"}),
+    ])
     request_id, _op = await _post_sample(
-        client,
-        "/fine_tuning/sessions/session_deadbeef/sample",
-        _aio_mod.SamplingParams(),
+        client, "/fine_tuning/sessions/session_deadbeef/sample", _aio_mod.SamplingParams(),
     )
     assert request_id == "req-ok"
     assert client.calls == 2
@@ -208,16 +205,12 @@ async def test_sample_submit_retries_transient_network_error_then_succeeds(clock
     """A transient ServiceResponseError during sample submit is retried."""
     from azure.core.exceptions import ServiceResponseError
 
-    client = _FakeAsyncClient(
-        [
-            ServiceResponseError("connection reset"),
-            _FakeResponse(200, {"request_id": "req-net"}),
-        ]
-    )
+    client = _FakeAsyncClient([
+        ServiceResponseError("connection reset"),
+        _FakeResponse(200, {"request_id": "req-net"}),
+    ])
     request_id, _op = await _post_sample(
-        client,
-        "/fine_tuning/sessions/session_deadbeef/sample",
-        _aio_mod.SamplingParams(),
+        client, "/fine_tuning/sessions/session_deadbeef/sample", _aio_mod.SamplingParams(),
     )
     assert request_id == "req-net"
     assert client.calls == 2
@@ -226,7 +219,6 @@ async def test_sample_submit_retries_transient_network_error_then_succeeds(clock
 # ---------------------------------------------------------------------------
 # Lifecycle-scoped semaphore (async sample)
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_sample_bounds_concurrency_over_full_lifecycle(monkeypatch):
@@ -372,7 +364,6 @@ async def test_sample_resubmits_through_throttled_post_path(clock, monkeypatch):
 # ---------------------------------------------------------------------------
 # Sync FineTuningSession sample endpoint
 # ---------------------------------------------------------------------------
-
 
 def test_sync_sample_posts_to_sample_endpoint():
     """Sync FineTuningSession.sample() routes to the ``/sample`` endpoint."""

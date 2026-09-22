@@ -17,17 +17,16 @@ SPEC_FOUNDRY_AICLIENT.md:
     sample_result  = session.sample(prompt_tokens, sampling_params, num_samples=4)
     session.close()
 
-Training submissions follow loom's two-step protocol:
+Each mutating method follows loom's two-step protocol:
   1. POST to the action endpoint — loom returns **200** with
      ``{request_id, session_id, status: "pending"}``.
-    2. GET ``/fine_tuning/sessions/{sessionId}/request/{requestId}`` — the server
-      returns a ``pending``, ``completed``, or ``failed`` request-status envelope.
+  2. GET ``/fine_tuning/sessions/{sessionId}/request/{requestId}`` — the server
+     long-polls (up to 5 minutes) and returns the typed result when the GPU finishes.
 
-Generated operations expose these HTTP 200 accepted-request handles and raw
-request-status envelopes. This handwritten layer manually polls request status,
-applies retries, and normalizes completed results into SDK convenience models.
+Note: the generated ``begin_*`` methods on sub-clients use the Azure LRO (202 +
+Operation-Location header) pattern and will **not** work against loom, which returns
+200.  Always use ``FineTuningSession`` methods for training operations.
 """
-
 from __future__ import annotations
 
 import concurrent.futures as _futures
@@ -48,22 +47,22 @@ from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest as _HttpRequest
 
-from ._client_options import prepare_client_options
+from ._client_options import _prepare_client_options
 from ._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
     RequestRetryableError as _RequestRetryableError,
+    RateLimitedError,
     BatchTooLargeError,
     ContentionError,
     EngineDeadError,
-    FineTuningSessionsError,
     MalformedDatumError,
-    NoCapacityError,
     OperationResultUnavailableError,
-    RateLimitedError,
-    RequestRetryableError,
-    RequestValidationError,
     TrainingEngineError,
+    FineTuningSessionsError,
+    RequestValidationError,
+    RequestRetryableError,
+    NoCapacityError,
 )
 from ._logging_setup import install_default_logging as _install_default_logging
 
@@ -94,7 +93,12 @@ from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
 from ._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder, _deserialize as _deserialize_model
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from azure.core.rest import AsyncHttpResponse, HttpResponse
+
+# Preserve the reference initializer's setup before import-time SDK warnings.
+# This installs no handler and is idempotent.
+_install_default_logging()
 
 # ── Loom wire-format → OperationResult discriminator map ─────────────────────
 # Maps the last path segment of a Loom action URL to the SDK's "type" value.
@@ -670,7 +674,7 @@ def _maybe_log_poll_progress(
 
     # Escalate to WARNING once a request has been pending past the warn
     # threshold. Tracked per-request on a separate, slower dedup so it surfaces
-    # even when the INFO line was recently emitted, without spamming, and so a
+    # even when the INFO line was recently emitted, and so a
     # sibling request of the same op completing cannot reset this window.
     if (
         not is_queued
@@ -836,21 +840,13 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: "TokenCredential",
-        *,
-        allow_insecure_http: bool = False,
-        use_legacy_routes: bool = False,
-        **kwargs: Any,
+        self, endpoint: str, credential: "TokenCredential", *, allow_insecure_http: bool = False, **kwargs: Any
     ) -> None:
-        kwargs = prepare_client_options(
-            endpoint, credential, allow_insecure_http=allow_insecure_http, use_legacy_routes=use_legacy_routes, **kwargs
-        )
         provided_policies = kwargs.get("policies")
-        original_kwargs = dict(kwargs)
+        original_kwargs = _prepare_client_options(endpoint, credential, kwargs, allow_insecure_http=allow_insecure_http)
         super().__init__(endpoint=endpoint, credential=credential, **original_kwargs)
         self._config.allow_insecure_http = allow_insecure_http
+        self._config.api_version = kwargs.get("api_version", "v1")
 
         _policies = provided_policies
         if _policies is None:
@@ -870,6 +866,8 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
                 self._config.http_logging_policy,
             ]
 
+        # Keep the frozen preview's pipeline construction, including keyword
+        # collision behavior. Review fixes are deliberately a separate change.
         self._session_client = PipelineClient(base_url=endpoint, policies=_policies, **original_kwargs)
         self.sessions._client = self._session_client
         # Lifecycle-scoped semaphore bounding concurrent sample() calls across
@@ -1296,11 +1294,11 @@ class FineTuningSession:
         timeline: Optional[dict[str, Optional[float]]] = None,
     ) -> OperationResult:
         """POST to a loom action endpoint (returns 200 + request_id), then
-        poll GET /request/{request_id} until the GPU finishes.
+        long-poll GET /request/{request_id} until the GPU finishes.
 
-        Loom returns HTTP 200 with an accepted-request handle containing
-        ``{request_id, session_id, status}``. The poll endpoint returns a
-        request-status envelope; completed results are normalized below.
+        Loom returns 200 (not 202) with ``{request_id, session_id, status}``
+        from all mutating operations.  The poll endpoint blocks server-side
+        (up to 5 minutes) and returns the typed result directly.
 
         Retries 408 / 5xx / transient network errors. The timeout is an ERROR
         budget, not a wall-clock budget — see below. Set
@@ -1383,9 +1381,12 @@ class FineTuningSession:
             (_time.monotonic() - submit_started) * 1000.0,
         )
 
-        # Poll the raw request-status envelope directly so we can apply retries
-        # and normalize the completed result's Loom wire format into the
-        # discriminated SDK OperationResult convenience model.
+        # Long-poll the result directly so we can normalize the Loom wire format
+        # before deserializing.  The generated operations.get() passes the raw JSON
+        # straight to _deserialize(OperationResult, ...) which expects a "type"
+        # discriminator field — but the Loom server returns its own engine format
+        # (no "type", metrics under namespaced keys).  We do the GET ourselves,
+        # normalize, then deserialize.
         poll_req = _HttpRequest(
             "GET",
             "{endpoint}" + f"/fine_tuning/sessions/{session_id}/request/{request_id}",
@@ -1839,10 +1840,10 @@ class FineTuningSession:
 
     def heartbeat(self, **kwargs: Any) -> Any:
         """Refresh an active session to prevent idle expiry."""
-        kwargs.setdefault("api_version", _API_VERSION)
         return self._client.sessions.heartbeat(
             session_id=self._resource_session_id,
             foundry_features=_PREVIEW,
+            api_version=_API_VERSION,
             **kwargs,
         )
 
@@ -1897,19 +1898,19 @@ class FineTuningSession:
 
 
 __all__: list[str] = [
-    "FineTuningSession",
     "FineTuningSessionClient",
+    "FineTuningSession",
     "FineTuningSessionsError",
     "BatchTooLargeError",
-    "ContentionError",
-    "EngineDeadError",
-    "MalformedDatumError",
     "NoCapacityError",
-    "OperationResultUnavailableError",
     "RateLimitedError",
-    "RequestRetryableError",
-    "RequestValidationError",
     "TrainingEngineError",
+    "EngineDeadError",
+    "OperationResultUnavailableError",
+    "ContentionError",
+    "RequestValidationError",
+    "RequestRetryableError",
+    "MalformedDatumError",
 ]
 
 
@@ -1920,4 +1921,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    _install_default_logging()
+    from . import _configuration
+    from ._client_options import _patch_configuration
+
+    _patch_configuration(_configuration)

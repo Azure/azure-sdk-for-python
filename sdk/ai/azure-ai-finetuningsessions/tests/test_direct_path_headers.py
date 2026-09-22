@@ -5,16 +5,18 @@ from headers that APIM injects on the project route and the command job supplies
 on the direct route. See ``docs/command-job-direct-loom-api-design.md``.
 """
 
-import asyncio
-
 import pytest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.ai.finetuningsessions import FineTuningSessionClient
 from azure.ai.finetuningsessions import _patch as p
-from azure.ai.finetuningsessions._client_options import _is_local_endpoint
-from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
+from azure.ai.finetuningsessions._configuration import (
+    FineTuningSessionClientConfiguration,
+    _is_local_endpoint,
+)
+from azure.ai.finetuningsessions.aio._configuration import (
+    FineTuningSessionClientConfiguration as AsyncFineTuningSessionClientConfiguration,
+)
 
 # Every env var _base_headers consults, cleared before each test so a real
 # developer environment cannot leak into assertions.
@@ -128,28 +130,15 @@ def test_empty_string_env_var_is_not_sent(monkeypatch):
 def test_extra_headers_merge_and_override(monkeypatch):
     monkeypatch.setenv("LOOM_AZURE_RESOURCE_LOCATION", "from-env")
 
-    headers = p._base_headers({"Content-Type": "application/json", "azure-resource-location": "explicit"})
+    headers = p._base_headers(
+        {"Content-Type": "application/json", "azure-resource-location": "explicit"}
+    )
 
     assert headers["Content-Type"] == "application/json"
     assert headers["azure-resource-location"] == "explicit"
 
 
 # ── allow_insecure_http guard ──────────────────────────────────────────────────
-
-
-def _client_config(client_class, **kwargs):
-    """Exercise public constructor guards without opening the transports."""
-    client = client_class(**kwargs)
-    try:
-        return client._config
-    finally:
-        if isinstance(client, AsyncFineTuningSessionClient):
-            asyncio.run(client.close())
-        else:
-            try:
-                client.close()
-            finally:
-                client._session_client.close()
 
 
 @pytest.mark.parametrize(
@@ -181,8 +170,7 @@ def test_is_local_endpoint_rejects_remote(endpoint):
 def test_insecure_http_rejected_against_remote_plaintext_endpoint():
     """Downgrading TLS on the direct path would leak identity headers + token."""
     with pytest.raises(ValueError, match="only supported for local endpoints"):
-        _client_config(
-            FineTuningSessionClient,
+        FineTuningSessionClientConfiguration(
             endpoint="http://loom-api-eastus2.internal.example.com",
             credential=_FakeCredential(),
             allow_insecure_http=True,
@@ -190,8 +178,7 @@ def test_insecure_http_rejected_against_remote_plaintext_endpoint():
 
 
 def test_insecure_http_flag_remains_compatible_with_https_endpoint():
-    config = _client_config(
-        FineTuningSessionClient,
+    config = FineTuningSessionClientConfiguration(
         endpoint="https://loom-api-eastus2.internal.example.com",
         credential=_FakeCredential(),
         allow_insecure_http=True,
@@ -202,8 +189,7 @@ def test_insecure_http_flag_remains_compatible_with_https_endpoint():
 
 
 def test_insecure_http_flag_remains_compatible_with_remote_api_key_endpoint():
-    config = _client_config(
-        FineTuningSessionClient,
+    config = FineTuningSessionClientConfiguration(
         endpoint="http://legacy-dev.example.com",
         credential=AzureKeyCredential("test-key"),
         allow_insecure_http=True,
@@ -213,8 +199,7 @@ def test_insecure_http_flag_remains_compatible_with_remote_api_key_endpoint():
 
 
 def test_insecure_http_allowed_against_localhost():
-    config = _client_config(
-        FineTuningSessionClient,
+    config = FineTuningSessionClientConfiguration(
         endpoint="http://localhost:8080",
         credential=_FakeCredential(),
         allow_insecure_http=True,
@@ -225,8 +210,7 @@ def test_insecure_http_allowed_against_localhost():
 
 def test_async_insecure_http_rejected_against_remote_plaintext_endpoint():
     with pytest.raises(ValueError, match="only supported for local endpoints"):
-        _client_config(
-            AsyncFineTuningSessionClient,
+        AsyncFineTuningSessionClientConfiguration(
             endpoint="http://loom-api-eastus2.internal.example.com",
             credential=_FakeAsyncCredential(),
             allow_insecure_http=True,
@@ -234,20 +218,21 @@ def test_async_insecure_http_rejected_against_remote_plaintext_endpoint():
 
 
 def test_async_insecure_http_flag_remains_compatible_with_https_endpoint():
-    config = _client_config(
-        AsyncFineTuningSessionClient,
+    config = AsyncFineTuningSessionClientConfiguration(
         endpoint="https://loom-api-eastus2.internal.example.com",
         credential=_FakeAsyncCredential(),
         allow_insecure_http=True,
     )
 
     assert config.allow_insecure_http is True
-    assert type(config.authentication_policy) is policies.AsyncBearerTokenCredentialPolicy
+    assert (
+        type(config.authentication_policy)
+        is policies.AsyncBearerTokenCredentialPolicy
+    )
 
 
 def test_async_insecure_http_flag_remains_compatible_with_remote_api_key_endpoint():
-    config = _client_config(
-        AsyncFineTuningSessionClient,
+    config = AsyncFineTuningSessionClientConfiguration(
         endpoint="http://legacy-dev.example.com",
         credential=AzureKeyCredential("test-key"),
         allow_insecure_http=True,
@@ -257,8 +242,7 @@ def test_async_insecure_http_flag_remains_compatible_with_remote_api_key_endpoin
 
 
 def test_async_insecure_http_allowed_against_localhost():
-    config = _client_config(
-        AsyncFineTuningSessionClient,
+    config = AsyncFineTuningSessionClientConfiguration(
         endpoint="http://localhost:8080",
         credential=_FakeAsyncCredential(),
         allow_insecure_http=True,
@@ -268,8 +252,7 @@ def test_async_insecure_http_allowed_against_localhost():
 
 
 def test_secure_endpoint_unaffected_by_guard():
-    config = _client_config(
-        FineTuningSessionClient,
+    config = FineTuningSessionClientConfiguration(
         endpoint="https://acct.services.ai.azure.com/api/projects/p",
         credential=_FakeCredential(),
     )

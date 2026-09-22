@@ -11,13 +11,9 @@ Verifies that:
 3. ``_classify_poll_failure`` correctly maps poll envelope failures to typed exceptions.
 4. Unknown errors fall through (return None) so generic handling still applies.
 """
-
 from __future__ import annotations
 
 import pytest
-
-from azure.core.exceptions import HttpResponseError
-
 from azure.ai.finetuningsessions._exceptions import (
     BatchTooLargeError,
     ContentionError,
@@ -30,6 +26,7 @@ from azure.ai.finetuningsessions._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
 )
+from azure.core.exceptions import HttpResponseError
 
 
 # ---------------------------------------------------------------------------
@@ -87,7 +84,20 @@ class TestClassifyHttpError:
         assert isinstance(exc, BatchTooLargeError)
         assert exc.max_batch_size is None
 
-    def test_503_engine_busy_structured(self) -> None:
+    def test_503_engine_busy_fastapi_detail_envelope(self) -> None:
+        body = {
+            "detail": {
+                "reason": "engine_busy",
+                "message": "No available engine capacity",
+                "retry_after_sec": 5,
+            }
+        }
+        exc = _classify_http_error(503, body)
+        assert isinstance(exc, NoCapacityError)
+        assert exc.retry_after_sec == 5.0
+        assert exc.reason == "engine_busy"
+
+    def test_503_engine_busy_flat_body_compatibility(self) -> None:
         body = {
             "reason": "engine_busy",
             "message": "No available engine capacity",
@@ -278,7 +288,10 @@ class TestClassifyPollFailure:
             "external_endpoints_exhausted",
         ],
     )
-    def test_external_inference_retry_codes_use_generic_retry_contract(self, error_code: str) -> None:
+    def test_external_inference_retry_codes_use_generic_retry_contract(
+        self,
+        error_code: str,
+    ) -> None:
         envelope = {
             "status": "failed",
             "error": "Retry the request.",
@@ -287,7 +300,9 @@ class TestClassifyPollFailure:
             "retry_after_sec": 30,
             "debug_ref": "ref123",
         }
+
         exc = _classify_poll_failure(envelope)
+
         assert isinstance(exc, RequestRetryableError)
         assert exc.error_code == error_code
         assert exc.retry_after_sec == 30
@@ -320,6 +335,49 @@ class TestClassifyPollFailure:
         envelope = {"status": "failed", "error": "timeout", "error_code": "engine_timeout"}
         exc = _classify_poll_failure(envelope)
         assert isinstance(exc, TrainingEngineError)
+
+    def test_engine_dead(self) -> None:
+        """The orphan sweep fails requests for a lease-expired model with
+        ``engine_dead``. Unmapped, that degrades to a bare RuntimeError in both
+        pollers, so the caller cannot branch on the failure."""
+        envelope = {
+            "status": "failed",
+            "error": (
+                "Model 'model_abc' failed because its engine died. LoRA weights "
+                "are lost. Re-create the model and reload from the last checkpoint."
+            ),
+            "error_code": "engine_dead",
+            "debug_ref": "cafebabe9876",
+        }
+        exc = _classify_poll_failure(envelope, session_id="session_aabbccdd")
+        assert isinstance(exc, TrainingEngineError)
+        assert exc.error_code == "engine_dead"
+        assert exc.session_id == "session_aabbccdd"
+        assert exc.debug_ref == "cafebabe9876"
+
+    def test_engine_dead_is_not_machine_retryable(self) -> None:
+        """The weights are gone; resubmitting the same request cannot succeed.
+        It must not classify as the retryable type that ``_post_and_poll``
+        silently resubmits."""
+        envelope = {"status": "failed", "error": "engine died", "error_code": "engine_dead"}
+        exc = _classify_poll_failure(envelope)
+        assert not isinstance(exc, RequestRetryableError)
+
+    def test_engine_dead_agrees_across_the_409_and_poll_paths(self) -> None:
+        """A client learns about one engine death either from a synchronous 409
+        or by polling an LRO. Both must yield the same type and code, or the
+        failure looks like two different events."""
+        poll_exc = _classify_poll_failure(
+            {"status": "failed", "error": "engine died", "error_code": "engine_dead"},
+            session_id="session_aabbccdd",
+        )
+        http_exc = _classify_http_error(
+            409,
+            {"reason": "engine_dead", "message": "engine died", "error_code": "engine_dead"},
+            session_id="session_aabbccdd",
+        )
+        assert type(poll_exc) is type(http_exc) is TrainingEngineError
+        assert poll_exc.error_code == http_exc.error_code == "engine_dead"
 
     def test_invalid_request(self) -> None:
         envelope = {

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -23,16 +23,19 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types as _types
+from .. import models as _models
 from .._configuration import FineTuningSessionClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from ..models._enums import FoundryFeaturesOptInKeys
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -42,13 +45,15 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_sessions_create_request(
-    *, foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW], **kwargs: Any
+    *,
+    api_version: str,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -68,6 +73,7 @@ def build_sessions_create_request(
 
 def build_sessions_list_request(
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     limit: Optional[int] = None,
     offset: Optional[int] = None,
@@ -76,7 +82,6 @@ def build_sessions_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,13 +104,13 @@ def build_sessions_list_request(
 def build_sessions_get_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,46 +131,16 @@ def build_sessions_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sessions_delete_request(
-    session_id: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_sessions_unload_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,13 +164,13 @@ def build_sessions_unload_request(
 def build_sessions_heartbeat_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,6 +194,7 @@ def build_sessions_heartbeat_request(
 def build_training_forward_backward_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
@@ -226,7 +202,6 @@ def build_training_forward_backward_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -249,9 +224,10 @@ def build_training_forward_backward_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_training_forward_request(
+def build_training_optim_step_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
@@ -259,40 +235,6 @@ def build_training_forward_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/fine_tuning/sessions/{sessionId}/forward"
-    path_format_arguments = {
-        "sessionId": _SERIALIZER.url("session_id", session_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_training_optimizer_step_request(
-    session_id: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -318,6 +260,7 @@ def build_training_optimizer_step_request(
 def build_checkpoints_save_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
@@ -325,7 +268,6 @@ def build_checkpoints_save_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -351,6 +293,7 @@ def build_checkpoints_save_request(
 def build_checkpoints_save_sampler_weights_request(  # pylint: disable=name-too-long
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
@@ -358,7 +301,6 @@ def build_checkpoints_save_sampler_weights_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -384,13 +326,13 @@ def build_checkpoints_save_sampler_weights_request(  # pylint: disable=name-too-
 def build_checkpoints_list_request(
     session_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -415,13 +357,13 @@ def build_checkpoints_get_request(
     session_id: str,
     checkpoint_id: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -446,6 +388,7 @@ def build_checkpoints_get_request(
 def build_sampling_sample_request(
     session_id: str,
     *,
+    api_version: str,
     checkpoint_id: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
@@ -454,7 +397,6 @@ def build_sampling_sample_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -482,13 +424,13 @@ def build_operations_get_request(
     session_id: str,
     request_id_parameter: str,
     *,
+    api_version: str,
     foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -510,7 +452,7 @@ def build_operations_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SessionsOperations:  # pylint: disable=docstring-missing-param
+class SessionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -527,115 +469,14 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def create(
+    def _create_initial(
         self,
-        session: _models.CreateSessionRequest,
+        session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CreateSessionResponse:
-        """Create a fine-tuning session.
-
-        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
-        single session identifier and a request identifier to poll for session initialization.
-
-        :param session: Configuration of the fine-tuning session to create. Required.
-        :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateSessionResponse. The CreateSessionResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.CreateSessionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        session: _types.CreateSessionRequest,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CreateSessionResponse:
-        """Create a fine-tuning session.
-
-        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
-        single session identifier and a request identifier to poll for session initialization.
-
-        :param session: Configuration of the fine-tuning session to create. Required.
-        :type session: ~azure.ai.finetuningsessions.types.CreateSessionRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateSessionResponse. The CreateSessionResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.CreateSessionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        session: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CreateSessionResponse:
-        """Create a fine-tuning session.
-
-        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
-        single session identifier and a request identifier to poll for session initialization.
-
-        :param session: Configuration of the fine-tuning session to create. Required.
-        :type session: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CreateSessionResponse. The CreateSessionResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.CreateSessionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        session: Union[_models.CreateSessionRequest, _types.CreateSessionRequest, IO[bytes]],
-        *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.CreateSessionResponse:
-        """Create a fine-tuning session.
-
-        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
-        single session identifier and a request identifier to poll for session initialization.
-
-        :param session: Configuration of the fine-tuning session to create. Is either a
-         CreateSessionRequest type or a IO[bytes] type. Required.
-        :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest or
-         ~azure.ai.finetuningsessions.types.CreateSessionRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: CreateSessionResponse. The CreateSessionResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.CreateSessionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -648,7 +489,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CreateSessionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -658,9 +499,9 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
             _content = json.dumps(session, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_sessions_create_request(
+            api_version=api_version,
             foundry_features=foundry_features,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -671,7 +512,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -679,28 +520,201 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.CreateSessionResponse, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
+    @overload
+    def begin_create(
+        self,
+        session: _models.CreateSessionRequest,
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Create a fine-tuning session.
+
+        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
+        single session identifier and a request identifier to poll for session initialization.
+
+        :param session: Configuration of the fine-tuning session to create. Required.
+        :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        session: JSON,
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Create a fine-tuning session.
+
+        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
+        single session identifier and a request identifier to poll for session initialization.
+
+        :param session: Configuration of the fine-tuning session to create. Required.
+        :type session: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self,
+        session: IO[bytes],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Create a fine-tuning session.
+
+        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
+        single session identifier and a request identifier to poll for session initialization.
+
+        :param session: Configuration of the fine-tuning session to create. Required.
+        :type session: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create(
+        self,
+        session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Create a fine-tuning session.
+
+        Create a new fine-tuning session and allocate it to a GPU engine. The response contains a
+        single session identifier and a request identifier to poll for session initialization.
+
+        :param session: Configuration of the fine-tuning session to create. Is one of the following
+         types: CreateSessionRequest, JSON, IO[bytes] Required.
+        :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_initial(
+                session=session,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
     @distributed_trace
     def list(
         self,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         limit: Optional[int] = None,
         offset: Optional[int] = None,
@@ -710,6 +724,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         List fine-tuning sessions in this project using offset-based pagination.
 
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -738,10 +754,10 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         cls: ClsType[_models.SessionList] = kwargs.pop("cls", None)
 
         _request = build_sessions_list_request(
+            api_version=api_version,
             foundry_features=foundry_features,
             limit=limit,
             offset=offset,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -782,6 +798,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         self,
         session_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
     ) -> _models.Session:
@@ -791,6 +808,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         :param session_id: Identifier of the fine-tuning session to retrieve. Required.
         :type session_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -814,8 +833,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_sessions_get_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -851,29 +870,14 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def delete(
+    def _unload_initial(
         self,
         session_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.DeleteSessionResponse:
-        """Delete a fine-tuning session.
-
-        Delete a fine-tuning session and mark its associated resources for cleanup. Repeating deletion
-        for an already-deleted session returns HTTP 200.
-
-        :param session_id: Identifier of the fine-tuning session to delete. Required.
-        :type session_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: DeleteSessionResponse. The DeleteSessionResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.DeleteSessionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -885,12 +889,12 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteSessionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_sessions_delete_request(
+        _request = build_sessions_unload_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -900,7 +904,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -908,18 +912,14 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DeleteSessionResponse, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -927,13 +927,14 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
-    def unload(
+    def begin_unload(
         self,
         session_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.CompleteResponse:
+    ) -> LROPoller[_models.OperationResult]:
         """Unload a fine-tuning session.
 
         Unload a session from the GPU engine, freeing memory. Unsaved in-memory LoRA weights are lost;
@@ -941,71 +942,73 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         :param session_id: Identifier of the fine-tuning session to unload. Required.
         :type session_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: CompleteResponse. The CompleteResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.CompleteResponse
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.CompleteResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._unload_initial(
+                session_id=session_id,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
 
-        _request = build_sessions_unload_request(
-            session_id=session_id,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
         else:
-            deserialized = _deserialize(_models.CompleteResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def heartbeat(
         self,
         session_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
     ) -> _models.HeartbeatResponse:
@@ -1015,6 +1018,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         :param session_id: Identifier of the fine-tuning session to keep active. Required.
         :type session_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1038,8 +1043,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_sessions_heartbeat_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1076,7 +1081,7 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class TrainingOperations:  # pylint: disable=docstring-missing-param
+class TrainingOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1093,127 +1098,15 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def forward_backward(
+    def _forward_backward_initial(
         self,
         session_id: str,
-        request: _models.ForwardBackwardRequest,
+        request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward and backward pass.
-
-        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
-        optimizer step is issued. Poll the returned request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
-        :type session_id: str
-        :param request: Training batch and loss configuration for the forward-backward pass. Required.
-        :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def forward_backward(
-        self,
-        session_id: str,
-        request: _types.ForwardBackwardRequest,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward and backward pass.
-
-        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
-        optimizer step is issued. Poll the returned request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
-        :type session_id: str
-        :param request: Training batch and loss configuration for the forward-backward pass. Required.
-        :type request: ~azure.ai.finetuningsessions.types.ForwardBackwardRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def forward_backward(
-        self,
-        session_id: str,
-        request: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward and backward pass.
-
-        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
-        optimizer step is issued. Poll the returned request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
-        :type session_id: str
-        :param request: Training batch and loss configuration for the forward-backward pass. Required.
-        :type request: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def forward_backward(
-        self,
-        session_id: str,
-        request: Union[_models.ForwardBackwardRequest, _types.ForwardBackwardRequest, IO[bytes]],
-        *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward and backward pass.
-
-        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
-        optimizer step is issued. Poll the returned request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
-        :type session_id: str
-        :param request: Training batch and loss configuration for the forward-backward pass. Is either
-         a ForwardBackwardRequest type or a IO[bytes] type. Required.
-        :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest or
-         ~azure.ai.finetuningsessions.types.ForwardBackwardRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1226,7 +1119,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ActionOperation] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1237,9 +1130,9 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_training_forward_backward_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1250,7 +1143,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1258,18 +1151,14 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ActionOperation, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1277,24 +1166,27 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @overload
-    def forward(
+    def begin_forward_backward(
         self,
         session_id: str,
-        request: _models.ForwardRequest,
+        request: _models.ForwardBackwardRequest,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward-only pass.
+    ) -> LROPoller[_models.OperationResult]:
+        """Forward and backward pass.
 
-        Submit a mini-batch for a forward-only pass without accumulating gradients. Poll the returned
-        request identifier for the result.
+        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
+        optimizer step is issued. Poll the returned request identifier for the result.
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-only pass. Required.
-        :type request: ~azure.ai.finetuningsessions.models.ForwardRequest
+        :param request: Training batch and loss configuration for the forward-backward pass. Required.
+        :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1302,30 +1194,34 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def forward(
+    def begin_forward_backward(
         self,
         session_id: str,
-        request: _types.ForwardRequest,
+        request: JSON,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward-only pass.
+    ) -> LROPoller[_models.OperationResult]:
+        """Forward and backward pass.
 
-        Submit a mini-batch for a forward-only pass without accumulating gradients. Poll the returned
-        request identifier for the result.
+        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
+        optimizer step is issued. Poll the returned request identifier for the result.
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-only pass. Required.
-        :type request: ~azure.ai.finetuningsessions.types.ForwardRequest
+        :param request: Training batch and loss configuration for the forward-backward pass. Required.
+        :type request: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1333,30 +1229,34 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def forward(
+    def begin_forward_backward(
         self,
         session_id: str,
         request: IO[bytes],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward-only pass.
+    ) -> LROPoller[_models.OperationResult]:
+        """Forward and backward pass.
 
-        Submit a mini-batch for a forward-only pass without accumulating gradients. Poll the returned
-        request identifier for the result.
+        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
+        optimizer step is issued. Poll the returned request identifier for the result.
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-only pass. Required.
+        :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1364,39 +1264,105 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def forward(
+    def begin_forward_backward(
         self,
         session_id: str,
-        request: Union[_models.ForwardRequest, _types.ForwardRequest, IO[bytes]],
+        request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.ActionOperation:
-        """Forward-only pass.
+    ) -> LROPoller[_models.OperationResult]:
+        """Forward and backward pass.
 
-        Submit a mini-batch for a forward-only pass without accumulating gradients. Poll the returned
-        request identifier for the result.
+        Submit a mini-batch for a combined forward and backward pass. Gradients accumulate until an
+        optimizer step is issued. Poll the returned request identifier for the result.
 
         :param session_id: Identifier of the fine-tuning session that will process the batch. Required.
         :type session_id: str
-        :param request: Training batch and loss configuration for the forward-only pass. Is either a
-         ForwardRequest type or a IO[bytes] type. Required.
-        :type request: ~azure.ai.finetuningsessions.models.ForwardRequest or
-         ~azure.ai.finetuningsessions.types.ForwardRequest or IO[bytes]
+        :param request: Training batch and loss configuration for the forward-backward pass. Is one of
+         the following types: ForwardBackwardRequest, JSON, IO[bytes] Required.
+        :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._forward_backward_initial(
+                session_id=session_id,
+                request=request,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _optim_step_initial(
+        self,
+        session_id: str,
+        request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1409,7 +1375,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ActionOperation] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1418,11 +1384,11 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         else:
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_training_forward_request(
+        _request = build_training_optim_step_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1433,7 +1399,7 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1441,18 +1407,14 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ActionOperation, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1460,15 +1422,16 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @overload
-    def optimizer_step(
+    def begin_optim_step(
         self,
         session_id: str,
         request: _models.OptimStepRequest,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Optimizer step.
 
         Apply accumulated gradients to the LoRA weights using the Adam optimizer. Poll the returned
@@ -1479,6 +1442,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1486,21 +1451,23 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def optimizer_step(
+    def begin_optim_step(
         self,
         session_id: str,
-        request: _types.OptimStepRequest,
+        request: JSON,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Optimizer step.
 
         Apply accumulated gradients to the LoRA weights using the Adam optimizer. Poll the returned
@@ -1510,7 +1477,9 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
-        :type request: ~azure.ai.finetuningsessions.types.OptimStepRequest
+        :type request: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1518,21 +1487,23 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def optimizer_step(
+    def begin_optim_step(
         self,
         session_id: str,
         request: IO[bytes],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ActionOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Optimizer step.
 
         Apply accumulated gradients to the LoRA weights using the Adam optimizer. Poll the returned
@@ -1543,6 +1514,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1550,20 +1523,22 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def optimizer_step(
+    def begin_optim_step(
         self,
         session_id: str,
-        request: Union[_models.OptimStepRequest, _types.OptimStepRequest, IO[bytes]],
+        request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.ActionOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Optimizer step.
 
         Apply accumulated gradients to the LoRA weights using the Adam optimizer. Poll the returned
@@ -1572,82 +1547,75 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param session_id: Identifier of the fine-tuning session whose weights will be updated.
          Required.
         :type session_id: str
-        :param request: Adam optimizer configuration for applying accumulated gradients. Is either a
-         OptimStepRequest type or a IO[bytes] type. Required.
-        :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest or
-         ~azure.ai.finetuningsessions.types.OptimStepRequest or IO[bytes]
+        :param request: Adam optimizer configuration for applying accumulated gradients. Is one of the
+         following types: OptimStepRequest, JSON, IO[bytes] Required.
+        :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: ActionOperation. The ActionOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.ActionOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ActionOperation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._optim_step_initial(
+                session_id=session_id,
+                request=request,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(request, (IOBase, bytes)):
-            _content = request
-        else:
-            _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
-        _request = build_training_optimizer_step_request(
-            session_id=session_id,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-        response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ActionOperation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class CheckpointsOperations:  # pylint: disable=docstring-missing-param
+class CheckpointsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1664,127 +1632,15 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def save(
+    def _save_initial(
         self,
         session_id: str,
-        checkpoint: _models.SaveCheckpointRequest,
+        checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Save a training checkpoint.
-
-        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
-        request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
-        :type session_id: str
-        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
-        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def save(
-        self,
-        session_id: str,
-        checkpoint: _types.SaveCheckpointRequest,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Save a training checkpoint.
-
-        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
-        request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
-        :type session_id: str
-        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
-        :type checkpoint: ~azure.ai.finetuningsessions.types.SaveCheckpointRequest
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def save(
-        self,
-        session_id: str,
-        checkpoint: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Save a training checkpoint.
-
-        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
-        request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
-        :type session_id: str
-        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
-        :type checkpoint: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def save(
-        self,
-        session_id: str,
-        checkpoint: Union[_models.SaveCheckpointRequest, _types.SaveCheckpointRequest, IO[bytes]],
-        *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Save a training checkpoint.
-
-        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
-        request identifier for the result.
-
-        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
-        :type session_id: str
-        :param checkpoint: Identifier and optional training metadata for the checkpoint. Is either a
-         SaveCheckpointRequest type or a IO[bytes] type. Required.
-        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest or
-         ~azure.ai.finetuningsessions.types.SaveCheckpointRequest or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1797,7 +1653,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingOperation] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1808,9 +1664,9 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_checkpoints_save_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1821,7 +1677,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1829,18 +1685,14 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PendingOperation, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1848,15 +1700,273 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @overload
-    def save_sampler_weights(
+    def begin_save(
+        self,
+        session_id: str,
+        checkpoint: _models.SaveCheckpointRequest,
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Save a training checkpoint.
+
+        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
+        request identifier for the result.
+
+        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
+        :type session_id: str
+        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
+        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_save(
+        self,
+        session_id: str,
+        checkpoint: JSON,
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Save a training checkpoint.
+
+        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
+        request identifier for the result.
+
+        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
+        :type session_id: str
+        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
+        :type checkpoint: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_save(
+        self,
+        session_id: str,
+        checkpoint: IO[bytes],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Save a training checkpoint.
+
+        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
+        request identifier for the result.
+
+        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
+        :type session_id: str
+        :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
+        :type checkpoint: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_save(
+        self,
+        session_id: str,
+        checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Save a training checkpoint.
+
+        Save a training checkpoint containing LoRA weights and optimizer state. Poll the returned
+        request identifier for the result.
+
+        :param session_id: Identifier of the fine-tuning session to checkpoint. Required.
+        :type session_id: str
+        :param checkpoint: Identifier and optional training metadata for the checkpoint. Is one of the
+         following types: SaveCheckpointRequest, JSON, IO[bytes] Required.
+        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest or JSON or
+         IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._save_initial(
+                session_id=session_id,
+                checkpoint=checkpoint,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _save_sampler_weights_initial(
+        self,
+        session_id: str,
+        checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(checkpoint, (IOBase, bytes)):
+            _content = checkpoint
+        else:
+            _content = json.dumps(checkpoint, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_checkpoints_save_sampler_weights_request(
+            session_id=session_id,
+            api_version=api_version,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_save_sampler_weights(
         self,
         session_id: str,
         checkpoint: _models.SaveSamplerWeightsRequest,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Save sampler weights.
 
         Save sampler-compatible weights without optimizer state for generation. Poll the returned
@@ -1868,6 +1978,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1875,21 +1987,23 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def save_sampler_weights(
+    def begin_save_sampler_weights(
         self,
         session_id: str,
-        checkpoint: _types.SaveSamplerWeightsRequest,
+        checkpoint: JSON,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Save sampler weights.
 
         Save sampler-compatible weights without optimizer state for generation. Poll the returned
@@ -1900,7 +2014,9 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :type session_id: str
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
-        :type checkpoint: ~azure.ai.finetuningsessions.types.SaveSamplerWeightsRequest
+        :type checkpoint: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1908,21 +2024,23 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def save_sampler_weights(
+    def begin_save_sampler_weights(
         self,
         session_id: str,
         checkpoint: IO[bytes],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Save sampler weights.
 
         Save sampler-compatible weights without optimizer state for generation. Poll the returned
@@ -1934,6 +2052,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
         :type checkpoint: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -1941,20 +2061,22 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def save_sampler_weights(
+    def begin_save_sampler_weights(
         self,
         session_id: str,
-        checkpoint: Union[_models.SaveSamplerWeightsRequest, _types.SaveSamplerWeightsRequest, IO[bytes]],
+        checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.PendingOperation:
+    ) -> LROPoller[_models.OperationResult]:
         """Save sampler weights.
 
         Save sampler-compatible weights without optimizer state for generation. Poll the returned
@@ -1964,84 +2086,79 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type session_id: str
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
-         weights. Is either a SaveSamplerWeightsRequest type or a IO[bytes] type. Required.
-        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest or
-         ~azure.ai.finetuningsessions.types.SaveSamplerWeightsRequest or IO[bytes]
+         weights. Is one of the following types: SaveSamplerWeightsRequest, JSON, IO[bytes] Required.
+        :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest or JSON or
+         IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingOperation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._save_sampler_weights_initial(
+                session_id=session_id,
+                checkpoint=checkpoint,
+                api_version=api_version,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(checkpoint, (IOBase, bytes)):
-            _content = checkpoint
-        else:
-            _content = json.dumps(checkpoint, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
-        _request = build_checkpoints_save_sampler_weights_request(
-            session_id=session_id,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
         else:
-            deserialized = _deserialize(_models.PendingOperation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
         self,
         session_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
     ) -> _models.CheckpointList:
@@ -2052,6 +2169,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param session_id: Identifier of the fine-tuning session whose checkpoints will be listed.
          Required.
         :type session_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -2075,8 +2194,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_checkpoints_list_request(
             session_id=session_id,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2118,6 +2237,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         session_id: str,
         checkpoint_id: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
     ) -> _models.CheckpointInfo:
@@ -2129,6 +2249,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :type session_id: str
         :param checkpoint_id: Identifier of the checkpoint to retrieve. Required.
         :type checkpoint_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
@@ -2153,8 +2275,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         _request = build_checkpoints_get_request(
             session_id=session_id,
             checkpoint_id=checkpoint_id,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2191,7 +2313,7 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class SamplingOperations:  # pylint: disable=docstring-missing-param
+class SamplingOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2208,151 +2330,16 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def sample(
+    def _sample_initial(
         self,
         session_id: str,
-        sample: _models.SampleRequest,
+        sample: Union[_models.SampleRequest, JSON, IO[bytes]],
         *,
-        checkpoint_id: str,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Generate completions.
-
-        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
-        save request must have completed before sampling. Poll the returned request identifier for the
-        result.
-
-        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
-         Required.
-        :type session_id: str
-        :param sample: Prompt and generation parameters for the requested completions. Required.
-        :type sample: ~azure.ai.finetuningsessions.models.SampleRequest
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def sample(
-        self,
-        session_id: str,
-        sample: _types.SampleRequest,
-        *,
-        checkpoint_id: str,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Generate completions.
-
-        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
-        save request must have completed before sampling. Poll the returned request identifier for the
-        result.
-
-        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
-         Required.
-        :type session_id: str
-        :param sample: Prompt and generation parameters for the requested completions. Required.
-        :type sample: ~azure.ai.finetuningsessions.types.SampleRequest
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def sample(
-        self,
-        session_id: str,
-        sample: IO[bytes],
-        *,
-        checkpoint_id: str,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Generate completions.
-
-        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
-        save request must have completed before sampling. Poll the returned request identifier for the
-        result.
-
-        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
-         Required.
-        :type session_id: str
-        :param sample: Prompt and generation parameters for the requested completions. Required.
-        :type sample: IO[bytes]
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def sample(
-        self,
-        session_id: str,
-        sample: Union[_models.SampleRequest, _types.SampleRequest, IO[bytes]],
-        *,
+        api_version: str,
         checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.PendingOperation:
-        """Generate completions.
-
-        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
-        save request must have completed before sampling. Poll the returned request identifier for the
-        result.
-
-        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
-         Required.
-        :type session_id: str
-        :param sample: Prompt and generation parameters for the requested completions. Is either a
-         SampleRequest type or a IO[bytes] type. Required.
-        :type sample: ~azure.ai.finetuningsessions.models.SampleRequest or
-         ~azure.ai.finetuningsessions.types.SampleRequest or IO[bytes]
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or
-         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: PendingOperation. The PendingOperation is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.PendingOperation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2365,7 +2352,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingOperation] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2376,10 +2363,10 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
 
         _request = build_sampling_sample_request(
             session_id=session_id,
+            api_version=api_version,
             checkpoint_id=checkpoint_id,
             foundry_features=foundry_features,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2390,7 +2377,7 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2398,26 +2385,236 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PendingOperation, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
+    @overload
+    def begin_sample(
+        self,
+        session_id: str,
+        sample: _models.SampleRequest,
+        *,
+        api_version: str,
+        checkpoint_id: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Generate completions.
 
-class Operations:  # pylint: disable=docstring-missing-param
+        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
+        save request must have completed before sampling. Poll the returned request identifier for the
+        result.
+
+        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
+         Required.
+        :type session_id: str
+        :param sample: Prompt and generation parameters for the requested completions. Required.
+        :type sample: ~azure.ai.finetuningsessions.models.SampleRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_sample(
+        self,
+        session_id: str,
+        sample: JSON,
+        *,
+        api_version: str,
+        checkpoint_id: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Generate completions.
+
+        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
+        save request must have completed before sampling. Poll the returned request identifier for the
+        result.
+
+        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
+         Required.
+        :type session_id: str
+        :param sample: Prompt and generation parameters for the requested completions. Required.
+        :type sample: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_sample(
+        self,
+        session_id: str,
+        sample: IO[bytes],
+        *,
+        api_version: str,
+        checkpoint_id: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Generate completions.
+
+        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
+        save request must have completed before sampling. Poll the returned request identifier for the
+        result.
+
+        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
+         Required.
+        :type session_id: str
+        :param sample: Prompt and generation parameters for the requested completions. Required.
+        :type sample: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_sample(
+        self,
+        session_id: str,
+        sample: Union[_models.SampleRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        checkpoint_id: str,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationResult]:
+        """Generate completions.
+
+        Generate one or more completions from the specified sampler checkpoint. The sampler-weights
+        save request must have completed before sampling. Poll the returned request identifier for the
+        result.
+
+        :param session_id: Identifier of the fine-tuning session containing the sampler checkpoint.
+         Required.
+        :type session_id: str
+        :param sample: Prompt and generation parameters for the requested completions. Is one of the
+         following types: SampleRequest, JSON, IO[bytes] Required.
+        :type sample: ~azure.ai.finetuningsessions.models.SampleRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or
+         ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :return: An instance of LROPoller that returns OperationResult. The OperationResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.finetuningsessions.models.OperationResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._sample_initial(
+                session_id=session_id,
+                sample=sample,
+                api_version=api_version,
+                checkpoint_id=checkpoint_id,
+                foundry_features=foundry_features,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class Operations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2440,9 +2637,10 @@ class Operations:  # pylint: disable=docstring-missing-param
         session_id: str,
         request_id_parameter: str,
         *,
+        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
         **kwargs: Any
-    ) -> _models.RequestStatus:
+    ) -> _models.OperationResult:
         """Poll request status.
 
         Poll a fine-tuning request using its request identifier. Returns HTTP 200 with status pending
@@ -2453,12 +2651,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         :type session_id: str
         :param request_id_parameter: Request identifier returned when the work was submitted. Required.
         :type request_id_parameter: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :return: RequestStatus. The RequestStatus is compatible with MutableMapping
-        :rtype: ~azure.ai.finetuningsessions.models.RequestStatus
+        :return: OperationResult. The OperationResult is compatible with MutableMapping
+        :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2472,13 +2672,13 @@ class Operations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RequestStatus] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationResult] = kwargs.pop("cls", None)
 
         _request = build_operations_get_request(
             session_id=session_id,
             request_id_parameter=request_id_parameter,
+            api_version=api_version,
             foundry_features=foundry_features,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2507,7 +2707,7 @@ class Operations:  # pylint: disable=docstring-missing-param
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.RequestStatus, response.json())
+            deserialized = _deserialize(_models.OperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

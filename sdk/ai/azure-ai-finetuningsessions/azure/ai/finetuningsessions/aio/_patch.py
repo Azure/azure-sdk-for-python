@@ -8,12 +8,7 @@
 
 All async training operations (create_session, forward_backward, optim_step,
 save_weights, save_weights_for_sampler, sample, close_session) are added
-to the exported ``FineTuningSessionClient`` subclass via ``patch_sdk()``.
-
-Generated operations return HTTP 200 accepted-request handles and raw
-request-status envelopes. The convenience methods manually poll
-``/fine_tuning/sessions/{sessionId}/request/{requestId}``, apply retries,
-and normalize completed results into SDK convenience models.
+directly to the generated ``FineTuningSessionClient`` class via ``patch_sdk()``.
 
 Concurrency:
   - Heartbeat uses an ``asyncio.Task`` per session.
@@ -31,7 +26,6 @@ Usage::
         opt = await client.optim_step(session_id, AdamParams(learning_rate=1e-4))
         await client.close_session(session_id)
 """
-
 from __future__ import annotations
 
 import asyncio
@@ -46,8 +40,8 @@ from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
 
-from .._client_options import prepare_client_options
-from ._client import FineTuningSessionClient as _GeneratedFineTuningSessionClient
+from ._client import FineTuningSessionClient as _GeneratedClient
+from .._client_options import _prepare_client_options
 from .._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
@@ -102,7 +96,25 @@ from .._patch import (
 )
 
 if TYPE_CHECKING:
-    from ._client import FineTuningSessionClient
+    from azure.core.credentials_async import AsyncTokenCredential
+
+
+class FineTuningSessionClient(_GeneratedClient):
+    """The generated async client with the tested preview authentication policies."""
+
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        options = dict(kwargs)
+        allow_insecure_http = options.pop("allow_insecure_http", False)
+        options = _prepare_client_options(
+            endpoint,
+            credential,
+            options,
+            allow_insecure_http=allow_insecure_http,
+            asynchronous=True,
+        )
+        super().__init__(endpoint=endpoint, credential=credential, **options)
+        self._config.allow_insecure_http = allow_insecure_http
+
 
 _PREVIEW = FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW
 _logger = _logging.getLogger(__name__)
@@ -183,8 +195,6 @@ def _ensure_async_state(self: "FineTuningSessionClient") -> None:
     """Lazily initialize async state on the client instance."""
     if not hasattr(self, "_heartbeat_tasks"):
         self._heartbeat_tasks: dict[str, asyncio.Task] = {}
-    if not hasattr(self, "_heartbeat_shutdowns"):
-        self._heartbeat_shutdowns: dict[str, asyncio.Task] = {}
     if not hasattr(self, "_post_semaphore"):
         self._post_semaphore = asyncio.Semaphore(_DEFAULT_POST_CONCURRENCY)
     if not hasattr(self, "_sampling_session_seq"):
@@ -269,40 +279,12 @@ def _start_heartbeat(
     )
 
 
-async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
-    """Cancel and drain the heartbeat before allowing a lifecycle request."""
+def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
+    """Cancel the background heartbeat task for a session."""
     _ensure_async_state(self)
-    session_id = _canonical_session_id(session_id)
-    shutdown = self._heartbeat_shutdowns.get(session_id)
-    if shutdown is None:
-        task = self._heartbeat_tasks.get(session_id)
-        if task is None:
-            return
+    task = self._heartbeat_tasks.pop(_canonical_session_id(session_id), None)
+    if task is not None:
         task.cancel()
-
-        async def _drain_heartbeat() -> None:
-            try:
-                await task
-            except asyncio.CancelledError:
-                pass  # Expected cancellation of the heartbeat, not of its caller.
-            except Exception as exc:
-                # A failed background heartbeat must not prevent session cleanup.
-                _logger.warning("[heartbeat] failed while stopping %s: %s", session_id, exc)
-            finally:
-                if self._heartbeat_tasks.get(session_id) is task:
-                    self._heartbeat_tasks.pop(session_id, None)
-                self._heartbeat_shutdowns.pop(session_id, None)
-
-        shutdown = asyncio.create_task(_drain_heartbeat(), name=f"fts-heartbeat-stop-{session_id}")
-        # Keep one drain per session, including when a lifecycle caller is cancelled.
-        # An eager task factory may have completed the drain during create_task().
-        if not shutdown.done():
-            self._heartbeat_shutdowns[session_id] = shutdown
-
-    # Concurrent close/delete calls wait for the same drain without issuing a
-    # second cancel that could interrupt transport cleanup. Caller cancellation
-    # still propagates, so a cancelled lifecycle call does not send its request.
-    await asyncio.shield(shutdown)
 
 
 # -- Low-level helpers ---------------------------------------------------------
@@ -345,7 +327,7 @@ async def _post(
     if extra_params:
         post_params.update(extra_params)
     op_type = _LOOM_SUBPATH_TO_OP_TYPE.get(subpath.rsplit("/", 1)[-1], "")
-    timeline_session_id = subpath.partition("/fine_tuning/sessions/")[2].partition("/")[0]
+    timeline_session_id = subpath.split("/sessions/", 1)[1].split("/", 1)[0] if "/sessions/" in subpath else ""
     submit_queued = _time.monotonic()
     _logger.info(
         "[operation_timeline] submit_queued session_id=%s op=%s path=%s%s",
@@ -2089,13 +2071,12 @@ async def close_session(
 ) -> None:
     """Unload the session from the GPU engine.
 
-    Cancels and awaits the background heartbeat, then issues the complete request.
+    Stops the background heartbeat, then issues the complete request.
 
     :param session_id: The session ID to close.
     """
-    # Snapshot before yielding: a concurrent delete may remove the resource mapping.
+    _stop_heartbeat(self, session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
-    await _stop_heartbeat(self, session_id)
     close_req = _HttpRequest(
         "POST",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/complete",
@@ -2112,7 +2093,7 @@ async def delete_session(
 ) -> None:
     """Delete a session and cascade-delete its models, checkpoints, and sampling sessions.
 
-    Cancels and awaits the background heartbeat, then issues an HTTP DELETE against the
+    Stops the background heartbeat, then issues an HTTP DELETE against the
     session resource; the cascade is performed server-side.
 
     Idempotent — a 404 (session already gone) is swallowed.  Any other
@@ -2121,9 +2102,8 @@ async def delete_session(
     :param session_id: The session ID to delete.
     """
     session_id = _canonical_session_id(session_id)
-    # Preserve the same wire ID even if another delete finishes while we drain.
+    _stop_heartbeat(self, session_id)
     resource_session_id = _client_resource_session_id(self, session_id)
-    await _stop_heartbeat(self, session_id)
     del_req = _HttpRequest(
         "DELETE",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}",
@@ -2146,38 +2126,17 @@ async def delete_session(
     self._session_resource_ids.pop(session_id, None)
 
 
-# -- Patch the generated client ------------------------------------------------
-
-
-class FineTuningSessionClient(_GeneratedFineTuningSessionClient):
-    """Async session client with regeneration-safe credential configuration."""
-
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Any,
-        *,
-        allow_insecure_http: bool = False,
-        use_legacy_routes: bool = False,
-        **kwargs: Any,
-    ) -> None:
-        options = prepare_client_options(
-            endpoint,
-            credential,
-            allow_insecure_http=allow_insecure_http,
-            asynchronous=True,
-            use_legacy_routes=use_legacy_routes,
-            **kwargs,
-        )
-        super().__init__(endpoint=endpoint, credential=credential, **options)
-        self._config.allow_insecure_http = allow_insecure_http
-
+# -- Patch the public client ---------------------------------------------------
 
 __all__: list[str] = ["FineTuningSessionClient"]
 
 
 def patch_sdk():
     """Patch async convenience methods onto FineTuningSessionClient."""
+    from . import _configuration
+    from .._client_options import _patch_configuration
+
+    _patch_configuration(_configuration, asynchronous=True)
 
     FineTuningSessionClient.create_session = create_session
     FineTuningSessionClient.create_session_from_checkpoint = create_session_from_checkpoint
@@ -2198,3 +2157,28 @@ def patch_sdk():
     FineTuningSessionClient.sample = sample
     FineTuningSessionClient.close_session = close_session
     FineTuningSessionClient.delete_session = delete_session
+
+    # Preserve the original private import path used by the upstream tests and
+    # existing callers, while public construction uses the supported subclass.
+    for name in (
+        "create_session",
+        "create_session_from_checkpoint",
+        "forward_backward",
+        "forward_backward_post",
+        "forward_backward_async",
+        "forward",
+        "forward_post",
+        "forward_async",
+        "optim_step",
+        "optim_step_post",
+        "optim_step_async",
+        "save_weights",
+        "save_weights_post",
+        "save_weights_async",
+        "save_weights_for_sampler_async",
+        "save_weights_and_get_sampling_client_async",
+        "sample",
+        "close_session",
+        "delete_session",
+    ):
+        setattr(_GeneratedClient, name, getattr(FineTuningSessionClient, name))

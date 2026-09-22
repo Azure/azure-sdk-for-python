@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-import sys
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,16 +18,11 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import FineTuningSessionClientConfiguration
 from .operations import CheckpointsOperations, Operations, SamplingOperations, SessionsOperations, TrainingOperations
 
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self  # type: ignore
-
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FineTuningSessionClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FineTuningSessionClient:  # pylint: disable=client-accepts-api-version-keyword
     """FineTuningSessionClient.
 
     :ivar sessions: SessionsOperations operations
@@ -48,10 +43,8 @@ class FineTuningSessionClient:  # pylint: disable=docstring-keyword-should-match
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is None. If not set, the operation's default API version will be used. Note
-     that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:

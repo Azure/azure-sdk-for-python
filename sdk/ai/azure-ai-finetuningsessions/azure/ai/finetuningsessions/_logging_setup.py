@@ -39,7 +39,6 @@ Operators can opt out without code changes by setting the env var
 Programmatic control is also available via
 ``install_default_logging(enabled=True)`` or ``enabled=False``.
 """
-
 from __future__ import annotations
 
 import logging as _logging

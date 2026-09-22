@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for FineTuningSessionClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -31,15 +30,9 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
-     None. Default value is None. If not set, the operation's default API version will be used. Note
-     that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "v1")
-
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
@@ -47,7 +40,6 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
 
         self.endpoint = endpoint
         self.credential = credential
-        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-finetuningsessions/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

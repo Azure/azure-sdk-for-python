@@ -6,9 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
-if TYPE_CHECKING:
-    from . import models as _models
-FineTuningInputChunk = Union["_models.ModelInputChunk", "_models.ImageChunk"]
 StopCriteria = Union[list[int], list[str]]

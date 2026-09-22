@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "status": "validated-typespec-and-supported-python-hooks",
+  "distribution": "azure-ai-finetuningsessions",
+  "namespace": "azure.ai.finetuningsessions",
+  "version": "1.0.0b1",
+  "reference": {
+    "manifest": "loom-source.json",
+    "repository": "loom",
+    "commit": "485774df502642879fdf3a53777be4a0d95155dc",
+    "comparison": "public-api-and-offline-behavior; internal-hook-layout-may-differ"
+  },
+  "typespec": {
+    "repository": "Azure/azure-rest-api-specs",
+    "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
+    "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
+    "commit": "d912f0d0bc6af9e87e0c0833922dd85fa32abf97",
+    "requires_uncommitted_working_tree": false,
+    "source_fingerprint_sha256": "619037fc5de240f101483250b91cf010d8d11dc30495333cc41b97ebbc973c8c",
+    "client_sha256": "536f1ca4ac836f09458871d8b8320f0b95193e7c33e7d2bba4f8426f115dd3f2",
+    "models_sha256": "dcee10709969a59f38b2e04626bcc068b88b15468e5a11ac3222c66382d7a1b4",
+    "config_sha256": "8a74554700889c9bd2b74c58000ee4a5dd2bf1c7ae5fffbd8944a63b462aa6e9",
+    "remote_generation_blocker": null
+  },
+  "toolchain": {
+    "manifest": "emitter-package.json",
+    "lockfile": "emitter-package-lock.json",
+    "lockfile_sha256": "93eb515baaef11de29c4bf5778f6b1196f8945f941ee6a00a519977d1c82fe6f",
+    "python_backend_requirements": "generator-requirements.txt",
+    "python_emitter": "0.61.3",
+    "http_client_python": "0.28.3",
+    "compiler": "1.11.0",
+    "client_generator_core": "0.67.3"
+  },
+  "assembly": {
+    "generated_inventory_entries": 21,
+    "generated_inventory_fingerprint_sha256": "835921e7d14a9d5f99f3a4f226092e59431dc7f2cb918591aaca6e3238a3dabe",
+    "runtime_files": 28,
+    "runtime_python_modules": 27,
+    "runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
+    "maintained_modules": [
+      "_patch.py",
+      "aio/_patch.py",
+      "models/_patch.py",
+      "operations/_patch.py",
+      "aio/operations/_patch.py",
+      "_client_options.py",
+      "_operation_compat.py",
+      "_exceptions.py",
+      "_logging_setup.py"
+    ],
+    "method": "Seed only maintained modules before emission; pinned emitter preserves/formats them; compare complete output with public runtime. No generated-source rewriting."
+  },
+  "validation": {
+    "upstream_tests": 434,
+    "upstream_test_files": 19,
+    "paired_convenience_cases": 20,
+    "requests_per_sdk": 134,
+    "checks_per_sdk": 2246,
+    "exported_models_and_enums": 45,
+    "model_construction_cases": 76,
+    "raw_operation_cases": 336,
+    "independent_emissions": 2,
+    "full_rest_openapi_files_unchanged": 4,
+    "python_emission_warnings": 99,
+    "full_rest_warnings": 29,
+    "live_service_tested": false,
+    "review_fixes_applied": false,
+    "scope": "preview-parity-baseline; subsequent review fixes must be recorded separately"
+  }
+}

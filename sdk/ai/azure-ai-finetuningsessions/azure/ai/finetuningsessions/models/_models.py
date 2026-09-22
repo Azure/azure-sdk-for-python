@@ -15,99 +15,44 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import OperationType
 
 if TYPE_CHECKING:
-    from .. import _unions, models as _models
+    from .. import _types, models as _models
 
 
-class _MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """_MisalignmentSteer.
-
-    :ivar message: The public continuation instruction. Required.
-    :vartype message: str
-    """
-
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The public continuation instruction. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        message: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ActionOperation(_Model):  # pylint: disable=docstring-missing-param
-    """Identifies an accepted training request and its fine-tuning session.
-
-    :ivar request_id: Request identifier to pass to the session's request-status endpoint.
-     Required.
-    :vartype request_id: str
-    :ivar status: Indicates that the request has not yet completed. Required. Default value is
-     "pending".
-    :vartype status: str
-    :ivar session_id: Identifier of the session processing this request. Required.
-    :vartype session_id: str
-    """
-
-    request_id: str = rest_field(visibility=["read"])
-    """Request identifier to pass to the session's request-status endpoint. Required."""
-    status: Literal["pending"] = rest_field(visibility=["read"])
-    """Indicates that the request has not yet completed. Required. Default value is \"pending\"."""
-    session_id: str = rest_field(visibility=["read"])
-    """Identifier of the session processing this request. Required."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status: Literal["pending"] = "pending"
-
-
-class AdamParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AdamParams(_Model):
     """Adam optimizer hyper-parameters.
 
-    :ivar learning_rate: Nonnegative learning rate. Defaults to 0.0001.
+    :ivar learning_rate: Learning rate. Required.
     :vartype learning_rate: float
-    :ivar beta1: Adam first-moment coefficient, from zero inclusive to one exclusive. Defaults to
-     0.9.
+    :ivar beta1: Adam β₁ coefficient. Required.
     :vartype beta1: float
-    :ivar beta2: Adam second-moment coefficient, from zero inclusive to one exclusive. Defaults to
-     0.95.
+    :ivar beta2: Adam β₂ coefficient. Required.
     :vartype beta2: float
-    :ivar eps: Positive numerical stability floor. Defaults to 0.000000000001.
+    :ivar eps: Adam ε (numerical stability floor). Required.
     :vartype eps: float
-    :ivar weight_decay: Nonnegative L2 weight-decay coefficient. Defaults to zero.
+    :ivar weight_decay: L₂ weight-decay coefficient. Required.
     :vartype weight_decay: float
     """
 
-    learning_rate: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Nonnegative learning rate. Defaults to 0.0001."""
-    beta1: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Adam first-moment coefficient, from zero inclusive to one exclusive. Defaults to 0.9."""
-    beta2: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Adam second-moment coefficient, from zero inclusive to one exclusive. Defaults to 0.95."""
-    eps: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Positive numerical stability floor. Defaults to 0.000000000001."""
-    weight_decay: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Nonnegative L2 weight-decay coefficient. Defaults to zero."""
+    learning_rate: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Learning rate. Required."""
+    beta1: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Adam β₁ coefficient. Required."""
+    beta2: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Adam β₂ coefficient. Required."""
+    eps: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Adam ε (numerical stability floor). Required."""
+    weight_decay: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """L₂ weight-decay coefficient. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        learning_rate: Optional[float] = None,
-        beta1: Optional[float] = None,
-        beta2: Optional[float] = None,
-        eps: Optional[float] = None,
-        weight_decay: Optional[float] = None,
+        learning_rate: float,
+        beta1: float,
+        beta2: float,
+        eps: float,
+        weight_decay: float,
     ) -> None: ...
 
     @overload
@@ -121,7 +66,7 @@ class AdamParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ApiError(_Model):
     """ApiError.
 
     :ivar code: Required.
@@ -132,8 +77,6 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype param: str
     :ivar type:
     :vartype type: str
-    :ivar misalignment:
-    :vartype misalignment: ~azure.ai.finetuningsessions.models.MisalignmentErrorDetailsResource
     :ivar details:
     :vartype details: list[~azure.ai.finetuningsessions.models.ApiError]
     :ivar additional_info:
@@ -148,9 +91,6 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     """Required."""
     param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
@@ -167,7 +107,6 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         message: str,
         param: Optional[str] = None,
         type: Optional[str] = None,
-        misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = None,
         details: Optional[list["_models.ApiError"]] = None,
         additional_info: Optional[dict[str, Any]] = None,
         debug_info: Optional[dict[str, Any]] = None,
@@ -184,7 +123,7 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         super().__init__(*args, **kwargs)
 
 
-class ApiErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ApiErrorResponse(_Model):
     """Error response for API failures.
 
     :ivar error: Required.
@@ -215,49 +154,38 @@ class ApiErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-matc
 class Checkpoint(_Model):
     """A checkpoint item returned in GET /fine_tuning/sessions/{sessionId}/checkpoints.
 
-    :ivar checkpoint_id: Identifier of the saved checkpoint within the session. Required.
+    :ivar checkpoint_id: Required.
     :vartype checkpoint_id: str
-    :ivar checkpoint_type: Whether the checkpoint contains training state or sampler weights.
-     Required. Known values are: "training" and "sampler".
+    :ivar checkpoint_type: Required. Known values are: "training" and "sampler".
     :vartype checkpoint_type: str or ~azure.ai.finetuningsessions.models.CheckpointType
     :ivar time: Timestamp when the checkpoint was saved. Required.
     :vartype time: ~datetime.datetime
-    :ivar step_number: Training step associated with the checkpoint, when recorded.
-    :vartype step_number: int
-    :ivar metrics: Metrics stored with the checkpoint, retaining their JSON value types.
-    :vartype metrics: dict[str, any]
     """
 
     checkpoint_id: str = rest_field(visibility=["read"])
-    """Identifier of the saved checkpoint within the session. Required."""
+    """Required."""
     checkpoint_type: Union[str, "_models.CheckpointType"] = rest_field(visibility=["read"])
-    """Whether the checkpoint contains training state or sampler weights. Required. Known values are:
-     \"training\" and \"sampler\"."""
+    """Required. Known values are: \"training\" and \"sampler\"."""
     time: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
     """Timestamp when the checkpoint was saved. Required."""
-    step_number: Optional[int] = rest_field(visibility=["read"])
-    """Training step associated with the checkpoint, when recorded."""
-    metrics: Optional[dict[str, Any]] = rest_field(visibility=["read"])
-    """Metrics stored with the checkpoint, retaining their JSON value types."""
 
 
-class CheckpointInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CheckpointInfo(_Model):
     """Detailed metadata for a single checkpoint.
 
-    :ivar base_model: Base model from which the checkpoint was created. Required.
+    :ivar base_model: Required.
     :vartype base_model: str
-    :ivar is_lora: Whether the checkpoint contains a LoRA adapter. Required.
+    :ivar is_lora: Required.
     :vartype is_lora: bool
-    :ivar lora_rank: LoRA rank of the checkpoint, if applicable.
+    :ivar lora_rank:
     :vartype lora_rank: int
     """
 
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base model from which the checkpoint was created. Required."""
+    """Required."""
     is_lora: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the checkpoint contains a LoRA adapter. Required."""
+    """Required."""
     lora_rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """LoRA rank of the checkpoint, if applicable."""
 
     @overload
     def __init__(
@@ -279,16 +207,15 @@ class CheckpointInfo(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class CheckpointList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CheckpointList(_Model):
     """List of all checkpoints for a session (no pagination).
 
-    :ivar checkpoints: All training and sampler checkpoints for the session, returned in one page.
-     Required.
+    :ivar checkpoints: Required.
     :vartype checkpoints: list[~azure.ai.finetuningsessions.models.Checkpoint]
     """
 
     checkpoints: list["_models.Checkpoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """All training and sampler checkpoints for the session, returned in one page. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -308,148 +235,37 @@ class CheckpointList(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class RequestStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Status envelope returned when polling a fine-tuning request.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CompletedRequest, FailedRequest, PendingRequest
-
-    :ivar status: Request state, which determines the shape of the status response. Required.
-     Default value is None.
-    :vartype status: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    status: str = rest_discriminator(name="status", visibility=["read", "create", "update", "delete", "query"])
-    """Request state, which determines the shape of the status response. Required. Default value is
-     None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CompletedRequest(
-    RequestStatus, discriminator="completed"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request that completed successfully.
-
-    :ivar status: Indicates that the request completed successfully. Required. Default value is
-     "completed".
-    :vartype status: str
-    :ivar result: Raw result payload, whose properties depend on the submitted request. Required.
-    :vartype result: dict[str, any]
-    """
-
-    status: Literal["completed"] = rest_discriminator(name="status", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Indicates that the request completed successfully. Required. Default value is \"completed\"."""
-    result: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Raw result payload, whose properties depend on the submitted request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        result: dict[str, Any],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status = "completed"  # type: ignore
-
-
-class CompleteResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from POST /fine_tuning/sessions/{sessionId}/complete.
-
-    :ivar session_id: Identifier of the session being unloaded. Required.
-    :vartype session_id: str
-    :ivar request_id: Request identifier used to poll for completion of the unload request.
-     Required.
-    :vartype request_id: str
-    """
-
-    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the session being unloaded. Required."""
-    request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Request identifier used to poll for completion of the unload request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        session_id: str,
-        request_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CreateSessionRequest(_Model):
     """Request body for POST /fine_tuning/sessions.
 
     :ivar type: The session type. Required. "training"
     :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
-    :ivar base_model: Base model to use for the new training session. Required.
+    :ivar base_model: Required.
     :vartype base_model: str
-    :ivar lora_config: Required LoRA adapter configuration, including the adapter rank. Required.
+    :ivar lora_config: LoRA adapter config. Rank is fixed server-side for v1; omit to use the
+     server default.
     :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
-    :ivar user_metadata: Caller-provided metadata whose values can be any JSON value.
+    :ivar user_metadata:
     :vartype user_metadata: dict[str, any]
-    :ivar from_checkpoint: Training checkpoint to load while initializing the session, when
-     provided.
-    :vartype from_checkpoint: ~azure.ai.finetuningsessions.models.FromCheckpoint
-    :ivar training_type: Training tier. When omitted, the service defaults to GlobalStandard unless
-     the legacy user_metadata.DeveloperTier setting selects DeveloperTier. Known values are:
-     "GlobalStandard", "DatazoneStandard", and "DeveloperTier".
-    :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
+    :ivar ejectable: Opt the session into idle hibernation. Default False.
+    :vartype ejectable: bool
+    :ivar training_type: Training SKU type: 'GlobalStandard', 'DatazoneStandard', or
+     'DeveloperTier'. Default 'GlobalStandard'.
+    :vartype training_type: str
     """
 
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The session type. Required. \"training\""""
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base model to use for the new training session. Required."""
-    lora_config: "_models.LoRAConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required LoRA adapter configuration, including the adapter rank. Required."""
+    """Required."""
+    lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA adapter config. Rank is fixed server-side for v1; omit to use the server default."""
     user_metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Caller-provided metadata whose values can be any JSON value."""
-    from_checkpoint: Optional["_models.FromCheckpoint"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Training checkpoint to load while initializing the session, when provided."""
-    training_type: Optional[Union[str, "_models.TrainingType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Training tier. When omitted, the service defaults to GlobalStandard unless the legacy
-     user_metadata.DeveloperTier setting selects DeveloperTier. Known values are:
-     \"GlobalStandard\", \"DatazoneStandard\", and \"DeveloperTier\"."""
+    ejectable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Opt the session into idle hibernation. Default False."""
+    training_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Training SKU type: 'GlobalStandard', 'DatazoneStandard', or 'DeveloperTier'. Default
+     'GlobalStandard'."""
 
     @overload
     def __init__(
@@ -457,10 +273,10 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
         *,
         type: Union[str, "_models.SessionType"],
         base_model: str,
-        lora_config: "_models.LoRAConfig",
+        lora_config: Optional["_models.LoRAConfig"] = None,
         user_metadata: Optional[dict[str, Any]] = None,
-        from_checkpoint: Optional["_models.FromCheckpoint"] = None,
-        training_type: Optional[Union[str, "_models.TrainingType"]] = None,
+        ejectable: Optional[bool] = None,
+        training_type: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -474,78 +290,7 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class CreateSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from POST /fine_tuning/sessions. Poll the returned request identifier to track session
-    initialization.
-
-    :ivar session_id: Identifier of the newly created fine-tuning session. Required.
-    :vartype session_id: str
-    :ivar type: Type of session created by the service. Required.
-    :vartype type: str
-    :ivar base_model: Base model used by the session. Required.
-    :vartype base_model: str
-    :ivar lora_config: LoRA adapter configuration selected for the session. Required.
-    :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
-    :ivar status: Current lifecycle status, which can initially be created or queued. Required.
-     Known values are: "queued", "running", "succeeded", and "failed".
-    :vartype status: str or ~azure.ai.finetuningsessions.models.SessionStatus
-    :ivar request_id: Request identifier used to poll for session initialization. Required.
-    :vartype request_id: str
-    :ivar info_message: Informational message associated with session creation, when available.
-    :vartype info_message: str
-    :ivar warning_message: Warning associated with session creation, when available.
-    :vartype warning_message: str
-    :ivar user_metadata: Caller-provided metadata associated with the session.
-    :vartype user_metadata: dict[str, any]
-    """
-
-    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the newly created fine-tuning session. Required."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Type of session created by the service. Required."""
-    base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base model used by the session. Required."""
-    lora_config: "_models.LoRAConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """LoRA adapter configuration selected for the session. Required."""
-    status: Union[str, "_models.SessionStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Current lifecycle status, which can initially be created or queued. Required. Known values are:
-     \"queued\", \"running\", \"succeeded\", and \"failed\"."""
-    request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Request identifier used to poll for session initialization. Required."""
-    info_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Informational message associated with session creation, when available."""
-    warning_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Warning associated with session creation, when available."""
-    user_metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Caller-provided metadata associated with the session."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        session_id: str,
-        type: str,
-        base_model: str,
-        lora_config: "_models.LoRAConfig",
-        status: Union[str, "_models.SessionStatus"],
-        request_id: str,
-        info_message: Optional[str] = None,
-        warning_message: Optional[str] = None,
-        user_metadata: Optional[dict[str, Any]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Cursor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Cursor(_Model):
     """Pagination cursor returned in list responses.
 
     :ivar offset: Zero-based index of the first item in the current page. Required.
@@ -583,17 +328,17 @@ class Cursor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-
         super().__init__(*args, **kwargs)
 
 
-class Datum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Datum(_Model):
     """A single training example.
 
-    :ivar model_input: Token-ID and optional image input to the model. Required.
+    :ivar model_input: Token-ID input to the model. Required.
     :vartype model_input: ~azure.ai.finetuningsessions.models.ModelInput
     :ivar loss_fn_inputs: Loss-function targets, aligned with model_input tokens. Required.
     :vartype loss_fn_inputs: ~azure.ai.finetuningsessions.models.LossFnInputs
     """
 
     model_input: "_models.ModelInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Token-ID and optional image input to the model. Required."""
+    """Token-ID input to the model. Required."""
     loss_fn_inputs: "_models.LossFnInputs" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Loss-function targets, aligned with model_input tokens. Required."""
 
@@ -616,122 +361,26 @@ class Datum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-o
         super().__init__(*args, **kwargs)
 
 
-class DeleteSessionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Response from DELETE /fine_tuning/sessions/{sessionId}.
-
-    :ivar session_id: Identifier of the session targeted for deletion. Required.
-    :vartype session_id: str
-    :ivar deleted: Whether the session is marked as deleted. Required.
-    :vartype deleted: bool
-    :ivar type: Identifies the response as a session deletion result. Required. Default value is
-     "delete_session".
-    :vartype type: str
-    """
-
-    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the session targeted for deletion. Required."""
-    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the session is marked as deleted. Required."""
-    type: Literal["delete_session"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifies the response as a session deletion result. Required. Default value is
-     \"delete_session\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        session_id: str,
-        deleted: bool,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["delete_session"] = "delete_session"
-
-
-class FailedRequest(
-    RequestStatus, discriminator="failed"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request that failed during processing.
-
-    :ivar status: Indicates that the request failed. Required. Default value is "failed".
-    :vartype status: str
-    :ivar error: Description of the failure. Required.
-    :vartype error: str
-    :ivar error_code: Machine-readable error code, when available.
-    :vartype error_code: str
-    :ivar debug_ref: Diagnostic reference that can be provided when requesting support.
-    :vartype debug_ref: str
-    :ivar should_retry: Whether the service recommends retrying the failed request.
-    :vartype should_retry: bool
-    :ivar retry_after_sec: Recommended delay in seconds before retrying the failed request.
-    :vartype retry_after_sec: float
-    """
-
-    status: Literal["failed"] = rest_discriminator(name="status", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Indicates that the request failed. Required. Default value is \"failed\"."""
-    error: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Description of the failure. Required."""
-    error_code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Machine-readable error code, when available."""
-    debug_ref: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Diagnostic reference that can be provided when requesting support."""
-    should_retry: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the service recommends retrying the failed request."""
-    retry_after_sec: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Recommended delay in seconds before retrying the failed request."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: str,
-        error_code: Optional[str] = None,
-        debug_ref: Optional[str] = None,
-        should_retry: Optional[bool] = None,
-        retry_after_sec: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status = "failed"  # type: ignore
-
-
-class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ForwardBackwardInput(_Model):
     """Inner payload for a forward-backward request.
 
-    :ivar data: Training examples to process in this batch. Required.
+    :ivar data: Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
-     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
+    :ivar loss_fn: Required. Known values are: "cross_entropy", "importance_sampling", "ppo",
+     "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
+    :ivar loss_fn_config:
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
     data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training examples to process in this batch. Required."""
+    """Required."""
     loss_fn: Union[str, "_models.LossFn"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Loss function to evaluate for the batch. Required. Known values are: \"cross_entropy\",
-     \"importance_sampling\", \"ppo\", \"cispo\", and \"sapo\"."""
+    """Required. Known values are: \"cross_entropy\", \"importance_sampling\", \"ppo\", \"cispo\", and
+     \"sapo\"."""
     loss_fn_config: Optional["_models.LossFnConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional hyper-parameters for the selected loss function."""
 
     @overload
     def __init__(
@@ -753,33 +402,31 @@ class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized result returned by SDK convenience methods, not the REST poll envelope.
+class OperationResult(_Model):
+    """Discriminated union of all async operation results. Returned by GET
+    /fine_tuning/sessions/{sessionId}/operations/{operationId}.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ForwardBackwardOperationResult, OptimStepOperationResult, SampleOperationResult,
     SaveCheckpointOperationResult, SaveSamplerWeightsOperationResult
 
-    :ivar type: Kind of operation whose result was normalized. Required. Known values are:
-     "forward_backward", "optim_step", "sample", "save_checkpoint", and "save_sampler_weights".
+    :ivar type: Required. Known values are: "forward_backward", "optim_step", "sample",
+     "save_checkpoint", and "save_sampler_weights".
     :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Kind of operation whose result was normalized. Required. Known values are:
-     \"forward_backward\", \"optim_step\", \"sample\", \"save_checkpoint\", and
-     \"save_sampler_weights\"."""
+    """Required. Known values are: \"forward_backward\", \"optim_step\", \"sample\",
+     \"save_checkpoint\", and \"save_sampler_weights\"."""
     operation_id: str = rest_field(visibility=["read"])
-    """Request identifier associated with this convenience result. Required."""
+    """Required."""
     status: Union[str, "_models.OperationStatus"] = rest_field(visibility=["read"])
-    """Normalized operation state. Required. Known values are: \"running\", \"succeeded\", and
-     \"failed\"."""
+    """Required. Known values are: \"running\", \"succeeded\", and \"failed\"."""
 
     @overload
     def __init__(
@@ -799,47 +446,41 @@ class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class ForwardBackwardOperationResult(
-    OperationResult, discriminator="forward_backward"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized forward or forward-backward result.
+class ForwardBackwardOperationResult(OperationResult, discriminator="forward_backward"):
+    """ForwardBackwardOperationResult.
 
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Identifies the forward-result shape. Required. A forward or forward-backward
-     result.
+    :ivar type: Required. A forward-backward pass operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.FORWARD_BACKWARD
-    :ivar total_loss: Aggregate loss, absent for forward-only results that do not report it.
+    :ivar total_loss: Aggregate training loss, or None when the operation does not report one.
     :vartype total_loss: float
-    :ivar loss_fn_output_type: Shape identifier of each loss output.
+    :ivar loss_fn_output_type: Shape/type identifier for each loss output.
     :vartype loss_fn_output_type: str
-    :ivar loss_fn_outputs: Per-datum outputs, including token log-probabilities.
+    :ivar loss_fn_outputs: Per-datum loss outputs, including token logprobs.
     :vartype loss_fn_outputs: list[dict[str, any]]
-    :ivar per_datum_logprobs: Legacy per-datum log-probability tensors, when reported.
+    :ivar per_datum_logprobs:
     :vartype per_datum_logprobs: list[~azure.ai.finetuningsessions.models.TensorData]
-    :ivar metrics: Metrics reported by the service, retaining arbitrary JSON values.
+    :ivar metrics:
     :vartype metrics: dict[str, any]
     """
 
     type: Literal[OperationType.FORWARD_BACKWARD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Identifies the forward-result shape. Required. A forward or forward-backward result."""
+    """Required. A forward-backward pass operation."""
     total_loss: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Aggregate loss, absent for forward-only results that do not report it."""
+    """Aggregate training loss, or None when the operation does not report one."""
     loss_fn_output_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Shape identifier of each loss output."""
+    """Shape/type identifier for each loss output."""
     loss_fn_outputs: Optional[list[dict[str, Any]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Per-datum outputs, including token log-probabilities."""
+    """Per-datum loss outputs, including token logprobs."""
     per_datum_logprobs: Optional[list["_models.TensorData"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legacy per-datum log-probability tensors, when reported."""
     metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Metrics reported by the service, retaining arbitrary JSON values."""
 
     @overload
     def __init__(
@@ -864,18 +505,17 @@ class ForwardBackwardOperationResult(
         self.type = OperationType.FORWARD_BACKWARD  # type: ignore
 
 
-class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ForwardBackwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
 
-    :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
-     Required.
+    :ivar forward_backward_input: Required.
     :vartype forward_backward_input: ~azure.ai.finetuningsessions.models.ForwardBackwardInput
     """
 
     forward_backward_input: "_models.ForwardBackwardInput" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Batch inputs for the combined forward and backward pass. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -895,28 +535,21 @@ class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class ForwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Inputs for a forward-only pass without gradient accumulation. Uses the same batch and loss
-    configuration as a forward-backward pass.
+class ForwardInput(ForwardBackwardInput):
+    """Forward-only payload.
 
-    :ivar data: Training examples to process in this batch. Required.
+    Currently identical to ForwardBackwardInput. Exists as a named alias so
+    that the forward endpoint has its own type in the SDK, allowing the
+    contract to diverge later (e.g. making loss_fn optional for forward).
+
+    :ivar data: Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
-     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
+    :ivar loss_fn: Required. Known values are: "cross_entropy", "importance_sampling", "ppo",
+     "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
+    :ivar loss_fn_config:
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
-
-    data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training examples to process in this batch. Required."""
-    loss_fn: Union[str, "_models.LossFn"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Loss function to evaluate for the batch. Required. Known values are: \"cross_entropy\",
-     \"importance_sampling\", \"ppo\", \"cispo\", and \"sapo\"."""
-    loss_fn_config: Optional["_models.LossFnConfig"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional hyper-parameters for the selected loss function."""
 
     @overload
     def __init__(
@@ -938,15 +571,15 @@ class ForwardInput(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ForwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
 
-    :ivar forward_input: Batch inputs for the forward-only pass. Required.
+    :ivar forward_input: Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
     """
 
     forward_input: "_models.ForwardInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Batch inputs for the forward-only pass. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -966,64 +599,21 @@ class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class FromCheckpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A training checkpoint used to initialize a new fine-tuning session.
-
-    :ivar source_session_id: Identifier of the session containing the source training checkpoint.
-     Required.
-    :vartype source_session_id: str
-    :ivar checkpoint_id: Identifier of the training checkpoint within the source session. Required.
-    :vartype checkpoint_id: str
-    """
-
-    source_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the session containing the source training checkpoint. Required."""
-    checkpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the training checkpoint within the source session. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source_session_id: str,
-        checkpoint_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HeartbeatResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class HeartbeatResponse(_Model):
     """Response from POST /fine_tuning/sessions/{sessionId}/heartbeat.
 
-    :ivar session_id: Identifier of the session whose heartbeat was refreshed. Required.
+    :ivar session_id: Required.
     :vartype session_id: str
-    :ivar type: Identifies the response as a session heartbeat acknowledgement, when included.
-     Default value is "session_heartbeat".
-    :vartype type: str
     """
 
     session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of the session whose heartbeat was refreshed. Required."""
-    type: Optional[Literal["session_heartbeat"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Identifies the response as a session heartbeat acknowledgement, when included. Default value is
-     \"session_heartbeat\"."""
+    """Required."""
 
     @overload
     def __init__(
         self,
         *,
         session_id: str,
-        type: Optional[Literal["session_heartbeat"]] = None,
     ) -> None: ...
 
     @overload
@@ -1037,56 +627,11 @@ class HeartbeatResponse(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ImageChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An image supplied as part of a multimodal input. Each decoded image must not exceed 10 MB. The
-    service validates the image content and token count at runtime.
+class LoRAConfig(_Model):
+    """LoRA adapter configuration. ``rank`` is fixed server-side for v1; omit to use the server
+    default.
 
-    :ivar type: Identifies this chunk as an image. Required. Default value is "image".
-    :vartype type: str
-    :ivar data: Image bytes, serialized as a base64-encoded string. Required.
-    :vartype data: bytes
-    :ivar format: Encoding of the supplied image bytes. Required. Known values are: "jpeg", "png",
-     and "webp".
-    :vartype format: str or ~azure.ai.finetuningsessions.models.ImageFormat
-    :ivar expected_tokens: Number of model tokens expected to represent this image. Required.
-    :vartype expected_tokens: int
-    """
-
-    type: Literal["image"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifies this chunk as an image. Required. Default value is \"image\"."""
-    data: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
-    """Image bytes, serialized as a base64-encoded string. Required."""
-    format: Union[str, "_models.ImageFormat"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Encoding of the supplied image bytes. Required. Known values are: \"jpeg\", \"png\", and
-     \"webp\"."""
-    expected_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of model tokens expected to represent this image. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data: bytes,
-        format: Union[str, "_models.ImageFormat"],
-        expected_tokens: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["image"] = "image"
-
-
-class LoRAConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """LoRA adapter configuration. Omit optional settings to use the server defaults.
-
-    :ivar rank: Number of LoRA rank dimensions required by the service. Required.
+    :ivar rank: Number of LoRA rank dimensions.
     :vartype rank: int
     :ivar alpha: LoRA scaling factor (effective scale = alpha / rank). Defaults to 32.0
      server-side.
@@ -1094,33 +639,33 @@ class LoRAConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     :ivar seed: Seed for LoRA weight initialisation. If omitted, the server picks a random seed and
      echoes it back.
     :vartype seed: int
-    :ivar freeze_vision_tower: Whether to freeze the vision tower during training. Defaults to true
-     server-side.
+    :ivar freeze_vision_tower: Whether to omit LoRA adapters from the vision tower. Defaults to
+     true.
     :vartype freeze_vision_tower: bool
-    :ivar freeze_multi_modal_projector: Whether to freeze the multimodal projector during training.
-     Defaults to true server-side.
+    :ivar freeze_multi_modal_projector: Whether to omit LoRA adapters from the multimodal projector
+     or connector. Defaults to true.
     :vartype freeze_multi_modal_projector: bool
     """
 
-    rank: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of LoRA rank dimensions required by the service. Required."""
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of LoRA rank dimensions."""
     alpha: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """LoRA scaling factor (effective scale = alpha / rank). Defaults to 32.0 server-side."""
     seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Seed for LoRA weight initialisation. If omitted, the server picks a random seed and echoes it
      back."""
     freeze_vision_tower: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to freeze the vision tower during training. Defaults to true server-side."""
+    """Whether to omit LoRA adapters from the vision tower. Defaults to true."""
     freeze_multi_modal_projector: Optional[bool] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether to freeze the multimodal projector during training. Defaults to true server-side."""
+    """Whether to omit LoRA adapters from the multimodal projector or connector. Defaults to true."""
 
     @overload
     def __init__(
         self,
         *,
-        rank: int,
+        rank: Optional[int] = None,
         alpha: Optional[float] = None,
         seed: Optional[int] = None,
         freeze_vision_tower: Optional[bool] = None,
@@ -1138,7 +683,7 @@ class LoRAConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class LossFnConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LossFnConfig(_Model):
     """Optional per-loss-function hyper-parameters.
 
     :ivar clip_low_threshold: PPO (Proximal Policy Optimization) / CISPO (Clipped
@@ -1185,13 +730,12 @@ class LossFnConfig(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class LossFnInputs(_Model):
     """Per-datum loss function inputs used in forward-backward.
 
     :ivar target_tokens: Target token ids (shifted by 1 relative to model input). Required.
     :vartype target_tokens: ~azure.ai.finetuningsessions.models.TensorData
-    :ivar weights: Per-token weights (0.0 = masked, 1.0 = counted). Omission uses a weight of one
-     for each target.
+    :ivar weights: Per-token weights (0.0 = masked, 1.0 = counted). Required.
     :vartype weights: ~azure.ai.finetuningsessions.models.TensorData
     :ivar advantages: Per-token advantage estimates (required for REINFORCE/PPO (Proximal Policy
      Optimization)/CISPO (Clipped Importance-Sampled Policy Optimization)/SAPO (Soft Adaptive Policy
@@ -1204,8 +748,8 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
 
     target_tokens: "_models.TensorData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target token ids (shifted by 1 relative to model input). Required."""
-    weights: Optional["_models.TensorData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Per-token weights (0.0 = masked, 1.0 = counted). Omission uses a weight of one for each target."""
+    weights: "_models.TensorData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Per-token weights (0.0 = masked, 1.0 = counted). Required."""
     advantages: Optional["_models.TensorData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Per-token advantage estimates (required for REINFORCE/PPO (Proximal Policy Optimization)/CISPO
      (Clipped Importance-Sampled Policy Optimization)/SAPO (Soft Adaptive Policy Optimization)).
@@ -1219,7 +763,7 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         self,
         *,
         target_tokens: "_models.TensorData",
-        weights: Optional["_models.TensorData"] = None,
+        weights: "_models.TensorData",
         advantages: Optional["_models.TensorData"] = None,
         logprobs: Optional["_models.TensorData"] = None,
     ) -> None: ...
@@ -1235,39 +779,22 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """MisalignmentErrorDetailsResource.
+class ModelInput(_Model):
+    """Full model input as one or more token-ID chunks.
 
-    :ivar error_type: An optional classification; clients must accept additional values. Known
-     values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
-     "potentially_unintended_destructive_activity", and "other".
-    :vartype error_type: str or ~azure.ai.finetuningsessions.models._MisalignmentErrorType
-    :ivar detailed_explanation: The public explanation for this block.
-    :vartype detailed_explanation: str
-    :ivar steer: An optional public continuation instruction.
-    :vartype steer: ~azure.ai.finetuningsessions.models._MisalignmentSteer
+    :ivar chunks: Ordered list of token-ID chunks that together form the complete model input.
+     Required.
+    :vartype chunks: list[~azure.ai.finetuningsessions.models.ModelInputChunk]
     """
 
-    error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An optional classification; clients must accept additional values. Known values are:
-     \"potentially_unintended_data_transfer\", \"potentially_unintended_data_access\",
-     \"potentially_unintended_destructive_activity\", and \"other\"."""
-    detailed_explanation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The public explanation for this block."""
-    steer: Optional["_models._MisalignmentSteer"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An optional public continuation instruction."""
+    chunks: list["_models.ModelInputChunk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Ordered list of token-ID chunks that together form the complete model input. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = None,
-        detailed_explanation: Optional[str] = None,
-        steer: Optional["_models._MisalignmentSteer"] = None,
+        chunks: list["_models.ModelInputChunk"],
     ) -> None: ...
 
     @overload
@@ -1281,40 +808,7 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
-class ModelInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Full model input as an ordered sequence of token-ID and image chunks.
-
-    :ivar chunks: Chunks forming the complete model input. At most 64 image chunks are allowed per
-     example; the service enforces this limit at runtime. Required.
-    :vartype chunks: list[~azure.ai.finetuningsessions.models.ModelInputChunk or
-     ~azure.ai.finetuningsessions.models.ImageChunk]
-    """
-
-    chunks: list["_unions.FineTuningInputChunk"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Chunks forming the complete model input. At most 64 image chunks are allowed per example; the
-     service enforces this limit at runtime. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        chunks: list["_unions.FineTuningInputChunk"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ModelInputChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ModelInputChunk(_Model):
     """A contiguous block of token IDs forming part of a model input.
 
     :ivar tokens: Sequence of token IDs in this chunk. Required.
@@ -1342,42 +836,38 @@ class ModelInputChunk(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class OptimStepOperationResult(
-    OperationResult, discriminator="optim_step"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized optimizer-step result.
+class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
+    """OptimStepOperationResult.
 
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Identifies an optimizer-step result. Required. An optimizer-step result.
+    :ivar type: Required. An optimizer step operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.OPTIM_STEP
-    :ivar grad_norm: Gradient norm, when reported.
+    :ivar grad_norm: Required.
     :vartype grad_norm: float
-    :ivar step_count: Optimizer step count, when reported.
+    :ivar step_count: Required.
     :vartype step_count: int
-    :ivar metrics: Metrics reported by the service.
-    :vartype metrics: dict[str, any]
+    :ivar metrics:
+    :vartype metrics: dict[str, float]
     """
 
     type: Literal[OperationType.OPTIM_STEP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Identifies an optimizer-step result. Required. An optimizer-step result."""
-    grad_norm: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gradient norm, when reported."""
-    step_count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optimizer step count, when reported."""
-    metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Metrics reported by the service."""
+    """Required. An optimizer step operation."""
+    grad_norm: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    step_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    metrics: Optional[dict[str, float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
         self,
         *,
-        grad_norm: Optional[float] = None,
-        step_count: Optional[int] = None,
-        metrics: Optional[dict[str, Any]] = None,
+        grad_norm: float,
+        step_count: int,
+        metrics: Optional[dict[str, float]] = None,
     ) -> None: ...
 
     @overload
@@ -1392,15 +882,15 @@ class OptimStepOperationResult(
         self.type = OperationType.OPTIM_STEP  # type: ignore
 
 
-class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class OptimStepRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
 
-    :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
+    :ivar adam_params: Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     """
 
     adam_params: "_models.AdamParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Adam optimizer parameters used to apply accumulated gradients. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -1420,80 +910,22 @@ class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class PendingOperation(_Model):  # pylint: disable=docstring-missing-param
-    """Identifies an accepted request whose result can be retrieved by polling.
+class SampledSequence(_Model):
+    """A single sampled sequence.
 
-    :ivar request_id: Request identifier to pass to the session's request-status endpoint.
-     Required.
-    :vartype request_id: str
-    :ivar status: Indicates that the request has not yet completed. Required. Default value is
-     "pending".
-    :vartype status: str
-    """
-
-    request_id: str = rest_field(visibility=["read"])
-    """Request identifier to pass to the session's request-status endpoint. Required."""
-    status: Literal["pending"] = rest_field(visibility=["read"])
-    """Indicates that the request has not yet completed. Required. Default value is \"pending\"."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status: Literal["pending"] = "pending"
-
-
-class PendingRequest(
-    RequestStatus, discriminator="pending"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request that is still being processed.
-
-    :ivar status: Indicates that the request has not yet completed. Required. Default value is
-     "pending".
-    :vartype status: str
-    :ivar phase: Current processing phase, when reported by the service.
-    :vartype phase: str
-    """
-
-    status: Literal["pending"] = rest_discriminator(name="status", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Indicates that the request has not yet completed. Required. Default value is \"pending\"."""
-    phase: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Current processing phase, when reported by the service."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        phase: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.status = "pending"  # type: ignore
-
-
-class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A single sampled sequence within a sampling result payload.
-
-    :ivar tokens: Generated token identifiers, in sequence order. Required.
+    :ivar tokens: Required.
     :vartype tokens: list[int]
-    :ivar text: Decoded text of the generated sequence, when available.
+    :ivar text: Decoded text of the generated sequence.
     :vartype text: str
-    :ivar logprobs: Log-probabilities of the generated tokens, when available.
+    :ivar logprobs:
     :vartype logprobs: list[float]
     """
 
     tokens: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Generated token identifiers, in sequence order. Required."""
+    """Required."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Decoded text of the generated sequence, when available."""
+    """Decoded text of the generated sequence."""
     logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Log-probabilities of the generated tokens, when available."""
 
     @overload
     def __init__(
@@ -1515,42 +947,47 @@ class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class SampleOperationResult(
-    OperationResult, discriminator="sample"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized sampling result.
+class SampleOperationResult(OperationResult, discriminator="sample"):
+    """SampleOperationResult.
 
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Identifies a sampling result. Required. A sampling result.
+    :ivar type: Required. A sampling operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAMPLE
-    :ivar sequences: Generated sequences. Required.
+    :ivar sequences: Required.
     :vartype sequences: list[~azure.ai.finetuningsessions.models.SampledSequence]
-    :ivar prompt_logprobs: Prompt-token log-probabilities; null marks a token without a computed
-     value.
+    :ivar prompt_logprobs: Per-token log-probabilities for the prompt, if requested. None at
+     positions where logprobs were not computed (e.g. the first prompt token).
     :vartype prompt_logprobs: list[float]
-    :ivar topk_prompt_logprobs: Per-prompt-token lists of [token_id, logprob] pairs; null marks an
-     unavailable position.
+    :ivar topk_prompt_logprobs: Top-k log-probabilities per prompt token, if requested. Each entry
+     is a list of (token_id, logprob) pairs sorted by logprob descending, or None for positions
+     where logprobs were not computed (e.g. the first prompt token). Note: over the wire each pair
+     is a JSON array, so at runtime pairs are lists, not tuples.
     :vartype topk_prompt_logprobs: list[list[list[any]]]
-    :ivar metrics: Sampling and prefill metrics, when available.
+    :ivar metrics: Per-call prefill and sample token COGS, including counts, duration, throughput,
+     and prefill cache-hit tokens when supported.
     :vartype metrics: dict[str, any]
     """
 
     type: Literal[OperationType.SAMPLE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Identifies a sampling result. Required. A sampling result."""
+    """Required. A sampling operation."""
     sequences: list["_models.SampledSequence"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Generated sequences. Required."""
+    """Required."""
     prompt_logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Prompt-token log-probabilities; null marks a token without a computed value."""
+    """Per-token log-probabilities for the prompt, if requested. None at positions where logprobs were
+     not computed (e.g. the first prompt token)."""
     topk_prompt_logprobs: Optional[list[list[list[Any]]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Per-prompt-token lists of [token_id, logprob] pairs; null marks an unavailable position."""
+    """Top-k log-probabilities per prompt token, if requested. Each entry is a list of (token_id,
+     logprob) pairs sorted by logprob descending, or None for positions where logprobs were not
+     computed (e.g. the first prompt token). Note: over the wire each pair is a JSON array, so at
+     runtime pairs are lists, not tuples."""
     metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sampling and prefill metrics, when available."""
+    """Per-call prefill and sample token COGS, including counts, duration, throughput, and prefill
+     cache-hit tokens when supported."""
 
     @overload
     def __init__(
@@ -1574,55 +1011,57 @@ class SampleOperationResult(
         self.type = OperationType.SAMPLE  # type: ignore
 
 
-class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SampleRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/sample.
 
-    :ivar num_samples: Number of independent completions to generate. Default 1.
+    :ivar num_samples: Number of independent completions to generate. Default 1. Required.
     :vartype num_samples: int
     :ivar prompt: Tokenised input prompt. Required.
     :vartype prompt: ~azure.ai.finetuningsessions.models.ModelInput
-    :ivar sampling_params: Parameters controlling token generation. Required.
+    :ivar sampling_params: Required.
     :vartype sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
-    :ivar sampling_session_id: Sampling session identifier from a prior sampler-weights save
-     request.
+    :ivar sampling_session_id: Sampling session ID from a prior save_sampler_weights call.
     :vartype sampling_session_id: str
-    :ivar seq_id: Training step index; must match the seq_id used when saving sampler weights.
+    :ivar seq_id: Training step index; must match the seq_id used in save_sampler_weights.
     :vartype seq_id: int
-    :ivar prompt_logprobs: Whether to return prompt-token log-probabilities in the overall sample
-     result. Defaults to false server-side.
+    :ivar prompt_logprobs: If true, return per-token log-probabilities for the prompt tokens as a
+     1-D float32 numpy array, shape ``(prompt_length,)``. ``NaN`` at positions where logprobs were
+     not computed (e.g. the first prompt token).
     :vartype prompt_logprobs: bool
-    :ivar topk_prompt_logprobs: Number of top-k log-probabilities per prompt token. Defaults to
-     zero (disabled); maximum 20.
+    :ivar topk_prompt_logprobs: Number of top-k log-probabilities to return per prompt token. 0 =
+     none. Must be between 0 and 20 (default 20). Required.
     :vartype topk_prompt_logprobs: int
     """
 
-    num_samples: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of independent completions to generate. Default 1."""
+    num_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of independent completions to generate. Default 1. Required."""
     prompt: "_models.ModelInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tokenised input prompt. Required."""
     sampling_params: "_models.SamplingParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Parameters controlling token generation. Required."""
+    """Required."""
     sampling_session_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sampling session identifier from a prior sampler-weights save request."""
+    """Sampling session ID from a prior save_sampler_weights call."""
     seq_id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training step index; must match the seq_id used when saving sampler weights."""
+    """Training step index; must match the seq_id used in save_sampler_weights."""
     prompt_logprobs: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to return prompt-token log-probabilities in the overall sample result. Defaults to
-     false server-side."""
-    topk_prompt_logprobs: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of top-k log-probabilities per prompt token. Defaults to zero (disabled); maximum 20."""
+    """If true, return per-token log-probabilities for the prompt tokens as a 1-D float32 numpy array,
+     shape ``(prompt_length,)``. ``NaN`` at positions where logprobs were not computed (e.g. the
+     first prompt token)."""
+    topk_prompt_logprobs: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of top-k log-probabilities to return per prompt token. 0 = none. Must be between 0 and
+     20 (default 20). Required."""
 
     @overload
     def __init__(
         self,
         *,
+        num_samples: int,
         prompt: "_models.ModelInput",
         sampling_params: "_models.SamplingParams",
-        num_samples: Optional[int] = None,
+        topk_prompt_logprobs: int,
         sampling_session_id: Optional[str] = None,
         seq_id: Optional[int] = None,
         prompt_logprobs: Optional[bool] = None,
-        topk_prompt_logprobs: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -1636,16 +1075,16 @@ class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SamplingParams(_Model):
     """Token-generation sampling parameters.
 
-    :ivar max_tokens: Maximum number of tokens to generate. Must be positive. Required.
+    :ivar max_tokens: Maximum tokens to generate. Required.
     :vartype max_tokens: int
-    :ivar temperature: Softmax temperature. Default 1.0.
+    :ivar temperature: Softmax temperature. Default 1.0. Required.
     :vartype temperature: float
-    :ivar top_p: Nucleus (top-p) probability mass. Default 1.0.
+    :ivar top_p: Nucleus (top-p) probability mass. Default 1.0. Required.
     :vartype top_p: float
-    :ivar top_k: Top-k candidates. -1 = disabled.
+    :ivar top_k: Top-k candidates. -1 = disabled. Required.
     :vartype top_k: int
     :ivar seed: RNG seed for reproducible samples. Server chooses randomly if omitted.
     :vartype seed: int
@@ -1655,16 +1094,16 @@ class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-
     """
 
     max_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Maximum number of tokens to generate. Must be positive. Required."""
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Softmax temperature. Default 1.0."""
-    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Nucleus (top-p) probability mass. Default 1.0."""
-    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Top-k candidates. -1 = disabled."""
+    """Maximum tokens to generate. Required."""
+    temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Softmax temperature. Default 1.0. Required."""
+    top_p: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nucleus (top-p) probability mass. Default 1.0. Required."""
+    top_k: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Top-k candidates. -1 = disabled. Required."""
     seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """RNG seed for reproducible samples. Server chooses randomly if omitted."""
-    stop_criteria: Optional["_unions.StopCriteria"] = rest_field(
+    stop_criteria: Optional["_types.StopCriteria"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Stop criteria: either stop_token_ids or stop_strings, not both. Is either a [int] type or a
@@ -1675,11 +1114,11 @@ class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-
         self,
         *,
         max_tokens: int,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        top_k: Optional[int] = None,
+        temperature: float,
+        top_p: float,
+        top_k: int,
         seed: Optional[int] = None,
-        stop_criteria: Optional["_unions.StopCriteria"] = None,
+        stop_criteria: Optional["_types.StopCriteria"] = None,
     ) -> None: ...
 
     @overload
@@ -1693,30 +1132,27 @@ class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class SaveCheckpointOperationResult(
-    OperationResult, discriminator="save_checkpoint"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized result of saving a training checkpoint.
+class SaveCheckpointOperationResult(OperationResult, discriminator="save_checkpoint"):
+    """SaveCheckpointOperationResult.
 
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Identifies a training checkpoint result. Required. A saved training checkpoint.
+    :ivar type: Required. A training checkpoint save operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_CHECKPOINT
-    :ivar checkpoint_id: Checkpoint identifier within its source session. Required.
+    :ivar checkpoint_id: Required.
     :vartype checkpoint_id: str
-    :ivar path: Portable path identifying the checkpoint. Required.
+    :ivar path: Required.
     :vartype path: str
     """
 
     type: Literal[OperationType.SAVE_CHECKPOINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Identifies a training checkpoint result. Required. A saved training checkpoint."""
+    """Required. A training checkpoint save operation."""
     checkpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Checkpoint identifier within its source session. Required."""
+    """Required."""
     path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Portable path identifying the checkpoint. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -1738,7 +1174,7 @@ class SaveCheckpointOperationResult(
         self.type = OperationType.SAVE_CHECKPOINT  # type: ignore
 
 
-class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SaveCheckpointRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
@@ -1778,37 +1214,34 @@ class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class SaveSamplerWeightsOperationResult(
-    OperationResult, discriminator="save_sampler_weights"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Normalized result of saving sampler weights.
+class SaveSamplerWeightsOperationResult(OperationResult, discriminator="save_sampler_weights"):
+    """SaveSamplerWeightsOperationResult.
 
-    :ivar operation_id: Request identifier associated with this convenience result. Required.
+    :ivar operation_id: Required.
     :vartype operation_id: str
-    :ivar status: Normalized operation state. Required. Known values are: "running", "succeeded",
-     and "failed".
+    :ivar status: Required. Known values are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
-    :ivar type: Identifies a sampler-checkpoint result. Required. Saved sampler weights.
+    :ivar type: Required. A sampler-weights save operation.
     :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_SAMPLER_WEIGHTS
-    :ivar checkpoint_id: Checkpoint identifier within its source session. Required.
+    :ivar checkpoint_id: Required.
     :vartype checkpoint_id: str
-    :ivar sampling_session_id: Sampling-session identifier, when reported.
+    :ivar sampling_session_id: Required.
     :vartype sampling_session_id: str
     """
 
     type: Literal[OperationType.SAVE_SAMPLER_WEIGHTS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Identifies a sampler-checkpoint result. Required. Saved sampler weights."""
+    """Required. A sampler-weights save operation."""
     checkpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Checkpoint identifier within its source session. Required."""
-    sampling_session_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sampling-session identifier, when reported."""
+    """Required."""
+    sampling_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
 
     @overload
     def __init__(
         self,
         *,
         checkpoint_id: str,
-        sampling_session_id: Optional[str] = None,
+        sampling_session_id: str,
     ) -> None: ...
 
     @overload
@@ -1823,36 +1256,23 @@ class SaveSamplerWeightsOperationResult(
         self.type = OperationType.SAVE_SAMPLER_WEIGHTS  # type: ignore
 
 
-class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint_sample. Supply either path
-    or both sampling_session_seq_id and seq_id. The service validates this requirement at runtime.
+class SaveSamplerWeightsRequest(_Model):
+    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint_sample.
 
-    :ivar path: Explicit sampler checkpoint identifier. Required unless both sequence identifiers
-     are supplied.
+    :ivar path: Optional explicit identifier for the sampler checkpoint.
     :vartype path: str
     :ivar sampling_session_seq_id: Ordinal of this sampling session within the training run.
-     Required with seq_id when path is omitted.
     :vartype sampling_session_seq_id: int
-    :ivar seq_id: Training step sequence number. Required with sampling_session_seq_id when path is
-     omitted.
+    :ivar seq_id: Training step sequence number.
     :vartype seq_id: int
-    :ivar type: Identifies the request as saving sampler-compatible weights. Default value is
-     "save_weights_for_sampler".
-    :vartype type: str
     """
 
     path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Explicit sampler checkpoint identifier. Required unless both sequence identifiers are supplied."""
+    """Optional explicit identifier for the sampler checkpoint."""
     sampling_session_seq_id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Ordinal of this sampling session within the training run. Required with seq_id when path is
-     omitted."""
+    """Ordinal of this sampling session within the training run."""
     seq_id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training step sequence number. Required with sampling_session_seq_id when path is omitted."""
-    type: Optional[Literal["save_weights_for_sampler"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Identifies the request as saving sampler-compatible weights. Default value is
-     \"save_weights_for_sampler\"."""
+    """Training step sequence number."""
 
     @overload
     def __init__(
@@ -1861,7 +1281,6 @@ class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-sh
         path: Optional[str] = None,
         sampling_session_seq_id: Optional[int] = None,
         seq_id: Optional[int] = None,
-        type: Optional[Literal["save_weights_for_sampler"]] = None,
     ) -> None: ...
 
     @overload
@@ -1875,7 +1294,7 @@ class SaveSamplerWeightsRequest(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class Session(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Session(_Model):
     """Response from GET /fine_tuning/sessions/{sessionId}.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
@@ -1918,19 +1337,19 @@ class Session(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
         super().__init__(*args, **kwargs)
 
 
-class SessionList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SessionList(_Model):
     """Paginated list of fine-tuning sessions.
 
-    :ivar data: Sessions returned in the current page. Required.
+    :ivar data: Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.SessionSummary]
-    :ivar cursor: Offset, limit, and total count for the requested page. Required.
+    :ivar cursor: Required.
     :vartype cursor: ~azure.ai.finetuningsessions.models.Cursor
     """
 
     data: list["_models.SessionSummary"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sessions returned in the current page. Required."""
+    """Required."""
     cursor: "_models.Cursor" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Offset, limit, and total count for the requested page. Required."""
+    """Required."""
 
     @overload
     def __init__(
@@ -1951,23 +1370,21 @@ class SessionList(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class SessionModelData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SessionModelData(_Model):
     """Nested model sub-object within a session response.
 
-    :ivar base_model: Base model used by the session. Required.
+    :ivar base_model: Required.
     :vartype base_model: str
-    :ivar lora_config: LoRA adapter configuration, when the model uses an adapter.
+    :ivar lora_config:
     :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
-    :ivar model_name: Name of the model associated with the session, when available.
+    :ivar model_name:
     :vartype model_name: str
     """
 
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base model used by the session. Required."""
+    """Required."""
     lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """LoRA adapter configuration, when the model uses an adapter."""
     model_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the model associated with the session, when available."""
 
     @overload
     def __init__(
@@ -1989,7 +1406,7 @@ class SessionModelData(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class SessionSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SessionSummary(_Model):
     """Summary item returned in the paginated GET /fine_tuning/sessions list.
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
@@ -2048,7 +1465,7 @@ class SessionSummary(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class TensorData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TensorData(_Model):
     """A 1-D array of floating-point values serialised for the wire.
 
     :ivar data: The floating-point values of the tensor. Required.

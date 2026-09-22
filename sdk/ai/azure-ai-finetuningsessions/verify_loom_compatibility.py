@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression,too-many-lines
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Offline, side-by-side Loom compatibility proof using unmodified SDK sources.
+"""Offline parity gate for the generated preview against immutable Loom.
 
 Run with the existing Python environment (azure-core and the SDK dependencies
 must already be installed):
@@ -11,9 +11,13 @@ must already be installed):
 The parent imports neither SDK. Two fresh, isolated Python subprocesses import
 azure.ai.finetuningsessions from their respective source roots, run the same 20
 cases with real clients and buffered fake transports, and return JSON snapshots.
+The reference is materialized from the immutable commit in loom-source.json,
+not from the possibly older or dirty Loom working tree. Upstream test files and
+the reference hashes are exact; the customer-facing API and behavior must match
+without additive allowances. Supported internal hook organization may differ.
 Both workers use their default routes without a route-selection flag. URLs are checked at the
 transport boundary, NEVER rewritten by this verifier. No install, generation,
-temporary source copy, package alias, test-module import, or service is involved.
+package alias, test-module import, or service is involved.
 
 Internal inspection interface:
 
@@ -24,7 +28,7 @@ Snapshots contain no wall-clock timestamps, process IDs, random request IDs, or 
 They retain complete JSON request/result bodies and numeric types. Only header
 casing, a validated client-request UUID, and the exact Python/platform user-agent
 suffix are normalized. The SDK user-agent moniker/version remain checked.
-Narrow surface allowances and excluded contracts are printed by the parent.
+Workload limits are printed separately from exact snapshot parity.
 Exit codes: 0 = pass, 1 = case/comparison failure, 2 = setup/worker failure.
 """
 
@@ -129,44 +133,15 @@ NORMALIZATIONS = [
     "x-ms-client-request-id must be a UUID on every request; only its random value is omitted.",
     "User-Agent must have the expected SDK moniker/version; only the exact Python/platform suffix is removed.",
     "JSON object ordering/whitespace and Python tuple/list JSON encoding are not wire differences; scalar numeric types are preserved.",
-    "Package origins/source hashes differ by design; both SDKs use their default routes without rewriting or selection flags.",
-    "Signature annotations are not compared; parameter names, kinds, defaults, binding, and selected real calls are checked.",
+    "Package origins and supported internal hook placement differ; immutable reference blobs and upstream tests are verified exactly.",
+    "Workload signatures compare names, kinds, defaults and binding; verify_loom_surface.py additionally checks all types and overloads.",
 ]
 LIMITATIONS = [
-    "Generated operations.get is excluded: Loom's OperationResult and the public raw RequestStatus union are different contracts.",
-    "Generated sessions.create/body-alias adapters are not a paired baseline contract here; creation uses the real convenience APIs.",
-    "All begin_* methods are excluded: Loom's generated 202/Operation-Location LRO contract is not its HTTP-200 protocol.",
+    "This workload exercises convenience APIs and selected generated reads, not every raw generated call.",
+    "The legacy begin_* machinery is separately compared offline; its pre-existing sync/async status inconsistency is not a service certification.",
     "Generated wire parity covers sessions.get/list/heartbeat and checkpoints.get/list with per-operation api_version='v1' only.",
-    "Generated-only types/annotations and internal class locations are not whole-schema parity claims; exercised model JSON/attributes are exact.",
     "Immediate fixture completion proves client behavior, not service/GPU correctness, retry timing, multi-chunk concurrency, or background heartbeats.",
 ]
-MODEL_ADDITIONS = frozenset(
-    {
-        "ActionOperation",
-        "CompleteResponse",
-        "CompletedRequest",
-        "CreateSessionResponse",
-        "DeleteSessionResponse",
-        "FailedRequest",
-        "ImageFormat",
-        "MisalignmentErrorDetailsResource",
-        "PendingOperation",
-        "PendingRequest",
-        "RequestStatus",
-        "TrainingType",
-        "_MisalignmentErrorType",
-        "_MisalignmentSteer",
-    }
-)
-FEATURE_ADDITIONS = {
-    "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
-    "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
-    "SKILLS_V1_PREVIEW": "Skills=V1Preview",
-    "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
-    "MODELS_V1_PREVIEW": "Models=V1Preview",
-    "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
-    "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
-}
 SYNC_METHODS = (
     "create",
     "create_from_checkpoint",
@@ -595,7 +570,9 @@ class _Context:
         self.model_base = importlib.import_module(NAMESPACE + "._utils.model_base")
         self.async_patch = importlib.import_module(NAMESPACE + ".aio._patch")
         self.legacy_routes = legacy_routes
-        self.moniker = f"azsdk-python-ai-finetuningsessions/{self.sdk.__version__}"
+        # Preserve the upstream Loom moniker; do not change the SDK merely to
+        # satisfy the earlier regenerated public SDK's user-agent convention.
+        self.moniker = f"azsdk-python-finetuning-sessions/{self.sdk.__version__}"
         self.user_agent_suffix = f" Python/{platform.python_version()} ({platform.platform()})"
         self.user_agent = self.moniker + self.user_agent_suffix
         self.sync_transport, self.async_transport = _transport_types()
@@ -1603,50 +1580,6 @@ def _differences(left: Any, right: Any, path: str = "") -> list[str]:
     return [] if left == right else [f"{path}: Loom={_dump(left)}; public={_dump(right)}"]
 
 
-def _surface_allowances(left: dict, right: dict) -> tuple[dict, dict, list[str]]:
-    # Work on copies: snapshots always retain the full actual observed surface.
-    left, right = json.loads(_dump(left)), json.loads(_dump(right))
-    notes = []
-    for group, old in left["exports"].items():
-        new = right["exports"].get(group, [])
-        extras = set(new) - set(old)
-        allowed = extras if group == "root" else extras & MODEL_ADDITIONS if group == "models" else set()
-        if allowed:
-            right["exports"][group] = sorted(set(new) - allowed)
-            notes.append(f"Additive {group} exports: {', '.join(sorted(allowed))}")
-    enum_name = "FoundryFeaturesOptInKeys"
-    for name, value in FEATURE_ADDITIONS.items():
-        if name not in left["enums"][enum_name] and right["enums"][enum_name].get(name) == value:
-            del right["enums"][enum_name][name]
-            notes.append(f"Additive shared Foundry feature: {name}={value}")
-    for target, keyword in (
-        ("sync.client", "use_legacy_routes"),
-        ("async.client", "use_legacy_routes"),
-        ("async.client", "allow_insecure_http"),
-    ):
-        old, new = left["signatures"][target], right["signatures"][target]
-        addition = {"name": keyword, "kind": "KEYWORD_ONLY", "default": False}
-        if not any(item["name"] == keyword for item in old) and addition in new:
-            new.remove(addition)
-            reason = (
-                "legacy accepted this flag through **kwargs"
-                if keyword == "allow_insecure_http"
-                else "ignored compatibility option; neither worker sets it"
-            )
-            notes.append(f"{target}: explicit {keyword}=False ({reason})")
-    api_version = {"name": "api_version", "kind": "KEYWORD_ONLY"}
-    for target, old in left["generated_signatures"].items():
-        new = right["generated_signatures"].get(target, [])
-        if (
-            api_version in old
-            and not any(item["name"] == "api_version" for item in new)
-            and any(item["kind"] == "VAR_KEYWORD" for item in new)
-        ):
-            old.remove(api_version)
-            notes.append(f"{target}: api_version accepted through **kwargs; real v1 wire request checked")
-    return left, right, notes
-
-
 def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
@@ -1686,7 +1619,7 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
 
 
 def _compare(loom: dict, public: dict) -> int:
-    failed, allowances = [], []
+    failed = []
     for name in CASE_NAMES:
         left, right = loom["cases"][name], public["cases"][name]
         differences = []
@@ -1694,9 +1627,6 @@ def _compare(loom: dict, public: dict) -> int:
             differences.append(
                 f"Case must succeed independently in both SDKs; Loom={left.get('error')}, public={right.get('error')}"
             )
-        elif name == "surface_and_signatures":
-            old_surface, new_surface, allowances = _surface_allowances(left["output"], right["output"])
-            left, right = {**left, "output": old_surface}, {**right, "output": new_surface}
         differences.extend(_differences(left, right, name))
         if differences:
             failed.append(name)
@@ -1708,8 +1638,7 @@ def _compare(loom: dict, public: dict) -> int:
         if len(differences) > 20:
             print(f"  ... {len(differences) - 20} further differences; use --snapshot to inspect full actual records.")
     print("\nExplicitly allowed surface differences:")
-    for note in allowances or ["None observed."]:
-        print("  " + note)
+    print("  None. Customer-facing API and behavior must match; internal hook placement may differ.")
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1724,7 +1653,7 @@ def _compare(loom: dict, public: dict) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--loom-repo", type=Path, help="Loom checkout containing azure-ai-finetuningsessions")
+    parser.add_argument("--loom-repo", type=Path, help="Local Git clone containing the pinned upstream Loom commit")
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--legacy-routes", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
@@ -1742,15 +1671,32 @@ def main() -> int:
     if args.loom_repo is None or args.legacy_routes:
         parser.error("--loom-repo is required; --legacy-routes is for internal --snapshot mode only")
     try:
+        from verify_loom_snapshot import reference_package, load_manifest, upstream_files, normalized_bytes
+
         public_package = _check_package(PACKAGE)
-        loom_package = _check_package(args.loom_repo / "azure-ai-finetuningsessions")
-        if (public_package / MODULE / "__init__.py").samefile(loom_package / MODULE / "__init__.py"):
-            raise ValueError("Loom and public source roots must be different packages")
-        print(f"Loom source:   {loom_package}\nPublic source: {public_package}")
-        loom = _run_worker(loom_package, legacy_routes=False)
-        public = _run_worker(public_package, legacy_routes=False)
-        return _compare(loom, public)
-    except (OSError, ValueError, RuntimeError, subprocess.TimeoutExpired) as exc:
+        manifest = load_manifest(public_package)
+        upstream = upstream_files(args.loom_repo, manifest)
+        expected_tests = {name: content for name, content in upstream.items() if name.startswith("tests/")}
+        actual_tests = {
+            path.relative_to(public_package).as_posix(): normalized_bytes(path)
+            for path in (public_package / "tests").rglob("*")
+            if path.is_file() and not {"__pycache__", ".pytest_cache"}.intersection(path.parts)
+        }
+        if expected_tests != actual_tests:
+            raise ValueError("The complete upstream test inventory must remain byte-identical after naming normalization")
+        print(f"Immutable Loom reference verified: {manifest['source_commit']}\nPublic source: {public_package}")
+        with reference_package(args.loom_repo, public_package) as reference:
+            loom = _run_worker(_check_package(reference), legacy_routes=False)
+            public = _run_worker(public_package, legacy_routes=False)
+            if _compare(loom, public):
+                return 1
+            completed = subprocess.run([
+                sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "verify_loom_surface.py"),
+                "--reference", str(reference), "--candidate", str(public_package),
+                "--harness", str(Path(__file__).resolve()),
+            ], check=False)
+            return completed.returncode
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
         print(f"Verifier setup failed: {exc}", file=sys.stderr)
         return 2
 

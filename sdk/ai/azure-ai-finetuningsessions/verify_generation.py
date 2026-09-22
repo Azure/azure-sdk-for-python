@@ -2,6 +2,10 @@
 # Licensed under the MIT License.
 """Emit twice in temporary directories and compare the checked-in generated SDK.
 
+Only supported maintained hooks are supplied to each fresh emission. All other
+runtime files must be emitter output. Full assembled runtime equality, including
+the hooks, is checked separately from the immutable Loom API/behavior comparison.
+
 This check never updates the package, installs dependencies, or changes Git state.
 Run with --spec-repo pointing to the public azure-rest-api-specs working tree.
 Use --toolchain for an isolated installation of emitter-package.json, or omit it
@@ -23,7 +27,7 @@ PACKAGE = Path(__file__).resolve().parent
 MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 TOOL_VERSIONS = json.loads((PACKAGE / "emitter-package.json").read_text(encoding="utf-8"))["dependencies"]
-HANDWRITTEN_MODULES = {"_client_options.py", "_compat.py", "_exceptions.py", "_legacy_polling.py", "_logging_setup.py"}
+HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py", "_operation_compat.py"}
 
 
 def normalized_bytes(path: Path) -> bytes:
@@ -36,15 +40,14 @@ def generated_files(package: Path) -> dict[str, bytes]:
     for path in (package / MODULE).rglob("*"):
         if not path.is_file() or "__pycache__" in path.parts or path.name == "_patch.py":
             continue
-        if path.suffix != ".py" and path.name != "py.typed":
-            continue
         # Exclude only the explicitly maintained custom modules, not files based
         # on a mutable generated-code banner. Missing and orphaned files fail.
         if path.relative_to(package / MODULE).as_posix() in HANDWRITTEN_MODULES:
             continue
         result[path.relative_to(package).as_posix()] = normalized_bytes(path)
     for name in ("_metadata.json", "apiview-properties.json"):
-        result[name] = normalized_bytes(package / name)
+        if (package / name).is_file():
+            result[name] = normalized_bytes(package / name)
     return result
 
 
@@ -59,11 +62,11 @@ def source_hashes(spec_repo: Path) -> dict[str, str]:
     }
 
 
-def package_hashes() -> dict[str, str]:
+def package_hashes(package: Path = PACKAGE) -> dict[str, str]:
     """Ensure the check did not rewrite generated OR handwritten package files."""
     return {
-        path.relative_to(PACKAGE).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in (PACKAGE / MODULE).rglob("*")
+        path.relative_to(package).as_posix(): hashlib.sha256(normalized_bytes(path)).hexdigest()
+        for path in (package / MODULE).rglob("*")
         if path.is_file() and "__pycache__" not in path.parts
     }
 
@@ -78,15 +81,48 @@ def check_tools(toolchain: Path) -> None:
             raise RuntimeError(f"Expected {name} {expected}, found {actual}; do not compare different toolchains.")
 
 
+def check_provenance(spec_repo: Path) -> None:
+    """Reject a stale checked-in provenance claim rather than silently updating it."""
+    provenance = json.loads((PACKAGE / "generation-provenance.json").read_text(encoding="utf-8"))
+    source = source_hashes(spec_repo)
+    source_fingerprint = hashlib.sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()
+    generated = {name: hashlib.sha256(value).hexdigest() for name, value in generated_files(PACKAGE).items()}
+    actual = {
+        "source": source_fingerprint,
+        "generated": hashlib.sha256(json.dumps(generated, sort_keys=True).encode()).hexdigest(),
+        "runtime": hashlib.sha256(json.dumps(package_hashes(), sort_keys=True).encode()).hexdigest(),
+        "lock": hashlib.sha256((PACKAGE / "emitter-package-lock.json").read_bytes()).hexdigest(),
+    }
+    expected = {
+        "source": provenance["typespec"]["source_fingerprint_sha256"],
+        "generated": provenance["assembly"]["generated_inventory_fingerprint_sha256"],
+        "runtime": provenance["assembly"]["runtime_fingerprint_sha256"],
+        "lock": provenance["toolchain"]["lockfile_sha256"],
+    }
+    if actual != expected:
+        raise RuntimeError(f"Generation provenance is stale: expected={expected}; actual={actual}")
+
+
 def emit(spec_repo: Path, output: Path, toolchain: Path | None = None) -> dict[str, bytes]:
     toolchain = (toolchain or spec_repo).resolve()
     # Keep a complete local input snapshot under the selected toolchain so
     # package resolution cannot accidentally mix pnpm and old npm libraries.
-    with tempfile.TemporaryDirectory(prefix="finetuning-inputs-", dir=toolchain) as directory:
+    with tempfile.TemporaryDirectory(prefix="finetuning-inputs-", dir=toolchain, ignore_cleanup_errors=True) as directory:
         inputs = Path(directory)
         for folder in (PROJECT.name, "session-finetuning", "common"):
             source = spec_repo / PROJECT.parent / folder
             shutil.copytree(source, inputs / folder, ignore=shutil.ignore_patterns("node_modules", "tsp-output"))
+        # Seed only explicit customization inputs. The emitter's documented
+        # _patch.py preservation is verified, not simulated by copying a
+        # completed SDK over the generated output afterward.
+        for path in (PACKAGE / MODULE).rglob("*"):
+            if not path.is_file() or "__pycache__" in path.parts:
+                continue
+            relative = path.relative_to(PACKAGE / MODULE)
+            if path.name == "_patch.py" or relative.as_posix() in HANDWRITTEN_MODULES:
+                destination = output / MODULE / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(path, destination)
         _compile(inputs / PROJECT.name, output, toolchain)
     return generated_files(output)
 
@@ -125,18 +161,22 @@ def main() -> None:
     spec_repo = args.spec_repo.resolve()
     toolchain = (args.toolchain or spec_repo).resolve()
     check_tools(toolchain)
+    check_provenance(spec_repo)
     before_source = source_hashes(spec_repo)
     before_package = package_hashes()
-    with tempfile.TemporaryDirectory(prefix="finetuning-generation-") as directory:
-        first = emit(spec_repo, Path(directory) / "first", toolchain)
-        second = emit(spec_repo, Path(directory) / "second", toolchain)
+    with tempfile.TemporaryDirectory(prefix="finetuning-generation-", ignore_cleanup_errors=True) as directory:
+        first_path, second_path = Path(directory) / "first", Path(directory) / "second"
+        first = emit(spec_repo, first_path, toolchain)
+        second = emit(spec_repo, second_path, toolchain)
         unstable = differences(first, second)
         drift = differences(first, generated_files(PACKAGE))
         if unstable or drift:
             raise RuntimeError(f"Non-repeatable files: {unstable}\nSDK generation drift: {drift}")
+        if package_hashes(first_path) != before_package or package_hashes(second_path) != before_package:
+            raise RuntimeError("The complete regenerated runtime or a maintained customization changed.")
     if before_source != source_hashes(spec_repo) or before_package != package_hashes():
         raise RuntimeError("Source or package files changed during verification.")
-    print(f"PASS: {len(first)} generated files match two independent emissions; handwritten files unchanged.")
+    print(f"PASS: {len(first)} generated files and the complete customized runtime match two independent emissions.")
     fingerprint = hashlib.sha256(json.dumps(before_source, sort_keys=True).encode()).hexdigest()
     print(f"TypeSpec working-tree fingerprint: {fingerprint}")
 

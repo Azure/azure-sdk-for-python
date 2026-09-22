@@ -204,7 +204,10 @@ def test_sync_post_create_operation_uses_server_resource_id(
 
     assert session.session_id == "session_abc12345"
     assert f"/fine_tuning/sessions/{resource_session_id}/checkpoint" in client.requests[2].url
-    assert f"/fine_tuning/sessions/{resource_session_id}/request/req-2" in client.requests[3].url
+    assert (
+        f"/fine_tuning/sessions/{resource_session_id}/request/req-2"
+        in client.requests[3].url
+    )
 
 
 @pytest.mark.parametrize(
@@ -237,7 +240,10 @@ async def test_async_post_create_operation_uses_server_resource_id(
 
     assert session_id == "session_abc12345"
     assert f"/fine_tuning/sessions/{resource_session_id}/checkpoint" in client.requests[2].url
-    assert f"/fine_tuning/sessions/{resource_session_id}/request/req-2" in client.requests[3].url
+    assert (
+        f"/fine_tuning/sessions/{resource_session_id}/request/req-2"
+        in client.requests[3].url
+    )
 
 
 @pytest.mark.parametrize(
@@ -266,7 +272,10 @@ def test_sync_post_create_close_uses_server_resource_id(
     session.close()
 
     assert session._heartbeat_session_id == "session_abc12345"
-    assert f"/fine_tuning/sessions/{resource_session_id}/complete" in client.requests[2].url
+    assert (
+        f"/fine_tuning/sessions/{resource_session_id}/complete"
+        in client.requests[2].url
+    )
 
 
 @pytest.mark.parametrize(
@@ -295,7 +304,10 @@ async def test_async_post_create_close_uses_server_resource_id(
     await _aio_patch.close_session(client, session_id)
 
     start_heartbeat.assert_called_once_with(client, "session_abc12345")
-    assert f"/fine_tuning/sessions/{resource_session_id}/complete" in client.requests[2].url
+    assert (
+        f"/fine_tuning/sessions/{resource_session_id}/complete"
+        in client.requests[2].url
+    )
 
 
 @pytest.mark.parametrize("server_session_id", ["model_abc12345", "abc12345"])
@@ -340,10 +352,9 @@ async def test_async_legacy_create_heartbeat_uses_server_resource_id(
         if len(client.requests) >= 3:
             break
         await asyncio.sleep(0)
-    heartbeat_task = client._heartbeat_tasks[session_id]
-    await _aio_patch._stop_heartbeat(client, session_id)
+    _aio_patch._stop_heartbeat(client, session_id)
+    await asyncio.sleep(0)
 
-    assert heartbeat_task.done()
     assert session_id == "session_abc12345"
     assert list(client._heartbeat_tasks) == []
     assert "/fine_tuning/sessions/model_abc12345/heartbeat" in client.requests[2].url

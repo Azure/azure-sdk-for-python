@@ -4,6 +4,7 @@ from azure.ai.finetuningsessions import _patch as sync_patch
 from azure.ai.finetuningsessions.aio import _patch as async_patch
 from azure.ai.finetuningsessions.models import SaveCheckpointOperationResult
 
+
 _CHECKPOINT_NAME = "checkpoint_name"
 _COMPLETED = {
     "status": "completed",
@@ -27,14 +28,18 @@ class _FakeResponse:
 class _FakeSyncClient:
     def send_request(self, request):
         if request.method == "POST":
-            return _FakeResponse({"request_id": "request_1", "session_id": "session_s1"})
+            return _FakeResponse(
+                {"request_id": "request_1", "session_id": "session_s1"}
+            )
         return _FakeResponse(_COMPLETED)
 
 
 class _FakeAsyncClient:
     async def send_request(self, request, **kwargs):
         if request.method == "POST":
-            return _FakeResponse({"request_id": "request_1", "session_id": "session_s1"})
+            return _FakeResponse(
+                {"request_id": "request_1", "session_id": "session_s1"}
+            )
         return _FakeResponse(_COMPLETED)
 
 
@@ -55,13 +60,17 @@ def test_sync_save_weights_completed_result_has_checkpoint_id() -> None:
 
 
 async def test_async_save_weights_completed_result_has_checkpoint_id() -> None:
-    result = await async_patch.save_weights(_FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME)
+    result = await async_patch.save_weights(
+        _FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME
+    )
 
     _assert_checkpoint_result(result)
 
 
 async def test_async_save_weights_post_completed_result_has_checkpoint_id() -> None:
-    pending = await async_patch.save_weights_post(_FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME)
+    pending = await async_patch.save_weights_post(
+        _FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME
+    )
 
     result = await pending.poll_result()
 
@@ -69,7 +78,9 @@ async def test_async_save_weights_post_completed_result_has_checkpoint_id() -> N
 
 
 async def test_async_save_weights_task_completed_result_has_checkpoint_id() -> None:
-    task = await async_patch.save_weights_async(_FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME)
+    task = await async_patch.save_weights_async(
+        _FakeAsyncClient(), "session_s1", _CHECKPOINT_NAME
+    )
 
     result = await task
 

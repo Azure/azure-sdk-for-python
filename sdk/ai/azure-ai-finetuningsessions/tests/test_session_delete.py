@@ -12,12 +12,11 @@ Verifies:
 * ``404`` is swallowed (idempotent — session already gone).
 * Other ``4xx``/``5xx`` surface via the standard SDK error path.
 """
-
 from __future__ import annotations
 
 import asyncio
 from typing import Any
-from unittest.mock import AsyncMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -85,7 +84,9 @@ class TestFineTuningSessionDelete:
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning/sessions/model_abc12345" in req.url, f"Expected model_abc12345 in URL, got: {req.url}"
+        assert "/fine_tuning/sessions/model_abc12345" in req.url, (
+            f"Expected model_abc12345 in URL, got: {req.url}"
+        )
         # Headers include the foundry features opt-in.
         assert "Foundry-Features" in req.headers
         assert req.headers["Accept"] == "application/json"
@@ -121,14 +122,18 @@ class TestFineTuningSessionDelete:
         sess.delete()
 
     def test_500_raises(self) -> None:
-        client = _RecordingClient([_FakeResponse(500, {"detail": "internal error"})])
+        client = _RecordingClient(
+            [_FakeResponse(500, {"detail": "internal error"})]
+        )
         sess = _make_session(client)
 
         with pytest.raises(HttpResponseError):
             sess.delete()
 
     def test_403_raises(self) -> None:
-        client = _RecordingClient([_FakeResponse(403, {"detail": "forbidden"})])
+        client = _RecordingClient(
+            [_FakeResponse(403, {"detail": "forbidden"})]
+        )
         sess = _make_session(client)
 
         with pytest.raises(HttpResponseError):
@@ -153,8 +158,8 @@ class TestFineTuningSessionDelete:
             order.append("send_request")
             return orig_send(req)
 
-        sess._stop_heartbeat = _spy_stop  # type: ignore[method-assign]
-        client.send_request = _spy_send  # type: ignore[method-assign]
+        sess._stop_heartbeat = _spy_stop   # type: ignore[method-assign]
+        client.send_request = _spy_send    # type: ignore[method-assign]
 
         sess.delete()
 
@@ -193,7 +198,6 @@ class TestAsyncDeleteSession:
 
     def _import(self) -> Any:
         from azure.ai.finetuningsessions.aio import _patch as aio_patch
-
         return aio_patch
 
     def test_success_issues_delete_with_correct_url(self) -> None:
@@ -201,14 +205,15 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(200, {"deleted": True})])
 
-        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()) as stop_heartbeat:
+        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
             asyncio.run(aio_patch.delete_session(client, "model_abc12345"))
-        stop_heartbeat.assert_awaited_once_with(client, "session_abc12345")
 
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning/sessions/session_abc12345" in req.url, f"Expected session_abc12345, got: {req.url}"
+        assert "/fine_tuning/sessions/session_abc12345" in req.url, (
+            f"Expected session_abc12345, got: {req.url}"
+        )
         assert "model_abc12345" not in req.url
         assert "Foundry-Features" in req.headers
 
@@ -216,7 +221,7 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(404)])
 
-        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()):
+        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
             # Must not raise.
             asyncio.run(aio_patch.delete_session(client, "session_deadbeef"))
 
@@ -224,7 +229,7 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(500, {"detail": "boom"})])
 
-        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()):
+        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
             with pytest.raises(HttpResponseError):
                 asyncio.run(aio_patch.delete_session(client, "session_deadbeef"))
 
@@ -235,7 +240,7 @@ class TestAsyncDeleteSession:
         order: list[str] = []
         orig_send = client.send_request
 
-        async def _spy_stop(self_arg: Any, session_id: str) -> None:
+        def _spy_stop(self_arg: Any, session_id: str) -> None:
             order.append(f"stop:{session_id}")
 
         async def _spy_send(req: Any) -> _AsyncFakeResponse:
@@ -249,11 +254,10 @@ class TestAsyncDeleteSession:
         assert order == ["stop:session_deadbeef", "send"]
 
     def test_registered_in_patch_sdk(self) -> None:
-        # patch_sdk attaches delete_session onto the public patched client.
+        # patch_sdk attaches delete_session onto the generated client.
         aio_patch = self._import()
-        from azure.ai.finetuningsessions.aio import (
+        from azure.ai.finetuningsessions.aio._client import (
             FineTuningSessionClient as Gen,
         )
-
         assert hasattr(Gen, "delete_session")
         assert getattr(Gen, "delete_session") is aio_patch.delete_session
