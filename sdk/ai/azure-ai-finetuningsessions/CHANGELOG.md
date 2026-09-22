@@ -16,6 +16,10 @@
 - Generated create responses expose a string `session_id` and `request_id`; raw request statuses are `pending`, `completed`, and `failed`.
 - The generated optimizer operation is `training.optimizer_step`; the convenience `optim_step` API remains available.
 
+### Bugs Fixed
+
+- Async `close_session` and `delete_session` now cancel and await heartbeat shutdown before sending the lifecycle request. Concurrent calls share shutdown without interrupting transport cleanup, retain their resource IDs, and preserve caller cancellation.
+
 ### Other Changes
 
 - Restored `/fine_tuning/sessions` for generated operations, convenience methods, and polling to match the existing Loom API. `use_legacy_routes` remains accepted as a no-op; no route flag, rewrite policy, or automatic fallback is required.

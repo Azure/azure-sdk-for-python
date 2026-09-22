@@ -340,9 +340,10 @@ async def test_async_legacy_create_heartbeat_uses_server_resource_id(
         if len(client.requests) >= 3:
             break
         await asyncio.sleep(0)
-    _aio_patch._stop_heartbeat(client, session_id)
-    await asyncio.sleep(0)
+    heartbeat_task = client._heartbeat_tasks[session_id]
+    await _aio_patch._stop_heartbeat(client, session_id)
 
+    assert heartbeat_task.done()
     assert session_id == "session_abc12345"
     assert list(client._heartbeat_tasks) == []
     assert "/fine_tuning/sessions/model_abc12345/heartbeat" in client.requests[2].url

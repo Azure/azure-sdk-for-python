@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -201,8 +201,9 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(200, {"deleted": True})])
 
-        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
+        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()) as stop_heartbeat:
             asyncio.run(aio_patch.delete_session(client, "model_abc12345"))
+        stop_heartbeat.assert_awaited_once_with(client, "session_abc12345")
 
         assert len(client.requests) == 1
         req = client.requests[0]
@@ -215,7 +216,7 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(404)])
 
-        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
+        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()):
             # Must not raise.
             asyncio.run(aio_patch.delete_session(client, "session_deadbeef"))
 
@@ -223,7 +224,7 @@ class TestAsyncDeleteSession:
         aio_patch = self._import()
         client = _AsyncRecordingClient([_AsyncFakeResponse(500, {"detail": "boom"})])
 
-        with patch.object(aio_patch, "_stop_heartbeat", MagicMock()):
+        with patch.object(aio_patch, "_stop_heartbeat", AsyncMock()):
             with pytest.raises(HttpResponseError):
                 asyncio.run(aio_patch.delete_session(client, "session_deadbeef"))
 
@@ -234,7 +235,7 @@ class TestAsyncDeleteSession:
         order: list[str] = []
         orig_send = client.send_request
 
-        def _spy_stop(self_arg: Any, session_id: str) -> None:
+        async def _spy_stop(self_arg: Any, session_id: str) -> None:
             order.append(f"stop:{session_id}")
 
         async def _spy_send(req: Any) -> _AsyncFakeResponse:

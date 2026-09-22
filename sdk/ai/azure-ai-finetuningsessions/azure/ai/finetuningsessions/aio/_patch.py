@@ -183,6 +183,8 @@ def _ensure_async_state(self: "FineTuningSessionClient") -> None:
     """Lazily initialize async state on the client instance."""
     if not hasattr(self, "_heartbeat_tasks"):
         self._heartbeat_tasks: dict[str, asyncio.Task] = {}
+    if not hasattr(self, "_heartbeat_shutdowns"):
+        self._heartbeat_shutdowns: dict[str, asyncio.Task] = {}
     if not hasattr(self, "_post_semaphore"):
         self._post_semaphore = asyncio.Semaphore(_DEFAULT_POST_CONCURRENCY)
     if not hasattr(self, "_sampling_session_seq"):
@@ -267,12 +269,40 @@ def _start_heartbeat(
     )
 
 
-def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
-    """Cancel the background heartbeat task for a session."""
+async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> None:
+    """Cancel and drain the heartbeat before allowing a lifecycle request."""
     _ensure_async_state(self)
-    task = self._heartbeat_tasks.pop(_canonical_session_id(session_id), None)
-    if task is not None:
+    session_id = _canonical_session_id(session_id)
+    shutdown = self._heartbeat_shutdowns.get(session_id)
+    if shutdown is None:
+        task = self._heartbeat_tasks.get(session_id)
+        if task is None:
+            return
         task.cancel()
+
+        async def _drain_heartbeat() -> None:
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass  # Expected cancellation of the heartbeat, not of its caller.
+            except Exception as exc:
+                # A failed background heartbeat must not prevent session cleanup.
+                _logger.warning("[heartbeat] failed while stopping %s: %s", session_id, exc)
+            finally:
+                if self._heartbeat_tasks.get(session_id) is task:
+                    self._heartbeat_tasks.pop(session_id, None)
+                self._heartbeat_shutdowns.pop(session_id, None)
+
+        shutdown = asyncio.create_task(_drain_heartbeat(), name=f"fts-heartbeat-stop-{session_id}")
+        # Keep one drain per session, including when a lifecycle caller is cancelled.
+        # An eager task factory may have completed the drain during create_task().
+        if not shutdown.done():
+            self._heartbeat_shutdowns[session_id] = shutdown
+
+    # Concurrent close/delete calls wait for the same drain without issuing a
+    # second cancel that could interrupt transport cleanup. Caller cancellation
+    # still propagates, so a cancelled lifecycle call does not send its request.
+    await asyncio.shield(shutdown)
 
 
 # -- Low-level helpers ---------------------------------------------------------
@@ -2059,12 +2089,13 @@ async def close_session(
 ) -> None:
     """Unload the session from the GPU engine.
 
-    Stops the background heartbeat, then issues the complete request.
+    Cancels and awaits the background heartbeat, then issues the complete request.
 
     :param session_id: The session ID to close.
     """
-    _stop_heartbeat(self, session_id)
+    # Snapshot before yielding: a concurrent delete may remove the resource mapping.
     resource_session_id = _client_resource_session_id(self, session_id)
+    await _stop_heartbeat(self, session_id)
     close_req = _HttpRequest(
         "POST",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}/complete",
@@ -2081,7 +2112,7 @@ async def delete_session(
 ) -> None:
     """Delete a session and cascade-delete its models, checkpoints, and sampling sessions.
 
-    Stops the background heartbeat, then issues an HTTP DELETE against the
+    Cancels and awaits the background heartbeat, then issues an HTTP DELETE against the
     session resource; the cascade is performed server-side.
 
     Idempotent — a 404 (session already gone) is swallowed.  Any other
@@ -2090,8 +2121,9 @@ async def delete_session(
     :param session_id: The session ID to delete.
     """
     session_id = _canonical_session_id(session_id)
-    _stop_heartbeat(self, session_id)
+    # Preserve the same wire ID even if another delete finishes while we drain.
     resource_session_id = _client_resource_session_id(self, session_id)
+    await _stop_heartbeat(self, session_id)
     del_req = _HttpRequest(
         "DELETE",
         "{endpoint}" + f"/fine_tuning/sessions/{resource_session_id}",

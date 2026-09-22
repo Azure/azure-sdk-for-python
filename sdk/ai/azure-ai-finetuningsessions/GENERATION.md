@@ -318,6 +318,40 @@ No new live-service, wheel-installation, or cross-language SDK validation was
 performed for this metadata-only clarification; prior results above retain
 their original scope.
 
+### Async heartbeat shutdown correction
+
+The handwritten async lifecycle methods now cancel and await the session's
+heartbeat before sending `complete` or `DELETE`. Calling `Task.cancel()` alone
+did not wait for an in-flight heartbeat's local transport cleanup; an
+event-controlled regression reproduced the lifecycle request running first.
+
+A shared drain task prevents concurrent close/delete calls from skipping the
+wait or cancelling transport cleanup a second time. Shielding only that drain
+preserves caller cancellation: a cancelled lifecycle call sends no request,
+while the heartbeat continues shutting down. Resource IDs are captured before
+waiting so a concurrent deletion cannot change an already-started call's route.
+Completed, failed, and already-cancelled heartbeat tasks are handled without
+blocking lifecycle cleanup on an old heartbeat error.
+
+- **751 tests passed against both source and a clean isolated installed wheel**,
+  including **22 new event-controlled shutdown cases** covering ordering, caller
+  cancellation, concurrent operations, task states, session-ID forms, session
+  isolation, and eager task completion. Runtime warnings for unawaited coroutines
+  were treated as errors. The wheel's **29 Python modules** matched current source;
+  package metadata, CRC, and `py.typed` were verified. The temporary artifact was
+  discarded after validation.
+- **22 generated files match two independent pinned emissions**. TypeSpec,
+  generated code, metadata, and the source pin are unchanged by this handwritten
+  correction; the existing TypeSpec input fingerprint remains valid.
+- **20/20 paired Loom cases passed**, with **134 requests and 2,246 checks per
+  SDK**. That existing workload disables background heartbeats; the new shutdown
+  tests, not the paired workload, establish the corrected ordering.
+- Formatting checks passed for every changed Python file.
+
+This establishes local coroutine/transport shutdown ordering, not rollback of a
+heartbeat that has already reached the service. No live-service validation or
+Loom source modification was performed for this fix.
+
 The original unrelated shared client-tool lockfile difference was removed during
 merge resolution, and the old wheel was removed from Git tracking (its local
 copy was preserved). A wheel belongs in a distribution/cookbook workflow, not in
