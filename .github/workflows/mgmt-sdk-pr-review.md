@@ -78,9 +78,240 @@ steps:
 tools:
   github:
     toolsets: [context, repos, pull_requests]
-  bash: ["cat", "head", "tail", "wc"]
+  bash: ["cat", "head", "tail", "wc", "jq"]
 
 safe-outputs:
+  # Fail before the built-in handler can publish or hide any previous review.
+  steps:
+    - name: Validate management SDK review comment
+      env:
+        GH_AW_AGENT_OUTPUT: ${{ steps.setup-agent-output-env.outputs.GH_AW_AGENT_OUTPUT }}
+      shell: bash
+      run: |
+        python - <<'PY'
+        from html import escape
+        from html.parser import HTMLParser
+        import json
+        import os
+        from pathlib import Path
+        import re
+        import string
+        import unicodedata
+
+        def require(condition, message):
+            if not condition:
+                raise ValueError(message)
+
+        def comparison_text(text):
+            # Bounded rendering of inline links, HTML, and formatting, for comparison only.
+            text = re.sub(r"!?\[([^\]\n]*)\]\((?:[^()\n]|\([^()\n]*\))*\)", r"\1", text)
+            # Match equal-length delimiter runs without backtracking over long backtick sequences.
+            runs = list(re.finditer(r"\x60+", text))
+            following, latest = {}, {}
+            for index in range(len(runs) - 1, -1, -1):
+                size = runs[index].end() - runs[index].start()
+                following[index] = latest.get(size)
+                latest[size] = index
+            parts, position, index = [], 0, 0
+            while index < len(runs):
+                end = following[index]
+                if end is None:
+                    index += 1
+                    continue
+                parts.extend((text[position:runs[index].start()], escape(text[runs[index].end():runs[end].start()])))
+                position = runs[end].end()
+                index = end + 1
+            parts.append(text[position:])
+            text = "".join(parts)
+            text = re.sub(r"<(https?://[^<>\s]+)>", r"\1", text)
+            class VisibleText(HTMLParser):
+                def __init__(self):
+                    super().__init__(convert_charrefs=True)
+                    self.parts = []
+                def handle_data(self, data):
+                    self.parts.append(data)
+                def handle_starttag(self, tag, attrs):
+                    if tag in {"br", "p"}:
+                        self.parts.append(" ")
+            parser = VisibleText()
+            parser.feed(text)
+            parser.close()
+            visible = re.sub(r"[*_\x60~]", "", "".join(parser.parts))
+            visible = " ".join(visible.lower().split())
+            start, end = 0, len(visible)
+            def punctuation(char):
+                return char in string.punctuation + " " or unicodedata.category(char).startswith("P")
+            while start < end and punctuation(visible[start]):
+                start += 1
+            while end > start and punctuation(visible[end - 1]):
+                end -= 1
+            return visible[start:end]
+
+        def substantive(text):
+            lines = [
+                comparison_text(line)
+                for line in text.splitlines()
+                if line.strip() and not line.startswith(("#", "<!--"))
+            ]
+            return bool(lines) and all(
+                line not in {
+                    "-", "", "todo", "tbd", "n/a", "none", "done", "full review pending", "review pending",
+                    "unable to complete review", "unable to complete review because",
+                }
+                and not re.match(r"(?:(?:the |a )?(?:full )?review (?:is )?pending|pending review)\b", line)
+                for line in [comparison_text(text), *lines]
+            ) and any(re.search(r"[A-Za-z0-9]", line) for line in lines)
+
+        def cells(line):
+            return [cell.strip() for cell in re.split(r"(?<!\\)\|", line.strip("|"))]
+
+        def table(text, header):
+            lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+            columns = len(header)
+            return (
+                len(lines) >= 3
+                and cells(lines[0]) == header
+                and len(cells(lines[1])) == columns
+                and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells(lines[1]))
+                and all(len(cells(line)) == columns and all(
+                            comparison_text(cell) != comparison_text(column) and (
+                                substantive(cell) or (column == "Confidence" and comparison_text(cell) == "n/a"))
+                            for column, cell in zip(header, cells(line)))
+                        for line in lines[2:])
+            )
+
+        def package_name(value):
+            name = value.strip("\x60")
+            require(re.fullmatch(r"(?:sdk/[^/\s]+/)?azure-mgmt-[a-z0-9]+(?:-[a-z0-9]+)*", name),
+                    "Expected a management SDK package name.")
+            return name.rsplit("/", 1)[-1]
+
+        def attribution_packages(text):
+            if text == "**Breaking-change attribution:** No newly added or modified entries.":
+                return set()
+            groups = re.split(r"(?m)^\*\*Package: ([^|\n]+) \| Release: ([^\n]+)\*\*\s*\n", text)
+            require(len(groups) >= 4 and not groups[0].strip() and (len(groups) - 1) % 3 == 0,
+                    "Attribution requires package/release groups with populated evidence tables.")
+            packages = set()
+            for index in range(1, len(groups), 3):
+                package, release, evidence = groups[index:index + 3]
+                packages.add(package_name(package.strip()))
+                require(substantive(release), "Attribution release is missing or a placeholder; use unverified if unknown.")
+                evidence = evidence.strip()
+                if evidence.startswith("**Needs human review:**"):
+                    reason = evidence.removeprefix("**Needs human review:**")
+                    require(re.match(r"^(?:[ \t]+|[ \t]*\n(?![ \t]*\n))", reason)
+                            and not re.match(r"^[ \t]*\n[ \t]*\n", reason),
+                            "Incomplete collection requires a reason on the same or immediately following line.")
+                    reason = reason.strip()
+                    require(
+                        substantive(reason) and len(comparison_text(reason).split()) >= 3
+                        and not re.search(r"\n\s*\n|(?<!\\)\|", reason)
+                        and not re.search(
+                            r"(?mi)^\s*(?:[#>]|[-+*]\s|\d+[.)]\s|[\x60~]{3}|[-=]{3,}\s*$|"
+                            r"<(?:table|h[1-6]|pre|div)\b)", reason)
+                        and not re.search(r"(?i)</?(?:ul|ol|li|dl|dt|dd|table|h[1-6]|pre|div|blockquote)\b", reason),
+                        "Incomplete collection requires one reason paragraph, without table or heading blocks.")
+                else:
+                    require(table(evidence, ["Changelog entry", "Cause", "Evidence and explanation", "Confidence"]),
+                            "Attribution requires a populated four-column table or an explicit incomplete-collection reason.")
+                    rows = [line.strip() for line in evidence.splitlines() if line.strip()][2:]
+                    for row in rows:
+                        _, cause, explanation, confidence = cells(row)
+                        cause, confidence = comparison_text(cause), comparison_text(confidence)
+                        if cause == "human review":
+                            reason = re.fullmatch(r"needs human review\b[\s:;-]*(.+)", comparison_text(explanation))
+                            require(confidence == "n/a" and reason and substantive(reason[1])
+                                    and len(reason[1].split()) >= 2,
+                                    "Human review requires N/A confidence and an entry-specific reason after Needs human review.")
+                        else:
+                            high = re.fullmatch(r"high(?:\s*[:(\-\u2013\u2014]\s*(.+))?", confidence)
+                            require(cause == "typespec/api" and high
+                                    and (high[1] is None or substantive(high[1])),
+                                    "TypeSpec/API requires High confidence, optionally followed by its rationale.")
+            return packages
+
+        def validate_summary(text, attributed_packages):
+            require(table(text, ["Package", "Completed checks"]),
+                    "Review summary requires a Package / Completed checks table with at least one populated row.")
+            packages = set()
+            allowed_checks = {
+                "Management package discovery", "Version consistency", "Preview version",
+                "Changelog date", "Stability flags", "Client signature", "Client name consistency",
+                "README snippets", "API-version drift",
+            }
+            lines = [line.strip() for line in text.splitlines() if line.strip()]
+            for line in lines[2:]:
+                package, completed = cells(line)
+                name = package_name(package)
+                require(name not in packages, "Review summary must list each package only once.")
+                packages.add(name)
+                checks = [check.strip() for check in completed.split(";")]
+                require(all(check in allowed_checks for check in checks) and len(checks) == len(set(checks)),
+                        "Completed checks must be a semicolon-separated list of documented check names.")
+            require(attributed_packages <= packages, "Review summary is missing an attribution package.")
+
+        def validate(payload):
+            require(isinstance(payload, dict), "Expected an agent output object.")
+            # gh-aw v0.87.1 emits errors alongside items, including rejected entries.
+            require(isinstance(payload.get("errors"), list) and not payload["errors"],
+                    "Expected an empty collector errors list. Inspect errors in the agent artifact before retrying.")
+            items = payload.get("items")
+            require(isinstance(items, list) and len(items) == 1,
+                    "Expected exactly one completed review; missing, duplicate, or diagnostic outputs cannot be published.")
+            item = items[0]
+            require(not isinstance(item, dict) or item.get("type") != "report_incomplete",
+                    "Review reported incomplete. Inspect report_incomplete reason/details in the agent artifact; "
+                    "diagnostic handlers and comment publication are intentionally blocked.")
+            require(isinstance(item, dict) and item.get("type") == "add_comment",
+                    "Expected add_comment, not an incomplete review or diagnostic.")
+            body = item.get("body")
+            require(isinstance(body, str) and 0 < len(body) <= 65000, "Expected a nonempty review body.")
+            body = body.strip().replace("\r\n", "\n")
+            # gh-aw sanitizes HTML comments out of the artifact and restores its own marker on publication.
+            marker = "<!-- gh-aw-workflow-id: mgmt-sdk-pr-review -->"
+            if body.startswith(marker):
+                body = body[len(marker):].lstrip()
+            not_applicable = (
+                "## Management SDK review not applicable\n\n"
+                "This pull request does not change a package matching \x60sdk/*/azure-mgmt-*\x60."
+            )
+            if body == not_applicable:
+                return
+            prefix = "## Management SDK PR review\n"
+            require(body.startswith(prefix), "Missing Management SDK PR review heading.")
+            content = body[len(prefix):].strip()
+            # Keep both documented None forms compatible, with or without their section heading.
+            for heading, none in (
+                ("Unverified checks", "**Unverified checks:** None."),
+                ("Breaking-change attribution", "**Breaking-change attribution:** No newly added or modified entries."),
+            ):
+                if not re.search(r"(?m)^### " + re.escape(heading) + r"\s*\n", content):
+                    content = content.replace(none, "### " + heading + "\n\n" + none, 1)
+            sections = re.split(r"(?m)^### (Unverified checks|Breaking-change attribution|Review summary)\s*\n", content)
+            require(len(sections) == 7 and sections[1::2] ==
+                    ["Unverified checks", "Breaking-change attribution", "Review summary"],
+                    "Missing, repeated, or out-of-order review sections.")
+            findings, unverified, attribution, summary = (section.strip() for section in sections[::2])
+            require(findings == "**Findings:** None." or table(findings,
+                    ["Severity", "Finding", "Location", "Evidence", "Rule", "Remediation"]),
+                    "Findings must contain the findings table with evidence or **Findings:** None.")
+            if findings != "**Findings:** None.":
+                rows = [line.strip() for line in findings.splitlines() if line.strip()][2:]
+                require(all(comparison_text(cells(row)[0]) in {"blocking", "warning", "suggestion"} for row in rows),
+                        "Finding severity must be Blocking, Warning, or Suggestion.")
+            require(unverified == "**Unverified checks:** None." or table(unverified, ["Check", "Reason"]),
+                    "Unverified checks must contain a populated table or **Unverified checks:** None.")
+            validate_summary(summary, attribution_packages(attribution))
+
+        try:
+            validate(json.loads(Path(os.environ["GH_AW_AGENT_OUTPUT"]).read_text(encoding="utf-8")))
+        except (OSError, ValueError) as error:
+            raise SystemExit(
+                f"::error::Management SDK review rejected: {error} "
+                "No review will be published or hidden. Inspect the agent artifact and rerun after correcting the submission."
+            ) from error
+        PY
   add-comment:
     max: 1
     target: "${{ github.event.pull_request.number }}"
@@ -296,11 +527,75 @@ or release in a table column. Use one row per introduced entry. Preserve multili
 and collection completed, write `**Breaking-change attribution:** No newly added or modified
 entries.` Do not merge attribution rows into the findings table.
 
-If collection is incomplete, identify the affected package or changelog under this attribution
-section as needing human review; do not imply that all introduced entries were checked. Do not
-add a separate attribution limitations table or repeat handoff reasons under unverified checks.
+If collection is incomplete and no entry rows can be produced for a package/release, retain its
+`**Package: azure-mgmt-example | Release: release heading**` group label (use `unverified` if the
+release is unknown), followed by `**Needs human review:**` and a specific missing-evidence reason.
+Use one prose paragraph, starting on the same line as the label or immediately after one soft
+line break (line wrapping and inline evidence links are allowed), not additional
+tables, headings, lists, or fenced blocks. Name the affected changelog when known.
+Do not imply that all introduced entries were checked.
+Do not add a separate attribution limitations table or repeat handoff reasons under unverified checks.
 
-Finish with a brief `### Review summary` naming every affected package and the checks completed.
+Finish with `### Review summary` and a table with exactly these columns:
+
+| Package | Completed checks |
+| --- | --- |
+| azure-mgmt-example | Version consistency; Client signature; API-version drift |
+
+Use one row per affected management SDK package, naming the checks actually completed; do not
+copy the example checks without evidence. In `Completed checks`, use a semicolon-separated list
+of these exact reporting names: `Management package discovery`, `Version consistency`,
+`Preview version`, `Changelog date`, `Stability flags`, `Client signature`,
+`Client name consistency`, `README snippets`, `API-version drift`. These are reporting labels
+for the current review rules, not a replacement for the authoritative rules. A partial review
+may list only the checks completed; put incomplete required checks under `Unverified checks`.
+If no checks could be completed, report incomplete rather than claiming a completed review.
+The publication gate validates this structure and
+cross-checks attribution package names against the summary, not factual completeness against
+the collected context. You must still include every `affectedPackages` entry from the context.
+The safe-output job has no independently trusted copy of `affectedPackages`; it cannot enforce
+complete package coverage. The agent's workspace/artifact copy is not an authoritative boundary
+for that check. Enforcing coverage would require a separate trusted pre-agent context transfer.
+Likewise, this gate does not infer which authoritative rules apply to each package or reconcile
+all required checks against completed/unverified rows. That accounting requires trusted rule
+applicability and package identity for unverified rows, not a blanket requirement for every
+reporting label. The reviewer must still account for every applicable rule.
+Placeholder comparison handles inline Markdown links/images, HTML formatting/entities, emphasis,
+inline code, and terminal punctuation (including Unicode punctuation) without changing submitted evidence.
+Adjacent inline HTML elements do not introduce spaces that are absent from the rendered text.
+Diagnostic matching is deliberately bounded: it rejects prefixes matching
+`[the |a ][full ]review [is ]pending` or `pending review` (brackets denote optional words),
+and the exact reason-free phrases `Unable to complete review` and `Unable to complete review because`.
+Concrete missing-evidence explanations after `because` remain valid for partial reviews.
+This is not exhaustive paraphrase detection, a general Markdown renderer, or semantic verification of the review.
+
+### Submit the complete body
+
+Write the final Markdown to `/tmp/gh-aw/agent/comment.md`, then submit its actual contents as
+JSON through the permitted `jq` command and the safe-output CLI:
+
+<!-- cspell:ignore gsub -->
+
+```bash
+jq -Rs '{body: gsub("(?<url>https?://[^\\s<>]+)|(?<email>(?:[A-Za-z0-9][A-Za-z0-9.!#$%&*+/=?^_\\x60{|}~\\x27-]*|\"(?:[^\"\\\\\\r\\n]|\\\\.)+\")@[A-Za-z0-9.-]+\\.[A-Za-z]{2,})|(?<![A-Za-z0-9_@./-])@{1,2}(?<decorator>[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*)"; .url // .email // .decorator)}' /tmp/gh-aw/agent/comment.md | safeoutputs add_comment .
+```
+
+This removes standalone TypeSpec-style `@` or augment-decorator `@@` sigils, including
+namespace-qualified names, while preserving decorator identifiers, arguments, and HTTP/HTTPS
+evidence links. The higher-priority email alternative preserves common ASCII addresses with
+alphanumeric-starting or quoted local parts, including punctuation-ending local parts. This is
+not full RFC email parsing. Embedded identifiers are not rewritten. Do not mention GitHub users.
+The final `.` reads a JSON object from stdin. Never use `--body -` or `@filename`: those submit
+literal placeholder text, not the file contents. Do not submit a test or placeholder comment;
+only one submission is allowed per run. If submission fails, use `report_incomplete` with the
+exact error rather than claiming the review was published.
+That diagnostic remains in the agent artifact for troubleshooting; the guard deliberately fails
+before all built-in output handlers, so it is not delivered as a comment or issue. A diagnostic
+combined with a comment also fails without publishing or hiding earlier reviews.
+
+The publisher independently rejects collector errors and missing, placeholder, structurally incomplete, or diagnostic
+outputs before posting a comment or hiding earlier reviews. Keep the required sections and
+explicit `None` statements even when there are no findings.
 
 ## Constraints
 
