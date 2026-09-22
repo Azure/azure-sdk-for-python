@@ -649,6 +649,9 @@ async def _coalesced_flush(timeout_millis: int) -> None:
     follow-up pass uses the largest ``timeout_millis`` requested by the callers
     that coalesced into it, so a small-timeout caller never shrinks another
     caller's requested bound.
+
+    :param timeout_millis: Maximum time to wait for the initial flush, in milliseconds.
+    :type timeout_millis: int
     """
     global _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     await flush_spans_async(timeout_millis)

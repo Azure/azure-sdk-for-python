@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
-from contextlib import aclosing
+from contextlib import aclosing, suppress
 import logging
 import os
 import threading
@@ -484,20 +484,30 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return
                 # Race: either shutdown fires or we poll again for disconnect
                 poll_task = asyncio.create_task(asyncio.sleep(0.5))
-                done, _ = await asyncio.wait(
-                    {shutdown_waiter, poll_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                if poll_task not in done:
-                    poll_task.cancel()
-                if shutdown_waiter in done:
-                    if context is not None:
-                        context.shutdown.set()
-                    cancellation_signal.set()
-                    return
+                try:
+                    done, _ = await asyncio.wait(
+                        {shutdown_waiter, poll_task},
+                        return_when=asyncio.FIRST_COMPLETED,
+                    )
+                    if poll_task not in done:
+                        poll_task.cancel()
+                        with suppress(asyncio.CancelledError):
+                            await poll_task
+                    if shutdown_waiter in done:
+                        if context is not None:
+                            context.shutdown.set()
+                        cancellation_signal.set()
+                        return
+                finally:
+                    if not poll_task.done():
+                        poll_task.cancel()
+                        with suppress(asyncio.CancelledError):
+                            await poll_task
         finally:
             if not shutdown_waiter.done():
                 shutdown_waiter.cancel()
+                with suppress(asyncio.CancelledError):
+                    await shutdown_waiter
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -892,6 +902,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         reset_request_context(stream_ctx_token)
                         if disconnect_task and not disconnect_task.done():
                             disconnect_task.cancel()
+                            with suppress(asyncio.CancelledError):
+                                await disconnect_task
 
                 sse_response = _CreateStreamingResponse(
                     _iter_with_context(),
@@ -944,6 +956,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
                 finally:
                     disconnect_task.cancel()
+                    with suppress(asyncio.CancelledError):
+                        await disconnect_task
 
             snapshot = await self._orchestrator.run_background(ctx)
             logger.info(
