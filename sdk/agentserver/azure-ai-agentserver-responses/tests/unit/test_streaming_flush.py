@@ -13,11 +13,17 @@ from unittest.mock import AsyncMock
 import pytest
 from starlette.requests import ClientDisconnect
 
+from azure.ai.agentserver.core import _tracing
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting import _endpoint_handler as endpoint
 from azure.ai.agentserver.responses.hosting import _orchestrator as orchestration
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
+
+
+@pytest.fixture(autouse=True)
+def _default_flush_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("AGENTSERVER_FLUSH_MODE", raising=False)
 
 
 def _scope(spec: str = "2.4") -> dict[str, Any]:
@@ -67,7 +73,7 @@ async def test_real_body_and_ended_span_precede_flush_and_final_send(
             assert release.wait(timeout_millis / 1000), "event loop could not release blocking exporter"
             events.append("flush-end")
 
-    monkeypatch.setattr(endpoint, "flush_spans", lambda: DelayedExporter().force_flush(5000))
+    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: DelayedExporter().force_flush(timeout_millis))
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         stream = ResponseEventStream(response_id=context.response_id, model="m")
@@ -132,7 +138,7 @@ async def test_sync_success_and_handler_error_still_flush_before_sending(
     monkeypatch: pytest.MonkeyPatch, failure: bool
 ) -> None:
     events: list[str] = []
-    monkeypatch.setattr(endpoint, "flush_spans", lambda: events.append("flush"))
+    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         if failure:
@@ -169,7 +175,7 @@ async def test_stream_cleanup_flushes_once_before_return(
 ) -> None:
     events: list[str] = []
     disconnected = asyncio.Event()
-    monkeypatch.setattr(endpoint, "flush_spans", lambda: events.append("flush"))
+    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
 
     async def source() -> Any:
         try:
@@ -221,13 +227,14 @@ async def test_cancellation_during_flush_drains_exporter(monkeypatch: pytest.Mon
     ended = threading.Event()
     loop = asyncio.get_running_loop()
 
-    def flush() -> None:
+    def flush(timeout_millis: int) -> None:
+        assert timeout_millis == 5000
         loop.call_soon_threadsafe(started.set)
         assert release.wait(5)
         ended.set()
 
-    monkeypatch.setattr(endpoint, "flush_spans", flush)
-    task = asyncio.create_task(endpoint._flush_spans_async())
+    monkeypatch.setattr(_tracing, "flush_spans", flush)
+    task = asyncio.create_task(endpoint.flush_spans_async())
     try:
         await asyncio.wait_for(started.wait(), 5)
         task.cancel()
@@ -269,7 +276,7 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
     disconnected = asyncio.Event()
     final_states: list[Any] = []
     frames: list[str] = []
-    monkeypatch.setattr(endpoint, "flush_spans", lambda: events.append("flush"))
+    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
     original_finalize = orchestration._ResponseOrchestrator._finalize_stream
 
     async def finalize(self: Any, ctx: Any, state: Any) -> None:
@@ -411,7 +418,7 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
     disconnected = asyncio.Event()
     initial_persisted = asyncio.Event()
     records: list[Any] = []
-    monkeypatch.setattr(endpoint, "flush_spans", lambda: events.append("flush"))
+    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
     original_start = orchestration._ResponseOrchestrator._start_resilient_background
 
     async def start(self: Any, ctx: Any, record: Any, fallback: Any, **kwargs: Any) -> None:
