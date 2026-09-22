@@ -663,18 +663,33 @@ class BreakingChangesTracker:
                 self.breaking_changes.append(bc)
 
     def check_property_required(self, components: Dict) -> None:
-        for key, value in components.get("properties", {}).items():
-            if not isinstance(value, dict):
-                continue
-            stable_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"].get(key, {}).get("attr_type")
-            current_type = value.get("attr_type")
+        def _get_property_type(value: Any) -> Any:
+            return value.get("attr_type") if isinstance(value, dict) else value
 
-            if (
-                isinstance(stable_type, str)
-                and stable_type.startswith("Optional[")
-                and isinstance(current_type, str)
-                and not current_type.startswith("Optional[")
-            ):
+        def _is_nullable(annotation: Any) -> bool:
+            if annotation == "Optional":
+                return True
+            if not isinstance(annotation, str):
+                return False
+
+            bracket = annotation.find("[")
+            if bracket != -1 and annotation.endswith("]"):
+                name = annotation[:bracket].rsplit(".", 1)[-1]
+                if name == "Optional":
+                    return True
+                if name == "Union":
+                    return any(member.strip() == "None" for member in annotation[bracket + 1:-1].split(","))
+
+            return any(member.strip() == "None" for member in annotation.split("|"))
+
+        stable_properties = self.stable[self._module_name]["class_nodes"][self._class_name].get("properties", {})
+        current_properties = components.get("properties", {})
+        for key in current_properties:
+            if isinstance(key, jsondiff.Symbol) or key not in stable_properties or key not in current_properties:
+                continue
+            stable_type = _get_property_type(stable_properties[key])
+            current_type = _get_property_type(current_properties[key])
+            if _is_nullable(stable_type) and not _is_nullable(current_type):
                 bc = (
                     self.REQUIRED_PROPERTY_MSG,
                     BreakingChangeType.REQUIRED_PROPERTY,
