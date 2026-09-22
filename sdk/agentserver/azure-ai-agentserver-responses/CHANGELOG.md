@@ -9,6 +9,8 @@
 
 ### Bugs Fixed
 
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
