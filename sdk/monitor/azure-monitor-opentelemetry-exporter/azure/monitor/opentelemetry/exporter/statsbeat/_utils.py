@@ -175,6 +175,19 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
 
 
 def _apply_sdk_stats_endpoint(connection_string: Optional[str], endpoint: Optional[str]) -> Optional[str]:
+    """Apply a OneSettings SDKStats destination to a resource connection string.
+
+    Preserves the connection string's instrumentation key and other fields while replacing
+    or appending its ingestion endpoint. If either value is missing or invalid, returns the
+    original connection string so the existing Breeze destination remains the fallback.
+
+    :param connection_string: SDKStats connection string containing the resource identity.
+    :type connection_string: Optional[str]
+    :param endpoint: OneSettings SDKStats ingestion endpoint.
+    :type endpoint: Optional[str]
+    :return: The connection string with the configured ingestion endpoint applied.
+    :rtype: Optional[str]
+    """
     if not connection_string or not endpoint:
         return connection_string
 
