@@ -1,5 +1,10 @@
 # Release History
 
+## 12.30.3 (2026-09-22)
+
+### Bugs Fixed
+- Async clients now reject header names and values containing a `\r` or `\n` when sending a batch request, matching the behavior of the sync clients.
+
 ## 12.30.2 (2026-09-16)
 
 ### Bugs Fixed
