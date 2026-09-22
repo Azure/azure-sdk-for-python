@@ -641,7 +641,7 @@ class VoiceAgentServerHost(InvocationAgentServerHost):
                         session_id,
                         context=extracted_context,
                     )
-                except BaseException:  # pylint: disable=broad-exception-caught
+                except Exception:  # pylint: disable=broad-exception-caught
                     pass
             parent_attachment = _attach_context(extracted_context)
             if parent_attachment is not None:
