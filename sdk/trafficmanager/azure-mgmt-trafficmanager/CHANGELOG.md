@@ -22,6 +22,8 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `Endpoint` moved instance variable `always_serve`, `custom_headers`, `endpoint_location`, `endpoint_monitor_status`, `endpoint_status`, `geo_mapping`, `min_child_endpoints`, `min_child_endpoints_i_pv4`, `min_child_endpoints_i_pv6`, `priority`, `subnets`, `target`, `target_resource_id` and `weight` under property `properties` whose type is `EndpointProperties`
   - Model `HeatMapModel` moved instance variable `end_time`, `endpoints`, `start_time` and `traffic_flows` under property `properties` whose type is `HeatMapProperties`
   - Model `Profile` moved instance variable `allowed_endpoint_record_types`, `dns_config`, `endpoints`, `max_return`, `monitor_config`, `profile_status`, `traffic_routing_method` and `traffic_view_enrollment_status` under property `properties` whose type is `ProfileProperties`
