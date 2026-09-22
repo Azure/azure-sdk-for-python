@@ -365,6 +365,26 @@ def _check_cancel_terminal_status(
     return None
 
 
+async def _stop_disconnect_monitor(
+    task: asyncio.Task[None] | None,
+    cancellation_signal: asyncio.Event,
+) -> None:
+    """Stop and await a request disconnect monitor.
+
+    :param task: Monitor task, or ``None`` when monitoring is disabled.
+    :type task: asyncio.Task[None] | None
+    :param cancellation_signal: Shared signal used to stop the monitor.
+    :type cancellation_signal: asyncio.Event
+    """
+    if task is None:
+        return
+    cancellation_signal.set()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+
+
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     """HTTP-layer handler for all Responses API endpoints.
 
@@ -479,60 +499,30 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :keyword context: Optional response context to stamp cancellation cause.
         :paramtype context: ResponseContext | None
         """
-        # Create a task that resolves when _shutdown_requested fires.
-        # This avoids relying on the 0.5s poll interval for shutdown detection.
-        shutdown_waiter = asyncio.create_task(self._shutdown_requested.wait())
-        poll_task: asyncio.Task[None] | None = None
-        try:
-            while not cancellation_signal.is_set():
-                if self._shutdown_requested.is_set():
-                    if context is not None:
+        while not cancellation_signal.is_set():
+            if self._shutdown_requested.is_set():
+                if context is not None:
+                    context.shutdown.set()
+                cancellation_signal.set()
+                return
+            if await request.is_disconnected():
+                # Client disconnect on foreground. If shutdown is also
+                # in progress, prefer SHUTTING_DOWN cause — the
+                # disconnect is a side effect of server shutdown
+                # (Hypercorn closing connections during graceful
+                # drain), not an independent client action. (Spec 014
+                # Row 3 Path B / spec 024 Proposal #11.)
+                if context is not None:
+                    if self._shutdown_requested.is_set():
                         context.shutdown.set()
-                    cancellation_signal.set()
-                    return
-                disconnected = await request.is_disconnected()
-                # Starlette probes ``receive`` inside a pre-cancelled AnyIO
-                # scope, which can consume this task's cancellation on asyncio.
-                current_task = asyncio.current_task()
-                if current_task is not None and current_task.cancelling():
-                    raise asyncio.CancelledError
-                if disconnected:
-                    # Client disconnect on foreground. If shutdown is also
-                    # in progress, prefer SHUTTING_DOWN cause — the
-                    # disconnect is a side effect of server shutdown
-                    # (Hypercorn closing connections during graceful
-                    # drain), not an independent client action. (Spec 014
-                    # Row 3 Path B / spec 024 Proposal #11.)
-                    if context is not None:
-                        if self._shutdown_requested.is_set():
-                            context.shutdown.set()
-                        else:
-                            context.client_cancelled = True
-                    cancellation_signal.set()
-                    return
-                # Race: either shutdown fires or we poll again for disconnect
-                poll_task = asyncio.create_task(asyncio.sleep(0.5))
-                done, _ = await asyncio.wait(
-                    {shutdown_waiter, poll_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                if poll_task not in done:
-                    poll_task.cancel()
-                if shutdown_waiter in done:
-                    if context is not None:
-                        context.shutdown.set()
-                    cancellation_signal.set()
-                    return
-        finally:
-            child_tasks = [task for task in (poll_task, shutdown_waiter) if task is not None]
-            for task in child_tasks:
-                if not task.done():
-                    task.cancel()
-            for task in child_tasks:
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    pass
+                    else:
+                        context.client_cancelled = True
+                cancellation_signal.set()
+                return
+            try:
+                await asyncio.wait_for(cancellation_signal.wait(), timeout=0.5)
+            except asyncio.TimeoutError:
+                pass
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -925,13 +915,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         raise
                     finally:
                         reset_request_context(stream_ctx_token)
-                        if disconnect_task:
-                            if not disconnect_task.done():
-                                disconnect_task.cancel()
-                            try:
-                                await disconnect_task
-                            except asyncio.CancelledError:
-                                pass
+                        await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
 
                 sse_response = _CreateStreamingResponse(
                     _iter_with_context(),
@@ -983,12 +967,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         ),
                     )
                 finally:
-                    if not disconnect_task.done():
-                        disconnect_task.cancel()
-                    try:
-                        await disconnect_task
-                    except asyncio.CancelledError:
-                        pass
+                    await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
 
             snapshot = await self._orchestrator.run_background(ctx)
             logger.info(
