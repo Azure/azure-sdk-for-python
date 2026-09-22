@@ -5,6 +5,7 @@
 import json
 import logging
 import re
+from copy import deepcopy
 from time import sleep
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
 
@@ -940,7 +941,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         if isinstance(val, (int, float)):
             return str(val)
         if isinstance(val, (list, dict)):
-            return val
+            # Later path insertions must not mutate objects shared with callable evaluators.
+            return deepcopy(val)
         return str(val)
 
     def _get_value_from_path(normalized_row: Dict[str, Any], path: str) -> Any:

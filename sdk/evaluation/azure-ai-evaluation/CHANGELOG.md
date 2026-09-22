@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+- Prevented AOAI data-source generation from mutating nested input data shared with callable evaluators.
 
 ### Other Changes
 

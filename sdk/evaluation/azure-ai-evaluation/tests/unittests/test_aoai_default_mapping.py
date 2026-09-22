@@ -290,3 +290,102 @@ def test_mixed_evaluation_retains_python_mapping_and_kwargs(tmp_path, aoai_bound
     for alias, source in local_mapping["default"].items():
         assert remote_mapping["default"][alias] == source
     assert result["rows"][0]["outputs.python.kwargs"] == baseline["rows"][0]["outputs.python.kwargs"]
+
+
+def _write_mutable_row(tmp_path, wrapped, value):
+    row = {
+        "reference": {"donors": 0, "details": [{"values": [None, 1]}]},
+        "model": {"donors": value, "details": [{"values": [None, 2]}]},
+    }
+    if wrapped:
+        row = {"item": row}
+    data = tmp_path / "mutable.jsonl"
+    data.write_text(json.dumps(row) + "\n", encoding="utf-8")
+    return data
+
+
+def _mutable_grader():
+    return AzureOpenAIGrader(
+        model_config={"api_key": "unused"},
+        grader_config={
+            "type": "string_check",
+            "name": "compare",
+            "operation": "eq",
+            "input": "{{item.model.donors}}",
+            "reference": "{{item.reference.donors}}",
+        },
+    )
+
+
+@pytest.mark.parametrize("wrapped", [False, True])
+@pytest.mark.parametrize("value", [2, None])
+def test_serialization_preserves_mutable_input(tmp_path, wrapped, value):
+    validated = evaluate_module._preprocess_data(
+        data=_write_mutable_row(tmp_path, wrapped, value),
+        evaluators_and_graders={"grader": _mutable_grader()},
+        _use_run_submitter_client=False,
+        _use_pf_client=False,
+    )
+    frame = validated["input_data_df"]
+    snapshot = deepcopy(frame.to_dict("records"))
+    mapping = _complete_aoai_default_column_mapping(validated["column_mapping"], frame)["default"]
+
+    item = _get_data_source(frame, mapping)["source"]["content"][0]["item"]
+
+    assert frame.to_dict("records") == snapshot
+    assert item["model"]["donors"] == ("" if value is None else str(value))
+    assert item["model"]["details"] == [{"values": [None, 2]}]
+    item["model"]["details"][0]["values"].append("payload-only")
+    assert frame.to_dict("records") == snapshot
+
+
+@pytest.mark.parametrize("wrapped", [False, True])
+@pytest.mark.parametrize("value", [2, None])
+def test_mixed_evaluation_preserves_mutable_python_input(tmp_path, aoai_boundary, wrapped, value):
+    data = _write_mutable_row(tmp_path, wrapped, value)
+    received = []
+
+    def python_evaluator(**kwargs):
+        received.append(deepcopy(kwargs))
+        root = kwargs["item"] if wrapped else kwargs
+        return {
+            "model_type": type(root["model"]["donors"]).__name__,
+            "model_value": root["model"]["donors"],
+        }
+
+    baseline = _evaluate(data, {"python": python_evaluator})
+    result = _evaluate(data, {"grader": _mutable_grader(), "python": python_evaluator})
+
+    assert received[1] == received[0]
+    for field in ("model_type", "model_value"):
+        key = f"outputs.python.{field}"
+        assert result["rows"][0][key] == baseline["rows"][0][key]
+    assert result["rows"][0]["outputs.python.model_type"] == type(value).__name__
+    assert result["rows"][0]["outputs.python.model_value"] == value
+    item = aoai_boundary.evals.runs.create.call_args.kwargs["data_source"]["source"]["content"][0]["item"]
+    assert item["model"]["donors"] == ("" if value is None else str(value))
+
+
+@pytest.mark.parametrize("source", ["mapped", "unmapped", "target"])
+@pytest.mark.parametrize("container", ["list", "dict"])
+def test_serialized_containers_do_not_alias_input(source, container):
+    nested = [{"values": [None, 2]}]
+    value = nested if container == "list" else {"nested": nested}
+    column = "__outputs.structured" if source == "target" else "structured"
+    frame = pd.DataFrame([{column: value}])
+    snapshot = deepcopy(value)
+    mapping = {}
+    if source != "unmapped":
+        mapping["structured"] = "${run.outputs.structured}" if source == "target" else "${data.structured}"
+
+    item = _get_data_source(frame, mapping)["source"]["content"][0]["item"]
+    payload = item["structured"]
+    assert payload == snapshot
+    assert payload is not value
+    payload_nested = payload if container == "list" else payload["nested"]
+    assert payload_nested is not nested
+    assert payload_nested[0] is not nested[0]
+    assert payload_nested[0]["values"] is not nested[0]["values"]
+    payload_nested[0]["values"].append("payload-only")
+    assert value == snapshot
+    assert frame.at[0, column] == snapshot
