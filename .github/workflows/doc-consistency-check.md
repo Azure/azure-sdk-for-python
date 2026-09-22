@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: weekly on Monday
 description: Review documentation for inconsistencies with source code and create a PR with fixes
+model: claude-sonnet-5
 permissions:
   contents: read
   issues: read
