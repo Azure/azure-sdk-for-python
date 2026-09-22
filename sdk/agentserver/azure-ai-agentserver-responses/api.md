@@ -5659,7 +5659,7 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.ResponseUsageInputTokensDetails(TypedDict, total=False):
-        key "cache_write_tokens": Required[int]
+        key "cache_write_tokens": int
         key "cached_tokens": Required[int]
         cache_write_tokens: int
         cached_tokens: int

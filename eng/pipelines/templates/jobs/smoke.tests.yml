@@ -46,6 +46,7 @@ jobs:
       matrix:
         Python_310_Linux (AzureCloud):
           PythonVersion: '3.10'
+          PythonArchitecture: 'x64'
 
     pool:
       name: $(LINUXPOOL)
@@ -79,6 +80,7 @@ jobs:
         matrix:
             Python_310_Windows (AzureCloud):
               PythonVersion: '3.10'
+              PythonArchitecture: 'x64'
 
       pool:
         name: $(WINDOWSPOOL)
@@ -109,6 +111,7 @@ jobs:
         matrix:
             Python_310_Mac (AzureCloud):
               PythonVersion: '3.10'
+              PythonArchitecture: 'arm64'
 
       pool:
         name: $(MACPOOL)

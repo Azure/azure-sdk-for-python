@@ -30,7 +30,7 @@ class WorkflowBootstrapTests(unittest.TestCase):
     def test_single_trusted_collector_has_valid_python(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.md").read_text(encoding="utf-8")
         blocks = workflow.split("python - <<'PY'")[1:]
-        self.assertEqual(1, len(blocks))
+        self.assertEqual(2, len(blocks))
         source = textwrap.dedent(blocks[0].split("\n      PY", 1)[0])
         compile(source, "collector-bootstrap", "exec")
         self.assertIn('revision = os.environ["TRUSTED_BASE_SHA"]', source)

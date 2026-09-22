@@ -65,6 +65,7 @@ from ._evaluate_aoai import (
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
     OAIEvalRunCreationInfo,
+    WRAPPER_KEY,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -1040,7 +1041,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
+            aoai_column_mapping = _complete_aoai_default_column_mapping(column_mapping, input_data_df)
+            eval_run_info_list = _begin_aoai_evaluation(graders, aoai_column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1778,6 +1780,41 @@ def _preprocess_data(
         batch_run_client=batch_run_client,
         batch_run_data=batch_run_data,
     )
+
+
+def _complete_aoai_default_column_mapping(
+    column_mapping: Dict[str, Dict[str, str]], input_data_df: pd.DataFrame
+) -> Dict[str, Dict[str, str]]:
+    """Copy automatic mappings for AOAI, retaining nested sources with colliding leaf names."""
+    completed = {name: mapping.copy() for name, mapping in column_mapping.items()}
+    default_mapping = completed.setdefault("default", {})
+    mapped_sources = set(default_mapping.values())
+    # Run outputs occupy root fields inside AOAI's item wrapper, regardless of alias.
+    target_paths = {
+        f"{WRAPPER_KEY}.{source[2:-1].split('.')[-1]}"
+        for source in mapped_sources
+        if source.startswith("${run.outputs.")
+    }
+    for col in sorted(input_data_df.columns):
+        if "." not in col or col.startswith(Prefixes.TSG_OUTPUTS) or col in target_paths:
+            continue
+        source = f"${{data.{col}}}"
+        if source in mapped_sources:
+            continue
+        parts = col.split(".")
+        for depth in range(1, len(parts) + 1):
+            alias = ".".join(parts[-depth:])
+            if alias not in default_mapping:
+                break
+        else:
+            suffix = 1
+            alias = f"{col}__{suffix}"
+            while alias in default_mapping:
+                suffix += 1
+                alias = f"{col}__{suffix}"
+        default_mapping[alias] = source
+        mapped_sources.add(source)
+    return completed
 
 
 def _flatten_object_columns_for_default_mapping(

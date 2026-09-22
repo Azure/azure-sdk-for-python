@@ -25,7 +25,7 @@ class TestNetworkManagementSubgroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
             subgroup_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementSubgroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.subgroups.list(
             resource_group_name=resource_group.name,
             interconnect_group_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

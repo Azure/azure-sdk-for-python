@@ -15,6 +15,11 @@ from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
 )
 from .._id_generator import IdGenerator
+from .._metadata_constraints import (
+    MAX_METADATA_KEYS,
+    MAX_METADATA_KEY_LENGTH,
+    MAX_METADATA_VALUE_LENGTH,
+)
 from .._options import ResponsesServerOptions
 
 from .. import models as _public_models
@@ -108,25 +113,26 @@ def validate_create_response(request: _public_models.CreateResponse) -> None:
 
     # B22: model is optional — resolved to default in normalize_create_response()
 
-    # Metadata constraints: ≤16 keys, key ≤64 chars, value ≤512 chars
     metadata = request.get("metadata")
     if isinstance(metadata, Mapping):
-        if len(metadata) > 16:
+        if len(metadata) > MAX_METADATA_KEYS:
             raise RequestValidationError(
-                "metadata must have at most 16 key-value pairs",
+                f"metadata must have at most {MAX_METADATA_KEYS} key-value pairs",
                 code="invalid_request",
                 param="metadata",
             )
         for key, value in metadata.items():
-            if isinstance(key, str) and len(key) > 64:
+            if isinstance(key, str) and len(key) > MAX_METADATA_KEY_LENGTH:
                 raise RequestValidationError(
-                    f"metadata key '{key[:64]}...' exceeds maximum length of 64 characters",
+                    f"metadata key '{key[:MAX_METADATA_KEY_LENGTH]}...' exceeds maximum length of "
+                    f"{MAX_METADATA_KEY_LENGTH} characters",
                     code="invalid_request",
                     param="metadata",
                 )
-            if isinstance(value, str) and len(value) > 512:
+            if isinstance(value, str) and len(value) > MAX_METADATA_VALUE_LENGTH:
                 raise RequestValidationError(
-                    f"metadata value for key '{key}' exceeds maximum length of 512 characters",
+                    f"metadata value for key '{key}' exceeds maximum length of "
+                    f"{MAX_METADATA_VALUE_LENGTH} characters",
                     code="invalid_request",
                     param="metadata",
                 )

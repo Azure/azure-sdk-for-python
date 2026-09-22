@@ -24,7 +24,7 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
         response = self.client.bastion_hosts.get(
             resource_group_name=resource_group.name,
             bastion_host_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -39,6 +39,12 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "etag": "str",
                 "id": "str",
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "location": "str",
                 "name": "str",
                 "properties": {
@@ -68,6 +74,10 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
                     "networkAcls": {"ipRules": [{"addressPrefix": "str"}]},
                     "provisioningState": "str",
                     "scaleUnits": 0,
+                    "sessionRecordingConfiguration": {
+                        "blobContainerUri": "str",
+                        "identity": {"type": "str", "userAssignedIdentityId": "str"},
+                    },
                     "virtualNetwork": {"id": "str"},
                 },
                 "sku": {"name": "str"},
@@ -75,7 +85,7 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -83,12 +93,20 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_bastion_hosts_begin_update_tags(self, resource_group):
-        response = self.client.bastion_hosts.begin_update_tags(
+    def test_bastion_hosts_begin_update(self, resource_group):
+        response = self.client.bastion_hosts.begin_update(
             resource_group_name=resource_group.name,
             bastion_host_name="str",
-            parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            parameters={
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "tags": {"str": "str"},
+            },
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +118,7 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
         response = self.client.bastion_hosts.begin_delete(
             resource_group_name=resource_group.name,
             bastion_host_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,7 +129,7 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
     def test_bastion_hosts_list_by_resource_group(self, resource_group):
         response = self.client.bastion_hosts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -121,7 +139,7 @@ class TestNetworkManagementBastionHostsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_bastion_hosts_list(self, resource_group):
         response = self.client.bastion_hosts.list(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
