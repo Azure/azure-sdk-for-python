@@ -77,6 +77,11 @@ class ServiceBusClient(
     :keyword retry_mode: The delay behavior between retry attempts. Supported values are "fixed" or "exponential",
      where default is "exponential".
     :paramtype retry_mode: str
+    :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
+     rather than the whole operation. Applies to sending, management operations, and AMQP link
+     acquisition, including the link acquisition performed by `receive_messages`. The value must
+     be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
+     bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
@@ -227,6 +232,11 @@ class ServiceBusClient(
         :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
          where default is 'exponential'.
         :paramtype retry_mode: str
+        :keyword float try_timeout: The timeout in seconds bounding a single attempt of an operation,
+         rather than the whole operation. Applies to sending, management operations, and AMQP link
+         acquisition, including the link acquisition performed by `receive_messages`. The value must
+         be greater than 0 if specified. Default is None, meaning no per-attempt bound. It does not
+         bound the `receive_messages` long poll, the receiver iterator's own wait, or settlement.
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
@@ -347,6 +357,7 @@ class ServiceBusClient(
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            try_timeout=self._config.try_timeout,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
@@ -395,8 +406,8 @@ class ServiceBusClient(
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -474,6 +485,7 @@ class ServiceBusClient(
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            try_timeout=self._config.try_timeout,
             session_id=session_id,
             sub_queue=sub_queue,
             receive_mode=receive_mode,
@@ -543,6 +555,7 @@ class ServiceBusClient(
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            try_timeout=self._config.try_timeout,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
@@ -594,8 +607,8 @@ class ServiceBusClient(
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
-         messages to arrive. If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout. On a sessionful
+         messages to arrive. The default value is None: iterating the receiver then waits indefinitely,
+         while `receive_messages()` falls back to a 60 second bound. On a sessionful
          queue/topic when NEXT_AVAILABLE_SESSION is specified, this will act as the timeout for connecting.
          If connection errors are occurring due to write timing out,the connection timeout
          value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
@@ -670,6 +683,7 @@ class ServiceBusClient(
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                try_timeout=self._config.try_timeout,
                 session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
@@ -704,6 +718,7 @@ class ServiceBusClient(
                 retry_total=self._config.retry_total,
                 retry_backoff_factor=self._config.retry_backoff_factor,
                 retry_backoff_max=self._config.retry_backoff_max,
+                try_timeout=self._config.try_timeout,
                 session_id=session_id,
                 sub_queue=sub_queue,
                 receive_mode=receive_mode,
@@ -743,6 +758,7 @@ class ServiceBusClient(
             retry_total=self._config.retry_total,
             retry_backoff_factor=self._config.retry_backoff_factor,
             retry_backoff_max=self._config.retry_backoff_max,
+            try_timeout=self._config.try_timeout,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,

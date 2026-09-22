@@ -256,7 +256,7 @@ async for event in connection:
         
     elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
         print("User started speaking")
-        # Stop playback and cancel any current response
+        # Stop playback
         
     elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
         # Play the audio chunk

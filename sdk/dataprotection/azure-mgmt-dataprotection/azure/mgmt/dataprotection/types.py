@@ -29,6 +29,7 @@ if TYPE_CHECKING:
         EncryptionState,
         ExistingResourcePolicy,
         FeatureType,
+        GranularityLevel,
         IdentityType,
         ImmutabilityState,
         InfrastructureEncryptionState,
@@ -58,9 +59,9 @@ class AbsoluteDeleteOption(TypedDict, total=False):
 
     :ivar duration: Duration of deletion after given timespan. Required.
     :vartype duration: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AbsoluteDeleteOption".
-    :vartype object_type: Literal["AbsoluteDeleteOption"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AbsoluteDeleteOption".
+    :vartype objectType: Literal["AbsoluteDeleteOption"]
     """
 
     duration: Required[str]
@@ -73,10 +74,10 @@ class AbsoluteDeleteOption(TypedDict, total=False):
 class AdHocBackupRuleOptions(TypedDict, total=False):
     """Adhoc backup rules.
 
-    :ivar rule_name: Required.
-    :vartype rule_name: str
-    :ivar trigger_option: Adhoc backup trigger option. Required.
-    :vartype trigger_option: "AdhocBackupTriggerOption"
+    :ivar ruleName: Required.
+    :vartype ruleName: str
+    :ivar triggerOption: Adhoc backup trigger option. Required.
+    :vartype triggerOption: "AdhocBackupTriggerOption"
     """
 
     ruleName: Required[str]
@@ -88,8 +89,8 @@ class AdHocBackupRuleOptions(TypedDict, total=False):
 class AdhocBackupTriggerOption(TypedDict, total=False):
     """Adhoc backup trigger option.
 
-    :ivar retention_tag_override:
-    :vartype retention_tag_override: str
+    :ivar retentionTagOverride:
+    :vartype retentionTagOverride: str
     """
 
     retentionTagOverride: str
@@ -98,8 +99,8 @@ class AdhocBackupTriggerOption(TypedDict, total=False):
 class AdhocBasedTaggingCriteria(TypedDict, total=False):
     """Adhoc backup tagging criteria.
 
-    :ivar tag_info: Retention tag information.
-    :vartype tag_info: "RetentionTag"
+    :ivar tagInfo: Retention tag information.
+    :vartype tagInfo: "RetentionTag"
     """
 
     tagInfo: "RetentionTag"
@@ -109,11 +110,11 @@ class AdhocBasedTaggingCriteria(TypedDict, total=False):
 class AdhocBasedTriggerContext(TypedDict, total=False):
     """Adhoc trigger context.
 
-    :ivar tagging_criteria: Tagging Criteria containing retention tag for adhoc backup. Required.
-    :vartype tagging_criteria: "AdhocBasedTaggingCriteria"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AdhocBasedTriggerContext".
-    :vartype object_type: Literal["AdhocBasedTriggerContext"]
+    :ivar taggingCriteria: Tagging Criteria containing retention tag for adhoc backup. Required.
+    :vartype taggingCriteria: "AdhocBasedTaggingCriteria"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AdhocBasedTriggerContext".
+    :vartype objectType: Literal["AdhocBasedTriggerContext"]
     """
 
     taggingCriteria: Required["AdhocBasedTaggingCriteria"]
@@ -126,12 +127,12 @@ class AdhocBasedTriggerContext(TypedDict, total=False):
 class AdlsBlobBackupDatasourceParameters(TypedDict, total=False):
     """Parameters to be used during configuration of backup of azure data lake storage account blobs.
 
-    :ivar containers_list: List of containers to be backed up during configuration of backup of
+    :ivar containersList: List of containers to be backed up during configuration of backup of
      blobs. Required.
-    :vartype containers_list: list[str]
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AdlsBlobBackupDatasourceParameters".
-    :vartype object_type: Literal["AdlsBlobBackupDatasourceParameters"]
+    :vartype containersList: list[str]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AdlsBlobBackupDatasourceParameters".
+    :vartype objectType: Literal["AdlsBlobBackupDatasourceParameters"]
     """
 
     containersList: Required[list[str]]
@@ -145,11 +146,11 @@ class AdlsBlobBackupDatasourceParametersForAutoProtection(TypedDict, total=False
     """Parameters to be used during configuration of backup of azure data lake storage account blobs
     using AutoProtection settings.
 
-    :ivar auto_protection_settings: AutoProtection settings. Required.
-    :vartype auto_protection_settings: "BlobBackupRuleBasedAutoProtectionSettings"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AdlsBlobBackupDatasourceParametersForAutoProtection".
-    :vartype object_type: Literal["AdlsBlobBackupDatasourceParametersForAutoProtection"]
+    :ivar autoProtectionSettings: AutoProtection settings. Required.
+    :vartype autoProtectionSettings: "BlobBackupRuleBasedAutoProtectionSettings"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AdlsBlobBackupDatasourceParametersForAutoProtection".
+    :vartype objectType: Literal["AdlsBlobBackupDatasourceParametersForAutoProtection"]
     """
 
     autoProtectionSettings: Required["BlobBackupRuleBasedAutoProtectionSettings"]
@@ -162,13 +163,13 @@ class AdlsBlobBackupDatasourceParametersForAutoProtection(TypedDict, total=False
 class AzureBackupFindRestorableTimeRangesRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """List Restore Ranges Request.
 
-    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+    :ivar sourceDataStoreType: Gets or sets the type of the source data store. Required. Known
      values are: "OperationalStore", "VaultStore", and "ArchiveStore".
-    :vartype source_data_store_type: Union[str, "RestoreSourceDataStoreType"]
-    :ivar start_time: Start time for the List Restore Ranges request. ISO 8601 format.
-    :vartype start_time: str
-    :ivar end_time: End time for the List Restore Ranges request. ISO 8601 format.
-    :vartype end_time: str
+    :vartype sourceDataStoreType: Union[str, "RestoreSourceDataStoreType"]
+    :ivar startTime: Start time for the List Restore Ranges request. ISO 8601 format.
+    :vartype startTime: str
+    :ivar endTime: End time for the List Restore Ranges request. ISO 8601 format.
+    :vartype endTime: str
     """
 
     sourceDataStoreType: Required[Union[str, "RestoreSourceDataStoreType"]]
@@ -191,9 +192,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -219,20 +220,20 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
 class AzureBackupParams(TypedDict, total=False):
     """Azure backup parameters.
 
-    :ivar backup_type: BackupType ; Full/Incremental etc. Required.
-    :vartype backup_type: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AzureBackupParams".
-    :vartype object_type: Literal["AzureBackupParams"]
+    :ivar backupType: BackupType ; Full/Incremental etc. Required.
+    :vartype backupType: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AzureBackupParams".
+    :vartype objectType: Literal["AzureBackupParams"]
     """
 
     backupType: Required[str]
@@ -245,25 +246,25 @@ class AzureBackupParams(TypedDict, total=False):
 class AzureBackupRecoveryTimeBasedRestoreRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """AzureBackup RecoveryPointTime Based Restore Request.
 
-    :ivar restore_target_info: Gets or sets the restore target information. Required.
-    :vartype restore_target_info: "RestoreTargetInfoBase"
-    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+    :ivar restoreTargetInfo: Gets or sets the restore target information. Required.
+    :vartype restoreTargetInfo: "RestoreTargetInfoBase"
+    :ivar sourceDataStoreType: Gets or sets the type of the source data store. Required. Known
      values are: "ArchiveStore", "SnapshotStore", "OperationalStore", and "VaultStore".
-    :vartype source_data_store_type: Union[str, "SourceDataStoreType"]
-    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+    :vartype sourceDataStoreType: Union[str, "SourceDataStoreType"]
+    :ivar sourceResourceId: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
-    :vartype source_resource_id: str
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+    :vartype sourceResourceId: str
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar identityDetails: Contains information of the Identity Details for the BI. If it is null,
      default will be considered as System Assigned.
-    :vartype identity_details: "IdentityDetails"
-    :ivar recovery_point_time: The recovery time in ISO 8601 format example -
+    :vartype identityDetails: "IdentityDetails"
+    :ivar recoveryPointTime: The recovery time in ISO 8601 format example -
      2020-08-14T17:30:00.0000000Z. Required.
-    :vartype recovery_point_time: str
-    :ivar object_type: Required. Default value is "AzureBackupRecoveryTimeBasedRestoreRequest".
-    :vartype object_type: Literal["AzureBackupRecoveryTimeBasedRestoreRequest"]
+    :vartype recoveryPointTime: str
+    :ivar objectType: Required. Default value is "AzureBackupRecoveryTimeBasedRestoreRequest".
+    :vartype objectType: Literal["AzureBackupRecoveryTimeBasedRestoreRequest"]
     """
 
     restoreTargetInfo: Required["RestoreTargetInfoBase"]
@@ -287,14 +288,13 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(TypedDict, total=False):  # pyl
 class AzureBackupRehydrationRequest(TypedDict, total=False):
     """Azure Backup Rehydrate Request.
 
-    :ivar recovery_point_id: Id of the recovery point to be recovered. Required.
-    :vartype recovery_point_id: str
-    :ivar rehydration_priority: Priority to be used for rehydration. Values High or Standard. Known
+    :ivar recoveryPointId: Id of the recovery point to be recovered. Required.
+    :vartype recoveryPointId: str
+    :ivar rehydrationPriority: Priority to be used for rehydration. Values High or Standard. Known
      values are: "Invalid", "High", and "Standard".
-    :vartype rehydration_priority: Union[str, "RehydrationPriority"]
-    :ivar rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
-     Required.
-    :vartype rehydration_retention_duration: str
+    :vartype rehydrationPriority: Union[str, "RehydrationPriority"]
+    :ivar rehydrationRetentionDuration: Retention duration in ISO 8601 format i.e P10D . Required.
+    :vartype rehydrationRetentionDuration: str
     """
 
     recoveryPointId: Required[str]
@@ -309,30 +309,29 @@ class AzureBackupRehydrationRequest(TypedDict, total=False):
 class AzureBackupRestoreWithRehydrationRequest(TypedDict, total=False):
     """AzureBackup Restore with Rehydration Request.
 
-    :ivar restore_target_info: Gets or sets the restore target information. Required.
-    :vartype restore_target_info: "RestoreTargetInfoBase"
-    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+    :ivar restoreTargetInfo: Gets or sets the restore target information. Required.
+    :vartype restoreTargetInfo: "RestoreTargetInfoBase"
+    :ivar sourceDataStoreType: Gets or sets the type of the source data store. Required. Known
      values are: "ArchiveStore", "SnapshotStore", "OperationalStore", and "VaultStore".
-    :vartype source_data_store_type: Union[str, "SourceDataStoreType"]
-    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+    :vartype sourceDataStoreType: Union[str, "SourceDataStoreType"]
+    :ivar sourceResourceId: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
-    :vartype source_resource_id: str
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+    :vartype sourceResourceId: str
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar identityDetails: Contains information of the Identity Details for the BI. If it is null,
      default will be considered as System Assigned.
-    :vartype identity_details: "IdentityDetails"
-    :ivar recovery_point_id: Required.
-    :vartype recovery_point_id: str
-    :ivar rehydration_priority: Priority to be used for rehydration. Values High or Standard.
+    :vartype identityDetails: "IdentityDetails"
+    :ivar recoveryPointId: Required.
+    :vartype recoveryPointId: str
+    :ivar rehydrationPriority: Priority to be used for rehydration. Values High or Standard.
      Required. Known values are: "Invalid", "High", and "Standard".
-    :vartype rehydration_priority: Union[str, "RehydrationPriority"]
-    :ivar rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
-     Required.
-    :vartype rehydration_retention_duration: str
-    :ivar object_type: Required. Default value is "AzureBackupRestoreWithRehydrationRequest".
-    :vartype object_type: Literal["AzureBackupRestoreWithRehydrationRequest"]
+    :vartype rehydrationPriority: Union[str, "RehydrationPriority"]
+    :ivar rehydrationRetentionDuration: Retention duration in ISO 8601 format i.e P10D . Required.
+    :vartype rehydrationRetentionDuration: str
+    :ivar objectType: Required. Default value is "AzureBackupRestoreWithRehydrationRequest".
+    :vartype objectType: Literal["AzureBackupRestoreWithRehydrationRequest"]
     """
 
     restoreTargetInfo: Required["RestoreTargetInfoBase"]
@@ -363,14 +362,14 @@ class AzureBackupRule(TypedDict, total=False):
 
     :ivar name: Required.
     :vartype name: str
-    :ivar backup_parameters: BackupParameters base.
-    :vartype backup_parameters: "BackupParameters"
-    :ivar data_store: DataStoreInfo base. Required.
-    :vartype data_store: "DataStoreInfoBase"
+    :ivar backupParameters: BackupParameters base.
+    :vartype backupParameters: "BackupParameters"
+    :ivar dataStore: DataStoreInfo base. Required.
+    :vartype dataStore: "DataStoreInfoBase"
     :ivar trigger: Trigger context. Required.
     :vartype trigger: "TriggerContext"
-    :ivar object_type: Required. Default value is "AzureBackupRule".
-    :vartype object_type: Literal["AzureBackupRule"]
+    :ivar objectType: Required. Default value is "AzureBackupRule".
+    :vartype objectType: Literal["AzureBackupRule"]
     """
 
     name: Required[str]
@@ -388,8 +387,8 @@ class AzureBackupRule(TypedDict, total=False):
 class AzureMonitorAlertSettings(TypedDict, total=False):
     """Settings for Azure Monitor based alerts.
 
-    :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
-    :vartype alerts_for_all_job_failures: Union[str, "AlertsState"]
+    :ivar alertsForAllJobFailures: Known values are: "Enabled" and "Disabled".
+    :vartype alertsForAllJobFailures: Union[str, "AlertsState"]
     """
 
     alertsForAllJobFailures: Union[str, "AlertsState"]
@@ -399,14 +398,14 @@ class AzureMonitorAlertSettings(TypedDict, total=False):
 class AzureOperationalStoreParameters(TypedDict, total=False):
     """Parameters for Operational-Tier DataStore.
 
-    :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
-     are: "OperationalStore", "VaultStore", and "ArchiveStore".
-    :vartype data_store_type: Union[str, "DataStoreTypes"]
-    :ivar resource_group_id: Gets or sets the Snapshot Resource Group Uri.
-    :vartype resource_group_id: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "AzureOperationalStoreParameters".
-    :vartype object_type: Literal["AzureOperationalStoreParameters"]
+    :ivar dataStoreType: type of datastore; Operational/Vault/Archive. Required. Known values are:
+     "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype dataStoreType: Union[str, "DataStoreTypes"]
+    :ivar resourceGroupId: Gets or sets the Snapshot Resource Group Uri.
+    :vartype resourceGroupId: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "AzureOperationalStoreParameters".
+    :vartype objectType: Literal["AzureOperationalStoreParameters"]
     """
 
     dataStoreType: Required[Union[str, "DataStoreTypes"]]
@@ -424,12 +423,12 @@ class AzureRetentionRule(TypedDict, total=False):
 
     :ivar name: Required.
     :vartype name: str
-    :ivar is_default:
-    :vartype is_default: bool
+    :ivar isDefault:
+    :vartype isDefault: bool
     :ivar lifecycles: Required.
     :vartype lifecycles: list["SourceLifeCycle"]
-    :ivar object_type: Required. Default value is "AzureRetentionRule".
-    :vartype object_type: Literal["AzureRetentionRule"]
+    :ivar objectType: Required. Default value is "AzureRetentionRule".
+    :vartype objectType: Literal["AzureRetentionRule"]
     """
 
     name: Required[str]
@@ -444,42 +443,41 @@ class AzureRetentionRule(TypedDict, total=False):
 class BackupInstance(TypedDict, total=False):
     """Backup Instance.
 
-    :ivar friendly_name: Gets or sets the Backup Instance friendly name.
-    :vartype friendly_name: str
-    :ivar data_source_info: Gets or sets the data source information. Required.
-    :vartype data_source_info: "Datasource"
-    :ivar data_source_set_info: Gets or sets the data source set information.
-    :vartype data_source_set_info: "DatasourceSet"
-    :ivar policy_info: Gets or sets the policy information. Required.
-    :vartype policy_info: "PolicyInfo"
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar protection_status: Specifies the protection status of the resource.
-    :vartype protection_status: "ProtectionStatusDetails"
-    :ivar current_protection_state: Specifies the current protection state of the resource. Known
+    :ivar friendlyName: Gets or sets the Backup Instance friendly name.
+    :vartype friendlyName: str
+    :ivar dataSourceInfo: Gets or sets the data source information. Required.
+    :vartype dataSourceInfo: "Datasource"
+    :ivar dataSourceSetInfo: Gets or sets the data source set information.
+    :vartype dataSourceSetInfo: "DatasourceSet"
+    :ivar policyInfo: Gets or sets the policy information. Required.
+    :vartype policyInfo: "PolicyInfo"
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar protectionStatus: Specifies the protection status of the resource.
+    :vartype protectionStatus: "ProtectionStatusDetails"
+    :ivar currentProtectionState: Specifies the current protection state of the resource. Known
      values are: "Invalid", "NotProtected", "ConfiguringProtection", "ProtectionConfigured",
      "BackupSchedulesSuspended", "RetentionSchedulesSuspended", "ProtectionStopped",
      "ProtectionError", "ConfiguringProtectionFailed", "SoftDeleting", "SoftDeleted", and
      "UpdatingProtection".
-    :vartype current_protection_state: Union[str, "CurrentProtectionState"]
-    :ivar protection_error_details: Specifies the protection error of the resource.
-    :vartype protection_error_details: "UserFacingError"
-    :ivar provisioning_state: Specifies the provisioning state of the resource i.e.
+    :vartype currentProtectionState: Union[str, "CurrentProtectionState"]
+    :ivar protectionErrorDetails: Specifies the protection error of the resource.
+    :vartype protectionErrorDetails: "UserFacingError"
+    :ivar provisioningState: Specifies the provisioning state of the resource i.e.
      provisioning/updating/Succeeded/Failed.
-    :vartype provisioning_state: str
-    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
-     provider.
-    :vartype datasource_auth_credentials: "AuthCredentials"
-    :ivar validation_type: Specifies the type of validation. In case of DeepValidation, all
+    :vartype provisioningState: str
+    :ivar datasourceAuthCredentials: Credentials to use to authenticate with data source provider.
+    :vartype datasourceAuthCredentials: "AuthCredentials"
+    :ivar validationType: Specifies the type of validation. In case of DeepValidation, all
      validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
      and "DeepValidation".
-    :vartype validation_type: Union[str, "ValidationType"]
-    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+    :vartype validationType: Union[str, "ValidationType"]
+    :ivar identityDetails: Contains information of the Identity Details for the BI. If it is null,
      default will be considered as System Assigned.
-    :vartype identity_details: "IdentityDetails"
-    :ivar object_type: Required.
-    :vartype object_type: str
+    :vartype identityDetails: "IdentityDetails"
+    :ivar objectType: Required.
+    :vartype objectType: str
     """
 
     friendlyName: str
@@ -528,9 +526,9 @@ class BackupInstanceResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: BackupInstanceResource properties.
     :vartype properties: "BackupInstance"
     :ivar tags: Proxy Resource tags.
@@ -546,13 +544,13 @@ class BackupInstanceResource(ProxyResource):
 class BackupPolicy(TypedDict, total=False):
     """Rule based backup policy.
 
-    :ivar datasource_types: Type of datasource for the backup management. Required.
-    :vartype datasource_types: list[str]
-    :ivar policy_rules: Policy rule dictionary that contains rules for each backuptype i.e
+    :ivar datasourceTypes: Type of datasource for the backup management. Required.
+    :vartype datasourceTypes: list[str]
+    :ivar policyRules: Policy rule dictionary that contains rules for each backuptype i.e
      Full/Incremental/Logs etc. Required.
-    :vartype policy_rules: list["BasePolicyRule"]
-    :ivar object_type: Required. Default value is "BackupPolicy".
-    :vartype object_type: Literal["BackupPolicy"]
+    :vartype policyRules: list["BasePolicyRule"]
+    :ivar objectType: Required. Default value is "BackupPolicy".
+    :vartype objectType: Literal["BackupPolicy"]
     """
 
     datasourceTypes: Required[list[str]]
@@ -567,7 +565,7 @@ class BackupPolicy(TypedDict, total=False):
 class BackupSchedule(TypedDict, total=False):
     """Schedule for backup.
 
-    :ivar repeating_time_intervals: Repeating time intervals that define the backup schedule. Each
+    :ivar repeatingTimeIntervals: Repeating time intervals that define the backup schedule. Each
      value must follow the format: ``R/YYYY-MM-DDThh:mm:ss[.fff][Z|(+/-)hh:mm]/Duration`` Only the
      exact formats listed below are supported. Other ISO 8601 variations are not accepted. Supported
      time formats:
@@ -586,8 +584,8 @@ class BackupSchedule(TypedDict, total=False):
      * `R/2023-10-15T14:30:00Z/P1W`
      * `R/2023-10-15T14:30:45.123+05:30/P1D`
      * `R/2023-10-15T14:30Z/P1D`. Required.
-    :vartype repeating_time_intervals: list[str]
-    :ivar time_zone: Time Zone for a schedule. Supported timezone indicators include:
+    :vartype repeatingTimeIntervals: list[str]
+    :ivar timeZone: Time Zone for a schedule. Supported timezone indicators include:
 
      * 'Z' for UTC
      * '+00:00'
@@ -599,7 +597,7 @@ class BackupSchedule(TypedDict, total=False):
      * 2023-10-15T14:30:45Z
      * 2023-10-15T14:30:45.123+05:30
      * 2023-10-15T14:30-08:00.
-    :vartype time_zone: str
+    :vartype timeZone: str
     """
 
     repeatingTimeIntervals: Required[list[str]]
@@ -639,40 +637,44 @@ class BackupSchedule(TypedDict, total=False):
 class BackupVault(TypedDict, total=False):
     """Backup Vault.
 
-    :ivar monitoring_settings: Monitoring Settings.
-    :vartype monitoring_settings: "MonitoringSettings"
-    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+    :ivar monitoringSettings: Monitoring Settings.
+    :vartype monitoringSettings: "MonitoringSettings"
+    :ivar costManagementSettings: Cost Management Settings of the vault.
+    :vartype costManagementSettings: "CostManagementSettings"
+    :ivar provisioningState: Provisioning state of the BackupVault resource. Known values are:
      "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_move_state: Resource move state for backup vault. Known values are: "Unknown",
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceMoveState: Resource move state for backup vault. Known values are: "Unknown",
      "InProgress", "PrepareFailed", "CommitFailed", "Failed", "PrepareTimedout", "CommitTimedout",
      "CriticalFailure", "PartialSuccess", and "MoveSucceeded".
-    :vartype resource_move_state: Union[str, "ResourceMoveState"]
-    :ivar resource_move_details: Resource move details for backup vault.
-    :vartype resource_move_details: "ResourceMoveDetails"
-    :ivar security_settings: Security Settings.
-    :vartype security_settings: "SecuritySettings"
-    :ivar storage_settings: Storage Settings.
-    :vartype storage_settings: list["StorageSetting"]
-    :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
-    :vartype is_vault_protected_by_resource_guard: bool
-    :ivar feature_settings: Feature Settings.
-    :vartype feature_settings: "FeatureSettings"
-    :ivar secure_score: Secure Score of Backup Vault. Known values are: "None", "Minimum",
+    :vartype resourceMoveState: Union[str, "ResourceMoveState"]
+    :ivar resourceMoveDetails: Resource move details for backup vault.
+    :vartype resourceMoveDetails: "ResourceMoveDetails"
+    :ivar securitySettings: Security Settings.
+    :vartype securitySettings: "SecuritySettings"
+    :ivar storageSettings: Storage Settings.
+    :vartype storageSettings: list["StorageSetting"]
+    :ivar isVaultProtectedByResourceGuard: Is vault protected by resource guard.
+    :vartype isVaultProtectedByResourceGuard: bool
+    :ivar featureSettings: Feature Settings.
+    :vartype featureSettings: "FeatureSettings"
+    :ivar secureScore: Secure Score of Backup Vault. Known values are: "None", "Minimum",
      "Adequate", "Maximum", and "NotSupported".
-    :vartype secure_score: Union[str, "SecureScoreLevel"]
-    :ivar bcdr_security_level: Security Level of Backup Vault. Known values are: "Poor", "Fair",
+    :vartype secureScore: Union[str, "SecureScoreLevel"]
+    :ivar bcdrSecurityLevel: Security Level of Backup Vault. Known values are: "Poor", "Fair",
      "Good", "Excellent", and "NotSupported".
-    :vartype bcdr_security_level: Union[str, "BCDRSecurityLevel"]
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar replicated_regions: List of replicated regions for Backup Vault.
-    :vartype replicated_regions: list[str]
+    :vartype bcdrSecurityLevel: Union[str, "BCDRSecurityLevel"]
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar replicatedRegions: List of replicated regions for Backup Vault.
+    :vartype replicatedRegions: list[str]
     """
 
     monitoringSettings: "MonitoringSettings"
     """Monitoring Settings."""
+    costManagementSettings: "CostManagementSettings"
+    """Cost Management Settings of the vault."""
     provisioningState: Union[str, "ProvisioningState"]
     """Provisioning state of the BackupVault resource. Known values are: \"Failed\", \"Provisioning\",
      \"Succeeded\", \"Unknown\", and \"Updating\"."""
@@ -713,9 +715,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -739,9 +741,9 @@ class BackupVaultResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -750,8 +752,8 @@ class BackupVaultResource(TrackedResource):
     :vartype properties: "BackupVault"
     :ivar identity: Input Managed Identity Details.
     :vartype identity: "DppIdentityDetails"
-    :ivar e_tag: Optional ETag.
-    :vartype e_tag: str
+    :ivar eTag: Optional ETag.
+    :vartype eTag: str
     """
 
     properties: Required["BackupVault"]
@@ -773,9 +775,9 @@ class BaseBackupPolicyResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: BaseBackupPolicyResource properties.
     :vartype properties: "BaseBackupPolicy"
     """
@@ -787,8 +789,8 @@ class BaseBackupPolicyResource(ProxyResource):
 class BlobBackupAutoProtectionRule(TypedDict, total=False):
     """Indicates a Blob Backup Auto Protection Rule.
 
-    :ivar object_type: Type of the specific object - used for deserializing. Required.
-    :vartype object_type: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required.
+    :vartype objectType: str
     :ivar mode: Exclude removes candidates (after inclusion). Required. "Exclude"
     :vartype mode: Union[str, "BlobBackupRuleMode"]
     :ivar type: Pattern type: Prefix, only pattern type supported for now. Required. "Prefix"
@@ -812,11 +814,11 @@ class BlobBackupAutoProtectionRule(TypedDict, total=False):
 class BlobBackupDatasourceParametersForAutoProtection(TypedDict, total=False):  # pylint: disable=name-too-long
     """Paramters to be used during configuration of backup of blobs using AutoProtection settings.
 
-    :ivar auto_protection_settings: AutoProtection settings. Required.
-    :vartype auto_protection_settings: "BlobBackupRuleBasedAutoProtectionSettings"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "BlobBackupDatasourceParametersForAutoProtection".
-    :vartype object_type: Literal["BlobBackupDatasourceParametersForAutoProtection"]
+    :ivar autoProtectionSettings: AutoProtection settings. Required.
+    :vartype autoProtectionSettings: "BlobBackupRuleBasedAutoProtectionSettings"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "BlobBackupDatasourceParametersForAutoProtection".
+    :vartype objectType: Literal["BlobBackupDatasourceParametersForAutoProtection"]
     """
 
     autoProtectionSettings: Required["BlobBackupRuleBasedAutoProtectionSettings"]
@@ -831,8 +833,8 @@ class BlobBackupRuleBasedAutoProtectionSettings(TypedDict, total=False):  # pyli
 
     :ivar enabled: Flag to enable whether auto protection. Required.
     :vartype enabled: bool
-    :ivar object_type: Required. Default value is "BlobBackupRuleBasedAutoProtectionSettings".
-    :vartype object_type: Literal["BlobBackupRuleBasedAutoProtectionSettings"]
+    :ivar objectType: Required. Default value is "BlobBackupRuleBasedAutoProtectionSettings".
+    :vartype objectType: Literal["BlobBackupRuleBasedAutoProtectionSettings"]
     :ivar rules: Rules are evaluated in the order provided. Inclusion adds candidates; exclusion
      removes candidates. If no rules are present, all containers are considered eligible when
      enabled = true.
@@ -867,13 +869,13 @@ class CheckNameAvailabilityRequest(TypedDict, total=False):
 class CmkKekIdentity(TypedDict, total=False):
     """The details of the managed identity used for CMK.
 
-    :ivar identity_type: The identity type. 'SystemAssigned' and 'UserAssigned' are mutually
+    :ivar identityType: The identity type. 'SystemAssigned' and 'UserAssigned' are mutually
      exclusive. 'SystemAssigned' will use implicitly created managed identity. Known values are:
      "SystemAssigned" and "UserAssigned".
-    :vartype identity_type: Union[str, "IdentityType"]
-    :ivar identity_id: The managed identity to be used which has access permissions to the Key
+    :vartype identityType: Union[str, "IdentityType"]
+    :ivar identityId: The managed identity to be used which has access permissions to the Key
      Vault. Provide a value here in case identity types: 'UserAssigned' only.
-    :vartype identity_id: str
+    :vartype identityId: str
     """
 
     identityType: Union[str, "IdentityType"]
@@ -888,8 +890,8 @@ class CmkKekIdentity(TypedDict, total=False):
 class CmkKeyVaultProperties(TypedDict, total=False):
     """The properties of the Key Vault which hosts CMK.
 
-    :ivar key_uri: The key uri of the Customer Managed Key.
-    :vartype key_uri: str
+    :ivar keyUri: The key uri of the Customer Managed Key.
+    :vartype keyUri: str
     """
 
     keyUri: str
@@ -899,9 +901,9 @@ class CmkKeyVaultProperties(TypedDict, total=False):
 class CopyOnExpiryOption(TypedDict, total=False):
     """Copy on Expiry Option.
 
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "CopyOnExpiryOption".
-    :vartype object_type: Literal["CopyOnExpiryOption"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "CopyOnExpiryOption".
+    :vartype objectType: Literal["CopyOnExpiryOption"]
     """
 
     objectType: Required[Literal["CopyOnExpiryOption"]]
@@ -909,13 +911,26 @@ class CopyOnExpiryOption(TypedDict, total=False):
      \"CopyOnExpiryOption\"."""
 
 
+class CostManagementSettings(TypedDict, total=False):
+    """Cost Management Settings of the vault.
+
+    :ivar granularityLevel: Settings for granularity level. Known values are: "VaultLevel",
+     "ProtectedItemLevel", and "ProtectedItemWithParentTag".
+    :vartype granularityLevel: Union[str, "GranularityLevel"]
+    """
+
+    granularityLevel: Union[str, "GranularityLevel"]
+    """Settings for granularity level. Known values are: \"VaultLevel\", \"ProtectedItemLevel\", and
+     \"ProtectedItemWithParentTag\"."""
+
+
 class CrossRegionRestoreDetails(TypedDict, total=False):
     """Cross Region Restore details.
 
-    :ivar source_region: Required.
-    :vartype source_region: str
-    :ivar source_backup_instance_id: Required.
-    :vartype source_backup_instance_id: str
+    :ivar sourceRegion: Required.
+    :vartype sourceRegion: str
+    :ivar sourceBackupInstanceId: Required.
+    :vartype sourceBackupInstanceId: str
     """
 
     sourceRegion: Required[str]
@@ -927,12 +942,12 @@ class CrossRegionRestoreDetails(TypedDict, total=False):
 class CrossRegionRestoreJobRequest(TypedDict, total=False):
     """Details of CRR Job to be fetched.
 
-    :ivar source_region: Required.
-    :vartype source_region: str
-    :ivar source_backup_vault_id: Required.
-    :vartype source_backup_vault_id: str
-    :ivar job_id: Required.
-    :vartype job_id: str
+    :ivar sourceRegion: Required.
+    :vartype sourceRegion: str
+    :ivar sourceBackupVaultId: Required.
+    :vartype sourceBackupVaultId: str
+    :ivar jobId: Required.
+    :vartype jobId: str
     """
 
     sourceRegion: Required[str]
@@ -946,10 +961,10 @@ class CrossRegionRestoreJobRequest(TypedDict, total=False):
 class CrossRegionRestoreJobsRequest(TypedDict, total=False):
     """Details of Backup Vault for which CRR Jobs are to be fetched.
 
-    :ivar source_region: Required.
-    :vartype source_region: str
-    :ivar source_backup_vault_id: Required.
-    :vartype source_backup_vault_id: str
+    :ivar sourceRegion: Required.
+    :vartype sourceRegion: str
+    :ivar sourceBackupVaultId: Required.
+    :vartype sourceBackupVaultId: str
     """
 
     sourceRegion: Required[str]
@@ -961,10 +976,10 @@ class CrossRegionRestoreJobsRequest(TypedDict, total=False):
 class CrossRegionRestoreRequestObject(TypedDict, total=False):
     """Cross Region Restore Request Object.
 
-    :ivar restore_request_object: Gets or sets the restore request object. Required.
-    :vartype restore_request_object: "AzureBackupRestoreRequest"
-    :ivar cross_region_restore_details: Cross region restore details. Required.
-    :vartype cross_region_restore_details: "CrossRegionRestoreDetails"
+    :ivar restoreRequestObject: Gets or sets the restore request object. Required.
+    :vartype restoreRequestObject: "AzureBackupRestoreRequest"
+    :ivar crossRegionRestoreDetails: Cross region restore details. Required.
+    :vartype crossRegionRestoreDetails: "CrossRegionRestoreDetails"
     """
 
     restoreRequestObject: Required["AzureBackupRestoreRequest"]
@@ -1002,9 +1017,9 @@ class CustomCopyOption(TypedDict, total=False):
 
     :ivar duration: Data copied after given timespan.
     :vartype duration: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "CustomCopyOption".
-    :vartype object_type: Literal["CustomCopyOption"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "CustomCopyOption".
+    :vartype objectType: Literal["CustomCopyOption"]
     """
 
     duration: str
@@ -1017,23 +1032,23 @@ class CustomCopyOption(TypedDict, total=False):
 class Datasource(TypedDict, total=False):
     """Datasource to be backed up.
 
-    :ivar datasource_type: DatasourceType of the resource.
-    :vartype datasource_type: str
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
-    :vartype object_type: str
-    :ivar resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+    :ivar datasourceType: DatasourceType of the resource.
+    :vartype datasourceType: str
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
+    :vartype objectType: str
+    :ivar resourceID: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
      azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
-    :vartype resource_id: str
-    :ivar resource_location: Location of datasource.
-    :vartype resource_location: str
-    :ivar resource_name: Unique identifier of the resource in the context of parent.
-    :vartype resource_name: str
-    :ivar resource_type: Resource Type of Datasource.
-    :vartype resource_type: str
-    :ivar resource_uri: Uri of the resource.
-    :vartype resource_uri: str
-    :ivar resource_properties: Properties specific to data source.
-    :vartype resource_properties: "BaseResourceProperties"
+    :vartype resourceID: str
+    :ivar resourceLocation: Location of datasource.
+    :vartype resourceLocation: str
+    :ivar resourceName: Unique identifier of the resource in the context of parent.
+    :vartype resourceName: str
+    :ivar resourceType: Resource Type of Datasource.
+    :vartype resourceType: str
+    :ivar resourceUri: Uri of the resource.
+    :vartype resourceUri: str
+    :ivar resourceProperties: Properties specific to data source.
+    :vartype resourceProperties: "BaseResourceProperties"
     """
 
     datasourceType: str
@@ -1058,23 +1073,23 @@ class Datasource(TypedDict, total=False):
 class DatasourceSet(TypedDict, total=False):
     """DatasourceSet details of datasource to be backed up.
 
-    :ivar datasource_type: DatasourceType of the resource.
-    :vartype datasource_type: str
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
-    :vartype object_type: str
-    :ivar resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+    :ivar datasourceType: DatasourceType of the resource.
+    :vartype datasourceType: str
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
+    :vartype objectType: str
+    :ivar resourceID: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
      azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
-    :vartype resource_id: str
-    :ivar resource_location: Location of datasource.
-    :vartype resource_location: str
-    :ivar resource_name: Unique identifier of the resource in the context of parent.
-    :vartype resource_name: str
-    :ivar resource_type: Resource Type of Datasource.
-    :vartype resource_type: str
-    :ivar resource_uri: Uri of the resource.
-    :vartype resource_uri: str
-    :ivar resource_properties: Properties specific to data source set.
-    :vartype resource_properties: "BaseResourceProperties"
+    :vartype resourceID: str
+    :ivar resourceLocation: Location of datasource.
+    :vartype resourceLocation: str
+    :ivar resourceName: Unique identifier of the resource in the context of parent.
+    :vartype resourceName: str
+    :ivar resourceType: Resource Type of Datasource.
+    :vartype resourceType: str
+    :ivar resourceUri: Uri of the resource.
+    :vartype resourceUri: str
+    :ivar resourceProperties: Properties specific to data source set.
+    :vartype resourceProperties: "BaseResourceProperties"
     """
 
     datasourceType: str
@@ -1099,12 +1114,12 @@ class DatasourceSet(TypedDict, total=False):
 class DataStoreInfoBase(TypedDict, total=False):
     """DataStoreInfo base.
 
-    :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
-     are: "OperationalStore", "VaultStore", and "ArchiveStore".
-    :vartype data_store_type: Union[str, "DataStoreTypes"]
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :ivar dataStoreType: type of datastore; Operational/Vault/Archive. Required. Known values are:
+     "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype dataStoreType: Union[str, "DataStoreTypes"]
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
      Required.
-    :vartype object_type: str
+    :vartype objectType: str
     """
 
     dataStoreType: Required[Union[str, "DataStoreTypes"]]
@@ -1119,8 +1134,8 @@ class Day(TypedDict, total=False):
 
     :ivar date: Date of the month.
     :vartype date: int
-    :ivar is_last: Whether Date is last date of month.
-    :vartype is_last: bool
+    :ivar isLast: Whether Date is last date of month.
+    :vartype isLast: bool
     """
 
     date: int
@@ -1132,9 +1147,9 @@ class Day(TypedDict, total=False):
 class DefaultResourceProperties(TypedDict, total=False):
     """Default source properties.
 
-    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :ivar objectType: Type of the specific object - used for deserializing. Required.
      DEFAULT_RESOURCE_PROPERTIES.
-    :vartype object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
+    :vartype objectType: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]
     """
 
     objectType: Required[Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES]]
@@ -1144,17 +1159,17 @@ class DefaultResourceProperties(TypedDict, total=False):
 class DppIdentityDetails(TypedDict, total=False):
     """Identity details.
 
-    :ivar principal_id: The object ID of the service principal object for the managed identity that
+    :ivar principalId: The object ID of the service principal object for the managed identity that
      is used to grant role-based access to an Azure resource.
-    :vartype principal_id: str
-    :ivar tenant_id: A Globally Unique Identifier (GUID) that represents the Azure AD tenant where
+    :vartype principalId: str
+    :ivar tenantId: A Globally Unique Identifier (GUID) that represents the Azure AD tenant where
      the resource is now a member.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The identityType which can be either SystemAssigned, UserAssigned,
      'SystemAssigned,UserAssigned' or None.
     :vartype type: str
-    :ivar user_assigned_identities: Gets or sets the user assigned identities.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: Gets or sets the user assigned identities.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1176,13 +1191,13 @@ class EncryptionSettings(TypedDict, total=False):
     :ivar state: Encryption state of the Backup Vault. Known values are: "Enabled", "Disabled", and
      "Inconsistent".
     :vartype state: Union[str, "EncryptionState"]
-    :ivar key_vault_properties: The properties of the Key Vault which hosts CMK.
-    :vartype key_vault_properties: "CmkKeyVaultProperties"
-    :ivar kek_identity: The details of the managed identity used for CMK.
-    :vartype kek_identity: "CmkKekIdentity"
-    :ivar infrastructure_encryption: Enabling/Disabling the Double Encryption state. Known values
+    :ivar keyVaultProperties: The properties of the Key Vault which hosts CMK.
+    :vartype keyVaultProperties: "CmkKeyVaultProperties"
+    :ivar kekIdentity: The details of the managed identity used for CMK.
+    :vartype kekIdentity: "CmkKekIdentity"
+    :ivar infrastructureEncryption: Enabling/Disabling the Double Encryption state. Known values
      are: "Enabled" and "Disabled".
-    :vartype infrastructure_encryption: Union[str, "InfrastructureEncryptionState"]
+    :vartype infrastructureEncryption: Union[str, "InfrastructureEncryptionState"]
     """
 
     state: Union[str, "EncryptionState"]
@@ -1199,10 +1214,10 @@ class EncryptionSettings(TypedDict, total=False):
 class FeatureSettings(TypedDict, total=False):
     """Class containing feature settings of vault.
 
-    :ivar cross_subscription_restore_settings: CrossSubscriptionRestore Settings.
-    :vartype cross_subscription_restore_settings: "CrossSubscriptionRestoreSettings"
-    :ivar cross_region_restore_settings:
-    :vartype cross_region_restore_settings: "CrossRegionRestoreSettings"
+    :ivar crossSubscriptionRestoreSettings: CrossSubscriptionRestore Settings.
+    :vartype crossSubscriptionRestoreSettings: "CrossSubscriptionRestoreSettings"
+    :ivar crossRegionRestoreSettings:
+    :vartype crossRegionRestoreSettings: "CrossRegionRestoreSettings"
     """
 
     crossSubscriptionRestoreSettings: "CrossSubscriptionRestoreSettings"
@@ -1213,14 +1228,14 @@ class FeatureSettings(TypedDict, total=False):
 class FeatureValidationRequest(TypedDict, total=False):
     """Base class for feature object.
 
-    :ivar feature_type: backup support feature type. Known values are: "Invalid" and
+    :ivar featureType: backup support feature type. Known values are: "Invalid" and
      "DataSourceType".
-    :vartype feature_type: Union[str, "FeatureType"]
-    :ivar feature_name: backup support feature name.
-    :vartype feature_name: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "FeatureValidationRequest".
-    :vartype object_type: Literal["FeatureValidationRequest"]
+    :vartype featureType: Union[str, "FeatureType"]
+    :ivar featureName: backup support feature name.
+    :vartype featureName: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "FeatureValidationRequest".
+    :vartype objectType: Literal["FeatureValidationRequest"]
     """
 
     featureType: Union[str, "FeatureType"]
@@ -1236,10 +1251,10 @@ class FetchSecondaryRPsRequestParameters(TypedDict, total=False):
     """Information about BI whose secondary RecoveryPoints are requested Source region and BI ARM
     path.
 
-    :ivar source_region: Source region in which BackupInstance is located.
-    :vartype source_region: str
-    :ivar source_backup_instance_id: ARM Path of BackupInstance.
-    :vartype source_backup_instance_id: str
+    :ivar sourceRegion: Source region in which BackupInstance is located.
+    :vartype sourceRegion: str
+    :ivar sourceBackupInstanceId: ARM Path of BackupInstance.
+    :vartype sourceBackupInstanceId: str
     """
 
     sourceRegion: str
@@ -1248,13 +1263,48 @@ class FetchSecondaryRPsRequestParameters(TypedDict, total=False):
     """ARM Path of BackupInstance."""
 
 
+class GenericBackupDatasourceParameters(TypedDict, total=False):
+    """Generic parameters to be used during configuration of backup.
+
+    :ivar resourceSelectors: List of resource selectors to be backed up during configuration of
+     backup. Required.
+    :vartype resourceSelectors: list[str]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "GenericBackupDatasourceParameters".
+    :vartype objectType: Literal["GenericBackupDatasourceParameters"]
+    """
+
+    resourceSelectors: Required[list[str]]
+    """List of resource selectors to be backed up during configuration of backup. Required."""
+    objectType: Required[Literal["GenericBackupDatasourceParameters"]]
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"GenericBackupDatasourceParameters\"."""
+
+
+class GenericRestoreDatasourceCriteria(TypedDict, total=False):
+    """Generic criteria to be used during restore.
+
+    :ivar resourceSelectors: List of resource identifiers that need to be restored. Required.
+    :vartype resourceSelectors: "ResourceListSelectionCriteria"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "GenericRestoreDatasourceCriteria".
+    :vartype objectType: Literal["GenericRestoreDatasourceCriteria"]
+    """
+
+    resourceSelectors: Required["ResourceListSelectionCriteria"]
+    """List of resource identifiers that need to be restored. Required."""
+    objectType: Required[Literal["GenericRestoreDatasourceCriteria"]]
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"GenericRestoreDatasourceCriteria\"."""
+
+
 class IdentityDetails(TypedDict, total=False):
     """IdentityDetails.
 
-    :ivar use_system_assigned_identity: Specifies if the BI is protected by System Identity.
-    :vartype use_system_assigned_identity: bool
-    :ivar user_assigned_identity_arm_url: ARM URL for User Assigned Identity.
-    :vartype user_assigned_identity_arm_url: str
+    :ivar useSystemAssignedIdentity: Specifies if the BI is protected by System Identity.
+    :vartype useSystemAssignedIdentity: bool
+    :ivar userAssignedIdentityArmUrl: ARM URL for User Assigned Identity.
+    :vartype userAssignedIdentityArmUrl: str
     """
 
     useSystemAssignedIdentity: bool
@@ -1266,9 +1316,9 @@ class IdentityDetails(TypedDict, total=False):
 class ImmediateCopyOption(TypedDict, total=False):
     """Immediate copy Option.
 
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "ImmediateCopyOption".
-    :vartype object_type: Literal["ImmediateCopyOption"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "ImmediateCopyOption".
+    :vartype objectType: Literal["ImmediateCopyOption"]
     """
 
     objectType: Required[Literal["ImmediateCopyOption"]]
@@ -1290,13 +1340,13 @@ class ImmutabilitySettings(TypedDict, total=False):
 class InnerError(TypedDict, total=False):
     """Inner Error.
 
-    :ivar additional_info: Any Key value pairs that can be provided to the client for additional
+    :ivar additionalInfo: Any Key value pairs that can be provided to the client for additional
      verbose information.
-    :vartype additional_info: dict[str, str]
+    :vartype additionalInfo: dict[str, str]
     :ivar code: Unique code for this error.
     :vartype code: str
-    :ivar embedded_inner_error: Child Inner Error, to allow Nesting.
-    :vartype embedded_inner_error: "InnerError"
+    :ivar embeddedInnerError: Child Inner Error, to allow Nesting.
+    :vartype embeddedInnerError: "InnerError"
     """
 
     additionalInfo: dict[str, str]
@@ -1310,22 +1360,21 @@ class InnerError(TypedDict, total=False):
 class ItemLevelRestoreTargetInfo(TypedDict, total=False):
     """Restore target info for Item level restore operation.
 
-    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
-    :vartype recovery_option: Union[str, "RecoveryOption"]
-    :ivar restore_location: Target Restore region.
-    :vartype restore_location: str
-    :ivar restore_criteria: Restore Criteria. Required.
-    :vartype restore_criteria: list["ItemLevelRestoreCriteria"]
-    :ivar datasource_info: Information of target DS. Required.
-    :vartype datasource_info: "Datasource"
-    :ivar datasource_set_info: Information of target DS Set.
-    :vartype datasource_set_info: "DatasourceSet"
-    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
-     provider.
-    :vartype datasource_auth_credentials: "AuthCredentials"
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :ivar recoveryOption: Recovery Option. Required. "FailIfExists"
+    :vartype recoveryOption: Union[str, "RecoveryOption"]
+    :ivar restoreLocation: Target Restore region.
+    :vartype restoreLocation: str
+    :ivar restoreCriteria: Restore Criteria. Required.
+    :vartype restoreCriteria: list["ItemLevelRestoreCriteria"]
+    :ivar datasourceInfo: Information of target DS. Required.
+    :vartype datasourceInfo: "Datasource"
+    :ivar datasourceSetInfo: Information of target DS Set.
+    :vartype datasourceSetInfo: "DatasourceSet"
+    :ivar datasourceAuthCredentials: Credentials to use to authenticate with data source provider.
+    :vartype datasourceAuthCredentials: "AuthCredentials"
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
      Required. Default value is "ItemLevelRestoreTargetInfo".
-    :vartype object_type: Literal["ItemLevelRestoreTargetInfo"]
+    :vartype objectType: Literal["ItemLevelRestoreTargetInfo"]
     """
 
     recoveryOption: Required[Union[str, "RecoveryOption"]]
@@ -1348,21 +1397,21 @@ class ItemLevelRestoreTargetInfo(TypedDict, total=False):
 class ItemPathBasedRestoreCriteria(TypedDict, total=False):
     """Prefix criteria to be used to during restore.
 
-    :ivar item_path: The path of the item to be restored. It could be the full path of the item or
+    :ivar itemPath: The path of the item to be restored. It could be the full path of the item or
      the path relative to the backup item. Required.
-    :vartype item_path: str
-    :ivar is_path_relative_to_backup_item: Flag to specify if the path is relative to backup item
-     or full path. Required.
-    :vartype is_path_relative_to_backup_item: bool
-    :ivar sub_item_path_prefix: The list of prefix strings to be used as filter criteria during
+    :vartype itemPath: str
+    :ivar isPathRelativeToBackupItem: Flag to specify if the path is relative to backup item or
+     full path. Required.
+    :vartype isPathRelativeToBackupItem: bool
+    :ivar subItemPathPrefix: The list of prefix strings to be used as filter criteria during
      restore. These are relative to the item path specified.
-    :vartype sub_item_path_prefix: list[str]
-    :ivar rename_to: Rename the item to be restored. Restore will rename the itemPath to this new
+    :vartype subItemPathPrefix: list[str]
+    :ivar renameTo: Rename the item to be restored. Restore will rename the itemPath to this new
      name if the value is specified otherwise the itemPath will be restored as same name.
-    :vartype rename_to: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "ItemPathBasedRestoreCriteria".
-    :vartype object_type: Literal["ItemPathBasedRestoreCriteria"]
+    :vartype renameTo: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "ItemPathBasedRestoreCriteria".
+    :vartype objectType: Literal["ItemPathBasedRestoreCriteria"]
     """
 
     itemPath: Required[str]
@@ -1384,36 +1433,36 @@ class ItemPathBasedRestoreCriteria(TypedDict, total=False):
 class KubernetesClusterBackupDatasourceParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """Parameters for Kubernetes Cluster Backup Datasource.
 
-    :ivar snapshot_volumes: Gets or sets the volume snapshot property. This property if enabled
-     will take volume snapshots during backup. Required.
-    :vartype snapshot_volumes: bool
-    :ivar included_volume_types: Gets or sets the include volume types property. This property sets
+    :ivar snapshotVolumes: Gets or sets the volume snapshot property. This property if enabled will
+     take volume snapshots during backup. Required.
+    :vartype snapshotVolumes: bool
+    :ivar includedVolumeTypes: Gets or sets the include volume types property. This property sets
      the volume types to be included during backup.
-    :vartype included_volume_types: list[Union[str, "AKSVolumeTypes"]]
-    :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
-     This property if enabled will include cluster scope resources during backup. Required.
-    :vartype include_cluster_scope_resources: bool
-    :ivar included_namespaces: Gets or sets the include namespaces property. This property sets the
+    :vartype includedVolumeTypes: list[Union[str, "AKSVolumeTypes"]]
+    :ivar includeClusterScopeResources: Gets or sets the include cluster resources property. This
+     property if enabled will include cluster scope resources during backup. Required.
+    :vartype includeClusterScopeResources: bool
+    :ivar includedNamespaces: Gets or sets the include namespaces property. This property sets the
      namespaces to be included during backup.
-    :vartype included_namespaces: list[str]
-    :ivar excluded_namespaces: Gets or sets the exclude namespaces property. This property sets the
+    :vartype includedNamespaces: list[str]
+    :ivar excludedNamespaces: Gets or sets the exclude namespaces property. This property sets the
      namespaces to be excluded during backup.
-    :vartype excluded_namespaces: list[str]
-    :ivar included_resource_types: Gets or sets the include resource types property. This property
+    :vartype excludedNamespaces: list[str]
+    :ivar includedResourceTypes: Gets or sets the include resource types property. This property
      sets the resource types to be included during backup.
-    :vartype included_resource_types: list[str]
-    :ivar excluded_resource_types: Gets or sets the exclude resource types property. This property
+    :vartype includedResourceTypes: list[str]
+    :ivar excludedResourceTypes: Gets or sets the exclude resource types property. This property
      sets the resource types to be excluded during backup.
-    :vartype excluded_resource_types: list[str]
-    :ivar label_selectors: Gets or sets the LabelSelectors property. This property sets the
-     resource with such label selectors to be included during backup.
-    :vartype label_selectors: list[str]
-    :ivar backup_hook_references: Gets or sets the backup hook references. This property sets the
+    :vartype excludedResourceTypes: list[str]
+    :ivar labelSelectors: Gets or sets the LabelSelectors property. This property sets the resource
+     with such label selectors to be included during backup.
+    :vartype labelSelectors: list[str]
+    :ivar backupHookReferences: Gets or sets the backup hook references. This property sets the
      hook reference to be executed during backup.
-    :vartype backup_hook_references: list["NamespacedNameResource"]
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "KubernetesClusterBackupDatasourceParameters".
-    :vartype object_type: Literal["KubernetesClusterBackupDatasourceParameters"]
+    :vartype backupHookReferences: list["NamespacedNameResource"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "KubernetesClusterBackupDatasourceParameters".
+    :vartype objectType: Literal["KubernetesClusterBackupDatasourceParameters"]
     """
 
     snapshotVolumes: Required[bool]
@@ -1451,43 +1500,43 @@ class KubernetesClusterBackupDatasourceParameters(TypedDict, total=False):  # py
 class KubernetesClusterRestoreCriteria(TypedDict, total=False):
     """kubernetes Cluster Backup target info for restore operation.
 
-    :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
-     This property if enabled will include cluster scope resources during restore. Required.
-    :vartype include_cluster_scope_resources: bool
-    :ivar included_namespaces: Gets or sets the include namespaces property. This property sets the
+    :ivar includeClusterScopeResources: Gets or sets the include cluster resources property. This
+     property if enabled will include cluster scope resources during restore. Required.
+    :vartype includeClusterScopeResources: bool
+    :ivar includedNamespaces: Gets or sets the include namespaces property. This property sets the
      namespaces to be included during restore.
-    :vartype included_namespaces: list[str]
-    :ivar excluded_namespaces: Gets or sets the exclude namespaces property. This property sets the
+    :vartype includedNamespaces: list[str]
+    :ivar excludedNamespaces: Gets or sets the exclude namespaces property. This property sets the
      namespaces to be excluded during restore.
-    :vartype excluded_namespaces: list[str]
-    :ivar included_resource_types: Gets or sets the include resource types property. This property
+    :vartype excludedNamespaces: list[str]
+    :ivar includedResourceTypes: Gets or sets the include resource types property. This property
      sets the resource types to be included during restore.
-    :vartype included_resource_types: list[str]
-    :ivar excluded_resource_types: Gets or sets the exclude resource types property. This property
+    :vartype includedResourceTypes: list[str]
+    :ivar excludedResourceTypes: Gets or sets the exclude resource types property. This property
      sets the resource types to be excluded during restore.
-    :vartype excluded_resource_types: list[str]
-    :ivar label_selectors: Gets or sets the LabelSelectors property. This property sets the
-     resource with such label selectors to be included during restore.
-    :vartype label_selectors: list[str]
-    :ivar persistent_volume_restore_mode: Gets or sets the PV (Persistent Volume) Restore Mode
+    :vartype excludedResourceTypes: list[str]
+    :ivar labelSelectors: Gets or sets the LabelSelectors property. This property sets the resource
+     with such label selectors to be included during restore.
+    :vartype labelSelectors: list[str]
+    :ivar persistentVolumeRestoreMode: Gets or sets the PV (Persistent Volume) Restore Mode
      property. This property sets whether volumes needs to be restored. Known values are:
      "RestoreWithVolumeData" and "RestoreWithoutVolumeData".
-    :vartype persistent_volume_restore_mode: Union[str, "PersistentVolumeRestoreMode"]
-    :ivar conflict_policy: Gets or sets the Conflict Policy property. This property sets policy
+    :vartype persistentVolumeRestoreMode: Union[str, "PersistentVolumeRestoreMode"]
+    :ivar conflictPolicy: Gets or sets the Conflict Policy property. This property sets policy
      during conflict of resources during restore. Known values are: "Skip" and "Patch".
-    :vartype conflict_policy: Union[str, "ExistingResourcePolicy"]
-    :ivar namespace_mappings: Gets or sets the Namespace Mappings property. This property sets if
+    :vartype conflictPolicy: Union[str, "ExistingResourcePolicy"]
+    :ivar namespaceMappings: Gets or sets the Namespace Mappings property. This property sets if
      namespace needs to be change during restore.
-    :vartype namespace_mappings: dict[str, str]
-    :ivar restore_hook_references: Gets or sets the restore hook references. This property sets the
+    :vartype namespaceMappings: dict[str, str]
+    :ivar restoreHookReferences: Gets or sets the restore hook references. This property sets the
      hook reference to be executed during restore.
-    :vartype restore_hook_references: list["NamespacedNameResource"]
-    :ivar resource_modifier_reference: Gets or sets the resource modifier reference. This property
+    :vartype restoreHookReferences: list["NamespacedNameResource"]
+    :ivar resourceModifierReference: Gets or sets the resource modifier reference. This property
      sets the reference for resource modifier during restore.
-    :vartype resource_modifier_reference: "NamespacedNameResource"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "KubernetesClusterRestoreCriteria".
-    :vartype object_type: Literal["KubernetesClusterRestoreCriteria"]
+    :vartype resourceModifierReference: "NamespacedNameResource"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "KubernetesClusterRestoreCriteria".
+    :vartype objectType: Literal["KubernetesClusterRestoreCriteria"]
     """
 
     includeClusterScopeResources: Required[bool]
@@ -1532,50 +1581,49 @@ class KubernetesClusterRestoreCriteria(TypedDict, total=False):
 class KubernetesClusterVaultTierRestoreCriteria(TypedDict, total=False):  # pylint: disable=name-too-long
     """kubernetes Cluster Backup target info for restore operation from vault.
 
-    :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
-     This property if enabled will include cluster scope resources during restore from vault.
-     Required.
-    :vartype include_cluster_scope_resources: bool
-    :ivar included_namespaces: Gets or sets the include namespaces property. This property sets the
+    :ivar includeClusterScopeResources: Gets or sets the include cluster resources property. This
+     property if enabled will include cluster scope resources during restore from vault. Required.
+    :vartype includeClusterScopeResources: bool
+    :ivar includedNamespaces: Gets or sets the include namespaces property. This property sets the
      namespaces to be included during restore from vault.
-    :vartype included_namespaces: list[str]
-    :ivar excluded_namespaces: Gets or sets the exclude namespaces property. This property sets the
+    :vartype includedNamespaces: list[str]
+    :ivar excludedNamespaces: Gets or sets the exclude namespaces property. This property sets the
      namespaces to be excluded during restore from vault.
-    :vartype excluded_namespaces: list[str]
-    :ivar included_resource_types: Gets or sets the include resource types property. This property
+    :vartype excludedNamespaces: list[str]
+    :ivar includedResourceTypes: Gets or sets the include resource types property. This property
      sets the resource types to be included during restore from vault.
-    :vartype included_resource_types: list[str]
-    :ivar excluded_resource_types: Gets or sets the exclude resource types property. This property
+    :vartype includedResourceTypes: list[str]
+    :ivar excludedResourceTypes: Gets or sets the exclude resource types property. This property
      sets the resource types to be excluded during restore from vault.
-    :vartype excluded_resource_types: list[str]
-    :ivar label_selectors: Gets or sets the LabelSelectors property. This property sets the
-     resource with such label selectors to be included during restore from vault.
-    :vartype label_selectors: list[str]
-    :ivar persistent_volume_restore_mode: Gets or sets the PV (Persistent Volume) Restore Mode
+    :vartype excludedResourceTypes: list[str]
+    :ivar labelSelectors: Gets or sets the LabelSelectors property. This property sets the resource
+     with such label selectors to be included during restore from vault.
+    :vartype labelSelectors: list[str]
+    :ivar persistentVolumeRestoreMode: Gets or sets the PV (Persistent Volume) Restore Mode
      property. This property sets whether volumes needs to be restored from vault. Known values are:
      "RestoreWithVolumeData" and "RestoreWithoutVolumeData".
-    :vartype persistent_volume_restore_mode: Union[str, "PersistentVolumeRestoreMode"]
-    :ivar conflict_policy: Gets or sets the Conflict Policy property. This property sets policy
+    :vartype persistentVolumeRestoreMode: Union[str, "PersistentVolumeRestoreMode"]
+    :ivar conflictPolicy: Gets or sets the Conflict Policy property. This property sets policy
      during conflict of resources during restore from vault. Known values are: "Skip" and "Patch".
-    :vartype conflict_policy: Union[str, "ExistingResourcePolicy"]
-    :ivar namespace_mappings: Gets or sets the Namespace Mappings property. This property sets if
+    :vartype conflictPolicy: Union[str, "ExistingResourcePolicy"]
+    :ivar namespaceMappings: Gets or sets the Namespace Mappings property. This property sets if
      namespace needs to be change during restore from vault.
-    :vartype namespace_mappings: dict[str, str]
-    :ivar restore_hook_references: Gets or sets the restore hook references. This property sets the
+    :vartype namespaceMappings: dict[str, str]
+    :ivar restoreHookReferences: Gets or sets the restore hook references. This property sets the
      hook reference to be executed during restore from vault.
-    :vartype restore_hook_references: list["NamespacedNameResource"]
-    :ivar staging_resource_group_id: Gets or sets the staging RG Id for creating staging disks and
+    :vartype restoreHookReferences: list["NamespacedNameResource"]
+    :ivar stagingResourceGroupId: Gets or sets the staging RG Id for creating staging disks and
      snapshots during restore from vault.
-    :vartype staging_resource_group_id: str
-    :ivar staging_storage_account_id: Gets or sets the staging Storage Account Id for creating
-     backup extension object store data during restore from vault.
-    :vartype staging_storage_account_id: str
-    :ivar resource_modifier_reference: Gets or sets the resource modifier reference. This property
+    :vartype stagingResourceGroupId: str
+    :ivar stagingStorageAccountId: Gets or sets the staging Storage Account Id for creating backup
+     extension object store data during restore from vault.
+    :vartype stagingStorageAccountId: str
+    :ivar resourceModifierReference: Gets or sets the resource modifier reference. This property
      sets the reference for resource modifier during restore.
-    :vartype resource_modifier_reference: "NamespacedNameResource"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "KubernetesClusterVaultTierRestoreCriteria".
-    :vartype object_type: Literal["KubernetesClusterVaultTierRestoreCriteria"]
+    :vartype resourceModifierReference: "NamespacedNameResource"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "KubernetesClusterVaultTierRestoreCriteria".
+    :vartype objectType: Literal["KubernetesClusterVaultTierRestoreCriteria"]
     """
 
     includeClusterScopeResources: Required[bool]
@@ -1628,11 +1676,11 @@ class KubernetesPVRestoreCriteria(TypedDict, total=False):
 
     :ivar name: Selected persistent volume claim name.
     :vartype name: str
-    :ivar storage_class_name: Selected storage class name for restore operation.
-    :vartype storage_class_name: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "KubernetesPVRestoreCriteria".
-    :vartype object_type: Literal["KubernetesPVRestoreCriteria"]
+    :ivar storageClassName: Selected storage class name for restore operation.
+    :vartype storageClassName: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "KubernetesPVRestoreCriteria".
+    :vartype objectType: Literal["KubernetesPVRestoreCriteria"]
     """
 
     name: str
@@ -1647,13 +1695,13 @@ class KubernetesPVRestoreCriteria(TypedDict, total=False):
 class KubernetesStorageClassRestoreCriteria(TypedDict, total=False):
     """Item Level kubernetes storage class target info for restore operation.
 
-    :ivar selected_storage_class_name: Selected storage class name.
-    :vartype selected_storage_class_name: str
+    :ivar selectedStorageClassName: Selected storage class name.
+    :vartype selectedStorageClassName: str
     :ivar provisioner: Provisioner of the storage class.
     :vartype provisioner: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "KubernetesStorageClassRestoreCriteria".
-    :vartype object_type: Literal["KubernetesStorageClassRestoreCriteria"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "KubernetesStorageClassRestoreCriteria".
+    :vartype objectType: Literal["KubernetesStorageClassRestoreCriteria"]
     """
 
     selectedStorageClassName: str
@@ -1668,8 +1716,8 @@ class KubernetesStorageClassRestoreCriteria(TypedDict, total=False):
 class MonitoringSettings(TypedDict, total=False):
     """Monitoring Settings.
 
-    :ivar azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
-    :vartype azure_monitor_alert_settings: "AzureMonitorAlertSettings"
+    :ivar azureMonitorAlertSettings: Settings for Azure Monitor based alerts.
+    :vartype azureMonitorAlertSettings: "AzureMonitorAlertSettings"
     """
 
     azureMonitorAlertSettings: "AzureMonitorAlertSettings"
@@ -1694,15 +1742,17 @@ class NamespacedNameResource(TypedDict, total=False):
 class PatchBackupVaultInput(TypedDict, total=False):
     """Backup Vault Contract for Patch Backup Vault API.
 
-    :ivar monitoring_settings: Monitoring Settings.
-    :vartype monitoring_settings: "MonitoringSettings"
-    :ivar security_settings: Security Settings.
-    :vartype security_settings: "SecuritySettings"
-    :ivar feature_settings: Feature Settings.
-    :vartype feature_settings: "FeatureSettings"
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
+    :ivar monitoringSettings: Monitoring Settings.
+    :vartype monitoringSettings: "MonitoringSettings"
+    :ivar securitySettings: Security Settings.
+    :vartype securitySettings: "SecuritySettings"
+    :ivar featureSettings: Feature Settings.
+    :vartype featureSettings: "FeatureSettings"
+    :ivar costManagementSettings: Cost Management Settings of the vault.
+    :vartype costManagementSettings: "CostManagementSettings"
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
     """
 
     monitoringSettings: "MonitoringSettings"
@@ -1711,6 +1761,8 @@ class PatchBackupVaultInput(TypedDict, total=False):
     """Security Settings."""
     featureSettings: "FeatureSettings"
     """Feature Settings."""
+    costManagementSettings: "CostManagementSettings"
+    """Cost Management Settings of the vault."""
     resourceGuardOperationRequests: list[str]
     """ResourceGuardOperationRequests on which LAC check will be performed."""
 
@@ -1748,12 +1800,12 @@ class PatchResourceRequestInput(TypedDict, total=False):
 class PolicyInfo(TypedDict, total=False):
     """Policy Info in backupInstance.
 
-    :ivar policy_id: Required.
-    :vartype policy_id: str
-    :ivar policy_version:
-    :vartype policy_version: str
-    :ivar policy_parameters: Policy parameters for the backup instance.
-    :vartype policy_parameters: "PolicyParameters"
+    :ivar policyId: Required.
+    :vartype policyId: str
+    :ivar policyVersion:
+    :vartype policyVersion: str
+    :ivar policyParameters: Policy parameters for the backup instance.
+    :vartype policyParameters: "PolicyParameters"
     """
 
     policyId: Required[str]
@@ -1766,10 +1818,10 @@ class PolicyInfo(TypedDict, total=False):
 class PolicyParameters(TypedDict, total=False):
     """Parameters in Policy.
 
-    :ivar data_store_parameters_list: Gets or sets the DataStore Parameters.
-    :vartype data_store_parameters_list: list["DataStoreParameters"]
-    :ivar backup_datasource_parameters_list: Gets or sets the Backup Data Source Parameters.
-    :vartype backup_datasource_parameters_list: list["BackupDatasourceParameters"]
+    :ivar dataStoreParametersList: Gets or sets the DataStore Parameters.
+    :vartype dataStoreParametersList: list["DataStoreParameters"]
+    :ivar backupDatasourceParametersList: Gets or sets the Backup Data Source Parameters.
+    :vartype backupDatasourceParametersList: list["BackupDatasourceParameters"]
     """
 
     dataStoreParametersList: list["DataStoreParameters"]
@@ -1781,8 +1833,8 @@ class PolicyParameters(TypedDict, total=False):
 class ProtectionStatusDetails(TypedDict, total=False):
     """Protection status details.
 
-    :ivar error_details: Specifies the protection status error of the resource.
-    :vartype error_details: "UserFacingError"
+    :ivar errorDetails: Specifies the protection status error of the resource.
+    :vartype errorDetails: "UserFacingError"
     :ivar status: Specifies the protection status of the resource. Known values are:
      "ConfiguringProtection", "ConfiguringProtectionFailed", "ProtectionConfigured",
      "ProtectionStopped", "SoftDeleted", and "SoftDeleting".
@@ -1800,13 +1852,13 @@ class ProtectionStatusDetails(TypedDict, total=False):
 class RangeBasedItemLevelRestoreCriteria(TypedDict, total=False):
     """Item Level target info for restore operation.
 
-    :ivar min_matching_value: minimum value for range prefix match.
-    :vartype min_matching_value: str
-    :ivar max_matching_value: maximum value for range prefix match.
-    :vartype max_matching_value: str
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "RangeBasedItemLevelRestoreCriteria".
-    :vartype object_type: Literal["RangeBasedItemLevelRestoreCriteria"]
+    :ivar minMatchingValue: minimum value for range prefix match.
+    :vartype minMatchingValue: str
+    :ivar maxMatchingValue: maximum value for range prefix match.
+    :vartype maxMatchingValue: str
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "RangeBasedItemLevelRestoreCriteria".
+    :vartype objectType: Literal["RangeBasedItemLevelRestoreCriteria"]
     """
 
     minMatchingValue: str
@@ -1821,17 +1873,17 @@ class RangeBasedItemLevelRestoreCriteria(TypedDict, total=False):
 class ResourceGuard(TypedDict, total=False):
     """ResourceGuard.
 
-    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+    :ivar provisioningState: Provisioning state of the BackupVault resource. Known values are:
      "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar allow_auto_approvals: This flag indicates whether auto approval is allowed or not.
-    :vartype allow_auto_approvals: bool
-    :ivar resource_guard_operations: {readonly} List of operation details those are protected by
-     the ResourceGuard resource.
-    :vartype resource_guard_operations: list["ResourceGuardOperation"]
-    :ivar vault_critical_operation_exclusion_list: List of critical operations which are not
-     protected by this resourceGuard.
-    :vartype vault_critical_operation_exclusion_list: list[str]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar allowAutoApprovals: This flag indicates whether auto approval is allowed or not.
+    :vartype allowAutoApprovals: bool
+    :ivar resourceGuardOperations: {readonly} List of operation details those are protected by the
+     ResourceGuard resource.
+    :vartype resourceGuardOperations: list["ResourceGuardOperation"]
+    :ivar vaultCriticalOperationExclusionList: List of critical operations which are not protected
+     by this resourceGuard.
+    :vartype vaultCriticalOperationExclusionList: list[str]
     :ivar description: Description about the pre-req steps to perform all the critical operations.
     :vartype description: str
     """
@@ -1852,10 +1904,10 @@ class ResourceGuard(TypedDict, total=False):
 class ResourceGuardOperation(TypedDict, total=False):
     """This class contains all the details about a critical operation.
 
-    :ivar vault_critical_operation: Name of the critical operation.
-    :vartype vault_critical_operation: str
-    :ivar request_resource_type: Type of resource request.
-    :vartype request_resource_type: str
+    :ivar vaultCriticalOperation: Name of the critical operation.
+    :vartype vaultCriticalOperation: str
+    :ivar requestResourceType: Type of resource request.
+    :vartype requestResourceType: str
     """
 
     vaultCriticalOperation: str
@@ -1867,10 +1919,10 @@ class ResourceGuardOperation(TypedDict, total=False):
 class ResourceGuardOperationDetail(TypedDict, total=False):
     """VaultCritical Operation protected by a resource guard.
 
-    :ivar vault_critical_operation:
-    :vartype vault_critical_operation: str
-    :ivar default_resource_request:
-    :vartype default_resource_request: str
+    :ivar vaultCriticalOperation:
+    :vartype vaultCriticalOperation: str
+    :ivar defaultResourceRequest:
+    :vartype defaultResourceRequest: str
     """
 
     vaultCriticalOperation: str
@@ -1880,12 +1932,12 @@ class ResourceGuardOperationDetail(TypedDict, total=False):
 class ResourceGuardProxyBase(TypedDict, total=False):
     """ResourceGuardProxyBase object, used in ResourceGuardProxyBaseResource.
 
-    :ivar resource_guard_resource_id:
-    :vartype resource_guard_resource_id: str
-    :ivar resource_guard_operation_details:
-    :vartype resource_guard_operation_details: list["ResourceGuardOperationDetail"]
-    :ivar last_updated_time:
-    :vartype last_updated_time: str
+    :ivar resourceGuardResourceId:
+    :vartype resourceGuardResourceId: str
+    :ivar resourceGuardOperationDetails:
+    :vartype resourceGuardOperationDetails: list["ResourceGuardOperationDetail"]
+    :ivar lastUpdatedTime:
+    :vartype lastUpdatedTime: str
     :ivar description:
     :vartype description: str
     """
@@ -1908,9 +1960,9 @@ class ResourceGuardProxyBaseResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: ResourceGuardProxyBaseResource properties.
     :vartype properties: "ResourceGuardProxyBase"
     """
@@ -1931,17 +1983,17 @@ class ResourceGuardResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: ResourceGuardResource properties.
     :vartype properties: "ResourceGuard"
-    :ivar e_tag: Optional ETag.
-    :vartype e_tag: str
+    :ivar eTag: Optional ETag.
+    :vartype eTag: str
     """
 
     properties: "ResourceGuard"
@@ -1950,22 +2002,44 @@ class ResourceGuardResource(TrackedResource):
     """Optional ETag."""
 
 
+class ResourceListSelectionCriteria(TypedDict, total=False):
+    """Specifies the list of resources to be restored.
+
+    :ivar objectType: Type of the specific object - used for deserializing. Required.
+    :vartype objectType: str
+    :ivar resourceIdentifiers: List of resource identifiers to restore from. Required.
+    :vartype resourceIdentifiers: list[str]
+    :ivar resourceNameOverrides: This is a map of source resource names to target resources names
+     to restore into. Any source name not included in the map will be restored with a default naming
+     format.
+    :vartype resourceNameOverrides: dict[str, str]
+    """
+
+    objectType: Required[str]
+    """Type of the specific object - used for deserializing. Required."""
+    resourceIdentifiers: Required[list[str]]
+    """List of resource identifiers to restore from. Required."""
+    resourceNameOverrides: dict[str, str]
+    """This is a map of source resource names to target resources names to restore into. Any source
+     name not included in the map will be restored with a default naming format."""
+
+
 class ResourceMoveDetails(TypedDict, total=False):
     """ResourceMoveDetails will be returned in response to GetResource call from ARM.
 
-    :ivar operation_id: CorrelationId of latest ResourceMove operation attempted.
-    :vartype operation_id: str
-    :ivar start_time_utc: Start time in UTC of latest ResourceMove operation attempted. ISO 8601
+    :ivar operationId: CorrelationId of latest ResourceMove operation attempted.
+    :vartype operationId: str
+    :ivar startTimeUtc: Start time in UTC of latest ResourceMove operation attempted. ISO 8601
      format.
-    :vartype start_time_utc: str
-    :ivar completion_time_utc: Completion time in UTC of latest ResourceMove operation attempted.
-     ISO 8601 format.
-    :vartype completion_time_utc: str
-    :ivar source_resource_path: ARM resource path of source resource.
-    :vartype source_resource_path: str
-    :ivar target_resource_path: ARM resource path of target resource used in latest ResourceMove
+    :vartype startTimeUtc: str
+    :ivar completionTimeUtc: Completion time in UTC of latest ResourceMove operation attempted. ISO
+     8601 format.
+    :vartype completionTimeUtc: str
+    :ivar sourceResourcePath: ARM resource path of source resource.
+    :vartype sourceResourcePath: str
+    :ivar targetResourcePath: ARM resource path of target resource used in latest ResourceMove
      operation.
-    :vartype target_resource_path: str
+    :vartype targetResourcePath: str
     """
 
     operationId: str
@@ -1983,16 +2057,16 @@ class ResourceMoveDetails(TypedDict, total=False):
 class RestoreFilesTargetInfo(TypedDict, total=False):
     """Class encapsulating restore as files target parameters.
 
-    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
-    :vartype recovery_option: Union[str, "RecoveryOption"]
-    :ivar restore_location: Target Restore region.
-    :vartype restore_location: str
-    :ivar target_details: Destination of RestoreAsFiles operation, when destination is not a
+    :ivar recoveryOption: Recovery Option. Required. "FailIfExists"
+    :vartype recoveryOption: Union[str, "RecoveryOption"]
+    :ivar restoreLocation: Target Restore region.
+    :vartype restoreLocation: str
+    :ivar targetDetails: Destination of RestoreAsFiles operation, when destination is not a
      datasource. Required.
-    :vartype target_details: "TargetDetails"
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :vartype targetDetails: "TargetDetails"
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
      Required. Default value is "RestoreFilesTargetInfo".
-    :vartype object_type: Literal["RestoreFilesTargetInfo"]
+    :vartype objectType: Literal["RestoreFilesTargetInfo"]
     """
 
     recoveryOption: Required[Union[str, "RecoveryOption"]]
@@ -2009,20 +2083,19 @@ class RestoreFilesTargetInfo(TypedDict, total=False):
 class RestoreTargetInfo(TypedDict, total=False):
     """Class encapsulating restore target parameters.
 
-    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
-    :vartype recovery_option: Union[str, "RecoveryOption"]
-    :ivar restore_location: Target Restore region.
-    :vartype restore_location: str
-    :ivar datasource_info: Information of target DS. Required.
-    :vartype datasource_info: "Datasource"
-    :ivar datasource_set_info: Information of target DS Set.
-    :vartype datasource_set_info: "DatasourceSet"
-    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
-     provider.
-    :vartype datasource_auth_credentials: "AuthCredentials"
-    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :ivar recoveryOption: Recovery Option. Required. "FailIfExists"
+    :vartype recoveryOption: Union[str, "RecoveryOption"]
+    :ivar restoreLocation: Target Restore region.
+    :vartype restoreLocation: str
+    :ivar datasourceInfo: Information of target DS. Required.
+    :vartype datasourceInfo: "Datasource"
+    :ivar datasourceSetInfo: Information of target DS Set.
+    :vartype datasourceSetInfo: "DatasourceSet"
+    :ivar datasourceAuthCredentials: Credentials to use to authenticate with data source provider.
+    :vartype datasourceAuthCredentials: "AuthCredentials"
+    :ivar objectType: Type of Datasource object, used to initialize the right inherited type.
      Required. Default value is "RestoreTargetInfo".
-    :vartype object_type: Literal["RestoreTargetInfo"]
+    :vartype objectType: Literal["RestoreTargetInfo"]
     """
 
     recoveryOption: Required[Union[str, "RecoveryOption"]]
@@ -2043,12 +2116,12 @@ class RestoreTargetInfo(TypedDict, total=False):
 class RetentionTag(TypedDict, total=False):
     """Retention tag.
 
-    :ivar e_tag: Retention Tag version.
-    :vartype e_tag: str
+    :ivar eTag: Retention Tag version.
+    :vartype eTag: str
     :ivar id: Retention Tag version.
     :vartype id: str
-    :ivar tag_name: Retention Tag Name to relate it to retention rule. Required.
-    :vartype tag_name: str
+    :ivar tagName: Retention Tag Name to relate it to retention rule. Required.
+    :vartype tagName: str
     """
 
     eTag: str
@@ -2062,22 +2135,22 @@ class RetentionTag(TypedDict, total=False):
 class ScheduleBasedBackupCriteria(TypedDict, total=False):
     """Schedule based backup criteria.
 
-    :ivar absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
+    :ivar absoluteCriteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
      "FirstOfWeek" / "FirstOfMonth" and should be part of AbsoluteMarker enum.
-    :vartype absolute_criteria: list[Union[str, "AbsoluteMarker"]]
-    :ivar days_of_month: This is day of the month from 1 to 28 other wise last of month.
-    :vartype days_of_month: list["Day"]
-    :ivar days_of_the_week: It should be Sunday/Monday/T..../Saturday.
-    :vartype days_of_the_week: list[Union[str, "DayOfWeek"]]
-    :ivar months_of_year: It should be January/February/....../December.
-    :vartype months_of_year: list[Union[str, "Month"]]
-    :ivar schedule_times: List of schedule times for backup.
-    :vartype schedule_times: list[str]
-    :ivar weeks_of_the_month: It should be First/Second/Third/Fourth/Last.
-    :vartype weeks_of_the_month: list[Union[str, "WeekNumber"]]
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "ScheduleBasedBackupCriteria".
-    :vartype object_type: Literal["ScheduleBasedBackupCriteria"]
+    :vartype absoluteCriteria: list[Union[str, "AbsoluteMarker"]]
+    :ivar daysOfMonth: This is day of the month from 1 to 28 other wise last of month.
+    :vartype daysOfMonth: list["Day"]
+    :ivar daysOfTheWeek: It should be Sunday/Monday/T..../Saturday.
+    :vartype daysOfTheWeek: list[Union[str, "DayOfWeek"]]
+    :ivar monthsOfYear: It should be January/February/....../December.
+    :vartype monthsOfYear: list[Union[str, "Month"]]
+    :ivar scheduleTimes: List of schedule times for backup.
+    :vartype scheduleTimes: list[str]
+    :ivar weeksOfTheMonth: It should be First/Second/Third/Fourth/Last.
+    :vartype weeksOfTheMonth: list[Union[str, "WeekNumber"]]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "ScheduleBasedBackupCriteria".
+    :vartype objectType: Literal["ScheduleBasedBackupCriteria"]
     """
 
     absoluteCriteria: list[Union[str, "AbsoluteMarker"]]
@@ -2103,11 +2176,11 @@ class ScheduleBasedTriggerContext(TypedDict, total=False):
 
     :ivar schedule: Schedule for this backup. Required.
     :vartype schedule: "BackupSchedule"
-    :ivar tagging_criteria: List of tags that can be applicable for given schedule. Required.
-    :vartype tagging_criteria: list["TaggingCriteria"]
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "ScheduleBasedTriggerContext".
-    :vartype object_type: Literal["ScheduleBasedTriggerContext"]
+    :ivar taggingCriteria: List of tags that can be applicable for given schedule. Required.
+    :vartype taggingCriteria: list["TaggingCriteria"]
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "ScheduleBasedTriggerContext".
+    :vartype objectType: Literal["ScheduleBasedTriggerContext"]
     """
 
     schedule: Required["BackupSchedule"]
@@ -2122,11 +2195,11 @@ class ScheduleBasedTriggerContext(TypedDict, total=False):
 class SecretStoreBasedAuthCredentials(TypedDict, total=False):
     """Secret store based authentication credentials.
 
-    :ivar secret_store_resource: Secret store resource.
-    :vartype secret_store_resource: "SecretStoreResource"
-    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
-     value is "SecretStoreBasedAuthCredentials".
-    :vartype object_type: Literal["SecretStoreBasedAuthCredentials"]
+    :ivar secretStoreResource: Secret store resource.
+    :vartype secretStoreResource: "SecretStoreResource"
+    :ivar objectType: Type of the specific object - used for deserializing. Required. Default value
+     is "SecretStoreBasedAuthCredentials".
+    :vartype objectType: Literal["SecretStoreBasedAuthCredentials"]
     """
 
     secretStoreResource: "SecretStoreResource"
@@ -2141,9 +2214,9 @@ class SecretStoreResource(TypedDict, total=False):
 
     :ivar uri: Uri to get to the resource.
     :vartype uri: str
-    :ivar secret_store_type: Gets or sets the type of secret store. Required. Known values are:
+    :ivar secretStoreType: Gets or sets the type of secret store. Required. Known values are:
      "Invalid" and "AzureKeyVault".
-    :vartype secret_store_type: Union[str, "SecretStoreType"]
+    :vartype secretStoreType: Union[str, "SecretStoreType"]
     :ivar value: Gets or sets value stored in secret store resource.
     :vartype value: str
     """
@@ -2160,12 +2233,12 @@ class SecretStoreResource(TypedDict, total=False):
 class SecuritySettings(TypedDict, total=False):
     """Class containing security settings of vault.
 
-    :ivar soft_delete_settings: Soft delete related settings.
-    :vartype soft_delete_settings: "SoftDeleteSettings"
-    :ivar immutability_settings: Immutability Settings at vault level.
-    :vartype immutability_settings: "ImmutabilitySettings"
-    :ivar encryption_settings: Customer Managed Key details of the resource.
-    :vartype encryption_settings: "EncryptionSettings"
+    :ivar softDeleteSettings: Soft delete related settings.
+    :vartype softDeleteSettings: "SoftDeleteSettings"
+    :ivar immutabilitySettings: Immutability Settings at vault level.
+    :vartype immutabilitySettings: "ImmutabilitySettings"
+    :ivar encryptionSettings: Customer Managed Key details of the resource.
+    :vartype encryptionSettings: "EncryptionSettings"
     """
 
     softDeleteSettings: "SoftDeleteSettings"
@@ -2181,8 +2254,8 @@ class SoftDeleteSettings(TypedDict, total=False):
 
     :ivar state: State of soft delete. Known values are: "Off", "On", and "AlwaysOn".
     :vartype state: Union[str, "SoftDeleteState"]
-    :ivar retention_duration_in_days: Soft delete retention duration.
-    :vartype retention_duration_in_days: float
+    :ivar retentionDurationInDays: Soft delete retention duration.
+    :vartype retentionDurationInDays: float
     """
 
     state: Union[str, "SoftDeleteState"]
@@ -2194,12 +2267,12 @@ class SoftDeleteSettings(TypedDict, total=False):
 class SourceLifeCycle(TypedDict, total=False):
     """Source LifeCycle.
 
-    :ivar delete_after: Delete Option. Required.
-    :vartype delete_after: "DeleteOption"
-    :ivar source_data_store: DataStoreInfo base. Required.
-    :vartype source_data_store: "DataStoreInfoBase"
-    :ivar target_data_store_copy_settings:
-    :vartype target_data_store_copy_settings: list["TargetCopySetting"]
+    :ivar deleteAfter: Delete Option. Required.
+    :vartype deleteAfter: "DeleteOption"
+    :ivar sourceDataStore: DataStoreInfo base. Required.
+    :vartype sourceDataStore: "DataStoreInfoBase"
+    :ivar targetDataStoreCopySettings:
+    :vartype targetDataStoreCopySettings: list["TargetCopySetting"]
     """
 
     deleteAfter: Required["DeleteOption"]
@@ -2212,9 +2285,9 @@ class SourceLifeCycle(TypedDict, total=False):
 class StopProtectionRequest(TypedDict, total=False):
     """Request body of Stop protection when MUA is Enabled.
 
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
     """
 
     resourceGuardOperationRequests: list[str]
@@ -2224,9 +2297,9 @@ class StopProtectionRequest(TypedDict, total=False):
 class StorageSetting(TypedDict, total=False):
     """Storage setting.
 
-    :ivar datastore_type: Gets or sets the type of the datastore. Known values are: "ArchiveStore",
+    :ivar datastoreType: Gets or sets the type of the datastore. Known values are: "ArchiveStore",
      "OperationalStore", and "VaultStore".
-    :vartype datastore_type: Union[str, "StorageSettingStoreTypes"]
+    :vartype datastoreType: Union[str, "StorageSettingStoreTypes"]
     :ivar type: Gets or sets the type. Known values are: "GeoRedundant", "LocallyRedundant", and
      "ZoneRedundant".
     :vartype type: Union[str, "StorageSettingTypes"]
@@ -2243,9 +2316,9 @@ class StorageSetting(TypedDict, total=False):
 class SuspendBackupRequest(TypedDict, total=False):
     """Request body of Suspend backup when MUA is Enabled.
 
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
     """
 
     resourceGuardOperationRequests: list[str]
@@ -2255,9 +2328,9 @@ class SuspendBackupRequest(TypedDict, total=False):
 class SyncBackupInstanceRequest(TypedDict, total=False):
     """Sync BackupInstance Request.
 
-    :ivar sync_type: Field indicating sync type e.g. to sync only in case of failure or in all
+    :ivar syncType: Field indicating sync type e.g. to sync only in case of failure or in all
      cases. Known values are: "Default" and "ForceResync".
-    :vartype sync_type: Union[str, "SyncType"]
+    :vartype syncType: Union[str, "SyncType"]
     """
 
     syncType: Union[str, "SyncType"]
@@ -2268,20 +2341,20 @@ class SyncBackupInstanceRequest(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2305,12 +2378,12 @@ class TaggingCriteria(TypedDict, total=False):
 
     :ivar criteria: Criteria which decides whether the tag can be applied to a triggered backup.
     :vartype criteria: list["BackupCriteria"]
-    :ivar is_default: Specifies if tag is default. Required.
-    :vartype is_default: bool
-    :ivar tagging_priority: Retention Tag priority. Required.
-    :vartype tagging_priority: int
-    :ivar tag_info: Retention tag information. Required.
-    :vartype tag_info: "RetentionTag"
+    :ivar isDefault: Specifies if tag is default. Required.
+    :vartype isDefault: bool
+    :ivar taggingPriority: Retention Tag priority. Required.
+    :vartype taggingPriority: int
+    :ivar tagInfo: Retention tag information. Required.
+    :vartype tagInfo: "RetentionTag"
     """
 
     criteria: list["BackupCriteria"]
@@ -2326,10 +2399,10 @@ class TaggingCriteria(TypedDict, total=False):
 class TargetCopySetting(TypedDict, total=False):
     """Target copy settings.
 
-    :ivar copy_after: It can be CustomCopyOption or ImmediateCopyOption. Required.
-    :vartype copy_after: "CopyOption"
-    :ivar data_store: Info of target datastore. Required.
-    :vartype data_store: "DataStoreInfoBase"
+    :ivar copyAfter: It can be CustomCopyOption or ImmediateCopyOption. Required.
+    :vartype copyAfter: "CopyOption"
+    :ivar dataStore: Info of target datastore. Required.
+    :vartype dataStore: "DataStoreInfoBase"
     """
 
     copyAfter: Required["CopyOption"]
@@ -2341,22 +2414,22 @@ class TargetCopySetting(TypedDict, total=False):
 class TargetDetails(TypedDict, total=False):
     """Class encapsulating target details, used where the destination is not a datasource.
 
-    :ivar file_prefix: Restore operation may create multiple files inside location pointed by Url
+    :ivar filePrefix: Restore operation may create multiple files inside location pointed by Url
      Below will be the common prefix for all of them. Required.
-    :vartype file_prefix: str
-    :ivar restore_target_location_type: Denotes the target location where the data will be
-     restored, string value for the enum
+    :vartype filePrefix: str
+    :ivar restoreTargetLocationType: Denotes the target location where the data will be restored,
+     string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
      Required. Known values are: "Invalid", "AzureBlobs", and "AzureFiles".
-    :vartype restore_target_location_type: Union[str, "RestoreTargetLocationType"]
+    :vartype restoreTargetLocationType: Union[str, "RestoreTargetLocationType"]
     :ivar url: Url denoting the restore destination. It can point to container / file share etc.
      Required.
     :vartype url: str
-    :ivar target_resource_arm_id: Full ARM Id denoting the restore destination. It is the ARM Id
+    :ivar targetResourceArmId: Full ARM Id denoting the restore destination. It is the ARM Id
      pointing to container / file share This is optional if the target subscription can be
      identified with the URL field. If not then this is needed if CrossSubscriptionRestore field of
      BackupVault is in any of the disabled states.
-    :vartype target_resource_arm_id: str
+    :vartype targetResourceArmId: str
     """
 
     filePrefix: Required[str]
@@ -2378,9 +2451,9 @@ class TargetDetails(TypedDict, total=False):
 class TriggerBackupRequest(TypedDict, total=False):
     """Trigger backup request.
 
-    :ivar backup_rule_options: Name for the Rule of the Policy which needs to be applied for this
+    :ivar backupRuleOptions: Name for the Rule of the Policy which needs to be applied for this
      backup. Required.
-    :vartype backup_rule_options: "AdHocBackupRuleOptions"
+    :vartype backupRuleOptions: "AdHocBackupRuleOptions"
     """
 
     backupRuleOptions: Required["AdHocBackupRuleOptions"]
@@ -2390,11 +2463,11 @@ class TriggerBackupRequest(TypedDict, total=False):
 class UnlockDeleteRequest(TypedDict, total=False):
     """Request body of unlock delete API.
 
-    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
-     be performed.
-    :vartype resource_guard_operation_requests: list[str]
-    :ivar resource_to_be_deleted:
-    :vartype resource_to_be_deleted: str
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which LAC check will be
+     performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar resourceToBeDeleted:
+    :vartype resourceToBeDeleted: str
     """
 
     resourceGuardOperationRequests: list[str]
@@ -2405,10 +2478,10 @@ class UnlockDeleteRequest(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2424,18 +2497,18 @@ class UserFacingError(TypedDict, total=False):
     :vartype code: str
     :ivar details: Additional related Errors.
     :vartype details: list["UserFacingError"]
-    :ivar inner_error: Inner Error.
-    :vartype inner_error: "InnerError"
-    :ivar is_retryable: Whether the operation will be retryable or not.
-    :vartype is_retryable: bool
-    :ivar is_user_error: Whether the operation is due to a user error or service error.
-    :vartype is_user_error: bool
+    :ivar innerError: Inner Error.
+    :vartype innerError: "InnerError"
+    :ivar isRetryable: Whether the operation will be retryable or not.
+    :vartype isRetryable: bool
+    :ivar isUserError: Whether the operation is due to a user error or service error.
+    :vartype isUserError: bool
     :ivar properties: Any key value pairs that can be injected inside error object.
     :vartype properties: dict[str, str]
     :ivar message:
     :vartype message: str
-    :ivar recommended_action: RecommendedAction � localized.
-    :vartype recommended_action: list[str]
+    :ivar recommendedAction: RecommendedAction � localized.
+    :vartype recommendedAction: list[str]
     :ivar target: Target of the error.
     :vartype target: str
     """
@@ -2462,10 +2535,10 @@ class UserFacingError(TypedDict, total=False):
 class ValidateCrossRegionRestoreRequestObject(TypedDict, total=False):
     """Cross Region Restore Request Object.
 
-    :ivar restore_request_object: Gets or sets the restore request object. Required.
-    :vartype restore_request_object: "AzureBackupRestoreRequest"
-    :ivar cross_region_restore_details: Cross region restore details. Required.
-    :vartype cross_region_restore_details: "CrossRegionRestoreDetails"
+    :ivar restoreRequestObject: Gets or sets the restore request object. Required.
+    :vartype restoreRequestObject: "AzureBackupRestoreRequest"
+    :ivar crossRegionRestoreDetails: Cross region restore details. Required.
+    :vartype crossRegionRestoreDetails: "CrossRegionRestoreDetails"
     """
 
     restoreRequestObject: Required["AzureBackupRestoreRequest"]
@@ -2477,8 +2550,8 @@ class ValidateCrossRegionRestoreRequestObject(TypedDict, total=False):
 class ValidateForBackupRequest(TypedDict, total=False):
     """Validate for backup request.
 
-    :ivar backup_instance: Backup Instance. Required.
-    :vartype backup_instance: "BackupInstance"
+    :ivar backupInstance: Backup Instance. Required.
+    :vartype backupInstance: "BackupInstance"
     """
 
     backupInstance: Required["BackupInstance"]
@@ -2488,8 +2561,8 @@ class ValidateForBackupRequest(TypedDict, total=False):
 class ValidateForModifyBackupRequest(TypedDict, total=False):
     """Validate for modify backup request.
 
-    :ivar backup_instance: Backup Instance. Required.
-    :vartype backup_instance: "BackupInstance"
+    :ivar backupInstance: Backup Instance. Required.
+    :vartype backupInstance: "BackupInstance"
     """
 
     backupInstance: Required["BackupInstance"]
@@ -2499,8 +2572,8 @@ class ValidateForModifyBackupRequest(TypedDict, total=False):
 class ValidateRestoreRequestObject(TypedDict, total=False):
     """Validate restore request object.
 
-    :ivar restore_request_object: Gets or sets the restore request object. Required.
-    :vartype restore_request_object: "AzureBackupRestoreRequest"
+    :ivar restoreRequestObject: Gets or sets the restore request object. Required.
+    :vartype restoreRequestObject: "AzureBackupRestoreRequest"
     """
 
     restoreRequestObject: Required["AzureBackupRestoreRequest"]
@@ -2515,6 +2588,7 @@ BackupDatasourceParameters = Union[
     AdlsBlobBackupDatasourceParametersForAutoProtection,
     BlobBackupDatasourceParameters,
     BlobBackupDatasourceParametersForAutoProtection,
+    GenericBackupDatasourceParameters,
     KubernetesClusterBackupDatasourceParameters,
 ]
 AuthCredentials = Union[SecretStoreBasedAuthCredentials]
@@ -2534,6 +2608,7 @@ BlobBackupAutoProtectionSettings = Union[BlobBackupRuleBasedAutoProtectionSettin
 CopyOption = Union[CopyOnExpiryOption, CustomCopyOption, ImmediateCopyOption]
 FeatureValidationRequestBase = Union[FeatureValidationRequest]
 ItemLevelRestoreCriteria = Union[
+    GenericRestoreDatasourceCriteria,
     ItemPathBasedRestoreCriteria,
     KubernetesClusterRestoreCriteria,
     KubernetesClusterVaultTierRestoreCriteria,

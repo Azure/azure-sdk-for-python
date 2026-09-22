@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SearchManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,22 +41,21 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_offerings_list_request(**kwargs: Any) -> HttpRequest:
+def build_offerings_fetch_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/providers/Microsoft.Search/offerings"
+    _url = "/providers/Microsoft.Search/fetchOfferings"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -64,14 +63,14 @@ def build_offerings_list_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +95,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -169,7 +168,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -200,7 +199,7 @@ def build_private_endpoint_connections_list_by_service_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -232,7 +231,7 @@ def build_shared_private_link_resources_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +267,7 @@ def build_shared_private_link_resources_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,7 +304,7 @@ def build_shared_private_link_resources_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/sharedPrivateLinkResources/{sharedPrivateLinkResourceName}"
     path_format_arguments = {
@@ -333,7 +332,7 @@ def build_shared_private_link_resources_list_by_service_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,7 +360,7 @@ def build_network_security_perimeter_configurations_get_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -390,7 +389,7 @@ def build_network_security_perimeter_configurations_list_by_service_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +416,7 @@ def build_network_security_perimeter_configurations_reconcile_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/networkSecurityPerimeterConfigurations/{nspConfigName}/reconcile"
     path_format_arguments = {
@@ -442,7 +441,7 @@ def build_services_check_name_availability_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -470,7 +469,7 @@ def build_services_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -499,7 +498,7 @@ def build_services_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -530,7 +529,7 @@ def build_services_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -560,7 +559,7 @@ def build_services_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}"
     path_format_arguments = {
@@ -585,7 +584,7 @@ def build_services_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -614,7 +613,7 @@ def build_services_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -640,7 +639,7 @@ def build_services_upgrade_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -668,7 +667,7 @@ def build_usages_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -695,7 +694,7 @@ def build_admin_keys_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -727,7 +726,7 @@ def build_admin_keys_regenerate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -756,7 +755,7 @@ def build_query_keys_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -785,7 +784,7 @@ def build_query_keys_list_by_search_service_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -813,7 +812,7 @@ def build_query_keys_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/deleteQueryKey/{key}"
     path_format_arguments = {
@@ -839,7 +838,7 @@ def build_private_link_resources_list_supported_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -867,7 +866,7 @@ def build_search_management_usage_by_subscription_sku_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -889,7 +888,7 @@ def build_search_management_usage_by_subscription_sku_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OfferingsOperations:
+class OfferingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -908,18 +907,16 @@ class OfferingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-03-01-preview",
-        params_added_on={"2026-03-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-03-01-preview"],
+        method_added_on="2026-09-01-preview",
+        params_added_on={"2026-09-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-09-01-preview"],
     )
-    def list(self, **kwargs: Any) -> _models.OfferingsListResult:
-        """Lists all of the features and SKUs offered by the Azure AI Search service in each region. Note:
-        This API returns a non-ARM resource collection and is not RPC-compliant. It will be replaced
-        with an action-style API in the next preview as a breaking change. Customers should avoid
-        taking new dependencies on the current shape.
+    def fetch(self, **kwargs: Any) -> _models.OfferingsResult:
+        """Fetches the features and SKUs offered by the Azure AI Search service in each region, along with
+        the recommended default region for creating new services.
 
-        :return: OfferingsListResult. The OfferingsListResult is compatible with MutableMapping
-        :rtype: ~azure.mgmt.search.models.OfferingsListResult
+        :return: OfferingsResult. The OfferingsResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.search.models.OfferingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -933,9 +930,9 @@ class OfferingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OfferingsListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OfferingsResult] = kwargs.pop("cls", None)
 
-        _request = build_offerings_list_request(
+        _request = build_offerings_fetch_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -969,7 +966,7 @@ class OfferingsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.OfferingsListResult, response.json())
+            deserialized = _deserialize(_models.OfferingsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -977,7 +974,7 @@ class OfferingsOperations:
         return deserialized  # type: ignore
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1041,7 +1038,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1084,7 +1084,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1220,7 +1220,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         search_service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1238,7 +1238,7 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
          update. Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection: ~azure.mgmt.search.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1288,7 +1288,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         search_service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Updates a private endpoint connection to the search service in the given resource group.
@@ -1303,9 +1305,9 @@ class PrivateEndpointConnectionsOperations:
          Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
-         update. Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type private_endpoint_connection: ~azure.mgmt.search.models.PrivateEndpointConnection or JSON
-         or IO[bytes]
+         update. Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type private_endpoint_connection: ~azure.mgmt.search.models.PrivateEndpointConnection or
+         ~azure.mgmt.search.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
@@ -1521,7 +1523,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1564,7 +1569,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SharedPrivateLinkResourcesOperations:
+class SharedPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1665,7 +1670,9 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        shared_private_link_resource: Union[_models.SharedPrivateLinkResource, JSON, IO[bytes]],
+        shared_private_link_resource: Union[
+            _models.SharedPrivateLinkResource, _types.SharedPrivateLinkResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1779,7 +1786,7 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        shared_private_link_resource: JSON,
+        shared_private_link_resource: _types.SharedPrivateLinkResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1798,7 +1805,7 @@ class SharedPrivateLinkResourcesOperations:
         :type shared_private_link_resource_name: str
         :param shared_private_link_resource: The definition of the shared private link resource to
          create or update. Required.
-        :type shared_private_link_resource: JSON
+        :type shared_private_link_resource: ~azure.mgmt.search.types.SharedPrivateLinkResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1849,7 +1856,9 @@ class SharedPrivateLinkResourcesOperations:
         resource_group_name: str,
         search_service_name: str,
         shared_private_link_resource_name: str,
-        shared_private_link_resource: Union[_models.SharedPrivateLinkResource, JSON, IO[bytes]],
+        shared_private_link_resource: Union[
+            _models.SharedPrivateLinkResource, _types.SharedPrivateLinkResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.SharedPrivateLinkResource]:
         """Initiates the creation or update of a shared private link resource managed by the search
@@ -1865,10 +1874,9 @@ class SharedPrivateLinkResourcesOperations:
          by the Azure AI Search service within the specified resource group. Required.
         :type shared_private_link_resource_name: str
         :param shared_private_link_resource: The definition of the shared private link resource to
-         create or update. Is one of the following types: SharedPrivateLinkResource, JSON, IO[bytes]
-         Required.
-        :type shared_private_link_resource: ~azure.mgmt.search.models.SharedPrivateLinkResource or JSON
-         or IO[bytes]
+         create or update. Is either a SharedPrivateLinkResource type or a IO[bytes] type. Required.
+        :type shared_private_link_resource: ~azure.mgmt.search.models.SharedPrivateLinkResource or
+         ~azure.mgmt.search.types.SharedPrivateLinkResource or IO[bytes]
         :return: An instance of LROPoller that returns SharedPrivateLinkResource. The
          SharedPrivateLinkResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.search.models.SharedPrivateLinkResource]
@@ -2117,7 +2125,10 @@ class SharedPrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2160,7 +2171,7 @@ class SharedPrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2313,7 +2324,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2481,7 +2495,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ServicesOperations:
+class ServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2523,14 +2537,18 @@ class ServicesOperations:
 
     @overload
     def check_name_availability(
-        self, check_name_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_name_availability_input: _types.CheckNameAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Checks whether or not the given search service name is available for use. Search service names
         must be globally unique since they are part of the service URI
         (https://<name>.search.windows.net).
 
         :param check_name_availability_input: The request body. Required.
-        :type check_name_availability_input: JSON
+        :type check_name_availability_input: ~azure.mgmt.search.types.CheckNameAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2561,16 +2579,20 @@ class ServicesOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, JSON, IO[bytes]], **kwargs: Any
+        self,
+        check_name_availability_input: Union[
+            _models.CheckNameAvailabilityInput, _types.CheckNameAvailabilityInput, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Checks whether or not the given search service name is available for use. Search service names
         must be globally unique since they are part of the service URI
         (https://<name>.search.windows.net).
 
-        :param check_name_availability_input: The request body. Is one of the following types:
-         CheckNameAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_name_availability_input: The request body. Is either a CheckNameAvailabilityInput
+         type or a IO[bytes] type. Required.
         :type check_name_availability_input: ~azure.mgmt.search.models.CheckNameAvailabilityInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.search.types.CheckNameAvailabilityInput or IO[bytes]
         :return: CheckNameAvailabilityOutput. The CheckNameAvailabilityOutput is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.search.models.CheckNameAvailabilityOutput
@@ -2716,7 +2738,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: Union[_models.SearchService, JSON, IO[bytes]],
+        service: Union[_models.SearchService, _types.SearchService, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2824,7 +2846,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: JSON,
+        service: _types.SearchService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2841,7 +2863,7 @@ class ServicesOperations:
         :param service: The definition of the search service to create or update. Create applies to
          both serverless and dedicated search services; update applies only to dedicated search
          services. Required.
-        :type service: JSON
+        :type service: ~azure.mgmt.search.types.SearchService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2888,7 +2910,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: Union[_models.SearchService, JSON, IO[bytes]],
+        service: Union[_models.SearchService, _types.SearchService, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SearchService]:
         """Creates or updates a search service in the given resource group. If the search service already
@@ -2902,8 +2924,9 @@ class ServicesOperations:
         :type search_service_name: str
         :param service: The definition of the search service to create or update. Create applies to
          both serverless and dedicated search services; update applies only to dedicated search
-         services. Is one of the following types: SearchService, JSON, IO[bytes] Required.
-        :type service: ~azure.mgmt.search.models.SearchService or JSON or IO[bytes]
+         services. Is either a SearchService type or a IO[bytes] type. Required.
+        :type service: ~azure.mgmt.search.models.SearchService or
+         ~azure.mgmt.search.types.SearchService or IO[bytes]
         :return: An instance of LROPoller that returns SearchService. The SearchService is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.search.models.SearchService]
@@ -2994,7 +3017,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: JSON,
+        service: _types.SearchServiceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3008,7 +3031,7 @@ class ServicesOperations:
          specified resource group. Required.
         :type search_service_name: str
         :param service: The definition of the search service to update. Required.
-        :type service: JSON
+        :type service: ~azure.mgmt.search.types.SearchServiceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3050,7 +3073,7 @@ class ServicesOperations:
         self,
         resource_group_name: str,
         search_service_name: str,
-        service: Union[_models.SearchServiceUpdate, JSON, IO[bytes]],
+        service: Union[_models.SearchServiceUpdate, _types.SearchServiceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.SearchService:
         """Updates an existing search service in the given resource group.
@@ -3061,9 +3084,10 @@ class ServicesOperations:
         :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
-        :param service: The definition of the search service to update. Is one of the following types:
-         SearchServiceUpdate, JSON, IO[bytes] Required.
-        :type service: ~azure.mgmt.search.models.SearchServiceUpdate or JSON or IO[bytes]
+        :param service: The definition of the search service to update. Is either a SearchServiceUpdate
+         type or a IO[bytes] type. Required.
+        :type service: ~azure.mgmt.search.models.SearchServiceUpdate or
+         ~azure.mgmt.search.types.SearchServiceUpdate or IO[bytes]
         :return: SearchService. The SearchService is compatible with MutableMapping
         :rtype: ~azure.mgmt.search.models.SearchService
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3248,7 +3272,10 @@ class ServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3338,7 +3365,10 @@ class ServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3476,14 +3506,10 @@ class ServicesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SearchService, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3510,7 +3536,7 @@ class ServicesOperations:
         )
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3578,7 +3604,10 @@ class UsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3621,7 +3650,7 @@ class UsagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AdminKeysOperations:
+class AdminKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3792,7 +3821,7 @@ class AdminKeysOperations:
         return deserialized  # type: ignore
 
 
-class QueryKeysOperations:
+class QueryKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3942,7 +3971,10 @@ class QueryKeysOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4054,7 +4086,7 @@ class QueryKeysOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4129,7 +4161,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

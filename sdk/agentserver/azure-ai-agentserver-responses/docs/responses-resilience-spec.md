@@ -197,9 +197,8 @@ value that is stable across every turn of the chain.
 
 Since Spec 038 the chain id is a **native IdGenerator-convention id** — the
 prefix acts as the discriminator, the embedded partition key co-locates the
-chain with its responses, and a deterministic `(agent, session)` scope fills the
-"entropy" slot. `task_id == conversation_chain_id` exactly (no wrapper prefix).
-The three cases:
+chain with its responses, and a deterministic `(agent, public session)` scope
+fills the "entropy" slot. The three cases:
 
 1. `conversation_id` present → `cchain_{partition(conversation_id)}{scope}`
    (partition extracted from the id, or derived deterministically when it is not
@@ -230,15 +229,30 @@ API charset/limit (`^[a-zA-Z0-9_-]{1,128}$`).
 
 ### §4.2 — The `task_id`
 
-Since Spec 038 the chain id is itself a native, self-prefixed id, so the
-resilient task is keyed directly on it:
+The physical task ID uses the same chain selection and native shape. In hosted
+mode, when `FOUNDRY_AGENT_SESSION_GUID` is available, its session-incarnation
+scope replaces the public session scope:
 
 ```
-task_id = chain_id      # e.g. "rchain_<partitionKey><scope>" (see §4.1)
+task_scope = (
+    FOUNDRY_AGENT_SESSION_GUID + "\x1f" + public_session_id
+    if FOUNDRY_AGENT_SESSION_GUID
+    else public_session_id
+)
+task_id = derive_chain_id(agent_name, task_scope, chain_anchor)
 ```
 
-The task that backs a conversation and the handler-facing chain id therefore
-**are one and the same identity** and can never drift apart.
+This prevents a recreated same-name session from colliding with a task
+tombstone left by the deleted session. The handler-facing
+`conversation_chain_id` remains based on the public session identity. Including
+that public identity in the private scope also prevents two resolved logical
+sessions under one hosted process from collapsing onto the same task. One-shot
+task IDs remain the response ID.
+
+During migration, a multi-turn start computes both GUID-scoped and legacy
+public-session-scoped IDs. It prefers an existing GUID-scoped task, otherwise
+continues an existing pending/in-progress/suspended legacy task, and creates
+under the GUID-scoped ID only when neither exists.
 
 ### §4.3 — Public surface
 
@@ -1422,19 +1436,20 @@ through to non-store behaviour per their stability policy.
 
 ## §15 — Worked storage timeline (worked example)
 
-A `(store=true, background=true, resilient_background=true, stream=true,
-steerable_conversations=true)` chain with two turns and a crash
-between them. Numbers are illustrative.
+A hosted `(store=true, background=true, resilient_background=true, stream=true,
+steerable_conversations=true)` chain with a session-incarnation GUID, two turns,
+and a crash between them. Numbers are illustrative.
 
 ```
 T=0   POST /v1/responses { input: "Hi", store: true, background: true }
-      → derive_task_id  = "rchain_AB12..."
-      → conversation_chain_id = "rchain_AB12..."  (== task_id; standalone first
-                                              turn, derived from resp_1's
-                                              embedded partition key)
+      → derive_task_id = "rchain_CD34..."  (private hosted task identity;
+                                             scoped by the session GUID and
+                                             public session identity)
+      → conversation_chain_id = "rchain_AB12..."  (stable public
+                                                     handler-facing identity)
 
 T=1   primitive: task_store.create({
-        id: "rchain_AB12...",
+        id: "rchain_CD34...",
         status: "in_progress",
         payload: { input: <serialized ResilientResponseInput> },
         ...
@@ -1458,7 +1473,7 @@ T=3   handler:   emit response.in_progress (seq=2)
 
 T=4   ═══════ SIGKILL ═══════
       
-T=5   process restarts; lease scanner sees "rchain_AB12..."
+T=5   process restarts; lease scanner sees "rchain_CD34..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
@@ -1504,7 +1519,7 @@ T=10  task body returns Suspended (steerable_conversations=true)
 
 T=11  POST /v1/responses { input: "Now this", previous_response_id: resp_1,
                            store: true, background: true }
-      → derive_task_id = SAME "rchain_AB12..." (chain inherits)
+      → derive_task_id = SAME "rchain_CD34..." (chain inherits)
       framework: task_fn.start(task_id, input_id=resp_2,
                                if_last_input_id=resp_1)
       primitive: precondition holds (_framework.last_input_id == resp_1)

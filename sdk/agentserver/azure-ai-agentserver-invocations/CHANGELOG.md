@@ -1,6 +1,18 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Generate fallback invocation and session IDs only when no valid supplied ID is available.
+
+## 1.2.0b1 (2026-09-03)
 
 ### Features Added
 

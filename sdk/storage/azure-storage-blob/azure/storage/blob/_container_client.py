@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -27,7 +28,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage
-from ._generated.models import SignedIdentifier
+from ._generated.models import SignedIdentifier as GenSignedIdentifier, SignedIdentifiers as GenSignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     ArrowBlobPropertiesPaged,
@@ -39,17 +40,17 @@ from ._list_blobs_helper import (
     FilteredBlobPaged,
     IgnoreListBlobsDeserializer,
 )
-from ._models import BlobProperties, BlobType, ContainerProperties, FilteredBlob
-from ._serialize import get_access_conditions, get_api_version, get_container_cpk_scope_info, get_modify_conditions
+from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob, SignedIdentifier
+from ._serialize import get_lease_id, get_api_version, get_container_cpk_scope_info, get_modify_conditions
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from azure.storage.blob import BlobServiceClient
-    from ._models import AccessPolicy, PremiumPageBlobTier, PublicAccess, StandardBlobTier
+    from ._models import PremiumPageBlobTier, PublicAccess, StandardBlobTier
 
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
@@ -157,7 +158,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
+        return AzureBlobStorage(self.url, version=self._api_version, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
@@ -320,9 +321,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             return self._client.container.create(  # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
+                default_encryption_scope=container_cpk_scope_info.get("default_encryption_scope"),
+                prevent_encryption_scope_override=container_cpk_scope_info.get("prevent_encryption_scope_override"),
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -369,8 +371,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 key_encryption_key=self.key_encryption_key,
                 key_resolver_function=self.key_resolver_function,
             )
-            renamed_container._client.container.rename(  # pylint: disable = protected-access
-                self.container_name, **kwargs
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
+                source_container_name=self.container_name, **kwargs
             )
             return renamed_container
         except HttpResponseError as error:
@@ -418,14 +420,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Delete a container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
             self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -525,14 +528,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting properties on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response = self._client.container.get_properties(
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                cls=deserialize_container_properties,
-                **kwargs,
+                timeout=timeout, cls=deserialize_container_properties, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -606,16 +606,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
             return self._client.container.set_metadata(  # type: ignore
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -690,18 +690,22 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting the access policy on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = self._client.container.get_access_policy(
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                cls=return_headers_and_deserialized,
-                **kwargs,
+                timeout=timeout, cls=return_headers_and_deserialized, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {"public_access": response.get("blob_public_access"), "signed_identifiers": identifiers or []}
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        signed_identifiers = [
+            SignedIdentifier._from_generated(si) for si in (items or [])  # pylint: disable=protected-access
+        ]
+        return {
+            "public_access": response.get("blob_public_access"),
+            "signed_identifiers": signed_identifiers,
+        }
 
     @distributed_trace
     def set_container_access_policy(
@@ -762,25 +766,26 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))  # type: ignore
-        signed_identifiers = identifiers  # type: ignore
+            access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
+            identifiers.append(GenSignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
+        signed_identifiers = identifiers or None  # type: ignore
         lease = kwargs.pop("lease", None)
         mod_conditions = get_modify_conditions(kwargs)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             return cast(
                 Dict[str, Union[str, datetime]],
                 self._client.container.set_access_policy(
-                    container_acl=signed_identifiers or None,
+                    container_acl=(
+                        GenSignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None
+                    ),
                     timeout=timeout,
                     access=public_access,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
                     cls=return_response_headers,
+                    if_modified_since=mod_conditions.get("if_modified_since"),
+                    if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                    lease_id=lease_id,
                     **kwargs,
                 ),
             )
@@ -840,7 +845,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -922,7 +927,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         name_starts_with = kwargs.pop("name_starts_with", None)
@@ -1016,7 +1021,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):

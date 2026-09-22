@@ -5,23 +5,27 @@
 import json
 import logging
 import re
-
-from openai import AzureOpenAI, OpenAI
-import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
+from copy import deepcopy
 from time import sleep
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Type, Union, cast
+
+import pandas as pd
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AzureOpenAI, OpenAI
+from openai._models import FinalRequestOptions
+
+# import aoai_mapping
+from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from ._batch_run import CodeClient, ProxyClient
 
-# import aoai_mapping
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
-from azure.ai.evaluation._common._experimental import experimental
-
-
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
+_DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
+_MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE = 100
+_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS = 3
 
 # Precompiled regex for extracting data paths from mapping expressions of the form
 # ${data.some.dotted.path}. Compiled once at import time to avoid repeated
@@ -258,7 +262,10 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
                     data_source_config["item_schema"]["required"].append(key)
 
 
-def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def _get_evaluation_run_results(
+    all_run_info: List[OAIEvalRunCreationInfo],
+    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
+) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
     pipeline to consume. This method accepts a list of eval run information, and will combine the
@@ -267,6 +274,8 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     :param all_run_info: A list of evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type all_run_info: List[OAIEvalRunCreationInfo]
+    :param aoai_output_items_page_size: The maximum number of output items to request per page.
+    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -278,7 +287,7 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     output_df = pd.DataFrame()
     for idx, run_info in enumerate(all_run_info):
         LOGGER.info(f"AOAI: Fetching results for run {idx + 1}/{len(all_run_info)} (ID: {run_info['eval_run_id']})...")
-        cur_output_df, cur_run_metrics = _get_single_run_results(run_info)
+        cur_output_df, cur_run_metrics = _get_single_run_results(run_info, aoai_output_items_page_size)
         output_df = pd.concat([output_df, cur_output_df], axis=1)
         run_metrics.update(cur_run_metrics)
 
@@ -286,8 +295,67 @@ def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> T
     return output_df, run_metrics
 
 
+def _list_output_items_page(
+    client: Union[AzureOpenAI, OpenAI],
+    list_kwargs: Dict[str, Any],
+    page_size: int,
+) -> Tuple[Any, int]:
+    """Fetch one output-items page with the OpenAI client's retry policy and a three-attempt budget.
+
+    :param client: A scoped OpenAI client with automatic retries disabled.
+    :type client: Union[AzureOpenAI, OpenAI]
+    :param list_kwargs: Arguments identifying the evaluation run and current cursor.
+    :type list_kwargs: Dict[str, Any]
+    :param page_size: The number of output items to request.
+    :type page_size: int
+    :return: The fetched page and the page size to retain for subsequent pages.
+    :rtype: Tuple[Any, int]
+    """
+    retry_options = FinalRequestOptions(
+        method="get",
+        url="/evals/runs/output_items",
+        max_retries=_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1,
+    )
+
+    for attempt in range(_AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS):
+        try:
+            return client.evals.runs.output_items.list(**list_kwargs, limit=page_size), page_size
+        except (APIConnectionError, APIStatusError) as error:
+            should_reduce_page_size = isinstance(error, APITimeoutError)
+            should_retry = isinstance(error, APIConnectionError)
+            response_headers = None
+
+            if isinstance(error, APIStatusError):
+                should_retry = client._should_retry(error.response)  # pylint: disable=protected-access
+                should_reduce_page_size = should_retry and error.status_code in (408, 504)
+                response_headers = error.response.headers
+
+            if not should_retry or attempt == _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - 1:
+                raise
+
+            if should_reduce_page_size:
+                page_size = max(1, (page_size + 1) // 2)
+
+            remaining_retries = _AOAI_OUTPUT_ITEMS_MAX_ATTEMPTS - attempt - 1
+            delay = client._calculate_retry_timeout(  # pylint: disable=protected-access
+                remaining_retries,
+                retry_options,
+                response_headers,
+            )
+            LOGGER.warning(
+                "AOAI output-items request failed for cursor %s. Retrying with page size %d in %.2f seconds.",
+                list_kwargs.get("after"),
+                page_size,
+                delay,
+            )
+            sleep(delay)
+
+    raise RuntimeError("AOAI output-items retry loop exited unexpectedly.")
+
+
 def _get_single_run_results(
     run_info: OAIEvalRunCreationInfo,
+    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
 ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Get the results of an OAI evaluation run, formatted in a way that is easy for the rest of the evaluation
@@ -296,6 +364,8 @@ def _get_single_run_results(
     :param run_info: The evaluation run information that contains the needed values
         to retrieve the results of the evaluation run.
     :type run_info: OAIEvalRunCreationInfo
+    :param aoai_output_items_page_size: The maximum number of output items to request per page.
+    :type aoai_output_items_page_size: int
     :return: A tuple containing the results of the evaluation run as a dataframe, and a dictionary of metrics
         calculated from the evaluation run.
     :rtype: Tuple[pd.DataFrame, Dict[str, Any]]
@@ -349,14 +419,18 @@ def _get_single_run_results(
     LOGGER.info(f"AOAI: Collecting output items for run {run_info['eval_run_id']} with pagination...")
     all_results: List[Any] = []
     next_cursor: Optional[str] = None
-    limit = 100  # Max allowed by API
+    page_size = aoai_output_items_page_size
+    output_items_client = run_info["client"].with_options(max_retries=0)
 
     while True:
-        list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
+        list_kwargs = {
+            "eval_id": run_info["eval_group_id"],
+            "run_id": run_info["eval_run_id"],
+        }
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
+        raw_list_results, page_size = _list_output_items_page(output_items_client, list_kwargs, page_size)
 
         # Add current page results
         all_results.extend(raw_list_results.data)
@@ -768,26 +842,27 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
             wrapper_name = only_seg
             LOGGER.info(f"AOAI: All paths start with wrapper '{WRAPPER_KEY}', will strip from schema.")
 
-    effective_paths = referenced_paths
+    path_pairs = [(p, p) for p in referenced_paths]
     if strip_wrapper:
         stripped = []
         for p in referenced_paths:
             parts = p.split(".", 1)
             if len(parts) == 2:
-                stripped.append(parts[1])  # drop leading 'item.'
+                stripped.append((p, parts[1]))  # drop leading 'item.'
             else:
                 # Path was just 'item' (no leaf) – ignore; it doesn't define a leaf value.
                 continue
         # If stripping produced at least one usable path, adopt; else fall back to original.
         if stripped:
-            effective_paths = stripped
-            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {effective_paths}")
+            path_pairs = stripped
+            LOGGER.info(f"AOAI: Effective paths after stripping wrapper: {[p for _, p in path_pairs]}")
 
+    effective_paths = [p for _, p in path_pairs]
     LOGGER.info(f"AOAI: Building nested schema from {len(effective_paths)} effective paths...")
 
     # Infer leaf types from the DataFrame so nested schemas also get array/object types
     leaf_type_map: Dict[str, str] = {}
-    for ref_path, eff_path in zip(referenced_paths, effective_paths if strip_wrapper else referenced_paths):
+    for ref_path, eff_path in path_pairs:
         if ref_path in input_data_df:
             for candidate in input_data_df[ref_path]:
                 if isinstance(candidate, (list, dict)):
@@ -866,7 +941,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         if isinstance(val, (int, float)):
             return str(val)
         if isinstance(val, (list, dict)):
-            return val
+            # Later path insertions must not mutate objects shared with callable evaluators.
+            return deepcopy(val)
         return str(val)
 
     def _get_value_from_path(normalized_row: Dict[str, Any], path: str) -> Any:

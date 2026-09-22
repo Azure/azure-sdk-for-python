@@ -8,6 +8,7 @@ namespace azure.ai.agentserver.core
             *, 
             connection_string: Optional[str] = ..., 
             enable_sensitive_data: bool = False, 
+            instrumentation_options: Optional[dict[str, dict[str, Any]]] = ..., 
             log_level: Optional[str] = ...
         ) -> None: ...
 
@@ -55,10 +56,16 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.resolve_state_subdir(name: str) -> Path: ...
 
 
+    def azure.ai.agentserver.core.schedule_flush_spans(timeout_millis: int = 5000) -> None: ...
+
+
     def azure.ai.agentserver.core.set_current_span(span: Any) -> Any: ...
 
 
     def azure.ai.agentserver.core.set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]: ...
+
+
+    async def azure.ai.agentserver.core.flush_spans_async:async(timeout_millis: int = 5000) -> None: ...
 
 
     async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]: ...
@@ -79,6 +86,7 @@ namespace azure.ai.agentserver.core
                 port: int, 
                 project_endpoint: str, 
                 project_id: str, 
+                session_guid: str = "", 
                 session_id: str, 
                 sse_keepalive_interval: int, 
                 ws_ping_interval: float = 0.0

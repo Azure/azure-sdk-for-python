@@ -10,26 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AcceleratorManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Accelerator manufacturers supported by Azure VMs."""
-
-    AMD = "AMD"
-    """AMD GpuType."""
-    NVIDIA = "Nvidia"
-    """Nvidia GpuType."""
-    XILINX = "Xilinx"
-    """Xilinx GpuType."""
-
-
-class AcceleratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Accelerator types supported by Azure VMs."""
-
-    GPU = "GPU"
-    """GPU Accelerator."""
-    FPGA = "FPGA"
-    """FPGA Accelerator."""
-
-
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
     only APIs.
@@ -48,15 +28,6 @@ class AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
     CAPACITY_OPTIMIZED = "CapacityOptimized"
     """Platform prioritizes VM sizes with the highest available capacity first."""
-
-
-class ArchitectureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Architecture types supported by Azure VMs."""
-
-    ARM64 = "ARM64"
-    """ARM64 Architecture."""
-    X64 = "X64"
-    """X64 Architecture."""
 
 
 class BulkCreateCustomAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -118,19 +89,6 @@ class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VCpus will be overprovisioned by default."""
 
 
-class CpuManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Cpu Manufacturers supported by Azure VMs."""
-
-    INTEL = "Intel"
-    """Intel CPU."""
-    AMD = "AMD"
-    """AMD CPU."""
-    MICROSOFT = "Microsoft"
-    """Microsoft CPU."""
-    AMPERE = "Ampere"
-    """Ampere CPU."""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -147,8 +105,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The types of deadlines supported by Bulkactions."""
 
-    UNKNOWN = "Unknown"
-    """Default value of Unknown."""
     INITIATE_AT = "InitiateAt"
     """Initiate the operation at the given deadline."""
     COMPLETE_BY = "CompleteBy"
@@ -303,15 +259,6 @@ class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When evicted, the Spot VM will be deallocated/stopped."""
 
 
-class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """HyperVGenerations supported by Azure VMs."""
-
-    GEN1 = "Gen1"
-    """Gen1 hyperV."""
-    GEN2 = "Gen2"
-    """Gen2 hyperV."""
-
-
 class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available from compute Api-Version 2017-03-30 onwards, it represents whether the specific
     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values are: 'IPv4' and
@@ -325,10 +272,10 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The notification languages currently supported."""
+    """The language used for scheduled action notifications."""
 
     EN_US = "en-us"
-    """American english language."""
+    """English (United States)."""
 
 
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -371,15 +318,6 @@ class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImageDefault linux VM guest patch mode."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
     """AutomaticByPlatform linux VM guest patch mode."""
-
-
-class LocalStorageDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Local storage disk types supported by Azure VMs."""
-
-    HDD = "HDD"
-    """HDD DiskType."""
-    SSD = "SSD"
-    """SSD DiskType."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -426,34 +364,34 @@ class Modes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Representation of the months available selection in a gregorian calendar."""
+    """A month in which the scheduled action can run."""
 
     JANUARY = "January"
-    """The January month."""
+    """The scheduled action can run in January."""
     FEBRUARY = "February"
-    """The February month."""
+    """The scheduled action can run in February."""
     MARCH = "March"
-    """The March month."""
+    """The scheduled action can run in March."""
     APRIL = "April"
-    """The April month."""
+    """The scheduled action can run in April."""
     MAY = "May"
-    """The May month."""
+    """The scheduled action can run in May."""
     JUNE = "June"
-    """The June month."""
+    """The scheduled action can run in June."""
     JULY = "July"
-    """The July month."""
+    """The scheduled action can run in July."""
     AUGUST = "August"
-    """The August month."""
+    """The scheduled action can run in August."""
     SEPTEMBER = "September"
-    """The September month."""
+    """The scheduled action can run in September."""
     OCTOBER = "October"
-    """The October month."""
+    """The scheduled action can run in October."""
     NOVEMBER = "November"
-    """The November month."""
+    """The scheduled action can run in November."""
     DECEMBER = "December"
-    """The December month."""
+    """The scheduled action can run in December."""
     ALL = "All"
-    """All months."""
+    """Every month."""
 
 
 class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -494,10 +432,10 @@ class NetworkInterfaceAuxiliarySku(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of notification supported."""
+    """The delivery method for scheduled action notifications."""
 
     EMAIL = "Email"
-    """Notify through e-mail."""
+    """Sends notifications by email."""
 
 
 class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -522,22 +460,22 @@ class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEn
 
 
 class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state the occurrence is at a given time."""
+    """The current state of a scheduled action occurrence."""
 
     CREATED = "Created"
-    """The occurrence was created."""
+    """The occurrence has been created."""
     RESCHEDULING = "Rescheduling"
-    """The occurrence is being rescheduled."""
+    """The scheduled time for the occurrence is being updated."""
     SCHEDULED = "Scheduled"
     """The occurrence has been scheduled."""
     SUCCEEDED = "Succeeded"
-    """The occurrence has successfully ran."""
+    """The occurrence operations completed successfully."""
     FAILED = "Failed"
-    """The occurrence has failed during its scheduling."""
+    """One or more of the occurrence operations failed."""
     CANCELLING = "Cancelling"
-    """The occurrence is going through cancellation."""
+    """Cancellation of the occurrence is in progress."""
     CANCELED = "Canceled"
-    """The occurrence has been canceled."""
+    """The occurrence was canceled."""
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -554,14 +492,8 @@ class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Values that define the states of operations in Bulkactions."""
 
-    UNKNOWN = "Unknown"
-    """The default value for the operation state enum."""
-    PENDING_SCHEDULING = "PendingScheduling"
-    """Operations that are pending scheduling."""
     SCHEDULED = "Scheduled"
     """Operations that have been scheduled."""
-    PENDING_EXECUTION = "PendingExecution"
-    """Operations that are waiting to be executed."""
     EXECUTING = "Executing"
     """Operations that are in the process of being executed."""
     SUCCEEDED = "Succeeded"
@@ -572,17 +504,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operations that have been Cancelled by the user."""
     BLOCKED = "Blocked"
     """Operations that are blocked."""
-
-
-class OptimizationPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The preferences customers can select to optimize their requests to ScheduledActions."""
-
-    COST = "Cost"
-    """Optimize while considering cost savings."""
-    AVAILABILITY = "Availability"
-    """Optimize while considering availability of resources."""
-    COST_AVAILABILITY_BALANCED = "CostAvailabilityBalanced"
-    """Optimize while considering a balance of cost and availability."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -596,15 +517,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
-
-
-class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported operating system types for flex VM creation."""
-
-    WINDOWS = "Windows"
-    """Windows operating system."""
-    LINUX = "Linux"
-    """Linux operating system."""
 
 
 class PartialFulfillmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -707,19 +619,17 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state the resource is on after the resource operation is applied."""
+    """Current status of an operation for the specific occurrence and resource."""
 
     SUCCEEDED = "Succeeded"
-    """The resource operation was successful."""
+    """The operation completed successfully for the resource."""
     FAILED = "Failed"
-    """The resource operation has failed."""
+    """The operation failed for the resource."""
 
 
 class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of bulk operation that can be performed on resources using Bulkactions API."""
 
-    UNKNOWN = "Unknown"
-    """The default value for this enum type."""
     START = "Start"
     """Start operations on the resources."""
     DEALLOCATE = "Deallocate"
@@ -730,33 +640,28 @@ class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create operations on the resources."""
     DELETE = "Delete"
     """Delete operations on the resources."""
-    GET_INSTANCE_VIEW = "GetInstanceView"
-    """Post-Start VM agent health-check sub-operation; surfaced when the customer opts into
-    verifyVmAgentHealth on a Start request."""
 
 
 class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of resource being targeted."""
+    """The type of compute resource targeted by the scheduled action."""
 
     VIRTUAL_MACHINE = "VirtualMachine"
-    """Resources defined are Virtual Machines."""
+    """Azure virtual machines."""
     VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
-    """Resources defined are Virtual Machines Scale Sets."""
+    """Azure Virtual Machine Scale Sets."""
 
 
 class ScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of deadline the scheduled action follows for its schedule."""
+    """How the scheduled time is interpreted for the resource operation."""
 
-    UNKNOWN = "Unknown"
-    """Default value of Unknown."""
     INITIATE_AT = "InitiateAt"
-    """Initiate the operation at the given deadline."""
+    """Starts the operation at the scheduled time."""
     COMPLETE_BY = "CompleteBy"
-    """Complete the operation by the given deadline."""
+    """Completes the operation by the scheduled time."""
 
 
 class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the scheduled action resource."""
+    """The provisioning state of the scheduled action."""
 
     SUCCEEDED = "Succeeded"
     """Resource has been created."""
@@ -765,35 +670,35 @@ class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnum
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     DELETING = "Deleting"
-    """Resource is being deleted."""
+    """The scheduled action is being deleted."""
+    UPDATING = "Updating"
+    """The scheduled action is being updated."""
 
 
 class ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource operation to take on a scheduled-action failure."""
+    """The operation to retry when a scheduled action fails."""
 
-    UNKNOWN = "Unknown"
-    """The default value for this enum type."""
     START = "Start"
-    """Start operations on the resources."""
+    """Starts the resources."""
     DEALLOCATE = "Deallocate"
-    """Deallocate operations on the resources."""
+    """Deallocates the resources."""
     HIBERNATE = "Hibernate"
-    """Hibernate operations on the resources."""
+    """Hibernates the resources."""
     CREATE = "Create"
-    """Create operations on the resources."""
+    """Creates the resources."""
     DELETE = "Delete"
-    """Delete operations on the resources."""
+    """Deletes the resources."""
 
 
 class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specify which action user wants to be performed on the resources."""
+    """The operation performed by the scheduled action."""
 
     START = "Start"
-    """Perform a start action on the specified resources."""
+    """Starts the targeted resources."""
     DEALLOCATE = "Deallocate"
-    """Perform a deallocate action on the specified resources."""
+    """Deallocates the targeted resources."""
     HIBERNATE = "Hibernate"
-    """Perform hibernate and deallocate on the specified resources."""
+    """Hibernates the targeted resources."""
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -863,85 +768,25 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PremiumV2_LRS storage account type."""
 
 
-class VMAttributeSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VMSizes supported by Azure VMs. Included is a union of Excluded and Required."""
-
-    EXCLUDED = "Excluded"
-    """All VMSizes having the feature support will be excluded."""
-    INCLUDED = "Included"
-    """VMSizes that have the feature support and that do not have the feature support will be used.
-    Included is a union of Excluded and Required."""
-    REQUIRED = "Required"
-    """Only the VMSizes having the feature support will be used."""
-
-
-class VMCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VMCategories defined for Azure VMs."""
-
-    GENERAL_PURPOSE = "GeneralPurpose"
-    """General purpose VM sizes provide balanced CPU-to-memory ratio. Ideal for testing and
-    development, small to medium databases, and low to medium traffic web servers."""
-    COMPUTE_OPTIMIZED = "ComputeOptimized"
-    """Compute optimized VM sizes have a high CPU-to-memory ratio. These sizes are good for medium
-    traffic web servers, network appliances, batch processes, and application servers."""
-    MEMORY_OPTIMIZED = "MemoryOptimized"
-    """Memory optimized VM sizes offer a high memory-to-CPU ratio that is great for relational
-    database servers, medium to large caches, and in-memory analytics."""
-    STORAGE_OPTIMIZED = "StorageOptimized"
-    """Storage optimized virtual machine (VM) sizes offer high disk throughput and IO, and are ideal
-    for Big Data, SQL, NoSQL databases, data warehousing, and large transactional databases."""
-    GPU_ACCELERATED = "GpuAccelerated"
-    """GPU optimized VM sizes are specialized virtual machines available with single, multiple, or
-    fractional GPUs."""
-    FPGA_ACCELERATED = "FpgaAccelerated"
-    """FPGA optimized VM sizes are specialized virtual machines available with single or multiple
-    FPGA."""
-    HIGH_PERFORMANCE_COMPUTE = "HighPerformanceCompute"
-    """Azure High Performance Compute VMs are optimized for various HPC workloads such as CFD, FEA,
-    EDA, rendering, molecular dynamics, weather simulation, and financial risk analysis."""
-
-
-class VMOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Virtual Machine operation status values."""
-
-    CREATING = "Creating"
-    """Indicates that the virtual machine is either in the process of being created or is scheduled to
-    be created."""
-    CANCELED = "Canceled"
-    """Indicates that the cancellation request was successful because the virtual machine had not been
-    created yet."""
-    CANCEL_FAILED_STATUS_UNKNOWN = "CancelFailedStatusUnknown"
-    """Indicates that the cancellation request could not be applied because the virtual machine had
-    already been created."""
-    FAILED = "Failed"
-    """Indicates that the virtual machine operation failed."""
-    SUCCEEDED = "Succeeded"
-    """Indicates that the virtual machine operation completed successfully."""
-    DELETING = "Deleting"
-    """Indicates that the virtual machine is being deleted."""
-    CANCELLING = "Cancelling"
-    """Indicates that the virtual machine operation is being cancelled."""
-
-
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Representation of the possible selection of days in a week in a gregorian calendar."""
+    """A day of the week on which the scheduled action can run."""
 
     MONDAY = "Monday"
-    """Monday weekday."""
+    """The scheduled action can run on Monday."""
     TUESDAY = "Tuesday"
-    """Tuesday weekday."""
+    """The scheduled action can run on Tuesday."""
     WEDNESDAY = "Wednesday"
-    """Wednesday weekday."""
+    """The scheduled action can run on Wednesday."""
     THURSDAY = "Thursday"
-    """Thursday weekday."""
+    """The scheduled action can run on Thursday."""
     FRIDAY = "Friday"
-    """Friday weekday."""
+    """The scheduled action can run on Friday."""
     SATURDAY = "Saturday"
-    """Saturday weekday."""
+    """The scheduled action can run on Saturday."""
     SUNDAY = "Sunday"
-    """Sunday weekday."""
+    """The scheduled action can run on Sunday."""
     ALL = "All"
-    """All week days."""
+    """Every day of the week."""
 
 
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

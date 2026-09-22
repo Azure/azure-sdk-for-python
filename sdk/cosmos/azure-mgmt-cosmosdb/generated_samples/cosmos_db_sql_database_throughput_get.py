@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBSqlDatabaseThroughputGet.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBSqlDatabaseThroughputGet.json
 if __name__ == "__main__":
     main()

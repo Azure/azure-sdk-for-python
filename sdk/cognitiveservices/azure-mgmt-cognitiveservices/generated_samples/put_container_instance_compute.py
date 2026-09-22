@@ -42,11 +42,11 @@ def main():
                     "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
                 },
             },
-            "location": "eastus",
             "properties": {
                 "computeType": "ContainerInstance",
                 "idleTimeBeforeShutdown": "PT30M",
                 "imageLink": "mcr.microsoft.com/azureml/curated/pytorch-gpu:latest",
+                "location": "eastus",
                 "sshSettings": {"adminEnabled": True, "sshPublicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQ..."},
                 "targetClusterId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.CognitiveServices/accounts/myAccount/computes/myCluster",
             },
@@ -55,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/PutContainerInstanceCompute.json
+# x-ms-original-file: 2026-07-15-preview/PutContainerInstanceCompute.json
 if __name__ == "__main__":
     main()

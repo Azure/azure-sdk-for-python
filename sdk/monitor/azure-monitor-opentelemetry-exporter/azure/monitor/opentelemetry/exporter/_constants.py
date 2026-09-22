@@ -94,6 +94,15 @@ _AVAILABILITY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Availability"
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
+_MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+
+# Track Availability telemetry constants
+_MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
+_MICROSOFT_AVAILABILITY_NAME = "microsoft.availability.name"
+_MICROSOFT_AVAILABILITY_DURATION = "microsoft.availability.duration"
+_MICROSOFT_AVAILABILITY_SUCCESS = "microsoft.availability.success"
+_MICROSOFT_AVAILABILITY_RUN_LOCATION = "microsoft.availability.runLocation"
+_MICROSOFT_AVAILABILITY_MESSAGE = "microsoft.availability.message"
 
 # ONE SETTINGS
 _APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED = "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"

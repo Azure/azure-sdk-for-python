@@ -6,6 +6,8 @@ UTF-8 byte count of the body, not the number of characters."""
 import unittest
 from unittest import mock
 
+import pytest
+
 from azure.cosmos import _synchronized_request, http_constants
 from azure.cosmos.aio import _asynchronous_request
 from azure.cosmos.documents import _OperationType
@@ -25,6 +27,8 @@ _STR_PAYLOADS = [
 
 
 class _DummyRequestParams:
+    """Stand-in for RequestObject with hedging disabled and a plain item
+    create, so requests reach the mocked executor directly."""
     def __init__(self):
         self.availability_strategy = None
         self.is_hedging_request = False
@@ -34,22 +38,36 @@ class _DummyRequestParams:
 
 
 class _DummyGlobalEndpointManager:
+    """Endpoint manager stub reporting per-partition failover as off."""
     @staticmethod
     def is_per_partition_automatic_failover_enabled():
         return False
 
 
 class _DummyRequest:
+    """Minimal HttpRequest stand-in capturing body and headers."""
     def __init__(self):
         self.headers = {}
         self.data = None
 
 
+class _DummyClient:
+    """Client stub with the compact UTF-8 option off, so these tests cover
+    the default serialization path."""
+    _enable_compact_utf8_item_writes = False
+
+
+# These tests need no emulator, but the Cosmos CI lane selects tests with
+# "-m cosmosEmulator" (see eng/pipelines/templates/stages/cosmos-sdk-client.yml),
+# so an unmarked test is silently deselected and would never run.
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringSync(unittest.TestCase):
     """Checks the sync request path sets Content-Length to the byte
     count of the body."""
 
     def _capture_outgoing_request(self, request_data):
+        """Run one request through the sync path with the retry executor
+        mocked out, returning the body and Content-Length that would be sent."""
         params = _DummyRequestParams()
         manager = _DummyGlobalEndpointManager()
         request = _DummyRequest()
@@ -66,7 +84,7 @@ class TestContentLengthWiringSync(unittest.TestCase):
             _synchronized_request._retry_utility, "Execute", side_effect=_fake_execute
         ):
             _synchronized_request.SynchronizedRequest(
-                client=object(),
+                client=_DummyClient(),
                 request_params=params,
                 global_endpoint_manager=manager,
                 connection_policy=object(),
@@ -113,10 +131,12 @@ class TestContentLengthWiringSync(unittest.TestCase):
         self.assertEqual(captured["content_length"], 0)
 
 
+@pytest.mark.cosmosEmulator
 class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
     """Async version of the sync class above. Same checks."""
 
     async def _capture_outgoing_request(self, request_data):
+        """Async twin of the sync capture helper."""
         params = _DummyRequestParams()
         manager = _DummyGlobalEndpointManager()
         request = _DummyRequest()
@@ -135,7 +155,7 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
             side_effect=_fake_execute_async,
         ):
             await _asynchronous_request.AsynchronousRequest(
-                client=object(),
+                client=_DummyClient(),
                 request_params=params,
                 global_endpoint_manager=manager,
                 connection_policy=object(),
@@ -146,6 +166,8 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
         return captured
 
     async def test_str_bodies_set_utf8_byte_content_length(self):
+        """Async twin: Content-Length is the UTF-8 byte count, and for
+        multi-byte payloads it differs from the character count."""
         for label, payload in _STR_PAYLOADS:
             with self.subTest(payload=label):
                 captured = await self._capture_outgoing_request(payload)
@@ -157,6 +179,7 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
                     self.assertNotEqual(captured["content_length"], len(body))
 
     async def test_none_body_sets_content_length_zero(self):
+        """Async twin: a request with no body still gets Content-Length 0."""
         captured = await self._capture_outgoing_request(None)
         self.assertEqual(captured["content_length"], 0)
 
@@ -176,4 +199,3 @@ class TestContentLengthWiringAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

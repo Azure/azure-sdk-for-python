@@ -36,8 +36,6 @@ def my_callback_on_fail(_):
 import os
 from azure.appconfiguration.provider import load, WatchKey
 
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-
 config = load(
     endpoint=endpoint,
     credential=credential,

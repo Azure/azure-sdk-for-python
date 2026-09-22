@@ -49,7 +49,7 @@ def build_deployments_get_at_scope_request(scope: str, deployment_name: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_deployments_check_existence_at_scope_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -98,7 +98,7 @@ def build_deployments_create_or_update_at_scope_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_deployments_delete_at_scope_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -148,7 +148,7 @@ def build_deployments_list_at_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -177,7 +177,7 @@ def build_deployments_cancel_at_scope_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -200,7 +200,7 @@ def build_deployments_validate_at_scope_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,7 +229,7 @@ def build_deployments_export_template_at_scope_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -256,7 +256,7 @@ def build_deployments_get_at_tenant_scope_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +281,7 @@ def build_deployments_check_existence_at_tenant_scope_request(  # pylint: disabl
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -303,7 +303,7 @@ def build_deployments_create_or_update_at_tenant_scope_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -330,7 +330,7 @@ def build_deployments_delete_at_tenant_scope_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -350,7 +350,7 @@ def build_deployments_cancel_at_tenant_scope_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -372,7 +372,7 @@ def build_deployments_validate_at_tenant_scope_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,7 +401,7 @@ def build_deployments_what_if_at_tenant_scope_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -429,7 +429,7 @@ def build_deployments_export_template_at_tenant_scope_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -455,7 +455,7 @@ def build_deployments_list_at_tenant_scope_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -480,7 +480,7 @@ def build_deployments_get_at_management_group_scope_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -506,7 +506,7 @@ def build_deployments_check_existence_at_management_group_scope_request(  # pyli
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -529,7 +529,7 @@ def build_deployments_create_or_update_at_management_group_scope_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -557,7 +557,7 @@ def build_deployments_delete_at_management_group_scope_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -579,7 +579,7 @@ def build_deployments_list_at_management_group_scope_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -608,7 +608,7 @@ def build_deployments_cancel_at_management_group_scope_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -631,7 +631,7 @@ def build_deployments_validate_at_management_group_scope_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -661,7 +661,7 @@ def build_deployments_what_if_at_management_group_scope_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -690,7 +690,7 @@ def build_deployments_export_template_at_management_group_scope_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +717,7 @@ def build_deployments_get_at_subscription_scope_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -743,7 +743,7 @@ def build_deployments_check_existence_at_subscription_scope_request(  # pylint: 
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -766,7 +766,7 @@ def build_deployments_create_or_update_at_subscription_scope_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -794,7 +794,7 @@ def build_deployments_delete_at_subscription_scope_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -816,7 +816,7 @@ def build_deployments_list_at_subscription_scope_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -845,7 +845,7 @@ def build_deployments_cancel_at_subscription_scope_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -868,7 +868,7 @@ def build_deployments_validate_at_subscription_scope_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -898,7 +898,7 @@ def build_deployments_what_if_at_subscription_scope_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -927,7 +927,7 @@ def build_deployments_export_template_at_subscription_scope_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -954,7 +954,7 @@ def build_deployments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -981,7 +981,7 @@ def build_deployments_check_existence_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -1005,7 +1005,7 @@ def build_deployments_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1034,7 +1034,7 @@ def build_deployments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -1062,7 +1062,7 @@ def build_deployments_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1094,7 +1094,7 @@ def build_deployments_cancel_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -1118,7 +1118,7 @@ def build_deployments_validate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1149,7 +1149,7 @@ def build_deployments_what_if_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1179,7 +1179,7 @@ def build_deployments_export_template_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1206,7 +1206,7 @@ def build_deployments_calculate_template_hash_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1228,7 +1228,7 @@ def build_deployment_operations_get_at_scope_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1256,7 +1256,7 @@ def build_deployment_operations_list_at_scope_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1285,7 +1285,7 @@ def build_deployment_operations_get_at_tenant_scope_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1312,7 +1312,7 @@ def build_deployment_operations_list_at_tenant_scope_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1340,7 +1340,7 @@ def build_deployment_operations_get_at_management_group_scope_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1368,7 +1368,7 @@ def build_deployment_operations_list_at_management_group_scope_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1397,7 +1397,7 @@ def build_deployment_operations_get_at_subscription_scope_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1425,7 +1425,7 @@ def build_deployment_operations_list_at_subscription_scope_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1454,7 +1454,7 @@ def build_deployment_operations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1483,7 +1483,7 @@ def build_deployment_operations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1507,7 +1507,7 @@ def build_deployment_operations_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DeploymentsOperations:  # pylint: disable=too-many-public-methods
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7213,7 +7213,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class DeploymentOperationsOperations:
+class DeploymentOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

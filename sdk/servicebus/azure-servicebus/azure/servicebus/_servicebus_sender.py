@@ -16,7 +16,13 @@ from ._common.message import (
     ServiceBusMessageBatch,
 )
 from .amqp import AmqpAnnotatedMessage
-from ._common.utils import create_authentication, transform_outbound_messages
+from ._common.utils import (
+    create_authentication,
+    transform_outbound_messages,
+    get_link_ready_deadline,
+    get_remaining_timeout,
+    check_link_ready_deadline,
+)
 from ._common.tracing import (
     send_trace_context_manager,
     trace_message,
@@ -251,18 +257,27 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             client_name=self._name,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler:
+            check_link_ready_deadline(deadline)
             self._handler.close()
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
+            # The token fetch can use the budget, and open() cannot be cancelled once entered.
+            check_link_ready_deadline(deadline)
             self._handler.open(connection=self._connection)
-            while not self._handler.client_ready():
+            while True:
+                check_link_ready_deadline(deadline)
+                if self._handler.client_ready():
+                    break
                 time.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
@@ -279,7 +294,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
-            self._close_handler()
+            try:
+                self._close_handler()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
             raise
 
     def _send(
@@ -288,7 +306,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout: Optional[float] = None,
         last_exception: Optional[Exception] = None,
     ) -> None:
-        self._amqp_transport.send_messages(self, message, _LOGGER, timeout=timeout, last_exception=last_exception)
+        # The transport opens the link before sending; bound it and give the send the rest.
+        attempt_started = time.monotonic()
+        self._open(timeout)
+        self._amqp_transport.send_messages(
+            self,
+            message,
+            _LOGGER,
+            timeout=get_remaining_timeout(timeout, attempt_started),
+            last_exception=last_exception,
+        )
 
     def schedule_messages(
         self,
@@ -487,6 +514,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 message=obj_message,
                 timeout=timeout,
                 operation_requires_timeout=True,
+                apply_try_timeout=True,
                 require_last_exception=True,
             )
 

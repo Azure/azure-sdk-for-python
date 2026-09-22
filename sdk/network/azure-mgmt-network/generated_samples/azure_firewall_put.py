@@ -37,6 +37,7 @@ def main():
         parameters={
             "location": "West US",
             "properties": {
+                "aiSecurityAddOn": True,
                 "applicationRuleCollections": [
                     {
                         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/azureFirewalls/azurefirewall/applicationRuleCollections/apprulecoll",
@@ -139,6 +140,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/AzureFirewallPut.json
+# x-ms-original-file: 2026-01-01/AzureFirewallPut.json
 if __name__ == "__main__":
     main()

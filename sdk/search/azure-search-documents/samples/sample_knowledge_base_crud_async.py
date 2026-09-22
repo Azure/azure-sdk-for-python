@@ -76,6 +76,7 @@ async def update_knowledge_base_async():
     # [START update_knowledge_base_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes.aio import SearchIndexClient
+
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     async with index_client:
         knowledge_base = await index_client.get_knowledge_base(knowledge_base_name)

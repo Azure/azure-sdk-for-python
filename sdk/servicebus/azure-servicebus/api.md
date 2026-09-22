@@ -43,6 +43,7 @@ namespace azure.servicebus
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -63,6 +64,7 @@ namespace azure.servicebus
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -537,6 +539,7 @@ namespace azure.servicebus.aio
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -557,6 +560,7 @@ namespace azure.servicebus.aio
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any

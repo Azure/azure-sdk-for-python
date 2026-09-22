@@ -16,6 +16,7 @@ from ._enums import (
     AddonType,
     DhcpTypeEnum,
     HostKind,
+    HostLicenseKind,
     LicenseKind,
     MaintenanceManagementOperationKind,
     PlacementPolicyType,
@@ -74,7 +75,7 @@ class ProxyResource(Resource):
     """
 
 
-class Addon(ProxyResource):
+class Addon(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An addon resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -115,7 +116,7 @@ class Addon(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AddonProperties(_Model):
+class AddonProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an addon.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -155,7 +156,9 @@ class AddonProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddonArcProperties(AddonProperties, discriminator="Arc"):
+class AddonArcProperties(
+    AddonProperties, discriminator="Arc"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Arc addon.
 
     :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
@@ -163,14 +166,14 @@ class AddonArcProperties(AddonProperties, discriminator="Arc"):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     :ivar v_center: The VMware vCenter resource ID.
     :vartype v_center: str
-    :ivar addon_type: The type of private cloud addon. Required.
+    :ivar addon_type: The type of private cloud addon. Required. ARC.
     :vartype addon_type: str or ~azure.mgmt.avs.models.ARC
     """
 
     v_center: Optional[str] = rest_field(name="vCenter", visibility=["read", "create", "update", "delete", "query"])
     """The VMware vCenter resource ID."""
     addon_type: Literal[AddonType.ARC] = rest_discriminator(name="addonType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of private cloud addon. Required."""
+    """The type of private cloud addon. Required. ARC."""
 
     @overload
     def __init__(
@@ -191,7 +194,9 @@ class AddonArcProperties(AddonProperties, discriminator="Arc"):
         self.addon_type = AddonType.ARC  # type: ignore
 
 
-class AddonHcxProperties(AddonProperties, discriminator="HCX"):
+class AddonHcxProperties(
+    AddonProperties, discriminator="HCX"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an HCX addon.
 
     :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
@@ -199,7 +204,7 @@ class AddonHcxProperties(AddonProperties, discriminator="HCX"):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     :ivar offer: The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required.
     :vartype offer: str
-    :ivar addon_type: The type of private cloud addon. Required.
+    :ivar addon_type: The type of private cloud addon. Required. HCX.
     :vartype addon_type: str or ~azure.mgmt.avs.models.HCX
     :ivar management_network: HCX management network.
     :vartype management_network: str
@@ -210,7 +215,7 @@ class AddonHcxProperties(AddonProperties, discriminator="HCX"):
     offer: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required."""
     addon_type: Literal[AddonType.HCX] = rest_discriminator(name="addonType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of private cloud addon. Required."""
+    """The type of private cloud addon. Required. HCX."""
     management_network: Optional[str] = rest_field(
         name="managementNetwork", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -241,7 +246,9 @@ class AddonHcxProperties(AddonProperties, discriminator="HCX"):
         self.addon_type = AddonType.HCX  # type: ignore
 
 
-class AddonSrmProperties(AddonProperties, discriminator="SRM"):
+class AddonSrmProperties(
+    AddonProperties, discriminator="SRM"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a Site Recovery Manager (SRM) addon.
 
     :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
@@ -249,7 +256,7 @@ class AddonSrmProperties(AddonProperties, discriminator="SRM"):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     :ivar license_key: The Site Recovery Manager (SRM) license.
     :vartype license_key: str
-    :ivar addon_type: The type of private cloud addon. Required.
+    :ivar addon_type: The type of private cloud addon. Required. SRM.
     :vartype addon_type: str or ~azure.mgmt.avs.models.SRM
     """
 
@@ -258,7 +265,7 @@ class AddonSrmProperties(AddonProperties, discriminator="SRM"):
     )
     """The Site Recovery Manager (SRM) license."""
     addon_type: Literal[AddonType.SRM] = rest_discriminator(name="addonType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of private cloud addon. Required."""
+    """The type of private cloud addon. Required. SRM."""
 
     @overload
     def __init__(
@@ -279,7 +286,9 @@ class AddonSrmProperties(AddonProperties, discriminator="SRM"):
         self.addon_type = AddonType.SRM  # type: ignore
 
 
-class AddonVrProperties(AddonProperties, discriminator="VR"):
+class AddonVrProperties(
+    AddonProperties, discriminator="VR"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a vSphere Replication (VR) addon.
 
     :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
@@ -287,14 +296,14 @@ class AddonVrProperties(AddonProperties, discriminator="VR"):
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     :ivar vrs_count: The vSphere Replication Server (VRS) count. Required.
     :vartype vrs_count: int
-    :ivar addon_type: The type of private cloud addon. Required.
+    :ivar addon_type: The type of private cloud addon. Required. VR.
     :vartype addon_type: str or ~azure.mgmt.avs.models.VR
     """
 
     vrs_count: int = rest_field(name="vrsCount", visibility=["read", "create", "update", "delete", "query"])
     """The vSphere Replication Server (VRS) count. Required."""
     addon_type: Literal[AddonType.VR] = rest_discriminator(name="addonType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of private cloud addon. Required."""
+    """The type of private cloud addon. Required. VR."""
 
     @overload
     def __init__(
@@ -338,7 +347,7 @@ class AdminCredentials(_Model):
     """vCenter admin password."""
 
 
-class AvailabilityProperties(_Model):
+class AvailabilityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties describing private cloud availability zone distribution.
 
     :ivar strategy: The availability strategy for the private cloud. Known values are: "SingleZone"
@@ -382,21 +391,22 @@ class AvailabilityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RescheduleOperationConstraint(_Model):
+class RescheduleOperationConstraint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines constraints for reschedule operation on maintenance.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AvailableWindowForMaintenanceWhileRescheduleOperation, BlockedWhileRescheduleOperation
+    AvailableWindowForMaintenanceWhileRescheduleOperation, BlockedWhileRescheduleOperation,
+    ReschedulingWindowConstraint, WeekendReschedulingConstraint
 
-    :ivar kind: The kind of operation. Required. Known values are: "AvailableWindowForMaintenance"
-     and "Blocked".
+    :ivar kind: The kind of operation. Required. Known values are: "AvailableWindowForMaintenance",
+     "Blocked", "ReschedulingWindow", and "WeekendRescheduling".
     :vartype kind: str or ~azure.mgmt.avs.models.RescheduleOperationConstraintKind
     """
 
     __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read"])
-    """The kind of operation. Required. Known values are: \"AvailableWindowForMaintenance\" and
-     \"Blocked\"."""
+    """The kind of operation. Required. Known values are: \"AvailableWindowForMaintenance\",
+     \"Blocked\", \"ReschedulingWindow\", and \"WeekendRescheduling\"."""
 
     @overload
     def __init__(
@@ -422,7 +432,7 @@ class AvailableWindowForMaintenanceWhileRescheduleOperation(
     """Time window in which Customer can reschedule maintenance.
 
     :ivar kind: The kind of constraint. Required. Time window in which maintenance can be
-     rescheduled
+     rescheduled.
     :vartype kind: str or
      ~azure.mgmt.avs.models.AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_RESCHEDULE_OPERATION
     :ivar starts_at: Start date time. Required.
@@ -432,7 +442,7 @@ class AvailableWindowForMaintenanceWhileRescheduleOperation(
     """
 
     kind: Literal[RescheduleOperationConstraintKind.AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_RESCHEDULE_OPERATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of constraint. Required. Time window in which maintenance can be rescheduled"""
+    """The kind of constraint. Required. Time window in which maintenance can be rescheduled."""
     starts_at: datetime.datetime = rest_field(name="startsAt", visibility=["read"], format="rfc3339")
     """Start date time. Required."""
     ends_at: datetime.datetime = rest_field(name="endsAt", visibility=["read"], format="rfc3339")
@@ -455,22 +465,22 @@ class AvailableWindowForMaintenanceWhileRescheduleOperation(
         self.kind = RescheduleOperationConstraintKind.AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_RESCHEDULE_OPERATION  # type: ignore
 
 
-class ScheduleOperationConstraint(_Model):
+class ScheduleOperationConstraint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines constraints for schedule operation on maintenance.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AvailableWindowForMaintenanceWhileScheduleOperation, BlockedWhileScheduleOperation,
-    SchedulingWindow
+    SchedulingWindow, WeekendSchedulingConstraint
 
     :ivar kind: The kind of operation. Required. Known values are: "SchedulingWindow",
-     "AvailableWindowForMaintenance", and "Blocked".
+     "AvailableWindowForMaintenance", "Blocked", and "WeekendScheduling".
     :vartype kind: str or ~azure.mgmt.avs.models.ScheduleOperationConstraintKind
     """
 
     __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read"])
     """The kind of operation. Required. Known values are: \"SchedulingWindow\",
-     \"AvailableWindowForMaintenance\", and \"Blocked\"."""
+     \"AvailableWindowForMaintenance\", \"Blocked\", and \"WeekendScheduling\"."""
 
     @overload
     def __init__(
@@ -495,7 +505,8 @@ class AvailableWindowForMaintenanceWhileScheduleOperation(
 ):  # pylint: disable=name-too-long
     """Time window in which Customer can to schedule maintenance.
 
-    :ivar kind: The kind of constraint. Required. Time window in which maintenance can be scheduled
+    :ivar kind: The kind of constraint. Required. Time window in which maintenance can be
+     scheduled.
     :vartype kind: str or
      ~azure.mgmt.avs.models.AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_SCHEDULE_OPERATION
     :ivar starts_at: Start date time. Required.
@@ -505,7 +516,7 @@ class AvailableWindowForMaintenanceWhileScheduleOperation(
     """
 
     kind: Literal[ScheduleOperationConstraintKind.AVAILABLE_WINDOW_FOR_MAINTENANCE_WHILE_SCHEDULE_OPERATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of constraint. Required. Time window in which maintenance can be scheduled"""
+    """The kind of constraint. Required. Time window in which maintenance can be scheduled."""
     starts_at: datetime.datetime = rest_field(name="startsAt", visibility=["read"], format="rfc3339")
     """Start date time. Required."""
     ends_at: datetime.datetime = rest_field(name="endsAt", visibility=["read"], format="rfc3339")
@@ -550,20 +561,20 @@ class BlockedDatesConstraintTimeRange(_Model):
 class BlockedWhileRescheduleOperation(RescheduleOperationConstraint, discriminator="Blocked"):
     """Time ranges blocked for rescheduling maintenance.
 
-    :ivar kind: The kind of constraint. Required. Blocked time range constraint
+    :ivar kind: The kind of constraint. Required. Blocked time range constraint.
     :vartype kind: str or ~azure.mgmt.avs.models.BLOCKED_WHILE_RESCHEDULE_OPERATION
     :ivar category: Category of blocked date. Required. Known values are: "HiPriorityEvent",
-     "QuotaExhausted", and "Holiday".
+     "QuotaExhausted", "Holiday", and "OverlappingMaintenance".
     :vartype category: str or ~azure.mgmt.avs.models.BlockedDatesConstraintCategory
     :ivar time_ranges: Date ranges blocked for schedule.
     :vartype time_ranges: list[~azure.mgmt.avs.models.BlockedDatesConstraintTimeRange]
     """
 
     kind: Literal[RescheduleOperationConstraintKind.BLOCKED_WHILE_RESCHEDULE_OPERATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of constraint. Required. Blocked time range constraint"""
+    """The kind of constraint. Required. Blocked time range constraint."""
     category: Union[str, "_models.BlockedDatesConstraintCategory"] = rest_field(visibility=["read"])
     """Category of blocked date. Required. Known values are: \"HiPriorityEvent\", \"QuotaExhausted\",
-     and \"Holiday\"."""
+     \"Holiday\", and \"OverlappingMaintenance\"."""
     time_ranges: Optional[list["_models.BlockedDatesConstraintTimeRange"]] = rest_field(
         name="timeRanges", visibility=["read"]
     )
@@ -589,20 +600,20 @@ class BlockedWhileRescheduleOperation(RescheduleOperationConstraint, discriminat
 class BlockedWhileScheduleOperation(ScheduleOperationConstraint, discriminator="Blocked"):
     """Time ranges blocked for scheduling maintenance.
 
-    :ivar kind: The kind of constraint. Required. Blocked time range constraint
+    :ivar kind: The kind of constraint. Required. Blocked time range constraint.
     :vartype kind: str or ~azure.mgmt.avs.models.BLOCKED_WHILE_SCHEDULE_OPERATION
     :ivar category: Category of blocked date. Required. Known values are: "HiPriorityEvent",
-     "QuotaExhausted", and "Holiday".
+     "QuotaExhausted", "Holiday", and "OverlappingMaintenance".
     :vartype category: str or ~azure.mgmt.avs.models.BlockedDatesConstraintCategory
     :ivar time_ranges: Date ranges blocked for schedule.
     :vartype time_ranges: list[~azure.mgmt.avs.models.BlockedDatesConstraintTimeRange]
     """
 
     kind: Literal[ScheduleOperationConstraintKind.BLOCKED_WHILE_SCHEDULE_OPERATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of constraint. Required. Blocked time range constraint"""
+    """The kind of constraint. Required. Blocked time range constraint."""
     category: Union[str, "_models.BlockedDatesConstraintCategory"] = rest_field(visibility=["read"])
     """Category of blocked date. Required. Known values are: \"HiPriorityEvent\", \"QuotaExhausted\",
-     and \"Holiday\"."""
+     \"Holiday\", and \"OverlappingMaintenance\"."""
     time_ranges: Optional[list["_models.BlockedDatesConstraintTimeRange"]] = rest_field(
         name="timeRanges", visibility=["read"]
     )
@@ -650,7 +661,7 @@ class Circuit(_Model):
     """ExpressRoute Circuit private peering identifier."""
 
 
-class CloudLink(ProxyResource):
+class CloudLink(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cloud link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -711,7 +722,7 @@ class CloudLink(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CloudLinkProperties(_Model):
+class CloudLinkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a cloud link.
 
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
@@ -755,7 +766,7 @@ class CloudLinkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cluster(ProxyResource):
+class Cluster(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -821,7 +832,7 @@ class Cluster(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a cluster.
 
     :ivar cluster_size: The cluster size.
@@ -875,7 +886,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpdate(_Model):
+class ClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update of a cluster resource.
 
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
@@ -930,7 +941,7 @@ class ClusterUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ClusterUpdateProperties(_Model):
+class ClusterUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a cluster that may be updated.
 
     :ivar cluster_size: The cluster size.
@@ -980,7 +991,7 @@ class ClusterZone(_Model):
     """Availability zone identifier."""
 
 
-class ClusterZoneList(_Model):
+class ClusterZoneList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of all zones and associated hosts for a cluster.
 
     :ivar zones: Zone and associated hosts info.
@@ -1010,7 +1021,7 @@ class ClusterZoneList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Datastore(ProxyResource):
+class Datastore(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A datastore resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1078,7 +1089,7 @@ class Datastore(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatastoreProperties(_Model):
+class DatastoreProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a datastore.
 
     :ivar provisioning_state: The state of the datastore provisioning. Known values are:
@@ -1144,7 +1155,7 @@ class DatastoreProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskPoolVolume(_Model):
+class DiskPoolVolume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An iSCSI volume from Microsoft.StoragePool provider.
 
     :ivar target_id: Azure resource ID of the iSCSI target. Required.
@@ -1165,8 +1176,8 @@ class DiskPoolVolume(_Model):
     mount_option: Optional[Union[str, "_models.MountOptionEnum"]] = rest_field(
         name="mountOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Mode that describes whether the LUN has to be mounted as a datastore or
-     attached as a LUN. Known values are: \"MOUNT\" and \"ATTACH\"."""
+    """Mode that describes whether the LUN has to be mounted as a datastore or attached as a LUN.
+     Known values are: \"MOUNT\" and \"ATTACH\"."""
     path: Optional[str] = rest_field(visibility=["read"])
     """Device path."""
 
@@ -1190,7 +1201,7 @@ class DiskPoolVolume(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticSanVolume(_Model):
+class ElasticSanVolume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Elastic SAN volume from Microsoft.ElasticSan provider.
 
     :ivar target_id: Azure resource ID of the Elastic SAN Volume. Required.
@@ -1218,7 +1229,7 @@ class ElasticSanVolume(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Encryption(_Model):
+class Encryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of customer managed encryption key.
 
     :ivar status: Status of customer managed encryption key. Known values are: "Enabled" and
@@ -1256,7 +1267,7 @@ class Encryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionKeyVaultProperties(_Model):
+class EncryptionKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Encryption Key.
 
     :ivar key_name: The name of the key.
@@ -1390,7 +1401,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1418,7 +1429,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpressRouteAuthorization(ProxyResource):
+class ExpressRouteAuthorization(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExpressRoute Circuit Authorization.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1484,7 +1495,7 @@ class ExpressRouteAuthorization(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ExpressRouteAuthorizationProperties(_Model):
+class ExpressRouteAuthorizationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an ExpressRoute Circuit Authorization resource.
 
     :ivar provisioning_state: The state of the ExpressRoute Circuit Authorization provisioning.
@@ -1533,7 +1544,7 @@ class ExpressRouteAuthorizationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostProperties(_Model):
+class HostProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a host.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1555,6 +1566,8 @@ class HostProperties(_Model):
     :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
     :ivar fault_domain:
     :vartype fault_domain: str
+    :ivar licenses: The licenses assigned to the host.
+    :vartype licenses: list[~azure.mgmt.avs.models.HostLicense]
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -1579,6 +1592,10 @@ class HostProperties(_Model):
     """If provided, the host is in maintenance. The value is the reason for maintenance. Known values
      are: \"Replacement\" and \"Upgrade\"."""
     fault_domain: Optional[str] = rest_field(name="faultDomain", visibility=["read"])
+    licenses: Optional[list["_models.HostLicense"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The licenses assigned to the host."""
 
     @overload
     def __init__(
@@ -1587,6 +1604,7 @@ class HostProperties(_Model):
         kind: str,
         display_name: Optional[str] = None,
         maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        licenses: Optional[list["_models.HostLicense"]] = None,
     ) -> None: ...
 
     @overload
@@ -1600,7 +1618,9 @@ class HostProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeneralHostProperties(HostProperties, discriminator="General"):
+class GeneralHostProperties(
+    HostProperties, discriminator="General"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a general host.
 
     :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
@@ -1617,12 +1637,14 @@ class GeneralHostProperties(HostProperties, discriminator="General"):
     :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
     :ivar fault_domain:
     :vartype fault_domain: str
-    :ivar kind: The kind of host. Required.
+    :ivar licenses: The licenses assigned to the host.
+    :vartype licenses: list[~azure.mgmt.avs.models.HostLicense]
+    :ivar kind: The kind of host. Required. GENERAL.
     :vartype kind: str or ~azure.mgmt.avs.models.GENERAL
     """
 
     kind: Literal[HostKind.GENERAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of host. Required."""
+    """The kind of host. Required. GENERAL."""
 
     @overload
     def __init__(
@@ -1630,6 +1652,7 @@ class GeneralHostProperties(HostProperties, discriminator="General"):
         *,
         display_name: Optional[str] = None,
         maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        licenses: Optional[list["_models.HostLicense"]] = None,
     ) -> None: ...
 
     @overload
@@ -1644,7 +1667,7 @@ class GeneralHostProperties(HostProperties, discriminator="General"):
         self.kind = HostKind.GENERAL  # type: ignore
 
 
-class GlobalReachConnection(ProxyResource):
+class GlobalReachConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A global reach connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1712,7 +1735,7 @@ class GlobalReachConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GlobalReachConnectionProperties(_Model):
+class GlobalReachConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a global reach connection.
 
     :ivar provisioning_state: The state of the  ExpressRoute Circuit Authorization provisioning.
@@ -1720,23 +1743,19 @@ class GlobalReachConnectionProperties(_Model):
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.GlobalReachConnectionProvisioningState
     :ivar address_prefix: The network used for global reach carved out from the original network
-     block
-     provided for the private cloud.
+     block provided for the private cloud.
     :vartype address_prefix: str
     :ivar authorization_key: Authorization key from the peer express route used for the global
-     reach
-     connection.
+     reach connection.
     :vartype authorization_key: str
     :ivar circuit_connection_status: The connection status of the global reach connection. Known
      values are: "Connected", "Connecting", and "Disconnected".
     :vartype circuit_connection_status: str or ~azure.mgmt.avs.models.GlobalReachConnectionStatus
     :ivar peer_express_route_circuit: Identifier of the ExpressRoute Circuit to peer with in the
-     global reach
-     connection.
+     global reach connection.
     :vartype peer_express_route_circuit: str
     :ivar express_route_id: The ID of the Private Cloud's ExpressRoute Circuit that is
-     participating in the
-     global reach connection.
+     participating in the global reach connection.
     :vartype express_route_id: str
     """
 
@@ -1746,13 +1765,12 @@ class GlobalReachConnectionProperties(_Model):
     """The state of the  ExpressRoute Circuit Authorization provisioning. Known values are:
      \"Succeeded\", \"Failed\", \"Canceled\", and \"Updating\"."""
     address_prefix: Optional[str] = rest_field(name="addressPrefix", visibility=["read"])
-    """The network used for global reach carved out from the original network block
-     provided for the private cloud."""
+    """The network used for global reach carved out from the original network block provided for the
+     private cloud."""
     authorization_key: Optional[str] = rest_field(
         name="authorizationKey", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Authorization key from the peer express route used for the global reach
-     connection."""
+    """Authorization key from the peer express route used for the global reach connection."""
     circuit_connection_status: Optional[Union[str, "_models.GlobalReachConnectionStatus"]] = rest_field(
         name="circuitConnectionStatus", visibility=["read"]
     )
@@ -1761,13 +1779,12 @@ class GlobalReachConnectionProperties(_Model):
     peer_express_route_circuit: Optional[str] = rest_field(
         name="peerExpressRouteCircuit", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Identifier of the ExpressRoute Circuit to peer with in the global reach
-     connection."""
+    """Identifier of the ExpressRoute Circuit to peer with in the global reach connection."""
     express_route_id: Optional[str] = rest_field(
         name="expressRouteId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The ID of the Private Cloud's ExpressRoute Circuit that is participating in the
-     global reach connection."""
+    """The ID of the Private Cloud's ExpressRoute Circuit that is participating in the global reach
+     connection."""
 
     @overload
     def __init__(
@@ -1789,7 +1806,7 @@ class GlobalReachConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HcxEnterpriseSite(ProxyResource):
+class HcxEnterpriseSite(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An HCX Enterprise Site resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1875,7 +1892,7 @@ class HcxEnterpriseSiteProperties(_Model):
      \"Deactivated\", and \"Deleted\"."""
 
 
-class Host(ProxyResource):
+class Host(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A host resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1926,7 +1943,99 @@ class Host(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class IdentitySource(_Model):
+class HostLicense(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A license assigned to a host.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    WindowsServerLicense
+
+    :ivar kind: License kind. Required. "WindowsServer"
+    :vartype kind: str or ~azure.mgmt.avs.models.HostLicenseKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """License kind. Required. \"WindowsServer\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HostUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a host to update.
+
+    :ivar properties: The properties of a host resource that may be updated.
+    :vartype properties: ~azure.mgmt.avs.models.HostUpdateProperties
+    """
+
+    properties: Optional["_models.HostUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of a host resource that may be updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.HostUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HostUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties for updating a host.
+
+    :ivar licenses: The licenses assigned to the host.
+    :vartype licenses: list[~azure.mgmt.avs.models.HostLicense]
+    """
+
+    licenses: Optional[list["_models.HostLicense"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The licenses assigned to the host."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        licenses: Optional[list["_models.HostLicense"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentitySource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """vCenter Single Sign On Identity Source.
 
     :ivar name: The name of the identity source.
@@ -1982,11 +2091,11 @@ class IdentitySource(_Model):
     """Protect LDAP communication using SSL certificate (LDAPS). Known values are: \"Enabled\" and
      \"Disabled\"."""
     username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of an Active Directory user with a minimum of read-only access to Base
-     DN for users and group."""
+    """The ID of an Active Directory user with a minimum of read-only access to Base DN for users and
+     group."""
     password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The password of the Active Directory user with a minimum of read-only access to
-     Base DN for users and groups."""
+    """The password of the Active Directory user with a minimum of read-only access to Base DN for
+     users and groups."""
 
     @overload
     def __init__(
@@ -2057,7 +2166,7 @@ class ImpactedMaintenanceResourceError(_Model):
     """Indicates whether action is required by the customer."""
 
 
-class IscsiPath(ProxyResource):
+class IscsiPath(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An iSCSI path resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2118,7 +2227,7 @@ class IscsiPath(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IscsiPathProperties(_Model):
+class IscsiPathProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an iSCSI path resource.
 
     :ivar provisioning_state: The state of the iSCSI path provisioning. Known values are:
@@ -2154,7 +2263,7 @@ class IscsiPathProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Label(_Model):
+class Label(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair representing a label.
 
     :ivar key: The key of the label. Required.
@@ -2187,7 +2296,7 @@ class Label(_Model):
         super().__init__(*args, **kwargs)
 
 
-class License(ProxyResource):
+class License(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A license resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2228,7 +2337,7 @@ class License(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class LicenseProperties(_Model):
+class LicenseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a license.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2268,7 +2377,7 @@ class LicenseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Maintenance(ProxyResource):
+class Maintenance(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cluster resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2309,6 +2418,35 @@ class Maintenance(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
+class MaintenanceActivity(_Model):
+    """Represents a maintenance activity performed as part of an operation.
+
+    :ivar kind: The type of activity. Required. Known values are: "Upgrade", "Downgrade",
+     "CertificateRotation", and "Backup".
+    :vartype kind: str or ~azure.mgmt.avs.models.MaintenanceActivityKind
+    :ivar component: The component on which the activity is performed. Required.
+    :vartype component: str
+    :ivar version: Target version of the component. Required.
+    :vartype version: str
+    :ivar info_link: Optional link containing more details about the activity.
+    :vartype info_link: str
+    :ivar impact: Describes impact of the activity.
+    :vartype impact: str
+    """
+
+    kind: Union[str, "_models.MaintenanceActivityKind"] = rest_field(visibility=["read"])
+    """The type of activity. Required. Known values are: \"Upgrade\", \"Downgrade\",
+     \"CertificateRotation\", and \"Backup\"."""
+    component: str = rest_field(visibility=["read"])
+    """The component on which the activity is performed. Required."""
+    version: str = rest_field(visibility=["read"])
+    """Target version of the component. Required."""
+    info_link: Optional[str] = rest_field(name="infoLink", visibility=["read"])
+    """Optional link containing more details about the activity."""
+    impact: Optional[str] = rest_field(visibility=["read"])
+    """Describes impact of the activity."""
+
+
 class MaintenanceFailedCheck(_Model):
     """Details about a failed maintenance check.
 
@@ -2326,7 +2464,26 @@ class MaintenanceFailedCheck(_Model):
     """A list of resources impacted by the failed check."""
 
 
-class MaintenanceManagementOperation(_Model):
+class MaintenanceGroup(_Model):
+    """Represents a maintenance group.
+
+    :ivar id: Unique identifier of the group. Required.
+    :vartype id: str
+    :ivar name: Display name of the group. Required.
+    :vartype name: str
+    :ivar kind: Type of the group. Required. Known values are: "Logical" and "Consolidation".
+    :vartype kind: str or ~azure.mgmt.avs.models.MaintenanceGroupKind
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Unique identifier of the group. Required."""
+    name: str = rest_field(visibility=["read"])
+    """Display name of the group. Required."""
+    kind: Union[str, "_models.MaintenanceGroupKind"] = rest_field(visibility=["read"])
+    """Type of the group. Required. Known values are: \"Logical\" and \"Consolidation\"."""
+
+
+class MaintenanceManagementOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines operations that can be performed on maintenance.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2370,6 +2527,12 @@ class MaintenanceProperties(_Model):
     :ivar cluster_id: Cluster ID for on which maintenance will be applied. Empty if maintenance is
      at private cloud level.
     :vartype cluster_id: int
+    :ivar activities: Activities performed as part of maintenance.
+    :vartype activities: list[~azure.mgmt.avs.models.MaintenanceActivity]
+    :ivar group: Group details if maintenance is part of a group.
+    :vartype group: ~azure.mgmt.avs.models.MaintenanceGroup
+    :ivar relationships: Relationships with other maintenances like dependencies and prerequisites.
+    :vartype relationships: ~azure.mgmt.avs.models.MaintenanceRelationships
     :ivar info_link: Link to maintenance info.
     :vartype info_link: str
     :ivar impact: Impact on the resource during maintenance period.
@@ -2398,6 +2561,12 @@ class MaintenanceProperties(_Model):
     cluster_id: Optional[int] = rest_field(name="clusterId", visibility=["read"])
     """Cluster ID for on which maintenance will be applied. Empty if maintenance is at private cloud
      level."""
+    activities: Optional[list["_models.MaintenanceActivity"]] = rest_field(visibility=["read"])
+    """Activities performed as part of maintenance."""
+    group: Optional["_models.MaintenanceGroup"] = rest_field(visibility=["read"])
+    """Group details if maintenance is part of a group."""
+    relationships: Optional["_models.MaintenanceRelationships"] = rest_field(visibility=["read"])
+    """Relationships with other maintenances like dependencies and prerequisites."""
     info_link: Optional[str] = rest_field(name="infoLink", visibility=["read"])
     """Link to maintenance info."""
     impact: Optional[str] = rest_field(visibility=["read"])
@@ -2462,7 +2631,7 @@ class MaintenanceReadinessRefreshOperation(MaintenanceManagementOperation, discr
     """Refresh MaintenanceReadiness status.
 
     :ivar kind: The kind of operation. Required. Represents a maintenance readiness refresh
-     operation
+     operation.
     :vartype kind: str or ~azure.mgmt.avs.models.MAINTENANCE_READINESS_REFRESH
     :ivar is_disabled: If maintenanceReadiness refresh is disabled.
     :vartype is_disabled: bool
@@ -2478,7 +2647,7 @@ class MaintenanceReadinessRefreshOperation(MaintenanceManagementOperation, discr
     """
 
     kind: Literal[MaintenanceManagementOperationKind.MAINTENANCE_READINESS_REFRESH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of operation. Required. Represents a maintenance readiness refresh operation"""
+    """The kind of operation. Required. Represents a maintenance readiness refresh operation."""
     is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
     """If maintenanceReadiness refresh is disabled."""
     disabled_reason: Optional[str] = rest_field(name="disabledReason", visibility=["read"])
@@ -2508,7 +2677,35 @@ class MaintenanceReadinessRefreshOperation(MaintenanceManagementOperation, discr
         self.kind = MaintenanceManagementOperationKind.MAINTENANCE_READINESS_REFRESH  # type: ignore
 
 
-class MaintenanceReschedule(_Model):
+class MaintenanceRecommendation(_Model):
+    """Recommendation details for scheduling/rescheduling maintenance.
+
+    :ivar maintenance_windows: List of recommended maintenance windows.
+    :vartype maintenance_windows: list[~azure.mgmt.avs.models.MaintenanceWindowRecommendation]
+    """
+
+    maintenance_windows: Optional[list["_models.MaintenanceWindowRecommendation"]] = rest_field(
+        name="maintenanceWindows", visibility=["read"]
+    )
+    """List of recommended maintenance windows."""
+
+
+class MaintenanceRelationships(_Model):
+    """Defines relationship details between maintenance groups.
+
+    :ivar dependencies: List of dependent group identifiers.
+    :vartype dependencies: list[str]
+    :ivar prerequisites: List of prerequisite group identifiers.
+    :vartype prerequisites: list[str]
+    """
+
+    dependencies: Optional[list[str]] = rest_field(visibility=["read"])
+    """List of dependent group identifiers."""
+    prerequisites: Optional[list[str]] = rest_field(visibility=["read"])
+    """List of prerequisite group identifiers."""
+
+
+class MaintenanceReschedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """reschedule a maintenance.
 
     :ivar reschedule_time: reschedule time.
@@ -2543,7 +2740,7 @@ class MaintenanceReschedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceSchedule(_Model):
+class MaintenanceSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """schedule a maintenance.
 
     :ivar schedule_time: schedule time.
@@ -2578,7 +2775,7 @@ class MaintenanceSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceState(_Model):
+class MaintenanceState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """state of the maintenance.
 
     :ivar name: Customer presentable maintenance state. Known values are: "NotScheduled",
@@ -2629,7 +2826,22 @@ class MaintenanceState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementCluster(_Model):
+class MaintenanceWindowRecommendation(_Model):
+    """Represents a recommended maintenance start window.
+
+    :ivar start_time: Recommended start time for maintenance. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar reason: Reason for recommending this window.
+    :vartype reason: str
+    """
+
+    start_time: datetime.datetime = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """Recommended start time for maintenance. Required."""
+    reason: Optional[str] = rest_field(visibility=["read"])
+    """Reason for recommending this window."""
+
+
+class ManagementCluster(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a management cluster.
 
     :ivar cluster_size: The cluster size.
@@ -2683,7 +2895,7 @@ class ManagementCluster(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetAppVolume(_Model):
+class NetAppVolume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure NetApp Files volume from Microsoft.NetApp provider.
 
     :ivar id: Azure resource ID of the NetApp volume. Required.
@@ -2711,7 +2923,7 @@ class NetAppVolume(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2769,7 +2981,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -2799,7 +3011,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PlacementPolicy(ProxyResource):
+class PlacementPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vSphere Distributed Resource Scheduler (DRS) placement policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2840,7 +3052,7 @@ class PlacementPolicy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PlacementPolicyProperties(_Model):
+class PlacementPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract placement policy properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2896,7 +3108,7 @@ class PlacementPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlacementPolicyUpdate(_Model):
+class PlacementPolicyUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update of a DRS placement policy resource.
 
     :ivar properties: The properties of a placement policy resource that may be updated.
@@ -2946,7 +3158,7 @@ class PlacementPolicyUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PlacementPolicyUpdateProperties(_Model):
+class PlacementPolicyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a placement policy resource that may be updated.
 
     :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
@@ -3009,7 +3221,7 @@ class PlacementPolicyUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3053,7 +3265,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateCloud(TrackedResource):
+class PrivateCloud(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private cloud resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3161,7 +3373,7 @@ class PrivateCloud(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PrivateCloudIdentity(_Model):
+class PrivateCloudIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (either system assigned, or none).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -3205,7 +3417,7 @@ class PrivateCloudIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateCloudProperties(_Model):
+class PrivateCloudProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private cloud resource.
 
     :ivar management_cluster: The default cluster used for management. Required.
@@ -3221,10 +3433,8 @@ class PrivateCloudProperties(_Model):
     :ivar encryption: Customer managed key encryption, can be enabled or disabled.
     :vartype encryption: ~azure.mgmt.avs.models.Encryption
     :ivar extended_network_blocks: Array of additional networks noncontiguous with networkBlock.
-     Networks must be
-     unique and non-overlapping across VNet in your subscription, on-premise, and
-     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to
-     (A.B.C.D/X).
+     Networks must be unique and non-overlapping across VNet in your subscription, on-premise, and
+     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to (A.B.C.D/X).
     :vartype extended_network_blocks: list[str]
     :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
      "Canceled", "Cancelled", "Pending", "Building", "Deleting", and "Updating".
@@ -3234,9 +3444,8 @@ class PrivateCloudProperties(_Model):
     :ivar endpoints: The endpoints.
     :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
     :ivar network_block: The block of addresses should be unique across VNet in your subscription
-     as
-     well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where
-     A,B,C,D are between 0 and 255, and X is between 0 and 22. Required.
+     as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where A,B,C,D are
+     between 0 and 255, and X is between 0 and 22. Required.
     :vartype network_block: str
     :ivar management_network: Network used to access vCenter Server and NSX-T Manager.
     :vartype management_network: str
@@ -3261,8 +3470,8 @@ class PrivateCloudProperties(_Model):
      stretched private cloud.
     :vartype secondary_circuit: ~azure.mgmt.avs.models.Circuit
     :ivar nsx_public_ip_quota_raised: Flag to indicate whether the private cloud has the quota for
-     provisioned NSX
-     Public IP count raised from 64 to 1024. Known values are: "Enabled" and "Disabled".
+     provisioned NSX Public IP count raised from 64 to 1024. Known values are: "Enabled" and
+     "Disabled".
     :vartype nsx_public_ip_quota_raised: str or ~azure.mgmt.avs.models.NsxPublicIpQuotaRaisedEnum
     :ivar virtual_network_id: Azure resource ID of the virtual network.
     :vartype virtual_network_id: str
@@ -3292,10 +3501,9 @@ class PrivateCloudProperties(_Model):
     extended_network_blocks: Optional[list[str]] = rest_field(
         name="extendedNetworkBlocks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Array of additional networks noncontiguous with networkBlock. Networks must be
-     unique and non-overlapping across VNet in your subscription, on-premise, and
-     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to
-     (A.B.C.D/X)."""
+    """Array of additional networks noncontiguous with networkBlock. Networks must be unique and
+     non-overlapping across VNet in your subscription, on-premise, and this privateCloud
+     networkBlock attribute. Make sure the CIDR format conforms to (A.B.C.D/X)."""
     provisioning_state: Optional[Union[str, "_models.PrivateCloudProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -3306,9 +3514,9 @@ class PrivateCloudProperties(_Model):
     endpoints: Optional["_models.Endpoints"] = rest_field(visibility=["read"])
     """The endpoints."""
     network_block: str = rest_field(name="networkBlock", visibility=["read", "create", "update", "delete", "query"])
-    """The block of addresses should be unique across VNet in your subscription as
-     well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where
-     A,B,C,D are between 0 and 255, and X is between 0 and 22. Required."""
+    """The block of addresses should be unique across VNet in your subscription as well as on-premise.
+     Make sure the CIDR format is conformed to (A.B.C.D/X) where A,B,C,D are between 0 and 255, and
+     X is between 0 and 22. Required."""
     management_network: Optional[str] = rest_field(name="managementNetwork", visibility=["read"])
     """Network used to access vCenter Server and NSX-T Manager."""
     provisioning_network: Optional[str] = rest_field(name="provisioningNetwork", visibility=["read"])
@@ -3332,13 +3540,12 @@ class PrivateCloudProperties(_Model):
     secondary_circuit: Optional["_models.Circuit"] = rest_field(
         name="secondaryCircuit", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A secondary expressRoute circuit from a separate AZ. Only present in a
-     stretched private cloud."""
+    """A secondary expressRoute circuit from a separate AZ. Only present in a stretched private cloud."""
     nsx_public_ip_quota_raised: Optional[Union[str, "_models.NsxPublicIpQuotaRaisedEnum"]] = rest_field(
         name="nsxPublicIpQuotaRaised", visibility=["read"]
     )
-    """Flag to indicate whether the private cloud has the quota for provisioned NSX
-     Public IP count raised from 64 to 1024. Known values are: \"Enabled\" and \"Disabled\"."""
+    """Flag to indicate whether the private cloud has the quota for provisioned NSX Public IP count
+     raised from 64 to 1024. Known values are: \"Enabled\" and \"Disabled\"."""
     virtual_network_id: Optional[str] = rest_field(name="virtualNetworkId", visibility=["read", "create"])
     """Azure resource ID of the virtual network."""
     dns_zone_type: Optional[Union[str, "_models.DnsZoneType"]] = rest_field(
@@ -3381,7 +3588,7 @@ class PrivateCloudProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateCloudUpdate(_Model):
+class PrivateCloudUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update to a private cloud resource.
 
     :ivar tags: Resource tags.
@@ -3456,7 +3663,7 @@ class PrivateCloudUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class PrivateCloudUpdateProperties(_Model):
+class PrivateCloudUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private cloud resource that may be updated.
 
     :ivar management_cluster: The default cluster used for management.
@@ -3472,10 +3679,8 @@ class PrivateCloudUpdateProperties(_Model):
     :ivar encryption: Customer managed key encryption, can be enabled or disabled.
     :vartype encryption: ~azure.mgmt.avs.models.Encryption
     :ivar extended_network_blocks: Array of additional networks noncontiguous with networkBlock.
-     Networks must be
-     unique and non-overlapping across VNet in your subscription, on-premise, and
-     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to
-     (A.B.C.D/X).
+     Networks must be unique and non-overlapping across VNet in your subscription, on-premise, and
+     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to (A.B.C.D/X).
     :vartype extended_network_blocks: list[str]
     :ivar dns_zone_type: The type of DNS zone to use. Known values are: "Public" and "Private".
     :vartype dns_zone_type: str or ~azure.mgmt.avs.models.DnsZoneType
@@ -3501,10 +3706,9 @@ class PrivateCloudUpdateProperties(_Model):
     extended_network_blocks: Optional[list[str]] = rest_field(
         name="extendedNetworkBlocks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Array of additional networks noncontiguous with networkBlock. Networks must be
-     unique and non-overlapping across VNet in your subscription, on-premise, and
-     this privateCloud networkBlock attribute. Make sure the CIDR format conforms to
-     (A.B.C.D/X)."""
+    """Array of additional networks noncontiguous with networkBlock. Networks must be unique and
+     non-overlapping across VNet in your subscription, on-premise, and this privateCloud
+     networkBlock attribute. Make sure the CIDR format conforms to (A.B.C.D/X)."""
     dns_zone_type: Optional[Union[str, "_models.DnsZoneType"]] = rest_field(
         name="dnsZoneType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3534,7 +3738,7 @@ class PrivateCloudUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProvisionedNetwork(ProxyResource):
+class ProvisionedNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A provisioned network resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3602,7 +3806,7 @@ class ProvisionedNetworkProperties(_Model):
      \"hcxManagement\", \"hcxUplink\", \"vcenterManagement\", \"vmotion\", and \"vsan\"."""
 
 
-class ScriptExecutionParameter(_Model):
+class ScriptExecutionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The arguments passed in to the execution.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3642,7 +3846,9 @@ class ScriptExecutionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PSCredentialExecutionParameter(ScriptExecutionParameter, discriminator="Credential"):
+class PSCredentialExecutionParameter(
+    ScriptExecutionParameter, discriminator="Credential"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """a powershell credential object.
 
     :ivar name: The parameter name. Required.
@@ -3651,7 +3857,7 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter, discriminator="Cr
     :vartype username: str
     :ivar password: password for login.
     :vartype password: str
-    :ivar type: The type of execution parameter. Required.
+    :ivar type: The type of execution parameter. Required. CREDENTIAL.
     :vartype type: str or ~azure.mgmt.avs.models.CREDENTIAL
     """
 
@@ -3660,7 +3866,7 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter, discriminator="Cr
     password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """password for login."""
     type: Literal[ScriptExecutionParameterType.CREDENTIAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of execution parameter. Required."""
+    """The type of execution parameter. Required. CREDENTIAL."""
 
     @overload
     def __init__(
@@ -3683,7 +3889,7 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter, discriminator="Cr
         self.type = ScriptExecutionParameterType.CREDENTIAL  # type: ignore
 
 
-class PureStoragePolicy(ProxyResource):
+class PureStoragePolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An instance describing a Pure Storage Policy Based Management policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3724,7 +3930,7 @@ class PureStoragePolicy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PureStoragePolicyProperties(_Model):
+class PureStoragePolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Pure Storage Policy Based Management policy.
 
     :ivar storage_policy_definition: Definition of a Pure Storage Policy Based Management policy.
@@ -3769,7 +3975,7 @@ class PureStoragePolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PureStorageVolume(_Model):
+class PureStorageVolume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Pure Storage volume from PureStorage.Block provider.
 
     :ivar storage_pool_id: Azure resource ID of the Pure Storage Pool. Required.
@@ -3821,7 +4027,7 @@ class Quota(_Model):
 class RescheduleOperation(MaintenanceManagementOperation, discriminator="Reschedule"):
     """Constraints for rescheduling maintenance.
 
-    :ivar kind: The kind of operation. Required. Represents a rescheduling operation
+    :ivar kind: The kind of operation. Required. Represents a rescheduling operation.
     :vartype kind: str or ~azure.mgmt.avs.models.RESCHEDULE
     :ivar is_disabled: If rescheduling is disabled.
     :vartype is_disabled: bool
@@ -3829,16 +4035,20 @@ class RescheduleOperation(MaintenanceManagementOperation, discriminator="Resched
     :vartype disabled_reason: str
     :ivar constraints: Constraints for rescheduling maintenance.
     :vartype constraints: list[~azure.mgmt.avs.models.RescheduleOperationConstraint]
+    :ivar recommendation: Recommendations for rescheduling maintenance.
+    :vartype recommendation: ~azure.mgmt.avs.models.MaintenanceRecommendation
     """
 
     kind: Literal[MaintenanceManagementOperationKind.RESCHEDULE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of operation. Required. Represents a rescheduling operation"""
+    """The kind of operation. Required. Represents a rescheduling operation."""
     is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
     """If rescheduling is disabled."""
     disabled_reason: Optional[str] = rest_field(name="disabledReason", visibility=["read"])
     """Reason for reschedule disabled."""
     constraints: Optional[list["_models.RescheduleOperationConstraint"]] = rest_field(visibility=["read"])
     """Constraints for rescheduling maintenance."""
+    recommendation: Optional["_models.MaintenanceRecommendation"] = rest_field(visibility=["read"])
+    """Recommendations for rescheduling maintenance."""
 
     @overload
     def __init__(
@@ -3857,7 +4067,42 @@ class RescheduleOperation(MaintenanceManagementOperation, discriminator="Resched
         self.kind = MaintenanceManagementOperationKind.RESCHEDULE  # type: ignore
 
 
-class ResourceSku(_Model):
+class ReschedulingWindowConstraint(RescheduleOperationConstraint, discriminator="ReschedulingWindow"):
+    """Constraint defining allowed time window for rescheduling.
+
+    :ivar kind: Required. Defines allowed window for rescheduling.
+    :vartype kind: str or ~azure.mgmt.avs.models.RESCHEDULING_WINDOW
+    :ivar starts_at: Start date time. Required.
+    :vartype starts_at: ~datetime.datetime
+    :ivar ends_at: End date Time. Required.
+    :vartype ends_at: ~datetime.datetime
+    """
+
+    kind: Literal[RescheduleOperationConstraintKind.RESCHEDULING_WINDOW] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Defines allowed window for rescheduling."""
+    starts_at: datetime.datetime = rest_field(name="startsAt", visibility=["read"], format="rfc3339")
+    """Start date time. Required."""
+    ends_at: datetime.datetime = rest_field(name="endsAt", visibility=["read"], format="rfc3339")
+    """End date Time. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = RescheduleOperationConstraintKind.RESCHEDULING_WINDOW  # type: ignore
+
+
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A SKU for a resource.
 
     :ivar resource_type: The type of resource the SKU applies to. Required. Known values are:
@@ -3937,7 +4182,7 @@ class ResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuCapabilities(_Model):
+class ResourceSkuCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes The SKU capabilities object.
 
     :ivar name: The name of the SKU capability. Required.
@@ -3970,7 +4215,7 @@ class ResourceSkuCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuLocationInfo(_Model):
+class ResourceSkuLocationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available Compute SKU Location Information.
 
     :ivar location: Location of the SKU. Required.
@@ -4011,7 +4256,7 @@ class ResourceSkuLocationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuRestrictionInfo(_Model):
+class ResourceSkuRestrictionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an available Compute SKU Restriction Information.
 
     :ivar locations: Locations where the SKU is restricted.
@@ -4044,7 +4289,7 @@ class ResourceSkuRestrictionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuRestrictions(_Model):
+class ResourceSkuRestrictions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The restrictions of the SKU.
 
     :ivar type: the type of restrictions. Known values are: "Location" and "Zone".
@@ -4099,7 +4344,7 @@ class ResourceSkuRestrictions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSkuZoneDetails(_Model):
+class ResourceSkuZoneDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes The zonal capabilities of a SKU.
 
     :ivar name: Gets the set of zones that the SKU is available in with the specified capabilities.
@@ -4139,7 +4384,7 @@ class ResourceSkuZoneDetails(_Model):
 class ScheduleOperation(MaintenanceManagementOperation, discriminator="Schedule"):
     """Scheduling window constraint.
 
-    :ivar kind: The kind of operation. Required. Represents a scheduling operation
+    :ivar kind: The kind of operation. Required. Represents a scheduling operation.
     :vartype kind: str or ~azure.mgmt.avs.models.SCHEDULE
     :ivar is_disabled: If scheduling is disabled.
     :vartype is_disabled: bool
@@ -4147,16 +4392,20 @@ class ScheduleOperation(MaintenanceManagementOperation, discriminator="Schedule"
     :vartype disabled_reason: str
     :ivar constraints: Constraints for scheduling maintenance.
     :vartype constraints: list[~azure.mgmt.avs.models.ScheduleOperationConstraint]
+    :ivar recommendation: Recommendations for scheduling maintenance.
+    :vartype recommendation: ~azure.mgmt.avs.models.MaintenanceRecommendation
     """
 
     kind: Literal[MaintenanceManagementOperationKind.SCHEDULE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of operation. Required. Represents a scheduling operation"""
+    """The kind of operation. Required. Represents a scheduling operation."""
     is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
     """If scheduling is disabled."""
     disabled_reason: Optional[str] = rest_field(name="disabledReason", visibility=["read"])
     """Reason for schedule disabled."""
     constraints: Optional[list["_models.ScheduleOperationConstraint"]] = rest_field(visibility=["read"])
     """Constraints for scheduling maintenance."""
+    recommendation: Optional["_models.MaintenanceRecommendation"] = rest_field(visibility=["read"])
+    """Recommendations for scheduling maintenance."""
 
     @overload
     def __init__(
@@ -4179,7 +4428,7 @@ class SchedulingWindow(ScheduleOperationConstraint, discriminator="SchedulingWin
     """Time window in which Customer has option to schedule maintenance.
 
     :ivar kind: The kind of constraint. Required. Time window in which Customer has option to
-     schedule maintenance
+     schedule maintenance.
     :vartype kind: str or ~azure.mgmt.avs.models.SCHEDULING_WINDOW
     :ivar starts_at: Start date time. Required.
     :vartype starts_at: ~datetime.datetime
@@ -4189,7 +4438,7 @@ class SchedulingWindow(ScheduleOperationConstraint, discriminator="SchedulingWin
 
     kind: Literal[ScheduleOperationConstraintKind.SCHEDULING_WINDOW] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of constraint. Required. Time window in which Customer has option to schedule
-     maintenance"""
+     maintenance."""
     starts_at: datetime.datetime = rest_field(name="startsAt", visibility=["read"], format="rfc3339")
     """Start date time. Required."""
     ends_at: datetime.datetime = rest_field(name="endsAt", visibility=["read"], format="rfc3339")
@@ -4212,7 +4461,7 @@ class SchedulingWindow(ScheduleOperationConstraint, discriminator="SchedulingWin
         self.kind = ScheduleOperationConstraintKind.SCHEDULING_WINDOW  # type: ignore
 
 
-class ScriptCmdlet(ProxyResource):
+class ScriptCmdlet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cmdlet available for script execution.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4306,7 +4555,7 @@ class ScriptCmdletProperties(_Model):
     """Parameters the script will accept."""
 
 
-class ScriptExecution(ProxyResource):
+class ScriptExecution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An instance of a script executed by a user - custom or AVS.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4383,7 +4632,7 @@ class ScriptExecution(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ScriptExecutionProperties(_Model):
+class ScriptExecutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a user-invoked script.
 
     :ivar script_cmdlet_id: A reference to the script cmdlet resource if user is running a AVS
@@ -4392,8 +4641,7 @@ class ScriptExecutionProperties(_Model):
     :ivar parameters: Parameters the script will accept.
     :vartype parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
     :ivar hidden_parameters: Parameters that will be hidden/not visible to ARM, such as passwords
-     and
-     credentials.
+     and credentials.
     :vartype hidden_parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
     :ivar failure_reason: Error message if the script was able to run, but if the script itself had
      errors or powershell threw an exception.
@@ -4435,13 +4683,12 @@ class ScriptExecutionProperties(_Model):
     hidden_parameters: Optional[list["_models.ScriptExecutionParameter"]] = rest_field(
         name="hiddenParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parameters that will be hidden/not visible to ARM, such as passwords and
-     credentials."""
+    """Parameters that will be hidden/not visible to ARM, such as passwords and credentials."""
     failure_reason: Optional[str] = rest_field(
         name="failureReason", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Error message if the script was able to run, but if the script itself had
-     errors or powershell threw an exception."""
+    """Error message if the script was able to run, but if the script itself had errors or powershell
+     threw an exception."""
     timeout: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Time limit for execution. Required."""
     retention: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4495,7 +4742,7 @@ class ScriptExecutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScriptPackage(ProxyResource):
+class ScriptPackage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Script Package resources available for execution.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4587,7 +4834,7 @@ class ScriptPackageProperties(_Model):
     """Link to support by the package vendor."""
 
 
-class ScriptParameter(_Model):
+class ScriptParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An parameter that the script will accept.
 
     :ivar type: The type of parameter the script is expecting. psCredential is a
@@ -4607,16 +4854,15 @@ class ScriptParameter(_Model):
     """
 
     type: Optional[Union[str, "_models.ScriptParameterTypes"]] = rest_field(visibility=["read"])
-    """The type of parameter the script is expecting. psCredential is a
-     PSCredentialObject. Known values are: \"String\", \"SecureString\", \"Credential\", \"Int\",
-     \"Bool\", and \"Float\"."""
+    """The type of parameter the script is expecting. psCredential is a PSCredentialObject. Known
+     values are: \"String\", \"SecureString\", \"Credential\", \"Int\", \"Bool\", and \"Float\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameter name that the script will expect a parameter value for."""
     description: Optional[str] = rest_field(visibility=["read"])
     """User friendly description of the parameter."""
     visibility: Optional[Union[str, "_models.VisibilityParameterEnum"]] = rest_field(visibility=["read"])
-    """Should this parameter be visible to arm and passed in the parameters argument
-     when executing. Known values are: \"Visible\" and \"Hidden\"."""
+    """Should this parameter be visible to arm and passed in the parameters argument when executing.
+     Known values are: \"Visible\" and \"Hidden\"."""
     optional: Optional[Union[str, "_models.OptionalParamEnum"]] = rest_field(visibility=["read"])
     """Is this parameter required or optional. Known values are: \"Optional\" and \"Required\"."""
 
@@ -4638,14 +4884,16 @@ class ScriptParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScriptSecureStringExecutionParameter(ScriptExecutionParameter, discriminator="SecureValue"):
+class ScriptSecureStringExecutionParameter(
+    ScriptExecutionParameter, discriminator="SecureValue"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """a plain text value execution parameter.
 
     :ivar name: The parameter name. Required.
     :vartype name: str
     :ivar secure_value: A secure value for the passed parameter, not to be stored in logs.
     :vartype secure_value: str
-    :ivar type: The type of execution parameter. Required.
+    :ivar type: The type of execution parameter. Required. SECURE_VALUE.
     :vartype type: str or ~azure.mgmt.avs.models.SECURE_VALUE
     """
 
@@ -4654,7 +4902,7 @@ class ScriptSecureStringExecutionParameter(ScriptExecutionParameter, discriminat
     )
     """A secure value for the passed parameter, not to be stored in logs."""
     type: Literal[ScriptExecutionParameterType.SECURE_VALUE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of execution parameter. Required."""
+    """The type of execution parameter. Required. SECURE_VALUE."""
 
     @overload
     def __init__(
@@ -4676,21 +4924,23 @@ class ScriptSecureStringExecutionParameter(ScriptExecutionParameter, discriminat
         self.type = ScriptExecutionParameterType.SECURE_VALUE  # type: ignore
 
 
-class ScriptStringExecutionParameter(ScriptExecutionParameter, discriminator="Value"):
+class ScriptStringExecutionParameter(
+    ScriptExecutionParameter, discriminator="Value"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """a plain text value execution parameter.
 
     :ivar name: The parameter name. Required.
     :vartype name: str
     :ivar value: The value for the passed parameter.
     :vartype value: str
-    :ivar type: The type of execution parameter. Required.
+    :ivar type: The type of execution parameter. Required. VALUE.
     :vartype type: str or ~azure.mgmt.avs.models.VALUE
     """
 
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value for the passed parameter."""
     type: Literal[ScriptExecutionParameterType.VALUE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of execution parameter. Required."""
+    """The type of execution parameter. Required. VALUE."""
 
     @overload
     def __init__(
@@ -4712,7 +4962,7 @@ class ScriptStringExecutionParameter(ScriptExecutionParameter, discriminator="Va
         self.type = ScriptExecutionParameterType.VALUE  # type: ignore
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -4772,7 +5022,9 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpecializedHostProperties(HostProperties, discriminator="Specialized"):
+class SpecializedHostProperties(
+    HostProperties, discriminator="Specialized"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a specialized host.
 
     :ivar provisioning_state: The state of the host provisioning. Known values are: "Succeeded",
@@ -4789,12 +5041,14 @@ class SpecializedHostProperties(HostProperties, discriminator="Specialized"):
     :vartype maintenance: str or ~azure.mgmt.avs.models.HostMaintenance
     :ivar fault_domain:
     :vartype fault_domain: str
-    :ivar kind: The kind of host is specialized. Required.
+    :ivar licenses: The licenses assigned to the host.
+    :vartype licenses: list[~azure.mgmt.avs.models.HostLicense]
+    :ivar kind: The kind of host is specialized. Required. SPECIALIZED.
     :vartype kind: str or ~azure.mgmt.avs.models.SPECIALIZED
     """
 
     kind: Literal[HostKind.SPECIALIZED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of host is specialized. Required."""
+    """The kind of host is specialized. Required. SPECIALIZED."""
 
     @overload
     def __init__(
@@ -4802,6 +5056,7 @@ class SpecializedHostProperties(HostProperties, discriminator="Specialized"):
         *,
         display_name: Optional[str] = None,
         maintenance: Optional[Union[str, "_models.HostMaintenance"]] = None,
+        licenses: Optional[list["_models.HostLicense"]] = None,
     ) -> None: ...
 
     @overload
@@ -4816,7 +5071,7 @@ class SpecializedHostProperties(HostProperties, discriminator="Specialized"):
         self.kind = HostKind.SPECIALIZED  # type: ignore
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4899,7 +5154,7 @@ class Trial(_Model):
     """Number of trial hosts available."""
 
 
-class VcfLicense(_Model):
+class VcfLicense(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VMware Cloud Foundation license.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4939,13 +5194,13 @@ class VcfLicense(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Vcf5License(VcfLicense, discriminator="vcf5"):
+class Vcf5License(VcfLicense, discriminator="vcf5"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VMware Cloud Foundation (VCF) 5.0 license.
 
     :ivar provisioning_state: The state of the license provisioning. Known values are: "Succeeded",
      "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.LicenseProvisioningState
-    :ivar kind: License kind. Required. A VMware Cloud Foundation (VCF) 5.0 license
+    :ivar kind: License kind. Required. A VMware Cloud Foundation (VCF) 5.0 license.
     :vartype kind: str or ~azure.mgmt.avs.models.VCF5
     :ivar license_key: License key.
     :vartype license_key: str
@@ -4962,7 +5217,7 @@ class Vcf5License(VcfLicense, discriminator="vcf5"):
     """
 
     kind: Literal[VcfLicenseKind.VCF5] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """License kind. Required. A VMware Cloud Foundation (VCF) 5.0 license"""
+    """License kind. Required. A VMware Cloud Foundation (VCF) 5.0 license."""
     license_key: Optional[str] = rest_field(
         name="licenseKey", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5008,7 +5263,7 @@ class Vcf5License(VcfLicense, discriminator="vcf5"):
         self.kind = VcfLicenseKind.VCF5  # type: ignore
 
 
-class VirtualMachine(ProxyResource):
+class VirtualMachine(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5105,7 +5360,7 @@ class VirtualMachineProperties(_Model):
      \"Enabled\" and \"Disabled\"."""
 
 
-class VirtualMachineRestrictMovement(_Model):
+class VirtualMachineRestrictMovement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set VM DRS-driven movement to restricted (enabled) or not (disabled).
 
     :ivar restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
@@ -5137,7 +5392,9 @@ class VirtualMachineRestrictMovement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmHostPlacementPolicyProperties(PlacementPolicyProperties, discriminator="VmHost"):
+class VmHostPlacementPolicyProperties(
+    PlacementPolicyProperties, discriminator="VmHost"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VM-Host placement policy properties.
 
     :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
@@ -5161,7 +5418,7 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties, discriminator="
     :ivar azure_hybrid_benefit_type: placement policy azure hybrid benefit opt-in type. Known
      values are: "SqlHost" and "None".
     :vartype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
-    :ivar type: placement policy type. Required.
+    :ivar type: placement policy type. Required. VM_HOST.
     :vartype type: str or ~azure.mgmt.avs.models.VM_HOST
     """
 
@@ -5183,7 +5440,7 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties, discriminator="
     )
     """placement policy azure hybrid benefit opt-in type. Known values are: \"SqlHost\" and \"None\"."""
     type: Literal[PlacementPolicyType.VM_HOST] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """placement policy type. Required."""
+    """placement policy type. Required. VM_HOST."""
 
     @overload
     def __init__(
@@ -5210,7 +5467,9 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties, discriminator="
         self.type = PlacementPolicyType.VM_HOST  # type: ignore
 
 
-class VmPlacementPolicyProperties(PlacementPolicyProperties, discriminator="VmVm"):
+class VmPlacementPolicyProperties(
+    PlacementPolicyProperties, discriminator="VmVm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VM-VM placement policy properties.
 
     :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
@@ -5226,7 +5485,7 @@ class VmPlacementPolicyProperties(PlacementPolicyProperties, discriminator="VmVm
     :ivar affinity_type: placement policy affinity type. Required. Known values are: "Affinity" and
      "AntiAffinity".
     :vartype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
-    :ivar type: placement policy type. Required.
+    :ivar type: placement policy type. Required. VM_VM.
     :vartype type: str or ~azure.mgmt.avs.models.VM_VM
     """
 
@@ -5237,7 +5496,7 @@ class VmPlacementPolicyProperties(PlacementPolicyProperties, discriminator="VmVm
     )
     """placement policy affinity type. Required. Known values are: \"Affinity\" and \"AntiAffinity\"."""
     type: Literal[PlacementPolicyType.VM_VM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """placement policy type. Required."""
+    """placement policy type. Required. VM_VM."""
 
     @overload
     def __init__(
@@ -5261,13 +5520,15 @@ class VmPlacementPolicyProperties(PlacementPolicyProperties, discriminator="VmVm
         self.type = PlacementPolicyType.VM_VM  # type: ignore
 
 
-class VmwareFirewallLicenseProperties(LicenseProperties, discriminator="VmwareFirewall"):
+class VmwareFirewallLicenseProperties(
+    LicenseProperties, discriminator="VmwareFirewall"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a VMware Firewall license.
 
     :ivar provisioning_state: The state of the license provisioning. Known values are: "Succeeded",
      "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.LicenseProvisioningState
-    :ivar kind: License kind. Required.
+    :ivar kind: License kind. Required. VMWARE_FIREWALL.
     :vartype kind: str or ~azure.mgmt.avs.models.VMWARE_FIREWALL
     :ivar license_key: License key.
     :vartype license_key: str
@@ -5284,7 +5545,7 @@ class VmwareFirewallLicenseProperties(LicenseProperties, discriminator="VmwareFi
     """
 
     kind: Literal[LicenseKind.VMWARE_FIREWALL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """License kind. Required."""
+    """License kind. Required. VMWARE_FIREWALL."""
     license_key: Optional[str] = rest_field(
         name="licenseKey", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5330,7 +5591,105 @@ class VmwareFirewallLicenseProperties(LicenseProperties, discriminator="VmwareFi
         self.kind = LicenseKind.VMWARE_FIREWALL  # type: ignore
 
 
-class WorkloadNetwork(ProxyResource):
+class WeekendReschedulingConstraint(RescheduleOperationConstraint, discriminator="WeekendRescheduling"):
+    """Constraint defining weekend rescheduling restrictions.
+
+    :ivar kind: Required. Defines weekend rescheduling restriction.
+    :vartype kind: str or ~azure.mgmt.avs.models.WEEKEND_RESCHEDULING
+    :ivar is_disabled: Indicates if rescheduling is disabled on weekends.
+    :vartype is_disabled: bool
+    :ivar disabled_reason: Reason why weekend rescheduling is disabled.
+    :vartype disabled_reason: str
+    """
+
+    kind: Literal[RescheduleOperationConstraintKind.WEEKEND_RESCHEDULING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Defines weekend rescheduling restriction."""
+    is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
+    """Indicates if rescheduling is disabled on weekends."""
+    disabled_reason: Optional[str] = rest_field(name="disabledReason", visibility=["read"])
+    """Reason why weekend rescheduling is disabled."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = RescheduleOperationConstraintKind.WEEKEND_RESCHEDULING  # type: ignore
+
+
+class WeekendSchedulingConstraint(ScheduleOperationConstraint, discriminator="WeekendScheduling"):
+    """Constraint defining weekend scheduling restrictions.
+
+    :ivar kind: Required. Defines weekend scheduling restriction.
+    :vartype kind: str or ~azure.mgmt.avs.models.WEEKEND_SCHEDULING
+    :ivar is_disabled: Indicates if scheduling is disabled on weekends.
+    :vartype is_disabled: bool
+    :ivar disabled_reason: Reason why weekend scheduling is disabled.
+    :vartype disabled_reason: str
+    """
+
+    kind: Literal[ScheduleOperationConstraintKind.WEEKEND_SCHEDULING] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Defines weekend scheduling restriction."""
+    is_disabled: Optional[bool] = rest_field(name="isDisabled", visibility=["read"])
+    """Indicates if scheduling is disabled on weekends."""
+    disabled_reason: Optional[str] = rest_field(name="disabledReason", visibility=["read"])
+    """Reason why weekend scheduling is disabled."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ScheduleOperationConstraintKind.WEEKEND_SCHEDULING  # type: ignore
+
+
+class WindowsServerLicense(HostLicense, discriminator="WindowsServer"):
+    """The host is to be used with Azure Hybrid Benefit for Windows Server.
+
+    :ivar kind: License kind. Required. The host is to be used with Azure Hybrid Benefit for
+     Windows Server.
+    :vartype kind: str or ~azure.mgmt.avs.models.WINDOWS_SERVER
+    """
+
+    kind: Literal[HostLicenseKind.WINDOWS_SERVER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """License kind. Required. The host is to be used with Azure Hybrid Benefit for Windows Server."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = HostLicenseKind.WINDOWS_SERVER  # type: ignore
+
+
+class WorkloadNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Network.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5391,7 +5750,7 @@ class WorkloadNetwork(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkDhcp(ProxyResource):
+class WorkloadNetworkDhcp(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DHCP.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5432,9 +5791,8 @@ class WorkloadNetworkDhcp(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkDhcpEntity(_Model):
-    """Base class for WorkloadNetworkDhcpServer and WorkloadNetworkDhcpRelay to
-    inherit from.
+class WorkloadNetworkDhcpEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base class for WorkloadNetworkDhcpServer and WorkloadNetworkDhcpRelay to inherit from.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WorkloadNetworkDhcpRelay, WorkloadNetworkDhcpServer
@@ -5490,7 +5848,9 @@ class WorkloadNetworkDhcpEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity, discriminator="RELAY"):
+class WorkloadNetworkDhcpRelay(
+    WorkloadNetworkDhcpEntity, discriminator="RELAY"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DHCP Relay.
 
     :ivar display_name: Display name of the DHCP entity.
@@ -5504,7 +5864,7 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity, discriminator="RELAY")
     :vartype revision: int
     :ivar server_addresses: DHCP Relay Addresses. Max 3.
     :vartype server_addresses: list[str]
-    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required.
+    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required. RELAY.
     :vartype dhcp_type: str or ~azure.mgmt.avs.models.RELAY
     """
 
@@ -5513,7 +5873,7 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity, discriminator="RELAY")
     )
     """DHCP Relay Addresses. Max 3."""
     dhcp_type: Literal[DhcpTypeEnum.RELAY] = rest_discriminator(name="dhcpType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of DHCP: SERVER or RELAY. Required."""
+    """Type of DHCP: SERVER or RELAY. Required. RELAY."""
 
     @overload
     def __init__(
@@ -5536,7 +5896,9 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity, discriminator="RELAY")
         self.dhcp_type = DhcpTypeEnum.RELAY  # type: ignore
 
 
-class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity, discriminator="SERVER"):
+class WorkloadNetworkDhcpServer(
+    WorkloadNetworkDhcpEntity, discriminator="SERVER"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DHCP Server.
 
     :ivar display_name: Display name of the DHCP entity.
@@ -5552,7 +5914,7 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity, discriminator="SERVER
     :vartype server_address: str
     :ivar lease_time: DHCP Server Lease Time.
     :vartype lease_time: int
-    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required.
+    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required. SERVER.
     :vartype dhcp_type: str or ~azure.mgmt.avs.models.SERVER
     """
 
@@ -5563,7 +5925,7 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity, discriminator="SERVER
     lease_time: Optional[int] = rest_field(name="leaseTime", visibility=["read", "create", "update", "delete", "query"])
     """DHCP Server Lease Time."""
     dhcp_type: Literal[DhcpTypeEnum.SERVER] = rest_discriminator(name="dhcpType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of DHCP: SERVER or RELAY. Required."""
+    """Type of DHCP: SERVER or RELAY. Required. SERVER."""
 
     @overload
     def __init__(
@@ -5587,7 +5949,7 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity, discriminator="SERVER
         self.dhcp_type = DhcpTypeEnum.SERVER  # type: ignore
 
 
-class WorkloadNetworkDnsService(ProxyResource):
+class WorkloadNetworkDnsService(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DNS Service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5657,7 +6019,7 @@ class WorkloadNetworkDnsService(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkDnsServiceProperties(_Model):
+class WorkloadNetworkDnsServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DNS Service Properties.
 
     :ivar display_name: Display name of the DNS Service.
@@ -5735,7 +6097,7 @@ class WorkloadNetworkDnsServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkDnsZone(ProxyResource):
+class WorkloadNetworkDnsZone(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DNS Zone.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5804,7 +6166,7 @@ class WorkloadNetworkDnsZone(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkDnsZoneProperties(_Model):
+class WorkloadNetworkDnsZoneProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX DNS Zone Properties.
 
     :ivar display_name: Display name of the DNS Zone.
@@ -5872,7 +6234,7 @@ class WorkloadNetworkDnsZoneProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkGateway(ProxyResource):
+class WorkloadNetworkGateway(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Gateway.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5933,7 +6295,7 @@ class WorkloadNetworkGateway(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkGatewayProperties(_Model):
+class WorkloadNetworkGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a NSX Gateway.
 
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
@@ -5975,7 +6337,7 @@ class WorkloadNetworkGatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkPortMirroring(ProxyResource):
+class WorkloadNetworkPortMirroring(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Port Mirroring.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6044,7 +6406,7 @@ class WorkloadNetworkPortMirroring(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkPortMirroringProperties(_Model):
+class WorkloadNetworkPortMirroringProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Port Mirroring Properties.
 
     :ivar display_name: Display name of the port mirroring profile.
@@ -6126,7 +6488,7 @@ class WorkloadNetworkProperties(_Model):
      \"Canceled\", \"Building\", \"Deleting\", and \"Updating\"."""
 
 
-class WorkloadNetworkPublicIP(ProxyResource):
+class WorkloadNetworkPublicIP(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Public IP Block.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6187,7 +6549,7 @@ class WorkloadNetworkPublicIP(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkPublicIPProperties(_Model):
+class WorkloadNetworkPublicIPProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Public IP Block Properties.
 
     :ivar display_name: Display name of the Public IP Block.
@@ -6237,7 +6599,7 @@ class WorkloadNetworkPublicIPProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkSegment(ProxyResource):
+class WorkloadNetworkSegment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Segment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6306,7 +6668,7 @@ class WorkloadNetworkSegment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkSegmentPortVif(_Model):
+class WorkloadNetworkSegmentPortVif(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ports and any VIF attached to segment.
 
     :ivar port_name: Name of port or VIF attached to segment.
@@ -6334,7 +6696,7 @@ class WorkloadNetworkSegmentPortVif(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkSegmentProperties(_Model):
+class WorkloadNetworkSegmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Segment Properties.
 
     :ivar display_name: Display name of the segment.
@@ -6400,7 +6762,7 @@ class WorkloadNetworkSegmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkSegmentSubnet(_Model):
+class WorkloadNetworkSegmentSubnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subnet configuration for segment.
 
     :ivar dhcp_ranges: DHCP Range assigned for subnet.
@@ -6437,7 +6799,7 @@ class WorkloadNetworkSegmentSubnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkVirtualMachine(ProxyResource):
+class WorkloadNetworkVirtualMachine(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Virtual Machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6498,7 +6860,7 @@ class WorkloadNetworkVirtualMachine(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkVirtualMachineProperties(_Model):
+class WorkloadNetworkVirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX Virtual Machine Properties.
 
     :ivar provisioning_state: The provisioning state of the resource. Known values are:
@@ -6540,7 +6902,7 @@ class WorkloadNetworkVirtualMachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadNetworkVMGroup(ProxyResource):
+class WorkloadNetworkVMGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX VM Group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6601,7 +6963,7 @@ class WorkloadNetworkVMGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkloadNetworkVMGroupProperties(_Model):
+class WorkloadNetworkVMGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NSX VM Group Properties.
 
     :ivar display_name: Display name of the VM group.
