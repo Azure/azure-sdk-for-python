@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.deviceregistrysoftwareupdate import DeviceUpdateClient
+from azure.mgmt.deviceregistrysoftwareupdate import DeviceRegistrySoftwareUpdateMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.deviceregistrysoftwareupdate import DeviceUpdateClient
 
 
 def main():
-    client = DeviceUpdateClient(
+    client = DeviceRegistrySoftwareUpdateMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

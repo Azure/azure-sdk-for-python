@@ -41,5 +41,5 @@
         "azure.mgmt.deviceregistrysoftwareupdate.operations.UpdateInstancesOperations.check_name_availability": "Microsoft.DeviceUpdate.UpdateInstances.checkNameAvailability",
         "azure.mgmt.deviceregistrysoftwareupdate.aio.operations.UpdateInstancesOperations.check_name_availability": "Microsoft.DeviceUpdate.UpdateInstances.checkNameAvailability"
     },
-    "CrossLanguageVersion": "eede32d71565"
+    "CrossLanguageVersion": "123e0b1ebe21"
 }

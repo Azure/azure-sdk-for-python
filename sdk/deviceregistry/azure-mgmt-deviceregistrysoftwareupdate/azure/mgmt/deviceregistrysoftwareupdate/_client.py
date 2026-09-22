@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import DeviceUpdateClientConfiguration
+from ._configuration import DeviceRegistrySoftwareUpdateMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, UpdateInstancesOperations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DeviceUpdateClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class DeviceRegistrySoftwareUpdateMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Device Update resource provider.
 
     :ivar operations: Operations operations
@@ -72,7 +72,7 @@ class DeviceUpdateClient:  # pylint: disable=docstring-keyword-should-match-keyw
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DeviceUpdateClientConfiguration(
+        self._config = DeviceRegistrySoftwareUpdateMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

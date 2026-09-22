@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.deviceregistrysoftwareupdate import DeviceUpdateClient
+from azure.mgmt.deviceregistrysoftwareupdate import DeviceRegistrySoftwareUpdateMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,9 +14,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDeviceUpdateUpdateInstancesOperations(AzureMgmtRecordedTestCase):
+class TestDeviceRegistrySoftwareUpdateMgmtUpdateInstancesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DeviceUpdateClient)
+        self.client = self.create_mgmt_client(DeviceRegistrySoftwareUpdateMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy

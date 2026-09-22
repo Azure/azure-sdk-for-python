@@ -50,7 +50,7 @@ from ...operations._operations import (
     build_update_instances_list_by_subscription_request,
     build_update_instances_update_request,
 )
-from .._configuration import DeviceUpdateClientConfiguration
+from .._configuration import DeviceRegistrySoftwareUpdateMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -63,14 +63,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceUpdateClient`'s
+        :class:`~azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceRegistrySoftwareUpdateMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DeviceUpdateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DeviceRegistrySoftwareUpdateMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -174,14 +176,16 @@ class UpdateInstancesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceUpdateClient`'s
+        :class:`~azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceRegistrySoftwareUpdateMgmtClient`'s
         :attr:`update_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DeviceUpdateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DeviceRegistrySoftwareUpdateMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

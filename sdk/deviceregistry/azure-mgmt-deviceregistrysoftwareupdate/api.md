@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.deviceregistrysoftwareupdate
 
-    class azure.mgmt.deviceregistrysoftwareupdate.DeviceUpdateClient: implements ContextManager 
+    class azure.mgmt.deviceregistrysoftwareupdate.DeviceRegistrySoftwareUpdateMgmtClient: implements ContextManager 
         operations: Operations
         update_instances: UpdateInstancesOperations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.deviceregistrysoftwareupdate
 
 namespace azure.mgmt.deviceregistrysoftwareupdate.aio
 
-    class azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceUpdateClient: implements AsyncContextManager 
+    class azure.mgmt.deviceregistrysoftwareupdate.aio.DeviceRegistrySoftwareUpdateMgmtClient: implements AsyncContextManager 
         operations: Operations
         update_instances: UpdateInstancesOperations
 
