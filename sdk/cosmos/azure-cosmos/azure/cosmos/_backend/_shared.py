@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Share driver setup, page checks, and cleanup between both Rust backends.
+"""Share Python wrapper preparation and cleanup across sync and async clients.
 
-The binding is the compiled extension that Python uses to call Rust. It creates
-drivers and shares the runtime, the Rust resources used to run their work.
+The Python/Rust binding is the compiled extension that calls the Rust driver.
+It creates driver instances and shares the runtime, the Rust resources used
+to run their work.
 Proxy and connection timeout settings apply to that shared runtime.
 
-Constructing a backend checks settings against an existing runtime without
+Constructing the Python wrapper object checks an existing runtime's settings without
 creating one or reserving settings. The first operation acquires a driver.
 The binding checks again then, because another client may have initialized
 the runtime in the meantime.
@@ -76,7 +77,7 @@ def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorM
 
     An absent binding returns an empty tuple, which matches no exceptions.
     A present binding missing the required exception class raises here. Without
-    that check, driver errors could bypass conversion to the SDK exceptions
+    that check, Rust driver errors could bypass conversion to the Python exceptions
     the customer app expects.
     """
     if rust_module is None:
@@ -93,8 +94,8 @@ def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorM
 def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
     """Return the binding's ``_DriverTransportError`` class for ``except`` use.
 
-    The backends convert that error into azure-core's ``ServiceResponseError``.
-    This means the wrapper received no HTTP response, not that the request was
+    The Python wrapper converts that error to azure-core's ``ServiceResponseError``.
+    This means it received no HTTP response, not that the request was
     never sent or that the service backend performed no work.
     """
     return _binding_error_type(rust_module, "_DriverTransportError")
@@ -103,7 +104,7 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatc
 def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingErrorMatcher:
     """Return the binding class raised when the driver cannot finish a query.
 
-    The Rust backends translate it to ``UnsupportedQueryError``.
+    The Python wrapper translates it to ``UnsupportedQueryError``.
     It is an execution failure, not permission to retry through Python.
     """
     return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
@@ -115,7 +116,7 @@ def page_dispatch_errors(
     unsupported_query_error: _BindingErrorMatcher,
     transport_error: _BindingErrorMatcher,
 ) -> Iterator[None]:
-    """Convert page-fetch errors to SDK errors without catching cancellation."""
+    """Convert page-fetch failures to public Python errors without catching cancellation."""
     try:
         yield
     except TimeoutError as exc:
@@ -172,9 +173,9 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
 
 
 def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
-    """Clean up an unused backend's resources on a separate thread when possible.
+    """Clean up an unused Python wrapper object's resources on another thread.
 
-    Pass only the credential and driver handle to that thread, not the backend
+    Pass only the credential and driver handle to that thread, not the Python
     object being deleted. If a thread cannot start, clean up on the calling thread.
     """
     if credential is None and driver_handle is None:
@@ -200,9 +201,9 @@ def finalize_backend_resources(credential: Optional[Any], driver_handle: Optiona
 
 
 class RustBindingShared:
-    """Store client settings and provide cleanup used by both Rust backends.
+    """Store client settings for both sync and async Python wrappers.
 
-    Each backend calls _init_shared during construction. The sync and async
+    Each Python wrapper object uses _init_shared during construction. The sync and async
     classes separately decide how to wait for driver creation and operations.
     """
 

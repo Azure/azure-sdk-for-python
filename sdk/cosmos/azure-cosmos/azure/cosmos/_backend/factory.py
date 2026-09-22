@@ -3,14 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Choose and construct a backend using the same rules for both client types.
+"""Prepare the Python wrapper's Rust caller and its client settings.
 
-The private _backend argument wins over COSMOS_BACKEND; otherwise use
-core-python. These are migration and test controls, not supported customer
-options, and are intended for removal before a Rust-only release.
+Rust is the only release backend. This checkout retains private controls
+for comparing unmigrated legacy Python code: _backend takes precedence over
+COSMOS_BACKEND, and the current unset value still uses core-python. That
+temporary default and those controls must be removed before release; they
+are not customer configuration.
 
-Rust selection validates settings and prepares the credential. It creates a
-RustBinding or AsyncRustBinding, but driver creation waits until first use.
+This Python wrapper validates settings and prepares the credential before
+creating RustBinding or AsyncRustBinding. These are Python classes that call
+the Python/Rust binding. The binding acquires a Rust driver on first use.
 If construction fails, release any async-credential bridge acquired here.
 """
 from __future__ import annotations
@@ -35,12 +38,13 @@ _BackendT = TypeVar("_BackendT")
 _LegacyBackendT = TypeVar("_LegacyBackendT")
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
-    """Resolve the private backend choice and reject unknown names.
+    """Read the temporary migration/test control and reject unknown values.
 
     Read the environment only when explicit is None. Strip surrounding spaces
     and ignore case, so " RUST " selects rust. A blank value selects the default,
     even if it was an explicit argument. Other unknown names or non-string
-    arguments raise ValueError rather than selecting another backend silently.
+    arguments raise ValueError rather than silently running different code.
+    This function does not define a release-facing backend choice.
     """
     raw = explicit if explicit is not None else os.environ.get(BACKEND_ENV_VAR)
     if raw is not None and not isinstance(raw, str):
@@ -89,11 +93,12 @@ def _make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
-    """Select the implementation and clean up credentials if construction fails.
+    """Construct the Python wrapper object and clean up credentials on failure.
 
-    Core-python skips Rust-only validation. Rust requires a nonempty endpoint
-    and supported network settings before preparing credentials. The binding
-    checks URL syntax later, when a driver is acquired.
+    The retained legacy test branch skips Rust validation. The Rust branch
+    requires a nonempty endpoint and supported network settings before
+    preparing credentials. The Python/Rust binding checks URL syntax later,
+    when a Rust driver is acquired.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -156,7 +161,7 @@ def make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> CosmosBackend:
-    """Build a synchronous backend with the shared selection and validation rules."""
+    """Build the synchronous Python wrapper object using shared preparation rules."""
     return _make_backend(
         explicit,
         rust_backend_type=RustBinding,

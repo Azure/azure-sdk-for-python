@@ -3,35 +3,36 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Connect Python SDK operations to Rust or the existing Python implementation.
+"""Prepare customer requests in Python and pass them to the Python/Rust binding.
 
-The customer app calls the SDK's public methods. The SDK prepares the inputs,
-then uses a backend object selected when the client was constructed. The Rust
-backend calls a binding: the compiled extension that lets Python call the Rust
-driver. The driver handles connections and sends requests to the service backend.
+The customer app calls CosmosClient and its database/container objects.
+The Python wrapper, including this package, validates values and prepares
+requests. RustBinding is a Python wrapper class, despite its name; it calls
+the compiled Python/Rust binding, azure.cosmos._rust.
 
-Rust calls return a status, available headers, body bytes, and diagnostics.
-The SDK's response helpers turn these into customer results or exceptions.
-These are not necessarily the original HTTP headers: the driver and binding
-may omit headers or build values from the information they retained.
+Our team owns the Python wrapper and Python/Rust binding. The binding calls
+the Rust driver, maintained by a separate team. The Rust driver manages
+connections and sends requests to the service backend, the remote Cosmos DB
+service. "SDK" means the complete installed package, not one of these layers.
 
-Queries return batches of results called pages. Some fetch each page using a
-continuation token, a bookmark for the next request. Others also keep a cursor,
-a Rust object that stores query progress between fetches.
+The binding returns status, available headers, body bytes, and diagnostics.
+The Python wrapper converts them into customer results or exceptions.
+Headers omitted by the Rust driver or binding cannot be recovered here.
 
-The existing Python implementation remains for migration work. Its backend
-runs a supplied Python function rather than a prepared Rust request. Only
-operations allowed by capabilities.py may switch from Rust to that function,
-and only before execution. An execution, parsing, or callback failure is
-reported, not retried through the other implementation.
+Large results arrive in groups called pages. The Python result iterator
+fetches pages as the customer app loops over results. A continuation token
+records where a later request should resume. Some queries also keep an
+in-memory object in the binding containing their plan and current progress.
+That saved query progress is not the same as a continuation token.
 
-Prepared requests include timeout settings. An absolute deadline, measured
-with a clock unaffected by wall-clock changes, is passed separately. The
-binding call receives the time remaining before that deadline.
+Rust is the only backend for the release. This checkout still contains
+legacy Python calls and private migration/test controls, not a second
+supported customer backend. capabilities.py limits which unmigrated calls
+can use that legacy code before execution. Execution, parsing, and callback
+failures must not cause a request to be repeated through legacy Python.
 
-Driver creation waits until the first operation. Closing a client releases
-its reference; other clients or active operations can keep that driver alive.
-Keep the legacy selection and fallback code separate so they can be removed
-without changing the Rust request and response handling.
-Do not add new operations to the legacy backend.
+The Python wrapper passes the time remaining before an operation's deadline
+to the binding. The binding acquires a Rust driver on first use. Closing a
+client releases its reference; other clients or operations can keep that
+driver alive. Retained legacy routing is removal work, not an extension point.
 """

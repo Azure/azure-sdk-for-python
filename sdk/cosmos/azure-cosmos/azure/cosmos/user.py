@@ -22,7 +22,7 @@
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-"""Create, read, update and delete users in the Azure Cosmos DB SQL API service.
+"""Legacy Cosmos user and permission APIs, excluded from the Rust-backed release.
 """
 from typing import Any, Mapping, Union, Optional, Callable
 
@@ -36,7 +36,10 @@ from .permission import Permission
 
 
 class UserProxy:
-    """An interface to interact with a specific user.
+    """Manage a legacy Cosmos database user and its resource permissions.
+
+    This API family is intentionally excluded from the Rust-backed release.
+    It does not manage Microsoft Entra identities or role assignments.
 
     This class should not be instantiated directly. Instead, use the
     :func:`DatabaseProxy.get_user_client` method.

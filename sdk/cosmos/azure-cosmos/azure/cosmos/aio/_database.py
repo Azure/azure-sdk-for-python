@@ -78,6 +78,10 @@ def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, 
 class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
+    Cosmos user methods on this class are retained for legacy Python only and
+    are excluded from the Rust-backed release, including get_user_client.
+    They manage resource-token permissions, not Microsoft Entra identities.
+
     This class should not be instantiated directly. Instead use the
     :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to obtain a local
     database proxy, or :func:`~azure.cosmos.aio.CosmosClient.create_database` to create
@@ -1294,10 +1298,10 @@ class DatabaseProxy(object):
         body: dict[str, Any],
         **kwargs: Any
     ) -> UserProxy:  # body should just be id?
-        """Create a new user in the container.
+        """Legacy-only: create a Cosmos user in this database.
 
         To update or replace an existing user, use the
-        :func:`ContainerProxy.upsert_user` method.
+        :func:`DatabaseProxy.upsert_user` method.
 
         :param dict[str, Any] body: A dict object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
@@ -1330,7 +1334,7 @@ class DatabaseProxy(object):
         self,
         user: Union[str, UserProxy, Mapping[str, Any]]
     ) -> UserProxy:
-        """Get a `UserProxy` for a user with specified ID.
+        """Legacy-only: get a local UserProxy for a Cosmos database user.
 
         :param user: The ID (name), dict representing the properties, or :class:`UserProxy`
             instance of the user to get.
@@ -1354,7 +1358,7 @@ class DatabaseProxy(object):
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """List all the users in the container.
+        """Legacy-only: list Cosmos users in this database.
 
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1383,7 +1387,7 @@ class DatabaseProxy(object):
         response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
-        """Return all users matching the given `query`.
+        """Legacy-only: query Cosmos users in this database.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
         :keyword parameters: Optional array of parameters to the query.
@@ -1416,9 +1420,9 @@ class DatabaseProxy(object):
         body: dict[str, Any],
         **kwargs: Any
     ) -> UserProxy:
-        """Insert or update the specified user.
+        """Legacy-only: create or replace a Cosmos user in this database.
 
-        If the user already exists in the container, it is replaced. If the user
+        If the user already exists in the database, it is replaced. If the user
         does not already exist, it is inserted.
 
         :param dict[str, Any] body: A dict-like object representing the user to update or insert.
@@ -1444,7 +1448,7 @@ class DatabaseProxy(object):
         body: dict[str, Any],
         **kwargs: Any
     ) -> UserProxy:
-        """Replaces the specified user if it exists in the container.
+        """Legacy-only: replace an existing Cosmos database user.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
@@ -1475,7 +1479,7 @@ class DatabaseProxy(object):
         user: Union[str, UserProxy, Mapping[str, Any]],
         **kwargs: Any
     ) -> None:
-        """Delete the specified user from the container.
+        """Legacy-only: delete a Cosmos user from this database.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.

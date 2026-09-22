@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Keep request and response data separate from the code that sends a request.
+"""Hold the Python wrapper's inputs to and results from the Python/Rust binding.
 
 Both client types use PreparedRequest and BackendResponse for single results,
 and PreparedQuery and QueryPage for pages. PreparedClientConfig holds client
@@ -12,8 +12,8 @@ are passed separately.
 
 Fields cannot be reassigned after construction. Request headers and nested
 query values are also copied into read-only objects, so caller edits cannot
-change a pending request. Response headers can still be edited. A query cursor
-is a Rust object whose progress changes as the pager fetches results.
+change a pending request. Response headers can still be edited. The binding's
+saved query-progress object also changes as more pages are fetched.
 """
 
 from __future__ import annotations
@@ -47,12 +47,12 @@ class ContainerMetadata:
 
 @dataclass(frozen=True)
 class PreparedRequest:
-    """Inputs ready to pass to the Rust binding for one operation.
+    """Inputs ready for the Python/Rust binding to perform one operation.
 
     The binding may still validate values or fetch container properties before
     sending the request. This is not an HTTP request already sent to the service.
 
-    The legacy Python backend uses a separate function with the original call
+    Retained legacy Python code uses a separate function with the original call
     arguments; those cannot always be reconstructed from this object.
     """
 
@@ -85,7 +85,7 @@ class PreparedRequest:
     #: leave it unset, in which case the binding reads the body itself.
     item_id: Optional[str] = None
 
-    #: Limits on which partition keys a cursor-based SQL query may search,
+    #: Limits on which partition keys a query with saved progress may search,
     #: separate from the SQL and parameters sent in the JSON body.
     query_scope: Optional[QueryScope] = None
 
@@ -175,7 +175,7 @@ class PreparedClientConfig(_ValidatedSettings):
     #: shared Rust runtime; None requests no override.
     connection_timeout_seconds: Optional[float] = None
 
-    #: Python's read_timeout, in seconds. Rust uses it to limit a complete HTTP
+    #: Python's read_timeout, in seconds. It limits a complete HTTP
     #: attempt: connecting, sending, and receiving, not just waiting for more
     #: response data. Applies to both item and account/container-property
     #: requests across the process. None requests no override.
@@ -196,7 +196,7 @@ class PreparedClientConfig(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class BackendResponse:
-    """Result of one Rust call, ready for the SDK's response helpers.
+    """Result of one binding call, ready for Python wrapper response helpers.
 
     A supplied legacy Python function can return its public result directly,
     without creating this object.
@@ -216,7 +216,7 @@ class BackendResponse:
     body: bytes = b""
 
     #: Driver request diagnostics. Response helpers expose a supplied value as
-    #: text in the SDK's diagnostics header.
+    #: text in the public diagnostics header.
     diagnostics: Any = None
 
 
@@ -226,7 +226,8 @@ class QueryScope:
 
     feed_range contains lower and upper key-range bounds, or None for no such
     restriction. allow_cross_partition records whether the query may search
-    across partitions. as_dict supplies these values for requests and bookmarks.
+    across partitions. as_dict supplies these values for requests and
+    continuation tokens.
     """
 
     feed_range: Optional[tuple[str, str]] = None
@@ -263,8 +264,8 @@ class PreparedQuery:
 
     protocol_version: ClassVar[int] = 3
 
-    #: An operation that the page-fetch tables support, whether it keeps a
-    #: cursor between pages or not.
+    #: An operation supported by the page-fetch tables, with or without the
+    #: binding's saved query-progress object.
     op: str
 
     #: e.g. ``"dbs/{db}/colls/{coll}"`` -- the resource being queried. Empty for
@@ -287,7 +288,7 @@ class PreparedQuery:
     #: Page-size hint (``x-ms-max-item-count``); ``None`` keeps the default.
     max_item_count: Optional[int] = None
 
-    #: Bookmark used to request this page, or None to start at the beginning.
+    #: Continuation token for this page, or None to start at the beginning.
     continuation: Optional[str] = None
 
     #: Actual HTTP request headers only.
@@ -295,14 +296,14 @@ class PreparedQuery:
     #: Operation settings passed to the binding with the page request.
     settings: RequestSettings = field(default_factory=RequestSettings)
 
-    #: Rust object keeping progress between page fetches. None selects a
-    #: function that does not keep a cursor; a continuation token may still apply.
+    #: The binding's _ItemFeedCursor object keeps the query plan and progress
+    #: between page requests. None means no such object; a token may still apply.
     cursor: Optional[_ItemFeedCursor] = None
     #: Change-feed settings: which changes to read, where to start, and which
     #: partition-key range to search. This is not SQL.
     change_feed: Optional[Mapping[str, Any]] = None
-    #: Query scope, and whether a cross-partition query is allowed, for paging
-    #: a query through a pager that keeps its cursor across pages.
+    #: Partition-key restrictions for a query that keeps its progress between
+    #: page requests, including whether multiple partitions may be searched.
     query_scope: Optional[QueryScope] = None
 
     #: SQL and parameters already converted to JSON bytes for reuse across pages.
@@ -342,16 +343,16 @@ class PreparedQuery:
 class QueryPage:
     """One query or listing response, with information for the next fetch.
 
-    Keep the body as bytes so SDK response helpers can parse the returned rows
+    Keep the body as bytes so Python wrapper response helpers can parse the rows
     and turn service failures into the same exceptions used for other operations.
     """
 
     #: HTTP status code for the page fetch.
     status_code: int
 
-    #: Token for the next page (``x-ms-continuation``). A pager that keeps its
-    #: cursor across pages may have more results without being able to give a
-    #: token, so check ``has_more`` as well.
+    #: Continuation token returned in ``x-ms-continuation``. Saved query
+    #: progress may allow another fetch without a resumable token;
+    #: check ``has_more`` as well.
     continuation: Optional[str] = None
 
     #: Cosmos sub-status code (``x-ms-substatus``); ``0`` if absent.
@@ -367,8 +368,8 @@ class QueryPage:
 
     #: Driver request diagnostics, exposed by response helpers as header text.
     diagnostics: Any = None
-    #: A pager that keeps its cursor across pages may have more results even
-    #: when the driver cannot produce a token, so this can still be true.
+    #: Saved query progress may allow another page even when the Rust driver
+    #: cannot produce a continuation token, so this can still be true.
     has_more: Optional[bool] = None
     continuation_supported: bool = True
 

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Pass partition-key values or a key-selection instruction to the binding.
+"""Prepare partition-key inputs in the Python wrapper for the Python/Rust binding.
 
 For example, ``components`` carries supplied values, ``extract`` asks the
 binding to read the key from the item, and ``cross_partition`` does not select

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Check request setting types before passing them to the Rust binding.
+"""Check Python wrapper request settings before calling the Python/Rust binding.
 
 Separate objects hold item, query, and resource settings. They cannot be edited
 after construction. For example, max_item_count must be an integer or None,
@@ -140,7 +140,7 @@ def _request_settings_schema() -> dict[str, tuple[str, ...]]:
 def native_settings_contract_error(native: Any) -> Optional[str]:
     """Return an error message if the binding expects different setting fields.
 
-    The Rust backend saves this result and raises it when a driver is needed.
+    The Python wrapper saves this result and raises it when a Rust driver is needed.
     This function does not itself raise the returned compatibility error.
     """
     exported = getattr(native, "_request_settings_schema", None)

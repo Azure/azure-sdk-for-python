@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Map SDK operation names to functions in the compiled Rust binding.
+"""Map Python wrapper operation names to Python/Rust binding functions.
 
-For example, OP_READ_ITEM selects the binding's read_item function. The async
-backend uses the same table and adds the _async suffix.
+For example, OP_READ_ITEM identifies the binding's read_item function.
+The async Python wrapper uses the same table and adds the _async suffix.
 
-Page fetches use separate tables. A cursor is a Rust object that keeps progress
-between fetches; requests with a cursor use CURSOR_QUERY_TO_BINDING_METHOD.
-Requests without one use STATELESS_QUERY_TO_BINDING_METHOD and may pass a
-continuation token to request the next page.
+Page fetches use separate tables. The binding can keep an in-memory object
+containing a query's plan and progress between requests. Calls passing that
+object use CURSOR_QUERY_TO_BINDING_METHOD. Calls without it use
+STATELESS_QUERY_TO_BINDING_METHOD and may pass a continuation token instead.
 
 These tables choose functions, not whether Python fallback is allowed. That
 decision belongs to capabilities.py.
@@ -48,11 +48,11 @@ OP_REPLACE_OFFER = "replace_offer"
 
 
 # ``PreparedRequest.op`` -> binding function name. Shared by the sync and
-# async backends so a new operation is wired in one place, not two.
+# async Python wrappers so a new operation is connected in one place, not two.
 #
 # ``query_items`` / ``read_all_items`` / ``list_databases`` are deliberately NOT
 # here: they are multi-page feeds, not single-reply operations, so they are
-# registered in the applicable page tables below and dispatched through
+# registered in the applicable page tables below and called through
 # ``execute_pages``, never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
@@ -70,7 +70,7 @@ OP_TO_BINDING_METHOD = {
     OP_PATCH_ITEM: "patch_item",
     OP_READ_FEED_RANGES: "read_feed_ranges",
     OP_FEED_RANGE_FROM_PARTITION_KEY: "feed_range_from_partition_key",
-    # A client-side subset check, still routed through the driver entry point.
+    # A local key-range check reached through the Python/Rust binding.
     OP_IS_FEED_RANGE_SUBSET: "is_feed_range_subset",
     # The two throughput operations: the public ``get_throughput`` /
     # ``replace_throughput`` calls reach the driver as offer reads and writes.
@@ -79,8 +79,8 @@ OP_TO_BINDING_METHOD = {
 }
 
 
-# Requests without a Rust cursor use this table, even when they carry a
-# continuation token. Requests with a cursor use the next table.
+# Requests without the binding's query-progress object use this table, even
+# when they carry a continuation token. Requests with that object use the next table.
 STATELESS_QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
@@ -98,7 +98,7 @@ CURSOR_QUERY_TO_BINDING_METHOD = {
 
 
 def get_page_binding_method(op: str, *, uses_cursor: bool) -> str | None:
-    """Select the page-fetch function based on whether the request has a cursor."""
+    """Find the page-fetch function for requests with or without saved query progress."""
     methods = (
         CURSOR_QUERY_TO_BINDING_METHOD
         if uses_cursor

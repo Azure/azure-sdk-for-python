@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Prepare arguments for the Rust binding and convert its returned values.
+"""Convert Python wrapper requests and Python/Rust binding responses.
 
 The binding is the compiled extension Python uses to call the Rust driver.
 It receives prepared request objects and returns tuples containing status,
 headers, body bytes, and diagnostics. Both synchronous and asynchronous
-backends use these conversions.
+Python wrappers use these conversions.
 """
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ _PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LI
 def build_binding_request_from_page(prepared: PreparedQuery) -> PreparedRequest:
     """Build the binding request for one page fetch.
 
-    Reuse query_body when the pager has already converted the SQL and parameters
+    Reuse query_body when the Python wrapper has converted the SQL and parameters
     to JSON bytes. Listing requests need no body; change-feed requests use their
     own settings instead of SQL. Copy headers before applying the page size and
     continuation token, so the original prepared query is not changed.
@@ -88,7 +88,7 @@ def page_dispatch_arguments(
     prepared: PreparedQuery,
     deadline: Optional[float],
 ) -> tuple[tuple[Any, ...], dict[str, Optional[float]]]:
-    """Pass the driver handle, request, optional cursor, and remaining seconds."""
+    """Pass the driver handle, request, saved query progress, and remaining seconds."""
     args: tuple[Any, ...] = (driver_handle, request)
     if prepared.cursor is not None:
         args += (prepared.cursor,)
@@ -101,7 +101,7 @@ def page_dispatch_arguments(
 
 
 def build_query_page(prepared: PreparedQuery, response: BackendResponse) -> QueryPage:
-    """Add the next-page token and any item-query cursor progress to a response."""
+    """Add the continuation token and whether saved query progress allows more results."""
     cursor = prepared.cursor if prepared.op == OP_QUERY_ITEMS else None
     return QueryPage(
         status_code=response.status_code,
@@ -136,7 +136,7 @@ def build_container_metadata(raw: Any) -> ContainerMetadata:
 
 
 def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseError:
-    """Convert a failed container-property lookup to an SDK exception.
+    """Convert a failed container-property lookup to a public Python exception.
 
     Keep its headers on the exception without replacing the client's saved
     response headers.

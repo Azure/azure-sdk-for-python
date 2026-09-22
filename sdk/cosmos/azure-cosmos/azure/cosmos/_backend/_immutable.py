@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Copy request data so later caller edits cannot change a pending request."""
+"""Copy Python wrapper request data so caller edits cannot change a pending request."""
 
 from __future__ import annotations
 

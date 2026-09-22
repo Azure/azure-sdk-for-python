@@ -3,17 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Send synchronous SDK operations through the compiled Rust binding.
+"""Call the Python/Rust binding from the synchronous Python wrapper.
 
-The binding, azure.cosmos._rust, lets Python call the Rust driver. The driver
+This file is Python wrapper code, not the compiled binding despite its name.
+The Python/Rust binding, azure.cosmos._rust, calls the separately owned Rust
+driver. The Rust driver
 chooses a region and sends requests to the service backend. On first use,
 the binding returns a driver handle: a string identifying the driver for later
 calls. Clients with matching endpoints, credentials, and settings can share
 a driver. Closing one client releases its reference, not other clients' work.
 
-Importing this module tolerates an absent extension so core-python remains
-usable. Constructing a Rust backend still requires the extension to check
-shared runtime settings. Missing operation functions are checked before use.
+Importing this module without the binding remains possible for legacy
+migration checks. Constructing the Rust caller requires the binding to check
+shared runtime settings. A missing binding is not a supported release mode.
+Missing operation functions are checked before use.
 """
 from __future__ import annotations
 import logging
@@ -63,7 +66,7 @@ except ImportError:
         "will raise NotImplementedError until the Rust module is built."
     )
 
-# Save the binding exception classes used to convert failures to SDK exceptions.
+# Save binding exception classes for conversion to public Python exceptions.
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
@@ -90,8 +93,9 @@ class RustBinding(RustBindingShared, CosmosBackend):
     """Send one CosmosClient's requests and release its resources on close.
 
     RustBindingShared stores client settings and provides shared cleanup.
-    This class acquires the driver on first use, makes synchronous binding
-    calls, and converts their results to response objects for the SDK helpers.
+    This Python class asks the binding to acquire a Rust driver on first use,
+    makes synchronous binding calls, and converts results for Python wrapper
+    response helpers.
     """
 
     name = BACKEND_NAME_RUST
@@ -270,7 +274,7 @@ class RustBinding(RustBindingShared, CosmosBackend):
     def execute_pages(
         self, prepared: PreparedQuery, *, deadline: Optional[float] = None
     ) -> Iterator[QueryPage]:
-        """Fetch and yield one page, using the supplied cursor when present."""
+        """Fetch one page, passing the binding's saved query progress if present."""
         self.validate_page_request(prepared)
         method = get_page_binding_method(
             prepared.op, uses_cursor=prepared.cursor is not None
@@ -297,7 +301,7 @@ class RustBinding(RustBindingShared, CosmosBackend):
         validate_page_request(prepared, _rust_module, _get_page_dispatch, "RustBinding")
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create a Rust cursor to keep page progress, without acquiring a driver."""
+        """Create the binding's query-progress object without acquiring a Rust driver."""
         if _rust_module is None:
             raise PagePreflightError(
                 "The compiled azure.cosmos._rust module is not present."

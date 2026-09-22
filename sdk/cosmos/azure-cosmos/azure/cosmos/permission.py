@@ -19,7 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create permissions in the Azure Cosmos DB SQL API service.
+"""Represent legacy Cosmos resource permissions, not Entra role assignments.
+
+The user/permission APIs returning these objects are intentionally excluded
+from the Rust-backed release.
 """
 from typing import Any, Mapping
 
@@ -28,7 +31,7 @@ from .documents import PermissionMode  # pylint: disable=unused-import
 
 
 class Permission:
-    """Represents a Permission object in the Azure Cosmos DB SQL API service.
+    """Store a legacy Cosmos permission and its returned properties.
     """
     def __init__(
         self,

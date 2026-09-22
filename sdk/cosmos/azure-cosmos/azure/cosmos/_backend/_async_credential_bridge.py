@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Let the Rust binding obtain tokens from an async Python credential.
+"""Let the Python/Rust binding obtain tokens from an async Python credential.
 
+This bridge is Python wrapper code, not part of the Rust driver.
 The credential's async methods need an event loop, which schedules their work.
 This bridge starts its own loop on a background thread when the first token is
 requested, rather than using the customer app's loop.
@@ -107,7 +108,7 @@ class AsyncTokenCredentialBridge:
     its fields. The first token request starts the thread.
 
     token_timeout limits both the synchronous wait and the scheduled async
-    request. Rust calls wait asynchronously and can also cancel that wait using
+    request. Binding calls wait asynchronously and can also cancel that wait using
     their operation deadline. Cancellation still depends on the credential
     responding to the request to stop.
 
@@ -275,7 +276,7 @@ class AsyncTokenCredentialBridge:
         """Synchronously return the access token for ``scopes``.
 
         Return the credential's result unchanged. Check for timeout or bridge
-        closure between short waits. This method uses token_timeout, not an SDK
+        closure between short waits. This method uses token_timeout, not a Python wrapper
         operation deadline, and does not limit time spent creating the async call.
         """
         deadline = None if self._token_timeout is None else time.monotonic() + self._token_timeout
@@ -336,13 +337,13 @@ class AsyncTokenCredentialBridge:
         """Release one acquired use; the last release requests thread shutdown.
 
         Call once per acquire, not once per Python reference to this object.
-        Releasing twice could remove another client's use. Backends clear their
+        Releasing twice could remove another client's use. Python wrapper objects clear their
         own reference before calling this method again.
 
         The last release cancels pending results and waits up to _join_timeout
         for the thread. If it keeps running, log that fact and prevent a
         replacement loop until it stops. The customer's credential stays open.
-        Some cleanup errors can propagate; backend cleanup logs them through
+        Some cleanup errors can propagate; the Python wrapper logs them through
         close_credential_bridge_quietly.
         """
         # Only the last user requests shutdown. Release the shared dictionary

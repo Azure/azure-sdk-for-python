@@ -2375,13 +2375,9 @@ def test_account_read_guard_raises_for_rust_backend():
 # Credential classification for the Rust backend (resolve_credential)
 # ---------------------------------------------------------------------------
 #
-# The Rust backend accepts a master key (string or {"masterKey": ...}) or a
-# token credential. A *synchronous* token credential is forwarded to the driver
-# as-is; an *async* token credential is wrapped in an AsyncTokenCredentialBridge
-# that drives its coroutine on a dedicated loop thread and exposes the synchronous
-# get_token the driver calls. Resource tokens are still rejected at construction
-# (the driver has no resource-token auth branch yet) so that unsupported shape
-# fails loudly up front.
+# Keys and Entra credentials are supported, including async credentials through
+# the credential bridge. Resource-token authentication is intentionally excluded;
+# reject it during construction rather than imply that support is pending.
 
 
 class _SyncTokenCredential:
@@ -2732,15 +2728,18 @@ def test_resolve_credential_sync_credential_not_false_positived():
 def test_resolve_credential_resource_token_map_rejected_with_specific_message():
     """A {resource-link: token} map (per-user scoped tokens) is rejected with the
     resource-token message, not the generic one."""
-    with pytest.raises(ValueError, match="resource-token"):
+    with pytest.raises(ValueError, match="resource-token") as error:
         resolve_credential({"dbs/x/colls/y": "resource-token"})
+    assert "intentionally excluded" in str(error.value)
+    assert "Microsoft Entra" in str(error.value)
 
 
 def test_resolve_credential_permission_feed_rejected_with_specific_message():
     """A permission feed (iterable of permission mappings) is rejected as a
     resource-token credential."""
-    with pytest.raises(ValueError, match="resource-token"):
+    with pytest.raises(ValueError, match="resource-token") as error:
         resolve_credential([{"id": "perm", "_token": "t", "resource": "dbs/x"}])
+    assert "intentionally excluded" in str(error.value)
 
 
 def test_resolve_credential_none_rejected():

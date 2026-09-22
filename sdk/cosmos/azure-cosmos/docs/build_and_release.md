@@ -79,9 +79,10 @@ another language. Here, the binding connects Python to Rust.
 The Rust-backed path has three source components:
 
 ```text
-Python SDK
-    -> calls the Python-facing Rust binding
-    -> the binding calls the Cosmos Rust driver
+Customer app
+    -> Python wrapper prepares the operation
+    -> Python/Rust binding calls the Rust driver
+    -> Rust driver sends requests to the service backend
 ```
 
 A **Rust crate** is a Rust project containing source and build information.
@@ -89,9 +90,18 @@ A **Rust crate** is a Rust project containing source and build information.
 
 | Component | Where its source is maintained | Its job |
 |---|---|---|
-| Python SDK | Python repository: `sdk\cosmos\azure-cosmos\azure\cosmos` | Provides the Python SDK code |
-| Binding crate, `azure_cosmos_rust` | Python repository: `sdk\cosmos\azure-cosmos\azure_cosmos_rust` | Makes Rust operations callable from Python |
-| Driver crate, `azure_data_cosmos_driver` | Rust repository: `sdk\cosmos\azure_data_cosmos_driver` | Implements the Cosmos operations used by the binding |
+| Python wrapper | Python repository: `sdk\cosmos\azure-cosmos\azure\cosmos` | Our Python code: accepts customer arguments, prepares calls, and returns Python results or exceptions |
+| Python/Rust binding, `azure_cosmos_rust` | Python repository: `sdk\cosmos\azure-cosmos\azure_cosmos_rust` | Our compiled extension: converts Python inputs into Rust driver calls and converts their results back |
+| Rust driver, `azure_data_cosmos_driver` | Rust repository: `sdk\cosmos\azure_data_cosmos_driver` | A separately owned dependency: manages connections, routes requests, and applies its retry rules |
+
+The **service backend** is the remote Cosmos DB service, not another component
+inside the Python package. **SDK** means the complete installed package.
+In code explanations, use the layer names above so ownership stays clear.
+For example, `_backend\binding.py` and its `RustBinding` class are Python
+wrapper code; the compiled Python/Rust binding is exposed as `azure.cosmos._rust`.
+
+Rust is the only release backend. Private legacy selectors still present in
+this migration checkout are test controls to remove, not customer options.
 
 The **package source directory** in this guide means:
 
@@ -102,7 +112,7 @@ azure-sdk-for-python\sdk\cosmos\azure-cosmos
 Inside it, the important layout is:
 
 ```text
-azure\cosmos\                    Python SDK files
+azure\cosmos\                    Python wrapper files
 azure_cosmos_rust\
     Cargo.toml                  binding configuration
     src\                        binding Rust source

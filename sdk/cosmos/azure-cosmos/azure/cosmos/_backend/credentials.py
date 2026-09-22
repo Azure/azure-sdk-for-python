@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Prepare the customer's credential for the Rust binding.
+"""Prepare the customer's credential in the Python wrapper for the binding.
 
 Accept a master key or an object that obtains access tokens. An async token
 credential needs a bridge, an object that runs its token requests on a
@@ -78,7 +78,8 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     key authentication. An object with a synchronous get_token is passed through.
     Async credentials are wrapped in AsyncTokenCredentialBridge instead.
 
-    Resource-token forms and unrecognized inputs raise ValueError here.
+    Resource-token authentication is intentionally excluded, not pending Rust
+    driver support. Those forms and other unrecognized inputs raise ValueError here.
     Getting a token or using it with the service backend can still fail later.
     """
     if isinstance(credential, str):
@@ -104,14 +105,13 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     if _is_resource_token_credential(credential):
         raise ValueError(
             "The Rust binding does not support resource-token (per-user / "
-            "permission) credentials yet -- that needs Rust-driver auth support "
-            "that isn't available. Use a master-key credential or a synchronous "
-            "token credential, or the core-python backend."
+            "permission) credentials. This capability is intentionally excluded. "
+            "Use an account key or a Microsoft Entra token credential."
         )
     raise ValueError(
         "The Rust binding requires a master-key credential (a string, or a dict "
-        "with a 'masterKey' entry) or a synchronous token credential. The Rust "
-        "backend does not support resource-token auth."
+        "with a 'masterKey' entry) or a Microsoft Entra token credential "
+        "(synchronous or asynchronous). Resource-token authentication is intentionally excluded."
     )
 
 
@@ -119,10 +119,10 @@ def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
 def resolved_credential(
     credential: Any,
 ) -> Iterator[Tuple[Optional[str], Optional[Any]]]:
-    """Prepare a credential and release its bridge if backend construction fails.
+    """Prepare a credential and release its bridge if Python client setup fails.
 
     An async bridge keeps a reference to the credential even before its thread
-    starts. On success, the backend becomes responsible for releasing its use
+    starts. On success, the Python wrapper object must release its use
     of that bridge. On failure, release it here and propagate the original error
     without closing the customer's credential.
     """

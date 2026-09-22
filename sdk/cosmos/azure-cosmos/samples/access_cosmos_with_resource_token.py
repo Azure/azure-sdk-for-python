@@ -19,8 +19,8 @@ from typing import Dict, Any
 # 1. An Azure Cosmos account -
 #    https://learn.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
-# 2. Microsoft Azure Cosmos
-#    pip install azure-cosmos>=4.0.0
+# 2. A legacy Python SDK release with resource-token support.
+#    This sample is not supported by the Rust-backed release.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - how to get and use resource token that allows restricted access to data
 # ----------------------------------------------------------------------------------------------------------

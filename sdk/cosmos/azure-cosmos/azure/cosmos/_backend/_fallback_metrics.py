@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Count requests switched from Rust to Python before execution.
+"""Count remaining legacy Python calls chosen before Rust execution.
 
-Some operations still allow the existing Python implementation when Rust
-cannot handle the request. Count those choices, not retries of failed Rust
-calls or explicit core-python selection.
+Some unmigrated operations still use old Python code for unsupported requests.
+Count those temporary cases, not retries of failed Rust calls or runs using
+the private legacy test control. These are migration measurements, not
+evidence of a supported second backend.
 
 All clients in this process, synchronous and asynchronous, share this counter.
 Both reading and updating it take the same lock.

@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Run supplied Python calls for operations still using migration wrappers.
+"""Keep old Python calls available only while migration is unfinished.
 
-This backend does not build or send Rust requests. Item operations using the
-existing Python implementation are handled by the separate legacy item helper.
+Rust is the only release backend. This retained class is not a supported
+customer alternative and does not send requests through the Python/Rust
+binding. Legacy item operations use a separate old Python helper.
 """
 
 from __future__ import annotations
@@ -22,10 +23,10 @@ from .constants import BACKEND_NAME_CORE_PYTHON
 
 
 class LegacyBackend(CosmosBackend):
-    """Core-python backend: runs the legacy ``client_connection`` call.
+    """Temporary caller for legacy ``client_connection`` functions.
 
     Each caller supplies the function to run. No client settings or progress
-    are stored here, so all core-python clients can share LEGACY_BACKEND.
+    are stored here, so migration checks can share LEGACY_BACKEND.
     """
 
     name = BACKEND_NAME_CORE_PYTHON
@@ -33,7 +34,7 @@ class LegacyBackend(CosmosBackend):
     def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Reject prepared requests, which this backend does not send.
+        """Reject requests prepared for the Python/Rust binding.
 
         Use run_operation or run_page_operation with a Python function that
         has the original call arguments. A PreparedRequest does not contain
@@ -78,6 +79,6 @@ class LegacyBackend(CosmosBackend):
         return legacy_call()
 
 
-#: Process-wide shared core-python backend. ``LegacyBackend`` holds no per-client
+#: Shared legacy migration object. ``LegacyBackend`` holds no per-client
 #: state (the legacy call is supplied per operation), so one instance is enough.
 LEGACY_BACKEND = LegacyBackend()

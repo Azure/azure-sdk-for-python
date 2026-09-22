@@ -1,10 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Decide which operations may use Python when Rust cannot handle a request.
+"""Limit the legacy Python calls that remain during migration.
 
 For a call with several steps, such as reading and then replacing throughput,
-the calling helper checks whether Rust supports the complete call. These rules
-allow Python fallback only before execution. A failure during execution,
+the Python wrapper checks whether Rust supports the complete call. These
+temporary rules permit some old Python calls only before execution, not as
+a customer backend choice. Rust is the only release backend.
+A failure during execution,
 response processing, or a customer callback is not retried through Python.
 """
 
@@ -193,11 +195,11 @@ CAPABILITIES: dict[str, OpCapability] = {
 
 @dataclass(frozen=True)
 class OperationRouting:
-    """Combine support for this request with the operation's fallback rule.
+    """Check this request against the operation's temporary legacy-call rule.
 
     ``capability`` can name a multi-step call whose rules differ from those of
     one step. For example, get-or-create must support both reading and creating.
-    Explicit core-python selection skips this Rust check and request building.
+    The private legacy test branch skips Rust checks and request building.
     """
 
     op: str

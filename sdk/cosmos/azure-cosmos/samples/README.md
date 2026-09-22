@@ -48,7 +48,7 @@ The following are code samples that show common scenario operations with the Azu
     * Consuming change feed scoped to a feed range
     * Parallel change feed processing using feed ranges
 
-* [access_cosmos_with_resource_token.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/access_cosmos_with_resource_token.py) - Example demontrating how to get and use resource token that allows restricted access to data.
+* [access_cosmos_with_resource_token.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/access_cosmos_with_resource_token.py) - Legacy Python example of restricted access using resource tokens. Resource-token authentication and Cosmos user/permission APIs are intentionally excluded from the Rust-backed release.
 
 
 * [multi-master operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/MultiMasterOperations) - Example demonstrating multi-master operations.

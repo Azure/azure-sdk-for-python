@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Report unsupported requests and unexpected binding inputs or results.
+"""Report Python wrapper and Python/Rust binding failures without replaying work.
 
-A check before execution may allow a request to use the existing Python
-implementation. A failure after execution starts must reach the caller,
+Some migration checks still permit an old Python call before execution.
+This is not a supported second release backend. A failure after execution
+starts must reach the caller,
 without repeating the operation through Python. Separate exception types
 keep those cases distinct.
 """
@@ -31,7 +32,7 @@ class UnsupportedQueryError(RuntimeError):
 
 
 class BindingProtocolError(RuntimeError):
-    """Report unexpected SDK request data or binding results.
+    """Report unexpected Python wrapper request data or binding results.
 
     For example, a prepared operation may not match the requested operation,
     or the binding may return no page. Report the mismatch rather than hiding
@@ -42,9 +43,9 @@ class BindingProtocolError(RuntimeError):
 def raise_account_read_unsupported(backend: Any) -> None:
     """Reject get_database_account on Rust instead of calling Python silently.
 
-    The binding has no function for this public account read. An explicitly
-    selected core-python client can still perform it, so this check returns
-    without raising for that client.
+    The binding has no function for this public account read. The retained
+    legacy test branch can still perform it, so this check returns without
+    raising for that branch. This is not a customer backend choice.
     """
     if not is_rust_backend(backend):
         return

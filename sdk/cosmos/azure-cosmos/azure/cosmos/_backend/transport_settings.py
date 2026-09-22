@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Check network settings and read the customer's requested timeouts.
+"""Validate network settings in the Python wrapper before calling the binding.
 
 The Rust driver manages its own connections and certificate checks. It cannot
 use the custom Python network objects rejected here. Raise at client
@@ -13,13 +13,13 @@ certificate setting is active.
 Both public constructors combine connection_policy settings with keyword
 overrides before this check, so nesting an option does not bypass validation.
 
-Connection and read timeouts can be passed to Rust, but apply to the whole
-process. Keep None for an unspecified value instead of treating a Python
+Connection and read timeouts pass through the Python/Rust binding and apply
+to the whole process. Keep None for an unspecified value instead of treating a Python
 default as a customer request. Construction checks an existing Rust runtime
 without creating it or reserving values. Driver acquisition checks again and
 initializes the runtime if needed.
 
-Rust interprets read_timeout as a limit on the complete HTTP attempt, not just
+Here, read_timeout limits the complete HTTP attempt, not just
 time spent waiting for more response data.
 """
 from __future__ import annotations
