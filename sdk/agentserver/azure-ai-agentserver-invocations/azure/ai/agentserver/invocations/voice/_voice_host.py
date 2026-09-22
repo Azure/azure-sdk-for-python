@@ -172,7 +172,7 @@ def _configure_voice_observability(
         )
     except ValueError:
         raise
-    except Exception:  # pylint: disable=broad-exception-caught
+    except BaseException:  # pylint: disable=broad-exception-caught
         pass
 
 
