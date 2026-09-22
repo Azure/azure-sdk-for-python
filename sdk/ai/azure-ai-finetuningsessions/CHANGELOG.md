@@ -21,6 +21,7 @@
 - Restored `/fine_tuning/sessions` for generated operations, convenience methods, and polling to match the existing Loom API. `use_legacy_routes` remains accepted as a no-op; no route flag, rewrite policy, or automatic fallback is required.
 - Regenerated from the public Foundry TypeSpec using pinned tooling and kept custom behavior in handwritten modules.
 - Aligned the TypeSpec input and feature-key unions with Azure extensible-enum guidance. Regeneration preserves all existing Python runtime code and enum members; added regression coverage for known values and future strings in raw generated models.
+- Declared the existing `prompt_logprobs` server default of `false` in TypeSpec. Generated Python code is unchanged; sync and async regression tests verify omission and explicit `true`/`false` overrides are preserved.
 - Preserved explicit offset-page responses rather than introducing an incomplete generated iterator.
 - Imported current SDK regressions and added raw sync/async contract tests.
 - Preserved legacy `body`, `operation_id`, and per-call `api_version` keywords through handwritten adapters without changing shared client configuration.

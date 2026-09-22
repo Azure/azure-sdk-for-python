@@ -420,3 +420,46 @@ async def test_async_raw_create_and_poll_through_authenticated_pipeline(use_key,
             assert request.headers["api-key"] == "offline-key" and "Authorization" not in request.headers
         else:
             assert request.headers["Authorization"] == "Bearer fake_token" and "api-key" not in request.headers
+
+
+@pytest.mark.parametrize(
+    "properties", [{}, {"prompt_logprobs": False}, {"prompt_logprobs": True}], ids=["omitted", "false", "true"]
+)
+def test_sync_sampling_server_default_preserves_omission_and_override(client, transport, properties) -> None:
+    body = {
+        "prompt": {"chunks": [{"tokens": [1, 2]}]},
+        "sampling_params": {"max_tokens": 1},
+        **properties,
+    }
+    transport._response_body = b'{"request_id":"request_sample"}'
+    result = client.sampling.sample(
+        "session_test", raw.SampleRequest(body), checkpoint_id="checkpoint_test", foundry_features=_PREVIEW
+    )
+    assert result.request_id == "request_sample"
+    [request] = transport.requests
+    _assert_request(request, "POST", "https://fake" + _ROOT + "/session_test/sample", checkpoint_id="checkpoint_test")
+    # A server default must not inject a client value or overwrite an explicit True/False.
+    assert json.loads(request.content) == body
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "properties", [{}, {"prompt_logprobs": False}, {"prompt_logprobs": True}], ids=["omitted", "false", "true"]
+)
+async def test_async_sampling_server_default_preserves_omission_and_override(properties) -> None:
+    body = {
+        "prompt": {"chunks": [{"tokens": [1, 2]}]},
+        "sampling_params": {"max_tokens": 1},
+        **properties,
+    }
+    transport = _AsyncTransport({"request_id": "request_sample"})
+    async with aio.FineTuningSessionClient(
+        "https://fake", AzureKeyCredential("offline-key"), transport=transport
+    ) as client:
+        result = await client.sampling.sample(
+            "session_test", raw.SampleRequest(body), checkpoint_id="checkpoint_test", foundry_features=_PREVIEW
+        )
+        assert result.request_id == "request_sample"
+    [request] = transport.requests
+    _assert_request(request, "POST", "https://fake" + _ROOT + "/session_test/sample", checkpoint_id="checkpoint_test")
+    assert json.loads(request.content) == body

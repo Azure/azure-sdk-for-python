@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# TypeSpec commit including extensible input/feature unions and the scoped PageOrder exception.
-commit: db5d8fa85d9a9d40024e108a4c7da3f07b6fbf8d
+# TypeSpec commit declaring the existing prompt_logprobs server default explicitly.
+commit: ad04115d8266b5d2929654132219526cab6ab559
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

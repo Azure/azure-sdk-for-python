@@ -52,10 +52,10 @@ changes and still needs its own coordinated source/wheel migration.
 - SDK branch: `feature/finetuning-sessions-sdk`, targeting `main`.
 - The generation source is described by [tsp-location.yaml](tsp-location.yaml).
   It pins the immutable TypeSpec commit
-  `db5d8fa85d9a9d40024e108a4c7da3f07b6fbf8d`, including extensible input and
-  feature-key unions with a scoped exception for the immutable page-order union.
-  The route restoration, namespace migration, and preview error-model exports
-  are retained.
+  `ad04115d8266b5d2929654132219526cab6ab559`, declaring the existing
+  `prompt_logprobs` server default explicitly. Extensible input/feature-key
+  unions, the scoped immutable page-order exception, route restoration,
+  namespace migration, and preview error-model exports are retained.
   Generation was verified against
   that commit's exact source content; the fingerprint below identifies it.
 - The TypeSpec target incorporated is
@@ -282,11 +282,41 @@ settings in other Foundry client projects are unchanged.
   `722ae7612a0985aa1f266cfeedeeac9144ee6f22cb1233fdb7f9bb9b75f5dc7f`.
   A direct build initially hit a Windows temporary-directory cleanup lock;
   the subsequent clean, isolated `pip wheel` build completed successfully.
-- The current TypeSpec input fingerprint is
+- The TypeSpec input fingerprint at this checkpoint was
   `16fb33f06b94b2cbcaaac11d3f20ded03c54d993e2efdc3db9a8c51c6f5063ef`.
 
 Other language SDKs were not regenerated or certified by the Python checks;
 shared schema changes remain subject to the Foundry API review process.
+
+### Sampling server-default clarification
+
+`FineTuningSampleRequest.prompt_logprobs` now explicitly declares `false` as its
+server default while remaining an optional boolean. Its existing documentation
+is unchanged. Callers can still send `true` or `false`; omission leaves the
+server to apply its default. This documents verified existing Loom behavior,
+not a new client-side default or a required request field. See
+[TypeSpec default-value guidance](https://typespec.io/docs/extending-typespec/emitters-basics/#managing-default-values).
+
+- TypeSpec validation and full Foundry compilation succeeded with the existing
+  **29 warnings**. Complete OpenAPI comparisons for `v1` and
+  `virtual-public-preview` show only `default: false` added to this property;
+  its optionality, type, and every other contract element are unchanged.
+- **22 generated files match two independent pinned emissions**; Python
+  emission retained **66 warnings**. Generated and handwritten Python runtime
+  files are unchanged from the preceding SDK commit. Only the generated APIView
+  `CrossLanguageVersion` changed, from `eaa1660bd45e` to `a30c5b0dfaea`.
+  MCP generation again reported a Windows cleanup lock after writing output;
+  the independent emission comparison verified that output rather than treating
+  the failed cleanup as a successful command.
+- **729 offline source tests passed**, including six new sync/async wire cases
+  that verify omission stays omitted and explicit `true`/`false` values are
+  neither dropped nor overwritten. Existing regression test bodies are unchanged.
+- The current TypeSpec input fingerprint is
+  `f9494a9a033b1b1143f1f91c2701be51f74752c6db48e84755bbadbaecc33656`.
+
+No new live-service, wheel-installation, or cross-language SDK validation was
+performed for this metadata-only clarification; prior results above retain
+their original scope.
 
 The original unrelated shared client-tool lockfile difference was removed during
 merge resolution, and the old wheel was removed from Git tracking (its local
