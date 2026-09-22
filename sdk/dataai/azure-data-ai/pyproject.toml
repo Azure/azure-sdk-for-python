@@ -10,7 +10,7 @@ name = "azure-data-ai"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Azure Inference Service client library for Python"
+description = "Azure Data AI client library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",

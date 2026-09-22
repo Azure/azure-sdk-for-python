@@ -9,6 +9,7 @@ from importlib.util import find_spec
 import inspect
 import json
 import logging
+from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
@@ -22,21 +23,59 @@ from azure.core.exceptions import (
 )
 
 import azure.data.ai
-from azure.data.ai import InferenceServiceClient
-from azure.data.ai.aio import InferenceServiceClient as AsyncInferenceServiceClient
+from azure.data.ai import AzureDataAIClient
+from azure.data.ai.aio import AzureDataAIClient as AsyncAzureDataAIClient
 
 
 def test_public_api_has_no_models_or_embedding_dependencies():
     assert azure.data.ai.__version__ == version("azure-data-ai")
-    assert azure.data.ai.__all__ == ["InferenceServiceClient"]
+    assert azure.data.ai.__all__ == ["AzureDataAIClient"]
     assert find_spec("azure.data.ai.models") is None
     assert find_spec("azure.data.ai.types") is None
-    for client_type in (InferenceServiceClient, AsyncInferenceServiceClient):
+    for client_type in (AzureDataAIClient, AsyncAzureDataAIClient):
         assert hasattr(client_type, "semantic_rerank")
         assert not hasattr(client_type, "generate_embeddings")
         assert not hasattr(client_type, "send_request")
-    assert not inspect.iscoroutinefunction(InferenceServiceClient.semantic_rerank)
-    assert inspect.iscoroutinefunction(AsyncInferenceServiceClient.semantic_rerank)
+    assert not inspect.iscoroutinefunction(AzureDataAIClient.semantic_rerank)
+    assert inspect.iscoroutinefunction(AsyncAzureDataAIClient.semantic_rerank)
+    assert AzureDataAIClient.__module__ == "azure.data.ai._azure_data_ai_client"
+    assert AsyncAzureDataAIClient.__module__ == "azure.data.ai.aio._azure_data_ai_client"
+
+
+def test_contract_metadata_uses_azure_data_ai_namespace():
+    package = Path(__file__).resolve().parents[1]
+    metadata = json.loads((package / "_metadata.json").read_text(encoding="utf-8"))
+    properties = json.loads((package / "apiview-properties.json").read_text(encoding="utf-8"))
+    assert metadata["apiVersions"] == {"Azure.Data.AI": metadata["apiVersion"]}
+    assert properties["CrossLanguagePackageId"] == "Azure.Data.AI"
+    assert properties["CrossLanguageDefinitionId"] == {
+        "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+    }
+
+
+@pytest.mark.asyncio
+async def test_sentence_scores_follow_updated_contract_without_normalization(
+    open_client, invoke, respond, request_payload
+):
+    payload = {
+        "scores": [
+            {
+                "index": 0,
+                "score": 0.9,
+                "sentenceScores": [
+                    {"index": 0, "score": 0.0},
+                    {"index": 3, "score": 0.6},
+                    {"index": 12, "score": 1.0},
+                ],
+            }
+        ]
+    }
+    respond((200, payload, {}))
+    async with open_client() as client:
+        result = await invoke(client, request_payload)
+    assert result == payload
+    assert [sentence["index"] for sentence in result["scores"][0]["sentenceScores"]] == [0, 3, 12]
 
 
 @pytest.mark.asyncio
@@ -324,7 +363,7 @@ async def test_context_manager_closes_transport(open_client, invoke, respond, tr
         transport.__exit__.assert_called_once()
 
 
-@pytest.mark.parametrize("client_type", [InferenceServiceClient, AsyncInferenceServiceClient])
+@pytest.mark.parametrize("client_type", [AzureDataAIClient, AsyncAzureDataAIClient])
 def test_missing_or_unsupported_credentials_fail(client_type):
     with pytest.raises(ValueError, match="credential"):
         client_type("https://example.inference.azure.com", None)
@@ -332,7 +371,7 @@ def test_missing_or_unsupported_credentials_fail(client_type):
         client_type("https://example.inference.azure.com", object())
 
 
-@pytest.mark.parametrize("client_type", [InferenceServiceClient, AsyncInferenceServiceClient])
+@pytest.mark.parametrize("client_type", [AzureDataAIClient, AsyncAzureDataAIClient])
 @pytest.mark.parametrize("endpoint", [None, ""])
 def test_missing_endpoint_fails(client_type, endpoint):
     with pytest.raises(ValueError, match="endpoint"):

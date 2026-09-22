@@ -17,8 +17,8 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
 from azure.core.rest import AsyncHttpResponse, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
-from azure.data.ai import InferenceServiceClient
-from azure.data.ai.aio import InferenceServiceClient as AsyncInferenceServiceClient
+from azure.data.ai import AzureDataAIClient
+from azure.data.ai.aio import AzureDataAIClient as AsyncAzureDataAIClient
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
@@ -81,10 +81,10 @@ def open_client(transport, asynchronous):
         kwargs.setdefault("retry_total", 0)
         endpoint = kwargs.pop("endpoint", "https://example.inference.azure.com")
         if asynchronous:
-            async with AsyncInferenceServiceClient(endpoint, credential, transport=transport, **kwargs) as client:
+            async with AsyncAzureDataAIClient(endpoint, credential, transport=transport, **kwargs) as client:
                 yield client
         else:
-            with InferenceServiceClient(endpoint, credential, transport=transport, **kwargs) as client:
+            with AzureDataAIClient(endpoint, credential, transport=transport, **kwargs) as client:
                 yield client
 
     return create
@@ -107,28 +107,42 @@ def token_credential(asynchronous):
     return credential
 
 
+@pytest.fixture(params=["text", "json"], ids=["text-documents", "json-documents"])
+def document_type(request):
+    return request.param
+
+
 @pytest.fixture
-def request_payload():
-    return {
+def request_payload(document_type):
+    documents = ["Paris is the capital of France.", "Berlin is the capital of Germany."]
+    if document_type == "json":
+        documents = [
+            json.dumps({"id": index, "description": text, "metadata": {"source": "test"}})
+            for index, text in enumerate(documents)
+        ]
+    payload = {
         "query": "What is the capital of France?",
-        "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],
+        "documents": documents,
         "topK": 1,
         "returnDocuments": True,
         "returnSentenceScore": True,
         "batchSize": 2,
         "sort": False,
-        "documentType": "text",
+        "documentType": document_type,
     }
+    if document_type == "json":
+        payload["targetPaths"] = "description"
+    return payload
 
 
 @pytest.fixture
-def result_payload():
+def result_payload(request_payload):
     return {
         "scores": [
             {
                 "index": 0,
                 "score": 0.98,
-                "document": "Paris is the capital of France.",
+                "document": request_payload["documents"][0],
                 "sentenceScores": [{"index": 0, "score": 0.98}],
             }
         ],

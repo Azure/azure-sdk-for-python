@@ -1,8 +1,0 @@
-{
-    "CrossLanguagePackageId": "Microsoft.InferenceService",
-    "CrossLanguageDefinitionId": {
-        "azure.data.ai.InferenceServiceClient.semantic_rerank": "Microsoft.InferenceService.InferenceOperationGroup.semanticRerank",
-        "azure.data.ai.aio.InferenceServiceClient.semantic_rerank": "Microsoft.InferenceService.InferenceOperationGroup.semanticRerank"
-    },
-    "CrossLanguageVersion": "c0b58a8f9aab"
-}

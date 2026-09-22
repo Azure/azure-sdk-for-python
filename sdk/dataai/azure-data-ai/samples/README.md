@@ -1,6 +1,6 @@
 # Azure Data AI samples
 
-These samples use dictionary requests and responses with Azure Inference Service.
+These samples use dictionary requests and responses with Azure Data AI, hosted by Azure Inference Service.
 They do not require any model classes or a Cosmos DB account.
 
 The SDK takes its endpoint and credential directly from the application. Environment
@@ -13,7 +13,7 @@ The asynchronous and Entra samples read these environment variables:
 
 | Variable | Value |
 | --- | --- |
-| `AZURE_DATA_AI_ENDPOINT` | Azure Inference Service endpoint. |
+| `AZURE_DATA_AI_ENDPOINT` | Azure Data AI endpoint. |
 | `AZURE_DATA_AI_KEY` | API subscription key, required for the key-auth samples. |
 
 Never put real credentials in source code intended to be shared.
@@ -23,6 +23,8 @@ Never put real credentials in source code intended to be shared.
 - `python samples/semantic_reranking_entra.py`: synchronous Microsoft Entra example.
   Install `azure-identity` and configure a supported credential with permission
   to invoke the service endpoint.
+- `python samples/semantic_reranking_entra_json.py`: Microsoft Entra example for
+  JSON documents, selected fields, and document/sentence scores.
 - `python samples/semantic_reranking_throttling.py`: bounded asynchronous throttling benchmark
   using the original synchronous sample's current endpoint, key, query, documents, and options.
 
@@ -58,6 +60,28 @@ with a `targetPaths` string. See the [JSON document and model-selection example]
 Python method names use snake_case, but dictionary keys keep the service's JSON
 names: `topK`, `returnDocuments`, `returnSentenceScore`, and `sentenceScores`.
 Read response entries from `scores`, not the legacy `Scores` spelling.
+Sentence-score indices are zero-based and can exceed 2; sentence scores range
+from 0 to 1 inclusive. Iterate all returned sentence entries without truncation.
+
+## JSON documents with Microsoft Entra
+
+The JSON sample uses the same Entra prerequisites and `AZURE_DATA_AI_ENDPOINT`
+configuration, without an API key:
+
+```bash
+python samples/semantic_reranking_entra_json.py
+python samples/semantic_reranking_entra_json.py --model semantic-reranker-v1
+```
+
+Use a model supported by your endpoint, or omit `--model` for its default.
+The sample serializes each document with `json.dumps`, sets `documentType` to
+`"json"`, and passes `"title,description"` as the comma-separated `targetPaths`
+string. Do not pass dictionaries directly in the `documents` array.
+
+Returned document text remains a JSON-encoded string; the sample uses `json.loads`
+to display its fields. It also prints any returned sentence scores. Only one
+JSON sample is provided; automated coverage exercises both sync/async clients and
+raw-key, `AzureKeyCredential`, and Entra authentication.
 
 ## Throttling benchmark
 

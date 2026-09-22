@@ -1,6 +1,6 @@
 # Azure Data AI client library for Python
 
-`azure-data-ai` provides access to **Azure Inference Service**. This initial preview
+`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. This initial preview
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
@@ -32,8 +32,8 @@ from this package directory instead.
 ### Prerequisites
 
 - Python 3.10 or later.
-- An [Azure subscription][azure_sub] and an Azure Inference Service endpoint.
-- A key issued for an Azure Inference Service endpoint with key-based authentication
+- An [Azure subscription][azure_sub] and an Azure Data AI endpoint.
+- A key issued for an Azure Data AI endpoint with key-based authentication
   enabled, or a Microsoft Entra identity with permission to invoke the service.
 
 For Cosmos-linked reranking, the [Cosmos DB Semantic Reranker setup][cosmos_reranker]
@@ -49,9 +49,9 @@ Use `AzureKeyCredential` for API-key authentication:
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai import InferenceServiceClient
+from azure.data.ai import AzureDataAIClient
 
-with InferenceServiceClient(
+with AzureDataAIClient(
     endpoint=os.environ["AZURE_DATA_AI_ENDPOINT"],
     credential=AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"]),
 ) as client:
@@ -76,7 +76,7 @@ The key is sent in the `Ocp-Apim-Subscription-Key` header using Azure Core's
 a raw key string directly:
 
 ```python
-client = InferenceServiceClient(endpoint, credential=key)
+client = AzureDataAIClient(endpoint, credential=key)
 ```
 
 Use `AzureKeyCredential` when you need to rotate a key with `credential.update(new_key)`
@@ -93,11 +93,11 @@ token credential:
 ```python
 import os
 
-from azure.data.ai import InferenceServiceClient
+from azure.data.ai import AzureDataAIClient
 from azure.identity import DefaultAzureCredential
 
 with DefaultAzureCredential() as credential:
-    with InferenceServiceClient(
+    with AzureDataAIClient(
         os.environ["AZURE_DATA_AI_ENDPOINT"], credential
     ) as client:
         result = client.semantic_rerank(
@@ -109,7 +109,7 @@ The client requests tokens for `https://dbinference.azure.com/.default`.
 
 ## Key concepts
 
-`InferenceServiceClient` is the entry point. Call `client.semantic_rerank(request)`
+`AzureDataAIClient` is the entry point. Call `client.semantic_rerank(request)`
 directly; there is no intermediate inference subclient.
 
 Dictionary keys use the service's JSON names, not Python attribute names. For
@@ -138,6 +138,11 @@ Responses contain optional `scores` and `meta` keys. Score entries can include
 `index`, `score`, `document`, and `sentenceScores`. Metadata can include
 `tokenUsage`, `latency`, `modelName`, and `modelVersion`. All nested objects are
 dictionaries too.
+
+Each sentence score has a nonnegative, zero-based `index` and a `score` in the
+inclusive range 0–1. Sentence indices are not capped at 2. The SDK returns these
+values as received; it does not truncate sentence results, clamp scores, or add
+client-side response validation.
 
 The SDK follows the pinned TypeSpec contract without renaming response keys or
 normalizing legacy payloads. Use an endpoint implementing the
@@ -205,10 +210,10 @@ token credential from `azure.identity.aio` if authenticating with Microsoft Entr
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai.aio import InferenceServiceClient
+from azure.data.ai.aio import AzureDataAIClient
 
 async def rerank():
-    async with InferenceServiceClient(
+    async with AzureDataAIClient(
         os.environ["AZURE_DATA_AI_ENDPOINT"],
         AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"]),
     ) as client:
@@ -255,12 +260,20 @@ resource permissions.
 
 `tsp-location.yaml` records the REST contract from
 [Azure/azure-rest-api-specs-pr#30255][spec_pr] at
-`de6631e6066f6eb00afa338ac8544c950e1fdda0`. TypeSpec remains the contract reference,
+`6834c9b873d205ea639cfcacc191633afdfcd760`. Its service title is **Azure Data AI**
+and its namespace is `Azure.Data.AI`; the route, authentication header/token
+audience, request fields, and API version remain unchanged.
+TypeSpec remains the contract reference,
 but **does not generate this Python runtime**. Do not run `tsp-client update` in
 this package: it would restore the generated implementation. Update the thin
 clients, reranking helpers, and their contract tests deliberately when the service API changes.
 
-The public surface is `InferenceServiceClient.semantic_rerank(request)`, plus
+The handwritten Python API uses `AzureDataAIClient` in both `azure.data.ai` and
+`azure.data.ai.aio`. The TypeSpec explicitly selects this client name for Python
+and C#. The package lives at
+`sdk/dataai/azure-data-ai`, matching the spec's `sdk/dataai` service directory.
+
+The public surface is `AzureDataAIClient.semantic_rerank(request)`, plus
 client lifecycle methods. Generic raw-request methods, binary-body overloads,
 model classes, and general-purpose serialization helpers are intentionally absent.
 
@@ -272,7 +285,7 @@ python -m pip install -e .
 python -m pytest tests
 ```
 
-This publishable package remains `sdk/inferenceservice/azure-data-ai`, with the
+This publishable package lives in `sdk/dataai/azure-data-ai`, with the
 `azure.data.ai` import namespace. The separate prototype lives in
 `sdk/cosmos/azure-data-ai-inference` and uses `azure.data.ai_inference`, so it cannot
 shadow the publishable SDK when an IDE adds the prototype to its source roots.

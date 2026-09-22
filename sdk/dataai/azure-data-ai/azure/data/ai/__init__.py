@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Azure Inference Service client library."""
+"""Azure Data AI client library."""
 
-from ._inference_service_client import InferenceServiceClient
+from ._azure_data_ai_client import AzureDataAIClient
 from ._version import VERSION
 
 __version__ = VERSION
 
-__all__ = ["InferenceServiceClient"]
+__all__ = ["AzureDataAIClient"]

@@ -1,7 +1,7 @@
 ```py
 namespace azure.data.ai
 
-    class azure.data.ai.InferenceServiceClient: implements ContextManager 
+    class azure.data.ai.AzureDataAIClient: implements ContextManager 
 
         def __init__(
                 self, 
@@ -24,7 +24,7 @@ namespace azure.data.ai
 
 namespace azure.data.ai.aio
 
-    class azure.data.ai.aio.InferenceServiceClient: implements AsyncContextManager 
+    class azure.data.ai.aio.AzureDataAIClient: implements AsyncContextManager 
 
         def __init__(
                 self, 

@@ -1,6 +1,6 @@
 {
   "apiVersion": "2026-09-01-preview",
   "apiVersions": {
-    "Microsoft.InferenceService": "2026-09-01-preview"
+    "Azure.Data.AI": "2026-09-01-preview"
   }
 }

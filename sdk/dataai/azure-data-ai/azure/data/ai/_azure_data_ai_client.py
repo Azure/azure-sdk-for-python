@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Synchronous Azure Inference Service client using Azure Core."""
+"""Synchronous Azure Data AI client using Azure Core."""
 
 from typing import Any, Union
 
@@ -15,12 +15,12 @@ from ._reranker import _SemanticReranker
 from ._shared import API_VERSION, DEFAULT_SCOPE, SUBSCRIPTION_KEY_HEADER, create_configuration
 
 
-class InferenceServiceClient:
-    """Call Azure Inference Service.
+class AzureDataAIClient:
+    """Call Azure Data AI.
 
-    :param endpoint: The Azure Inference Service endpoint.
+    :param endpoint: The Azure Data AI endpoint.
     :type endpoint: str
-    :param credential: An Azure Inference Service key, as a string or AzureKeyCredential,
+    :param credential: An Azure Data AI key, as a string or AzureKeyCredential,
         or a Microsoft Entra token credential. Keys use the ``Ocp-Apim-Subscription-Key``
         header. Use AzureKeyCredential to update a key without recreating the client.
     :type credential: str or ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
@@ -64,19 +64,19 @@ class InferenceServiceClient:
         :param request: Request dictionary with a nonempty ``query`` string and a nonempty
             ``documents`` list of strings. Optional request keys are:
 
-            * ``model`` (str): Name of a reranking model supported by the endpoint.
-              Omit it to use the service's default model.
             * ``topK`` (int): Maximum number of ranked documents to return.
               Must be between 1 and 2147483647.
+            * ``returnDocuments`` (bool): Whether to include document text in the response.
+            * ``returnSentenceScore`` (bool): Whether to include sentence-level scores.
             * ``batchSize`` (int): Number of documents processed per batch.
               Must be between 1 and 2147483647.
             * ``sort`` (bool): Whether to sort results by relevance score.
-            * ``returnDocuments`` (bool): Whether to include document text in the response.
-            * ``returnSentenceScore`` (bool): Whether to include sentence-level scores.
             * ``documentType`` (str): Document format, such as ``"text"`` or ``"json"``.
               JSON documents must be JSON-encoded strings.
             * ``targetPaths`` (str): JSON paths containing the text to rank when
               ``documentType`` is ``"json"``.
+            * ``model`` (str): Name of a reranking model supported by the endpoint.
+              Omit it to use the service's default model.
 
             These options belong inside ``request``, using the service's JSON casing,
             not in ``kwargs``. The dictionary is sent unchanged; the service validates
@@ -84,6 +84,8 @@ class InferenceServiceClient:
         :type request: dict[str, Any]
         :return: The response dictionary. Optional ``scores`` entries contain ``index``,
             ``score``, and, when requested, ``document`` and ``sentenceScores``.
+            Sentence entries contain a nonnegative, zero-based ``index`` (not capped at 2)
+            and a ``score`` from 0 to 1 inclusive. The response is returned unchanged.
             Optional ``meta`` contains token usage, latency, ``modelName``, and ``modelVersion``.
         :rtype: dict[str, Any]
         :raises ~azure.core.exceptions.HttpResponseError: If the service rejects the request.
@@ -94,7 +96,7 @@ class InferenceServiceClient:
         """Close the underlying Azure Core client."""
         self._client.close()
 
-    def __enter__(self) -> "InferenceServiceClient":
+    def __enter__(self) -> "AzureDataAIClient":
         self._client.__enter__()
         return self
 

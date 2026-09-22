@@ -1,0 +1,8 @@
+{
+    "CrossLanguagePackageId": "Azure.Data.AI",
+    "CrossLanguageDefinitionId": {
+        "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
+    },
+    "CrossLanguageVersion": "03cf9d91e3c5"
+}

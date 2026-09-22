@@ -3,37 +3,35 @@
 
 """Rerank documents asynchronously using dictionaries and an API key."""
 
-import argparse
 import asyncio
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai.aio import InferenceServiceClient
+from azure.data.ai.aio import AzureDataAIClient
 
 
-async def main(model: str | None = None) -> None:
+async def main() -> None:
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
     credential = AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"])
-    async with InferenceServiceClient(endpoint, credential) as client:
+    async with AzureDataAIClient(endpoint, credential) as client:
         request = {
             "query": "What is the capital of France?",
             "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],
+            "topK": 2,
             "returnDocuments": True,
             "returnSentenceScore": True,
-            "topK": 1,
-            "batchSize": 2,
+            "batchSize": 8,
             "sort": True,
             "documentType": "text",
+            "model": "aisearch-reranker",
         }
-        if model is not None:
-            request["model"] = model
         result = await client.semantic_rerank(request)
 
-    for score in result.get("scores", []):
+    for score in result.get("Scores", []):
         print(score["index"], score["score"], score.get("document"))
+        for sentence in score.get("sentenceScores", []):
+            print("  Sentence", sentence["index"], "score:", sentence["score"])
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Rerank documents asynchronously with an Azure Inference Service key.")
-    parser.add_argument("--model", help="Model supported by the endpoint; omitted by default.")
-    asyncio.run(main(model=parser.parse_args().model))
+    asyncio.run(main())
