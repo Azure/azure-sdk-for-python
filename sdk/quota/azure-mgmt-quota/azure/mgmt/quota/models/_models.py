@@ -2229,7 +2229,7 @@ class QuotaTransferProperties(_Model):  # pylint: disable=docstring-keyword-shou
      subscription.
     :vartype destination_tenant_id: str
     :ivar billing_account_id: Billing account id both donor and recipient subscriptions must roll
-     up to. Required.
+     up to.
     :vartype billing_account_id: str
     :ivar resource_name: The quota dimension being moved, scoped by the URI's target provider (for
      example, ``standardDv5Family`` under Microsoft.Compute). Required.
@@ -2280,10 +2280,8 @@ class QuotaTransferProperties(_Model):  # pylint: disable=docstring-keyword-shou
     """Recipient subscription id. Must differ from the donor subscription. Required."""
     destination_tenant_id: Optional[str] = rest_field(name="destinationTenantId", visibility=["read"])
     """Recipient tenant id, resolved by the service from the recipient subscription."""
-    billing_account_id: str = rest_field(
-        name="billingAccountId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Billing account id both donor and recipient subscriptions must roll up to. Required."""
+    billing_account_id: Optional[str] = rest_field(name="billingAccountId", visibility=["read"])
+    """Billing account id both donor and recipient subscriptions must roll up to."""
     resource_name: str = rest_field(name="resourceName", visibility=["read", "create", "update", "delete", "query"])
     """The quota dimension being moved, scoped by the URI's target provider (for example,
      ``standardDv5Family`` under Microsoft.Compute). Required."""
@@ -2316,7 +2314,6 @@ class QuotaTransferProperties(_Model):  # pylint: disable=docstring-keyword-shou
         *,
         display_name: str,
         destination_subscription_id: str,
-        billing_account_id: str,
         resource_name: str,
         amount: int,
         comment: Optional[str] = None,

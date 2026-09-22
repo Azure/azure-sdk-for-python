@@ -38,7 +38,6 @@ def main():
             "properties": {
                 "amount": 50,
                 "autoApprove": False,
-                "billingAccountId": "1234567890",
                 "comment": "Backfill for new prod fleet rollout.",
                 "destinationSubscriptionId": "aaaaaaaa-bbbb-cccc-dddd-000000000002",
                 "displayName": "Move 50 Dv5 vCPU to recipient",

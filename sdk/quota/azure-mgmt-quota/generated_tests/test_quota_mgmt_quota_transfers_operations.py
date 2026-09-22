@@ -43,12 +43,12 @@ class TestQuotaMgmtQuotaTransfersOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "amount": 0,
-                    "billingAccountId": "str",
                     "destinationSubscriptionId": "str",
                     "displayName": "str",
                     "resourceName": "str",
                     "approval": {"actor": "str", "occurredAt": "2020-02-20 00:00:00", "comment": "str"},
                     "autoApprove": bool,
+                    "billingAccountId": "str",
                     "cancellation": {"actor": "str", "occurredAt": "2020-02-20 00:00:00", "reason": "str"},
                     "comment": "str",
                     "createdAt": "2020-02-20 00:00:00",

@@ -1848,7 +1848,7 @@ namespace azure.mgmt.quota.models
         amount: int
         approval: Optional[ApprovalRecord]
         auto_approve: Optional[bool]
-        billing_account_id: str
+        billing_account_id: Optional[str]
         cancellation: Optional[CancellationRecord]
         comment: Optional[str]
         created_at: Optional[datetime]
@@ -1868,7 +1868,6 @@ namespace azure.mgmt.quota.models
                 *, 
                 amount: int, 
                 auto_approve: Optional[bool] = ..., 
-                billing_account_id: str, 
                 comment: Optional[str] = ..., 
                 destination_subscription_id: str, 
                 display_name: str, 
@@ -3350,7 +3349,7 @@ namespace azure.mgmt.quota.types
         key "amount": Required[int]
         key "approval": ForwardRef('ApprovalRecord', module='types')
         key "autoApprove": bool
-        key "billingAccountId": Required[str]
+        key "billingAccountId": str
         key "cancellation": ForwardRef('CancellationRecord', module='types')
         key "comment": str
         key "createdAt": str

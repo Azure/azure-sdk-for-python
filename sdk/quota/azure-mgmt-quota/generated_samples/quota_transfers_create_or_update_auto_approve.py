@@ -38,7 +38,6 @@ def main():
             "properties": {
                 "amount": 25,
                 "autoApprove": True,
-                "billingAccountId": "1234567890",
                 "destinationSubscriptionId": "aaaaaaaa-bbbb-cccc-dddd-000000000002",
                 "displayName": "Move 25 Dv5 vCPU - auto approved",
                 "resourceName": "standardDv5Family",

@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Quota": "2026-09-01-preview"
   },
-  "commit": "9fc594b02872a9fce4e4852dc831c155320022f1",
+  "commit": "35b6e5452f7b95aa8b5f15f2d92a2466bae87042",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/quota/resource-manager/Microsoft.Quota/Quota",
   "emitterVersion": "0.63.5",

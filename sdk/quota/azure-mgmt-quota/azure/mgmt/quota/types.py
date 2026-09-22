@@ -618,7 +618,7 @@ class QuotaTransferProperties(TypedDict, total=False):
      subscription.
     :vartype destinationTenantId: str
     :ivar billingAccountId: Billing account id both donor and recipient subscriptions must roll up
-     to. Required.
+     to.
     :vartype billingAccountId: str
     :ivar resourceName: The quota dimension being moved, scoped by the URI's target provider (for
      example, ``standardDv5Family`` under Microsoft.Compute). Required.
@@ -663,8 +663,8 @@ class QuotaTransferProperties(TypedDict, total=False):
     """Recipient subscription id. Must differ from the donor subscription. Required."""
     destinationTenantId: str
     """Recipient tenant id, resolved by the service from the recipient subscription."""
-    billingAccountId: Required[str]
-    """Billing account id both donor and recipient subscriptions must roll up to. Required."""
+    billingAccountId: str
+    """Billing account id both donor and recipient subscriptions must roll up to."""
     resourceName: Required[str]
     """The quota dimension being moved, scoped by the URI's target provider (for example,
      ``standardDv5Family`` under Microsoft.Compute). Required."""
