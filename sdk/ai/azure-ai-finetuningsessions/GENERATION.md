@@ -223,16 +223,24 @@ These checks establish local reproducibility and offline compatibility, not
 live GPU/service validation, review approval, all supported-Python CI, or
 cross-language SDK readiness.
 
-## Historical source pin and pending final validation
+## Current source pin and review validation
 
-[tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) at the parity baseline pins public TypeSpec commit
-`58363c8c67228e0320e55916ad70b8ff48c5a7b4`, which contains the validated model
-projection, client mappings, and CI repairs. The source
+[tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
+`a170cb1188d5fc706a6433a0c95a13caf30c72fe`, which contains the validated model
+projection, client mappings, CI repairs, and closed agent-definition opt-in union. The source
 fingerprint is recorded separately
 in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
 independently reproducible. The new source pointer and matching provenance have
 been verified against the pushed TypeSpec commit and two independent emissions.
+
+The [agent opt-in review](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4073849886)
+removes the unrestricted `string` member from `AgentDefinitionOptInKeys` only.
+All named values and version annotations remain, and `FoundryFeaturesOptInKeys`
+is unchanged. All four REST outputs change only that schema's extensibility.
+Regeneration leaves all 21 generated entries and the complete fine-tuning SDK
+runtime unchanged; no client, model, serialization, or handwritten-code fix is
+needed. This source-pin update records the reviewed shared TypeSpec input.
 
 Archived public-only tests remain in [review_tests/](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/review_tests/DEFERRED.md), and
 the earlier implementation is recoverable at SDK commit `8ebc1ea5c9`. The heartbeat

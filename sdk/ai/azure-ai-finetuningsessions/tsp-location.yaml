@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
 # Validated Python-specific preview inputs, including loom-models.tsp.
-commit: 58363c8c67228e0320e55916ad70b8ff48c5a7b4
+commit: a170cb1188d5fc706a6433a0c95a13caf30c72fe
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json
