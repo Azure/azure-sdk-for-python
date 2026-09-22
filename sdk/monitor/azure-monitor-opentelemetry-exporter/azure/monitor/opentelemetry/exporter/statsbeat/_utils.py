@@ -3,10 +3,8 @@
 import os
 import logging
 import json
-import re
 from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict, List
-from urllib.parse import urlparse
 from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -21,10 +19,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
     _ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY,
-    _ONE_SETTINGS_DEFAULT_SDK_STATS_ENDPOINT_KEY,
     _ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY,
 )
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
@@ -112,14 +108,13 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
     logger = logging.getLogger(__name__)
 
     default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
-    default_endpoint = settings.get(_ONE_SETTINGS_DEFAULT_SDK_STATS_ENDPOINT_KEY)
 
     try:
         # Get supported data boundaries
         supported_boundaries = settings.get(_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY)
         if not supported_boundaries:
             logger.warning("Supported data boundaries key not found in configuration")
-            return _apply_sdk_stats_endpoint(default_connection_string, default_endpoint)
+            return default_connection_string
 
         # Parse if it's a JSON string
         if isinstance(supported_boundaries, str):
@@ -128,7 +123,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         # supported_boundaries should be a list
         if not isinstance(supported_boundaries, Iterable):
             logger.warning("Supported data boundaries is not iterable")
-            return _apply_sdk_stats_endpoint(default_connection_string, default_endpoint)
+            return default_connection_string
 
         # Check each supported boundary to find the region
         for boundary in supported_boundaries:
@@ -152,8 +147,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
                     connection_string = settings.get(connection_string_key)
 
                     if connection_string:
-                        endpoint = settings.get(f"{boundary}_SDK_STATS_ENDPOINT") or default_endpoint
-                        return _apply_sdk_stats_endpoint(connection_string, endpoint)
+                        return connection_string
 
                     logger.warning("Connection string key '%s' not found in configuration", connection_string_key)
 
@@ -161,7 +155,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         if not default_connection_string:
             logger.warning("Default stats connection string not found in configuration")
             return None
-        return _apply_sdk_stats_endpoint(default_connection_string, default_endpoint)
+        return default_connection_string
     except (ValueError, TypeError, KeyError) as ex:
         logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "Error parsing configuration for region '%s': %s", target_region, str(ex)
@@ -172,44 +166,6 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
             "Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)
         )
         return None
-
-
-def _apply_sdk_stats_endpoint(connection_string: Optional[str], endpoint: Optional[str]) -> Optional[str]:
-    """Apply a OneSettings SDKStats destination to a resource connection string.
-
-    Preserves the connection string's instrumentation key and other fields while replacing
-    or appending its ingestion endpoint. If either value is missing or invalid, returns the
-    original connection string so the existing Breeze destination remains the fallback.
-
-    :param connection_string: SDKStats connection string containing the resource identity.
-    :type connection_string: Optional[str]
-    :param endpoint: OneSettings SDKStats ingestion endpoint.
-    :type endpoint: Optional[str]
-    :return: The connection string with the configured ingestion endpoint applied.
-    :rtype: Optional[str]
-    """
-    if not connection_string or not endpoint:
-        return connection_string
-
-    try:
-        parsed_endpoint = urlparse(endpoint)
-        if parsed_endpoint.scheme.lower() != "https" or not parsed_endpoint.netloc:
-            return connection_string
-        ConnectionStringParser(connection_string)
-    except ValueError:
-        return connection_string
-
-    normalized_endpoint = endpoint.rstrip("/") + "/"
-    if re.search(r"(?:^|;)IngestionEndpoint=", connection_string, re.IGNORECASE):
-        return re.sub(
-            r"(?i)(IngestionEndpoint=)[^;]*",
-            rf"\g<1>{normalized_endpoint}",
-            connection_string,
-            count=1,
-        )
-    return f"{connection_string.rstrip(';')};IngestionEndpoint={normalized_endpoint}"
-
-
 def _get_additional_observations(metric_name: str, options: CallbackOptions) -> List[Observation]:
     """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
 
