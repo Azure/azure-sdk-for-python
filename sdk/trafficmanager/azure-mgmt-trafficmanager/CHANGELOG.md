@@ -30,10 +30,10 @@
   - Model `TrafficManagerGeographicHierarchy` moved instance variable `geographic_hierarchy` under property `properties` whose type is `GeographicHierarchyProperties`
   - Model `UserMetricsModel` moved instance variable `key` under property `properties` whose type is `UserMetricsProperties`
   - Deleted or renamed model `ProfileListResult`
+  - Parameter `heat_map_type` of method `HeatMapOperations.get` is now required
   - Method `HeatMapOperations.get` changed type of its parameter `bot_right` from `List[float]` to `list[float]`
   - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
   - Method `HeatMapOperations.get` changed type of its parameter `heat_map_type` from `str` to `Union[str, HeatMapType]`
-  - Method `HeatMapOperations.get` removed default value `None` from its parameter `heat_map_type`
   - Method `HeatMapOperations.get` changed its parameter `heat_map_type` from `keyword_only` to `positional_or_keyword`
   - Method `HeatMapOperations.get` changed type of its parameter `top_left` from `List[float]` to `list[float]`
   - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
