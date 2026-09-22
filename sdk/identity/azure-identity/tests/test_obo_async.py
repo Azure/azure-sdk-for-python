@@ -339,6 +339,70 @@ async def test_no_cross_user_token_from_shared_cache(get_token_method):
     assert b_exchanges == ["b"], "credential did not exchange its own user assertion"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
+    shared_cache = msal.TokenCache()
+
+    async def send_a(request, **kwargs):
+        assert "refresh_token" not in request.body
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token="ACCESS-TOKEN-A",
+                refresh_token="REFRESH-TOKEN-A",
+                expires_in=0,
+                uid="a",
+                utid="utid",
+            )
+        )
+
+    b_requests = []
+
+    async def send_b(request, **kwargs):
+        refresh_token = request.body.get("refresh_token")
+        b_requests.append(refresh_token)
+        if refresh_token is None:
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token="ACCESS-TOKEN-B",
+                    refresh_token="REFRESH-TOKEN-B",
+                    expires_in=0,
+                    uid="b",
+                    utid="utid",
+                )
+            )
+
+        assert refresh_token == "REFRESH-TOKEN-B"
+        return mock_response(json_payload=build_aad_response(access_token="REFRESHED-ACCESS-TOKEN-B"))
+
+    credential_a = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion-a",
+        transport=Mock(send=send_a),
+        cache=shared_cache,
+    )
+    token_a = await getattr(credential_a, get_token_method)("scope")
+    assert token_a.token == "ACCESS-TOKEN-A"
+
+    credential_b = OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion-b",
+        transport=Mock(send=send_b),
+        cache=shared_cache,
+    )
+    token_b = await getattr(credential_b, get_token_method)("scope")
+    assert token_b.token == "ACCESS-TOKEN-B"
+
+    refreshed_token_b = await getattr(credential_b, get_token_method)("scope")
+    assert refreshed_token_b.token == "REFRESHED-ACCESS-TOKEN-B"
+    assert b_requests == [None, "REFRESH-TOKEN-B"]
+    assert credential_b._client.last_home_account_id == "b.utid"
+
+
 def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
     valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
