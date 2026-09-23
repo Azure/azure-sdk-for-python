@@ -11,6 +11,7 @@ from typing import Any, AnyStr, Dict, IO, Iterable, Optional, Union, TYPE_CHECKI
 from ._list_blobs_helper import BlobPrefix
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
+from .._shared.session_async import AsyncContainerSessionProvider, AsyncSessionProvider
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
 from ._blob_service_client_async import BlobServiceClient
@@ -167,4 +168,6 @@ __all__ = [
     "ExponentialRetry",
     "LinearRetry",
     "StorageStreamDownloader",
+    "AsyncSessionProvider",
+    "AsyncContainerSessionProvider",
 ]
