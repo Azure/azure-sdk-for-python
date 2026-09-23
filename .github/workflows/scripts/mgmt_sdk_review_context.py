@@ -8,6 +8,7 @@ retain missing-evidence diagnostics.
 
 import base64
 import binascii
+import datetime
 import difflib
 import json
 import os
@@ -427,6 +428,17 @@ def latest_release_version(parsed_changelog):
     return None
 
 
+def is_released_heading(heading):
+    match = re.fullmatch(r"([0-9]+\.[0-9]+\.[0-9]+(?:b[0-9]+)?)\s+\(([0-9]{4}-[0-9]{2}-[0-9]{2})\)", heading)
+    if not match or match[1] == "0.0.0":
+        return False
+    try:
+        datetime.date.fromisoformat(match[2])
+    except ValueError:
+        return False
+    return True
+
+
 def resolve_release_tag(client, package_name, version):
     if not version:
         return {"status": "unverified", "error": "No previous release heading was found at the merge base"}
@@ -649,7 +661,7 @@ def collect():
             and old_file.get("status") == "missing"
             and new_file.get("status") == "available"
             and len(new_parsed["releases"]) == 1
-            and latest_release_version(new_parsed)
+            and is_released_heading(new_parsed["releases"][0]["heading"])
             and not new_parsed["entries"]
             and not new_parsed["emptySections"]
             and all(item.get("status") == "added" and not item.get("previous_filename") for item in package_changes)

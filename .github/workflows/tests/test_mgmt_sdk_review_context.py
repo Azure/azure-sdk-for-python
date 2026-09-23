@@ -470,6 +470,34 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual("complete", context["breakingChangeContext"][0]["status"])
         self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], 31)
 
+    def test_initial_release_requires_a_valid_dated_release_heading(self):
+        for heading in (
+            "Notes",
+            "1.0.0",
+            "1.0.0 (Unreleased)",
+            "0.0.0 (2026-09-22)",
+            "1.0 (2026-09-22)",
+            "1.0.0b (2026-09-22)",
+            "1.0.0 (2026-9-22)",
+            "1.0.0 (2026-02-30)",
+            "1.0.0 (2026-13-01)",
+            "1.0.0 (2026-09-22) Additional notes",
+        ):
+            with self.subTest(heading=heading):
+                package = self.collect_initial_release(
+                    changelog=f"## {heading}\n### Other Changes\n- Initial version.\n"
+                )["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+                self.assertTrue(package["collectionIssues"])
+        for heading in ("1.0.0 (2026-09-22)", "1.0.0b1 (2026-09-22)", "1.0.0b12 (2024-02-29)"):
+            with self.subTest(heading=heading):
+                package = self.collect_initial_release(
+                    changelog=f"## {heading}\n### Other Changes\n- Initial version.\n"
+                )["breakingChangeContext"][0]
+                self.assertEqual("complete", package["status"])
+                self.assertEqual("not_applicable", package["releaseBaseline"]["status"])
+
     def test_unavailable_baseline_never_emits_historical_deltas(self):
         for status in (403, 404, 503):
             with self.subTest(status=status):
