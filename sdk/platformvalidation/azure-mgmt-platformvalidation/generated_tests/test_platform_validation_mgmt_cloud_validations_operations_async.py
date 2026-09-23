@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation.aio import PlatformValidationClient
+from azure.mgmt.platformvalidation.aio import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtCloudValidationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient, is_async=True)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execution_plan_runs_get(self, resource_group):
-        response = await self.client.execution_plan_runs.get(
+    async def test_cloud_validations_get(self, resource_group):
+        response = await self.client.cloud_validations.get(
             resource_group_name=resource_group.name,
             cloud_validation_name="str",
-            validation_execution_plan_name="str",
-            execution_plan_run_name="str",
         )
 
         # please add some check logic here by yourself
@@ -34,18 +32,16 @@ class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execution_plan_runs_begin_create_or_update(self, resource_group):
+    async def test_cloud_validations_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.execution_plan_runs.begin_create_or_update(
+            await self.client.cloud_validations.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 cloud_validation_name="str",
-                validation_execution_plan_name="str",
-                execution_plan_run_name="str",
                 resource={
+                    "location": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "completedAt": "2020-02-20 00:00:00",
                         "description": "str",
                         "error": {
                             "additionalInfo": [{"info": {}, "type": "str"}],
@@ -54,20 +50,8 @@ class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTe
                             "message": "str",
                             "target": "str",
                         },
-                        "planConfigurationSnapshot": "str",
+                        "managedOnBehalfOfConfiguration": {"moboBrokerResources": [{"id": "str"}]},
                         "provisioningState": "str",
-                        "reportedAt": "2020-02-20 00:00:00",
-                        "startedAt": "2020-02-20 00:00:00",
-                        "status": "str",
-                        "testRunIds": ["str"],
-                        "testRunSummary": {
-                            "failedTests": 0,
-                            "message": "str",
-                            "overallResult": "str",
-                            "passedTests": 0,
-                            "skippedTests": 0,
-                            "totalTests": 0,
-                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -77,6 +61,7 @@ class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTe
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
+                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -87,13 +72,12 @@ class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execution_plan_runs_begin_delete(self, resource_group):
+    async def test_cloud_validations_begin_update(self, resource_group):
         response = await (
-            await self.client.execution_plan_runs.begin_delete(
+            await self.client.cloud_validations.begin_update(
                 resource_group_name=resource_group.name,
                 cloud_validation_name="str",
-                validation_execution_plan_name="str",
-                execution_plan_run_name="str",
+                properties={"properties": {"description": "str"}, "tags": {"str": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,12 +86,31 @@ class TestPlatformValidationExecutionPlanRunsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_execution_plan_runs_list_by_execution_plan(self, resource_group):
-        response = self.client.execution_plan_runs.list_by_execution_plan(
+    async def test_cloud_validations_begin_delete(self, resource_group):
+        response = await (
+            await self.client.cloud_validations.begin_delete(
+                resource_group_name=resource_group.name,
+                cloud_validation_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cloud_validations_list_by_resource_group(self, resource_group):
+        response = self.client.cloud_validations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            cloud_validation_name="str",
-            validation_execution_plan_name="str",
         )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cloud_validations_list_by_subscription(self, resource_group):
+        response = self.client.cloud_validations.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.platformvalidation
 
-    class azure.mgmt.platformvalidation.PlatformValidationClient: implements ContextManager 
+    class azure.mgmt.platformvalidation.PlatformValidationMgmtClient: implements ContextManager 
         cloud_validations: CloudValidationsOperations
         execution_plan_runs: ExecutionPlanRunsOperations
         operation_status: OperationStatusOperations
@@ -37,7 +37,7 @@ namespace azure.mgmt.platformvalidation
 
 namespace azure.mgmt.platformvalidation.aio
 
-    class azure.mgmt.platformvalidation.aio.PlatformValidationClient: implements AsyncContextManager 
+    class azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient: implements AsyncContextManager 
         cloud_validations: CloudValidationsOperations
         execution_plan_runs: ExecutionPlanRunsOperations
         operation_status: OperationStatusOperations
@@ -535,24 +535,17 @@ namespace azure.mgmt.platformvalidation.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.platformvalidation.models.CloudValidationOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
     class azure.mgmt.platformvalidation.models.CloudValidationProperties(_Model):
         description: Optional[str]
         error: Optional[ErrorDetail]
         managed_on_behalf_of_configuration: Optional[ManagedOnBehalfOfConfiguration]
-        overall_state: Optional[Union[str, CloudValidationOverallState]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                overall_state: Optional[Union[str, CloudValidationOverallState]] = ...
+                description: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -577,14 +570,12 @@ namespace azure.mgmt.platformvalidation.models
 
     class azure.mgmt.platformvalidation.models.CloudValidationUpdateProperties(_Model):
         description: Optional[str]
-        overall_state: Optional[Union[str, CloudValidationOverallState]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                overall_state: Optional[Union[str, CloudValidationOverallState]] = ...
+                description: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -891,15 +882,9 @@ namespace azure.mgmt.platformvalidation.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.platformvalidation.models.ValidationExecutionPlanOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
     class azure.mgmt.platformvalidation.models.ValidationExecutionPlanProperties(_Model):
         description: Optional[str]
         error: Optional[ErrorDetail]
-        overall_state: Optional[Union[str, ValidationExecutionPlanOverallState]]
         plan_configuration_json: Optional[str]
         plan_configuration_uri: Optional[str]
         provisioning_state: Optional[Union[str, ValidationExecutionPlanProvisioningState]]
@@ -909,7 +894,6 @@ namespace azure.mgmt.platformvalidation.models
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                overall_state: Optional[Union[str, ValidationExecutionPlanOverallState]] = ..., 
                 plan_configuration_json: Optional[str] = ..., 
                 plan_configuration_uri: Optional[str] = ...
             ) -> None: ...
@@ -944,7 +928,6 @@ namespace azure.mgmt.platformvalidation.models
 
     class azure.mgmt.platformvalidation.models.ValidationExecutionPlanUpdateProperties(_Model):
         description: Optional[str]
-        overall_state: Optional[Union[str, ValidationExecutionPlanOverallState]]
         plan_configuration_json: Optional[str]
         plan_configuration_uri: Optional[str]
 
@@ -953,7 +936,6 @@ namespace azure.mgmt.platformvalidation.models
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                overall_state: Optional[Union[str, ValidationExecutionPlanOverallState]] = ..., 
                 plan_configuration_json: Optional[str] = ..., 
                 plan_configuration_uri: Optional[str] = ...
             ) -> None: ...
@@ -1005,20 +987,6 @@ namespace azure.mgmt.platformvalidation.models
         owners: Optional[list[str]]
         parent_category_id: Optional[str]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                audience: Optional[Union[str, CatalogAudience]] = ..., 
-                description: Optional[str] = ..., 
-                display_name: Optional[str] = ..., 
-                owners: Optional[list[str]] = ..., 
-                parent_category_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.platformvalidation.models.ValidationTestFailureDetails(_Model):
@@ -1076,13 +1044,6 @@ namespace azure.mgmt.platformvalidation.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.platformvalidation.models.ValidationTestOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ACTIVE = "Active"
-        DISABLED = "Disabled"
-        DRAFT = "Draft"
-        PUBLISHED = "Published"
-
-
     class azure.mgmt.platformvalidation.models.ValidationTestPassDetails(_Model):
         result_code: Optional[str]
         result_details: Optional[str]
@@ -1094,32 +1055,13 @@ namespace azure.mgmt.platformvalidation.models
         category_ids: Optional[list[str]]
         current_version: Optional[str]
         description: Optional[str]
+        display_name: Optional[str]
         inputs: Optional[list[ValidationTestInput]]
         last_published_at: Optional[datetime]
         latest_published_version: Optional[str]
-        overall_state: Optional[Union[str, ValidationTestOverallState]]
         owners: Optional[list[str]]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         test_store_uri: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                audience: Optional[Union[str, CatalogAudience]] = ..., 
-                category_ids: Optional[list[str]] = ..., 
-                current_version: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                inputs: Optional[list[ValidationTestInput]] = ..., 
-                last_published_at: Optional[datetime] = ..., 
-                latest_published_version: Optional[str] = ..., 
-                overall_state: Optional[Union[str, ValidationTestOverallState]] = ..., 
-                owners: Optional[list[str]] = ..., 
-                test_store_uri: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.platformvalidation.models.ValidationTestRun(ProxyResource):
@@ -1151,17 +1093,6 @@ namespace azure.mgmt.platformvalidation.models
         started_at: Optional[datetime]
         status: Optional[Union[str, ValidationTestRunStatus]]
         test_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                inputs_json: Optional[str] = ..., 
-                test_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.platformvalidation.models.ValidationTestRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1204,28 +1135,11 @@ namespace azure.mgmt.platformvalidation.models
         category_ids: Optional[list[str]]
         content_hash: Optional[str]
         description: Optional[str]
+        display_name: Optional[str]
         inputs: Optional[list[ValidationTestInput]]
-        overall_state: Optional[Union[str, ValidationTestOverallState]]
         owners: Optional[list[str]]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         test_store_uri: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                audience: Optional[Union[str, CatalogAudience]] = ..., 
-                category_ids: Optional[list[str]] = ..., 
-                content_hash: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                inputs: Optional[list[ValidationTestInput]] = ..., 
-                overall_state: Optional[Union[str, ValidationTestOverallState]] = ..., 
-                owners: Optional[list[str]] = ..., 
-                test_store_uri: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
 namespace azure.mgmt.platformvalidation.operations
@@ -1681,12 +1595,10 @@ namespace azure.mgmt.platformvalidation.types
         key "description": str
         key "error": ForwardRef('ErrorDetail', module='types')
         key "managedOnBehalfOfConfiguration": ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
-        key "overallState": Union[str, CloudValidationOverallState]
         key "provisioningState": Union[str, ProvisioningState]
         description: str
         error: ErrorDetail
         managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
-        overallState: Union[str, CloudValidationOverallState]
         provisioningState: Union[str, ProvisioningState]
 
 
@@ -1698,9 +1610,7 @@ namespace azure.mgmt.platformvalidation.types
 
     class azure.mgmt.platformvalidation.types.CloudValidationUpdateProperties(TypedDict, total=False):
         key "description": str
-        key "overallState": Union[str, CloudValidationOverallState]
         description: str
-        overallState: Union[str, CloudValidationOverallState]
 
 
     class azure.mgmt.platformvalidation.types.ErrorAdditionalInfo(TypedDict, total=False):
@@ -1850,13 +1760,11 @@ namespace azure.mgmt.platformvalidation.types
     class azure.mgmt.platformvalidation.types.ValidationExecutionPlanProperties(TypedDict, total=False):
         key "description": str
         key "error": ForwardRef('ErrorDetail', module='types')
-        key "overallState": Union[str, ValidationExecutionPlanOverallState]
         key "planConfigurationJson": str
         key "planConfigurationUri": str
         key "provisioningState": Union[str, ValidationExecutionPlanProvisioningState]
         description: str
         error: ErrorDetail
-        overallState: Union[str, ValidationExecutionPlanOverallState]
         planConfigurationJson: str
         planConfigurationUri: str
         provisioningState: Union[str, ValidationExecutionPlanProvisioningState]
@@ -1870,11 +1778,9 @@ namespace azure.mgmt.platformvalidation.types
 
     class azure.mgmt.platformvalidation.types.ValidationExecutionPlanUpdateProperties(TypedDict, total=False):
         key "description": str
-        key "overallState": Union[str, ValidationExecutionPlanOverallState]
         key "planConfigurationJson": str
         key "planConfigurationUri": str
         description: str
-        overallState: Union[str, ValidationExecutionPlanOverallState]
         planConfigurationJson: str
         planConfigurationUri: str
 

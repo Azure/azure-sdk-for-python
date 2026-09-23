@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PlatformValidationClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for PlatformValidationClient.
+class PlatformValidationMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
+    """Configuration for PlatformValidationMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

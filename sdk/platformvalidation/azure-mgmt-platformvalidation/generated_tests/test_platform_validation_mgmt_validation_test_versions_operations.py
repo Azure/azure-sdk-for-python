@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,15 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationValidationTestsOperations(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtValidationTestVersionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validation_tests_get(self, resource_group):
-        response = self.client.validation_tests.get(
+    def test_validation_test_versions_get(self, resource_group):
+        response = self.client.validation_test_versions.get(
             validation_test_name="str",
+            version="str",
         )
 
         # please add some check logic here by yourself
@@ -30,8 +31,10 @@ class TestPlatformValidationValidationTestsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validation_tests_list_by_subscription(self, resource_group):
-        response = self.client.validation_tests.list_by_subscription()
+    def test_validation_test_versions_list(self, resource_group):
+        response = self.client.validation_test_versions.list(
+            validation_test_name="str",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

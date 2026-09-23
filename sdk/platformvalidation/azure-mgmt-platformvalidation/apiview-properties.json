@@ -40,9 +40,7 @@
         "azure.mgmt.platformvalidation.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.platformvalidation.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.platformvalidation.models.ProvisioningState": "Microsoft.PlatformValidation.ProvisioningState",
-        "azure.mgmt.platformvalidation.models.CloudValidationOverallState": "Microsoft.PlatformValidation.CloudValidationOverallState",
         "azure.mgmt.platformvalidation.models.ValidationExecutionPlanProvisioningState": "Microsoft.PlatformValidation.ValidationExecutionPlanProvisioningState",
-        "azure.mgmt.platformvalidation.models.ValidationExecutionPlanOverallState": "Microsoft.PlatformValidation.ValidationExecutionPlanOverallState",
         "azure.mgmt.platformvalidation.models.ExecutionPlanRunStatus": "Microsoft.PlatformValidation.ExecutionPlanRunStatus",
         "azure.mgmt.platformvalidation.models.TestRunOverallResult": "Microsoft.PlatformValidation.TestRunOverallResult",
         "azure.mgmt.platformvalidation.models.ExecutionPlanRunProvisioningState": "Microsoft.PlatformValidation.ExecutionPlanRunProvisioningState",
@@ -50,7 +48,6 @@
         "azure.mgmt.platformvalidation.models.ValidationTestRunProvisioningState": "Microsoft.PlatformValidation.ValidationTestRunProvisioningState",
         "azure.mgmt.platformvalidation.models.CatalogAudience": "Microsoft.PlatformValidation.CatalogAudience",
         "azure.mgmt.platformvalidation.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
-        "azure.mgmt.platformvalidation.models.ValidationTestOverallState": "Microsoft.PlatformValidation.ValidationTestOverallState",
         "azure.mgmt.platformvalidation.models.ValidationTestInputDataType": "Microsoft.PlatformValidation.ValidationTestInputDataType",
         "azure.mgmt.platformvalidation.operations.OperationStatusOperations.get": "Microsoft.PlatformValidation.OperationStatus.get",
         "azure.mgmt.platformvalidation.aio.operations.OperationStatusOperations.get": "Microsoft.PlatformValidation.OperationStatus.get",
@@ -103,5 +100,5 @@
         "azure.mgmt.platformvalidation.operations.ValidationTestCategoriesOperations.list_by_subscription": "Microsoft.PlatformValidation.ValidationTestCategories.listBySubscription",
         "azure.mgmt.platformvalidation.aio.operations.ValidationTestCategoriesOperations.list_by_subscription": "Microsoft.PlatformValidation.ValidationTestCategories.listBySubscription"
     },
-    "CrossLanguageVersion": "06c49d3f584a"
+    "CrossLanguageVersion": "54e7b374bd1f"
 }

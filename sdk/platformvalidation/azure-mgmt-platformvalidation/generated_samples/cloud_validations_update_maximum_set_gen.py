@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +26,7 @@ from azure.mgmt.platformvalidation import PlatformValidationClient
 
 
 def main():
-    client = PlatformValidationClient(
+    client = PlatformValidationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -34,8 +35,10 @@ def main():
         resource_group_name="rgvalidate",
         cloud_validation_name="cvtest01",
         properties={
-            "properties": {"description": "ezutdlxrzaemjqpqpandwfixfkfk", "overallState": "Enabled"},
-            "tags": {"key3330": "hklihtouujxhnfrm"},
+            "properties": {
+                "description": "Cloud validation that groups platform validation execution plans for the target subscription."
+            },
+            "tags": {"cost-center": "platform-validation"},
         },
     ).result()
     print(response)

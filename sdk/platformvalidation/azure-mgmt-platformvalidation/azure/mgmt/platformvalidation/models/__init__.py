@@ -54,7 +54,6 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     ActionType,
     CatalogAudience,
-    CloudValidationOverallState,
     CreatedByType,
     ExecutionPlanRunProvisioningState,
     ExecutionPlanRunStatus,
@@ -62,10 +61,8 @@ from ._enums import (  # type: ignore
     ProvisioningState,
     ResourceProvisioningState,
     TestRunOverallResult,
-    ValidationExecutionPlanOverallState,
     ValidationExecutionPlanProvisioningState,
     ValidationTestInputDataType,
-    ValidationTestOverallState,
     ValidationTestRunProvisioningState,
     ValidationTestRunStatus,
 )
@@ -111,7 +108,6 @@ __all__ = [
     "ValidationTestVersionProperties",
     "ActionType",
     "CatalogAudience",
-    "CloudValidationOverallState",
     "CreatedByType",
     "ExecutionPlanRunProvisioningState",
     "ExecutionPlanRunStatus",
@@ -119,10 +115,8 @@ __all__ = [
     "ProvisioningState",
     "ResourceProvisioningState",
     "TestRunOverallResult",
-    "ValidationExecutionPlanOverallState",
     "ValidationExecutionPlanProvisioningState",
     "ValidationTestInputDataType",
-    "ValidationTestOverallState",
     "ValidationTestRunProvisioningState",
     "ValidationTestRunStatus",
 ]

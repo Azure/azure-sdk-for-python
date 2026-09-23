@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.platformvalidation import PlatformValidationClient
 
 
 def main():
-    client = PlatformValidationClient(
+    client = PlatformValidationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -33,7 +33,7 @@ def main():
     response = client.execution_plan_runs.list_by_execution_plan(
         resource_group_name="rgvalidate",
         cloud_validation_name="cvtest01",
-        validation_execution_plan_name="veptest01",
+        validation_execution_plan_name="contoso-linux-cert",
     )
     for item in response:
         print(item)

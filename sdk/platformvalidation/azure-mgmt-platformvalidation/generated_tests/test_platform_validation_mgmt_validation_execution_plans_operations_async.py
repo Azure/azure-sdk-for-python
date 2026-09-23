@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation.aio import PlatformValidationClient
+from azure.mgmt.platformvalidation.aio import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,9 +15,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationValidationExecutionPlansOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtValidationExecutionPlansOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient, is_async=True)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -52,7 +52,6 @@ class TestPlatformValidationValidationExecutionPlansOperationsAsync(AzureMgmtRec
                             "message": "str",
                             "target": "str",
                         },
-                        "overallState": "str",
                         "planConfigurationJson": "str",
                         "planConfigurationUri": "str",
                         "provisioningState": "str",
@@ -83,12 +82,7 @@ class TestPlatformValidationValidationExecutionPlansOperationsAsync(AzureMgmtRec
                 cloud_validation_name="str",
                 validation_execution_plan_name="str",
                 properties={
-                    "properties": {
-                        "description": "str",
-                        "overallState": "str",
-                        "planConfigurationJson": "str",
-                        "planConfigurationUri": "str",
-                    },
+                    "properties": {"description": "str", "planConfigurationJson": "str", "planConfigurationUri": "str"},
                     "tags": {"str": "str"},
                 },
             )

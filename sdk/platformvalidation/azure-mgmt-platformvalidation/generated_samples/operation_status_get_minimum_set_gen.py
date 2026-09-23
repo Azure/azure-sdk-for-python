@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,14 +25,14 @@ from azure.mgmt.platformvalidation import PlatformValidationClient
 
 
 def main():
-    client = PlatformValidationClient(
+    client = PlatformValidationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.operation_status.get(
-        location="obkgllzbzclv",
-        operation_id="mewjfcrlycxuylboqxenpnsxxgcncx",
+        location="southcentralus",
+        operation_id="11111111-1111-4111-8111-111111111111",
     )
     print(response)
 

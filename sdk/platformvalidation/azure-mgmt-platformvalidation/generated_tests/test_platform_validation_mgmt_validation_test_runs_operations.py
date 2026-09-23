@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,19 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationValidationTestVersionsOperations(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtValidationTestRunsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validation_test_versions_get(self, resource_group):
-        response = self.client.validation_test_versions.get(
-            validation_test_name="str",
-            version="str",
+    def test_validation_test_runs_get(self, resource_group):
+        response = self.client.validation_test_runs.get(
+            resource_group_name=resource_group.name,
+            cloud_validation_name="str",
+            validation_execution_plan_name="str",
+            execution_plan_run_name="str",
+            validation_test_run_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,9 +34,12 @@ class TestPlatformValidationValidationTestVersionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_validation_test_versions_list(self, resource_group):
-        response = self.client.validation_test_versions.list(
-            validation_test_name="str",
+    def test_validation_test_runs_list_by_execution_plan_run(self, resource_group):
+        response = self.client.validation_test_runs.list_by_execution_plan_run(
+            resource_group_name=resource_group.name,
+            cloud_validation_name="str",
+            validation_execution_plan_name="str",
+            execution_plan_run_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

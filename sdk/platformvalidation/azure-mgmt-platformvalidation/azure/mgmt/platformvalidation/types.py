@@ -12,13 +12,11 @@ from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
-        CloudValidationOverallState,
         CreatedByType,
         ExecutionPlanRunProvisioningState,
         ExecutionPlanRunStatus,
         ProvisioningState,
         TestRunOverallResult,
-        ValidationExecutionPlanOverallState,
         ValidationExecutionPlanProvisioningState,
     )
 
@@ -113,9 +111,6 @@ class CloudValidationProperties(TypedDict, total=False):
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar error: Error details. Populated when provisioningState is Failed or Canceled.
     :vartype error: "ErrorDetail"
-    :ivar overallState: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overallState: Union[str, "CloudValidationOverallState"]
     :ivar managedOnBehalfOfConfiguration: Managed On Behalf Of Configuration.
     :vartype managedOnBehalfOfConfiguration: "ManagedOnBehalfOfConfiguration"
     """
@@ -127,8 +122,6 @@ class CloudValidationProperties(TypedDict, total=False):
      \"Canceled\", \"Creating\", \"Updating\", \"Disabling\", \"Deleting\", and \"Accepted\"."""
     error: "ErrorDetail"
     """Error details. Populated when provisioningState is Failed or Canceled."""
-    overallState: Union[str, "CloudValidationOverallState"]
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
     managedOnBehalfOfConfiguration: "ManagedOnBehalfOfConfiguration"
     """Managed On Behalf Of Configuration."""
 
@@ -153,15 +146,10 @@ class CloudValidationUpdateProperties(TypedDict, total=False):
 
     :ivar description: The description of the resource.
     :vartype description: str
-    :ivar overallState: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overallState: Union[str, "CloudValidationOverallState"]
     """
 
     description: str
     """The description of the resource."""
-    overallState: Union[str, "CloudValidationOverallState"]
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
 
 
 class ErrorAdditionalInfo(TypedDict, total=False):
@@ -424,8 +412,10 @@ class ValidationExecutionPlanProperties(TypedDict, total=False):
     :vartype description: str
     :ivar planConfigurationUri: URI where the configuration of the execution plan is defined.
      Either this property or ``planConfigurationJson`` is mandatory while creating; they are
-     mutually exclusive. This value is returned as-is in get responses, so it must not contain
-     credentials or other secrets.
+     mutually exclusive. This must be a plain, non-SAS reference (no embedded credentials, tokens,
+     or query-string secrets); the service reads the referenced content using its managed identity.
+     This value is returned as-is in get responses, so it must not contain credentials or other
+     secrets.
     :vartype planConfigurationUri: str
     :ivar planConfigurationJson: Entire execution plan configuration/manifest json. Either this
      property or ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive.
@@ -437,17 +427,16 @@ class ValidationExecutionPlanProperties(TypedDict, total=False):
     :vartype provisioningState: Union[str, "ValidationExecutionPlanProvisioningState"]
     :ivar error: Error details. Populated when provisioningState is Failed or Canceled.
     :vartype error: "ErrorDetail"
-    :ivar overallState: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overallState: Union[str, "ValidationExecutionPlanOverallState"]
     """
 
     description: str
     """The description of the resource."""
     planConfigurationUri: str
     """URI where the configuration of the execution plan is defined. Either this property or
-     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This value
-     is returned as-is in get responses, so it must not contain credentials or other secrets."""
+     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This must
+     be a plain, non-SAS reference (no embedded credentials, tokens, or query-string secrets); the
+     service reads the referenced content using its managed identity. This value is returned as-is
+     in get responses, so it must not contain credentials or other secrets."""
     planConfigurationJson: str
     """Entire execution plan configuration/manifest json. Either this property or
      ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive. In get,
@@ -458,8 +447,6 @@ class ValidationExecutionPlanProperties(TypedDict, total=False):
      \"Canceled\", \"Creating\", and \"Updating\"."""
     error: "ErrorDetail"
     """Error details. Populated when provisioningState is Failed or Canceled."""
-    overallState: Union[str, "ValidationExecutionPlanOverallState"]
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
 
 
 class ValidationExecutionPlanUpdate(TypedDict, total=False):
@@ -484,29 +471,28 @@ class ValidationExecutionPlanUpdateProperties(TypedDict, total=False):
     :vartype description: str
     :ivar planConfigurationUri: URI where the configuration of the execution plan is defined.
      Either this property or ``planConfigurationJson`` is mandatory while creating; they are
-     mutually exclusive. This value is returned as-is in get responses, so it must not contain
-     credentials or other secrets.
+     mutually exclusive. This must be a plain, non-SAS reference (no embedded credentials, tokens,
+     or query-string secrets); the service reads the referenced content using its managed identity.
+     This value is returned as-is in get responses, so it must not contain credentials or other
+     secrets.
     :vartype planConfigurationUri: str
     :ivar planConfigurationJson: Entire execution plan configuration/manifest json. Either this
      property or ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive.
      In get, always return the entire json configuration. This value is returned as-is in get
      responses, so it must not contain credentials or other secrets.
     :vartype planConfigurationJson: str
-    :ivar overallState: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overallState: Union[str, "ValidationExecutionPlanOverallState"]
     """
 
     description: str
     """The description of the resource."""
     planConfigurationUri: str
     """URI where the configuration of the execution plan is defined. Either this property or
-     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This value
-     is returned as-is in get responses, so it must not contain credentials or other secrets."""
+     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This must
+     be a plain, non-SAS reference (no embedded credentials, tokens, or query-string secrets); the
+     service reads the referenced content using its managed identity. This value is returned as-is
+     in get responses, so it must not contain credentials or other secrets."""
     planConfigurationJson: str
     """Entire execution plan configuration/manifest json. Either this property or
      ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive. In get,
      always return the entire json configuration. This value is returned as-is in get responses, so
      it must not contain credentials or other secrets."""
-    overallState: Union[str, "ValidationExecutionPlanOverallState"]
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""

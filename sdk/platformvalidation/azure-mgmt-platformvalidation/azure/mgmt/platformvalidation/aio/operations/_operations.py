@@ -63,7 +63,7 @@ from ...operations._operations import (
     build_validation_tests_get_request,
     build_validation_tests_list_by_subscription_request,
 )
-from .._configuration import PlatformValidationClientConfiguration
+from .._configuration import PlatformValidationMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -76,14 +76,16 @@ class OperationStatusOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`operation_status` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -163,14 +165,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -274,14 +278,16 @@ class CloudValidationsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`cloud_validations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1166,14 +1172,16 @@ class ValidationExecutionPlansOperations:  # pylint: disable=docstring-missing-p
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`validation_execution_plans` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2000,14 +2008,16 @@ class ExecutionPlanRunsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`execution_plan_runs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2626,14 +2636,16 @@ class ValidationTestRunsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`validation_test_runs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2845,14 +2857,16 @@ class ValidationTestsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`validation_tests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3028,14 +3042,16 @@ class ValidationTestVersionsOperations:  # pylint: disable=docstring-missing-par
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`validation_test_versions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3217,14 +3233,16 @@ class ValidationTestCategoriesOperations:  # pylint: disable=docstring-missing-p
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationClient`'s
+        :class:`~azure.mgmt.platformvalidation.aio.PlatformValidationMgmtClient`'s
         :attr:`validation_test_categories` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformValidationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlatformValidationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

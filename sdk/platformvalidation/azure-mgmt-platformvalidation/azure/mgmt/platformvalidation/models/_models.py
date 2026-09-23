@@ -147,10 +147,6 @@ class CloudValidationProperties(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype provisioning_state: str or ~azure.mgmt.platformvalidation.models.ProvisioningState
     :ivar error: Error details. Populated when provisioningState is Failed or Canceled.
     :vartype error: ~azure.mgmt.platformvalidation.models.ErrorDetail
-    :ivar overall_state: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overall_state: str or
-     ~azure.mgmt.platformvalidation.models.CloudValidationOverallState
     :ivar managed_on_behalf_of_configuration: Managed On Behalf Of Configuration.
     :vartype managed_on_behalf_of_configuration:
      ~azure.mgmt.platformvalidation.models.ManagedOnBehalfOfConfiguration
@@ -165,10 +161,6 @@ class CloudValidationProperties(_Model):  # pylint: disable=docstring-keyword-sh
      \"Canceled\", \"Creating\", \"Updating\", \"Disabling\", \"Deleting\", and \"Accepted\"."""
     error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """Error details. Populated when provisioningState is Failed or Canceled."""
-    overall_state: Optional[Union[str, "_models.CloudValidationOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
     managed_on_behalf_of_configuration: Optional["_models.ManagedOnBehalfOfConfiguration"] = rest_field(
         name="managedOnBehalfOfConfiguration", visibility=["read"]
     )
@@ -179,7 +171,6 @@ class CloudValidationProperties(_Model):  # pylint: disable=docstring-keyword-sh
         self,
         *,
         description: Optional[str] = None,
-        overall_state: Optional[Union[str, "_models.CloudValidationOverallState"]] = None,
     ) -> None: ...
 
     @overload
@@ -233,25 +224,16 @@ class CloudValidationUpdateProperties(_Model):  # pylint: disable=docstring-keyw
 
     :ivar description: The description of the resource.
     :vartype description: str
-    :ivar overall_state: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overall_state: str or
-     ~azure.mgmt.platformvalidation.models.CloudValidationOverallState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the resource."""
-    overall_state: Optional[Union[str, "_models.CloudValidationOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
         self,
         *,
         description: Optional[str] = None,
-        overall_state: Optional[Union[str, "_models.CloudValidationOverallState"]] = None,
     ) -> None: ...
 
     @overload
@@ -862,8 +844,10 @@ class ValidationExecutionPlanProperties(_Model):  # pylint: disable=docstring-ke
     :vartype description: str
     :ivar plan_configuration_uri: URI where the configuration of the execution plan is defined.
      Either this property or ``planConfigurationJson`` is mandatory while creating; they are
-     mutually exclusive. This value is returned as-is in get responses, so it must not contain
-     credentials or other secrets.
+     mutually exclusive. This must be a plain, non-SAS reference (no embedded credentials, tokens,
+     or query-string secrets); the service reads the referenced content using its managed identity.
+     This value is returned as-is in get responses, so it must not contain credentials or other
+     secrets.
     :vartype plan_configuration_uri: str
     :ivar plan_configuration_json: Entire execution plan configuration/manifest json. Either this
      property or ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive.
@@ -876,10 +860,6 @@ class ValidationExecutionPlanProperties(_Model):  # pylint: disable=docstring-ke
      ~azure.mgmt.platformvalidation.models.ValidationExecutionPlanProvisioningState
     :ivar error: Error details. Populated when provisioningState is Failed or Canceled.
     :vartype error: ~azure.mgmt.platformvalidation.models.ErrorDetail
-    :ivar overall_state: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overall_state: str or
-     ~azure.mgmt.platformvalidation.models.ValidationExecutionPlanOverallState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -888,8 +868,10 @@ class ValidationExecutionPlanProperties(_Model):  # pylint: disable=docstring-ke
         name="planConfigurationUri", visibility=["read", "create", "update", "delete", "query"]
     )
     """URI where the configuration of the execution plan is defined. Either this property or
-     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This value
-     is returned as-is in get responses, so it must not contain credentials or other secrets."""
+     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This must
+     be a plain, non-SAS reference (no embedded credentials, tokens, or query-string secrets); the
+     service reads the referenced content using its managed identity. This value is returned as-is
+     in get responses, so it must not contain credentials or other secrets."""
     plan_configuration_json: Optional[str] = rest_field(
         name="planConfigurationJson", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -904,10 +886,6 @@ class ValidationExecutionPlanProperties(_Model):  # pylint: disable=docstring-ke
      \"Canceled\", \"Creating\", and \"Updating\"."""
     error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """Error details. Populated when provisioningState is Failed or Canceled."""
-    overall_state: Optional[Union[str, "_models.ValidationExecutionPlanOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -916,7 +894,6 @@ class ValidationExecutionPlanProperties(_Model):  # pylint: disable=docstring-ke
         description: Optional[str] = None,
         plan_configuration_uri: Optional[str] = None,
         plan_configuration_json: Optional[str] = None,
-        overall_state: Optional[Union[str, "_models.ValidationExecutionPlanOverallState"]] = None,
     ) -> None: ...
 
     @overload
@@ -973,18 +950,16 @@ class ValidationExecutionPlanUpdateProperties(_Model):  # pylint: disable=docstr
     :vartype description: str
     :ivar plan_configuration_uri: URI where the configuration of the execution plan is defined.
      Either this property or ``planConfigurationJson`` is mandatory while creating; they are
-     mutually exclusive. This value is returned as-is in get responses, so it must not contain
-     credentials or other secrets.
+     mutually exclusive. This must be a plain, non-SAS reference (no embedded credentials, tokens,
+     or query-string secrets); the service reads the referenced content using its managed identity.
+     This value is returned as-is in get responses, so it must not contain credentials or other
+     secrets.
     :vartype plan_configuration_uri: str
     :ivar plan_configuration_json: Entire execution plan configuration/manifest json. Either this
      property or ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive.
      In get, always return the entire json configuration. This value is returned as-is in get
      responses, so it must not contain credentials or other secrets.
     :vartype plan_configuration_json: str
-    :ivar overall_state: The overall state of the resource. Known values are: "Enabled" and
-     "Disabled".
-    :vartype overall_state: str or
-     ~azure.mgmt.platformvalidation.models.ValidationExecutionPlanOverallState
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -993,8 +968,10 @@ class ValidationExecutionPlanUpdateProperties(_Model):  # pylint: disable=docstr
         name="planConfigurationUri", visibility=["read", "create", "update", "delete", "query"]
     )
     """URI where the configuration of the execution plan is defined. Either this property or
-     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This value
-     is returned as-is in get responses, so it must not contain credentials or other secrets."""
+     ``planConfigurationJson`` is mandatory while creating; they are mutually exclusive. This must
+     be a plain, non-SAS reference (no embedded credentials, tokens, or query-string secrets); the
+     service reads the referenced content using its managed identity. This value is returned as-is
+     in get responses, so it must not contain credentials or other secrets."""
     plan_configuration_json: Optional[str] = rest_field(
         name="planConfigurationJson", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1002,10 +979,6 @@ class ValidationExecutionPlanUpdateProperties(_Model):  # pylint: disable=docstr
      ``planConfigurationUri`` is mandatory while creating; they are mutually exclusive. In get,
      always return the entire json configuration. This value is returned as-is in get responses, so
      it must not contain credentials or other secrets."""
-    overall_state: Optional[Union[str, "_models.ValidationExecutionPlanOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The overall state of the resource. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -1014,7 +987,6 @@ class ValidationExecutionPlanUpdateProperties(_Model):  # pylint: disable=docstr
         description: Optional[str] = None,
         plan_configuration_uri: Optional[str] = None,
         plan_configuration_json: Optional[str] = None,
-        overall_state: Optional[Union[str, "_models.ValidationExecutionPlanOverallState"]] = None,
     ) -> None: ...
 
     @overload
@@ -1110,7 +1082,7 @@ class ValidationTestCategory(ProxyResource):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class ValidationTestCategoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationTestCategoryProperties(_Model):
     """Validation test category properties.
 
     :ivar display_name: Display name of the validation test category.
@@ -1129,22 +1101,19 @@ class ValidationTestCategoryProperties(_Model):  # pylint: disable=docstring-key
      top-level parent's category id. Sub-categories cannot themselves have sub-categories, and a
      category must not reference itself as its own parent.
     :vartype parent_category_id: str
-    :ivar owners: Owners of the validation test category, expressed as email aliases or Microsoft
-     Entra object IDs. Only catalog publishers set this value through an internal publishing
-     process; end users of the validation service consume catalog entries read-only through Get/List
-     and cannot modify it.
+    :ivar owners: Owners of the validation test category, expressed as team or distribution list
+     aliases. Individual user aliases and directory object identifiers are not published in this
+     field. Only catalog publishers set this value through an internal publishing process; end users
+     of the validation service consume catalog entries read-only through Get/List and cannot modify
+     it.
     :vartype owners: list[str]
     """
 
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
     """Display name of the validation test category."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(visibility=["read"])
     """Validation test category description."""
-    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(visibility=["read"])
     """Audience visibility of this validation test category. Known values are: \"Public\" and
      \"Internal\"."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -1152,39 +1121,16 @@ class ValidationTestCategoryProperties(_Model):  # pylint: disable=docstring-key
     )
     """Provisioning state of the validation test category catalog resource. Known values are:
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    parent_category_id: Optional[str] = rest_field(
-        name="parentCategoryId", visibility=["read", "create", "update", "delete", "query"]
-    )
+    parent_category_id: Optional[str] = rest_field(name="parentCategoryId", visibility=["read"])
     """Parent validation test category id. Categories form a two-level hierarchy only: a top-level
      category leaves this unset, and a sub-category sets this to its top-level parent's category id.
      Sub-categories cannot themselves have sub-categories, and a category must not reference itself
      as its own parent."""
-    owners: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Owners of the validation test category, expressed as email aliases or Microsoft Entra object
-     IDs. Only catalog publishers set this value through an internal publishing process; end users
-     of the validation service consume catalog entries read-only through Get/List and cannot modify
-     it."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        audience: Optional[Union[str, "_models.CatalogAudience"]] = None,
-        parent_category_id: Optional[str] = None,
-        owners: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    owners: Optional[list[str]] = rest_field(visibility=["read"])
+    """Owners of the validation test category, expressed as team or distribution list aliases.
+     Individual user aliases and directory object identifiers are not published in this field. Only
+     catalog publishers set this value through an internal publishing process; end users of the
+     validation service consume catalog entries read-only through Get/List and cannot modify it."""
 
 
 class ValidationTestFailureDetails(_Model):
@@ -1324,9 +1270,11 @@ class ValidationTestPassDetails(_Model):
     """Detailed information about the passed test."""
 
 
-class ValidationTestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationTestProperties(_Model):
     """Validation test catalog properties.
 
+    :ivar display_name: Display name of the validation test.
+    :vartype display_name: str
     :ivar description: Validation test description.
     :vartype description: str
     :ivar audience: Audience visibility of this validation test. Known values are: "Public" and
@@ -1339,13 +1287,11 @@ class ValidationTestProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar category_ids: The names of the validation test categories (ValidationTestCategory
      resource names, not ARM resource IDs) associated with this test.
     :vartype category_ids: list[str]
-    :ivar overall_state: Overall state of the validation test. Known values are: "Draft", "Active",
-     "Published", and "Disabled".
-    :vartype overall_state: str or ~azure.mgmt.platformvalidation.models.ValidationTestOverallState
-    :ivar owners: Owners of the validation test definition, expressed as aliases. Only catalog
-     publishers(limited to microsoft internal only) set this value through an internal publishing
-     process; end users of the validation service consume catalog entries read-only through Get/List
-     and cannot modify it.
+    :ivar owners: Owners of the validation test definition, expressed as team or distribution list
+     aliases. Individual user aliases and directory object identifiers are not published in this
+     field. Only catalog publishers(limited to microsoft internal only) set this value through an
+     internal publishing process; end users of the validation service consume catalog entries
+     read-only through Get/List and cannot modify it.
     :vartype owners: list[str]
     :ivar inputs: Declared input contract for this validation test.
     :vartype inputs: list[~azure.mgmt.platformvalidation.models.ValidationTestInput]
@@ -1359,77 +1305,38 @@ class ValidationTestProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype last_published_at: ~datetime.datetime
     """
 
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the validation test."""
+    description: Optional[str] = rest_field(visibility=["read"])
     """Validation test description."""
-    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(visibility=["read"])
     """Audience visibility of this validation test. Known values are: \"Public\" and \"Internal\"."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """Provisioning state of the validation test catalog resource. Known values are: \"Succeeded\",
      \"Failed\", and \"Canceled\"."""
-    category_ids: Optional[list[str]] = rest_field(
-        name="categoryIds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    category_ids: Optional[list[str]] = rest_field(name="categoryIds", visibility=["read"])
     """The names of the validation test categories (ValidationTestCategory resource names, not ARM
      resource IDs) associated with this test."""
-    overall_state: Optional[Union[str, "_models.ValidationTestOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Overall state of the validation test. Known values are: \"Draft\", \"Active\", \"Published\",
-     and \"Disabled\"."""
-    owners: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Owners of the validation test definition, expressed as aliases. Only catalog publishers(limited
-     to microsoft internal only) set this value through an internal publishing process; end users of
-     the validation service consume catalog entries read-only through Get/List and cannot modify it."""
-    inputs: Optional[list["_models.ValidationTestInput"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    owners: Optional[list[str]] = rest_field(visibility=["read"])
+    """Owners of the validation test definition, expressed as team or distribution list aliases.
+     Individual user aliases and directory object identifiers are not published in this field. Only
+     catalog publishers(limited to microsoft internal only) set this value through an internal
+     publishing process; end users of the validation service consume catalog entries read-only
+     through Get/List and cannot modify it."""
+    inputs: Optional[list["_models.ValidationTestInput"]] = rest_field(visibility=["read"])
     """Declared input contract for this validation test."""
-    test_store_uri: Optional[str] = rest_field(
-        name="testStoreUri", visibility=["read", "create", "update", "delete", "query"]
-    )
+    test_store_uri: Optional[str] = rest_field(name="testStoreUri", visibility=["read"])
     """URI of the location where the test artifact is stored."""
-    current_version: Optional[str] = rest_field(
-        name="currentVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
+    current_version: Optional[str] = rest_field(name="currentVersion", visibility=["read"])
     """The resource ID of the current immutable version snapshot."""
-    latest_published_version: Optional[str] = rest_field(
-        name="latestPublishedVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
+    latest_published_version: Optional[str] = rest_field(name="latestPublishedVersion", visibility=["read"])
     """The resource ID of the latest published version snapshot."""
     last_published_at: Optional[datetime.datetime] = rest_field(
-        name="lastPublishedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="lastPublishedAt", visibility=["read"], format="rfc3339"
     )
     """Timestamp of the last version publication."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        audience: Optional[Union[str, "_models.CatalogAudience"]] = None,
-        category_ids: Optional[list[str]] = None,
-        overall_state: Optional[Union[str, "_models.ValidationTestOverallState"]] = None,
-        owners: Optional[list[str]] = None,
-        inputs: Optional[list["_models.ValidationTestInput"]] = None,
-        test_store_uri: Optional[str] = None,
-        current_version: Optional[str] = None,
-        latest_published_version: Optional[str] = None,
-        last_published_at: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ValidationTestRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1474,7 +1381,7 @@ class ValidationTestRun(ProxyResource):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationTestRunProperties(_Model):
     """Validation Test Run properties.
 
     :ivar status: The overall status of the test run. Known values are: "NotRunning", "Scheduled",
@@ -1492,8 +1399,7 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
     :vartype completed_at: ~datetime.datetime
     :ivar reported_at: The time at which the test run result was reported.
     :vartype reported_at: ~datetime.datetime
-    :ivar test_id: The name of the validation test (ValidationTest resource name, not an ARM
-     resource ID) in the validation test catalog.
+    :ivar test_id: The resource ID of the validation test in the validation test catalog.
     :vartype test_id: str
     :ivar inputs_json: Validation test run inputs json, conforming to the input contract declared
      by ``ValidationTestInput`` on the corresponding validation test. This value is returned as-is
@@ -1522,12 +1428,9 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
     """The completion time of the test run."""
     reported_at: Optional[datetime.datetime] = rest_field(name="reportedAt", visibility=["read"], format="rfc3339")
     """The time at which the test run result was reported."""
-    test_id: Optional[str] = rest_field(name="testId", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the validation test (ValidationTest resource name, not an ARM resource ID) in the
-     validation test catalog."""
-    inputs_json: Optional[str] = rest_field(
-        name="inputsJson", visibility=["read", "create", "update", "delete", "query"]
-    )
+    test_id: Optional[str] = rest_field(name="testId", visibility=["read"])
+    """The resource ID of the validation test in the validation test catalog."""
+    inputs_json: Optional[str] = rest_field(name="inputsJson", visibility=["read"])
     """Validation test run inputs json, conforming to the input contract declared by
      ``ValidationTestInput`` on the corresponding validation test. This value is returned as-is in
      get responses, so it must not contain credentials or other secrets."""
@@ -1539,24 +1442,6 @@ class ValidationTestRunProperties(_Model):  # pylint: disable=docstring-keyword-
         name="failureDetails", visibility=["read"]
     )
     """Detailed failure information when the test fails."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        test_id: Optional[str] = None,
-        inputs_json: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class ValidationTestVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1600,9 +1485,11 @@ class ValidationTestVersion(ProxyResource):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class ValidationTestVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ValidationTestVersionProperties(_Model):
     """Validation test version catalog properties.
 
+    :ivar display_name: Display name of the validation test version.
+    :vartype display_name: str
     :ivar description: Validation test description.
     :vartype description: str
     :ivar audience: Audience visibility of this validation test version. Known values are: "Public"
@@ -1615,13 +1502,11 @@ class ValidationTestVersionProperties(_Model):  # pylint: disable=docstring-keyw
     :ivar category_ids: The names of the validation test categories (ValidationTestCategory
      resource names, not ARM resource IDs) associated with this test version.
     :vartype category_ids: list[str]
-    :ivar overall_state: Overall state of the validation test. Known values are: "Draft", "Active",
-     "Published", and "Disabled".
-    :vartype overall_state: str or ~azure.mgmt.platformvalidation.models.ValidationTestOverallState
-    :ivar owners: Owners of the validation test version definition, expressed as email aliases or
-     Microsoft Entra object IDs. Only catalog publishers set this value through an internal
-     publishing process; end users of the validation service consume catalog entries read-only
-     through Get/List and cannot modify it.
+    :ivar owners: Owners of the validation test version definition, expressed as team or
+     distribution list aliases. Individual user aliases and directory object identifiers are not
+     published in this field. Only catalog publishers set this value through an internal publishing
+     process; end users of the validation service consume catalog entries read-only through Get/List
+     and cannot modify it.
     :vartype owners: list[str]
     :ivar inputs: Declared input contract for this validation test version.
     :vartype inputs: list[~azure.mgmt.platformvalidation.models.ValidationTestInput]
@@ -1631,11 +1516,11 @@ class ValidationTestVersionProperties(_Model):  # pylint: disable=docstring-keyw
     :vartype test_store_uri: str
     """
 
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
+    """Display name of the validation test version."""
+    description: Optional[str] = rest_field(visibility=["read"])
     """Validation test description."""
-    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    audience: Optional[Union[str, "_models.CatalogAudience"]] = rest_field(visibility=["read"])
     """Audience visibility of this validation test version. Known values are: \"Public\" and
      \"Internal\"."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -1643,54 +1528,18 @@ class ValidationTestVersionProperties(_Model):  # pylint: disable=docstring-keyw
     )
     """Provisioning state of the validation test version catalog resource. Known values are:
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    category_ids: Optional[list[str]] = rest_field(
-        name="categoryIds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    category_ids: Optional[list[str]] = rest_field(name="categoryIds", visibility=["read"])
     """The names of the validation test categories (ValidationTestCategory resource names, not ARM
      resource IDs) associated with this test version."""
-    overall_state: Optional[Union[str, "_models.ValidationTestOverallState"]] = rest_field(
-        name="overallState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Overall state of the validation test. Known values are: \"Draft\", \"Active\", \"Published\",
-     and \"Disabled\"."""
-    owners: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Owners of the validation test version definition, expressed as email aliases or Microsoft Entra
-     object IDs. Only catalog publishers set this value through an internal publishing process; end
-     users of the validation service consume catalog entries read-only through Get/List and cannot
-     modify it."""
-    inputs: Optional[list["_models.ValidationTestInput"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    owners: Optional[list[str]] = rest_field(visibility=["read"])
+    """Owners of the validation test version definition, expressed as team or distribution list
+     aliases. Individual user aliases and directory object identifiers are not published in this
+     field. Only catalog publishers set this value through an internal publishing process; end users
+     of the validation service consume catalog entries read-only through Get/List and cannot modify
+     it."""
+    inputs: Optional[list["_models.ValidationTestInput"]] = rest_field(visibility=["read"])
     """Declared input contract for this validation test version."""
-    content_hash: Optional[str] = rest_field(
-        name="contentHash", visibility=["read", "create", "update", "delete", "query"]
-    )
+    content_hash: Optional[str] = rest_field(name="contentHash", visibility=["read"])
     """SHA-256 hash of the version content used for integrity and deduplication."""
-    test_store_uri: Optional[str] = rest_field(
-        name="testStoreUri", visibility=["read", "create", "update", "delete", "query"]
-    )
+    test_store_uri: Optional[str] = rest_field(name="testStoreUri", visibility=["read"])
     """URI of the location where the test artifact is stored."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        audience: Optional[Union[str, "_models.CatalogAudience"]] = None,
-        category_ids: Optional[list[str]] = None,
-        overall_state: Optional[Union[str, "_models.ValidationTestOverallState"]] = None,
-        owners: Optional[list[str]] = None,
-        inputs: Optional[list["_models.ValidationTestInput"]] = None,
-        content_hash: Optional[str] = None,
-        test_store_uri: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)

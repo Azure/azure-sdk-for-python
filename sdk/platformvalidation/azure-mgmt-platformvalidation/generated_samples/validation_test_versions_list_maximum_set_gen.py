@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,13 +25,13 @@ from azure.mgmt.platformvalidation import PlatformValidationClient
 
 
 def main():
-    client = PlatformValidationClient(
+    client = PlatformValidationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.validation_test_versions.list(
-        validation_test_name="test1",
+        validation_test_name="linux-quality-validation",
     )
     for item in response:
         print(item)

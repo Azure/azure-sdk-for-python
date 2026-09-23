@@ -28,15 +28,6 @@ class CatalogAudience(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Visible only to authorized Microsoft-internal callers."""
 
 
-class CloudValidationOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Overall states of the validation resource."""
-
-    ENABLED = "Enabled"
-    """The resource is in enabled state."""
-    DISABLED = "Disabled"
-    """The resource is in disabled state."""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -144,15 +135,6 @@ class TestRunOverallResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Some tests passed and some failed."""
 
 
-class ValidationExecutionPlanOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Overall states of the validation execution plan."""
-
-    ENABLED = "Enabled"
-    """The resource is in enabled state."""
-    DISABLED = "Disabled"
-    """The resource is in disabled state."""
-
-
 class ValidationExecutionPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The execution plan resource provisioning state."""
 
@@ -183,19 +165,6 @@ class ValidationTestInputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Object input value."""
     ARRAY = "Array"
     """Array input value."""
-
-
-class ValidationTestOverallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The overall state of a validation test or test version."""
-
-    DRAFT = "Draft"
-    """The validation test definition is in draft state."""
-    ACTIVE = "Active"
-    """The validation test definition is active."""
-    PUBLISHED = "Published"
-    """The validation test definition is published."""
-    DISABLED = "Disabled"
-    """The validation test definition is disabled."""
 
 
 class ValidationTestRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

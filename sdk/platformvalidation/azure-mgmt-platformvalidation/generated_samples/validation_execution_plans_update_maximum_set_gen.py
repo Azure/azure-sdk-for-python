@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +26,7 @@ from azure.mgmt.platformvalidation import PlatformValidationClient
 
 
 def main():
-    client = PlatformValidationClient(
+    client = PlatformValidationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -36,12 +37,10 @@ def main():
         validation_execution_plan_name="veptest01",
         properties={
             "properties": {
-                "description": "ortzzlmaoxmwtcjkjkvuxx",
-                "overallState": "Enabled",
-                "planConfigurationJson": "vmqqmcdpvhgu",
-                "planConfigurationUri": "xsouolufo",
+                "description": "Validation execution plan that runs the network connectivity checks against the target image.",
+                "planConfigurationJson": '{"apiVersion":"microsoft.PlatformValidation/validationExecutionPlan.v0","kind":"ValidationExecutionPlan","metadata":{"name":"contoso-linux-cert"},"parameters":{"certificationPackageReference":{"osType":"Linux","vmGenerationType":"V1","architectureType":"X64","recommendedVMSizes":["Standard_D4s_v3"],"storageProfile":{"osDiskImage":{"sourceVhdUri":"https://contoso.blob.core.windows.net/vhds/img.vhd?<sas>"},"dataDiskImages":[]},"additionalProperties":{}}},"authoring":{"steps":[{"name":"os-disk-size","type":"test","testRef":"/providers/Microsoft.PlatformValidation/validationTests/os-disk-size/versions/1.0.0"},{"name":"data-disk-size","type":"test","testRef":"/providers/Microsoft.PlatformValidation/validationTests/data-disk-size/versions/1.0.0"},{"name":"malware-defender","type":"test","testRef":"/providers/Microsoft.PlatformValidation/validationTests/malware-defender/versions/1.0.0"},{"name":"malware-esrp","type":"test","testRef":"/providers/Microsoft.PlatformValidation/validationTests/malware-esrp/versions/1.0.0"},{"name":"linux-quality-validation","type":"test","testRef":"/providers/Microsoft.PlatformValidation/validationTests/linux-quality-validation/versions/1.0.0","inputs":{"concurrency":1,"testSuite":[{"testNames":["smoke_test","validate_netvsc_reload"]}]}}]}}',
             },
-            "tags": {"key145": "grepfloxy"},
+            "tags": {"environment": "production"},
         },
     ).result()
     print(response)

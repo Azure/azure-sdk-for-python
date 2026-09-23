@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,14 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationOperations(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtOperationStatusOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r for r in response]
+    def test_operation_status_get(self, resource_group):
+        response = self.client.operation_status.get(
+            location="str",
+            operation_id="str",
+        )
+
         # please add some check logic here by yourself
         # ...

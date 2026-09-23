@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation.aio import PlatformValidationClient
+from azure.mgmt.platformvalidation.aio import PlatformValidationMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,24 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationOperationStatusOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtValidationTestCategoriesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient, is_async=True)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_operation_status_get(self, resource_group):
-        response = await self.client.operation_status.get(
-            location="str",
-            operation_id="str",
+    async def test_validation_test_categories_get(self, resource_group):
+        response = await self.client.validation_test_categories.get(
+            validation_test_category_name="str",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_validation_test_categories_list_by_subscription(self, resource_group):
+        response = self.client.validation_test_categories.list_by_subscription()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

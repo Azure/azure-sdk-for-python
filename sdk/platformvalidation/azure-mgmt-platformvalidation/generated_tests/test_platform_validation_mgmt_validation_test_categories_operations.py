@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.platformvalidation.aio import PlatformValidationClient
+from azure.mgmt.platformvalidation import PlatformValidationMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformValidationValidationTestCategoriesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPlatformValidationMgmtValidationTestCategoriesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformValidationClient, is_async=True)
+        self.client = self.create_mgmt_client(PlatformValidationMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_validation_test_categories_get(self, resource_group):
-        response = await self.client.validation_test_categories.get(
+    @recorded_by_proxy
+    def test_validation_test_categories_get(self, resource_group):
+        response = self.client.validation_test_categories.get(
             validation_test_category_name="str",
         )
 
@@ -30,9 +29,9 @@ class TestPlatformValidationValidationTestCategoriesOperationsAsync(AzureMgmtRec
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_validation_test_categories_list_by_subscription(self, resource_group):
+    @recorded_by_proxy
+    def test_validation_test_categories_list_by_subscription(self, resource_group):
         response = self.client.validation_test_categories.list_by_subscription()
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
