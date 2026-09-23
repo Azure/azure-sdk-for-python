@@ -21,24 +21,68 @@ from pathlib import Path
 from subprocess import CalledProcessError, check_call
 from typing import List
 
-COMPILED_EXTENSION_SUFFIXES = (".pyd", ".so", ".dylib")
+from packaging import tags as packaging_tags
+from packaging.utils import parse_wheel_filename
+
+# Suffixes for files this script will actually try to import as Python extension modules.
+# Deliberately excludes .dylib: on macOS, compiled Python extensions are always packaged with a
+# `.so` suffix (CPython's import machinery never resolves `.dylib` as an extension-module
+# suffix), while `.dylib` is used for *shared libraries* a wheel vendors as a dependency of its
+# real extension (e.g. delocate/auditwheel repair output). Those vendored libraries are still
+# signed like any other native binary, but importing them directly is neither meaningful nor
+# expected to work, and doing so would fail this smoke test on an otherwise correctly signed
+# wheel. See extract_sign_inputs.py's SIGNABLE_SUFFIXES for what actually gets sent through ESRP.
+IMPORTABLE_EXTENSION_SUFFIXES = (".pyd", ".so")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Install a signed wheel and import its compiled extension module(s) as a smoke test."
     )
-    parser.add_argument("--wheel-dir", required=True, help="Directory containing exactly one signed wheel to test.")
+    parser.add_argument(
+        "--wheel-dir",
+        required=True,
+        help=(
+            "Directory containing signed wheels. cibuildwheel can legitimately "
+            "produce more than one wheel per platform for the same package/version (e.g. "
+            "separate CPython and PyPy builds, or multiple Windows/macOS architectures); this "
+            "script selects one representative wheel that is installable on the invoking "
+            "interpreter."
+        ),
+    )
     return parser.parse_args()
 
 
-def find_wheel(wheel_dir: str) -> str:
+def interpreter_compatible_tags() -> List[str]:
+    """The set of platform/interpreter/ABI tags pip considers installable on this interpreter."""
+    return [str(t) for t in packaging_tags.sys_tags()]
+
+
+def find_representative_wheel(wheel_dir: str) -> str:
+    """Return one wheel from *wheel_dir* that is installable on the invoking interpreter.
+
+    A signed-binary package's platform artifact directory can contain wheels for multiple
+    Python implementations or architectures. This is representative coverage of the signed
+    repackaging boundary, not an exhaustive compatibility test, so prefer the first wheel
+    matching pip's ordered compatibility tags and use the filename as a stable tie-breaker.
+    """
     candidates = sorted(glob.glob(os.path.join(wheel_dir, "*.whl")))
     if not candidates:
         raise FileNotFoundError(f"No wheel found in {wheel_dir}.")
-    if len(candidates) > 1:
-        raise RuntimeError(f"Expected exactly one wheel in {wheel_dir}, found {len(candidates)}: {candidates}")
-    return candidates[0]
+
+    wheel_tags = {
+        candidate: {str(tag) for tag in parse_wheel_filename(os.path.basename(candidate))[3]}
+        for candidate in candidates
+    }
+    for compatible_tag in interpreter_compatible_tags():
+        for candidate in candidates:
+            if compatible_tag in wheel_tags[candidate]:
+                return candidate
+
+    raise RuntimeError(
+        f"None of the wheels in {wheel_dir} are installable on this interpreter, so the smoke "
+        f"test cannot validate a representative wheel: {candidates}"
+    )
 
 
 def install_wheel(wheel_path: str) -> None:
@@ -62,14 +106,14 @@ def find_compiled_modules(dist_name: str) -> List[str]:
         # reconstruct the dotted module path.
         relative_path = str(file)
         suffix = "".join(Path(relative_path).suffixes).lower()
-        if not any(suffix.endswith(ext) for ext in COMPILED_EXTENSION_SUFFIXES):
+        if not any(suffix.endswith(ext) for ext in IMPORTABLE_EXTENSION_SUFFIXES):
             continue
 
         # Strip the platform/abi tag portion of the filename (e.g. "native.cp310-win_amd64.pyd"
         # -> "native"), then convert the file's path into a dotted module name.
         path = Path(relative_path)
         stem = path.name
-        for ext in COMPILED_EXTENSION_SUFFIXES:
+        for ext in IMPORTABLE_EXTENSION_SUFFIXES:
             idx = stem.lower().find(ext)
             if idx != -1:
                 stem = stem[:idx]
@@ -78,12 +122,11 @@ def find_compiled_modules(dist_name: str) -> List[str]:
 
         parent_parts = path.parent.parts
 
-        # Not every compiled file under COMPILED_EXTENSION_SUFFIXES is an importable module.
-        # Repair tools that vendor a package's native dependencies alongside its real
-        # extensions (delocate's `<pkg>/.dylibs/*.dylib`, auditwheel's `<dist>.libs/*.so`) are
-        # signable, but they aren't Python modules and don't sit on a valid dotted import
-        # path. A directory or filename that isn't a valid identifier can't be part of one, so
-        # skip it instead of handing import_module() a bogus name like "pkg.dylibs.libfoo".
+        # Not every .so is an importable module. auditwheel vendors a package's native
+        # dependencies under `<dist>.libs/*.so`; that's signable but isn't a Python module and
+        # doesn't sit on a valid dotted import path. A directory or filename that isn't a valid
+        # identifier can't be part of one, so skip it instead of handing import_module() a bogus
+        # name like "pkg.libs.libfoo".
         if not stem.isidentifier() or not all(part.isidentifier() for part in parent_parts):
             continue
 
@@ -101,9 +144,8 @@ def find_compiled_modules(dist_name: str) -> List[str]:
     return sorted(set(modules))
 
 
-def main() -> None:
-    args = parse_args()
-    wheel_path = find_wheel(args.wheel_dir)
+def smoke_test_wheel(wheel_path: str) -> int:
+    """Install *wheel_path* and import every compiled module it ships. Returns the count imported."""
     print(f"Smoke-testing signed wheel: {wheel_path}")
 
     install_wheel(wheel_path)
@@ -113,7 +155,7 @@ def main() -> None:
 
     if not compiled_modules:
         raise RuntimeError(
-            f"No compiled extension modules (.pyd/.so/.dylib) found for {dist_name}; expected at "
+            f"No importable compiled extension modules (.pyd/.so) found for {dist_name}; expected at "
             "least one for a signed-binary package. The smoke test would not have exercised anything."
         )
 
@@ -122,7 +164,15 @@ def main() -> None:
         importlib.import_module(module_name)
         print(f"OK: {module_name} imported successfully.")
 
-    print(f"Smoke test passed: {len(compiled_modules)} compiled module(s) imported successfully.")
+    return len(compiled_modules)
+
+
+def main() -> None:
+    args = parse_args()
+    wheel_path = find_representative_wheel(args.wheel_dir)
+    total_modules = smoke_test_wheel(wheel_path)
+
+    print(f"Smoke test passed: {total_modules} compiled module(s) imported successfully.")
 
 
 if __name__ == "__main__":

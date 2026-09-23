@@ -81,6 +81,26 @@ def test_find_compiled_modules_skips_vendored_dependency_libs():
     assert modules == ["azure.cosmos._rust"]
 
 
+def test_find_compiled_modules_never_imports_dylib_even_with_plain_name():
+    # .dylib is never a valid Python extension-import suffix on macOS (compiled extensions are
+    # always packaged as .so there), even for a vendored dependency library with an ordinary,
+    # identifier-safe name that the vendored-lib-directory check above wouldn't otherwise catch
+    # (e.g. sitting directly alongside the package's real extension, not under a dotted repair
+    # directory like .dylibs/). Signing still covers it (see extract_sign_inputs.py); it must
+    # simply never be treated as importable.
+    fake_dist = SimpleNamespace(
+        files=[
+            _fake_file("azure/cosmos/_rust.abi3.so"),
+            _fake_file("azure/cosmos/vendored.dylib"),
+            _fake_file("azure/cosmos/__init__.py"),
+        ]
+    )
+    with patch("smoke_test_signed_wheel.metadata.distribution", return_value=fake_dist):
+        modules = smoke_test_signed_wheel.find_compiled_modules("azure-cosmos")
+
+    assert modules == ["azure.cosmos._rust"]
+
+
 def test_find_compiled_modules_compiled_init_maps_to_parent_package():
     fake_dist = SimpleNamespace(
         files=[
@@ -101,11 +121,34 @@ def test_find_compiled_modules_raises_when_none_found():
     assert modules == []
 
 
-def test_find_wheel_requires_exactly_one(tmp_path):
+def test_find_representative_wheel_raises_when_directory_empty(tmp_path):
     with pytest.raises(FileNotFoundError):
-        smoke_test_signed_wheel.find_wheel(str(tmp_path))
+        smoke_test_signed_wheel.find_representative_wheel(str(tmp_path))
 
-    (tmp_path / "a-1.0.0-py3-none-any.whl").touch()
-    (tmp_path / "b-1.0.0-py3-none-any.whl").touch()
-    with pytest.raises(RuntimeError, match="Expected exactly one wheel"):
-        smoke_test_signed_wheel.find_wheel(str(tmp_path))
+
+def test_find_representative_wheel_prefers_first_compatible_tag(tmp_path):
+    # cibuildwheel can produce a CPython wheel alongside a PyPy wheel (and, on Windows, an
+    # additional wheel per architecture) in the same signed-artifact directory. Select one
+    # representative wheel using the invoking interpreter's tag preference order.
+    preferred_wheel = tmp_path / "azure_storage_extensions-1.0.0-cp310-cp310-win_amd64.whl"
+    compatible_wheel = tmp_path / "azure_storage_extensions-1.0.0-cp310-abi3-win_amd64.whl"
+    pypy_wheel = tmp_path / "azure_storage_extensions-1.0.0-pp311-pypy311_pp73-win_amd64.whl"
+    preferred_wheel.touch()
+    compatible_wheel.touch()
+    pypy_wheel.touch()
+
+    with patch(
+        "smoke_test_signed_wheel.interpreter_compatible_tags",
+        return_value=["cp310-cp310-win_amd64", "cp310-abi3-win_amd64"],
+    ):
+        wheel = smoke_test_signed_wheel.find_representative_wheel(str(tmp_path))
+
+    assert wheel == str(preferred_wheel)
+
+
+def test_find_representative_wheel_raises_when_none_compatible(tmp_path):
+    (tmp_path / "azure_storage_extensions-1.0.0-pp311-pypy311_pp73-win_amd64.whl").touch()
+
+    with patch("smoke_test_signed_wheel.interpreter_compatible_tags", return_value=["cp310-abi3-win_amd64"]):
+        with pytest.raises(RuntimeError, match="are installable on this interpreter"):
+            smoke_test_signed_wheel.find_representative_wheel(str(tmp_path))
