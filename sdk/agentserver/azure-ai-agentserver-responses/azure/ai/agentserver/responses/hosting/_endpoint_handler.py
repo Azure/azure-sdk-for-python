@@ -1545,12 +1545,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         execution_task = record.execution_task
         if execution_task is not None:
             if not execution_task.done():
-                try:
-                    await asyncio.wait_for(
-                        asyncio.shield(execution_task),
-                        timeout=float(self._runtime_options.shutdown_grace_period_seconds),
-                    )
-                except asyncio.TimeoutError:
+                done, _ = await asyncio.wait(
+                    {execution_task},
+                    timeout=float(self._runtime_options.shutdown_grace_period_seconds),
+                )
+                if execution_task not in done:
                     return _invalid_request(
                         "Response persistence is still in progress. Retry deletion.",
                         _hdrs,

@@ -202,6 +202,47 @@ class TestAsyncTerminalPersist:
             await asyncio.wait_for(asyncio.gather(delete_task, return_exceptions=True), 5)
 
     @pytest.mark.asyncio
+    async def test_delete_logs_concurrent_execution_failure_and_continues(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        drain_started = asyncio.Event()
+        drain_release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider())
+        app = _make_app(provider)
+        client = _AsyncAsgiClient(app)
+
+        async def _failing_drain(_ctx: Any, _state: Any) -> None:
+            drain_started.set()
+            await drain_release.wait()
+            raise RuntimeError("deferred drain failed")
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_drain_deferred_terminal_persist",
+            _failing_drain,
+        )
+        post_response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+        )
+        events = _parse_sse_bytes(post_response.body)
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+        await asyncio.wait_for(drain_started.wait(), 5)
+
+        delete_task = asyncio.create_task(client.delete(f"/responses/{response_id}"))
+        try:
+            await asyncio.sleep(0)
+            assert not delete_task.done()
+            drain_release.set()
+            deleted = await asyncio.wait_for(delete_task, 5)
+            assert deleted.status_code == 200
+            assert deleted.json()["deleted"] is True
+        finally:
+            drain_release.set()
+            await asyncio.wait_for(asyncio.gather(delete_task, return_exceptions=True), 5)
+
+    @pytest.mark.asyncio
     async def test_shutdown_drains_fallback_created_before_pending_registration(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
