@@ -10,12 +10,12 @@ import shutil
 import subprocess
 import tempfile
 import zipfile
+import urllib.parse
 from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
-from typing import List, Optional, Sequence, Union
-from urllib.parse import urlsplit
+from typing import Iterable, List, Optional, Union
 
 from typing_extensions import Literal
 
@@ -162,6 +162,26 @@ class ArtifactCache:
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     @staticmethod
+    def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
+        """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
+
+        Each member's resolved destination path is validated to remain within ``destination``.
+        Members with absolute paths or ``..`` segments that would escape the destination are rejected.
+
+        :param zip_file: The zip archive to extract.
+        :type zip_file: zipfile.ZipFile
+        :param destination: The directory to extract the archive members into.
+        :type destination: Union[str, os.PathLike]
+        :raises RuntimeError: If a member would be extracted outside of ``destination``.
+        """
+        destination_path = Path(destination).resolve()
+        for member in zip_file.namelist():
+            target_path = (destination_path / member).resolve()
+            if destination_path != target_path and destination_path not in target_path.parents:
+                raise RuntimeError(f"Illegal path traversal detected in zip archive member: {member}")
+        zip_file.extractall(destination_path)  # nosec B202
+
+    @staticmethod
     def _get_organization_name(organization: str) -> str:
         organization_name = r"[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?"
         pattern = (
@@ -188,7 +208,7 @@ class ArtifactCache:
         ):
             raise ValueError("Invalid artifact tool download URL.")
         try:
-            parsed = urlsplit(uri)
+            parsed = urllib.parse.urlsplit(uri)
             valid = (
                 parsed.scheme == "https"
                 and bool(parsed.hostname)
@@ -201,26 +221,6 @@ class ArtifactCache:
         if not valid:
             raise ValueError("Invalid artifact tool download URL.")
         return uri
-
-    @staticmethod
-    def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
-        """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
-
-        Each member's resolved destination path is validated to remain within ``destination``.
-        Members with absolute paths or ``..`` segments that would escape the destination are rejected.
-
-        :param zip_file: The zip archive to extract.
-        :type zip_file: zipfile.ZipFile
-        :param destination: The directory to extract the archive members into.
-        :type destination: Union[str, os.PathLike]
-        :raises RuntimeError: If a member would be extracted outside of ``destination``.
-        """
-        destination_path = Path(destination).resolve()
-        for member in zip_file.namelist():
-            target_path = (destination_path / member).resolve()
-            if destination_path != target_path and destination_path not in target_path.parents:
-                raise RuntimeError(f"Illegal path traversal detected in zip archive member: {member}")
-        zip_file.extractall(destination_path)  # nosec B202
 
     def _redirect_artifacts_tool_path(self, organization: Optional[str]):
         """Downloads the artifacts tool and redirects `az artifact` command to it.
@@ -279,7 +279,7 @@ class ArtifactCache:
 
     def _download_artifacts(
         self,
-        download_cmd: Sequence[str],
+        download_cmd: Iterable[str],
         organization: Optional[str],
         name: str,
         version: str,
@@ -289,7 +289,7 @@ class ArtifactCache:
         """Download artifacts with retry.
 
         :param download_cmd: The command used to download the artifact
-        :type download_cmd: Sequence[str]
+        :type download_cmd: Iterable[str]
         :param organization: The artifact organization
         :type organization: Optional[str]
         :param name: The package name
@@ -448,12 +448,9 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """
-        az_executable = shutil.which("az")
-        if az_executable is None:
-            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
         tempdir = tempfile.mkdtemp()  # nosec B306
         download_cmd = [
-            az_executable,
+            shutil.which("az"),
             "artifacts",
             "universal",
             "download",
