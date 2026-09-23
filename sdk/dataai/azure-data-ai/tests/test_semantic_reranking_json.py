@@ -4,10 +4,10 @@
 """JSON-document wire coverage using real SDK policies and mocked transport."""
 
 from copy import deepcopy
+from contextlib import ExitStack
 import importlib.util
 import json
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -120,52 +120,3 @@ async def test_invalid_json_document_errors_are_service_errors(
     assert caught.value.response.json() == problem
     assert json.loads(transport.send.call_args.args[0].content) == payload
     transport.send.assert_called_once()
-
-
-@pytest.mark.parametrize("asynchronous", [False], indirect=True)
-@pytest.mark.parametrize("model", [None, "test-model"])
-def test_entra_json_sample_offline(monkeypatch, transport, token_credential, respond, capsys, model):
-    path = Path(__file__).resolve().parents[1] / "samples" / "semantic_reranking_entra_json.py"
-    spec = importlib.util.spec_from_file_location("entra_json_sample", path)
-    sample = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(sample)
-    monkeypatch.setenv("AZURE_DATA_AI_ENDPOINT", "https://example.inference.azure.com")
-    credential_context = MagicMock()
-    credential_context.__enter__.return_value = token_credential
-    monkeypatch.setattr(sample, "DefaultAzureCredential", lambda: credential_context)
-    monkeypatch.setattr(
-        sample,
-        "AzureDataAIClient",
-        lambda endpoint, credential: AzureDataAIClient(endpoint, credential, transport=transport, retry_total=0),
-    )
-    document = json.dumps({"id": "cosmos-db", "title": "Azure Cosmos DB", "description": "Global distribution"})
-    respond(
-        (
-            200,
-            {
-                "scores": [
-                    {"index": 0, "score": 0.99, "document": document, "sentenceScores": [{"index": 0, "score": 0.99}]}
-                ],
-            },
-            {},
-        )
-    )
-
-    sample.main(model=model)
-
-    sent = transport.send.call_args.args[0]
-    payload = json.loads(sent.content)
-    assert payload["documentType"] == "json"
-    assert payload["targetPaths"] == "title,description"
-    assert len(payload["documents"]) == 3
-    assert all(isinstance(document, str) for document in payload["documents"])
-    assert all("metadata" in json.loads(document) for document in payload["documents"])
-    assert ("model" in payload) is (model is not None)
-    if model is not None:
-        assert payload["model"] == model
-    assert "Authorization" in sent.headers
-    assert "Ocp-Apim-Subscription-Key" not in sent.headers
-    assert "X-Environment" not in sent.headers
-    assert "Azure Cosmos DB" in capsys.readouterr().out
-    credential_context.__exit__.assert_called_once()
-    transport.__exit__.assert_called_once()

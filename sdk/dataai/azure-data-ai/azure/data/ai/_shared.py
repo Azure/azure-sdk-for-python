@@ -40,10 +40,12 @@ def create_configuration(
     config: Configuration = Configuration(**kwargs)
     config.authentication_policy = kwargs.get("authentication_policy") or authentication_policy
 
-    retry_policy = policies.AsyncRetryPolicy if asynchronous else policies.RetryPolicy
-    redirect_policy = policies.AsyncRedirectPolicy if asynchronous else policies.RedirectPolicy
-    config.retry_policy = kwargs.get("retry_policy") or retry_policy(**kwargs)
-    config.redirect_policy = kwargs.get("redirect_policy") or redirect_policy(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or (
+        policies.AsyncRetryPolicy(**kwargs) if asynchronous else policies.RetryPolicy(**kwargs)
+    )
+    config.redirect_policy = kwargs.get("redirect_policy") or (
+        policies.AsyncRedirectPolicy(**kwargs) if asynchronous else policies.RedirectPolicy(**kwargs)
+    )
     config.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
     config.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
     config.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
