@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed artifact cache path validation, wildcard version handling, and concurrent downloads for component `additional_includes`.
 - Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
 - Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
 - Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.
