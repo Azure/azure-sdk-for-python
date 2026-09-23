@@ -12,7 +12,7 @@
   concurrent requests collapse into a single follow-up flush, so the work does
   not grow with the request rate. Async flushes drain queued or running exports
   before propagating request cancellation. Both helpers are marked
-  `@experimental` while the API surface is validated in preview.
+  `@experimental`.
 
 ### Breaking Changes
 
