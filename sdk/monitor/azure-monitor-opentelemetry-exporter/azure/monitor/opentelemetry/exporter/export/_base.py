@@ -77,6 +77,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_initial_success,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _sdkstats_debug,
     _update_requests_map,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
@@ -100,6 +101,40 @@ class ExportResult(Enum):
     SUCCESS = 0
     FAILED_RETRYABLE = 1
     FAILED_NOT_RETRYABLE = 2
+
+
+def _safe_diagnostic_url(url: Optional[str]) -> str:
+    if not url:
+        return "<unavailable>"
+    try:
+        parsed = urlparse(url)
+        netloc = parsed.netloc.rsplit("@", 1)[-1]
+        return f"{parsed.scheme}://{netloc}{parsed.path}"
+    except Exception:  # pylint: disable=broad-except
+        return "<unavailable>"
+
+
+def _safe_diagnostic_text(value: Any, max_length: int = 160) -> str:
+    text = " ".join(str(value).split())
+    if len(text) <= max_length:
+        return text
+    return f"{text[: max_length - 3]}..."
+
+
+def _format_ingestion_errors(errors: Any, max_errors: int = 5) -> str:
+    errors_list = list(errors or [])
+    error_details = [
+        (
+            f"index={getattr(error, 'index', None)} "
+            f"status={getattr(error, 'status_code', None)} "
+            f"message={_safe_diagnostic_text(getattr(error, 'message', '<unavailable>'))}"
+        )
+        for error in errors_list[:max_errors]
+    ]
+    remaining_errors = len(errors_list) - len(error_details)
+    if remaining_errors > 0:
+        error_details.append(f"additional_errors={remaining_errors}")
+    return "[" + "; ".join(error_details) + "]"
 
 
 # pylint: disable=broad-except
@@ -136,6 +171,9 @@ class BaseExporter:
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._aad_audience = parsed_connection_string.aad_audience
+        self._debug_sdkstats(
+            f"exporter configuration ingestion_endpoint={self._endpoint} api_version={self._api_version}"
+        )
         self._storage_maintenance_period = kwargs.get(
             "storage_maintenance_period", 60
         )  # Maintenance interval in seconds.
@@ -200,6 +238,10 @@ class BaseExporter:
             connection_timeout=self._timeout,
             policies=policies,
             **kwargs,
+        )
+        self._debug_sdkstats(
+            f"client initialized host={_safe_diagnostic_url(self.client._config.host)} "
+            f"offline_storage_disabled={self._disable_offline_storage}"
         )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
@@ -335,6 +377,10 @@ class BaseExporter:
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
         if len(envelopes) > 0:
+            self._debug_sdkstats(
+                f"send entry batch_size={len(envelopes)} "
+                f"host={_safe_diagnostic_url(self.client._config.host)} redirected_retry={_skip_rate_limit}"
+            )
             # Client-side rate limiting: cap send rate to protect shared ingestion infrastructure.
             # Stats exporters bypass rate limiting to ensure observability data is not lost.
             # Skip rate limiting on recursive calls (e.g. 307/308 redirects) to avoid
@@ -383,19 +429,32 @@ class BaseExporter:
             start_time = time.time()
             final_result = None
             retry_after_delay_seconds = None
+            failure_details = None
             try:
                 track_result = self.client.track(
                     envelopes,
                     cls=lambda pipeline_response, deserialized, _: (
                         deserialized,
                         pipeline_response.http_response.headers,
+                        pipeline_response.http_response.status_code,
+                        pipeline_response.http_request.url,
                     ),
                 )
                 response_headers: Any = {}
-                if isinstance(track_result, tuple) and len(track_result) == 2:
+                response_status = None
+                request_url = None
+                if isinstance(track_result, tuple) and len(track_result) == 4:
+                    track_response, response_headers, response_status, request_url = track_result
+                elif isinstance(track_result, tuple) and len(track_result) == 2:
                     track_response, response_headers = track_result
                 else:
                     track_response = track_result
+                self._debug_sdkstats(
+                    f"response status={response_status} request_url={_safe_diagnostic_url(request_url)} "
+                    f"body_summary=items_received:{track_response.items_received},"
+                    f"items_accepted:{track_response.items_accepted},"
+                    f"errors:{len(track_response.errors or [])}"
+                )
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
@@ -415,6 +474,9 @@ class BaseExporter:
                 else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
+                    response_error_codes = sorted(
+                        {error.status_code for error in track_response.errors if error.status_code is not None}
+                    )
                     for error in track_response.errors:
                         # Check for sampling rejection - these should not be retried
                         # because the server will always reject them based on sampling rules
@@ -468,10 +530,36 @@ class BaseExporter:
                         # Track items that would have been retried but are dropped since client has local storage disabled
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                    self._debug_sdkstats(
+                        f"partial response retryable_items={len(resend_envelopes)} "
+                        f"status_codes={response_error_codes} retry_after_s={retry_after_delay_seconds} "
+                        f"errors={_format_ingestion_errors(track_response.errors)}"
+                    )
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
+                    failure_details = (
+                        f"partial-response items_received={track_response.items_received} "
+                        f"items_accepted={track_response.items_accepted} "
+                        f"errors={_format_ingestion_errors(track_response.errors)}"
+                    )
             except HttpResponseError as response_error:
                 # HttpResponseError is raised when a response is received
+                response = response_error.response
+                request = getattr(response, "request", None)
+                headers = getattr(response, "headers", None) or {}
+                content_length = headers.get("content-length", "<unknown>")
+                response_model = getattr(response_error, "model", None)
+                model_errors = getattr(response_model, "errors", None) or []
+                failure_details = (
+                    f"http-response status={response_error.status_code} "
+                    f"request_url={_safe_diagnostic_url(getattr(request, 'url', None))} "
+                    f"content_length={content_length} errors={_format_ingestion_errors(model_errors)}"
+                )
+                self._debug_sdkstats(
+                    f"response exception=HttpResponseError status={response_error.status_code} "
+                    f"request_url={_safe_diagnostic_url(getattr(request, 'url', None))} "
+                    f"body_summary=content_length:{content_length},errors:{len(model_errors)}"
+                )
                 if _reached_ingestion_code(response_error.status_code):
                     reach_ingestion = True
                 if _is_retryable_code(response_error.status_code):
@@ -503,6 +591,10 @@ class BaseExporter:
                             if response_error.response and response_error.response.headers:  # type: ignore
                                 headers = response_error.response.headers  # type: ignore
                             retry_after_delay_seconds = _get_retry_delay_from_headers(headers)
+                    self._debug_sdkstats(
+                        f"retry decision=retryable status={response_error.status_code} "
+                        f"retry_after_s={retry_after_delay_seconds}"
+                    )
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
@@ -511,6 +603,9 @@ class BaseExporter:
                     if not self._is_stats_exporter():
                         if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
                             track_dropped_items(envelopes, response_error.status_code)
+                    self._debug_sdkstats(
+                        f"retry decision=not-retryable-throttle status={response_error.status_code}"
+                    )
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     # pylint: disable=W0212
@@ -541,11 +636,20 @@ class BaseExporter:
                                         url.netloc,
                                     )
                                 result = ExportResult.FAILED_NOT_RETRYABLE
+                                failure_details = (
+                                    f"redirect-rejected target={_safe_diagnostic_url(location)}"
+                                )
+                                self._debug_sdkstats(
+                                    f"redirect decision=rejected target={_safe_diagnostic_url(location)}"
+                                )
                             else:
                                 # Change the host to the new redirected host
                                 self.client._config.host = "{}://{}".format(
                                     url.scheme, url.netloc
                                 )  # pylint: disable=W0212
+                                self._debug_sdkstats(
+                                    f"redirect decision=follow target={_safe_diagnostic_url(location)}"
+                                )
                                 # Attempt to export again
                                 result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
@@ -560,6 +664,8 @@ class BaseExporter:
                                     "Error parsing redirect information.",
                                 )
                             result = ExportResult.FAILED_NOT_RETRYABLE
+                            failure_details = "redirect-rejected reason=invalid-location"
+                            self._debug_sdkstats("redirect decision=rejected reason=invalid-location")
                     else:
                         if not self._is_stats_exporter():
                             # Track dropped items in customer sdkstats, non-retryable scenario
@@ -577,6 +683,8 @@ class BaseExporter:
                         if self._should_collect_stats():
                             _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
                         result = ExportResult.FAILED_NOT_RETRYABLE
+                        failure_details = "redirect-rejected reason=max-redirects"
+                        self._debug_sdkstats("redirect decision=rejected reason=max-redirects")
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
@@ -605,6 +713,9 @@ class BaseExporter:
                             # Also shutdown customer sdkstats on invalid code
                             shutdown_customer_sdkstats_metrics()
                     result = ExportResult.FAILED_NOT_RETRYABLE
+                    self._debug_sdkstats(
+                        f"retry decision=not-retryable status={response_error.status_code}"
+                    )
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
                 # request, so it should be safe to retry.
@@ -621,6 +732,13 @@ class BaseExporter:
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
+                failure_details = (
+                    f"service-request-error exception={request_error.__class__.__name__} "
+                    f"cause={getattr(request_error, 'exc_type', None)}"
+                )
+                self._debug_sdkstats(
+                    f"request exception={request_error.__class__.__name__} retry decision=retryable"
+                )
             except ServiceResponseError as response_error:
                 # The request was sent but the client failed to receive a response
                 # (e.g. read timeout).
@@ -636,7 +754,29 @@ class BaseExporter:
                         exc_type = response_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
+                failure_details = (
+                    f"service-response-error exception={response_error.__class__.__name__} "
+                    f"cause={getattr(response_error, 'exc_type', None)}"
+                )
+                self._debug_sdkstats(
+                    f"response exception={response_error.__class__.__name__} retry decision=retryable"
+                )
             except Exception as ex:
+                failure_details = f"client-exception type={ex.__class__.__name__}"
+                self._debug_sdkstats(
+                    f"send exception={ex.__class__.__name__} retry decision=not-retryable"
+                )
+                self._debug_sdkstats(
+                    f"envelopes={envelopes}"
+                )
+                # for e in envelopes:
+                #     self._debug_sdkstats(
+                #         f"envelope={e}"
+                #     )
+                response = response_error.response
+                self._debug_sdkstats(
+                    f"send response={response}"
+                )
                 logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
                     "Envelopes could not be exported and are not retryable: %s.", ex
                 )
@@ -652,6 +792,7 @@ class BaseExporter:
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
+                raise ex
             finally:
                 if self._should_collect_stats():
                     end_time = time.time()
@@ -672,6 +813,12 @@ class BaseExporter:
 
                             shutdown_statsbeat_metrics()
                             final_result = ExportResult.FAILED_NOT_RETRYABLE
+                            threshold_detail = "statsbeat-initial-failure-threshold-reached"
+                            failure_details = (
+                                f"{failure_details}; {threshold_detail}"
+                                if failure_details
+                                else threshold_detail
+                            )
 
                 if final_result is None:
                     final_result = result
@@ -679,6 +826,16 @@ class BaseExporter:
                     self._retry_after_delay_seconds = retry_after_delay_seconds
                 else:
                     self._retry_after_delay_seconds = None
+                failure_details_text = (
+                    f" failure_details={failure_details or '<unavailable>'}"
+                    if final_result != ExportResult.SUCCESS
+                    else ""
+                )
+                self._debug_sdkstats(
+                    f"send complete result={final_result.name if final_result else '<unset>'} "
+                    f"reached_ingestion={reach_ingestion} retry_after_s={self._retry_after_delay_seconds}"
+                    f"{failure_details_text}"
+                )
             return final_result
 
         # No spans to export
@@ -764,6 +921,10 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
+
+    def _debug_sdkstats(self, message: str) -> None:
+        if self._is_stats_exporter():
+            _sdkstats_debug(f"exporter=statsbeat {message}")
 
     def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
         """Return True if the redirect target is safe to follow.
