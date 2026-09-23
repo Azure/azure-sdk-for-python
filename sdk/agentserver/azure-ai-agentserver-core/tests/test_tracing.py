@@ -1138,11 +1138,12 @@ class TestScheduleFlushSpans:
         """schedule_flush_spans's internal call into the flush machinery must not
         also trigger flush_spans_async's separately-cached experimental warning."""
         from azure.ai.agentserver.core._experimental import _warning_cache
+        from azure.ai.agentserver.core._experimental import module_logger as experimental_logger
 
         _warning_cache.clear()
         provider = _BlockingFlushProvider(block_first=False)
         with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
-            with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver.core._tracing"):
+            with caplog.at_level(logging.WARNING, logger=experimental_logger.name):
                 _tracing.schedule_flush_spans()
                 await _tracing._bg_flush_task
         experimental_warnings = [r for r in caplog.records if "experimental" in r.message]
