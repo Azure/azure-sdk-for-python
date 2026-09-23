@@ -1,9 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from aiohttp import ClientConnectorError
 import pytest
 
-from azure.eventhub._pyamqp.aio._transport_async import WebSocketTransportAsync
+from azure.servicebus import ServiceBusMessage, TransportType
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus.exceptions import ServiceBusError
+from azure.servicebus._pyamqp.aio._transport_async import WebSocketTransportAsync
 
 
 def _client_connector_error():
@@ -16,16 +22,6 @@ def _session_with_connect_error(error):
     session.ws_connect = AsyncMock(side_effect=error)
     session.close = AsyncMock()
     return session
-
-
-@pytest.mark.asyncio
-async def test_websocket_aiohttp_exception_async():
-    import aiohttp
-
-    with patch.object(aiohttp.ClientSession, "ws_connect", side_effect=aiohttp.ClientOSError):
-        transport = WebSocketTransportAsync(host="my_host")
-        with pytest.raises(aiohttp.ClientOSError):
-            await transport.connect()
 
 
 @pytest.mark.asyncio
@@ -105,3 +101,37 @@ async def test_close_closes_session_when_socket_close_fails():
     assert transport.sock is None
     assert transport.session is None
     assert transport.connected is False
+
+
+@pytest.mark.asyncio
+async def test_send_messages_closes_all_sessions_after_retries():
+    connection_string = (
+        "Endpoint=sb://example.servicebus.windows.net/;"
+        "SharedAccessKeyName=RootManageSharedAccessKey;"
+        "SharedAccessKey=ZmFrZS1rZXk="
+    )
+    client = ServiceBusClient.from_connection_string(
+        connection_string,
+        transport_type=TransportType.AmqpOverWebsocket,
+        retry_total=3,
+        retry_backoff_factor=0,
+        retry_backoff_max=0,
+    )
+    sender = client.get_queue_sender("queue")
+    sessions = []
+
+    def create_session():
+        session = _session_with_connect_error(_client_connector_error())
+        sessions.append(session)
+        return session
+
+    try:
+        with patch("aiohttp.ClientSession", side_effect=create_session):
+            with pytest.raises(ServiceBusError):
+                await sender.send_messages(ServiceBusMessage("message"))
+    finally:
+        await sender.close()
+        await client.close()
+
+    assert len(sessions) == 4
+    assert all(session.close.await_count == 1 for session in sessions)
