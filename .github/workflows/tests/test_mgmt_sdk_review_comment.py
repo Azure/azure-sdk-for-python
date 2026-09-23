@@ -662,7 +662,7 @@ class PublicationIntegrationTests(unittest.TestCase):
         add_entry(data, trusted, direct=True)
         entry = data["packages"][0]["attribution"]["entries"][0]
         entry["sources"][0]["url"] = entry["sources"][0]["url"].replace(
-            "main.tsp", "@renamedFrom(Widget)&\uff37idget.tsp"
+            "main.tsp", "@renamedFrom(Widget)&\uff21Widget.tsp"
         )
         entry["explanation"] = "\n".join(
             '@renamedFrom("a") @@clientName <Widget> \\| `name` "quoted" \\ path' for _ in range(15)

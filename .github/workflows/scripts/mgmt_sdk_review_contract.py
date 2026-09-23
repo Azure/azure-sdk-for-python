@@ -437,8 +437,8 @@ def text(value):
 
 
 def link(url, label):
-    # URI-encode syntax that gh-aw would otherwise treat as mentions, HTML or Unicode
-    # confusables. This preserves the destination, including its SHA and line anchors.
+    # URI-encode syntax that gh-aw would otherwise treat as mentions, HTML or
+    # look-alike characters. Preserve the destination, including its SHA and line anchors.
     destination = quote(url, safe="/:%#._-~")
     return f"[{text(label)}]({destination})"
 
