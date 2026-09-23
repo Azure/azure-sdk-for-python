@@ -131,7 +131,7 @@ def add_entry(data, trusted, *, direct=False, release="2.0.0 (2026-09-22)"):
     attribution["entries"].append(
         {
             "entry_index": index,
-            "release": release,
+            "release": "" if release is None else release,
             "cause": "typespec_api" if direct else "human_review",
             "confidence": "high" if direct else "not_applicable",
             "explanation": (
@@ -217,6 +217,50 @@ class StructuredReviewTests(unittest.TestCase):
     def test_agent_cannot_invent_initial_release(self):
         self.package["attribution"]["initial_release"] = True
         self.reject(".initial_release")
+
+    def test_missing_release_identity_remains_reviewable_without_invention(self):
+        add_entry(self.data, self.context, release=None)
+        body = self.render()
+        self.assertIn("Unverified release (missing heading)", body)
+        self.assertIn("Breaking-change release identity", body)
+        self.assertIn("Removed", body)
+        entry = self.package["attribution"]["entries"][0]
+        entry["release"] = "Invented release"
+        self.reject(".release")
+        entry["release"] = None
+        self.reject("expected string")
+
+    def test_missing_release_collector_snapshot_reaches_renderer(self):
+        from test_mgmt_sdk_review_context import CollectionTests
+
+        self.context = CollectionTests().collect_context(
+            old_status=404, changelog_status="added", changelog="### Breaking Changes\n- Removed Widget.\n"
+        )
+        name = self.context["affectedPackages"][0]
+        breaking = self.context["breakingChangeContext"][0]
+        self.assertEqual(1, len(breaking["introducedEntries"]))
+        self.assertIsNone(breaking["introducedEntries"][0]["release"])
+        self.package["package"] = name
+        for check in self.package["checks"]:
+            check["sources"] = [reference(package=name)]
+        self.package["attribution"].update(
+            outcome="incomplete",
+            reason="The previous release baseline could not be established.",
+            entries=[
+                {
+                    "entry_index": 0,
+                    "release": "",
+                    "cause": "human_review",
+                    "confidence": "not_applicable",
+                    "explanation": "The historical specification and release heading are unavailable.",
+                    "sources": [],
+                }
+            ],
+        )
+        body = self.render()
+        self.assertIn("Unverified release (missing heading)", body)
+        self.assertIn("Breaking-change release identity", body)
+        self.assertIn("Removed Widget.", body)
 
     def test_initial_release_collector_snapshot_reaches_renderer(self):
         from test_mgmt_sdk_review_context import CollectionTests
@@ -377,6 +421,11 @@ class StructuredReviewTests(unittest.TestCase):
             "**`None.`**",
             "~~None~~",
             "<strong>None.</strong>",
+            "<table><tbody><tr><td>Full review pending</td></tr></tbody></table>",
+            "<h1>Full review pending</h1>",
+            "<ul><li>Full review pending</li></ul>",
+            '<div title="a > b">Full review pending</div>',
+            "<details><summary>Full review pending</summary></details>",
             "&#78;one&#33;",
             "[None.](https://example.invalid)",
             "TBD",

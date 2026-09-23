@@ -174,7 +174,19 @@ def substantive(text, path):
     # This is placeholder detection on prose, not parsing the publication layout.
     visible = normalized_text(text, path)
     visible = re.sub(r"!?\[([^\]\n]*)\]\([^\n]*?\)", r"\1", visible)
-    visible = re.sub(r"</?(?:strong|em|b|i|s|del|code|span|u|p|div|br)\b[^>]*>", "", visible, flags=re.I)
+    # cspell:ignore hgroup noscript samp
+    visible = re.sub(
+        r"</?(?:a|abbr|acronym|address|area|article|aside|audio|b|base|bdi|bdo|big|blockquote|body|br|button|"
+        r"canvas|caption|center|cite|code|col|colgroup|data|datalist|dd|del|details|dfn|dialog|dir|div|dl|dt|em|"
+        r"embed|fieldset|figcaption|figure|font|footer|form|frame|frameset|h[1-6]|head|header|hgroup|hr|html|i|"
+        r"iframe|img|input|ins|kbd|label|legend|li|link|main|map|mark|marquee|math|menu|meta|meter|nav|noscript|"
+        r"object|ol|optgroup|option|output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|"
+        r"slot|small|source|span|strike|strong|style|sub|summary|sup|svg|table|tbody|td|template|textarea|tfoot|"
+        r"th|thead|time|title|tr|track|tt|u|ul|var|video|wbr)\b(?:[^>'\"]|\"[^\"]*\"|'[^']*')*>",
+        "",
+        visible,
+        flags=re.I,
+    )
     visible = re.sub(r"[*_`~]", "", visible).lower()
     visible = " ".join(visible.split())
     visible = visible.strip("".join(char for char in set(visible) if unicodedata.category(char).startswith("P")) + " ")
@@ -402,10 +414,11 @@ def validate_review(data, context):
             require(not attribution["reason"], field + ".reason", "complete attribution must have an empty reason")
         for index, entry in indexes.items():
             row = field + f".entries[{index}]"
+            trusted_release = trusted_entries[index]["release"]
             require(
-                entry["release"] == trusted_entries[index]["release"],
+                entry["release"] == ("" if trusted_release is None else trusted_release),
                 row + ".release",
-                "must match the trusted changelog release heading",
+                "must match the trusted changelog release heading, or be empty when that heading is missing",
             )
             reason(entry["explanation"], row + ".explanation")
             direct = entry["cause"] == "typespec_api"
@@ -562,12 +575,21 @@ def render(data, context):
                 explanation = "**Needs human review:** " + explanation
             if entry["sources"]:
                 explanation += "<br>" + sources(entry["sources"])
-            groups.setdefault(entry["release"], []).append(
+            release = trusted["release"] if trusted["release"] is not None else "Unverified release (missing heading)"
+            groups.setdefault(release, []).append(
                 [
                     link(url, trusted["text"]) + "<br>Change: " + text(trusted["changeKind"]),
                     "TypeSpec/API" if entry["cause"] == "typespec_api" else "Human review",
                     explanation,
                     "High" if entry["confidence"] == "high" else "N/A",
+                ]
+            )
+        if any(entry["release"] is None for entry in breaking["introducedEntries"]):
+            unverified.append(
+                [
+                    text(name),
+                    "Breaking-change release identity",
+                    "Introduced entries appear before a release heading. Correct the changelog release structure.",
                 ]
             )
         for release, rows in groups.items():

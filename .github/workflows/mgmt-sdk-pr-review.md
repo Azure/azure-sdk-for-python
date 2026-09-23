@@ -401,8 +401,10 @@ Do not create findings solely because breaking-change attribution remains uncert
 ## Step 4 - Attribute introduced breaking changes
 
 For every `breakingChangeContext.introducedEntries` item, produce one attribution entry referencing
-its zero-based `entry_index` and exact `release`. Code preserves the full multiline changelog text,
-`changeKind` and recorded line locations. Do not resubmit entry text or historical entries.
+its zero-based `entry_index` and exact `release`. If the trusted entry has `release: null` because
+its release heading is missing, submit `release: ""`; never invent a heading. Code renders an
+unverified release identity and keeps the malformed changelog reviewable. Code preserves the full
+multiline changelog text, `changeKind` and recorded line locations. Do not resubmit entry text or historical entries.
 
 1. Compare package provenance at merge base and pinned head. When
    `releaseBaseline.differsFromMergeBase` is true, use release baseline provenance for causality.
