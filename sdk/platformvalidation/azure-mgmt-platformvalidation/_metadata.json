@@ -6,6 +6,6 @@
   "commit": "8b60913ae846f5209258162f983c8c2c425e5371",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/platformvalidation/resource-manager/Microsoft.PlatformValidation/PlatformValidation",
-  "emitterVersion": "0.63.5",
-  "httpClientPythonVersion": "^0.36.0"
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "^0.37.3"
 }
