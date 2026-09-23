@@ -43,11 +43,14 @@ from ._item_context import ItemClientDefaults, ClientLastResponseHeaders
 from ._request_settings import compose_item_options, _timeout_is_representable, overrides_driver_owned_header
 from ._item_prep import (
     prepare_patch_item_kwargs,
+    prepare_replace_item_kwargs,
     serialize_patch_body,
     apply_patch_item_options,
 )
 from ._document import build_create_document, serialize_document
+from ._resource_validation import validate_resource
 from ._response_parse import complete_item_response, process_backend_response
+from .._operation_deadline import remaining_timeout
 
 
 def normalize_item_arguments(
@@ -61,11 +64,13 @@ def normalize_item_arguments(
     Rust path after the prepared request reaches the binding.
     """
     kwargs = dict(arguments)
-    # _item_self_link addresses an item the old way. The Rust path has no use
-    # for it, so drop it here rather than carry it further down.
-    kwargs.pop("_item_self_link", None)
+    if op == "replace_item" and "_item_self_link" in kwargs and not isinstance(kwargs["_item_self_link"], str):
+        raise TypeError("replace_item target _self must be a string.")
+    item_self_link = kwargs.pop("_item_self_link", None)
     if op == "patch_item":
         prepare_patch_item_kwargs(kwargs)
+    elif op == "replace_item":
+        prepare_replace_item_kwargs(kwargs)
     body = kwargs.pop("body", None)
     patch_operations = kwargs.pop("patch_operations", None)
     generate_id = kwargs.pop("enable_automatic_id_generation", False)
@@ -73,6 +78,7 @@ def normalize_item_arguments(
     args = {
         "container_link": kwargs.pop("container_link"),
         "item_id": kwargs.pop("item_id", None),
+        "item_self_link": item_self_link if op == "replace_item" else None,
         "filter_predicate": kwargs.pop("filter_predicate", None),
         "indexing_directive": kwargs.pop("indexing_directive", None),
         "deadline": deadline if op == "create_item" else inherited_deadline,
@@ -82,6 +88,8 @@ def normalize_item_arguments(
             body = build_create_document(body, generate_id=generate_id)
         elif isinstance(body, dict):
             body = dict(body)
+            if op == "replace_item":
+                validate_resource(body)
         args["document"] = serialize_document(
             body, operation=op, compact_utf8=compact_utf8,
         )
@@ -174,6 +182,7 @@ def build_item_request(
     if op in ("upsert_item", "replace_item"):
         if op == "replace_item":
             common["item_id"] = args["item_id"]
+            common["item_self_link"] = args["item_self_link"]
         builder = (
             _request_item.build_upsert_item_request if op == "upsert_item"
             else _request_item.build_replace_item_request
@@ -230,6 +239,8 @@ class ItemHelper:
         if op == "patch_item":
             parsed = process_backend_response(response, response_state=self._response_state)
             return complete_item_response(parsed, response_hook, deadline)
+        if op == "replace_item":
+            remaining_timeout(deadline)
         parsed = process_backend_response(response, response_state=self._response_state, response_hook=response_hook)
         return None if op == "delete_item" else parsed
 

@@ -1,6 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Read the typed partition key supplied by the Python wrapper.
+//!
+//! For an order read, kind="components" and values=("customer-17",) become a
+//! Rust driver PartitionKey. This is not JSON parsed from an HTTP header.
+//! Other kinds preserve distinctions such as extracting a key from an item
+//! body versus querying the full container; each operation checks which it accepts.
+
 use azure_data_cosmos_driver::models::{PartitionKey, PartitionKeyValue};
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
@@ -124,6 +131,7 @@ pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<Bin
 }
 
 #[cfg(test)]
+/// Convert legacy header examples into typed inputs for tests, not production requests.
 pub(crate) fn test_partition_key<'py>(py: Python<'py>, header: Option<&str>) -> Bound<'py, PyAny> {
     use pyo3::types::PyDict;
     use serde_json::Value;

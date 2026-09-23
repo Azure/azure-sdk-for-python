@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Resolve metadata needed before an item operation, such as orders' partition key.
+//!
+//! Success returns (container resource id, partition-key paths, kind, systemKey).
+//! This is a metadata tuple, not the five-field binding response tuple. Metadata
+//! errors can carry a response tuple inside _DriverResponseError instead.
+
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
@@ -31,7 +37,7 @@ fn metadata_result<'py>(
                 _ => return Err(PyRuntimeError::new_err("Unsupported partition-key kind")),
             };
             let paths = PyTuple::new_bound(py, definition.paths().iter().map(|path| path.as_ref()));
-            // The driver does not retain systemKey. None means unknown, not false.
+            // The Rust driver does not retain systemKey. None means unknown, not false.
             Ok(PyTuple::new_bound(
                 py,
                 [

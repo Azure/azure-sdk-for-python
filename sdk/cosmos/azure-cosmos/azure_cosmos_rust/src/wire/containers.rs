@@ -1,7 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Runs container create, read, replace, delete, list, and query operations.
+//! Execute container operations using the Rust driver.
+//!
+//! For example, a read names database "sales" and container "orders". Replacement
+//! and deletion first resolve container metadata; their helpers keep lookup and
+//! the final operation within one supplied timeout.
 
 use std::future::Future;
 use std::sync::Arc;
@@ -295,7 +299,7 @@ fn prepare_container_operation(
     (op, options)
 }
 
-/// Send a create-container request and return the created container properties.
+/// Send a create-container request and return the Rust driver's response.
 async fn run_create_container_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
@@ -323,7 +327,7 @@ async fn run_read_container_future(
 }
 
 fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> OperationOptions {
-    // Conditions and customer headers belong to the write, not its metadata GET.
+    // Conditions and customer app headers belong to the write, not its metadata GET.
     build_operation_options(
         None,
         modifiers.excluded_regions_value.clone(),
@@ -352,7 +356,7 @@ async fn with_container_timeout<T>(
         })?
 }
 
-/// Rust resolves metadata; one explicit timeout covers both lookup and deletion.
+/// Ask the Rust driver to resolve metadata; one timeout covers lookup and deletion.
 async fn run_delete_container_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,

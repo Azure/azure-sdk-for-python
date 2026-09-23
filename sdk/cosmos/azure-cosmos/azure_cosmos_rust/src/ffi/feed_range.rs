@@ -1,13 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Binding calls for feed-range lookup and local subset comparison.
+//!
+//! Lookup uses the retained CosmosDriver object. Subset comparison reads the
+//! two ranges from body bytes and does not contact the service backend.
+
 use super::*;
 
-/// Enumerate the container's partition-key ranges (routing map view).
+/// Read the container's partition-key ranges through the Rust driver.
 ///
 /// The request body may carry `{"forceRefresh": true}` to force a cache
-/// refresh. Returns body shape
-/// `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"},...]}`.
+/// refresh. An illustrative response body is
+/// `{"PartitionKeyRanges":[{"id":"0","minInclusive":"","maxExclusive":"FF"}]}`.
 #[pyfunction]
 pub(crate) fn read_feed_ranges<'py>(
     py: Python<'py>,
@@ -25,10 +30,10 @@ pub(crate) fn read_feed_ranges<'py>(
     )
 }
 
-/// feed_range_from_partition_key: compute the feed range that one partition key falls into.
+/// Compute a feed range from the typed partition key and container metadata.
 ///
-/// Returns body shape
-/// `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
+/// Return a response tuple whose body contains Range with min, max,
+/// isMinInclusive, and isMaxInclusive fields.
 #[pyfunction]
 pub(crate) fn feed_range_from_partition_key<'py>(
     py: Python<'py>,
@@ -46,8 +51,7 @@ pub(crate) fn feed_range_from_partition_key<'py>(
     )
 }
 
-/// is_feed_range_subset: pure client-side check of whether one feed range's
-/// effective-partition-key span sits entirely inside another's. No network call;
+/// Check locally whether one feed range sits entirely inside another. No service request;
 /// the two feed ranges arrive in the request body as `{"parent": <feed-range
 /// dict>, "child": <feed-range dict>}` and the answer comes back as
 /// `{"IsSubset": <bool>}`. The binding normalizes both ranges to `[min, max)`

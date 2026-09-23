@@ -91,6 +91,10 @@ class PreparedRequest:
     #: separate from the SQL and parameters sent in the JSON body.
     query_scope: Optional[QueryScope] = None
 
+    #: Returned resource address for a dictionary replacement target. It selects
+    #: the original resource, not a recreated item with the same user ID.
+    item_self_link: Optional[str] = None
+
     def __post_init__(self) -> None:
         if not isinstance(self.body_bytes, bytes):
             raise TypeError("PreparedRequest.body_bytes must be immutable bytes")
@@ -100,6 +104,8 @@ class PreparedRequest:
             raise TypeError("PreparedRequest operation and container_link must be strings")
         if self.item_id is not None and not isinstance(self.item_id, str):
             raise TypeError("PreparedRequest.item_id must be a string or None")
+        if self.item_self_link is not None and not isinstance(self.item_self_link, str):
+            raise TypeError("PreparedRequest.item_self_link must be a string or None")
         if not isinstance(self.partition_key, BindingPartitionKey):
             raise TypeError("PreparedRequest requires a typed BindingPartitionKey")
         if self.query_scope is not None and not isinstance(self.query_scope, QueryScope):

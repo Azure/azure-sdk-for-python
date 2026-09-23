@@ -1,32 +1,25 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The pure feed-range math behind `is_feed_range_subset`: parse two feed-range
-//! dicts, normalize each to `[min, max)` bounds, and ask the driver whether one
-//! sits entirely inside the other. There is no network and no Python here -- the
-//! wire/binding work (turning the yes/no into a `BackendResponse` tuple and
-//! running it sync/async) stays in `wire/feed_range.rs` and calls
-//! [`compute_is_feed_range_subset`].
+//! Compare two feed ranges without a service-backend request.
 //!
-//! What the customer calls: `container.is_feed_range_subset(parent, child)`. It
-//! answers one yes/no question -- does the child feed range sit entirely inside
-//! the parent feed range? A feed range is an opaque label for a slice of the
-//! container's key space; a customer reaches for this check when they keep their
-//! own per-slice state (for example, caching one session token per slice) and
-//! need to know which wider slice a narrower one belongs to.
+//! The customer app asks whether the child feed range is entirely inside the
+//! parent. This binding module reads their JSON body, converts both ranges to
+//! the form expected by FeedRange, and calls the Rust driver's local
+//! FeedRange::is_subset_of method. It does not access Python objects or acquire
+//! a CosmosDriver object.
 //!
-//! Why the normalization lives here and not in the driver: the driver already has
-//! the comparison (`FeedRange::is_subset_of`), but its `FeedRange` constructor
-//! only takes the `[min, max)` form and will not normalize a slice given with an
-//! inclusive end or exclusive start. The legacy python normalizes first, so we do
-//! the identical arithmetic here to get the identical answer.
+//! The bound conversion preserves the legacy Python Range.to_normalized_range
+//! arithmetic, including its exclusive-start adjustment. It is not a new
+//! interval rule. `wire/feed_range.rs` handles waiting and calls the response
+//! converter in `wire/response.rs`; the Python wrapper constructs BackendResponse.
 
 use serde::Deserialize;
 
 use azure_data_cosmos_driver::models::{EffectivePartitionKey, FeedRange};
 
-/// The request body the python layer sends: `{"parent": <dict>, "child": <dict>}`,
-/// each dict being `{"Range": {"min","max","isMinInclusive","isMaxInclusive"}}`.
+/// Read parent and child objects from the body supplied by the Python wrapper.
+/// Each contains Range with min, max, isMinInclusive, and isMaxInclusive fields.
 #[derive(Deserialize)]
 struct IsFeedRangeSubsetBody {
     parent: FeedRangeDict,
@@ -65,7 +58,7 @@ fn hex_char_value(byte: u8) -> Result<u8, String> {
 
 /// Decode a hex effective-partition-key string into its raw bytes. The string
 /// must have an even number of characters (two hex digits per byte); this
-/// matches the even-length requirement in the python `add_to_effective_partition_key`.
+/// matches the legacy Python helper's even-length requirement.
 fn effective_partition_key_to_bytes(hex: &str) -> Result<Vec<u8>, String> {
     let chars = hex.as_bytes();
     if chars.len() % 2 != 0 {
@@ -93,7 +86,7 @@ fn bytes_to_effective_partition_key(bytes: &[u8]) -> String {
 
 /// Add or subtract one from an effective partition key, treating the hex string
 /// as a big-endian number over its bytes. This is the exact arithmetic the
-/// python `add_to_effective_partition_key` performs: for `+1`, walk from the
+/// legacy Python `add_to_effective_partition_key` performs: for `+1`, walk from the
 /// last byte and increment the first byte below 255 (setting trailing 255 bytes
 /// to 0 as carries); for `-1`, decrement the first non-zero byte (setting
 /// trailing 0 bytes to 255 as borrows).
@@ -119,8 +112,8 @@ fn add_to_effective_partition_key(hex: &str, increment: bool) -> Result<String, 
     Ok(bytes_to_effective_partition_key(&bytes))
 }
 
-/// Normalize one feed range to `[min, max)` bounds, matching the python
-/// `Range.to_normalized_range`. The bounds are upper-cased first (the python
+/// Normalize one feed range to `[min, max)` bounds, matching the legacy Python
+/// `Range.to_normalized_range`. The bounds are upper-cased first (the Python
 /// parser upper-cases min/max). A range that is already `[min, max)` (min
 /// inclusive, max exclusive) is returned as-is; otherwise an inclusive min is
 /// left alone but an exclusive min steps back by one, and an inclusive max steps
@@ -153,10 +146,10 @@ fn feed_range_from_normalized_bounds(min: String, max: String) -> Result<FeedRan
     .map_err(|e| format!("invalid feed range bounds: {e}"))
 }
 
-/// The whole client-side computation for is_feed_range_subset: parse the
-/// `{"parent","child"}` body, normalize both ranges, and ask the driver whether
-/// the child is a subset of the parent. The pyo3 code that packages this
-/// yes/no into a `BackendResponse` tuple lives in `wire/feed_range.rs`.
+/// Parse both feed ranges and compare them using the Rust driver's local method.
+/// For example, the range [40, 60) is inside [20, 80): the lower bound is
+/// included and the upper bound is excluded. The response converter elsewhere
+/// puts this example's result into `{"IsSubset":true}` body bytes.
 pub(crate) fn compute_is_feed_range_subset(body_bytes: &[u8]) -> Result<bool, String> {
     let parsed: IsFeedRangeSubsetBody = serde_json::from_slice(body_bytes).map_err(|e| {
         format!("is_feed_range_subset body must be JSON with 'parent' and 'child' feed ranges: {e}")
@@ -174,7 +167,7 @@ mod tests {
 
     // ---- EPK +/-1 arithmetic --------------------------------------------------
     //
-    // These pin the byte carry/borrow rules against the legacy python
+    // These pin the byte carry/borrow rules against the legacy Python
     // `add_to_effective_partition_key`, which the normalization step depends on.
 
     #[test]

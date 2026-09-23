@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Execute account-level throughput offer operations using the Rust driver.
+//!
+//! Reading throughput queries offers and returns an Offers list in body bytes.
+//! Replacing throughput targets an offer resource id and returns one offer
+//! record. Neither helper resolves an item container or partition key.
+
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
@@ -22,12 +28,8 @@ use super::response::{tuple_from_offer_feed_result, tuple_from_result};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
-/// Entry point the binding calls to run one container's offer/throughput read and
-/// wait for it (sync). Offers are an account-level, non-partitioned resource, so --
-/// unlike `run_query_operation` -- there is no container to resolve and no partition
-/// to target: it builds `CosmosOperation::query_offers` against the account carrying
-/// the same offer query JSON the legacy path sends, and returns the page in the
-/// `{"Offers":[...]}` envelope the Python offer parser reads.
+/// Run one offer-query page and return its binding response tuple.
+/// Wait on the calling thread with Python's global interpreter lock (GIL) released.
 pub(crate) fn run_read_offer_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -80,12 +82,8 @@ pub(crate) fn run_read_offer_operation_async<'py>(
     })
 }
 
-/// Entry point the binding calls to run one container's offer/throughput replace and
-/// wait for it (sync). Offers are account-level and non-partitioned, so -- like
-/// `run_read_offer_operation` -- there is no container to resolve: it builds
-/// `CosmosOperation::replace_offer` for the given offer RID carrying the mutated
-/// offer document, and returns the single updated offer via `tuple_from_result` (the
-/// single-document shape, not the offer-feed envelope the read uses).
+/// Replace the named offer and return its binding response tuple.
+/// Wait on the calling thread with the GIL released; the body contains one record.
 pub(crate) fn run_replace_offer_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -139,9 +137,7 @@ pub(crate) fn run_replace_offer_operation_async<'py>(
         })
     })
 }
-/// Driver work for an offer/throughput read. Offers live at the account level and
-/// are not partitioned, so this resolves no container and targets no partition: it
-/// builds `query_offers` against the account and attaches the prepared query JSON.
+/// Build query_offers against the account using the prepared query body.
 /// Add default query `Content-Type` and `x-ms-documentdb-isquery` markers only if
 /// absent from custom headers. The prepared container-recreate guard header is
 /// also supplied through those custom headers; this helper does not enforce it.
@@ -178,13 +174,9 @@ async fn run_read_offer_future(
     driver.execute_operation(op, options).await
 }
 
-/// Driver work for an offer/throughput replace. Like `run_read_offer_future`, offers
-/// are an account-level, non-partitioned resource, so this resolves no container and
-/// targets no partition: it builds `CosmosOperation::replace_offer(account, offer_id)`
-/// using the offer's RID and the prepared replacement document. Signing and
-/// transport header defaults are left to the driver. Custom headers include any
-/// prepared container-recreate guard. `execute_singleton_operation` returns one
-/// response, converted with `tuple_from_result` rather than the offer-feed envelope.
+/// Build replace_offer using the offer resource id and prepared replacement body.
+/// Pass through custom headers, including any container-recreate guard. The
+/// Rust driver handles signing and execution; this helper does not enforce the guard.
 async fn run_replace_offer_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,

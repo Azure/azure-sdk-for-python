@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Execute account-level database operations using the Rust driver.
+//!
+//! A read of "sales" needs a database name but no container lookup or partition
+//! key. Feed operations return one page with a Databases field in the body.
+
 use std::sync::Arc;
 
 use pyo3::exceptions::PyTimeoutError;
@@ -271,7 +276,7 @@ fn prepare_database_operation(
     (op, options)
 }
 
-/// Send a create-database request and return the created database properties.
+/// Send a create-database request and return the Rust driver's response.
 async fn run_create_database_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,

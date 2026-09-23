@@ -1,43 +1,23 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Shared request and response translation between Python and the Rust driver.
-//! Operation-specific execution lives in the sibling operation modules; shared
-//! helpers cover the following boundaries:
+//! Convert prepared inputs to Rust driver calls and convert the results for Python.
 //!
-//!   * Request (down): look up the rust driver by handle, parse the container
-//!     link and partition key where needed, combine typed settings with prepared
-//!     headers, and build driver operation options. Driver-backed runners execute
-//!     on the binding's shared Tokio runtime.
-//!   * Reply (up): turn the driver's response -- or an error that still carries a
-//!     wire response, like a 404/409 -- into the 5-tuple `BackendResponse` the
-//!     Python parser reads. Header conversion uses the driver's `to_raw_headers`,
-//!     not an unmodified HTTP header collection. Response-less driver errors can
-//!     become the typed error Python converts to `ServiceResponseError`; local
-//!     validation and binding timeouts have separate error paths.
+//! For example, a request for "order-42" carries "dbs/sales/colls/orders",
+//! a typed partition key, and request settings. These binding helpers obtain the
+//! CosmosDriver object named by the driver handle and prepare its operation.
+//! Tokio runs the asynchronous Rust work; the Rust driver contacts the service
+//! backend. Local feed-range comparisons are a separate path without service I/O.
 //!
-//! These helpers centralize common conversions; operation-specific handling such
-//! as metadata tuples and retained-cursor continuation headers remains separate.
+//! Response helpers return a binding response tuple:
+//! `(status, sub_status, headers, body_bytes, diagnostics)`. The Python wrapper
+//! constructs BackendResponse from it. Header conversion uses the driver's
+//! `to_raw_headers`, not the original HTTP header collection.
 //!
-//! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `ffi/`, `runtime.rs`, and the Python `_backend` / `_helpers`
-//! package docs):
-//!
-//!   * binding = this compiled `_rust` extension.
-//!   * rust driver = the `CosmosDriver` driver. It owns connection pooling,
-//!     request signing, and choosing which region to talk to.
-//!   * shared Tokio runtime = the binding-owned process-wide executor that
-//!     runs the driver's work.
-//!   * driver handle = the string naming which rust driver a client uses.
-//!   * legacy = the Python implementation that predates the rust driver. It
-//!     is being removed.
-//!   * item = one stored record. The service calls these documents on the
-//!     wire, so the JSON keys stay `Documents`, but prose says item.
-//!   * envelope = the JSON wrapper the service puts a feed in, such as
-//!     `{"Documents":[...]}` or `{"Offers":[...]}`. The name of the wrapper
-//!     for a given feed is carried as `envelope_name`.
-//!   * point operation = an operation on a single item, found by its id and
-//!     partition key. As opposed to a query or a feed, which return many.
+//! Metadata has a different result shape. Retained paging also records progress
+//! in a feed cursor; no feed cursor is created by a tuple conversion.
+//! Errors without an attached response do not prove that no service work occurred.
+//! See docs/V5/VOCABULARY.md for the shared terminology.
 
 use std::sync::Arc;
 
@@ -73,12 +53,12 @@ pub(crate) use request::{
     extract_read_feed_ranges_force_refresh, extract_required_item_id, RequestHeadersAndOptions,
 };
 // ---------------------------------------------------------------------------
-// Shared singleton-operation runner (sync + async)
+// Shared driver lookup and task cancellation
 // ---------------------------------------------------------------------------
 
 /// Request task cancellation when the owning Rust bridge future drops this guard.
 /// Aborting is not proof of immediate completion, connection release, or rollback
-/// of requests already sent to the service.
+/// of requests already sent to the service backend.
 struct AbortOnDrop(tokio::task::AbortHandle);
 
 impl Drop for AbortOnDrop {
@@ -87,7 +67,7 @@ impl Drop for AbortOnDrop {
     }
 }
 
-/// Clone the cached driver's Arc, or raise if the handle is absent.
+/// Retain the cached CosmosDriver object for an operation, or reject an absent handle.
 /// A shared handle can remain cached after one client closes; the Python wrapper
 /// is responsible for rejecting operations on that closed client.
 fn lookup_driver(driver_handle: &str) -> PyResult<Arc<CosmosDriver>> {
@@ -132,7 +112,7 @@ pub(crate) use feed_range::{
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_read_feed_ranges_operation, run_read_feed_ranges_operation_async,
 };
-pub(crate) use items::{execute_item_operation_async, execute_item_operation_sync};
+pub(crate) use items::{execute_item_operation_async, execute_item_operation_sync, ItemTarget};
 pub(crate) use offers::{
     run_read_offer_operation, run_read_offer_operation_async, run_replace_offer_operation,
     run_replace_offer_operation_async,

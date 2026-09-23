@@ -176,15 +176,17 @@ def build_replace_item_request(
     request_options: Mapping[str, Any],
     no_response_on_write_default: bool = False,
     extract_partition_key: bool = False,
+    item_self_link: Optional[str] = None,
 ) -> PreparedRequest:
-    """Build a replacement; the explicit target id wins over the document's id."""
-    return _build_write_prepared(
+    """Preserve a returned resource address; otherwise use the explicit target ID."""
+    prepared = _build_write_prepared(
         op=OP_REPLACE_ITEM, container_link=container_link, body_bytes=document.body_bytes, item_id=item_id,
         partition_key_value=partition_key_value, container_rid=container_rid,
         request_options=request_options,
         no_response_on_write_default=no_response_on_write_default,
         extract_partition_key=extract_partition_key,
     )
+    return replace(prepared, item_self_link=item_self_link)
 
 
 def build_patch_item_request(

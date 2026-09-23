@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Runs driver operations for synchronous and asynchronous Python calls.
+//! Share CosmosDriver lookup, waiting, and result conversion across binding calls.
+//!
+//! For example, an item read retains the CosmosDriver named by its driver handle.
+//! The sync path waits on the calling thread with Python's global interpreter
+//! lock (GIL) released. The async path schedules work on the Tokio runtime and
+//! returns a Python awaitable. Both convert the result with the GIL held.
 
 use std::future::Future;
 use std::sync::atomic::Ordering;
@@ -17,12 +22,12 @@ use super::diagnostics::BINDING_OP_COUNT;
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
-/// Converts a driver result into the response tuple returned to Python.
+/// Convert a Rust driver result into the binding response tuple returned to Python.
 pub(super) type ResponseTupleConverter<R> =
     for<'py> fn(Python<'py>, R) -> PyResult<Bound<'py, PyTuple>>;
 
-/// Run an operation on the shared runtime and return its response tuple.
-/// The function releases the Python lock while it waits.
+/// Run an operation on the Tokio runtime and return its binding response tuple.
+/// Release the GIL while waiting; this still blocks the calling thread.
 pub(super) fn run_driver_operation_sync<'py, R, F, Fut>(
     py: Python<'py>,
     driver_handle: &str,
@@ -65,7 +70,7 @@ where
     convert_response(py, response_result)
 }
 
-/// Start an operation on the shared runtime and return a Python awaitable.
+/// Start an operation on the Tokio runtime and return a Python awaitable.
 /// The Rust bridge future owns a guard that requests task cancellation when
 /// dropped. Merely discarding a Python reference is not a cancellation contract.
 pub(super) fn run_driver_operation_async<'py, R, F, Fut>(

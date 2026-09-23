@@ -15,8 +15,8 @@ use super::diagnostics::record_diagnostics;
 use super::errors::{_DriverTransportError, _UnsupportedQueryFeatureError};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
 
-/// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
-/// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
+/// Turn the Rust driver's `Result<CosmosResponse, CosmosError>` into a
+/// binding response tuple. A CosmosError carrying a response (404 / 409
 /// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
 /// Without a response, statuses 400 and 412 become synthesized error tuples;
 /// other statuses become `_DriverTransportError`. The latter does not prove a
@@ -63,7 +63,7 @@ pub(super) fn tuple_from_result<'py>(
                 // process-wide counters when diagnostics are available.
                 record_diagnostics_for_responseless(&cosmos_error);
                 // Report a typed transport error (Display preserves the
-                // Cosmos status) the Python layer maps to
+                // Cosmos status) the Python wrapper maps to
                 // ServiceResponseError, rather than a bare RuntimeError.
                 Err(_DriverTransportError::new_err(format!(
                     "driver execute_singleton_operation failed: {cosmos_error}"
@@ -219,8 +219,9 @@ fn tuple_from_named_feed_result_for<'py>(
     }
 }
 
-/// Feed-range variant: returns a JSON body in the shape
-/// `{"PartitionKeyRanges":[{"id","minInclusive","maxExclusive"}, ...]}`.
+/// Return partition-key ranges in a binding response tuple.
+/// Its body contains a PartitionKeyRanges list with id, minInclusive, and
+/// maxExclusive fields for each range.
 pub(super) fn tuple_from_partition_key_ranges_result<'py>(
     py: Python<'py>,
     response_result: Result<
@@ -256,8 +257,8 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
     }
 }
 
-/// feed_range_from_partition_key variant: returns a JSON body in the shape
-/// `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
+/// Return a computed feed range in a binding response tuple.
+/// Its body contains Range with min, max, isMinInclusive, and isMaxInclusive fields.
 pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
     py: Python<'py>,
     response_result: Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError>,
@@ -322,8 +323,9 @@ pub(super) fn tuple_from_offer_feed_result<'py>(
     }
 }
 
-/// Shape the boolean result (or a validation error) into the `BackendResponse`
-/// 5-tuple the python parser reads, with a `{"IsSubset": <bool>}` body.
+/// Put a local subset-comparison result into a binding response tuple.
+/// For true, the body is `{"IsSubset":true}`; validation errors raise ValueError
+/// instead of returning a tuple.
 pub(super) fn tuple_from_is_feed_range_subset_result<'py>(
     py: Python<'py>,
     result: Result<bool, String>,
@@ -342,7 +344,7 @@ pub(super) fn tuple_from_is_feed_range_subset_result<'py>(
     }
 }
 
-/// Assemble the fixed 5-part reply used by these backend-response converters.
+/// Assemble a binding response tuple; the Python wrapper constructs BackendResponse.
 /// The separate container-metadata success contract does not use this helper.
 fn backend_response_tuple<'py>(
     py: Python<'py>,
@@ -352,7 +354,7 @@ fn backend_response_tuple<'py>(
     body: &[u8],
     diagnostics: Option<&str>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    // Python backend tuple contract:
+    // Binding response tuple contract:
     // (status_code, sub_status, headers, body, diagnostics_or_none).
     let body_py = PyBytes::new_bound(py, body);
     let diagnostics_py = match diagnostics {
@@ -379,11 +381,8 @@ fn backend_response_tuple_from_success<'py>(
     let status = response.status();
     let (status_code, sub_status) = status_code_and_sub_status(status);
     let diagnostics = record_diagnostics(response.diagnostics());
-    // dict keyed by the actual `x-ms-...` wire-header names. This is what
-    // the Python parser (`_helpers/_response_parse.py`) reads to populate
-    // `client_connection.last_response_headers`, so customer code that
-    // does e.g. `last_response_headers["etag"]` keeps working on the
-    // Rust path.
+    // Convert the Rust driver's headers for Python response parsing, including
+    // last_response_headers. This is not the original HTTP header collection.
     let driver_headers = response.headers();
     let response_headers = response_headers_dict(py, driver_headers)?;
 
@@ -411,8 +410,8 @@ fn backend_response_tuple_from_success<'py>(
     }
 }
 
-/// Query-page version of `backend_response_tuple_from_success`: same steps, but the
-/// body is wrapped in the `{"Documents":[...]}` envelope the query parser reads.
+/// Convert a query page, wrapping item-list bodies in `{"Documents":[...]}`.
+/// Already serialized body bytes pass through without another wrapper.
 fn backend_response_tuple_from_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,
@@ -421,7 +420,7 @@ fn backend_response_tuple_from_feed_success<'py>(
 }
 
 /// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
-/// Python `BackendResponse.body` bytes field.
+/// binding response tuple's body bytes, later stored in BackendResponse.body.
 ///
 /// `NoPayload` becomes empty bytes, `Bytes` is copied, and an unexpected
 /// `Items` feed body raises `PyRuntimeError`; items are not concatenated.
@@ -451,12 +450,12 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
     backend_response_tuple_from_named_feed_success(py, response, b"Offers")
 }
 
-/// Convert a successful feed response into the Python backend tuple, wrapping the
-/// driver's rows in the legacy envelope named by `envelope_name`.
+/// Convert a successful feed response into a binding response tuple, wrapping
+/// item-list bodies in the JSON object named by `envelope_name`.
 ///
 /// One function serves `Documents`, `Databases`, `Offers`, and
-/// `DocumentCollections`. Without the envelope a customer looping over a feed
-/// would see different keys depending on which backend served the call.
+/// `DocumentCollections`. The Python wrapper expects the matching field when
+/// extracting rows, for example Documents for an order query.
 fn backend_response_tuple_from_named_feed_success<'py>(
     py: Python<'py>,
     response: azure_data_cosmos_driver::models::CosmosResponse,

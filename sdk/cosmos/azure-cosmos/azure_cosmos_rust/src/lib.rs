@@ -1,23 +1,25 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! PyO3 binding crate that exposes `azure_data_cosmos_driver` to Python.
+//! Register the binding functions and types exposed as azure.cosmos._rust.
 //!
 //! Compiled into one cdylib that Maturin renames to
 //! `_rust.{pyd,so}` and drops into `azure/cosmos/`. The
-//! driver crate is statically linked into that extension. Native assets such as
+//! Rust driver library is statically linked into that compiled extension. Assets such as
 //! QueryPlanInterop are packaged separately.
 //!
 //! Most operation entry points take a driver handle plus a `PreparedRequest`
 //! and return the 5-tuple
 //! `(status, sub_status, headers, body, diagnostics)`, which Python builds
 //! back into its `BackendResponse` dataclass. Metadata has a separate tuple
-//! contract, and local feed-range subset checks do not call the driver.
+//! contract. Feed-range subset checks call the Rust driver's local comparison,
+//! not a CosmosDriver service operation.
 //!
 //! Every operation below has an `_async` twin that returns a Python awaitable
 //! instead of a ready result. The driver lifecycle, diagnostics, and settings
-//! entry points are sync only. Acquisition can initialize runtimes and wait for
-//! driver construction; it is not merely a process-state lookup. See each
+//! entry points are sync only. Acquisition can initialize CosmosDriverRuntime,
+//! obtain the Tokio runtime, and wait for a CosmosDriver object to be created.
+//! It is not merely a driver-cache lookup. See each
 //! function for its execution and return-value contract.
 //!
 //! Driver lifecycle (`runtime.rs`):
@@ -58,6 +60,9 @@
 //! Other settings become custom headers. Header names are lowercased and typed
 //! settings can replace prepared values; operation-specific code may also
 //! consume headers, such as PATCH's If-Match precondition.
+//!
+//! The binding and linked Rust driver are separate responsibilities inside the
+//! same compiled extension. Use docs/V5/VOCABULARY.md for their established names.
 
 mod credential;
 mod ffi;

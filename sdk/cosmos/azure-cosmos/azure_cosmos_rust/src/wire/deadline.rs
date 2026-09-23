@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Keep the supplied remaining timeout across waiting and execution.
+//!
+//! If an order read has 50 ms left and spends 30 ms waiting to start, its future
+//! has a deadline 20 ms away, not another 50 ms. A timeout cannot forcibly stop
+//! synchronous work or undo work already sent to the service backend.
+
 use std::{future::Future, time::Duration};
 
 use pyo3::{
@@ -9,6 +15,7 @@ use pyo3::{
 };
 use tokio::time::error::Elapsed;
 
+/// Accept no timeout or a positive finite duration the platform clock can represent.
 pub(crate) fn parse_remaining_timeout(seconds: Option<f64>) -> PyResult<Option<Duration>> {
     seconds
         .map(|seconds| {
@@ -28,6 +35,8 @@ pub(crate) fn parse_remaining_timeout(seconds: Option<f64>) -> PyResult<Option<D
         .transpose()
 }
 
+/// Record the deadline now, rather than when the returned future is first polled.
+/// If waiting to start uses all remaining time, do not poll the operation at all.
 pub(super) fn with_timeout<T>(
     timeout: Option<Duration>,
     operation: impl Future<Output = T>,

@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Fetch one item-query or read-all page without retaining a feed cursor.
+//!
+//! The binding chooses the scope from the typed partition key, asks the Rust
+//! driver for one page, and returns a binding response tuple. Public retained
+//! paging uses the feed cursor in item_feed.rs instead of these compatibility helpers.
+
 use super::partition_key_input::BindingPartitionKey;
 use std::sync::Arc;
 
@@ -22,21 +28,12 @@ use super::response::tuple_from_feed_result;
 
 const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
 
-// One-shot compatibility helpers. Public SQL queries and read-all feeds use
-// wire::item_feed's retained plan cursor rather than these execute_operation calls.
-// Query and read-all operations share the same feed-shaped response boundary.
-// The flow is: the Python wrapper hands us a
-// PreparedRequest, we work out scope (partition-key-derived range vs full
-// container), ask the driver for one page, and turn the driver's reply back
-// into the exact shape the Python feed parser expects.
-// ---------------------------------------------------------------------------
-
 /// The scope of the query, worked out from `PreparedRequest.partition_key`.
 /// A supplied key is converted to a feed range using the container definition.
 pub(super) enum QueryTarget {
     /// Search the range derived from the supplied partition-key components.
     Partition(PartitionKey),
-    /// Search the full container (the customer used cross-partition query, or
+    /// Search the full container (the customer app used cross-partition query, or
     /// this is a whole-container `read_all_items`).
     CrossPartition,
 }
@@ -56,12 +53,9 @@ impl From<QueryTarget> for ReadAllItemsExecution {
     }
 }
 
-/// Entry point the binding calls to run one query page and wait for it. Finds the
-/// driver for this client, splits the container link into database + container
-/// names, works out the query scope, then runs the driver work below and converts
-/// the reply into the tuple the Python parser reads. Matches `execute_item_operation_sync`
-/// but builds a `CosmosOperation::query_items` targeting a partition-key-derived
-/// range or the full container.
+/// Prepare and execute one query page, then return its binding response tuple.
+/// Resolve the container link and typed query scope before waiting. The supplied
+/// page timeout covers metadata resolution and execution together.
 pub(crate) fn run_query_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
@@ -238,9 +232,9 @@ async fn run_query_future(
     driver.execute_operation(op, options).await
 }
 
-/// Driver work for this one-shot `read_all_items` path. A supplied partition key
+/// Rust driver work for stateless `read_all_items`. A supplied partition key
 /// selects read-feed; whole-container scope selects `SELECT * FROM root r`.
-/// Public retained-feed iteration uses `item_feed.rs`, not this one-page helper.
+/// Public retained paging uses `item_feed.rs`, not this one-page helper.
 async fn run_read_all_items_future(
     driver: Arc<CosmosDriver>,
     database_name: String,

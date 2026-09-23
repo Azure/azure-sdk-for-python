@@ -1,10 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Binding functions for stateless item-query and read-all page fetching.
+//!
+//! Each call fetches one page without retaining a feed cursor between calls.
+//! Public retained paging uses fetch_page_with_cursor in wire/item_feed.rs.
+//! Stateless paging can still reuse a cached CosmosDriver object.
+
 use super::*;
 
-/// Execute one query page through the shared driver's one-shot compatibility path.
-/// Public retained-cursor iteration uses `wire/item_feed.rs` instead.
+/// Execute one query page through the stateless compatibility path.
+/// Public retained paging uses `wire/item_feed.rs` instead.
 ///
 /// The query JSON is in `PreparedRequest.body_bytes`.
 /// `PreparedRequest.partition_key` selects a partition-key-derived range or
@@ -33,9 +39,9 @@ pub(crate) fn query_items<'py>(
     )
 }
 
-/// One-shot `read_all_items`: a supplied partition key selects read-feed;
+/// Stateless `read_all_items`: a supplied partition key selects read-feed;
 /// whole-container scope selects `SELECT * FROM root r`. This is separate from
-/// the retained-cursor path used for public feed iteration.
+/// the retained-paging path used for public feed iteration.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_all_items<'py>(

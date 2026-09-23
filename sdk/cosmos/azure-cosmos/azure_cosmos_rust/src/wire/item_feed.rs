@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Retained cursors for item queries, read-all feeds and change feeds.
+//! Retain feed cursors across item-query, read-all, and change-feed pages.
+//!
+//! A Python page iterator passes the same feed cursor for successive pages of
+//! orders. The binding retains the Rust driver's plan rather than planning
+//! again for each page. A continuation token, when supported, is a separate
+//! value that can be used to resume with a new feed cursor.
 
 use std::{
     future::Future,
@@ -203,8 +208,9 @@ struct CursorState {
     published_status: Arc<AtomicU8>,
 }
 
-/// Retained state for a Python page iterator. In-flight fetches clone the state
-/// Arc, so dropping the Python cursor need not immediately release its plan.
+/// Binding feed cursor retained by a Python page iterator.
+/// In-flight fetches retain their own reference to its state, so dropping the
+/// Python reference need not immediately release the Rust driver's plan.
 #[pyclass(name = "_ItemFeedCursor", module = "azure.cosmos._rust")]
 pub(crate) struct ItemFeedCursor {
     state: Arc<Mutex<CursorState>>,
@@ -239,6 +245,9 @@ impl ItemFeedCursor {
     }
 
     #[getter]
+    /// Whether execution has not started and the state is currently available.
+    /// The Python wrapper applies additional retry checks; this is not permission
+    /// to retry every timeout or cancellation.
     fn can_retry_setup(&self) -> bool {
         self.state.try_lock().is_ok_and(|state| !state.started)
     }
@@ -364,8 +373,9 @@ async fn next_plan_page(
             request,
         }
     };
-    // Setup can be repeated, but execution may advance the opaque plan even
-    // when it fails or is cancelled. Never make that plan available again.
+    // Before execution starts, a later fetch can repeat setup. Execution may
+    // advance the Rust driver's plan even on failure or cancellation; do not
+    // restore that potentially advanced plan for another fetch.
     state.started = true;
     let response = match driver
         .execute_plan(
@@ -379,7 +389,7 @@ async fn next_plan_page(
         Err(error) => return Ok((Err(error), None)),
     };
     // Split recovery may expand a previously safe scope. Do not publish a
-    // checkpoint or an empty poll that now covers only one of its children.
+    // continuation token or an empty poll covering only one of its children.
     if let FeedRequest::ChangeFeed(request) = &progress.request {
         let width = match request.scope_width(&driver, &progress.container).await? {
             Ok(width) => width,

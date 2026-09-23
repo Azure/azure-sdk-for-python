@@ -251,6 +251,8 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatc
         expected["item_id"] = "order-42"
     if op == "create_item":
         expected.update(indexing_directive=None)
+    if op == "replace_item":
+        expected["item_self_link"] = None
     if op == "patch_item":
         expected.update(body_bytes=args["body_bytes"])
     builder.assert_called_once_with(**expected)

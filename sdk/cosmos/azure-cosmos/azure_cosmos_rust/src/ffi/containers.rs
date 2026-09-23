@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Binding calls for container operations and metadata.
+//!
+//! Prepared requests name the database and, when needed, the container:
+//! for example, "sales" and "orders". Metadata takes explicit arguments instead.
+//! The helpers under wire/ run the Rust driver operation and convert its result.
+
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 

@@ -25,7 +25,7 @@ from ..._helpers._item_operations import (
     build_item_request,
 )
 from ..._helpers._response_parse import process_backend_response, complete_item_response
-from ..._operation_deadline import run_with_deadline
+from ..._operation_deadline import remaining_timeout, run_with_deadline
 from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
@@ -79,6 +79,8 @@ class AsyncItemHelper:
 
             return await run_with_deadline(execute_patch, args["deadline"])
         response = await self._backend.execute(prepared, deadline=args["deadline"])
+        if op == "replace_item":
+            remaining_timeout(args["deadline"])
         parsed = process_backend_response(
             response, response_state=self._response_state, response_hook=args["kwargs"].get("response_hook")
         )

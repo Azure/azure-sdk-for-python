@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Combine PreparedRequest headers with its typed request settings.
+//!
+//! For example, query.max_item_count=2 replaces a prepared x-ms-max-item-count
+//! header with "2". Other values, such as a session token or timeout, become
+//! typed operation fields or options instead of remaining in custom_headers.
+
 use super::request::RequestHeadersAndOptions;
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::options::{
@@ -171,6 +177,9 @@ pub(crate) fn validate_request_protocol(prepared: &Bound<'_, PyAny>) -> PyResult
     Ok(())
 }
 
+/// Check the protocol, copy prepared headers, then apply typed settings.
+/// Typed values take precedence where supplied. Operation-specific code may
+/// consume a header later, such as converting If-Match to a patch precondition.
 pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestHeadersAndOptions> {
     validate_request_protocol(prepared)?;
     let settings = prepared.getattr("settings").map_err(|_| {

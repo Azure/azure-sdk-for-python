@@ -1,7 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Offline measurement of the production extractors, without shipping debug exports.
+//! Measure prepared-request extraction without executing a Rust driver operation.
+//!
+//! These test-only Python functions call the production extractors. They are
+//! not binding exports in the installed extension, and the timing does not
+//! measure a complete request or service-backend latency.
 
 use super::*;
 use std::hint::black_box;

@@ -32,7 +32,7 @@ use crate::runtime::require_runtime_context;
 pub(super) enum FeedRangePartitionKeySource {
     /// A normal partition-key value.
     Standard,
-    /// The empty header used for Python's internal empty-key marker.
+    /// The typed marker for Python's internal empty partition key.
     EmptySentinel,
     /// A caller supplied an empty sequence as the partition key.
     ExplicitEmptySequence,
@@ -226,9 +226,9 @@ pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
         })
     })
 }
-/// Driver work for `read_feed_ranges`: resolve the container, ask the driver for
-/// all partition-key ranges (cached unless `force_refresh` is true), and return
-/// them in min-EPK order.
+/// Resolve the container and ask the Rust driver for its partition-key ranges.
+/// Pass force_refresh to the Rust driver; cache lookup and range ordering are
+/// its responsibility, not work performed by this helper.
 async fn run_read_feed_ranges_future(
     driver: Arc<CosmosDriver>,
     database_name: String,
@@ -246,9 +246,8 @@ async fn run_read_feed_ranges_future(
         .await
 }
 
-/// Driver work for `feed_range_from_partition_key`: resolve container metadata,
-/// compute the effective-partition-key range for the supplied partition key,
-/// and return it in the legacy Python feed-range shape.
+/// Resolve container metadata and compute bounds for the supplied partition key.
+/// Return the bounds and inclusivity flag; response.rs builds the Python body.
 async fn run_feed_range_from_partition_key_future(
     driver: Arc<CosmosDriver>,
     database_name: String,
@@ -310,9 +309,9 @@ pub(crate) fn run_is_feed_range_subset_operation<'py>(
     tuple_from_is_feed_range_subset_result(py, result)
 }
 
-/// Async sibling of `run_is_feed_range_subset_operation`. The work is still a
-/// pure local computation; it runs on the shared Tokio runtime only so the async
-/// caller gets a real awaitable, matching every other async entry point.
+/// Schedule the local subset comparison on the Tokio runtime and return an awaitable.
+/// This path requires an initialized RuntimeContext but does not look up a
+/// CosmosDriver object or contact the service backend.
 pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
     py: Python<'py>,
     body_bytes: Vec<u8>,

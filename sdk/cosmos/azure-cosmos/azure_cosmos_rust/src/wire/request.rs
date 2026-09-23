@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Extract prepared-request fields and build Rust driver operation options.
+//!
+//! For example, "dbs/sales/colls/orders" becomes database "sales" and container
+//! "orders". Body bytes are copied from Python bytes, while settings and typed
+//! partition keys are read through their dedicated helpers.
+
 use std::collections::HashMap;
 use std::time::Duration;
 
@@ -40,8 +46,6 @@ use super::query::QueryTarget;
 /// excluded regions, timeout, and availability strategy become typed fields.
 /// Other settings can generate or overwrite custom headers; operation-specific
 /// code can consume those headers before passing the remainder to the driver.
-/// Fields are `pub(crate)` so the operation runners
-/// in sibling modules can consume them directly without going through an accessor.
 pub(crate) struct RequestHeadersAndOptions {
     pub(crate) activity_header: Option<String>,
     pub(crate) session_header: Option<String>,
@@ -50,9 +54,9 @@ pub(crate) struct RequestHeadersAndOptions {
     // reads / deletes. This option controls write responses, not read payloads.
     pub(crate) content_response_on_write: ContentResponseOnWrite,
     pub(crate) excluded_regions_value: Option<ExcludedRegions>,
-    // Driver execution policy, whose minimum duration need not equal our budget.
+    // Rust driver timeout policy, separate from the binding's remaining timeout.
     pub(crate) driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
-    // Remaining binding budget including metadata work, preserving subsecond limits.
+    // Remaining binding timeout, including metadata work and subsecond limits.
     pub(crate) operation_timeout: Option<Duration>,
     // Per-request cross-region hedging control pulled out of the
     // typed ``settings.hedging`` field. ``Disabled`` turns hedging off for
@@ -87,7 +91,7 @@ pub(crate) fn extract_database_prepared_inputs<'py>(
     Ok((database_id, modifiers))
 }
 
-/// Read request modifiers for an account-level operation with no resource id.
+/// Read request headers and settings for an account-level operation with no resource id.
 pub(crate) fn extract_account_prepared_modifiers<'py>(
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<RequestHeadersAndOptions> {
@@ -96,7 +100,8 @@ pub(crate) fn extract_account_prepared_modifiers<'py>(
 
 /// Copy the prepared request body into Rust-owned bytes.
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
-    // Vec<u8>::extract walks a Python sequence one element at a time.
+    // Read the byte buffer directly, then copy it once; do not extract each byte
+    // as a separate Python sequence element.
     Ok(prepared
         .getattr("body_bytes")?
         .downcast::<PyBytes>()?
@@ -177,7 +182,7 @@ pub(super) fn build_operation_options(
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Parse "dbs/<db>/colls/<coll>" into ("<db>", "<coll>").
+/// Parse "dbs/sales/colls/orders" into ("sales", "orders").
 ///
 /// Reads the four segments off the split iterator instead of collecting into a
 /// `Vec`, to avoid allocating one per call. The trailing `None` arm rejects a
@@ -608,7 +613,7 @@ mod tests {
             "paths": ["/pk"], "kind": "Hash", "version": 2,
         }))
         .unwrap();
-        // Python can encode these JSON escapes, but the native Value parser
+        // Python can encode these JSON escapes, but serde_json::Value
         // cannot represent them, even in a property unrelated to the key.
         for body in [
             br#"{"pk":"p","value":"\ud800"}"#.as_slice(),

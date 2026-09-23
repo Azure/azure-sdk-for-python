@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Binding calls that read or replace throughput offer records.
+//!
+//! Offers belong to the account, not an item partition. The Python wrapper
+//! prepares the query or replacement body before calling these functions.
+
 use super::*;
 
-/// read_offer: read a container's provisioned throughput by querying the account's
-/// `/offers` feed. Offers are an account-level, non-partitioned resource, so the
-/// container link and partition-key header on the PreparedRequest are unused here;
-/// the offer query JSON (the same filter the legacy path sends) is sent in the body
-/// and the matching offer records come back in the `{"Offers":[...]}` payload.
-/// The binding adds the query `Content-Type` and `x-ms-documentdb-isquery`
-/// markers that `query_offers` requires.
-/// Without it, get_throughput could not run on the rust driver and would stay on
-/// the core-python path.
+/// Query the account's offers using PreparedRequest.body_bytes.
+/// Common extraction reads the container link and typed partition key, but the
+/// offer operation does not use them. Return a binding response tuple with an
+/// `{"Offers":[...]}` body. The execution helper supplies query headers when absent.
 #[pyfunction]
 pub(crate) fn read_offer<'py>(
     py: Python<'py>,
@@ -23,17 +23,10 @@ pub(crate) fn read_offer<'py>(
     run_read_offer_operation(py, driver_handle, modifiers, body_bytes, "read_offer")
 }
 
-/// replace_offer: replace a container's provisioned throughput by PUTting the
-/// already-mutated offer document to `/offers/{rid}`. Offers are an account-level,
-/// non-partitioned resource, so -- like `read_offer` -- the container link and
-/// partition-key header on the PreparedRequest are unused; the offer RID (which
-/// offer to overwrite) is carried in `PreparedRequest.item_id` and the mutated offer
-/// document is sent in the body. Returns the single updated offer document (the
-/// single-document tuple shape), so `get_throughput`'s caller can read back the
-/// applied RU/s. Unlike the read path there is no query `Content-Type` to force:
-/// a replace carries a resource body and the driver defaults `Content-Type` to
-/// `application/json`. Without it, `replace_throughput` could not run on the rust
-/// driver and would stay on the core-python path.
+/// Replace the offer named by the resource id in PreparedRequest.item_id.
+/// The Python wrapper has already updated the offer body. Return the updated
+/// record as body bytes in a binding response tuple, not an Offers list.
+/// The execution helper requests response content for the throughput result.
 #[pyfunction]
 pub(crate) fn replace_offer<'py>(
     py: Python<'py>,

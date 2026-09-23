@@ -479,6 +479,7 @@ def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_fir
                 first.cancel()
                 with pytest.raises(asyncio.CancelledError):
                     await first
+                client.client_connection._routing_map_provider.release.assert_called_once_with()
             second = asyncio.create_task(client.close())
             with pytest.raises(asyncio.TimeoutError):
                 await asyncio.wait_for(asyncio.shield(second), 0.05)
@@ -498,6 +499,54 @@ def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_fir
     asyncio.run(run())
     binding.release_driver_handle.assert_called_once_with("close-test-driver")
     credential._close_cosmos_async_bridge.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("phase", ["account-refresh", "transport", "backend"])
+@pytest.mark.parametrize("context_manager", [False, True])
+async def test_cancelled_async_close_releases_only_its_routing_cache_share(
+    monkeypatch, phase, context_manager
+):
+    from types import SimpleNamespace
+    from azure.cosmos._routing.aio import routing_map_provider
+
+    client = _make_async_client(monkeypatch)
+    connection = SimpleNamespace(url_connection=ASYNC_URL)
+    owned_cache = routing_map_provider.PartitionKeyRangeCache(connection)
+    other_cache = routing_map_provider.PartitionKeyRangeCache(connection)
+    client.client_connection._routing_map_provider = owned_cache
+    endpoint = owned_cache._endpoint
+    stages = {
+        "account-refresh": client.client_connection._global_endpoint_manager.close,
+        "transport": client.client_connection.pipeline_client.__aexit__,
+        "backend": AsyncMock(),
+    }
+    monkeypatch.setattr(client._backend, "close", stages["backend"])
+    stages[phase].side_effect = asyncio.CancelledError()
+    try:
+        assert routing_map_provider._shared_cache_refcounts[endpoint] == 2
+        with pytest.raises(asyncio.CancelledError):
+            if context_manager:
+                async with client:
+                    pass
+            else:
+                await client.close()
+
+        assert owned_cache._released
+        assert not other_cache._released
+        assert routing_map_provider._shared_cache_refcounts[endpoint] == 1
+        for stage in stages.values():
+            stage.assert_awaited_once()
+
+        stages[phase].side_effect = None
+        await client.close()
+        assert routing_map_provider._shared_cache_refcounts[endpoint] == 1
+        other_cache.release()
+        assert endpoint not in routing_map_provider._shared_cache_refcounts
+        assert endpoint not in routing_map_provider._shared_routing_map_cache
+    finally:
+        owned_cache.release()
+        other_cache.release()
 
 
 def test_async_backend_close_completion_is_shared_across_event_loops(monkeypatch):
@@ -645,6 +694,37 @@ def test_close_public_signature_is_unchanged(client_type, asynchronous):
     assert list(inspect.signature(client_type.close).parameters) == ["self"]
     assert inspect.signature(client_type.close).return_annotation is None
     assert inspect.iscoroutinefunction(client_type.close) is asynchronous
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("option", ["timeout", "response_hook", "initial_headers"])
+def test_close_rejects_request_options_before_cleanup(monkeypatch, asynchronous, option):
+    make_client = _make_async_client if asynchronous else _make_sync_client
+    client = make_client(monkeypatch)
+    try:
+        with pytest.raises(TypeError, match=option):
+            client.close(**{option: None})
+        assert not client._backend._closing
+        client.client_connection._routing_map_provider.release.assert_not_called()
+    finally:
+        if asynchronous:
+            asyncio.run(client.close())
+        else:
+            client.close()
+
+
+@pytest.mark.asyncio
+async def test_async_close_does_not_start_until_awaited(monkeypatch):
+    client = _make_async_client(monkeypatch)
+    closing = client.close()
+    try:
+        assert not client._backend._closing
+        client.client_connection._global_endpoint_manager.close.assert_not_awaited()
+        client.client_connection.pipeline_client.__aexit__.assert_not_awaited()
+        client.client_connection._routing_map_provider.release.assert_not_called()
+    finally:
+        assert await closing is None
+    assert client._backend._closing
 
 
 def test_sync_close_preserves_stateless_legacy_backend(monkeypatch):

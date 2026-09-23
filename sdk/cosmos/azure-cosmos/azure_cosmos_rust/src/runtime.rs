@@ -1,42 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Per-process runtime, the driver cache, and the client lifecycle entry points
-//! (`acquire_driver_handle` / `release_driver_handle`).
+//! Acquire and release CosmosDriver objects for the Python wrapper.
 //!
-//! This file initializes the binding's driver runtimes, converts client settings
-//! into driver options, and caches drivers using endpoint, credential, and config
-//! fingerprints. Each successful acquisition adds a reference to the cache entry.
+//! Two matching clients can reuse a CosmosDriver object rather than build one
+//! each. The binding computes a driver identity from the endpoint, credential,
+//! and PreparedClientConfig fields. It uses that identity as the driver-cache
+//! key and returns the same string to Python in its role as a driver handle.
+//! Each acquisition adds to the entry's count; a balanced final release removes
+//! the entry. An active operation can still retain the CosmosDriver afterward.
 //!
-//! Three "runtime"-ish things live here; keep them distinct:
-//!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the binding-owned
-//!     executor shared by driver work and the `pyo3-async-runtimes` bridge,
-//!     distinct from Python's event loop.
-//!   * driver runtime (`CosmosDriverRuntime`) -- the *factory* that builds rust
-//!     drivers and carries the process-wide connection-pool config. Also one per
-//!     process. It is built *on* the Tokio runtime.
-//!   * rust driver (`CosmosDriver`) -- the per-account *driver* that signs,
-//!     routes, and retries. This is the one thing here that is NOT process-wide:
-//!     the cache retains one per handle, produced by
-//!     `driver_runtime.create_driver(...)`, and its async work runs on the shared
-//!     Tokio runtime.
+//! RuntimeContext retains access to two different objects. CosmosDriverRuntime
+//! creates CosmosDriver objects and supplies their shared connection resources.
+//! The Tokio runtime runs asynchronous Rust work. They are not Python's event
+//! loop, and neither is a CosmosDriver object.
 //!
-//! So the relationship is: one shared Tokio runtime and one driver runtime per
-//! process (bundled together in `RuntimeContext`, behind one `OnceLock`); the
-//! driver runtime is a factory that makes rust drivers, which this file caches
-//! and reference-counts. Concurrent cache misses can build surplus drivers before
-//! one is selected for the cache. Runtime initialization errors are cached too.
+//! Acquisition initializes RuntimeContext when needed and records the requested
+//! CosmosDriverRuntime connection settings. A later explicit conflicting value
+//! is rejected. The construction-time check does not initialize or reserve
+//! these settings. Initialization failures are retained too.
 //!
-//! `acquire_driver_handle` returns an opaque SHA-256 cache key. Identity uses the
-//! parsed endpoint, process-salted credentials, and typed configuration values.
-//! A balanced final release evicts the entry, but active operations can retain
-//! their own `Arc` references to the driver after eviction.
-//!
-//! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `ffi/`): client = the `CosmosClient`; binding = this compiled `_rust`
-//! extension; rust driver / driver runtime / shared Tokio runtime as above;
-//! driver handle = the cache key string; credential = how the customer proves who
-//! they are.
+//! Preferred regions and driver operation defaults are prepared separately for
+//! DriverOptions. See docs/V5/VOCABULARY.md for the object names and
+//! docs/V5/use-cases/01-cosmos-client-creation.md for the ownership walkthrough.
 
 use std::collections::HashMap;
 use std::sync::{Arc, OnceLock};
@@ -69,8 +55,9 @@ use crate::credential::PyTokenCredential;
 // Per-process singletons
 // ---------------------------------------------------------------------------
 
-/// Bundles the process-wide Tokio runtime, driver factory, and the runtime
-/// settings that later clients must match. Built once by `runtime_context`.
+/// Retain the Tokio runtime, CosmosDriverRuntime, and recorded connection settings.
+/// `runtime_context` creates this record once; later acquisitions check explicit
+/// requested settings against those recorded values.
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: &'static TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
@@ -85,7 +72,7 @@ struct RuntimeSettings {
     max_metadata_request_timeout: Option<Duration>,
 }
 
-/// One cached driver, its fault rules, and the number of outstanding acquisitions.
+/// One cached CosmosDriver, its fault rules, and its outstanding acquisition count.
 ///
 /// The key includes endpoint, credential, and config fingerprints because drivers
 /// retain authentication and settings. Keying only by endpoint would incorrectly
@@ -113,7 +100,7 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 // Cache key: (endpoint, credential, config)
 // ---------------------------------------------------------------------------
 //
-// * Master keys use process-salted SHA-256. Handles remain private identifiers,
+// * Account keys use process-salted SHA-256. Handles remain private identifiers,
 //   not authorization tokens or a reason to log credential-derived values.
 // * A token credential is keyed by its Python object identity. The cache holds a
 //   reference to it, so its address can't be reused by another live credential while
@@ -147,7 +134,7 @@ fn master_key_fingerprint(master_key: &str) -> PyResult<String> {
 }
 
 /// Fingerprint a token credential by its Python object identity, tagged `tc:`. The
-/// tag distinguishes it from a master-key fingerprint.
+/// tag distinguishes it from an account-key fingerprint.
 fn token_credential_fingerprint(object_id: usize) -> String {
     format!("tc:{object_id:x}")
 }
@@ -223,8 +210,8 @@ fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> St
     )
 }
 
-/// Compute the same identity used by acquisition, without starting the runtime,
-/// acquiring a driver reference, or calling a credential.
+/// Compute the driver identity without initializing RuntimeContext,
+/// acquiring a CosmosDriver reference, or asking the credential for a token.
 fn driver_identity(
     endpoint: &str,
     master_key: Option<&str>,
@@ -247,15 +234,12 @@ fn driver_identity(
     ))
 }
 
-/// The driver runtime and its connection pool are process-global, so a later
-/// explicit runtime setting that differs from the initialized value is a conflict.
+/// Check explicit settings against the initialized CosmosDriverRuntime settings.
 ///
-/// The winner is whichever client wins the `OnceLock` `get_or_init` race -- NOT
-/// "the first client in source order". Under concurrent client construction with
-/// differing settings, which values initialize the process runtime are
-/// nondeterministic and the loser gets a hard error. The contract is therefore
-/// "use the same process-wide settings on every Rust client", not "set them on
-/// the first client".
+/// For example, a requested five-second connection timeout conflicts with a
+/// recorded two-second value. An unspecified value requests no override.
+/// The first acquisition to initialize RuntimeContext records the settings;
+/// merely constructing a Python client does not choose them.
 fn runtime_settings_conflict(initialized: RuntimeSettings, requested: RuntimeSettings) -> bool {
     setting_conflicts(initialized.proxy_allowed, requested.proxy_allowed)
         || setting_conflicts(
@@ -281,11 +265,8 @@ const AUTH_REQUIRED_ERROR: &str =
 const AUTH_EXCLUSIVE_ERROR: &str =
     "acquire_driver_handle received both master_key and token credential; exactly one must be set";
 
-/// Require exactly one auth input -- a master key or a token credential -- at the
-/// API boundary. Rejects "both" (ambiguous: which one signs requests?) and
-/// "neither" (nothing to authenticate with) with a clear message. Without this
-/// check, "neither" would fail deeper down in a less obvious place and "both"
-/// could be resolved silently one way, hiding a real misconfiguration.
+/// Require exactly one credential input: account key or Python token credential.
+/// Reject both or neither rather than silently choosing an authentication path.
 fn validate_auth_inputs(
     master_key: Option<&str>,
     credential: Option<&Bound<'_, PyAny>>,
@@ -301,24 +282,19 @@ fn validate_auth_inputs(
 static RUNTIME_CONTEXT: OnceLock<Result<RuntimeContext, String>> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, DriverEntry>>> = OnceLock::new();
 
-/// Accessor for the one process-wide driver cache: the map from driver handle
-/// (`(endpoint, credential, config)` key) to the reference-counted rust driver
-/// for that key. The map is process-wide and created once; the rust drivers it
-/// holds are per-key. Without a single accessor there would be no one shared
-/// cache, so clients could not find each other's drivers to share them.
+/// Return the driver cache, creating the empty table if needed.
+/// Each driver identity maps to a CosmosDriver object and its acquisition count.
+/// Creating this table alone does not create CosmosDriverRuntime or a driver.
 pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
     DRIVERS.get_or_init(|| RwLock::new(HashMap::new()))
 }
 
-/// Build (once) or fetch the two process-wide runtimes -- the shared Tokio
-/// runtime and the driver runtime -- and return the shared `RuntimeContext`.
+/// Initialize RuntimeContext during acquisition, or check its recorded result.
 ///
-/// The first client to reach here initializes both together inside the
-/// `RUNTIME_CONTEXT` `OnceLock`, with the GIL released (`py.allow_threads`), and
-/// records its connection-pool settings. Every later client fetches the same
-/// context and is checked against those recorded values. Because these runtimes
-/// are process-wide (not per client), a later client asking for a different proxy
-/// or transport timeout is a hard error rather than a silent mismatch.
+/// Initialization obtains the Tokio runtime and builds CosmosDriverRuntime.
+/// Release Python's global interpreter lock (GIL) while initializing or waiting
+/// for another initializer. A stored failure is raised again; a stored success
+/// is checked for conflicting explicit connection settings.
 fn runtime_context(
     py: Python<'_>,
     requested_settings: RuntimeSettings,
@@ -363,10 +339,11 @@ fn validate_runtime_context(
     }
 }
 
-/// Check settings against an initialized runtime without creating one.
+/// Check requested CosmosDriverRuntime settings without initializing it.
 ///
-/// A successful check is not a reservation: another caller can initialize the
-/// runtime afterwards. Acquisition repeats this check using the same rules.
+/// No completed initialization result means this check passes without reserving
+/// settings. A recorded failure is raised; a recorded success must not conflict.
+/// Driver acquisition repeats the check because another caller may initialize first.
 #[pyfunction(name = "_validate_runtime_configuration")]
 #[pyo3(signature = (config=None))]
 pub(crate) fn validate_runtime_configuration(config: Option<&Bound<'_, PyAny>>) -> PyResult<()> {
@@ -402,12 +379,10 @@ fn connection_pool_from_settings(
         .map_err(|e| format!("invalid connection pool options: {e}"))
 }
 
-/// Read-only fetch of the process-wide `RuntimeContext` for the per-operation
-/// path (`wire/`), which needs the shared Tokio runtime to run a request but
-/// must not (re)build it. Raises a clear "acquire_driver_handle must be called before
-/// {op_name}" if no client has initialized the runtimes yet. Without it, an
-/// operation issued before `acquire_driver_handle` would fail deep down with an obscure
-/// error instead of a plain one naming the missing step.
+/// Return an initialized RuntimeContext without creating it.
+/// Operation helpers use its Tokio runtime. Missing initialization raises an
+/// error naming the required acquisition step; a retained initialization failure
+/// is raised again.
 pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static RuntimeContext> {
     match RUNTIME_CONTEXT.get() {
         Some(Ok(ctx)) => Ok(ctx),
@@ -438,17 +413,17 @@ pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Opti
     }
 }
 
-/// Acquire one reference to a cached driver and return its handle.
-/// The Python backend calls this during lazy initialization, which can be retried
-/// after a driver-build failure. This function does not enforce one call per client.
+/// Acquire a CosmosDriver object and return a driver handle for later binding calls.
+/// The Python backend requests this on first use. This function does not enforce
+/// one acquisition per Python client.
 ///
 /// A cache hit increments its count. On a miss, build outside the cache lock,
-/// then insert the driver or use the entry another caller inserted in the meantime.
-/// Runtime settings are initialized process-wide; preferred regions and operation
-/// defaults are configured on each newly built driver.
+/// then cache the CosmosDriver or use the entry another caller inserted meanwhile.
+/// CosmosDriverRuntime connection settings are shared within the process;
+/// preferred regions and driver operation defaults belong in DriverOptions.
 ///
-/// Validate that exactly one of `master_key` and the synchronous Python
-/// `credential` is present. Token credentials are adapted by `PyTokenCredential`.
+/// Exactly one of `master_key` and Python `credential` must be present.
+/// PyTokenCredential handles a synchronous credential or AsyncTokenCredentialBridge.
 
 #[pyfunction]
 #[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
@@ -490,11 +465,8 @@ pub(crate) fn acquire_driver_handle(
         None => (Vec::new(), None, Vec::new()),
     };
 
-    // Slow path: build the driver. Held without any of our locks because
-    // create_driver is async and may take seconds. The account carries
-    // whichever auth the caller supplied: a token credential (wrapped so the
-    // driver can call back into Python for tokens), otherwise the master key.
-    // This binding enforces exactly one input at the API boundary.
+    // No matching CosmosDriver was cached. Prepare the account without holding the
+    // cache lock; token authentication uses PyTokenCredential to call Python.
     let account = match credential {
         Some(token_credential) => {
             let py_credential: Py<PyAny> = token_credential.clone().unbind();
@@ -509,8 +481,8 @@ pub(crate) fn acquire_driver_handle(
         }
     };
 
-    // `create_driver` takes a single required `DriverOptions` that carries the
-    // account itself and the Python client's operation defaults.
+    // DriverOptions combines the account, prepared client configuration, and
+    // driver operation defaults. It is not Python's ItemClientDefaults record.
     let driver_options = {
         let mut builder = DriverOptions::builder(account).with_operation_options(operation_options);
         if !preferred_regions.is_empty() {
@@ -527,7 +499,7 @@ pub(crate) fn acquire_driver_handle(
         builder.build()
     };
 
-    // Build the driver on the shared runtime as a spawned task, then wait on its
+    // Build the CosmosDriver on the Tokio runtime, then wait on the task's
     // handle with the GIL released. Concurrent acquisitions can submit separate
     // build tasks. Join failures are mapped to Python errors below.
     let driver_runtime = Arc::clone(&runtime_ctx.driver_runtime);
@@ -541,11 +513,9 @@ pub(crate) fn acquire_driver_handle(
         })?
         .map_err(|e| PyRuntimeError::new_err(format!("driver init failed: {e}")))?;
 
-    // Insert under the write lock as the first reference. If two threads raced to
-    // build the same key, the first to take the lock wins; the loser's driver is
-    // dropped after the lock is released, not inside it -- dropping a CosmosDriver
-    // runs teardown that could block other threads or panic, and that must not happen
-    // while the cache lock is held.
+    // If another acquisition already cached a matching CosmosDriver, reuse it.
+    // Drop our surplus object after releasing the lock so its cleanup cannot
+    // run while the driver cache is locked.
     let mut surplus_driver: Option<Arc<CosmosDriver>> = None;
     {
         let mut cache = drivers().write();
@@ -569,19 +539,19 @@ pub(crate) fn acquire_driver_handle(
             }
         }
     }
-    // Drop the race-loser driver (if any) now that the lock is released.
+    // Drop any surplus CosmosDriver after releasing the cache lock.
     drop(surplus_driver);
 
     Ok(driver_handle)
 }
 
-/// Read the process-wide connection-pool settings from the prepared config.
+/// Read CosmosDriverRuntime connection settings from PreparedClientConfig.
 fn runtime_settings_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<RuntimeSettings> {
     let Some(client_config) = config else {
         return Ok(RuntimeSettings::default());
     };
     // Compatibility mapping: the driver exposes complete HTTP-attempt caps,
-    // not the customer's socket-read inactivity timer (driver parity gap 17).
+    // not the customer app's socket-read inactivity timer (driver parity gap 17).
     let http_attempt_cap = timeout_from_config(client_config, "read_timeout_seconds")?;
     Ok(RuntimeSettings {
         proxy_allowed: get_config_opt::<bool>(client_config, "proxy_allowed")?,
@@ -602,15 +572,9 @@ fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<
     })
 }
 
-/// Read the optional `preferred_locations` off the prepared client config and
-/// turn each region name into a driver `Region` for preferred-region routing.
-///
-/// Matches how `extract_settings` reads `excluded_locations`: it accepts any
-/// Python sequence of strings (the `PreparedClientConfig` stores a tuple) and
-/// lets the driver normalize each name ("West US" -> "westus"). A config object
-/// without the attribute, or a Python `None`, yields no regions rather than an
-/// error, so the binding stays compatible with config shapes that predate or
-/// postdate this field; the driver then keeps its default endpoint ordering.
+/// Convert PreparedClientConfig.preferred_locations into Rust driver Region values.
+/// For example, the tuple ("West US",) supplies one Region::from("West US").
+/// Reject blank names; a missing attribute or None yields an empty list.
 fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Region>> {
     let value = match config.getattr("preferred_locations") {
         Ok(value) => value,
@@ -638,17 +602,10 @@ fn validate_region_names(names: &[String]) -> PyResult<()> {
     Ok(())
 }
 
-/// Read the optional `user_agent_suffix` and turn it into the driver's
-/// `UserAgentSuffix` for driver construction. A missing
-/// attribute, a Python `None`, or an empty string yields `None`, leaving the driver's
-/// default SDK User-Agent in place. (`build_client_config` normalizes an empty suffix
-/// to `None`, so an empty string only reaches here from a hand-built config.)
-///
-/// The driver's `UserAgentSuffix` allows at most `UserAgentSuffix::MAX_LENGTH` (25)
-/// header-safe characters (alphanumeric, `-`, `_`, `.`, `~`). A present value that
-/// fails that check is a hard error rather than a silent drop. `try_new` (not `new`)
-/// is used so an invalid value returns a `ValueError` instead of panicking across the
-/// FFI boundary.
+/// Convert an optional prepared suffix to the Rust driver's UserAgentSuffix.
+/// Missing, None, or empty means no suffix. Use try_new so a value rejected by
+/// the Rust driver's length or character rules raises ValueError rather than
+/// panicking across the binding call.
 fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<UserAgentSuffix>> {
     let suffix = match get_config_opt::<String>(config, "user_agent_suffix")? {
         Some(suffix) => suffix,
@@ -733,7 +690,7 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
     Ok(rules)
 }
 
-/// Build a driver-level `OperationOptions` from the prepared client config's
+/// Build Rust driver OperationOptions from PreparedClientConfig's operation
 /// defaults -- excluded regions, throttle-retry caps, the hedging threshold,
 /// and the chosen read consistency level. Individual operations can also supply
 /// options; this function does not establish their final merged values.
@@ -748,9 +705,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
         return Ok(builder.build());
     };
 
-    // excluded_locations -> ExcludedRegions. Same collection shape the
-    // per-operation `excludedLocations` option already uses; the driver
-    // normalizes each region name.
+    // Convert excluded_locations to the same ExcludedRegions type used by
+    // per-operation settings.
     if let Some(region_names) = get_config_opt::<Vec<String>>(config, "excluded_locations")? {
         validate_region_names(&region_names)?;
         if !region_names.is_empty() {
@@ -797,8 +753,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     }
 
     // hedging threshold -> AvailabilityStrategy::Hedging. Present only when the
-    // customer enabled hedging (availability_strategy True / dict). The Python
-    // side validates threshold_ms > 0; reject an invalid hand-built config too.
+    // customer app enabled hedging (availability_strategy True / dict). The
+    // Python wrapper validates threshold_ms > 0; reject an invalid hand-built config too.
     if let Some(threshold_ms) = get_config_opt::<u64>(config, "hedging_threshold_ms")? {
         let threshold = HedgeThreshold::new(Duration::from_millis(threshold_ms))
             .ok_or_else(|| PyValueError::new_err("hedging_threshold_ms must be positive"))?;
@@ -807,7 +763,7 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
         ));
     }
 
-    // consistency_level -> ReadConsistencyStrategy. Set only when the customer
+    // consistency_level -> ReadConsistencyStrategy. Set only when the customer app
     // supplied a non-empty value. This binding accepts Eventual, Session, and
     // Strong; reject other non-empty values even if Python preparation was bypassed.
     if let Some(level) = get_config_opt::<String>(config, "consistency_level")? {
@@ -842,10 +798,8 @@ fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     }
 }
 
-/// Read an optional attribute off the prepared client config, tolerating a
-/// missing attribute or a Python `None` (both yield `Ok(None)`). A present but
-/// wrong-typed value is a hard error so a real misconfiguration is loud rather
-/// than silently dropped.
+/// Read an optional PreparedClientConfig attribute.
+/// Missing or None yields Ok(None); a wrongly typed value raises ValueError.
 fn get_config_opt<'py, T>(config: &Bound<'py, PyAny>, attr: &str) -> PyResult<Option<T>>
 where
     T: FromPyObject<'py>,
@@ -1079,6 +1033,55 @@ class ExplicitNone:
         // Saturation at zero prevents underflow. It does not make duplicate
         // releases safe while another acquisition still contributes to the count.
         assert_eq!(apply_close(0), (0, true));
+    }
+
+    #[tokio::test]
+    async fn release_preserves_other_clients_and_operation_references() {
+        use azure_data_cosmos_driver::{
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::AccountReference,
+            options::DriverOptions,
+        };
+        use std::{collections::HashMap, sync::Arc};
+        use url::Url;
+
+        let endpoint = Url::parse("https://close.emulator.local").unwrap();
+        let config =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
+                .unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let account = AccountReference::with_master_key(endpoint, "ZW11bGF0b3Ita2V5");
+        let driver = runtime
+            .create_driver(DriverOptions::builder(account).build())
+            .await
+            .unwrap();
+        let weak_driver = Arc::downgrade(&driver);
+        let handle = "close-reference-lifetime-test";
+        super::drivers().write().insert(
+            handle.to_string(),
+            super::DriverEntry {
+                driver,
+                fault_rules: HashMap::new(),
+                refcount: 2,
+            },
+        );
+
+        super::release_driver_handle(handle).unwrap();
+        let operation_driver = {
+            let cache = super::drivers().read();
+            let entry = cache.get(handle).unwrap();
+            assert_eq!(entry.refcount, 1);
+            Arc::clone(&entry.driver)
+        };
+        super::release_driver_handle(handle).unwrap();
+        assert!(!super::drivers().read().contains_key(handle));
+        assert!(weak_driver.upgrade().is_some());
+
+        super::release_driver_handle(handle).unwrap();
+        assert!(weak_driver.upgrade().is_some());
+        drop(operation_driver);
+        assert!(weak_driver.upgrade().is_none());
     }
 
     // Check the binding's string-to-strategy mapping, not request transmission

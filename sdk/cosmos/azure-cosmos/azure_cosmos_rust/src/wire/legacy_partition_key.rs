@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-//! Test-only legacy wire-value oracle; never part of native request extraction.
+//! Parse legacy partition-key header examples for comparison tests.
+//! Production binding calls read typed inputs through partition_key_input.rs.
 use super::{
     feed_range::{FeedRangePartitionKeyInput, FeedRangePartitionKeySource},
     query::QueryTarget,

@@ -36,6 +36,16 @@ def prepare_create_item_kwargs(kwargs: dict[str, Any]) -> Optional[float]:
     return prepare_item_deadline(kwargs, "create_item", time.monotonic())
 
 
+def prepare_replace_item_kwargs(kwargs: dict[str, Any]) -> None:
+    """Carry one replacement budget through preparation, metadata, and the write."""
+    if "_item_operation_deadline" not in kwargs:
+        if "request_options" not in kwargs:
+            kwargs["request_options"] = kwargs.get("feed_options")
+        deadline = prepare_item_deadline(kwargs, "replace_item", time.monotonic())
+        if deadline is not None:
+            kwargs["_item_operation_deadline"] = deadline
+
+
 def prepare_item_target(kwargs: dict[str, Any], item: Any) -> None:
     """Retain mapping validation without building a legacy document address."""
     if "document_link" in kwargs or "_item_self_link" in kwargs:

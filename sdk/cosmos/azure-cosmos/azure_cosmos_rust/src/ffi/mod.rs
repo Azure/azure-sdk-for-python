@@ -1,39 +1,27 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Python-callable entry points for migrated operations, with synchronous and
-//! asynchronous variants grouped by operation family.
+//! Binding functions called by the synchronous and asynchronous Python backends.
 //!
-//! Where this fits in the layering (same direction as a normal call):
+//! For an order read, the Python wrapper passes a driver handle and
+//! `PreparedRequest` to `read_item`. This module checks the operation name and
+//! extracts the inputs. Helpers in `wire/` obtain the retained `CosmosDriver`
+//! object, run the operation, and convert its result to a binding response tuple.
+//! The Python wrapper then constructs `BackendResponse`; the tuple is not that
+//! Python record yet.
 //!
-//!     Python client -> RustBackend (Python) -> a function here (binding)
-//!         -> looks up the rust driver by handle
-//!         -> runs the driver's work on the shared Tokio runtime
+//! Most operations use prepared requests. Container metadata instead takes
+//! explicit arguments, and feed-range subset comparison is local. Request
+//! signing, service routing, and retries remain the Rust driver's responsibility.
 //!
-//! Operation entry points extract fields from `PreparedRequest` and delegate to
-//! runners under `wire/`; metadata helpers take explicit arguments instead.
-//! Request signing, region routing, retries, and service execution remain in the
-//! shared Rust driver. Local feed-range subset checks do not contact the service.
+//! Async binding functions can check and extract inputs on the calling thread
+//! before returning an awaitable. Rust operation work runs with the Tokio
+//! runtime, not one Python worker thread per service request. See the shared
+//! execution helpers for cancellation and credential-callback limits.
 //!
-//! Terminology used here (consistent with the rest of the backend):
-//!   * binding      -- this compiled `_rust` extension Python calls into.
-//!   * rust driver  -- the `CosmosDriver` driver that does the real Cosmos work.
-//!   * driver handle -- the string naming which pooled rust driver a client uses.
-//!   * shared Tokio runtime -- the binding-owned process-wide executor (in the
-//!     binding) that runs the driver's async work; see `runtime.rs`. It is NOT
-//!     the rust driver and NOT the driver runtime -- it is just the executor the
-//!     driver's futures run on.
-//!
-//! What is shared, what is not, and why (all grounded in `runtime.rs`):
-//!   * SHARED, per process: `RuntimeContext.tokio_rt` and `CosmosDriverRuntime`,
-//!     initialized lazily by acquisition. The saved initialization result can
-//!     also be an error. The Python awaitable bridge is a separate mechanism.
-//!   * SHARED, per cache handle: a `CosmosDriver` and its routing state. The
-//!     handle combines endpoint, credential fingerprint, and config fingerprint;
-//!     see `runtime.rs` for hash and reference-counting limitations.
-//!   * PER CALL: extracted body, item id, partition key, modifiers, and the
-//!     constructed operation. These inputs are separate even when calls share
-//!     a driver and its caches.
+//! Reuse docs/V5/VOCABULARY.md for terminology. `runtime.rs` explains which
+//! CosmosDriverRuntime resources and CosmosDriver objects can be shared;
+//! request inputs remain specific to each binding call.
 
 use crate::wire::partition_key_input::{extract_partition_key, BindingPartitionKey};
 use pyo3::types::PyTuple;
@@ -97,14 +85,9 @@ fn validate_prepared_operation(prepared: &Bound<'_, PyAny>, expected: &str) -> P
     Ok(())
 }
 
-/// Pull the common fields (container link, partition-key header, per-request
-/// modifiers) plus a *required* item id off the PreparedRequest. Used by the
-/// operations that send no body (delete, read), where the id comes from the request. Without a
-/// single shared extractor each op would re-derive the same inputs and could
-/// diverge on which fields it reads or which error it raises.
-///
-/// Both error messages are passed in by the caller so the failure names the
-/// operation the customer actually called, rather than the shared extractor.
+/// Extract read/delete inputs: container link, typed partition key, settings,
+/// and the required item id. For example, "order-42" comes from `item_id`,
+/// not a body. The caller supplies errors that name its operation.
 fn extract_item_inputs(
     prepared: &Bound<'_, PyAny>,
     item_id_error: &'static str,
@@ -119,11 +102,9 @@ fn extract_item_inputs(
     Ok((container_link, partition_key, modifiers, item_id))
 }
 
-/// Common fields plus the item body, then use the item id Python already
-/// resolved on `PreparedRequest.item_id`. Callers that have not been updated may leave that field
-/// unset, in which case `extract_create_item_id` reads the id from the body.
-/// Without this shared extractor, create and upsert could disagree on that
-/// preference and fallback behavior.
+/// Extract create/upsert inputs, preferring `PreparedRequest.item_id`.
+/// If that field is None or empty, read the id from body bytes. A missing
+/// attribute or wrong type raises; it does not silently select the body.
 fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyInputs> {
     let (container_link, partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     let item_id = extract_create_item_id(prepared, &body_bytes)?;
@@ -136,10 +117,9 @@ fn extract_create_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ItemBodyI
     ))
 }
 
-/// Common fields plus the body plus a *required* item id taken from the request
-/// (not the body). Used by replace and patch. Taking the id from the request is
-/// the safety point: deriving it from the body could target the wrong item
-/// if the body's id disagreed with the `item` argument the customer passed.
+/// Extract replace/patch inputs without deriving the target from the body.
+/// `item_id` is required here; replace may subsequently use `item_self_link`.
+/// A different id inside the body must not redirect the operation.
 fn extract_item_body_inputs(
     prepared: &Bound<'_, PyAny>,
     error_message: &'static str,
@@ -163,18 +143,16 @@ fn extract_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<BodyInputs> {
     Ok((container_link, partition_key, modifiers, body_bytes))
 }
 
-/// Inputs for `replace_offer`: per-request modifiers, the offer RID (required, from
-/// `PreparedRequest.item_id`), and the mutated offer document body. Offers are an
-/// account-level, non-partitioned resource, so the container link and partition-key
-/// header on the PreparedRequest are unused here (matches `read_offer`).
+/// Extract settings, the offer resource id from `item_id`, and replacement body bytes.
+/// The common extractor still reads the container link and typed partition key,
+/// but offer execution does not use them to select a container or partition.
 fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
     let offer_id = extract_required_item_id(prepared, REPLACE_OFFER_ID_REQUIRED)?;
     Ok((modifiers, offer_id, body_bytes))
 }
 
-/// Common fields for read-all feed operations (container link, partition-key
-/// targeting header, and per-request modifiers).
+/// Extract the container link, typed partition key, and settings for read-all.
 fn extract_read_all_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadAllInputs> {
     extract_common_prepared_inputs(prepared)
 }
@@ -187,7 +165,7 @@ fn extract_read_feed_ranges_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<Read
     Ok((container_link, force_refresh))
 }
 
-/// Fields for `feed_range_from_partition_key` (container link + partition-key header).
+/// Extract the container link and typed partition key for feed-range calculation.
 fn extract_feed_range_from_partition_key_inputs(
     prepared: &Bound<'_, PyAny>,
 ) -> PyResult<FeedRangeFromPartitionKeyInputs> {
@@ -203,34 +181,9 @@ fn extract_feed_range_from_partition_key_inputs(
 // Async item entry points share input extraction and operation construction
 // with their synchronous counterparts, but return awaitables rather than tuples.
 //
-// What "async" means here, precisely (grounded in `wire/`):
-//   * Driver work is spawned on the binding's Tokio runtime. No Python worker
-//     thread is reserved for the full operation, but argument extraction, result
-//     conversion, and credential callbacks still acquire the GIL. Synchronous
-//     credential acquisition is offloaded to a blocking worker; an async
-//     credential is awaited through its Python bridge.
-//   * The spawned Rust task is turned into a Python awaitable by
-//     `pyo3_async_runtimes::tokio::future_into_py`. That is a library that maps
-//     a Rust future onto an object the customer's asyncio event loop can
-//     `await`; when the task finishes it resolves with the BackendResponse
-//     tuple. This is NOT the credential bridge (`AsyncTokenCredentialBridge`) --
-//     that one wraps an async *credential* into a sync `get_token` and is
-//     unrelated to dispatching operations.
-//   * Dropping the Rust bridge future drops its abort guard and requests task
-//     cancellation. This does not guarantee immediate cleanup or undo service
-//     work already submitted.
-//
-// The Python async backend (`aio/_backend/rust_backend.py`) dispatches to these.
-//
-// Layering (async path) -- same downward direction as the sync path, the tail
-// end just returns to asyncio instead of blocking:
-//
-//     async Python client -> AsyncRustBackend (Python) -> a *_item_async here
-//         -> look up the rust driver by handle (GIL held)
-//         -> spawn the driver's work on the shared Tokio runtime
-//         -> hand asyncio a Python awaitable (via pyo3-async-runtimes)
-//         -> [driver future runs; credential callbacks can re-enter Python]
-//         -> await resolves with the BackendResponse tuple
+// Shared waiting and cancellation rules are in wire/driver_runner.rs.
+// Credential callbacks use the separate path in credential.rs; returning an
+// operation awaitable is not the job of AsyncTokenCredentialBridge.
 
 mod containers;
 mod databases;

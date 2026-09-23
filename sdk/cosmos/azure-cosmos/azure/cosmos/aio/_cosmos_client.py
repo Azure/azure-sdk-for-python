@@ -351,13 +351,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 await self.client_connection.pipeline_client.__aexit__(*args)
         finally:
             try:
-                await self._backend.close()
-            except Exception:  # pylint: disable=broad-except
-                logging.getLogger(__name__).warning("Failed closing async client backend", exc_info=True)
-            try:
-                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
-            except Exception:  # pylint: disable=broad-except
-                logging.getLogger(__name__).warning("Failed releasing async client routing state", exc_info=True)
+                try:
+                    await self._backend.close()
+                except Exception:  # pylint: disable=broad-except
+                    logging.getLogger(__name__).warning("Failed closing async client backend", exc_info=True)
+            finally:
+                try:
+                    self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+                except Exception:  # pylint: disable=broad-except
+                    logging.getLogger(__name__).warning("Failed releasing async client routing state", exc_info=True)
 
     async def close(self) -> None:
         """Release local resources owned by this client, as on leaving an ``async with`` block.

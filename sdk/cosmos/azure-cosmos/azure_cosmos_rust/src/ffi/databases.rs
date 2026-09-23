@@ -1,9 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//! Binding calls for database operations, without a container or partition key.
+//!
+//! For example, a prepared read names database "sales". The binding returns a
+//! response tuple; the Python wrapper parses its body into database properties.
+
 use super::*;
 
-/// Create an account-level database and return its service response.
+/// Create an account-level database and return a binding response tuple.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn create_database<'py>(
@@ -37,14 +42,10 @@ pub(crate) fn create_database_async<'py>(
     )
 }
 
-/// Read an account-level database and return its service properties.
-///
-/// Two public APIs land here. `DatabaseProxy.read` is the direct one: a customer
-/// asks for a database's properties. `create_database_if_not_exists` is the
-/// indirect one -- it first asks whether the database is already there and
-/// creates it only if this read comes back not-found. The Rust driver has a
-/// create-database call and a read-database call, but no combined get-or-create,
-/// so Python does the combining and needs both halves available here.
+/// Read a database and return its properties as body bytes in a response tuple.
+/// DatabaseProxy.read uses this directly. The Python wrapper also uses it as
+/// the read step of create_database_if_not_exists; this binding call does not
+/// make the read/create decision or perform both operations.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_database<'py>(
@@ -103,10 +104,9 @@ pub(crate) fn delete_database_async<'py>(
 
 /// Read one page of the account's databases, for `client.list_databases()`.
 ///
-/// This is where a prepared Python request crosses into Rust. It reads the
-/// request options off the prepared object and hands them to the wire layer.
+/// Read settings from PreparedRequest and pass them to the execution helpers.
 /// It uses `extract_account_prepared_modifiers` rather than the extractor the
-/// container-scoped operations use, because at account scope there is no
+/// container operations use, because at account scope there is no
 /// container link or partition key to read.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
