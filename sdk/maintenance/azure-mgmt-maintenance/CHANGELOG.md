@@ -1,5 +1,23 @@
 # Release History
 
+## 2.2.0b4 (2026-09-23)
+
+### Features Added
+
+  - Client `MaintenanceManagementClient` added operation group `scheduled_events`
+  - Added model `ScheduledEventsAcknowledgeErrorDetails`
+  - Added model `ScheduledEventsApproveResponse`
+  - Added model `ScheduledEventsIdList`
+  - Added model `ScheduledEventsListAcknowledgeError`
+  - Added model `ScheduledEventsListAcknowledgeErrorDetails`
+  - Added operation group `ScheduledEventsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `MaintenanceManagementClient.scheduled_event`
+  - Deleted or renamed model `ScheduledEventApproveResponse`
+  - Deleted or renamed model `ScheduledEventOperations`
+
 ## 2.2.0b3 (2026-05-21)
 
 ### Features Added

@@ -54,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2023-10-01-preview/ApplyUpdates_CreateOrUpdateOnly_NoCancellation.json
+# x-ms-original-file: 2025-10-01-preview/ApplyUpdates_CreateOrUpdateOnly_NoCancellation.json
 if __name__ == "__main__":
     main()

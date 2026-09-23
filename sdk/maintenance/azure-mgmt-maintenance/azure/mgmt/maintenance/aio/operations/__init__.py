@@ -21,7 +21,7 @@ from ._operations import ConfigurationAssignmentsForResourceGroupOperations  # t
 from ._operations import PublicMaintenanceConfigurationsOperations  # type: ignore
 from ._operations import MaintenanceConfigurationsForResourceGroupOperations  # type: ignore
 from ._operations import ConfigurationAssignmentsWithinSubscriptionOperations  # type: ignore
-from ._operations import ScheduledEventOperations  # type: ignore
+from ._operations import ScheduledEventsOperations  # type: ignore
 from ._operations import ApplyUpdateForResourceGroupOperations  # type: ignore
 from ._operations import UpdatesOperations  # type: ignore
 
@@ -39,7 +39,7 @@ __all__ = [
     "PublicMaintenanceConfigurationsOperations",
     "MaintenanceConfigurationsForResourceGroupOperations",
     "ConfigurationAssignmentsWithinSubscriptionOperations",
-    "ScheduledEventOperations",
+    "ScheduledEventsOperations",
     "ApplyUpdateForResourceGroupOperations",
     "UpdatesOperations",
 ]

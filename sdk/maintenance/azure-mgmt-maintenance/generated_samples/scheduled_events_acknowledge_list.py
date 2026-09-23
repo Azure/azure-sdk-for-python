@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.maintenance import MaintenanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-maintenance
 # USAGE
-    python configuration_assignments_create_or_update_parent.py
+    python scheduled_events_acknowledge_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,23 +30,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.configuration_assignments.create_or_update_parent(
-        resource_group_name="examplerg",
-        provider_name="Microsoft.Compute",
-        resource_parent_type="virtualMachineScaleSets",
-        resource_parent_name="smdtest1",
-        resource_type="virtualMachines",
-        resource_name="smdvm1",
-        configuration_assignment_name="workervmPolicy",
-        configuration_assignment={
-            "properties": {
-                "maintenanceConfigurationId": "/subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourcegroups/examplerg/providers/Microsoft.Maintenance/maintenanceConfigurations/policy1"
-            }
+    response = client.scheduled_events.acknowledge_list(
+        resource_group_name="resource-group1",
+        resource_type="resource-type1",
+        resource_name="resource-name1",
+        scheduled_events_id_list={
+            "value": ["00000000-0000-0000-0000-000000000000", "11111111-1111-1111-1111-111111111111"]
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-01-preview/ConfigurationAssignments_CreateOrUpdateParent.json
+# x-ms-original-file: 2025-10-01-preview/ScheduledEvents_AcknowledgeList.json
 if __name__ == "__main__":
     main()
