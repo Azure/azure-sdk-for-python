@@ -77,7 +77,7 @@ from azure.cosmos._backend._async_credential_bridge import (
     AsyncTokenCredentialBridge,
 )
 from azure.cosmos._backend.rust_backend import RustBackend
-from azure.cosmos._helpers._item_dispatch import get_selected_backend
+from azure.cosmos._helpers._item_arguments import get_selected_backend
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND

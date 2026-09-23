@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Async database listing and queries with pager-owned state and per-page timeouts."""
+"""List or query databases using an async page iterator and stateless paging.
+
+The shared ListDatabasesConfig or QueryDatabasesConfig prepares page requests.
+Each ListDatabasesPageState keeps one page iterator's continuation token,
+without a feed cursor. With a timeout, the config supplies an existing operation
+deadline when configured, or a new per-page deadline otherwise.
+"""
 from typing import Any, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
@@ -12,6 +18,8 @@ from ..._operation_deadline import remaining_timeout, run_with_deadline
 
 
 class AsyncListDatabasesPageIterator(AsyncPageIterator):
+    """Await database pages using the shared configuration and response rules."""
+
     def __init__(self, config: ListDatabasesConfig, continuation_token: Optional[str] = None) -> None:
         self.state = ListDatabasesPageState(config, continuation_token)
         super().__init__(self._fetch, self._unpack, continuation_token=self.state.token)
@@ -20,6 +28,7 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
         return value
 
     async def __anext__(self) -> Any:
+        """Prevent overlapping fetches and mark failures, including cancellation."""
         self.state.acquire()
         try:
             return await super().__anext__()
@@ -32,6 +41,11 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
             self.state.lock.release()
 
     async def _fetch(self, _token: Optional[str]) -> Any:
+        """Skip empty pages under one deadline and return the next rows and token.
+
+        The backend page is parsed before state.accept() calls the synchronous
+        response hook. Errors do not switch to the legacy path.
+        """
         state = self.state
         if state.done:
             raise StopAsyncIteration
@@ -65,10 +79,12 @@ class AsyncListDatabasesPageIterator(AsyncPageIterator):
 
 
 def list_databases(client: Any, kwargs: dict[str, Any]) -> AsyncItemPaged[dict[str, Any]]:
+    """Return a database-listing pager; no page is fetched until async iteration."""
     return AsyncItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=AsyncListDatabasesPageIterator)
 
 
 def query_databases(client: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> AsyncItemPaged[Any]:
+    """Return a database-query pager using the same page iterator as listing."""
     return AsyncItemPaged(
         QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=AsyncListDatabasesPageIterator,
     )

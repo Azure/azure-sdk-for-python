@@ -37,7 +37,7 @@ from azure.core import MatchConditions
 from azure.cosmos._backend.operations import OP_UPSERT_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._item_dispatch import (
+from azure.cosmos._helpers._item_arguments import (
     build_upsert_item_request_options,
     merge_upsert_item_explicit_kwargs,
 )

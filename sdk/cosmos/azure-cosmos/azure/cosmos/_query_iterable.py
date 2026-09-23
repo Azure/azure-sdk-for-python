@@ -75,8 +75,8 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self._query = query
         self._options = options
         if query is not None:
-            from ._helpers._query_items import reject_rust_bookmark
-            reject_rust_bookmark({"continuation": continuation_token or options.get("continuation")})
+            from ._helpers._query_items import reject_rust_continuation_token
+            reject_rust_continuation_token({"continuation": continuation_token or options.get("continuation")})
         if continuation_token:
             options['continuation'] = continuation_token
         self._fetch_function = fetch_function

@@ -18,22 +18,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Compatibility page-routing helpers used by sync and async client connections.
+"""Prepare page requests and process backend pages during migration.
 
-Public Rust ``query_items``, ``read_all_items`` and change feed use independent
-retained pagers, not the query/feed eligibility gates below. Those gates remain
-for legacy/internal connection paths; the master-resource feeds still use this
-module directly. Shared request/response adapters are also reused by the retained
-pagers.
+This module checks whether legacy/internal page inputs can use the Rust path,
+builds PreparedPageRequest objects, and processes BackendPage results. The
+caller chooses the permitted execution path before fetching. These helpers
+do not select service-backend regions or replicas.
 
-It has three jobs: decide whether a page is safe for Rust (the ``can_use_*``
-gates), build the page request (``build_query_items_prepared_query``,
-``build_read_all_items_prepared_query``, or
-``build_list_databases_prepared_query``), and finish the response to match
-legacy (``finalize_rust_page_response``).
+For example, listing containers under "dbs/checkout/colls" produces a prepared
+page request with container_link="dbs/checkout" and no SQL query. The Python
+backend later converts it to PreparedRequest for the binding call. A returned
+backend page is parsed into a Python body and response headers.
 
-The ``can_use_*`` gates are temporary migration code: each ``return False`` case shrinks as
-that case is supported on Rust, and the gates go away once the Rust path reaches full parity.
+Public Rust item queries, read-all operations, and change feed use their own
+page iterators with retained feed cursors. They do not use the item-query and
+read-all eligibility checks here, although they reuse response conversion.
+Database and container feeds also use this module's builders and checks.
+
+Eligibility checks are migration support, not a reason to discard request
+validation when legacy execution is retired. Terminology follows
+docs/V5/VOCABULARY.md.
 """
 from __future__ import annotations
 
@@ -71,9 +75,8 @@ from ._helpers._response_parse import process_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
-# Internal keywords the four master-resource feeds -- list/query databases and
-# list/query containers -- recognize. Anything else in ``kwargs`` means the caller
-# asked for something these pages do not carry. All four feeds reject such calls.
+# List/query database and container pages only forward the internal keywords
+# listed here. Other keywords make the input ineligible for the Rust path.
 _MASTER_FEED_ALLOWED_INTERNAL_KWARGS = frozenset({
     Constants.OperationStartTime,
 })
@@ -99,47 +102,31 @@ def can_use_rust_backend_for_query_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return True when one query page can safely route through the Rust backend.
+    """Check inputs for the legacy/internal item-query page path.
 
-    This compatibility gate is not used by the public retained Rust query pager.
-    Backend selection for these legacy/internal calls is handled
-    separately by ``run_page_operation``. It says no whenever anything does not
-    fit: no query, the query-plan step, a non-document query, or the internal
-    read_items query leg (a confirmed driver panic -- see the
-    ``Constants.ReadItemsQueryLeg`` check below). It also says no when the
-    caller used a feed_range, a prefix partition key, a custom read timeout, an
-    availability strategy, full-text score scope, or query advice -- none of which
-    ``PreparedPageRequest`` has a field for, so the Rust path cannot represent them yet.
+    This is not the public retained-query path. The checks below describe what
+    this compatibility path forwards, not everything the Rust driver supports.
+    In particular, they keep read_items' internal queries on the legacy path
+    and reject options this path does not handle.
 
-    Unlike those, the query *text* is deliberately not inspected here. This gate
-    used to regex-scan the SQL for clauses (``ORDER BY`` / ``GROUP BY`` / ...) the
-    Rust driver could not run across partitions and route those queries around it;
-    that made Python's regex the thing deciding what the driver could do, which is
-    fragile (a clause could appear in a string literal, or an unsupported shape the
-    patterns never anticipated could slip through) and duplicates a decision the
-    driver is the actual authority on. The query shape is instead always handed to
-    the driver once the structural checks below pass. If its query plan requires
-    an unsupported merge operation, the binding returns a typed capability error
-    and this module falls back before exposing an error to the caller.
+    Query text is not searched for SQL clauses. Passing these input checks
+    does not prove that the Rust driver can execute the query. The caller's
+    run_page_operation decides any permitted fallback before execution;
+    an execution error is not permission to repeat the query through legacy.
     """
     if query_payload is None or is_query_plan:
         return False
     if resource_type != http_constants.ResourceType.Document:
         return False
-    # read_items builds an internal per-partition "id IN (...)" query for each
-    # chunk of its batch and marks those queries with this flag. The rust query
-    # path cannot serve that shape yet (it panics resolving the partition
-    # topology for it), so keep read_items' query legs on legacy while its
-    # point-read legs still use rust. Normal query_items calls never set this.
-    # This is a confirmed-crash gate (not a capability guess), so it stays.
+    # read_items marks its internal "id IN (...)" queries with this flag.
+    # Keep that existing legacy path; its individual item reads are separate.
     if options.get(Constants.ReadItemsQueryLeg):
         return False
     if "feed_range" in kwargs:
         return False
     if "prefix_partition_key_object" in kwargs or "prefix_partition_key_value" in kwargs:
         return False
-    # The rust query-page fast path currently does not honor these request-level
-    # controls the same way as the legacy path, so keep those requests on legacy.
+    # These options are not supported by this compatibility page path.
     if options.get("read_timeout") is not None:
         return False
     if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
@@ -161,10 +148,8 @@ def can_use_rust_backend_for_query_page(
             return False
 
     if partition_key_wire.kind in ("cross_partition", "empty_sentinel"):
-        # Honor explicit "cross partition disabled" requests by keeping them on
-        # the legacy path, which raises the same BAD_REQUEST the service returns
-        # today for unsupported cross-partition execution. This is a plain
-        # request-shape flag, not a parse of the query text.
+        # Do not use this cross-partition path when the customer app explicitly
+        # disabled it. This checks an option, not the SQL text.
         if options.get("enableCrossPartitionQuery") is False:
             return False
         return True
@@ -185,12 +170,11 @@ def can_use_rust_backend_for_read_all_items_page(
     resource_type: str,
     partition_key_range_id: Optional[str],
 ) -> bool:
-    """Return True when one read_all_items page can safely route through Rust.
+    """Check inputs for the legacy/internal whole-container read path.
 
-    Same idea as the query_items gate, for a whole-container read: it says no when
-    the caller is reading a change feed, reading one specific partition range, or
-    used a custom read timeout, an availability strategy, query metrics, or a
-    feed_range. Otherwise the whole-container read can be served by Rust.
+    This is separate from the public retained read-all page iterator. Reject
+    query-plan requests, change feed, a selected partition range, and options
+    this compatibility path cannot forward.
     """
     if is_query_plan:
         return False
@@ -222,18 +206,14 @@ def _master_feed_page_is_rust_eligible(
     expected_resource_type: str,
     allow_timeout: bool = False,
 ) -> bool:
-    """Return True when one page of ``client.list_databases()`` can run on Rust.
+    """Share option checks for listing or querying databases and containers.
 
-    Same idea as the two container gates above, for the account's list of
-    databases. It says no when the caller asked for something the Rust page does
-    not serve yet: a query-plan request, a feed of something other than
-    databases, a change feed, a per-call read timeout or unsupported overall timeout, an
-    availability strategy, an internal keyword this path does not recognize, or
-    an override of a header the driver writes itself.
+    The caller supplies the expected resource type. When allow_timeout is True,
+    the timeout must be supported and agree between options and keyword arguments.
+    Otherwise any non-None timeout is rejected.
 
-    Without this gate unsupported internal call shapes could reach Rust.
-    Rejection does not always imply a lost legacy feature: availability
-    strategies were accepted but not applied to legacy database metadata requests.
+    Other checks prevent unsupported options and overrides of headers owned by
+    the Rust driver from being silently dropped.
     """
     if is_query_plan:
         return False
@@ -276,7 +256,7 @@ def _container_feed_page_is_rust_eligible(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return whether Rust supports this container feed page."""
+    """Apply the shared checks to a container page, allowing an operation timeout."""
     return _master_feed_page_is_rust_eligible(
         options=options,
         kwargs=kwargs,
@@ -295,7 +275,7 @@ def can_use_rust_backend_for_list_containers_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return whether Rust supports this ``list_containers`` page."""
+    """Check the database path and options for a list_containers page."""
     if not _database_link_from_colls_path(path):
         return False
     return _master_feed_page_is_rust_eligible(
@@ -317,13 +297,11 @@ def can_use_rust_backend_for_query_containers_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return whether Rust supports this ``query_containers`` page."""
+    """Check the query dictionary, database path, and container-page options."""
     if query_payload is None:
         return False
-    # Same reason as the database query gate: the legacy-only SqlQuery mode
-    # leaves the payload a bare string and posts it as ``text/plain``, while the
-    # driver always posts ``application/query+json``. Different bytes on the
-    # wire, so reject that case on a Rust backend.
+    # Legacy SqlQuery mode uses a plain-text body. This Rust path expects the
+    # query dictionary used for application/query+json instead.
     if not isinstance(query_payload, dict):
         return False
     if not _database_link_from_colls_path(path):
@@ -343,7 +321,7 @@ def can_use_rust_backend_for_list_databases_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return whether Rust supports this ``list_databases`` page."""
+    """Apply the shared checks to a list_databases page."""
     return _master_feed_page_is_rust_eligible(
         options=options,
         kwargs=kwargs,
@@ -362,14 +340,11 @@ def can_use_rust_backend_for_query_databases_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Return whether Rust supports this ``query_databases`` page."""
+    """Check the query dictionary and options for a query_databases page."""
     if query_payload is None or is_query_plan:
         return False
-    # By the time the query reaches here it has been normalized: the default
-    # query mode always yields a dict, and the legacy-only SqlQuery mode leaves
-    # it a bare string that legacy posts as ``text/plain``. The driver always
-    # posts ``application/query+json``, so a string here means the two paths
-    # would put different bytes on the wire. Reject that case on a Rust backend.
+    # A string here belongs to legacy SqlQuery mode's plain-text body, not the
+    # query dictionary expected by this Rust path.
     if not isinstance(query_payload, dict):
         return False
     return _master_feed_page_is_rust_eligible(
@@ -382,7 +357,7 @@ def can_use_rust_backend_for_query_databases_page(
     )
 
 
-def _build_feed_request(
+def _build_prepared_page_request(
     *,
     op: str,
     container_link: str,
@@ -391,7 +366,13 @@ def _build_feed_request(
     req_headers: Mapping[str, Any],
     query_payload: Optional[Union[str, Mapping[str, Any]]] = None,
 ) -> PreparedPageRequest:
-    """Build a page from unsigned defaults/options, with one paging authority."""
+    """Build a prepared page request from client headers and request options.
+
+    For example, maxItemCount=100 becomes max_item_count=100, not a second
+    page-size header. Continuation and partition-key values likewise move to
+    their dedicated fields. The Python backend converts this record to a
+    prepared request before calling the binding.
+    """
     if resource_type in ("dbs", "colls"):
         timeout = options.get(Constants.Kwargs.TIMEOUT)
         started = options.get(Constants.OperationStartTime)
@@ -437,20 +418,20 @@ def _build_feed_request(
 
 
 def _extract_container_link_from_docs_path(path: str) -> str:
-    """Return the container link from a document-feed path."""
+    """Turn a path such as "dbs/checkout/colls/orders/docs" into its container link."""
     normalized_path = base.TrimBeginningAndEndingSlashes(path)
     return normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
 
 
-def build_query_items_prepared_query(
+def build_query_items_prepared_page_request(
     *,
     path: str,
     query_payload: Union[str, dict[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build an item query directly from unsigned defaults and service options."""
-    return _build_feed_request(
+    """Build a prepared page request carrying the item query and its parameters."""
+    return _build_prepared_page_request(
         op=OP_QUERY_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
         resource_type="docs",
@@ -460,19 +441,18 @@ def build_query_items_prepared_query(
     )
 
 
-def build_read_all_items_prepared_query(
+def build_read_all_items_prepared_page_request(
     *,
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build the PreparedPageRequest for one read_all_items page dispatch.
+    """Build a prepared page request for read_all_items without constructing SQL.
 
-    Python carries the requested scope without constructing SQL. The binding uses
-    native read-feed for a logical partition and the legacy-compatible internal
-    query for a whole-container read.
+    The partition-key field carries the requested scope. Choosing the Rust
+    driver operation happens later through the binding, not in this builder.
     """
-    return _build_feed_request(
+    return _build_prepared_page_request(
         op=OP_READ_ALL_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
         resource_type="docs",
@@ -481,13 +461,13 @@ def build_read_all_items_prepared_query(
     )
 
 
-def build_list_databases_prepared_query(
+def build_list_databases_prepared_page_request(
     *,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build the Rust request for one page of ``list_databases``."""
-    return _build_feed_request(
+    """Build a prepared page request for listing databases, with no SQL query."""
+    return _build_prepared_page_request(
         op=OP_LIST_DATABASES,
         container_link="",
         resource_type="dbs",
@@ -496,14 +476,14 @@ def build_list_databases_prepared_query(
     )
 
 
-def build_query_databases_prepared_query(
+def build_query_databases_prepared_page_request(
     *,
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build the Rust request for one page of ``query_databases``."""
-    return _build_feed_request(
+    """Build a prepared page request carrying the database query."""
+    return _build_prepared_page_request(
         op=OP_QUERY_DATABASES,
         container_link="",
         resource_type="dbs",
@@ -514,7 +494,7 @@ def build_query_databases_prepared_query(
 
 
 def _database_link_from_colls_path(path: str) -> str:
-    """Return the database link from a container-feed path, or ``""``."""
+    """Turn "dbs/checkout/colls" into "dbs/checkout", or return "" for an invalid path."""
     normalized_path = base.TrimBeginningAndEndingSlashes(path)
     if not normalized_path.endswith("/colls"):
         return ""
@@ -525,14 +505,14 @@ def _database_link_from_colls_path(path: str) -> str:
     return database_link
 
 
-def build_list_containers_prepared_query(
+def build_list_containers_prepared_page_request(
     *,
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build the Rust request for one page of ``list_containers``."""
-    return _build_feed_request(
+    """Build a prepared page request for listing containers in the named database."""
+    return _build_prepared_page_request(
         op=OP_LIST_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
         resource_type="colls",
@@ -541,15 +521,15 @@ def build_list_containers_prepared_query(
     )
 
 
-def build_query_containers_prepared_query(
+def build_query_containers_prepared_page_request(
     *,
     path: str,
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build the Rust request for one page of ``query_containers``."""
-    return _build_feed_request(
+    """Build a prepared page request carrying the container query and database link."""
+    return _build_prepared_page_request(
         op=OP_QUERY_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
         resource_type="colls",
@@ -560,7 +540,11 @@ def build_query_containers_prepared_query(
 
 
 def page_to_backend_response(page: BackendPage) -> BackendResponse:
-    """Adapt a page reply for the existing response/error parser."""
+    """Represent a backend page's response fields as BackendResponse for body parsing.
+
+    Reuse the headers and body bytes without decoding them. Page-only
+    continuation information is not included.
+    """
     return BackendResponse(
         status_code=page.status_code,
         sub_status=page.sub_status,
@@ -572,7 +556,7 @@ def page_to_backend_response(page: BackendPage) -> BackendResponse:
 
 @dataclass(frozen=True)
 class ParsedRustPage:
-    """One parsed Rust page and its finalized response headers."""
+    """Python record containing a body decoded from BackendPage and processed response headers."""
 
     body: dict[str, Any]
     headers: CaseInsensitiveDict
@@ -588,15 +572,16 @@ def finalize_rust_page_response(
     response_headers: Optional[CaseInsensitiveDict],
     response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]],
 ) -> CaseInsensitiveDict:
-    """Finalize a Rust feed page while retaining SDK diagnostics.
+    """Update session state and response headers, then call the response hook.
 
-    Shared by item, database, and container queries and read feeds.
+    Shared by item, database, and container pages. Decode index metrics and
+    query advice only when their headers are present; keep other headers,
+    including diagnostics. Copy headers into the connection and any supplied
+    response_headers dictionary. internal_headers_capture records the headers
+    before those conversions.
 
-    Updates the session token, rewrites the index-metrics and query-advice headers
-    into their readable form, fills the caller's response headers, and fires the
-    response hook. The SDK-created diagnostics header is an intentional vNext
-    addition on all Rust response paths. For a native read-feed, index-metrics and
-    query-advice headers are simply absent, so those rewrite branches are no-ops.
+    The response hook receives its own header copy but the same parsed body.
+    A hook error is raised to the caller, not used to select legacy fallback.
     """
     if internal_headers_capture is not None:
         internal_headers_capture.clear()
@@ -630,7 +615,11 @@ def process_query_page(  # pylint: disable=too-many-arguments
     response_headers: Optional[CaseInsensitiveDict],
     response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]],
 ) -> ParsedRustPage:
-    """Parse one backend page and apply legacy response side effects."""
+    """Decode a backend page and perform the shared session, header, and hook updates.
+
+    Return the parsed body and processed headers together. The result is Python
+    data, not a Rust driver page or a feed cursor.
+    """
     parsed_response = cast(
         CosmosDict,
         process_backend_response(

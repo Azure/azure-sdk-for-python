@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend-pinned SQL queries with retained plans and query-bound bookmarks.
+"""Prepare item queries and fetch pages with a retained feed cursor.
 
-The service query body is serialized once per pager. Scope and page settings
-travel separately, so fetching another page does not encode the query again.
+QueryConfig serializes the query body once. Each QueryPageIterator retains
+its own feed cursor and progress. A q1. continuation token adds a compatibility
+check for the account, container, query, parameters, and scope around the
+binding's c1. token; neither format changes when these Python helpers are renamed.
 """
 
 from __future__ import annotations
@@ -31,7 +33,7 @@ from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
 from .._query_advisor import get_query_advice_info
-from ._partition_key import query_partition_key_components, partition_key_bookmark_value
+from ._partition_key import query_partition_key_components, serialize_partition_key_for_continuation
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
 from ._wire_encoding import serialize_body_to_bytes
@@ -54,7 +56,8 @@ def uses_rust(proxy: Any) -> bool:
     return backend.name != "core-python"
 
 
-def reject_rust_bookmark(kwargs: dict[str, Any]) -> None:
+def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
+    """Reject Rust-path continuation formats before a legacy query can use them."""
     options = kwargs.get("request_options", kwargs.get("feed_options", {})) or {}
     token = kwargs.get("continuation", options.get("continuation"))
     if isinstance(token, str) and token.startswith(("q1.", "c1.", "cf1.")):
@@ -66,6 +69,8 @@ if TYPE_CHECKING:
 
 
 class QueryConfig(ReadAllConfig):
+    """Keep prepared query inputs separate from each page iterator's progress."""
+
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
         self.query, self.parameters = normalize_query_specification(
             kwargs.pop("query", None), kwargs.pop("parameters", None), operation="query_items",
@@ -175,9 +180,9 @@ class QueryConfig(ReadAllConfig):
             raise NotImplementedError(
                 "Query scope, paging and planning headers cannot be overridden; no fallback."
             )
-        bookmark_scope = {
+        continuation_scope = {
             **self.scope.as_dict(),
-            "partition_key": partition_key_bookmark_value(partition) if partition is not None else None,
+            "partition_key": serialize_partition_key_for_continuation(partition) if partition is not None else None,
         }
         encoded = json.dumps(
             [
@@ -185,7 +190,7 @@ class QueryConfig(ReadAllConfig):
                 proxy.container_link,
                 self.query,
                 self.parameters,
-                bookmark_scope,
+                continuation_scope,
             ],
             sort_keys=True,
             separators=(",", ":"),
@@ -200,6 +205,7 @@ class QueryConfig(ReadAllConfig):
         self.decode(self.options.get("continuation"))
 
     def decode(self, token: Optional[str]) -> Optional[str]:
+        """Validate the query inputs recorded by the token and return its inner token."""
         if token is None:
             return None
         if not isinstance(token, str) or not token.startswith(_PREFIX):
@@ -229,6 +235,7 @@ class QueryConfig(ReadAllConfig):
         return value["token"]
 
     def encode(self, token: Optional[str]) -> Optional[str]:
+        """Add this query's compatibility identity to a binding continuation token."""
         if token is None:
             return None
         return _PREFIX + base64.urlsafe_b64encode(
@@ -252,6 +259,13 @@ class QueryConfig(ReadAllConfig):
 
 
 class QueryPageState(ReadAllPageState):
+    """Track pending progress separately from the last delivered continuation token.
+
+    A fetch may advance self.token through empty pages. Only accept() publishes
+    that progress as last_delivered_continuation_token after the response hook
+    succeeds. The feed cursor remains a separate binding object.
+    """
+
     config: QueryConfig
 
     def __init__(
@@ -261,7 +275,7 @@ class QueryPageState(ReadAllPageState):
         super().__init__(config, headers, token)
         self.more = True
         self.resumable = True
-        self.bookmark = token
+        self.last_delivered_continuation_token = token
 
     def capture(self, headers: Any, body: Any) -> None:
         headers = CaseInsensitiveDict(headers)
@@ -294,14 +308,14 @@ class QueryPageState(ReadAllPageState):
 
     def accept(self, rows: list[Any], deadline: Optional[float]) -> list[Any]:
         self.finish(rows, deadline)
-        self.bookmark = self.token
+        self.last_delivered_continuation_token = self.token
         if self.config.response_state is not None and self.responses:
             self.config.response_state.last_response_headers = deepcopy(self.headers)
         return rows
 
     def invalidate(self, error: BaseException) -> None:
         if isinstance(error, AzureError) and not error.continuation_token:
-            error.continuation_token = self.bookmark
+            error.continuation_token = self.last_delivered_continuation_token
         super().invalidate(error)
 
     def check(self) -> None:
@@ -323,6 +337,8 @@ class QueryPageState(ReadAllPageState):
 
 
 class QueryPageIterator(Iterator[Iterator[Any]]):
+    """Fetch query pages, using has_more rather than token availability to finish."""
+
     def __init__(
         self,
         config: QueryConfig,
@@ -342,7 +358,7 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
             raise NotImplementedError(
                 "The driver cannot bookmark this query shape; continue using this iterator."
             )
-        return self.state.bookmark
+        return self.state.last_delivered_continuation_token
 
     def __next__(self) -> Any:
         state = self.state

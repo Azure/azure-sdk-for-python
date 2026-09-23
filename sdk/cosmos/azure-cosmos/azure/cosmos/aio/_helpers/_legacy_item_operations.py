@@ -3,7 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async legacy item parity, separate from Rust execution."""
+"""Await item operations on the explicitly selected legacy path.
+
+Argument preparation is shared with the synchronous legacy helper. This module
+awaits metadata requests and the legacy item call; it is not a fallback for
+failed Rust operations.
+"""
 from __future__ import annotations
 
 import logging
@@ -18,11 +23,21 @@ from ..._helpers._legacy_item_operations import (
 
 
 class AsyncLegacyItemHelper(LegacyItemHelper):
-    """Inherited operation methods return this runner's coroutine."""
+    """Use inherited item methods with the asynchronous _run implementation.
+
+    For example, await helper.read_item(...) awaits _run here, even though
+    read_item itself is defined on LegacyItemHelper.
+    """
 
     async def _run(
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
+        """Prepare item inputs, await required metadata, and await the legacy call.
+
+        Reads and creates pass their deadline through metadata preparation.
+        The remaining operations keep the legacy metadata lookup behavior,
+        including its warning when container properties cannot be read.
+        """
         args, options = prepare_legacy_item_arguments(
             op, arguments, compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
             deadline=deadline,

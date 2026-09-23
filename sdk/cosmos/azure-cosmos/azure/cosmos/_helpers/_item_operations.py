@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Turning item calls into requests, and replies back into results.
+"""Prepare item operations, execute them through RustBackend, and parse responses.
 
 This file covers the six single-item operations: create, read, replace,
-upsert, patch, and delete. Everything here is local work. Nothing in this
-file opens a connection or waits on a reply; sending is the backend's job.
+upsert, patch, and delete. Preparation is local work. ItemHelper then calls
+the synchronous Python backend and waits for its backend response; the binding
+and Rust driver perform the service operation.
 
 A call moves through four steps, in this order:
 
@@ -15,11 +16,11 @@ A call moves through four steps, in this order:
    request needs and the options that shape it.
 2. Reject anything the Rust path cannot honor, naming what to remove.
 3. Build the request object for this particular operation.
-4. Hand it to the backend, then turn the reply into the caller's result.
+4. Pass the prepared request to RustBackend, then parse its backend response.
 
 Which path a client uses was settled earlier, up in the container class.
 By the time this helper exists the choice is made, so nothing here inspects
-it, and there is no route back to the legacy Python code from this file.
+it, and there is no fallback to the legacy path from this file.
 
 The async version in azure/cosmos/aio/_helpers/_item_operations.py makes the
 same decisions in the same order, and imports steps 1 to 3 from here rather
@@ -55,11 +56,9 @@ def normalize_item_arguments(
 ) -> tuple[Dict[str, Any], Dict[str, Any]]:
     """Split the caller's keyword arguments into request values and options.
 
-    Reads only what the caller passed in, so a container that has never been
-    used costs nothing here. Two things a reader might expect are left
-    undone on purpose: the container's internal id, and, for writes, the
-    partition key read out of the document. Both are worked out later during
-    the send, because both need information only the driver holds.
+    This does not fetch container metadata. The container's internal id and,
+    when extraction is requested, a write's partition key are resolved on the
+    Rust path after the prepared request reaches the binding.
     """
     kwargs = dict(arguments)
     # _item_self_link addresses an item the old way. The Rust path has no use
@@ -113,7 +112,7 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
     """Reject options this path cannot honor, before anything is sent.
 
     Failing here is the point. The alternatives would be to send the request
-    with the option silently dropped, or to divert to the legacy Python code,
+    with the option silently dropped, or to divert to the legacy path,
     and both leave the caller believing something happened that did not. The
     error names the option so it can be removed.
     """
@@ -127,7 +126,7 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
 
 
 def normalize_item_partition_key(value: Any, system_key: bool) -> Any:
-    """Turn the two stand-in partition-key values into what the wire expects.
+    """Normalize the public partition-key sentinels before request building.
 
     A caller can pass NonePartitionKeyValue or NullPartitionKeyValue in place
     of a real key. What the first of those should become depends on whether
@@ -145,7 +144,7 @@ def build_item_request(
     op: str, args: Dict[str, Any], options: Dict[str, Any],
     defaults: ItemClientDefaults,
 ) -> PreparedRequest:
-    """Build the request object for one item operation.
+    """Build the prepared request for one item operation.
 
     Picks the builder that matches the operation and gives it what that
     operation needs: a read needs an id, a create needs a document. Returns
@@ -197,9 +196,9 @@ def build_item_request(
 class ItemHelper:
     """Runs one item operation, from caller arguments to finished result.
 
-    Holds three things and nothing else: a backend to send through, the
+    Holds three things: the selected Python backend, the
     client-wide defaults, and somewhere to record the headers from the most
-    recent reply. It does not hold the legacy Python connection, which is why
+    recent backend response. It does not hold the legacy connection, which is why
     there is no way to reach the legacy path from here.
     """
 
@@ -218,7 +217,7 @@ class ItemHelper:
     def _process_response(
         self, response: BackendResponse, op: str, response_hook: Any, deadline: Optional[float] = None
     ) -> Any:
-        """Turn a reply into the value the caller gets back.
+        """Turn a backend response into the value the customer app receives.
 
         Patch is the odd one out. The other five operations leave the
         finishing work to the public method that called in, but patch

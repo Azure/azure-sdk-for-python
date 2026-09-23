@@ -14,8 +14,8 @@ whether the customer called ``ContainerProxy.get_throughput`` or
 
 1. :func:`offer_query` builds the query that finds the one offer record
    belonging to this resource.
-2. :func:`gather_rust_call_inputs` reads, once, everything the rust dispatch
-   needs out of the client and the call's keyword arguments.
+2. :func:`gather_rust_call_inputs` retrieves the selected Python backend and
+   prepares options for the Rust path's eligibility check and request builder.
 
 Those two steps are identical for containers and databases, so they live here
 rather than being written twice in
@@ -32,7 +32,7 @@ from .._constants import _Constants as Constants
 
 def offer_query(resource_self_link: str) -> dict[str, Any]:
     """Build the query that finds a resource's throughput offer."""
-    # The filter both backends send to find this container's single offer record:
+    # Both execution paths use this filter for a container or database offer:
     # the account's offers feed keyed by the resource's self-link.
     return {
         "query": "SELECT * FROM root r WHERE r.resource=@link",
@@ -45,10 +45,10 @@ def gather_rust_call_inputs(
     container_rid: Optional[str],
     kwargs: Mapping[str, Any],
 ) -> tuple[Any, Dict[str, Any], Dict[str, Any]]:
-    """Collect the three things the rust path needs from one public call.
+    """Collect the three inputs needed to prepare a throughput operation.
 
-    Returns the client's selected backend, the rust request options, and the
-    leftover kwargs used only to decide rust-eligibility. They are returned
+    Return the client's selected Python backend, request options, and the
+    leftover kwargs used to check Rust-path eligibility. They are returned
     together so each public function reads ``client_connection._backend``
     exactly once, in one place.
     """

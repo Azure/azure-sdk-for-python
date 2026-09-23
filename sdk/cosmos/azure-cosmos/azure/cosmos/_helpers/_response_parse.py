@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Pure response decoding, explicit header publication and isolated success hooks."""
+"""Parse backend responses, publish response headers, and invoke response hooks.
+
+parse_backend_response only builds the result. process_backend_response can
+also update client-owned headers and call a hook. Neither performs a binding
+call; a parsing or callback failure is not permission for legacy fallback.
+"""
 
 from __future__ import annotations
 import json
@@ -161,7 +166,7 @@ def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
 
 
 def _copy_response_headers(headers: Mapping[str, Any]) -> CaseInsensitiveDict:
-    """Reuse wire strings while isolating any mutable extension-provided values."""
+    """Reuse string header values while copying mutable backend-response values."""
     return CaseInsensitiveDict({
         key: value if type(value) is str else deepcopy(value)
         for key, value in headers.items()
@@ -172,8 +177,7 @@ def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:
     """Ensure the request-charge header is a string in the wire format.
 
     No-op when the header is absent or already a string. The Rust path
-    may surface the charge as a numeric type; this bridges the two
-    representations so byte equality holds.
+    may surface the charge as a numeric type; for example, 1 becomes "1.0".
     """
     raw = headers.get(_REQUEST_CHARGE_HEADER)
     if raw is None or isinstance(raw, str):

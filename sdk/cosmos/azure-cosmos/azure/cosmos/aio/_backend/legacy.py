@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Explicit core-python selection for remaining migration coordinators.
+"""Keep asynchronous legacy-path calls available while migration is unfinished.
 
-This stateless backend invokes the supplied plain callable without building or
-executing a prepared request. Point parity uses the separate legacy item helper."""
+AsyncLegacyBackend awaits the supplied legacy-path function without building
+a prepared request or calling the binding. It holds no per-client resources.
+Legacy item operations use a separate helper.
+"""
 
 from __future__ import annotations
 
@@ -27,11 +29,11 @@ from .cosmos_backend import AsyncCosmosBackend
 
 
 class AsyncLegacyBackend(AsyncCosmosBackend):
-    """Core-python async backend: awaits the legacy ``client_connection`` call.
+    """Await a legacy-path connection call using its original Python arguments.
 
-    Stateless -- it only forwards to the legacy callable
-    the async coordinator supplies -- so :data:`ASYNC_LEGACY_BACKEND` is shared by
-    every core-python async client.
+    The function supplied by the caller retains its own inputs and connection.
+    This object holds no per-client state, so ASYNC_LEGACY_BACKEND can be shared.
+    That ownership property is unrelated to stateless paging.
     """
 
     name = BACKEND_NAME_CORE_PYTHON
@@ -39,12 +41,10 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
     async def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Not supported: the legacy driver is not ``PreparedRequest``-driven.
+        """Reject prepared requests, which the legacy path does not consume.
 
-        See :meth:`azure.cosmos._backend.legacy.LegacyBackend.execute`. Every
-        async coordinator drives this backend through :meth:`run_operation` or
-        :meth:`run_page_operation`, never a wire primitive; this exists only to
-        satisfy the abstract base.
+        Use run_operation or run_page_operation with a legacy-path function
+        that already has the original call arguments.
         """
         raise NotImplementedError(
             "AsyncLegacyBackend does not send prepared requests on the wire; the "
@@ -61,7 +61,7 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Run the explicitly selected legacy callable without building a Rust request."""
+        """Await the selected legacy-path function without building a prepared request."""
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
@@ -77,7 +77,7 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Run the explicitly selected legacy callable without building a Rust request."""
+        """Await the legacy-path page function without building a prepared page request."""
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
@@ -85,6 +85,6 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         return await legacy_call()
 
 
-#: Process-wide shared core-python async backend. ``AsyncLegacyBackend`` holds no
+#: Shared Python backend for asynchronous legacy-path calls. ``AsyncLegacyBackend`` holds no
 #: per-client state, so one instance is enough.
 ASYNC_LEGACY_BACKEND = AsyncLegacyBackend()

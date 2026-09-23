@@ -1,7 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Run container operations with the client's selected Python or Rust implementation."""
+"""Run container operations through the selected Python backend.
+
+On the Rust path, builders create prepared requests and response helpers parse
+backend responses. The legacy path keeps its connection calls for migration.
+An execution failure never causes this helper to try the other path.
+"""
 
 from __future__ import annotations
 
@@ -39,7 +44,7 @@ class ContainerHelper:
     """Prepare and run synchronous container operations."""
 
     def __init__(self, client_connection: Any, backend: CosmosBackend) -> None:
-        """Store the client connection and selected implementation."""
+        """Store the legacy connection and the already-selected Python backend."""
         self._client_connection = client_connection
         self._backend = backend
 
@@ -54,8 +59,8 @@ class ContainerHelper:
     ) -> CosmosDict:
         """Create a container and return its properties.
 
-        Unsupported Rust calls fail rather than switching transports.
-        Explicit legacy selection remains available.
+        Unsupported Rust-path calls fail rather than falling back.
+        Explicit legacy-path selection remains available for migration.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -140,7 +145,7 @@ class ContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        """Delete through the selected backend without Rust-to-legacy replay."""
+        """Delete through the selected Python backend without legacy replay."""
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         on_response = with_response_header_snapshot(response_hook)

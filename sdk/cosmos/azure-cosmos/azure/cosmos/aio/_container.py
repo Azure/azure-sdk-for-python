@@ -46,10 +46,10 @@ from .._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_
 from .._helpers._read_items import complete_read_items_response, prepare_read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items
-from .._helpers._query_items import uses_rust, reject_rust_bookmark
+from .._helpers._query_items import uses_rust, reject_rust_continuation_token
 from .._helpers._response_parse import complete_item_response
 from .._operation_deadline import async_deadline_lock, legacy_deadline_options, remaining_timeout, run_with_deadline
-from .._helpers._item_dispatch import (
+from .._helpers._item_arguments import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
     merge_patch_item_explicit_kwargs,
@@ -1028,7 +1028,7 @@ class ContainerProxy:
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         if uses_rust(self):
             return _query_items(self, kwargs)
-        reject_rust_bookmark(kwargs)
+        reject_rust_continuation_token(kwargs)
         feed_options = _build_options(kwargs)
 
         # Update 'feed_options' from 'kwargs'

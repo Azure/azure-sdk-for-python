@@ -33,7 +33,7 @@ from azure.cosmos._backend.request_settings import RequestSettings
 from azure.cosmos._helpers._partition_key import (
     normalize_partition_key,
     query_partition_key_components,
-    partition_key_bookmark_value,
+    serialize_partition_key_for_continuation,
     parse_customer_partition_key_header,
 )
 from azure.cosmos._helpers._request_item import build_read_item_request
@@ -83,7 +83,7 @@ def test_query_components_do_not_erase_undefined():
     """
     key = query_partition_key_components(["tenant", _Undefined(), None])
     assert key.values == ("tenant", UNDEFINED_PARTITION_KEY, None)
-    assert partition_key_bookmark_value(key) == '["tenant",{},null]'
+    assert serialize_partition_key_for_continuation(key) == '["tenant",{},null]'
 
 
 def test_component_snapshots_and_identity_are_immutable_and_type_sensitive():
@@ -173,7 +173,7 @@ def test_unicode_normalization_preserves_key_shapes_and_bookmarks(value, expecte
         query_partition_key_components(components),
     ):
         assert key.values == ("tenant", expected, None)
-        assert partition_key_bookmark_value(key) == json.dumps(
+        assert serialize_partition_key_for_continuation(key) == json.dumps(
             components, separators=(",", ":"), allow_nan=False
         )
     assert components == ["tenant", value, None]
@@ -374,9 +374,9 @@ def test_unused_raw_headers_are_not_parsed(resource, options, expected):
     otherwise no key at all, because listing databases or containers is not scoped to a
     partition. Reading the header would turn a harmless leftover into an error.
     """
-    from azure.cosmos._query_rust_routing import _build_feed_request
+    from azure.cosmos._query_rust_routing import _build_prepared_page_request
 
-    request = _build_feed_request(
+    request = _build_prepared_page_request(
         op="read_all_items",
         container_link="dbs/d/colls/c",
         resource_type=resource,

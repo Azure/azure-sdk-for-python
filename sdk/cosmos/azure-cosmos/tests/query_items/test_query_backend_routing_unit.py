@@ -60,7 +60,7 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponse
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
-    build_list_databases_prepared_query,
+    build_list_databases_prepared_page_request,
     can_use_rust_backend_for_list_databases_page,
     can_use_rust_backend_for_query_databases_page,
     can_use_rust_backend_for_list_containers_page,
@@ -1273,7 +1273,7 @@ def test_rust_page_adapter_preserves_zero_max_item_count(adapter):
 
 def test_rust_feed_prep_has_one_paging_authority():
     """Typed options win; raw-header-only paging is promoted rather than lost."""
-    prepared = build_list_databases_prepared_query(
+    prepared = build_list_databases_prepared_page_request(
         options={
             "continuation": "typed-continuation",
             "maxItemCount": 0,
@@ -1298,7 +1298,7 @@ def test_rust_feed_prep_has_one_paging_authority():
     }
     assert prepared.continuation == "typed-continuation"
     assert prepared.max_item_count == 0
-    prepared = build_list_databases_prepared_query(
+    prepared = build_list_databases_prepared_page_request(
         options={},
         req_headers={
             "x-ms-continuation": "customer-continuation",
@@ -1321,7 +1321,7 @@ def test_rust_feed_rejects_invalid_raw_page_size(count):
     somewhere deep in the driver with no hint of which header caused it.
     """
     with pytest.raises(ValueError, match="x-ms-max-item-count must be an integer"):
-        build_list_databases_prepared_query(
+        build_list_databases_prepared_page_request(
             options={"initialHeaders": {"X-MS-MAX-ITEM-COUNT": count}}, req_headers={},
         )
 
@@ -1363,7 +1363,7 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive(typed):
         "x-ms-continuation": "default-token", "x-ms-max-item-count": "3",
         "x-app": "default", "x-ms-consistency-level": "Session",
     }
-    prepared = build_list_databases_prepared_query(options=options, req_headers=defaults)
+    prepared = build_list_databases_prepared_page_request(options=options, req_headers=defaults)
     assert prepared.max_item_count == (0 if typed else 7)
     assert prepared.continuation == ("typed-token" if typed else "caller-token")
     assert wire_headers(prepared) == {

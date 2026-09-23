@@ -31,7 +31,12 @@ def _scalar(value: Any) -> PartitionKeyComponent:
 
 
 def normalize_partition_key(value: Any) -> BindingPartitionKey:
-    """Preserve point/feed-range sentinel rules, including empty-sequence provenance."""
+    """Keep supplied values and missing-key instructions distinct for the binding.
+
+    For example, "customer-17" becomes one component. An empty sequence and
+    NonePartitionKeyValue keep different kinds so later handling can distinguish
+    the original inputs.
+    """
     if isinstance(value, _Undefined):
         return BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))
     if isinstance(value, _Empty) or value is NonePartitionKeyValue:
@@ -78,8 +83,12 @@ def parse_customer_partition_key_header(header: str) -> BindingPartitionKey:
     return normalize_partition_key(values)
 
 
-def partition_key_bookmark_value(key: BindingPartitionKey) -> str:
-    """Keep existing persisted bookmark identities; this is not the native transport."""
+def serialize_partition_key_for_continuation(key: BindingPartitionKey) -> str:
+    """Serialize components for continuation compatibility, not a binding request.
+
+    For example, ("customer-17",) becomes '["customer-17"]'. Preserve this
+    representation so already-saved continuation tokens keep the same identity.
+    """
     if key.kind != "components":
         raise ValueError("A scoped bookmark requires partition-key components")
     return json.dumps(

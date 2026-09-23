@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Document ID preparation and immutable encoded snapshots before dispatch."""
+"""Prepare an item id and serialize its document before request execution."""
 
 from __future__ import annotations
 import uuid
@@ -46,7 +46,11 @@ def ensure_item_id(body: Dict[str, Any], *, generate: bool = True) -> Optional[s
 
 @dataclass(frozen=True)
 class SerializedDocument:
-    """Encoded document and its body ID, not a replacement's target ID."""
+    """Body bytes and the document's id, not a replacement operation's target id.
+
+    For {"id": "order-42"}, body_id is "order-42" and body_bytes holds the
+    serialized document. A replace request can supply its target id separately.
+    """
 
     body_id: Optional[str]
     body_bytes: bytes

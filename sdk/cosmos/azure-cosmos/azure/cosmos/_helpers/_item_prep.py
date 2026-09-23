@@ -67,7 +67,7 @@ def prepare_read_item_kwargs(
 
 
 def build_patch_operations_payload(patch_operations: Any) -> dict[str, Any]:
-    """Use the service's canonical increment spelling, also accepted by the driver."""
+    """Build the patch body dictionary, converting increment to the service's incr."""
     if not isinstance(patch_operations, list):
         raise TypeError("patch_operations must be a list of operation dictionaries.")
     if not patch_operations:
@@ -83,7 +83,7 @@ def build_patch_operations_payload(patch_operations: Any) -> dict[str, Any]:
 
 
 def serialize_patch_body(patch_operations: Any, *, compact_utf8: bool = False) -> bytes:
-    """Snapshot the operations before backend dispatch can yield to caller code."""
+    """Create body bytes before execution can give control back to the customer app."""
     return serialize_body_to_bytes(
         build_patch_operations_payload(patch_operations),
         ensure_ascii=not compact_utf8,

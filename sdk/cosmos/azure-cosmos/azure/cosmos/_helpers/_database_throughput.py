@@ -5,9 +5,8 @@
 # -------------------------------------------------------------------------
 """Reading and replacing the throughput a database's containers share.
 
-A database can provision request units at the database level, and every
-container inside it then draws on that one shared budget instead of holding its
-own. These functions back ``DatabaseProxy.get_throughput`` and
+For a database provisioned with shared throughput, these functions read or
+replace that shared request-unit budget. They implement ``DatabaseProxy.get_throughput`` and
 ``DatabaseProxy.replace_throughput`` (sync and async); the container-level
 equivalents are in
 :mod:`~azure.cosmos._helpers._container_throughput`.
@@ -22,8 +21,8 @@ that case explicitly (:func:`_require_offers`) and raise the public
 ``CosmosResourceNotFoundError`` with a message naming the database, rather than
 letting an empty result fail later as something more obscure.
 
-Backend selection is handled exactly as in the container module: the concrete
-backend stored by the client drives the work through
+Execution-path selection follows the container module: the Python backend
+stored by the client drives the work through
 :meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the public
 proxy method stays a thin delegate that names no backend.
 """
@@ -113,7 +112,6 @@ async def get_database_throughput_async(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Return a database's provisioned throughput asynchronously."""
-    # Import here to avoid a circular import between the sync and async packages.
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
@@ -124,9 +122,8 @@ async def get_database_throughput_async(
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
 
-        ``QueryOffers`` yields asynchronously, so the fallback leg has to
-        materialise it here to hand back the same list shape the Rust leg
-        produces.
+        On the legacy path, await iteration of QueryOffers to produce the same
+        list result shape expected from the Rust path.
         """
         return [
             offer async for offer in client_connection.QueryOffers(query_spec, **kwargs)
@@ -237,9 +234,6 @@ async def replace_database_throughput_async(
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
     """Set a database's shared throughput asynchronously."""
-    # Deferred, not module-level: ``azure.cosmos.aio`` reaches back into
-    # ``azure.cosmos`` for ``DatabaseAccount``, so importing it at the top of
-    # this module closes a cycle and breaks plain ``import azure.cosmos``.
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     selected_backend, rust_options, rust_kwargs = gather_rust_call_inputs(
@@ -255,9 +249,8 @@ async def replace_database_throughput_async(
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
 
-        ``QueryOffers`` yields asynchronously, so the fallback leg has to
-        materialise it here to hand back the same list shape the Rust leg
-        produces.
+        On the legacy path, await iteration of QueryOffers to produce the same
+        list result shape expected from the Rust path.
         """
         return [
             offer async for offer in client_connection.QueryOffers(query_spec, **kwargs)

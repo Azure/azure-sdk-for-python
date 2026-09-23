@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Explicit core-Python parity adapter. Never constructed as a Rust fallback."""
+"""Run explicitly selected legacy-path item operations, not failed Rust operations."""
 from __future__ import annotations
 
 import logging
@@ -19,7 +19,7 @@ from ._item_operations import normalize_item_partition_key
 from ._document import build_create_document
 from ._wire_encoding import serialize_body_to_bytes
 from .._backend.constants import BACKEND_NAME_CORE_PYTHON
-from ._item_dispatch import (
+from ._item_arguments import (
     build_create_item_request_options, build_delete_item_request_options,
     build_patch_item_request_options, build_read_item_request_options,
     build_upsert_item_request_options,
@@ -43,7 +43,7 @@ def _prepare_legacy_create_item_body(
 def require_legacy_item_connection(connection: Any) -> None:
     """Allow context-free proxy compatibility only for explicitly selected legacy.
 
-    This check never constructs an item context or recovers a Rust runtime.
+    This check never constructs an item context or acquires a driver handle.
     Missing or Rust selection requires the independently supplied client context.
     """
     attributes = getattr(connection, "__dict__", None)

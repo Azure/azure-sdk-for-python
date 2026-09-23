@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Build prepared requests for the container operations.
+"""Build prepared requests for container operations without sending them.
 
 Covers container creation, reading, replacement, and deletion, plus eligibility checks.
 
 A container lives inside a database, so these builders reuse the database
 module: the create path needs the parent database id out of the link, and the
 eligibility checks defer to the database rules, because a container call carries
-the same per-call arguments and reaches the driver through the same
-account-level headers.
+the same supported per-call arguments. Request headers and typed settings are
+prepared together; the binding and Rust driver perform metadata resolution.
 """
 from __future__ import annotations
 
@@ -125,7 +125,7 @@ def build_create_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the Rust request that creates a container in a database."""
+    """Build a prepared request to create a container in its parent database."""
     _validate_resource(container_definition)
     create_options = dict(request_options)
     create_options.pop("sessionToken", None)
@@ -157,7 +157,7 @@ def build_read_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the Rust request that reads a container."""
+    """Build a prepared request to read a container's properties."""
     read_options = dict(request_options)
     read_options.pop("sessionToken", None)
     headers, settings = account_request_settings(read_options, kwargs)
@@ -196,7 +196,7 @@ def build_delete_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Pass names to Rust; metadata resolution stays inside the driver."""
+    """Build a named container's delete request without resolving service metadata."""
     delete_options = dict(request_options)
     delete_options.pop("sessionToken", None)
     headers, settings = account_request_settings(delete_options, kwargs)
@@ -225,7 +225,7 @@ def build_replace_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Send the replacement body and names; Rust owns metadata resolution."""
+    """Build a replacement request with body bytes; do not send or resolve metadata."""
     _validate_resource(container_definition)
     replace_options = dict(request_options)
     replace_options.pop("sessionToken", None)

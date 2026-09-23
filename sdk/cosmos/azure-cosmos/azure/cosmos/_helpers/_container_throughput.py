@@ -9,7 +9,7 @@ The throughput counterpart to
 :class:`~azure.cosmos._helpers._item_operations.ItemHelper`, for containers. The
 public proxy methods ``ContainerProxy.get_throughput`` and
 ``ContainerProxy.replace_throughput`` (sync and async) each gather their
-arguments and call one function here; the function does the backend work and
+arguments and call one function here; it uses the selected Python backend and
 hands back a finished ``ThroughputProperties``.
 
 The container's request-unit budget lives in a separate account-level *offer*
@@ -18,15 +18,11 @@ record rather than on the container (see
 that offer, and replace then edits the record and writes it back. That
 read-modify-write is why the replace functions drive two operations, not one.
 
-Why this module exists (public methods must not know which backend runs): without
-it, ``get_throughput`` / ``replace_throughput`` on the proxy would read
-``client_connection._backend`` and branch inline -- try the rust backend, else
-fall back to the legacy ``QueryOffers`` / ``ReplaceOffer`` calls -- inside the
-customer-facing method, putting backend-selection code in the public API surface.
-Instead, each function uses the concrete backend stored by the client and drives
-the work through
-:meth:`~azure.cosmos._backend.cosmos_backend.CosmosBackend.run_operation`, so the proxy
-method is a thin delegate that names no backend.
+These helpers keep migration-path decisions out of public proxy methods.
+Each uses the Python backend already stored by the client and supplies
+OperationRouting to run_operation. Any permitted fallback is chosen before
+execution; a failed binding call is not retried as a legacy QueryOffers or
+ReplaceOffer call.
 """
 
 from __future__ import annotations
@@ -105,7 +101,7 @@ async def get_container_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Async twin of :func:`get_throughput`."""
+    """Read container throughput, awaiting metadata and Python backend execution."""
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     container_rid = properties["_rid"]
@@ -118,9 +114,8 @@ async def get_container_throughput_async(
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
 
-        ``QueryOffers`` yields asynchronously, so the fallback leg has to
-        materialise it here to hand back the same list shape the Rust leg
-        produces.
+        On the legacy path, await iteration of QueryOffers to produce the same
+        list result shape expected from the Rust path.
         """
         return [
             offer
@@ -168,7 +163,7 @@ def replace_container_throughput(
 
     Read-modify-write: run one ``read_offer`` to get the current offer, apply the
     new RU/s to a copy, then run one ``replace_offer`` to write it back. Both go
-    through the same coerced backend, so the public method never picks an backend.
+    through the same selected Python backend; the public method does not select it.
     """
     properties = get_properties()
     query_spec = offer_query(properties["_self"])
@@ -238,7 +233,7 @@ async def replace_container_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Async twin of :func:`replace_throughput`."""
+    """Replace throughput, awaiting the offer read and replacement on the same path."""
     properties = await get_properties()
     query_spec = offer_query(properties["_self"])
     container_rid = properties["_rid"]
@@ -256,9 +251,8 @@ async def replace_container_throughput_async(
     async def run_legacy_read() -> list[dict[str, Any]]:
         """Drain the legacy offer query into a list.
 
-        ``QueryOffers`` yields asynchronously, so the fallback leg has to
-        materialise it here to hand back the same list shape the Rust leg
-        produces.
+        On the legacy path, await iteration of QueryOffers to produce the same
+        list result shape expected from the Rust path.
         """
         return [
             offer

@@ -422,7 +422,7 @@ def test_all_public_point_methods_work_with_no_connection(async_mode, op):
                 "azure.cosmos.aio._cosmos_client_connection_async",
                 "azure.cosmos._helpers._legacy_item_operations",
                 "azure.cosmos.aio._helpers._legacy_item_operations",
-            ) or (module == "azure.cosmos._helpers._item_dispatch"
+            ) or (module == "azure.cosmos._helpers._item_arguments"
                   and frame.f_code.co_name.startswith("build_")):
                 legacy_calls.append((module, frame.f_code.co_name))
 

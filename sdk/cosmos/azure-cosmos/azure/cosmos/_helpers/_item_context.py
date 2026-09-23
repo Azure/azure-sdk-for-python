@@ -54,9 +54,10 @@ class ClientLastResponseHeaders:
 
 @dataclass(frozen=True)
 class ItemClientContext(Generic[_BackendT]):
-    """Carry the sync or async backend type from client to database to container.
+    """Carry the Python backend, client defaults, and header state through proxies.
 
-    Dependencies are passed directly, never recovered through a connection.
+    Client -> database proxy -> container proxy keeps the same context.
+    Dependencies are passed directly, not recovered through a legacy connection.
     """
 
     backend: _BackendT

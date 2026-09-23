@@ -30,7 +30,7 @@ from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHelper
 from azure.cosmos._helpers._read_items import (
-    ReadItemsHeaders, complete_read_items_response, index_query_results, index_requested_items,
+    ResponseHeaderAccumulator, complete_read_items_response, index_query_results, index_requested_items,
     normalize_read_items, partition_key_identity, validate_concurrency,
 )
 from azure.cosmos._operation_deadline import legacy_deadline_options, remaining_timeout, run_with_deadline
@@ -328,7 +328,7 @@ class ReadItemsHelperAsync:
         :return: A tuple containing a list of results with original indices and the response headers.
         :rtype: tuple[list[tuple[int, any]], CaseInsensitiveDict]
         """
-        captured_headers = ReadItemsHeaders()
+        captured_headers = ResponseHeaderAccumulator()
         request_kwargs['response_hook'] = captured_headers
         request_kwargs.pop("_item_operation_deadline", None)
         request_kwargs.pop("timeout", None)

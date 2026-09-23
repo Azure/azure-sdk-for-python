@@ -63,7 +63,11 @@ from azure.cosmos._backend.operations import (
     get_page_binding_function_name,
 )
 from azure.cosmos._helpers import _item_prep, _response_parse
+from azure.cosmos._helpers import _item_arguments, _partition_key, _query_items, _read_all_items, _read_items
+from azure.cosmos._helpers._change_feed import ChangeFeedPageState
+from azure.cosmos.aio._helpers._query_items import AsyncQueryPageIterator
 from azure.cosmos import _operation_deadline
+from azure.cosmos import _query_rust_routing as page_helpers
 from azure.cosmos._helpers._document import serialize_document
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos._helpers._response_parse import (
@@ -131,6 +135,25 @@ def test_page_contracts_have_no_query_only_aliases(current, retired):
 
 
 @pytest.mark.parametrize(
+    "current,retired",
+    [
+        ("build_query_items_prepared_page_request", "build_query_items_prepared_query"),
+        ("build_read_all_items_prepared_page_request", "build_read_all_items_prepared_query"),
+        ("build_list_databases_prepared_page_request", "build_list_databases_prepared_query"),
+        ("build_query_databases_prepared_page_request", "build_query_databases_prepared_query"),
+        ("build_list_containers_prepared_page_request", "build_list_containers_prepared_query"),
+        ("build_query_containers_prepared_page_request", "build_query_containers_prepared_query"),
+        ("_build_prepared_page_request", "_build_feed_request"),
+    ],
+)
+def test_page_request_builders_name_the_record_they_return(current, retired):
+    builder = getattr(page_helpers, current)
+    assert callable(builder)
+    assert get_type_hints(builder)["return"] is PreparedPageRequest
+    assert not hasattr(page_helpers, retired)
+
+
+@pytest.mark.parametrize(
     "module,current,retired",
     [
         (shared_rust, "page_binding_call_errors", "page_dispatch_errors"),
@@ -146,6 +169,60 @@ def test_page_contracts_have_no_query_only_aliases(current, retired):
 def test_binding_call_helpers_use_canonical_names_without_retired_aliases(module, current, retired):
     assert hasattr(module, current)
     assert not hasattr(module, retired)
+
+
+@pytest.mark.parametrize(
+    "current,retired",
+    [
+        ("_acquire_driver_handle", "_build_driver_handle"),
+        ("_driver_acquisition_finished", "_driver_initialization_finished"),
+    ],
+)
+def test_async_acquisition_helpers_do_not_imply_new_driver_creation(current, retired):
+    assert callable(getattr(async_rust.AsyncRustBackend, current))
+    assert not hasattr(async_rust.AsyncRustBackend, retired)
+
+
+def test_item_argument_module_is_not_named_as_binding_dispatch():
+    assert _item_arguments.__name__ == "azure.cosmos._helpers._item_arguments"
+    assert Path(_item_arguments.__file__).name == "_item_arguments.py"
+    assert not Path(_item_arguments.__file__).with_name("_item_dispatch.py").exists()
+
+
+@pytest.mark.parametrize(
+    "module,current,retired",
+    [
+        (_read_all_items, "validate_read_all_continuation_token", "validate_bookmark"),
+        (_query_items, "reject_rust_continuation_token", "reject_rust_bookmark"),
+        (_partition_key, "serialize_partition_key_for_continuation", "partition_key_bookmark_value"),
+        (_read_items, "ResponseHeaderAccumulator", "ReadItemsHeaders"),
+        (ChangeFeedPageState, "encode_continuation_token", "bookmark"),
+    ],
+)
+def test_helper_names_use_continuation_and_response_terms(module, current, retired):
+    assert callable(getattr(module, current))
+    assert not hasattr(module, retired)
+
+
+@pytest.mark.parametrize("iterator_type", [_query_items.QueryPageIterator, AsyncQueryPageIterator])
+def test_query_iterator_exposes_last_delivered_continuation_not_pending_progress(iterator_type):
+    config = SimpleNamespace(operation="query_items", decode=lambda token: token)
+    iterator = iterator_type(config, CaseInsensitiveDict(), continuation_token="q1.saved")
+    assert iterator.state.last_delivered_continuation_token == "q1.saved"
+    assert not hasattr(iterator.state, "bookmark")
+    iterator.state.token = "q1.pending"
+    assert iterator.continuation_token == "q1.saved"
+    iterator.state.last_delivered_continuation_token = "q1.delivered"
+    assert iterator.continuation_token == "q1.delivered"
+
+
+def test_response_header_accumulator_combines_charges_and_keeps_latest_headers():
+    headers = _read_items.ResponseHeaderAccumulator()
+    headers({"x-ms-request-charge": "1.0", "x-ms-cosmos-sdk-diagnostics": "first", "etag": "old"}, None)
+    headers({"x-ms-request-charge": "2.0", "x-ms-cosmos-sdk-diagnostics": "second", "etag": "new"}, None)
+    assert headers.headers["x-ms-request-charge"] == "3.0"
+    assert headers.headers["x-ms-cosmos-sdk-diagnostics"] == "first; second"
+    assert headers.headers["etag"] == "new"
 
 
 @pytest.mark.parametrize(

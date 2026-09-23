@@ -18,7 +18,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Offer compatibility routing and response conversion; builders are pure."""
+"""Prepare offer requests and parse their responses for throughput methods.
+
+Eligibility checks tell the caller whether its selected Python backend and
+options can use the Rust path. They do not perform an operation or choose
+fallback after an execution error.
+
+Builders copy connection defaults into prepared requests. The Python backend
+executes them through the binding; these helpers then parse backend responses.
+For example, a decoded {"Offers": [...]} body becomes a CosmosList whose own
+response headers belong to that operation.
+"""
 
 from __future__ import annotations
 
@@ -36,7 +46,11 @@ from ._helpers._response_parse import process_backend_response
 
 
 def can_use_rust_backend_for_read_offer(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
-    """Keep unsupported transport options and customer overrides on legacy."""
+    """Check the selected Python backend and options before reading an offer.
+
+    False means this call cannot use the Rust path as supplied. The caller
+    applies migration policy; this check does not run the legacy operation.
+    """
     if not is_rust_backend(backend):
         return False
     if options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
@@ -55,7 +69,10 @@ def build_read_offer_from_connection(
     offer_query: Mapping[str, Any],
     options: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Adapt connection defaults to the value-only offer-query builder."""
+    """Build a prepared request using connection headers and the supplied offer query.
+
+    build_read_offer_request prepares the inputs; it does not send the request.
+    """
     return build_read_offer_request(
         resource_link=container_link,
         offer_query=offer_query,
@@ -67,7 +84,11 @@ def build_read_offer_from_connection(
 
 
 def process_read_offer_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
-    """Parse a backend response into the legacy offer-list shape."""
+    """Parse a backend response into a CosmosList and update the connection's headers.
+
+    The list retains this response's headers so later operations on the same
+    connection cannot replace the headers read from this result.
+    """
     parsed = process_backend_response(
         backend_response,
         client_connection=client_connection,
@@ -80,14 +101,22 @@ def process_read_offer_response(backend_response: Any, *, client_connection: Any
 
 
 def offer_response_headers(result: Any, client_connection: Any) -> CaseInsensitiveDict:
-    """Use operation-owned headers; retain the legacy plain-list fallback."""
+    """Copy headers from this result when available, not another operation's result.
+
+    A legacy plain list has no response headers of its own. Results that are
+    not CosmosDict or CosmosList use the connection's last_response_headers.
+    """
     if isinstance(result, (CosmosDict, CosmosList)):
         return deepcopy(result.get_response_headers())
     return CaseInsensitiveDict(deepcopy(client_connection.last_response_headers))
 
 
 def parse_read_offer_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Return offer records consumed by the shared throughput deserializer."""
+    """Return copied offer dictionaries from a decoded {"Offers": [...]} response body.
+
+    Check that Offers is a list and each entry is a mapping. Converting these
+    records to throughput properties is the caller's next step.
+    """
     raw_offers = payload.get("Offers")
     if not isinstance(raw_offers, list):
         raise ValueError("read_offer Rust payload must include a list field 'Offers'.")
@@ -105,7 +134,11 @@ def can_use_rust_backend_for_replace_throughput(
     options: Mapping[str, Any],
     kwargs: Mapping[str, Any],
 ) -> bool:
-    """Keep both steps of the read-modify-write on the same eligible backend."""
+    """Apply the read-offer eligibility check before replacing throughput.
+
+    The caller first reads the current offer and then replaces it. This shared
+    check does not execute either step; the caller performs two separate operations.
+    """
     return can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs)
 
 
@@ -116,7 +149,7 @@ def build_replace_offer_from_connection(
     offer: Mapping[str, Any],
     options: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Adapt connection defaults to the value-only offer-replacement builder."""
+    """Build a prepared replacement request using connection headers and the offer body."""
     return build_replace_offer_request(
         resource_link=container_link,
         offer_body=offer,
@@ -128,7 +161,7 @@ def build_replace_offer_from_connection(
 
 
 def process_replace_offer_response(backend_response: Any, *, client_connection: Any) -> Any:
-    """Parse an offer replacement response."""
+    """Parse the backend response and update the connection's latest response headers."""
     return process_backend_response(
         backend_response,
         client_connection=client_connection,

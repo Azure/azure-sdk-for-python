@@ -3,7 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async change-feed polling; no metadata coroutines are created eagerly."""
+"""Poll change-feed pages when the customer app advances the async page iterator.
+
+ChangeFeedConfig and ChangeFeedPageState supply the shared settings and
+continuation rules. This module awaits the selected Python backend or legacy
+fetcher. Constructing the pager does not start a metadata request or fetch a page.
+"""
 
 from typing import Any, Optional
 
@@ -25,6 +30,8 @@ from ..._operation_deadline import (
 
 
 class AsyncChangeFeedPageIterator(AsyncPageIterator):
+    """Keep this iterator's feed cursor, continuation token, and polling progress."""
+
     def __init__(
         self,
         config: ChangeFeedConfig,
@@ -40,12 +47,18 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         super().__init__(self._fetch, self._unpack, continuation_token=token)
 
     async def _unpack(self, value: tuple[Optional[str], list[dict[str, Any]]]) -> Any:
-        # azure-core accepts lists and optional tokens at runtime.
+        # Pass through the continuation token and rows for the page iterator.
         return value
 
     async def _fetch(
         self, _token: Optional[str]
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
+        """Await a poll and then complete its result using the shared state.
+
+        A poll starting at a particular time can require another fetch before
+        returning. Those fetches share one deadline. The legacy fetcher and its
+        metadata request are created only when that path is actually used.
+        """
         state = self.state
         if state.done:
             raise StopAsyncIteration
@@ -132,6 +145,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
 
 
 def query_items_change_feed(proxy: Any, kwargs: dict[str, Any]) -> CosmosAsyncItemPaged:
+    """Return a change-feed pager without starting its first poll."""
     config = ChangeFeedConfig(proxy, kwargs)
     headers = CaseInsensitiveDict()
     return CosmosAsyncItemPaged(

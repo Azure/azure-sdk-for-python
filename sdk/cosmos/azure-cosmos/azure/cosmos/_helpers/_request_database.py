@@ -9,7 +9,7 @@ Covers create, read and delete of a database, plus the checks that decide
 whether a given call can run on the Rust path at all. A database is
 account-scoped, so these requests carry no partition key and no container link.
 
-The eligibility predicates screen known unsupported settings before dispatch.
+The eligibility predicates screen known unsupported settings before execution.
 They do not prove service acceptance or exhaustively validate arbitrary internal
 option mappings. The caller's migration policy decides how to handle ineligibility.
 """
@@ -85,7 +85,7 @@ def prepare_create_database_options(
     if "request_options" not in kwargs:
         kwargs["request_options"] = feed_options
     options = deepcopy(compose_options_from_kwargs(kwargs))
-    # Get-or-create retains this option for explicitly selected legacy transport.
+    # Get-or-create retains this option for the explicitly selected legacy path.
     # Its Rust eligibility check rejects it before the existence read.
     if not allow_read_timeout:
         for source in (kwargs, options):
@@ -201,7 +201,7 @@ def build_create_database_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the account-level create-database request consumed by the Rust backend."""
+    """Build the account-level prepared request consumed by RustBackend."""
     validate_resource(database)
     headers, settings = account_request_settings(request_options, kwargs)
     manual = settings.resource.offer_throughput is not None or "x-ms-offer-throughput" in headers
@@ -228,12 +228,11 @@ def build_read_database_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the account-level read-database request consumed by the Rust backend.
+    """Build an account-level prepared request to read a database.
 
-    Two callers: ``DatabaseProxy.read`` and the existence check inside
-    ``create_database_if_not_exists``. Without it a Rust-backed client has to
-    run both of those on the legacy transport, because there is no Rust request
-    to send.
+    ``DatabaseProxy.read`` and ``create_database_if_not_exists`` use this same
+    builder. For database "checkout", item_id holds "checkout" and container_link
+    is empty. The builder performs no existence check or network I/O.
     """
     read_options = dict(request_options)
     # Database reads are master-resource requests. The legacy session layer never
@@ -281,9 +280,9 @@ def is_read_database_rust_eligible(
     Returns ``False`` when the caller asked for
     something the Rust path would drop without saying so:
 
-    * ``read_timeout`` -- a socket-level timeout. The Rust path has no
-      per-request equivalent; the driver takes its read timeout from the client
-      configuration.
+    * ``read_timeout`` -- no supported per-operation override on this path.
+      The constructor's value configures CosmosDriverRuntime's whole HTTP-attempt
+      limits, not response-read inactivity.
     * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
       for example ``connection_timeout`` or ``raw_request_hook``, which the
       legacy azure-core pipeline consumes and the Rust path never sees.
@@ -292,10 +291,9 @@ def is_read_database_rust_eligible(
     * ``initial_headers`` containing a standard header the driver always
       overwrites. The legacy pipeline preserves those caller overrides.
 
-    Without this check the read would run on Rust regardless, and these options
-    would be accepted and then quietly not applied. A customer who
-    sets ``timeout=0.5`` to fail fast would wait a full second and have no way to
-    tell from logs that their number was replaced.
+    For example, ``timeout=0.5`` fails this eligibility check rather than being
+    accepted as a supported operation timeout. Eligibility is not permission
+    to retry a failed operation through the legacy path.
 
     :param request_options: The internal options dict for this read.
     :type request_options: Mapping[str, Any]
@@ -336,7 +334,7 @@ def build_delete_database_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the Rust request that deletes a database."""
+    """Build the prepared request that identifies the database to delete."""
     delete_options = dict(request_options)
     # Same suppression as the read: a database is a master resource, so the legacy
     # session layer attaches no session token and ``_base.GetHeaders`` drops

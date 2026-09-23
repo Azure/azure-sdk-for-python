@@ -3,18 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async backend dispatch. Two wire reply shapes: single responses and pages.
+"""Define how the asynchronous Python wrapper executes prepared requests.
 
-Migrated point and retained-feed helpers execute directly. Remaining migration
-coordinators pass an OperationRouting, a lazy builder, a response processor and
-an optional legacy callable. Policy is centralized in capabilities.py; request
-compatibility remains request-dependent. Explicit legacy selection skips request
-building. Only allowed ineligibility/static preflight can route to legacy;
-execution, parsing and callback failures never replay.
+Migrated helpers call execute or execute_pages directly. Remaining migration
+helpers use run_operation or run_page_operation, supplying a request builder,
+function to process the response, OperationRouting, and optional legacy-path function.
+OperationRouting selects an execution path, not a region or replica.
 
-Prepared records carry wire data, not invocation deadlines. Native item cursors
-are created lazily by their owning pagers through the backend factory. Client
-registration reservations and native driver references retain separate lifetimes.
+Prepared requests produce backend responses; prepared page requests produce
+backend pages. The invocation's absolute deadline is supplied separately.
+Python page iterators create feed cursors through create_item_feed_cursor;
+that synchronous binding constructor does not acquire a driver handle.
 """
 
 from __future__ import annotations
@@ -45,68 +44,48 @@ if TYPE_CHECKING:
 
 
 class AsyncCosmosBackend(abc.ABC):
-    """Abstract dispatch target for any Cosmos operation (async).
+    """Shared Python interface for asynchronous request execution.
 
-    Migrated item helpers call ``execute`` directly, with no legacy port.
-    The other dispatch methods remain migration ports for other families.
+    AsyncRustBackend implements execute and execute_pages through the binding.
+    AsyncLegacyBackend instead awaits supplied legacy-path functions through
+    run_operation and run_page_operation; it does not consume prepared requests.
 
-    A still-migrating async coordinator (``AsyncThroughputHelper``,
-    ``AsyncFeedRangeHelper``) holds one of these by interface and drives its
-    operations through :meth:`run_operation` or :meth:`run_page_operation`
-    without knowing which concrete backend it has. Driver selection and legacy
-    fallback happen behind this
-    interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
-    core-python client holds an
-    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend`, and every
-    coordinator treats both the same -- none of them branch on ``None``, on
-    which concrete backend they hold, or on a wire primitive returning
-    ``None``. The operation kind is on ``prepared.op``; the backend branches on
-    it.
-
-    ``execute`` and ``execute_pages`` are the wire-level primitives used behind
-    those two coordinator methods. The core-python
-    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend` is **not**
-    ``PreparedRequest``-driven, so it does not implement ``execute`` and instead
-    overrides :meth:`run_operation` and :meth:`run_page_operation` to await the
-    legacy operation.
-
-    The legacy implementation and compatibility fallback are temporary parity
-    scaffolding; the migration target is complete Rust coverage.
+    Those two migration methods choose any permitted fallback before execution.
+    They never repeat execution, response-processing, or callback failures
+    through the legacy path. Retiring that path also removes its selection
+    policy, not the requirement to validate unsupported request options.
     """
 
-    #: Short identifier surfaced in the startup INFO log and the
-    #: per-request user-agent suffix. Subclasses set this from
+    #: Python backend identifier used in the startup INFO log. Subclasses set this from
     #: ``BACKEND_NAME_RUST`` etc.
     name: str = "abstract"
 
     async def close(self) -> None:
-        """Release resources owned by this backend.
+        """Release resources owned by this Python backend.
 
-        Stateless backends have nothing to release. Backends that own resources
-        override this method.
+        Implementations with no owned resources can keep this empty default.
         """
 
     @abc.abstractmethod
     async def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Issue a single async Cosmos operation on the wire and return the raw reply.
+        """Execute a prepared request and return a backend response.
 
-        Dispatch on ``prepared.op`` and return a ``BackendResponse`` for the
-        caller to parse, including for an empty successful body. A missing
-        request is invalid; a missing native reply is a protocol error.
-        ``deadline`` is the caller's existing absolute monotonic budget,
-        converted to remaining time at dispatch.
-        This is the rust wire primitive; a backend that does
-        not send prepared requests (the core-python legacy backend) does not
-        implement it.
+        AsyncRustBackend selects a binding function using prepared.op, calls it,
+        and awaits its result. The returned BackendResponse still needs body
+        parsing by the caller, including for an empty successful body.
+
+        deadline is an absolute reading of time.monotonic(), not a new duration.
+        For example, a deadline of 105 with the clock now at 102 leaves three
+        seconds for the binding call. AsyncLegacyBackend rejects this method.
         """
         ...
 
     async def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None
     ) -> ContainerMetadata:
-        """Get immutable routing facts; unsupported backends must fail explicitly."""
+        """Get the container id and partition-key definition, or raise if unsupported."""
         raise NotImplementedError("This backend does not provide container metadata")
 
     async def run_operation(
@@ -118,7 +97,12 @@ class AsyncCosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        """Choose the permitted execution path, await its result, then process it.
+
+        A supplied legacy_call is used only when migration policy permits it
+        before execution. A response-processing error is raised, not used to
+        choose the legacy path.
+        """
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -143,7 +127,12 @@ class AsyncCosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Apply migration policy before dispatch; never replay execution or parsing errors."""
+        """Fetch one backend page through Rust or choose permitted legacy fallback.
+
+        Page preflight precedes driver acquisition and fetching. Its specific
+        PagePreflightError can allow fallback only when the operation's policy
+        permits it and no continuation token was supplied. Execution errors do not.
+        """
         if routing.uses_legacy():
             if legacy_call is None:
                 raise BindingProtocolError(
@@ -187,25 +176,27 @@ class AsyncCosmosBackend(abc.ABC):
     def execute_pages(
         self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
     ) -> AsyncIterator[BackendPage]:
-        """Return a paged query or read-feed result one ``BackendPage`` at a time.
+        """Return the asynchronous iterator used to fetch a backend page.
 
-        The default here raises; ``AsyncRustBackend`` overrides it using the
-        stateless or retained-cursor dispatch table. A
-        backend that does not implement this -- ``AsyncLegacyBackend`` never
-        reaches it, since :meth:`run_page_operation` invokes the legacy call
-        directly -- keeps this raising default.
+        AsyncRustBackend yields one BackendPage per call. Advancing its async
+        generator performs the fetch; constructing that generator does not.
+        The operation name and presence of a feed cursor select stateless or
+        retained paging. A supplied deadline contributes its remaining seconds.
 
-        ``deadline`` supplies the existing monotonic budget to supported native
-        cursor execution and ``list_databases``. Other stateless feeds use
-        their prepared settings rather than this deadline argument.
+        This base implementation raises. AsyncLegacyBackend uses its supplied
+        legacy-path page function instead.
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:
-        """Validate static page capability before execution; no I/O or driver acquisition."""
+        """Provide a page-preflight hook before driver acquisition or page fetching.
+
+        This base method performs no check. AsyncRustBackend checks that the
+        operation and cursor mode have the required async binding function.
+        """
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create local native cursor state, without acquiring a driver."""
+        """Create a feed cursor synchronously, without driver acquisition or page fetching."""
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"
         )

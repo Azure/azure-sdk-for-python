@@ -9,13 +9,13 @@ A customer divides an order scan among workers by passing each worker a
 returned feed-range dictionary. Treat it as an unchanged value describing
 which part of the container to read, not as order data or a continuation token.
 
-Range discovery waits until iteration. The Python/Rust binding asks the Rust
-driver to resolve the container and obtain its ranges. Each Python result
-iterator keeps its own results and available response headers. Unsupported
-Rust options and failures do not cause a call through legacy Python.
+Range discovery waits until iteration. The binding asks the Rust driver to
+resolve the container and obtain its ranges. Each returned pager keeps its
+own result state and available response headers. Unsupported Rust-path options
+and discovery failures do not cause fallback to the legacy path.
 
 The legacy branches remain for migration tests and unmigrated family members,
-not as another backend for the Rust-only release. Partition-key conversion and
+not as another execution path for release. Partition-key conversion and
 range-subset checks share this module but have their own operation rules.
 """
 
@@ -177,7 +177,7 @@ def feed_range_from_partition_key(
     partition_key_value: Any,
     get_legacy_epk_range: Callable[[Any], Range],
 ) -> dict[str, Any]:
-    """Calculate one partition key's feed range through the selected backend."""
+    """Calculate one partition key's feed range through the selected Python backend."""
     selected_backend = client_connection._backend
     backend = selected_backend
     return backend.run_operation(
@@ -210,7 +210,7 @@ def is_feed_range_subset(
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
 ) -> bool:
-    """Compare feed ranges through the selected backend."""
+    """Compare feed ranges through the selected Python backend."""
     selected_backend = client_connection._backend
     backend = selected_backend
 

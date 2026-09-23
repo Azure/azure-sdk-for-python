@@ -4,7 +4,16 @@
 
 
 def parse_connection_string(conn_str: str) -> dict[str, str]:
-    """Read account settings without creating a client or exposing key values in errors."""
+    """Return connection-string settings without creating a client or contacting the service backend.
+
+    Split each setting at its first "=" so padding in an AccountKey value is
+    preserved. Repeated names keep their last value. AccountEndpoint and
+    AccountKey must be present and nonblank, but values are returned unchanged,
+    including whitespace and any additional settings.
+
+    This checks the string's structure, not whether the endpoint or credential
+    works. Errors identify the missing setting, never the supplied key value.
+    """
     if not isinstance(conn_str, str):
         raise TypeError("Connection string must be a string.")
 

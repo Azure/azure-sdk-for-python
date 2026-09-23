@@ -3,7 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Shared read-many validation, typed identities, accounting, and success hooks."""
+"""Validate read_items inputs and combine their results in the Python wrapper.
+
+Each requested item is identified by its id and partition key. Result indexing
+restores the request order, including duplicates. ResponseHeaderAccumulator is
+also reused by feed helpers to combine headers across their fetches.
+"""
 from __future__ import annotations
 
 import math
@@ -144,8 +149,13 @@ def index_query_results(results: Sequence, indices: dict[tuple, list[int]], defi
     return indexed
 
 
-class ReadItemsHeaders:
-    """Accumulate each successful query response, including empty continuation pages."""
+class ResponseHeaderAccumulator:
+    """Combine response headers without fetching or advancing a feed.
+
+    Request charges "1.0" and "2.0" become "3.0". Diagnostic strings are joined;
+    other headers keep their latest value. Empty pages still contribute their
+    available headers.
+    """
 
     def __init__(self) -> None:
         self.headers = CaseInsensitiveDict()

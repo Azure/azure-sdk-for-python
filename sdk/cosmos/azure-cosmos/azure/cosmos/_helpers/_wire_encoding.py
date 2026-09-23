@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Retained JSON/UTF-8 encoding and service header-value formatting."""
+"""Encode body bytes and format response-header values in the Python wrapper."""
 
 from __future__ import annotations
 import json
 from typing import Any, Union
 
 # Compact separators (no spaces) match the byte sequence the existing
-# core-python pipeline produces today.
+# legacy path produces.
 _COMPACT_SEPARATORS = (",", ":")
 
 
@@ -67,12 +67,11 @@ SerializableBody = Union[None, bytes, bytearray, str, dict, list, tuple]
 
 
 def format_ru_charge(charge: float) -> str:
-    """Render a request charge as the wire-string shape (``str(float)``).
+    """Render a request charge as a response-header string (``str(float)``).
 
-    :param charge: The RU charge as a float (typically from the Rust
-        backend's typed response struct).
+    :param charge: The request charge as a float.
     :type charge: float
-    :returns: The wire-string representation, e.g. ``"1.0"``, ``"1.43"``.
+    :returns: The header value, e.g. ``"1.0"``, ``"1.43"``.
     :rtype: str
     """
     return str(float(charge))

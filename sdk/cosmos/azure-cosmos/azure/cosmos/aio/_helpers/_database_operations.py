@@ -3,12 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async counterpart of the backend-neutral database coordinator.
+"""Prepare database requests and await the selected Python backend.
 
-Request builders are synchronous; service execution is awaited. Creation uses
-one deadline and waits for cancellation to finish before returning. Success
-hooks remain ordinary synchronous callables, outside request retries and the
-async timeout wrapper.
+The request builders and response parsers are shared with the synchronous
+database helper. During migration, run_operation selects a permitted path
+before execution; a failure does not cause a Rust operation to run again
+through the legacy connection.
+
+Each creation method uses one supplied deadline for its steps. On timeout,
+run_with_deadline cancels the Python task and waits for it
+to finish handling cancellation. This does not undo a database creation already
+performed by the service backend. After successful completion and a remaining-time
+check, the success hook runs synchronously, outside retries and run_with_deadline.
 """
 
 from __future__ import annotations
@@ -46,13 +52,13 @@ from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
 class AsyncDatabaseHelper:
-    """Route async database operations through the selected backend boundary."""
+    """Build prepared requests, await execution, and return database properties."""
 
     def __init__(
         self, client_connection: Any, backend: AsyncCosmosBackend, *,
         response_state: Optional[ClientLastResponseHeaders] = None,
     ) -> None:
-        """Store the client connection and selected implementation."""
+        """Retain the Python backend, legacy connection, and optional response-header state."""
         self._client_connection = client_connection
         self._backend = backend
         self._response_state = response_state
@@ -66,12 +72,14 @@ class AsyncDatabaseHelper:
         kwargs: Optional[Mapping[str, Any]] = None,
         deadline: Optional[float] = None,
     ) -> CosmosDict:
-        """Async twin of :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.create_database`.
+        """Create a database, such as {"id": "checkout"}, and return its properties.
 
-        Per-call ``read_timeout`` is not supported; callers configure the read
-        timeout when constructing ``CosmosClient``. ``response_hook`` is invoked
-        once on success with the response headers and created database, matching
-        the legacy async connection contract.
+        The supplied deadline covers preparation and awaited execution.
+        On success, check the remaining time before calling response_hook once
+        with copies of the headers and database properties.
+
+        A per-call read_timeout is rejected. The customer app configures that
+        setting when constructing CosmosClient instead.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -132,8 +140,11 @@ class AsyncDatabaseHelper:
         ] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
-        """Async twin of
-        :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.read_database`."""
+        """Read database properties and preserve the response hook's 304 behavior.
+
+        A 304 response means the database has not changed. The hook receives
+        None instead of a body for that response.
+        """
         response_hook = with_response_header_snapshot(response_hook)
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -181,10 +192,6 @@ class AsyncDatabaseHelper:
         operation_kwargs.pop("response_hook", None)
 
         def build_request() -> PreparedRequest:
-            """Build the prepared delete-database request.
-
-            Construction is synchronous; only backend execution is awaited.
-            """
             return build_delete_database_prepared(
                 database_link,
                 request_options,
@@ -220,19 +227,16 @@ class AsyncDatabaseHelper:
         kwargs: Optional[Mapping[str, Any]] = None,
         deadline: Optional[float] = None,
     ) -> CosmosDict:
-        """Async twin of
-        :meth:`azure.cosmos._helpers._database_operations.DatabaseHelper.create_database_if_not_exists`.
+        """Return an existing database, or create it when the read reports not found.
 
-        Same retry-safe behavior: read the named database first and create it
-        only when the read returns "not found" (404), so re-running setup for a
-        name that already exists returns that database instead of failing. Same
-        stripping of provisioning options from the read. The Python
-        coordinator composes separate driver operations under one deadline,
-        validating both steps before dispatch. Cancellation drains the pending
-        request work. The synchronous success hook receives isolated final-response
-        copies outside recovery and timeout handling. If creation
-        conflicts with another caller, read the database once more. A failed
-        follow-up read propagates without another creation attempt.
+        Check support for both operations before starting, and leave
+        creation-only options off the read. Each step uses the same deadline.
+        If another caller creates the database first, read it once more;
+        a failed follow-up read is raised without another creation attempt.
+
+        After the awaited work, call the synchronous response hook once with
+        copies of the final headers and properties. Changes made by the hook
+        do not change the result returned to the customer app.
         """
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database_if_not_exists response_hook must be callable or None.")

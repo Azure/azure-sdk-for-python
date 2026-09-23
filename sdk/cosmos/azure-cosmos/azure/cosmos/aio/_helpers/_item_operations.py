@@ -3,17 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async version of the item helper in azure/cosmos/_helpers/_item_operations.py.
+"""Prepare item requests and await the selected Python backend.
 
-The steps and their order are the same, and the first three of them are
-imported from that file rather than copied. Read it for what the steps are
-and why the flow is shaped this way.
+Preparation uses the same functions as azure.cosmos._helpers._item_operations:
+normalize arguments, reject unsupported options, and build a prepared request.
+For example, an order read becomes PreparedRequest before this helper awaits
+AsyncRustBackend.execute and parses the returned BackendResponse.
 
-Two things differ here:
-
-- The backend call is awaited.
-- Patch runs inside a task that a timeout can cancel. The other five
-  operations do not need that; AsyncItemHelper._run explains why.
+Patch also completes the customer result here. With a supplied deadline,
+run_with_deadline runs that work in a Python task and waits for the task to
+finish handling cancellation on timeout. It cannot interrupt a running
+synchronous response hook or undo work already performed by the service backend.
 """
 from __future__ import annotations
 
@@ -32,9 +32,9 @@ from .._backend.cosmos_backend import AsyncCosmosBackend
 class AsyncItemHelper:
     """Runs one awaited item operation, from caller arguments to result.
 
-    Holds the same three things as the sync ItemHelper and nothing more: a
-    backend, the client-wide defaults, and somewhere to record the headers
-    from the most recent reply.
+    Holds the same inputs as ItemHelper: the selected Python backend,
+    client defaults, and optional state for the latest response headers. It does not retain
+    the legacy connection or fall back to the legacy path.
     """
 
     def __init__(
@@ -52,18 +52,15 @@ class AsyncItemHelper:
     async def _run(
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
-        """Prepare, send, and interpret one operation.
+        """Build a prepared request, await execution, and process the backend response.
 
-        Five of the six await the backend, parse the reply, and leave the
-        finishing to the public method that called in.
+        Patch uses run_with_deadline around execution, parsing, and result
+        completion. complete_item_response checks the remaining time before
+        calling the synchronous response hook. Without a deadline, that work
+        is awaited directly rather than placed in a separate task.
 
-        Patch is handled differently, and the difference exists only on this
-        path. Patch finishes its own result, so after the reply arrives there
-        is still a time check and the caller's response hook left to run.
-        Awaiting those straight through would put them outside the time
-        limit. Running all three inside one task means a timeout cancels the
-        whole sequence and waits for that cancellation to land, so nothing is
-        left running once this call returns.
+        The other five operations await execution and parse the response here;
+        their public methods retain the remaining result-completion work.
         """
         args, options = normalize_item_arguments(
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
@@ -73,8 +70,8 @@ class AsyncItemHelper:
         self._defaults.apply_to_options(options)
         prepared = build_item_request(op, args, options, self._defaults)
         if op == "patch_item":
-            # Execute, parse, and finish inside one task, so a timeout cancels
-            # all three together rather than only the send.
+            # With a deadline, track execution and response completion together.
+            # Synchronous parsing and hooks cannot be interrupted by the timer.
             async def execute_patch() -> Any:
                 response = await self._backend.execute(prepared, deadline=args["deadline"])
                 parsed = process_backend_response(response, response_state=self._response_state)
@@ -88,7 +85,7 @@ class AsyncItemHelper:
         return None if op == "delete_item" else parsed
 
     async def create_item(self, *, deadline: Optional[float], **kwargs: Any) -> Any:
-        """Create an item, failing if the id already exists.
+        """Create an item, failing if that id and partition key already exist.
 
         The time limit arrives as its own argument because the public method
         started the clock before calling in.
@@ -100,21 +97,21 @@ class AsyncItemHelper:
         return await self._run("read_item", kwargs)
 
     async def delete_item(self, **kwargs: Any) -> Any:
-        """Delete an item. Returns nothing; the reply is read for its headers."""
+        """Delete an item; parse its backend response for headers and return None."""
         return await self._run("delete_item", kwargs)
 
     async def upsert_item(self, **kwargs: Any) -> Any:
-        """Create an item, or replace it if one with that id is already there."""
+        """Create an item, or replace the item with the same id and partition key."""
         return await self._run("upsert_item", kwargs)
 
     async def replace_item(self, **kwargs: Any) -> Any:
-        """Replace the item with this id, failing if it is not there."""
+        """Replace the item with this id and partition key, failing if it is absent."""
         return await self._run("replace_item", kwargs)
 
     async def patch_item(self, **kwargs: Any) -> Any:
         """Apply a list of changes to one item.
 
-        The only operation here that finishes its own result, inside a task a
-        timeout can cancel.
+        This helper also completes the patch result. A supplied deadline uses
+        the cancellation handling described by _run.
         """
         return await self._run("patch_item", kwargs)

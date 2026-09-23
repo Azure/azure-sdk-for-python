@@ -3,7 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Pure item builders consuming serialized bodies, keys and normalized options."""
+"""Build prepared item requests from body bytes, partition keys, and request options.
+
+These builders do not send requests. For a read, "order-42" and "customer-17"
+become the item id and typed partition-key input on PreparedRequest. For a
+write without an explicit partition key, the record asks the binding to
+extract the key from the body.
+"""
 from __future__ import annotations
 
 from dataclasses import replace
@@ -36,7 +42,7 @@ def _build_item_headers_and_settings(
         stamp_container_rid(options, container_rid)
     headers, settings = build_request_headers_and_settings(options)
     if container_rid is not None:
-        # The resolved canonical header wins even over nested customer headers.
+        # The resolved container id wins over a customer-supplied header value.
         headers.pop("x-ms-cosmos-intended-collection-rid", None)
         settings = replace(settings, resource=replace(settings.resource, container_rid=container_rid))
     return headers, settings
@@ -53,7 +59,7 @@ def build_create_item_request(
     no_response_on_write_default: bool = False,
     extract_partition_key: bool = False,
 ) -> PreparedRequest:
-    """Package one body snapshot with an explicit key or native-extraction marker."""
+    """Build a prepared request with an explicit key or a binding extraction instruction."""
     options = dict(request_options)
     if indexing_directive is not None:
         options["indexingDirective"] = indexing_directive
@@ -124,7 +130,7 @@ def _build_write_prepared(
     no_response_on_write_default: bool = False,
     extract_partition_key: bool = False,
 ) -> PreparedRequest:
-    """Package one write snapshot without inspecting or serializing caller data."""
+    """Package a write without inspecting or reserializing its body bytes."""
     headers, settings = _build_item_headers_and_settings(
         request_options, container_rid, no_response_on_write_default
     )
@@ -171,7 +177,7 @@ def build_replace_item_request(
     no_response_on_write_default: bool = False,
     extract_partition_key: bool = False,
 ) -> PreparedRequest:
-    """Build a replacement; the explicit target id wins over the payload id."""
+    """Build a replacement; the explicit target id wins over the document's id."""
     return _build_write_prepared(
         op=OP_REPLACE_ITEM, container_link=container_link, body_bytes=document.body_bytes, item_id=item_id,
         partition_key_value=partition_key_value, container_rid=container_rid,

@@ -85,7 +85,7 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._query_rust_routing import build_list_containers_prepared_query, build_list_databases_prepared_query, build_query_containers_prepared_query, build_query_databases_prepared_query, build_read_all_items_prepared_query, build_query_items_prepared_query, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
+from ._query_rust_routing import build_list_containers_prepared_page_request, build_list_databases_prepared_page_request, build_query_containers_prepared_page_request, build_query_databases_prepared_page_request, build_read_all_items_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
@@ -3392,7 +3392,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 def _build_list_databases_page():
                     nonlocal rust_request_headers
-                    prepared = build_list_databases_prepared_query(
+                    prepared = build_list_databases_prepared_page_request(
                         options=options,
                         req_headers=self.default_headers,
                     )
@@ -3411,7 +3411,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 def _build_list_containers_page():
                     nonlocal rust_request_headers
-                    prepared = build_list_containers_prepared_query(
+                    prepared = build_list_containers_prepared_page_request(
                         path=path,
                         options=options,
                         req_headers=self.default_headers,
@@ -3431,7 +3431,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 def _build_read_all_items_page():
                     nonlocal rust_request_headers
-                    prepared = build_read_all_items_prepared_query(
+                    prepared = build_read_all_items_prepared_page_request(
                         path=path,
                         options=options,
                         req_headers=self.default_headers,
@@ -3523,7 +3523,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
-                prepared = build_query_databases_prepared_query(
+                prepared = build_query_databases_prepared_page_request(
                     query_payload=query,
                     options=options,
                     req_headers=self.default_headers,
@@ -3547,7 +3547,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
-                prepared = build_query_containers_prepared_query(
+                prepared = build_query_containers_prepared_page_request(
                     path=path,
                     query_payload=query,
                     options=options,
@@ -3568,7 +3568,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
-                prepared = build_query_items_prepared_query(
+                prepared = build_query_items_prepared_page_request(
                     path=path,
                     query_payload=query,
                     options=options,

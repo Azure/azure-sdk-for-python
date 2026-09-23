@@ -3,7 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Shared retained-feed configuration, page accounting and read-all paging."""
+"""Read an item feed while keeping one feed cursor per Python page iterator.
+
+ReadAllConfig prepares request inputs. ReadAllPageState retains the feed cursor,
+continuation token, and response headers for one page iterator. Query and
+change-feed helpers reuse these Python records but supply their own completion
+rules. A Python state record is not itself the feed cursor.
+"""
 
 from __future__ import annotations
 
@@ -31,12 +37,13 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosItemPaged
 from ..exceptions import CosmosClientTimeoutError
 from .._operation_deadline import legacy_deadline_options, remaining_timeout
-from ._read_items import ReadItemsHeaders
+from ._read_items import ResponseHeaderAccumulator
 from ._response_parse import process_backend_response
 from .._query_rust_routing import page_to_backend_response
 
 
-def validate_bookmark(token: Optional[str], rust: bool) -> None:
+def validate_read_all_continuation_token(token: Optional[str], rust: bool) -> None:
+    """Check the read-all token's shape and execution path, not all feed compatibility."""
     if token is None:
         return
     if not isinstance(token, str) or not token:
@@ -54,6 +61,8 @@ if TYPE_CHECKING:
 
 
 class ReadAllConfig:
+    """Snapshot request options and retain the selected Python backend."""
+
     def __init__(
         self, proxy: Any, kwargs: dict[str, Any], *, operation: str = "read_all_items"
     ) -> None:
@@ -145,7 +154,7 @@ class ReadAllConfig:
             context.defaults.apply_to_options(self.options)
         self.kwargs = kwargs
         if operation == "read_all_items":
-            validate_bookmark(self.options.get("continuation"), self.rust)
+            validate_read_all_continuation_token(self.options.get("continuation"), self.rust)
 
     def deadline(self) -> Optional[float]:
         return None if self.timeout is None else time.monotonic() + self.timeout
@@ -153,6 +162,11 @@ class ReadAllConfig:
     def prepared(
         self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
     ) -> PreparedPageRequest:
+        """Build a prepared page request, keeping its feed cursor separate from body bytes.
+
+        The Python backend later converts this record to PreparedRequest and
+        passes the feed cursor separately to the binding function.
+        """
         if cursor is None:
             raise RuntimeError("Retained paging requires a pager-owned cursor.")
         options = dict(self.options)
@@ -178,11 +192,13 @@ class ReadAllConfig:
 
 
 class ReadAllPageState:
+    """Keep one page iterator's progress and per-fetch response information."""
+
     def __init__(
         self, config: ReadAllConfig, headers: CaseInsensitiveDict, token: Optional[str]
     ) -> None:
         if config.operation == "read_all_items":
-            validate_bookmark(token, config.rust)
+            validate_read_all_continuation_token(token, config.rust)
         self.config = config
         self.headers = headers
         self.token = token
@@ -193,12 +209,13 @@ class ReadAllPageState:
         self.legacy_pages: Any = None
         self.captured = CaseInsensitiveDict()
         self.envelope: dict[str, Any] = {}
-        self.accumulated = ReadItemsHeaders()
+        self.accumulated = ResponseHeaderAccumulator()
         self.responses = 0
         self.has_charge = False
         self.lock = threading.Lock()
 
     def begin(self) -> None:
+        """Create a feed cursor if needed and reset the next fetch's response totals."""
         if self.config.rust and self.cursor is None:
             cursor = self.config.backend.create_item_feed_cursor()
             if not hasattr(cursor, "can_retry_setup"):
@@ -207,7 +224,7 @@ class ReadAllPageState:
                     "rebuild it from the current source."
                 )
             self.cursor = cursor
-        self.accumulated = ReadItemsHeaders()
+        self.accumulated = ResponseHeaderAccumulator()
         self.responses = 0
         self.has_charge = False
 
@@ -255,8 +272,8 @@ class ReadAllPageState:
         rows = result["Documents"]
         if self.config.operation != "query_items" and any(not isinstance(row, dict) for row in rows):
             raise ValueError("read_all_items received a non-object document.")
-        # A None returned by execute_plan means this pager has finished
-        # locally. It is not a service response, so do not invent a
+        # A None returned by execute_plan means the feed cursor has finished
+        # locally. It is not a service backend response, so do not invent a
         # response hook call or a request charge for it.
         if rows or page.continuation is not None or page.headers:
             self.capture(result.get_response_headers(), result)
@@ -308,6 +325,8 @@ class ReadAllPageState:
 
 
 class ReadAllPageIterator(PageIterator):
+    """Advance the item feed; the customer-facing pager uses this page iterator."""
+
     def __init__(
         self,
         config: ReadAllConfig,

@@ -250,7 +250,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
         client_config=PreparedClientConfig(proxy_allowed=True),
     )
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(backend._build_driver_handle)
+        future = executor.submit(backend._acquire_driver_handle)
         try:
             assert started.wait(10)
             close_backend(backend)

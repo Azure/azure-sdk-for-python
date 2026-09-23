@@ -74,8 +74,8 @@ from azure.cosmos._helpers._container_operations import ContainerHelper
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
-    build_list_containers_prepared_query,
-    build_query_containers_prepared_query,
+    build_list_containers_prepared_page_request,
+    build_query_containers_prepared_page_request,
     can_use_rust_backend_for_list_containers_page,
     can_use_rust_backend_for_query_containers_page,
 )
@@ -1333,7 +1333,7 @@ def test_list_containers_sends_no_query_body():
     from azure.cosmos._backend.rust_backend import build_binding_request_from_page
 
     request = build_binding_request_from_page(
-        build_list_containers_prepared_query(
+        build_list_containers_prepared_page_request(
             path="dbs/db1/colls",
             options={},
             req_headers={},
@@ -1349,7 +1349,7 @@ def test_query_containers_sends_the_query_body():
     from azure.cosmos._backend.rust_backend import build_binding_request_from_page
 
     request = build_binding_request_from_page(
-        build_query_containers_prepared_query(
+        build_query_containers_prepared_page_request(
             path="dbs/db1/colls",
             query_payload={"query": "SELECT * FROM c"},
             options={},
@@ -1468,7 +1468,7 @@ def test_list_containers_prepared_carries_the_owning_database_link():
     """``container_link`` holds a database link, not a container link: the feed is
     scoped to a database and this is the only typed field that can carry it."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_list_containers_prepared_query(
+    prepared = build_list_containers_prepared_page_request(
         path=path,
         options={"maxItemCount": 10, "continuation": "ct-1"},
         req_headers={},
@@ -1484,7 +1484,7 @@ def test_list_containers_prepared_carries_the_owning_database_link():
 def test_query_containers_prepared_carries_the_query_and_the_database_link():
     """The prepared query must name the owning database and carry the full query string and parameters."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_query_containers_prepared_query(
+    prepared = build_query_containers_prepared_page_request(
         path=path,
         query_payload={
             "query": "SELECT * FROM c WHERE c.id=@id",
@@ -1505,7 +1505,7 @@ def test_container_feed_headers_keep_the_customers_own_headers():
     entry the binding forwards verbatim. Left flat it would be dropped by the
     option-key translation on the Rust side."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_list_containers_prepared_query(
+    prepared = build_list_containers_prepared_page_request(
         path=path,
         options={"initialHeaders": {"x-custom-tag": "value"}},
         req_headers={"x-custom-tag": "value"},

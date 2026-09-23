@@ -3,7 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async counterpart of the independent read-all pager."""
+"""Fetch item-feed pages, keeping a feed cursor per iterator on the Rust path.
+
+ReadAllConfig and ReadAllPageState provide the shared request and continuation
+rules. This module awaits page fetching through the selected Python backend.
+The customer app receives a CosmosAsyncItemPaged pager, not this page iterator.
+"""
 
 from typing import Any, Optional
 
@@ -20,6 +25,8 @@ from ..._operation_deadline import (
 
 
 class AsyncReadAllPageIterator(AsyncPageIterator):
+    """Keep this iterator's progress separate and reject overlapping fetches."""
+
     def __init__(
         self,
         config: ReadAllConfig,
@@ -35,12 +42,18 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
         super().__init__(self._fetch, self._unpack, continuation_token=token)
 
     async def _unpack(self, value: tuple[Optional[str], list[dict[str, Any]]]) -> Any:
-        # azure-core accepts lists and None terminal tokens at runtime.
+        # Pass through the rows and continuation token; None marks the end.
         return value
 
     async def _fetch(
         self, _token: Optional[str]
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
+        """Fetch rows under one deadline, including any empty pages skipped.
+
+        state.begin() may create a feed cursor but does not acquire a driver
+        handle. Failed fetches go through the shared state's failure handling;
+        a safe initial setup failure may permit a later explicit retry.
+        """
         state = self.state
         if state.done:
             raise StopAsyncIteration
@@ -122,6 +135,7 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
 
 
 def read_all_items(proxy: Any, kwargs: dict[str, Any]) -> CosmosAsyncItemPaged:
+    """Return a pager without fetching a page; async iteration starts the work."""
     config = ReadAllConfig(proxy, kwargs)
     headers = CaseInsensitiveDict()
     return CosmosAsyncItemPaged(

@@ -3,7 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Backend-pinned change-feed polling with page-local checkpoints."""
+"""Poll a change feed through the selected Python backend.
+
+Each ChangeFeedPageIterator has its own progress. On the Rust path it retains
+a feed cursor; the cf1. continuation token also records the feed settings for
+a later compatible request. An empty final poll finishes this iteration, not the
+container's ability to produce future changes.
+"""
 
 from __future__ import annotations
 
@@ -39,7 +45,7 @@ from ..partition_key import (
     _return_undefined_or_empty_partition_key,
 )
 from ._legacy_partition_key import legacy_partition_key_header
-from ._partition_key import normalize_partition_key, query_partition_key_components, partition_key_bookmark_value
+from ._partition_key import normalize_partition_key, query_partition_key_components, serialize_partition_key_for_continuation
 from .._backend.partition_key_input import BindingPartitionKey
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._response_parse import process_backend_response
@@ -252,8 +258,8 @@ class ChangeFeedConfig(ReadAllConfig):
                 and not inner.strip('"').isdigit()
             ):
                 raise ValueError("Invalid change-feed continuation settings.")
-            # Check our own bookmark format without relying on the layout of the
-    # token the driver keeps to itself.
+            # Validate the Python wrapper's continuation format without decoding
+            # the inner continuation token.
             values: dict[str, Any] = {
                 "mode": settings.get("mode"),
                 "start_time": settings.get("start"),
@@ -319,6 +325,8 @@ class ChangeFeedConfig(ReadAllConfig):
 
 
 class ChangeFeedPageState(ReadAllPageState):
+    """Retain the feed settings, inner continuation token, and polling progress."""
+
     config: ChangeFeedConfig
 
     def __init__(
@@ -343,11 +351,12 @@ class ChangeFeedPageState(ReadAllPageState):
             partition_key=self.settings["partition_key"] or BindingPartitionKey("cross_partition"),
         )
 
-    def bookmark(self, inner: str) -> str:
+    def encode_continuation_token(self, inner: str) -> str:
+        """Wrap the inner continuation token with the selected path and feed settings."""
         persisted_settings = dict(self.settings)
         key = persisted_settings["partition_key"]
         if isinstance(key, BindingPartitionKey):
-            persisted_settings["partition_key"] = partition_key_bookmark_value(key)
+            persisted_settings["partition_key"] = serialize_partition_key_for_continuation(key)
         payload = {
             "backend": "rust" if self.config.rust else "core-python",
             "container": self.config.proxy.container_link,
@@ -377,7 +386,7 @@ class ChangeFeedPageState(ReadAllPageState):
             rows = [row["current"] for row in rows]
         self.capture(page.headers or {}, result)
         self.inner_token = page.continuation
-        self.token = self.bookmark(self.inner_token)
+        self.token = self.encode_continuation_token(self.inner_token)
         self.poll_again = self.initial_time_poll and not rows
         self.initial_time_poll = False
         return rows
@@ -430,12 +439,11 @@ class ChangeFeedPageState(ReadAllPageState):
         if not isinstance(inner, str) or not inner:
             raise ValueError("Legacy change feed returned no durable continuation.")
         self.inner_token = inner
-        # Keep V2's bookmark, which describes itself and carries the scope that
-        # should be trusted.
+        # Keep the legacy V2 continuation token and its saved scope unchanged.
         self.token = (
             inner
             if self.fetcher._change_feed_state.version == ChangeFeedStateVersion.V2
-            else self.bookmark(inner)
+            else self.encode_continuation_token(inner)
         )
         return rows
 

@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Independent database listing/query inputs, response state and synchronous paging."""
+"""List or query databases with stateless paging through the selected Python backend.
+
+Each page iterator keeps its own continuation token. On the Rust path it builds
+a prepared page request without a feed cursor, then parses a backend page.
+The customer app receives an ItemPaged pager, not the page iterator itself.
+"""
 from __future__ import annotations
 
 import threading
@@ -18,8 +23,8 @@ from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import (
-    build_list_databases_prepared_query,
-    build_query_databases_prepared_query,
+    build_list_databases_prepared_page_request,
+    build_query_databases_prepared_page_request,
     can_use_rust_backend_for_list_databases_page,
     can_use_rust_backend_for_query_databases_page,
     page_to_backend_response,
@@ -122,8 +127,8 @@ class ListDatabasesConfig:
         else:
             options.pop("continuation", None)
         prepared = (
-            build_list_databases_prepared_query(options=options, req_headers=self.default_headers)
-            if self.query_payload is None else build_query_databases_prepared_query(
+            build_list_databases_prepared_page_request(options=options, req_headers=self.default_headers)
+            if self.query_payload is None else build_query_databases_prepared_page_request(
                 query_payload=self.query_payload, options=options, req_headers=self.default_headers,
             )
         )
@@ -137,7 +142,7 @@ class ListDatabasesConfig:
             raise RuntimeError("A legacy database listing requires its selected connection.")
         options = legacy_deadline_options(self.options, deadline)
         options["continuation"] = token
-        # The old transport retries the request, never the customer's success hook.
+        # The legacy path retries the request, never the customer app's success hook.
         return self.connection._CosmosClientConnection__QueryFeed(
             "/dbs", http_constants.ResourceType.Database, "",
             lambda body: body["Databases"], lambda _, body: body, self.query_payload, options,

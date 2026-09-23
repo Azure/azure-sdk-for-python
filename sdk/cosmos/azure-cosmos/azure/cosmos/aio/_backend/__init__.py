@@ -3,46 +3,34 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async backends that send Cosmos requests and hand back the raw reply.
+"""Execute prepared requests through the asynchronous Python backend.
 
-A backend is the layer that actually talks to the service. There are two
-here: one that calls the Rust driver, and one that uses the legacy Python
-code. A factory picks between them once, when the client is built, and
-nothing above this package has to know which one it got.
+For a customer app reading "order-42", the Python wrapper builds a
+PreparedRequest and calls AsyncRustBackend.execute. AsyncRustBackend calls the
+binding and awaits its result; the Rust driver performs the operation against
+the service backend. The binding's response tuple is converted to BackendResponse
+before a Python response helper parses the body for the customer app.
 
-Callers pass in a request that is already finished and get back what came
-off the wire. Replies come in two shapes: a single reply, or a series of
-pages. Backends do not build requests and do not interpret replies; the
-helper package does both.
+Page fetches start with PreparedPageRequest. AsyncRustBackend converts it to
+PreparedRequest, passes a feed cursor separately when retained paging uses one,
+and yields one BackendPage. The page iterator owns subsequent fetches; the
+customer-facing pager uses that iterator.
 
-Operations that have finished moving to Rust go straight to the driver.
-Operations still being moved go through a wrapper that first works out
-which path to use. There are three possible answers: the Rust path can
-handle the request, so it does; the Rust path cannot, but the legacy Python
-path is allowed to step in for this kind of request, so it does; or neither
-can, and the call fails right away with a message naming the option to
-remove. That choice is made before anything is sent.
+Driver acquisition runs on a worker thread because it can block. The acquired
+driver handle identifies a CosmosDriver retained by the binding. Closing the
+client releases its acquisition and its use of an async credential bridge,
+when present, not another client's resources. An in-flight operation can retain
+the CosmosDriver after the last client releases it. There is no separate
+Python client-registration table.
 
-Falling back is a decision, never a recovery. Once a request has been sent,
-its outcome stands: a failure while sending, while reading the reply, or
-inside the caller's own callback is reported as a failure. It is never
-quietly retried against the other path.
+An invocation's absolute deadline is passed separately from the prepared
+request. Typed request settings can still contain a relative timeout; the
+binding call receives the remaining time when a deadline is supplied.
 
-A request holds the data to send but not the caller's time limit. The time
-limit travels separately, so a request can be built once and still be
-subject to how much time is actually left.
+AsyncLegacyBackend and OperationRouting's choice of execution path remain only for
+migration. Permitted fallback is chosen before execution, never as a retry of
+execution, parsing, or callback failures. The Rust path is the release target.
 
-Two kinds of cleanup are tracked apart. Closing one client releases that
-client's own registration, while a Rust driver shared with other clients
-stays alive until the last of them is done with it.
-
-Having two backends is a stage, not the destination. The legacy Python
-backend exists only until every operation works on Rust. When that lands,
-it is deleted, and so is the wrapper that chooses between paths, because
-there will be nothing left to choose between. What remains is the shape
-the item path already has: public class, helper, one backend, driver.
-
-So treat anything legacy in here as code with an expiry date. Do not build
-on it, do not add operations to it, and do not design around the
-possibility of falling back to it.
+Terminology follows docs/V5/VOCABULARY.md. See AsyncRustBackend for the separate
+rules governing acquisition, cancellation, and the shared close future.
 """

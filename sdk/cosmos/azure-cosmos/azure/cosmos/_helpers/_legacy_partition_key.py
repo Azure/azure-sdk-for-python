@@ -20,8 +20,8 @@ Input value                                         On-wire header value
 ``["t1", _Empty()]`` (hierarchical, missing leaf)   ``["t1",null]``
 ==================================================  =================================
 
-Legacy pipeline/parity oracle. Rust-bound preparation uses typed
-``BindingPartitionKey`` instead; this helper must not be used for native dispatch.
+This is the legacy path's header encoding. Rust-path preparation uses typed
+``BindingPartitionKey`` inputs instead; do not use this helper to replace them.
 """
 from __future__ import annotations
 

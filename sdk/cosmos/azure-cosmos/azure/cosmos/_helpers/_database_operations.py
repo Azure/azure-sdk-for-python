@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Coordinate account-level database operations through the selected backend.
+"""Coordinate account-level database operations through the selected Python backend.
 
 Public clients delegate execution and response handling here. Builders prepare
-Rust requests without transport state; unsupported Rust settings fail before
-dispatch rather than switching to legacy Python. Explicit legacy selection
+prepared requests without transport state; unsupported Rust-path settings fail
+before execution rather than falling back. Explicit legacy-path selection
 retains its connection calls. Creation accepts client-owned response state and
 gives its success hook independent copies of that operation's result.
 """
@@ -47,13 +47,13 @@ from .._helpers._response_parse import (
 
 
 class DatabaseHelper:
-    """Route database operations through the selected backend boundary."""
+    """Prepare and execute database operations through the selected Python backend."""
 
     def __init__(
         self, client_connection: Any, backend: CosmosBackend, *,
         response_state: Optional[ClientLastResponseHeaders] = None,
     ) -> None:
-        """Store the client connection and selected implementation."""
+        """Store the legacy connection and the selected Python backend."""
         self._client_connection = client_connection
         self._backend = backend
         self._response_state = response_state
@@ -130,9 +130,9 @@ class DatabaseHelper:
     ) -> CosmosDict:
         """Read one database's properties, without exposing backend selection.
 
-        Unsupported Rust calls fail rather than borrowing legacy transport.
-        Explicit legacy selection remains available. The two-argument hook gets
-        a separate header snapshot on either backend.
+        Unsupported Rust-path calls fail rather than falling back.
+        Explicit legacy-path selection remains available for migration. The
+        two-argument hook gets a separate header snapshot on either path.
         """
         response_hook = with_response_header_snapshot(response_hook)
         operation_kwargs = dict(kwargs or {})
@@ -223,7 +223,7 @@ class DatabaseHelper:
         try to set throughput. The Python coordinator owns this compound
         workflow because the driver exposes separate read and create operations.
         Both steps must support the supplied options before the first request.
-        One deadline covers the workflow, without changing backends midway.
+        One deadline covers the workflow, without changing execution paths midway.
         ``response_hook`` receives isolated copies of the final response outside
         recovery and timeout handling. If creation conflicts with another caller,
         read the database once more. A failed follow-up read propagates without

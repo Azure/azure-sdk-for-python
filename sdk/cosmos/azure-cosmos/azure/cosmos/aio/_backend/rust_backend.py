@@ -3,21 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Execute asynchronous requests through the compiled Python/Rust binding.
+"""Execute asynchronous requests through the binding and convert its results.
 
 Like the synchronous RustBackend, this is Python wrapper code. It acquires a
 driver handle identifying a CosmosDriver retained by the binding, then passes
 prepared requests through azure.cosmos._rust.
 
-What differs here is when work leaves the calling thread:
+For an order read, the sequence is:
 
-- Binding functions are awaited rather than run in a Python executor per request.
-  Python preparation, result conversion, and credential callbacks still run
-  Python code; token acquisition can involve additional threads.
-- Building the handle the first time still blocks, so it is pushed to a
-  background thread. AsyncRustBackend._ensure_driver_handle covers the rest.
-- Closing normally offloads teardown and shields the shared close future from
-  caller cancellation. If submission fails, cleanup can run on the calling thread.
+    PreparedRequest -> call read_item_async on the calling thread
+    -> await the binding result -> convert its tuple to BackendResponse
+
+The binding runs Rust work with the Tokio runtime; service I/O does not use
+a Python executor worker per request. Driver acquisition is different: it can
+block, so _ensure_driver_handle submits it to a worker thread. Python preparation,
+locks, token acquisition, and calling-thread cleanup can still block.
 """
 from __future__ import annotations
 from ..._backend.request_settings import binding_settings_contract_error
@@ -80,24 +80,21 @@ except ImportError:
         "will raise NotImplementedError until the Rust module is built."
     )
 
-# The binding's response-less transport error, captured once at load. A driver
-# op that fails before any wire response raises this; we re-raise it as
-# azure-core's ServiceResponseError (see driver_transport_error_type).
+# The binding's transport error means no HTTP response was received, not that
+# the service backend performed no work. Convert it without legacy replay.
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 _REQUEST_CONTRACT_ERROR = binding_settings_contract_error(_rust_module) if _rust_module is not None else None
 
 
-# Looked up per call, not cached at import, so tests can install a stand-in
-# binding. One getattr costs nothing against a network round trip.
+# Look up functions per call so tests can install a stand-in binding.
 def _binding_function_for_op(op: str) -> Optional[Any]:
     """Find the async binding function that runs one operation.
 
-    Same mapping and same meaning of ``None`` as the sync counterpart in
-    ``azure.cosmos._backend.rust_backend``, with one difference: this looks up
-    the ``_async`` name, so a binding that exports only the sync form reads
-    here as "too old to export this operation".
+    Operation name "read_item" -> binding function read_item_async.
+    Return None if the operation has no mapping, the binding is absent, or the
+    async function is missing. A missing export does not establish why it is absent.
 
     :param op: The Python wrapper's operation name, from the prepared request.
     :returns: The matching async binding function, or ``None``.
@@ -111,10 +108,10 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
 def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[Any]:
     """Find an async binding function the caller has already named.
 
-    Same role and same meaning of ``None`` as the sync counterpart in
-    ``azure.cosmos._backend.rust_backend``, with one difference: the function name is
-    the sync name and the ``_async`` suffix is appended here, so callers pass
-    the same name on both paths.
+    For example, "fetch_page_with_cursor" selects fetch_page_with_cursor_async.
+    Callers supply the same unsuffixed function name as on the synchronous path.
+    None means no matching function for this call, not that the operation has
+    no paging implementation in every cursor mode.
 
     :param binding_function_name: A binding function name, or ``None`` if none applies.
     :returns: The matching async binding function, or ``None``.
@@ -125,9 +122,10 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
 
 
 def _close_driver_handle_quietly(driver_handle: str) -> None:
-    """Release one driver handle, logging cleanup failures.
+    """Release one driver-handle acquisition when the binding export is available.
 
-    Other clients and operations can keep the driver alive after this release.
+    Log raised cleanup errors without exposing the handle. Other clients and
+    in-flight operations can keep the CosmosDriver alive after this release.
     """
     if _rust_module is None:
         return
@@ -144,23 +142,15 @@ def _close_driver_handle_quietly(driver_handle: str) -> None:
 class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
-    Driver handles work exactly as on the synchronous RustBackend: a handle is
-    a string identifying a CosmosDriver retained by the binding, this backend
-    acquires one on first use and reuses it, and closing releases only this
-    client's acquisition. Clients with matching account, credential, and
-    configuration can share a CosmosDriver, so an operation still running can
-    keep one alive after the last client closes.
+    As with RustBackend, the driver handle identifies a CosmosDriver retained
+    by the binding. First use acquires a handle; later calls reuse it. Closing
+    releases this client's acquisition, not another client's or an in-flight
+    operation's reference.
 
-    Two differences follow from being asynchronous:
-
-    - The Python wrapper calls an async binding function on the calling thread,
-      then awaits its returned awaitable. Service I/O does not occupy a Python
-      executor worker.
-      Token acquisition, Python preparation, locks, and the cleanup fallback
-      can still block, so concurrency is not set by the connection pool alone.
-    - Acquiring the first handle blocks, so it runs on a worker thread.
-      Callers on one or more event loops share that single acquisition, and
-      share a single close.
+    Same-loop callers can share an acquisition attempt. Worker jobs from
+    different loops take turns acquiring or reusing the stored handle.
+    Close callers share _close_future; each loop uses its own awaitable for
+    that shared result.
     """
 
     name = BACKEND_NAME_RUST
@@ -172,36 +162,39 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
     ) -> None:
-        """Remember the client's inputs without acquiring a CosmosDriver.
+        """Store inputs and check CosmosDriverRuntime settings without acquiring a driver handle.
 
-        Same stored inputs as the synchronous ``RustBackend.__init__``, with
-        one difference: this also creates the locks and futures that let
-        callers on one or more event loops share a single handle acquisition
-        and a single close.
+        RustBackendShared performs the same setup as for RustBackend, including
+        checking completed CosmosDriverRuntime initialization. This constructor
+        also creates locks and empty future fields. Acquisition and close create
+        their futures later; construction does not reserve CosmosDriverRuntime settings.
         """
         # Fields must exist even if shared validation fails and the finalizer runs.
-        # _build_lock serializes acquisition attempts across loops. Successful
-        # initialization is reused; failed attempts can run again. Handle
-        # acquisition does not hold _driver_handle_lock, so close can mark the
-        # backend closed without waiting for that call to finish.
-        self._build_lock = threading.Lock()
+        # _driver_acquisition_lock allows one acquisition attempt at a time.
+        # A successfully acquired handle is reused; failed attempts can run again.
+        # Acquisition does not hold _driver_handle_lock, so close can mark the
+        # Python backend closed without waiting for that call to finish.
+        self._driver_acquisition_lock = threading.Lock()
         self._close_lock = threading.Lock()
         self._close_future: Optional[Future[None]] = None
-        # When many operations start at once on a fresh client they all need the
-        # handle. These hold the one running build so they share it instead of each
-        # starting their own on the same loop (see _ensure_driver_handle).
-        # Callers on different loops may submit separate serialized build jobs.
+        # Same-loop callers share _init_future while an acquisition attempt runs.
+        # Different loops may submit separate acquisition jobs that take turns.
         self._init_future: Optional["asyncio.Future[str]"] = None
         self._init_future_loop: Optional[asyncio.AbstractEventLoop] = None
         self._init_shared(
             endpoint, master_key, client_config, token_credential
         )
 
-    def _build_driver_handle(self) -> str:
-        """Create or share the Rust driver handle on a worker thread."""
-        # Handle acquisition can block, so it runs on a worker. _build_lock
-        # serializes attempts without holding the handle-state lock. If close
-        # wins before publication, release the newly acquired handle here.
+    def _acquire_driver_handle(self) -> str:
+        """Return the stored driver handle or acquire one through the binding.
+
+        This runs on a worker thread. Acquisition may reuse a CosmosDriver from
+        the binding's driver cache; it does not necessarily create a new object.
+        If close wins before the handle is stored, release that acquisition here.
+        """
+        # Only one worker at a time acquires a handle, without holding
+        # _driver_handle_lock during the binding call. If close wins before
+        # the handle is stored, release the new acquisition here.
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncRustBackend: the compiled azure.cosmos._rust "
@@ -209,7 +202,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 "with `maturin develop` from the repo root."
             )
         surplus_driver_handle: Optional[str] = None
-        with self._build_lock:
+        with self._driver_acquisition_lock:
             with self._driver_handle_lock:
                 if self._closing:
                     raise RuntimeError("AsyncRustBackend: the client is closed.")
@@ -230,7 +223,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         return new_driver_handle
 
     def _take_driver_handle_for_close(self) -> Optional[str]:
-        """Mark the client closed and remove its current Rust handle."""
+        """Mark the client closed and remove its stored driver handle for release."""
         with self._driver_handle_lock:
             self._closing = True
             driver_handle = self._driver_handle
@@ -238,12 +231,15 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             return driver_handle
 
     async def _ensure_driver_handle(self) -> str:
-        """Reuse the handle or await a worker-thread initialization attempt.
+        """Reuse the driver handle or await a worker-thread acquisition attempt.
 
-        Same-loop callers can share the stored future. Different loops can
-        submit separate jobs; ``_build_lock`` serializes their handle acquisition
-        and rechecks the handle. A failed attempt can be retried on a later call.
-        Cancelling an await does not necessarily stop its executor job.
+        Same-loop callers can share _init_future. Different loops can
+        submit separate jobs; _driver_acquisition_lock makes them take turns.
+        Each job rechecks the stored handle before acquiring one through the
+        binding. A failed attempt can be retried on a later call.
+        Shielding prevents a waiter's cancellation from cancelling that shared
+        future. It does not cancel the worker job or release its eventual handle;
+        acquisition and close coordinate that ownership separately.
         """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
@@ -255,13 +251,14 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 return self._driver_handle
             init_future = self._init_future
             if init_future is None or self._init_future_loop is not loop:
-                init_future = loop.run_in_executor(None, self._build_driver_handle)
+                init_future = loop.run_in_executor(None, self._acquire_driver_handle)
                 self._init_future = init_future
                 self._init_future_loop = loop
-                init_future.add_done_callback(self._driver_initialization_finished)
+                init_future.add_done_callback(self._driver_acquisition_finished)
         return await asyncio.shield(init_future)
 
-    def _driver_initialization_finished(self, future: "asyncio.Future[str]") -> None:
+    def _driver_acquisition_finished(self, future: "asyncio.Future[str]") -> None:
+        """Clear this attempt's stored future and observe any unawaited error."""
         with self._driver_handle_lock:
             if self._init_future is future:
                 self._init_future = None
@@ -272,35 +269,40 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             _LOGGER.debug("Rust driver initialization failed")
 
     async def close(self) -> None:
-        """Release this client's resources without closing another client's driver.
+        """Release this client's driver acquisition and async credential bridge use.
 
         Same release rules as the synchronous ``RustBackend.close``, with one
-        difference: teardown normally runs on a worker thread and every caller
-        awaits the same shared close future, so cancelling one caller stops
-        its wait but not the cleanup. Later callers, including callers on
-        another event loop, wait on that same future.
+        difference: cleanup normally runs on a worker thread. Each caller
+        waits for the result recorded in _close_future through an awaitable
+        for its own event loop. Cancelling one caller stops its wait but not
+        the cleanup. Later callers wait for that same result.
 
-        If background cleanup cannot start or finish, the fallback runs on the
-        calling thread. Cleanup is therefore not unconditionally nonblocking.
+        Caller A starts close -> _close_future records the shared result.
+        Caller B awaits that same result through an awaitable for B's event loop.
+        Neither caller closes the customer app's token credential.
+
+        If background cleanup fails to start or complete successfully, cleanup
+        also runs on the calling thread. A lock prevents duplicate release.
+        Close is therefore not unconditionally nonblocking.
         """
         loop = asyncio.get_running_loop()
         with self._close_lock:
-            completion = self._close_future
-            if completion is None:
+            close_future = self._close_future
+            if close_future is None:
                 with self._driver_handle_lock:
                     self._closing = True
                 driver_handle = self._take_driver_handle_for_close()
                 credential = self._take_token_credential_for_close()
-                pending_close: Future[None] = Future()
-                self._close_future = completion = pending_close
+                pending_close_future: Future[None] = Future()
+                self._close_future = close_future = pending_close_future
                 teardown_lock = threading.Lock()
 
                 def teardown() -> None:
-                    # Submission can queue the job before raising; the fallback must not release it twice.
+                    # Submission can queue the job before raising; calling-thread cleanup must not release twice.
                     with teardown_lock:
-                        if pending_close.running() or pending_close.done():
+                        if pending_close_future.running() or pending_close_future.done():
                             return
-                        if not pending_close.set_running_or_notify_cancel():
+                        if not pending_close_future.set_running_or_notify_cancel():
                             return
                     try:
                         try:
@@ -309,16 +311,16 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                             if driver_handle is not None:
                                 _close_driver_handle_quietly(driver_handle)
                     except BaseException as error:
-                        pending_close.set_exception(error)
+                        pending_close_future.set_exception(error)
                     else:
-                        pending_close.set_result(None)
+                        pending_close_future.set_result(None)
 
                 if driver_handle is None and credential is None:
-                    pending_close.set_result(None)
+                    pending_close_future.set_result(None)
                 else:
-                    def worker_finished(work: asyncio.Future[None]) -> None:
-                        error = None if work.cancelled() else work.exception()
-                        if not work.cancelled() and error is None:
+                    def worker_finished(worker_future: asyncio.Future[None]) -> None:
+                        error = None if worker_future.cancelled() else worker_future.exception()
+                        if not worker_future.cancelled() and error is None:
                             return
                         _LOGGER.warning(
                             "Background client cleanup did not complete; cleaning up on the calling thread",
@@ -327,8 +329,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                         teardown()
 
                     try:
-                        work = loop.run_in_executor(None, teardown)
-                        work.add_done_callback(worker_finished)
+                        worker_future = loop.run_in_executor(None, teardown)
+                        worker_future.add_done_callback(worker_finished)
                     except Exception:  # pylint: disable=broad-except
                         _LOGGER.warning(
                             "Could not start background client cleanup; cleaning up on the calling thread",
@@ -336,17 +338,17 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                         )
                         teardown()
 
-        if completion.done():
-            completion.result()
+        if close_future.done():
+            close_future.result()
             return
-        # Each loop gets its own awaitable; cancelling it must not cancel the shared work.
-        await asyncio.shield(asyncio.wrap_future(completion))
+        # Each loop gets its own awaitable; cancellation must not cancel _close_future.
+        await asyncio.shield(asyncio.wrap_future(close_future))
 
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.
 
-        Same fallback as the synchronous ``RustBackend.__del__``; explicit
-        ``close`` remains the normal path.
+        Same last-resort cleanup as RustBackend.__del__; an awaited close()
+        remains the normal path.
         """
         try:
             credential = self._take_token_credential_for_close()
@@ -359,7 +361,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     async def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
-        """Send one prepared operation and return a BackendResponse.
+        """Execute one prepared request and return a backend response.
 
         Same function selection and error translation as the synchronous
         ``RustBackend.execute``, with one difference: the ``_async`` binding
@@ -376,7 +378,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 "the repo root."
             )
 
-        # Look up the binding's _async function for this op; None if unsupported.
+        # Resolve the operation name to an async binding function before acquisition.
         binding_function = _binding_function_for_op(prepared.op)
         if binding_function is None:
             raise NotImplementedError(
@@ -391,8 +393,8 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             prepared.op,
             OP_TO_BINDING_FUNCTION_NAME.get(prepared.op),
         )
-        # Await the binding function directly rather than allocating an executor
-        # job for its I/O. Translate response-less errors to ServiceResponseError,
+        # Call the binding function and await its result, without a Python executor
+        # job for service I/O. Translate response-less errors to ServiceResponseError,
         # without assuming no request was sent or invoking legacy retry policies.
         try:
             result = (
@@ -448,11 +450,12 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     async def execute_pages(
         self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
     ) -> AsyncIterator[BackendPage]:
-        """Yield one page when the caller iterates this async generator.
+        """Yield one backend page when the caller advances this async generator.
 
-        Same page selection as the synchronous ``RustBackend.execute_pages``,
-        with one difference: the chosen binding function is awaited, and the
-        caller iterates with ``async for``.
+        PreparedPageRequest -> PreparedRequest -> async binding call with an
+        optional feed cursor -> response tuple -> BackendResponse -> BackendPage.
+        The caller uses async for or awaits __anext__(); this method does not
+        fetch all subsequent pages itself.
         """
         self.validate_page_request(prepared)
         binding_function_name = get_page_binding_function_name(
@@ -476,7 +479,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         yield build_backend_page(prepared, response)
 
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:
-        """Check page support before acquiring a driver or fetching results.
+        """Perform page preflight before acquiring a driver handle or fetching results.
 
         Same checks as the synchronous ``RustBackend.validate_page_request``,
         with one difference: it requires the ``_async`` form of each binding
@@ -489,7 +492,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
 
         Same as the synchronous ``RustBackend.create_item_feed_cursor``:
         call the binding's cursor constructor synchronously, without acquiring
-        a driver handle or fetching a page. There is no asynchronous difference.
+        a driver handle or fetching a page.
         """
         if _rust_module is None:
             raise PagePreflightError(

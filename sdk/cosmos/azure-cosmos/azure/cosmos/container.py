@@ -39,7 +39,7 @@ from ._base import (_build_properties_cache, build_options,
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._helpers._item_dispatch import (
+from ._helpers._item_arguments import (
     merge_create_item_explicit_kwargs,
     merge_delete_item_explicit_kwargs,
     merge_patch_item_explicit_kwargs,
@@ -51,7 +51,7 @@ from ._helpers._item_operations import ItemHelper
 from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
 from ._helpers._read_items import complete_read_items_response, prepare_read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
-from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_bookmark
+from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_continuation_token
 from ._helpers._response_parse import complete_item_response
 from ._operation_deadline import deadline_lock, legacy_deadline_options, remaining_timeout
 from ._helpers._container_operations import ContainerHelper
@@ -1102,7 +1102,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         if uses_rust(self):
             return _query_items(self, kwargs)
-        reject_rust_bookmark(kwargs)
+        reject_rust_continuation_token(kwargs)
         feed_options = build_options(kwargs)
 
         # Get container property and init client container caches

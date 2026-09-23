@@ -9,10 +9,11 @@ This needs only two inputs: the container's partition-key definition (its
 ``kind`` / ``paths`` / ``systemKey``) and the document. The extraction is a
 plain walk of the document -- no client connection, no I/O.
 
-These functions match the connection's ``_ExtractPartitionKey`` /
-``_retrieve_partition_key`` (single- and multi-hash, system-key handling) so
-the backend produces the same value the legacy path does. The backend uses
-them instead of calling ``CosmosClientConnection._AddPartitionKey``.
+These Python wrapper utilities preserve the legacy extraction rules for callers
+that already have the definition. For example, /customerId with
+{"customerId": "customer-17"} yields "customer-17". They do not invoke a binding
+function. Rust-path point writes can instead ask the binding to extract the key
+from body bytes.
 """
 from __future__ import annotations
 

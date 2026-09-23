@@ -5,10 +5,15 @@
 # -------------------------------------------------------------------------
 """Public item keyword merging and legacy-only request-option adapters.
 
-The merge_* utilities belong to the public wrapper and serve both backends.
-The build_*_request_options functions are used only by explicit legacy parity;
-they import legacy option preparation when invoked. Rust item helpers instead
-use _request_settings.compose_item_options. Nothing here performs I/O.
+The merge_* utilities belong to the Python wrapper and serve both execution
+paths. For example, response_hook=callback is copied into the working kwargs;
+the public method decides when to call it.
+
+The build_*_request_options functions prepare options for the legacy path.
+Rust-path item helpers instead use _request_settings.compose_item_options.
+The retained get_selected_backend accessor retrieves an existing Python
+backend; it does not select one. Nothing here calls a binding function or
+performs network I/O.
 """
 from __future__ import annotations
 
@@ -65,7 +70,7 @@ def merge_create_item_explicit_kwargs(
 
 
 def get_selected_backend(client_connection: Any) -> Any:
-    """Retrieve the already-selected backend from the client connection.
+    """Retrieve the already-selected Python backend from the client connection.
 
     Unmigrated connection-owned coordinators use this accessor. Public point
     operations instead receive their backend directly through ItemClientContext.
@@ -75,8 +80,8 @@ def get_selected_backend(client_connection: Any) -> Any:
     attributes) when available; otherwise use attribute lookup.
 
     :param client_connection: The connection that owns the ``_backend``
-        attribute containing the selected Rust or legacy backend.
-    :returns: The stored concrete backend.
+        attribute containing the selected Python backend.
+    :returns: The stored Python backend object.
     :raises RuntimeError: If ``_backend`` is missing or ``None``.
     """
     connection_dict = getattr(client_connection, "__dict__", None)
@@ -210,8 +215,8 @@ def merge_read_item_explicit_kwargs(
     Differences from ``merge_delete_item_explicit_kwargs``:
 
     * No ``pre_trigger_include`` (read_item has no pre-trigger surface).
-    * No ``retry_write`` / ``no_response`` (reads are idempotent and
-      have no body to suppress).
+    * No ``retry_write`` / ``no_response``: the read API does not expose
+      write-retry or write-response suppression options.
     * Adds ``max_integrated_cache_staleness_in_ms``, the dedicated-
       gateway cache-staleness knob that only exists on reads.
 
@@ -324,10 +329,9 @@ def build_upsert_item_request_options(
     * There is no ``indexing_directive`` knob (not on the public
       signature).
 
-    ``etag`` / ``match_condition`` are honoured here, not dropped:
-    ``build_options`` consumes them into the ``accessCondition`` shape,
-    which both the rust prep and the legacy path emit as ``If-Match`` /
-    ``If-None-Match``.
+    ``etag`` / ``match_condition`` are kept: ``build_options`` converts them
+    into ``accessCondition`` for the legacy path's conditional request headers.
+    Rust-path preparation carries the same conditions in typed request settings.
 
     ``populate_query_metrics`` is only meaningful on the sync container
     method (the async sibling never exposed it); the async caller passes

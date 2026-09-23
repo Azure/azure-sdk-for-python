@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Shared option normalization, header ownership, defaults and typed request settings."""
+"""Separate Python wrapper options into request headers and typed request settings.
+
+For example, accessCondition={"type": "IfMatch", "condition": '"v1"'} becomes
+settings.item.if_match, not an extra If-Match entry in the returned headers.
+The binding consumes those typed settings; the helper does not send a request.
+"""
 
 from __future__ import annotations
 
@@ -127,11 +132,12 @@ def get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[s
 
 
 def compose_item_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
-    """Build Rust item options from a local kwargs copy, not legacy build_options.
+    """Build options from a caller-supplied working dictionary, not legacy build_options.
 
     Owns conditional-request normalization and copies supplied option mappings.
     It generates no Python pipeline timing/retry bookkeeping. Consumed kwargs
-    are removed only from the helper's working copy, never the caller's mapping.
+    are removed from kwargs itself; callers must supply a working copy when
+    their original dictionary must remain unchanged.
     """
     feed_options = kwargs.pop("feed_options", {})
     if "request_options" not in kwargs:
@@ -149,10 +155,10 @@ def compose_item_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_common_options() -> Mapping[str, str]:
-    """Return a read-only view of ``COMMON_OPTIONS``.
+    """Return the shared ``COMMON_OPTIONS`` table with a read-only type annotation.
 
-    Returning a ``Mapping`` makes accidental mutation by a caller a
-    typing error rather than a silent shared-state bug.
+    The Mapping annotation discourages mutation during type checking. This
+    does not create an immutable runtime view or copy the underlying dictionary.
 
     :rtype: Mapping[str, str]
     """
@@ -161,9 +167,9 @@ def get_common_options() -> Mapping[str, str]:
 
 # Internal option-keys the legacy ``_base.GetHeaders`` path emits only when the
 # value is *truthy* -- a ``0`` / ``None`` / ``""`` value omits the header
-# entirely. ``indexing_directive=IndexingDirective.Default`` is ``0`` and
-# ``throughput_bucket=0`` is not a real bucket, so both must send no header to
-# match v4. ``maxIntegratedCacheStaleness`` is treated the same way, for the
+# entirely. ``indexing_directive=IndexingDirective.Default`` and
+# ``throughput_bucket=0`` retain that omission behavior.
+# ``maxIntegratedCacheStaleness`` is treated the same way, for the
 # same compatibility reason.
 _TRUTHY_GATED_OPTION_KEYS = frozenset(
     {
@@ -210,8 +216,8 @@ _TRUTHY_GATED_OPTION_KEYS = frozenset(
 #     retry-policy input, not a header: the legacy path reads it in
 #     ``_request_object.RequestObject.set_retry_write`` and ``GetHeaders`` never
 #     looks at it. ``_base.build_options`` copies it into the options dict for
-#     every operation (it is in ``COMMON_OPTIONS``), so without this entry it
-#     rides to the binding as a header named ``retry_write``.
+#     every operation (it is in ``COMMON_OPTIONS``). Skip it here rather than
+#     interpret Python retry policy as a typed service setting.
 _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset(
     {
         Constants.OperationStartTime,
@@ -305,7 +311,7 @@ def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
 
 
 def is_supported_operation_timeout(timeout: Any) -> bool:
-    """Whether a duration survives Rust's one-second minimum and f64 conversion."""
+    """Accept None or finite numeric seconds from 1 up to, but not including, 2**64."""
     if timeout is None:
         return True
     if isinstance(timeout, bool) or not isinstance(timeout, (int, float)):
@@ -319,12 +325,11 @@ def is_supported_operation_timeout(timeout: Any) -> bool:
 
 
 def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
-    """Return whether the caller's ``timeout`` survives the trip to the driver.
+    """Apply the retained migration timeout predicate, not full request validation.
 
-    The driver clamps a positive sub-second value up to one second and drops a
-    zero, negative, or non-numeric one, in both cases without an error. The
-    legacy path either honors the exact number or raises its own validation
-    error, so anything the driver would change is kept off the Rust path.
+    This older predicate accepts None, NaN, and numeric values converting to
+    at least one second. Unlike is_supported_operation_timeout, it does not
+    reject every invalid duration; typed request-settings validation is separate.
     """
     timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
     if timeout is None:
@@ -332,9 +337,7 @@ def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
     if not isinstance(timeout, (int, float)):
         return False
     seconds = float(timeout)
-    # ``nan`` reaches neither backend's timeout logic -- the driver drops it as
-    # non-finite and the legacy retry loop never finds it elapsed -- so it is
-    # representable even though it fails every numeric bound.
+    # Preserve this migration predicate's existing NaN result.
     if math.isnan(seconds):
         return True
     return seconds >= 1.0
@@ -343,7 +346,7 @@ def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
 def apply_no_response_on_write_default(
     options: Dict[str, Any], no_response_on_write_default: bool
 ) -> None:
-    """Apply the client-level ``no_response_on_write`` setting as a fallback.
+    """Apply the client-level ``no_response_on_write`` default when no override is supplied.
 
     A per-call ``no_response`` always wins. The client-level default takes
     effect only when the call passes no per-call value and that default is
@@ -352,11 +355,11 @@ def apply_no_response_on_write_default(
     ``responsePayloadOnWriteDisabled`` option, which suppresses the write
     response body.
 
-    :param options: The internal options dict. **Mutated** when the fallback
+    :param options: The internal options dict. **Mutated** when the default
         applies.
     :type options: Dict[str, Any]
     :param no_response_on_write_default: The client-level
-        ``connection_policy.ResponsePayloadOnWriteDisabled`` value.
+        default supplied by the caller.
     :type no_response_on_write_default: bool
     """
     if no_response_on_write_default and "responsePayloadOnWriteDisabled" not in options:
@@ -367,10 +370,11 @@ def stamp_container_rid(
     options: Dict[str, Any],
     container_rid: str,
 ) -> None:
-    """Write ``x-ms-cosmos-intended-collection-rid`` into ``options`` if absent.
+    """Store the container id under ``Constants.ContainerRID`` if absent.
 
     Idempotent: if the caller has already set ``Constants.ContainerRID``,
-    the existing value is preserved.
+    the existing value is preserved. Later conversion puts this option in
+    typed request settings; this helper does not create an HTTP header.
 
     :param options: The internal options dict. Mutated in place.
     :type options: Dict[str, Any]
@@ -453,6 +457,12 @@ def build_customer_headers(
 def build_request_headers_and_settings(
     options: Mapping[str, Any],
 ) -> tuple[dict[str, str], RequestSettings]:
+    """Return request headers and typed settings without changing the options mapping.
+
+    Known options become fields, such as maxItemCount -> settings.query.max_item_count.
+    Explicit headers retain their existing precedence; an unknown option raises
+    rather than silently disappearing.
+    """
     headers: dict[str, str] = {}
     groups: dict[str, dict[str, Any]] = {
         "": {},

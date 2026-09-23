@@ -25,7 +25,7 @@ def build_read_offer_request(
     request_options: Mapping[str, Any],
     default_headers: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Find the database/container offer using its existing normalized query."""
+    """Build a prepared request to find the offer; do not execute its query."""
     headers, settings = prepare_service_request_settings(request_options, default_headers, resource_type="offers")
     return PreparedRequest(
         op=OP_READ_OFFER,
@@ -44,7 +44,7 @@ def build_replace_offer_request(
     request_options: Mapping[str, Any],
     default_headers: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Replace the offer RID from its self-link, not the owning resource RID."""
+    """Build a replacement request targeting the offer id parsed from its self-link."""
     offer_id = GetResourceIdOrFullNameFromLink(offer_body["_self"])
     headers, settings = prepare_service_request_settings(request_options, default_headers, resource_type="offers")
     return PreparedRequest(

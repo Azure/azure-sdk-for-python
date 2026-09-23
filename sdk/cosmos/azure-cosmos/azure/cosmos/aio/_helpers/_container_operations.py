@@ -1,7 +1,17 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Run async container operations with the selected Python or Rust implementation."""
+"""Prepare container requests and await the selected Python backend.
+
+For example, creating "orders" builds a PreparedRequest, awaits execution, and
+parses the BackendResponse into container properties. Building and parsing use
+the shared synchronous helpers; neither step sends the request.
+
+During migration, run_operation chooses the permitted path before execution.
+A failed Rust operation is not sent again through the legacy connection.
+Response hooks are called synchronously with this operation's response headers,
+not awaited and not given headers from another operation on the same client.
+"""
 
 from __future__ import annotations
 
@@ -39,7 +49,7 @@ class AsyncContainerHelper:
     """Prepare and run asynchronous container operations."""
 
     def __init__(self, client_connection: Any, backend: AsyncCosmosBackend) -> None:
-        """Store the client connection and selected implementation."""
+        """Retain the Python backend and the connection used by the legacy path."""
         self._client_connection = client_connection
         self._backend = backend
 
@@ -57,10 +67,6 @@ class AsyncContainerHelper:
         operation_kwargs.pop("response_hook", None)
 
         def build_request() -> PreparedRequest:
-            """Build the prepared create-container request.
-
-            Construction is synchronous; only backend execution is awaited.
-            """
             return build_create_container_prepared(
                 database_link,
                 container_definition,
@@ -88,10 +94,8 @@ class AsyncContainerHelper:
                 client_connection=self._client_connection,
             ),
         )
-        # Headers come off the result, not off ``client_connection``. The
-        # connection's ``last_response_headers`` is shared mutable state that any
-        # other task on the same client overwrites, so reading it here could hand
-        # the hook another call's headers alongside this call's body.
+        # Another task can overwrite the connection's last_response_headers.
+        # Read from this result so the hook gets matching headers and body.
         if response_hook is not None:
             response_hook(result.get_response_headers(), result)
         return result
@@ -110,10 +114,6 @@ class AsyncContainerHelper:
         operation_kwargs.pop("response_hook", None)
 
         def build_request() -> PreparedRequest:
-            """Build the prepared read-container request.
-
-            Construction is synchronous; only backend execution is awaited.
-            """
             return build_read_container_prepared(
                 container_link,
                 request_options,
@@ -152,7 +152,7 @@ class AsyncContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        """Delete through the selected backend without Rust-to-legacy replay."""
+        """Delete the container and give the response hook headers with a None body."""
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         on_response = with_response_header_snapshot(response_hook)
@@ -193,7 +193,11 @@ class AsyncContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
-        """Replace properties without legacy replay or callback mutation of the result."""
+        """Replace container properties and give the response hook a separate copy.
+
+        For example, if the hook edits the returned indexing policy, that edit
+        does not change the properties returned to the customer app.
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 

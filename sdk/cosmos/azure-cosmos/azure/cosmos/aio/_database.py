@@ -40,7 +40,7 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
-from .._helpers._item_dispatch import get_selected_backend
+from .._helpers._item_arguments import get_selected_backend
 from .._helpers._page_response_hook import wrap_page_response_hook
 from ._helpers._container_operations import AsyncContainerHelper
 from .._helpers._request_container import (
