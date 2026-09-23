@@ -16,10 +16,10 @@
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
     "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
-    "commit": "a170cb1188d5fc706a6433a0c95a13caf30c72fe",
+    "commit": "05c7c9af0f866ed349f9d7e0870eb7d2d849d1de",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "2d416cea1d6c9c632cc5897f1e9da817166102a8a1635cc08265858beb69e429",
-    "client_sha256": "fd19808ed118961d42e1b37e2de399adfa0ffcc0052860e3b267f1c59e98712e",
+    "source_fingerprint_sha256": "7c976b74b0f73dcecbebdcfb539f7306bf4295581c73f74a1daf1c98a4fc6779",
+    "client_sha256": "bba367bec721f5dad5229b80cdaaa57a83bd00205460cd0de8a72531fc3aecf1",
     "models_sha256": "51e81c378f4742dac9f12ff83d2dbcce3b29197ed0cde81431387a1d9466f93b",
     "config_sha256": "0bf14509b0ec1fe883b63783779249629ed90d68eeeee65f656ed70d0e157262",
     "remote_generation_blocker": null
@@ -36,7 +36,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "f5337b0ae1e0004b069f892b07b97f80023578d09f743c853db19fb577580125",
+    "generated_inventory_fingerprint_sha256": "54415b33a412343c29bc5774d3ea026b339514f24d7997714dc528318adedebc",
     "runtime_files": 28,
     "runtime_python_modules": 27,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
@@ -73,6 +73,16 @@
       "base_spec_commit": "2cb54f4534b1c262cdd5eb5dd60bf43c8ed76c74",
       "rest_delta": "Only AgentDefinitionOptInKeys changes from an open string union to the same declared literal values in all four OpenAPI outputs.",
       "fine_tuning_sdk_delta": "No generated API, metadata, or runtime changes; only source pin, provenance, and generation documentation updated."
+    },
+    "route_deduplication": {
+      "base_spec_commit": "a170cb1188d5fc706a6433a0c95a13caf30c72fe",
+      "base_sdk_commit": "df4b722725386974c26463fb375ba7e27f6511fb",
+      "spec_commit": "05c7c9af0f866ed349f9d7e0870eb7d2d849d1de",
+      "uncommitted": false,
+      "generated_python_and_runtime_changes": 0,
+      "rest_openapi_files_byte_identical": 4,
+      "apiview_metadata_changes": "Only 26 CrossLanguageDefinitionId values (13 operations, sync and async) now identify canonical service operations instead of SDK aliases. Package and model identifiers are unchanged.",
+      "new_loom_comparison_exceptions": 0
     },
     "python_emission_warnings": 0,
     "full_rest_warnings": 0,

@@ -1,5 +1,37 @@
 # Reproducible preview SDK generation
 
+## Route-deduplication refactor (2026-09-23)
+
+The public TypeSpec client customization now reuses the service operations in
+`session-finetuning/routes.tsp` instead of declaring routed SDK interfaces and
+operation aliases. Python-scoped `@clientName` and `@clientLocation` retain the
+root client and five flat groups. `@scope("!python")` excludes only the same two
+raw operations omitted before: session deletion and forward-only training. The
+handwritten convenience methods remain unchanged. Model mappings, required
+per-call API version, method names, and legacy polling/pagination decorators
+remain in the Python customization file. The operation-template migration is
+not included.
+
+Baseline TypeSpec commit: `a170cb1188d5fc706a6433a0c95a13caf30c72fe`.
+Baseline SDK commit: `df4b722725386974c26463fb375ba7e27f6511fb`.
+The baseline and two independent candidates use the same pinned generator and
+the same nine maintained hooks. All generated Python and the complete runtime
+are unchanged, as are all four full REST OpenAPI outputs. The sole emitted
+metadata delta is 26 APIView operation identifiers (13 methods in sync/async)
+changing from alias identities to canonical service identities; package/model
+identifiers and the customer API are unchanged.
+
+Both isolated source packages pass all 501 tests and the existing full Loom
+comparison (20 paired cases, 45 exported types, 76 model cases, 336 raw cases).
+The installed candidate wheel passes the same tests and compatibility checks.
+No test, verifier, or approved comparison exception was changed.
+
+The source pointer and provenance pin the pushed TypeSpec refactor at
+`05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`. The committed inputs match the
+validated working-tree hashes; remote regeneration no longer requires
+uncommitted TypeSpec changes. The starting commits above remain the comparison
+baselines.
+
 ## Reviewed fixes after the parity baseline
 
 The independently reproducible exact public-API parity baseline is SDK commit
@@ -226,8 +258,9 @@ cross-language SDK readiness.
 ## Current source pin and review validation
 
 [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
-`a170cb1188d5fc706a6433a0c95a13caf30c72fe`, which contains the validated model
-projection, client mappings, CI repairs, and closed agent-definition opt-in union. The source
+`05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`, which contains the validated model
+projection, route-deduplicated client customization, CI repairs, and closed
+agent-definition opt-in union. The source
 fingerprint is recorded separately
 in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
