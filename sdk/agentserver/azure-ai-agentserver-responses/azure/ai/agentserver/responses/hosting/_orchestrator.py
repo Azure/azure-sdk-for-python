@@ -3151,7 +3151,7 @@ class _ResponseOrchestrator:
             keep_alive_task.cancel()
             events_task.cancel()
 
-    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:
+    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:  # pylint: disable=too-many-statements
         """Drive the SSE streaming pipeline using the shared event pipeline.
 
         Delegates all event processing (first-event handling, normalisation,
