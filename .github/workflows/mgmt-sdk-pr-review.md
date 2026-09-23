@@ -519,8 +519,10 @@ runtime tests, set `GH_AW_RUNTIME` to v0.88.8's `actions/setup/js` directory and
 The suite also requires `jq` (or `JQ` pointing to its executable) for the actual submission command.
 The runtime harness mocks all GitHub writes; it does not post a review.
 
-The saved regression fixtures are the actual `agent_output.json` payloads from runs 35704016518,
-35712475844, 35713301590, 35819606419 and 35823186480. They reproduce the old layout rejection.
+Two named regression fixtures preserve the distinct failure shapes from runs 35819606419 and
+35823186480: a plain human-review prefix and a no-entry statement followed by an explanation.
+They are sanitized derivatives of the actual payloads, not full run artifacts: temporary tool IDs
+and incidental commit references are removed. Test comments link to the originating runs.
 The new tests exercise equivalent typed incomplete-collection and confirmed-initial-release
 scenarios without accepting legacy Markdown as an alternate publication path. Collector
 regressions from #49147, including calendar validation and per-file expected absence, remain.

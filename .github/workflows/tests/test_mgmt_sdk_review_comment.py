@@ -604,18 +604,26 @@ class StructuredReviewTests(unittest.TestCase):
         self.package["attribution"]["entries"][0]["explanation"] = "x" * 12001
         self.reject("size limit")
 
-    def test_actual_failure_payloads_and_equivalent_structured_scenarios(self):
-        files = sorted(FIXTURES.glob("run-*.json"))
-        self.assertEqual(5, len(files))
-        for path in files:
-            with self.subTest(run=path.stem):
-                payload = json.loads(path.read_text(encoding="utf-8"))
+    def test_historical_failure_shapes_and_equivalent_structured_scenarios(self):
+        cases = {
+            # Derived from https://github.com/Azure/azure-sdk-for-python/actions/runs/35819606419
+            "plain-human-review.json": "incomplete",
+            # Derived from https://github.com/Azure/azure-sdk-for-python/actions/runs/35823186480
+            "initial-release-no-entries-explanation.json": "no_entries",
+        }
+        self.assertEqual(set(cases), {path.name for path in FIXTURES.glob("*.json")})
+        for filename, outcome in cases.items():
+            with self.subTest(case=filename):
+                payload = json.loads((FIXTURES / filename).read_text(encoding="utf-8"))
+                self.assertEqual({"type", "body"}, set(payload["items"][0]))
                 old_body = payload["items"][0]["body"]
+                self.assertNotRegex(old_body, r"\b[0-9a-f]{40}\b")
                 self.assertIn("### Breaking-change attribution", old_body)
                 with self.assertRaisesRegex(ValueError, "body"):
                     MODULE.prepare_output(payload, self.context)
                 data, trusted = review(), context()
-                if "\nNeeds human review:" in old_body:
+                if outcome == "incomplete":
+                    self.assertIn("\nNeeds human review:", old_body)
                     explanation = (
                         old_body.split("\nNeeds human review:", 1)[1].split("\n\n### Review summary", 1)[0].strip()
                     )
@@ -627,6 +635,7 @@ class StructuredReviewTests(unittest.TestCase):
                     body = MODULE.prepare_output(envelope(data), trusted)["items"][0]["body"]
                     self.assertIn("**Needs human review:**", body)
                 else:
+                    self.assertIn("No newly added or modified entries. This is", old_body)
                     trusted["breakingChangeContext"][0]["releaseBaseline"] = {
                         "status": "not_applicable",
                         "reason": "Initial release confirmed by complete added-file and absent-directory evidence.",
