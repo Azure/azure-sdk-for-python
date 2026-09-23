@@ -426,6 +426,16 @@ class StructuredReviewTests(unittest.TestCase):
             "<ul><li>Full review pending</li></ul>",
             '<div title="a > b">Full review pending</div>',
             "<details><summary>Full review pending</summary></details>",
+            "> Full review pending",
+            ">> Full review pending",
+            "1. Full review pending",
+            "2) Full review pending",
+            "- Full review pending",
+            "+ Full review pending",
+            "* Full review pending",
+            "> 1. [ ] Full review pending",
+            "* [x] Full review pending",
+            "1. **Full review pending**",
             "&#78;one&#33;",
             "[None.](https://example.invalid)",
             "TBD",
@@ -440,6 +450,8 @@ class StructuredReviewTests(unittest.TestCase):
                 self.reject(".reason")
         check["reason"] = "Unable to complete review because the pinned file returned HTTP 404."
         self.assertIn("HTTP 404", self.render())
+        check["reason"] = "> 1. The pinned file returned HTTP 404."
+        self.assertIn("> 1. The pinned file returned HTTP 404.", self.render())
 
     def test_literal_type_names_are_not_html_placeholders(self):
         for value in ("<Widget>", "`<Widget>`", "value & other", "None is the documented return value"):

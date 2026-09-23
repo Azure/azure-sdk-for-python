@@ -188,6 +188,7 @@ def substantive(text, path):
         flags=re.I,
     )
     visible = re.sub(r"[*_`~]", "", visible).lower()
+    visible = re.sub(r"^(?:\s*(?:>\s*|[-+]\s+|\d+[.)]\s+|\[[ x]\]\s+))+", "", visible)
     visible = " ".join(visible.split())
     visible = visible.strip("".join(char for char in set(visible) if unicodedata.category(char).startswith("P")) + " ")
     require(
