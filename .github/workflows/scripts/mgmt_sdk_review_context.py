@@ -568,7 +568,7 @@ def collect():
     drift_results = []
     breaking_change_context = []
     for package_path in package_paths:
-        remaining_requests = MAX_API_REQUESTS - client.request_count
+        remaining_requests = MAX_API_REQUESTS - client.request_count - int(bool(expected_head))
         if remaining_requests < MAX_PACKAGE_API_REQUESTS:
             reason = (
                 f"Needs human review: evidence collection for {package_path} was skipped because only "

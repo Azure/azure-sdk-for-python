@@ -12,6 +12,7 @@ import tempfile
 import textwrap
 import unittest
 from unittest import mock
+from urllib.parse import quote
 
 WORKFLOW = Path(__file__).parents[1] / "mgmt-sdk-pr-review.md"
 SCRIPT = WORKFLOW.parent / "scripts" / "mgmt_sdk_review_contract.py"
@@ -391,6 +392,30 @@ class StructuredReviewTests(unittest.TestCase):
         check["reason"] = "Unable to complete review because the pinned file returned HTTP 404."
         self.assertIn("HTTP 404", self.render())
 
+    def test_literal_type_names_are_not_html_placeholders(self):
+        for value in ("<Widget>", "`<Widget>`", "value & other", "None is the documented return value"):
+            MODULE.substantive(value, "analysis")
+
+    def test_placeholder_validation_uses_the_rendered_entity_fixed_point(self):
+        for placeholder in (
+            "&amp;#70;ull review is pending",
+            "&amp;amp;#78;one!",
+            "&amp;lt;strong&amp;gt;None&amp;lt;/strong&amp;gt;",
+            "\uff26ull review is pending",
+        ):
+            with self.subTest(placeholder=placeholder):
+                self.package["checks"][0].update(outcome="unverified", reason=placeholder, sources=[])
+                self.reject(".reason")
+        MODULE.reason("Baseline&#32;unavailable", "reason")
+
+    def test_excessive_entity_nesting_is_rejected_by_validator_and_renderer(self):
+        value = "&#70;ull review pending"
+        for _ in range(12):
+            value = html.escape(value)
+        for function in (lambda: MODULE.substantive(value, "reason"), lambda: MODULE.text(value)):
+            with self.assertRaisesRegex(ValueError, "excessively nested"):
+                function()
+
     def test_diagnostic_only_review_rejected(self):
         for check in self.package["checks"]:
             check.update(outcome="unverified", reason="Pinned file was inaccessible.", sources=[])
@@ -636,6 +661,9 @@ class PublicationIntegrationTests(unittest.TestCase):
         data, trusted = review(), context()
         add_entry(data, trusted, direct=True)
         entry = data["packages"][0]["attribution"]["entries"][0]
+        entry["sources"][0]["url"] = entry["sources"][0]["url"].replace(
+            "main.tsp", "@renamedFrom(Widget)&\uff37idget.tsp"
+        )
         entry["explanation"] = "\n".join(
             '@renamedFrom("a") @@clientName <Widget> \\| `name` "quoted" \\ path' for _ in range(15)
         )
@@ -646,7 +674,13 @@ class PublicationIntegrationTests(unittest.TestCase):
             "validation": lock_json("GH_AW_VALIDATION_JSON"),
         }
         result = subprocess.run(
-            ["node", str(script)], input=json.dumps(request), capture_output=True, text=True, check=True, timeout=30
+            ["node", str(script)],
+            input=json.dumps(request),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=30,
         )
         ingested = json.loads(result.stdout)
         self.assertTrue(ingested["isValid"], ingested)
@@ -657,6 +691,7 @@ class PublicationIntegrationTests(unittest.TestCase):
             input=json.dumps({"mode": "publish", "payload": prepared}),
             capture_output=True,
             text=True,
+            encoding="utf-8",
             check=True,
             timeout=30,
         )
@@ -664,8 +699,9 @@ class PublicationIntegrationTests(unittest.TestCase):
         self.assertTrue(published["result"]["success"], published)
         self.assertEqual(49107, published["comment"]["issue_number"])
         self.assertIn(NEW_SPEC, published["comment"]["body"])
+        self.assertIn(quote(entry["sources"][0]["url"], safe="/:%#._-~"), published["comment"]["body"])
         self.assertIn("<Widget>", published["comment"]["body"])
-        self.assertEqual(15, published["comment"]["body"].count("@renamedFrom"))
+        self.assertEqual(15, published["comment"]["body"].count('@renamedFrom("a")'))
         self.assertNotIn("Structured data:", published["comment"]["body"])
         # The built-in handler replaces our stripped marker with its own searchable XML marker.
         self.assertEqual(1, published["comment"]["body"].count("workflow_id: mgmt-sdk-pr-review"))

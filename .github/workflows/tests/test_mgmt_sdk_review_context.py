@@ -571,6 +571,15 @@ class CollectionTests(unittest.TestCase):
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
                 self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
 
+    def test_event_head_budget_reserves_the_final_consistency_request(self):
+        for limit, expected in ((31, "unverified"), (32, "complete")):
+            with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
+                context = self.collect_context(annotated_tag=True, event_head="b" * 40)
+                self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
+                self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
+                if expected == "complete":
+                    self.assertEqual(limit, context["collectionLimits"]["githubApiRequests"])
+
 
 class FailureHandlingTests(unittest.TestCase):
     def test_drift_reports_missing_or_invalid_api_version(self):

@@ -153,11 +153,22 @@ def validate_schema(value, schema=SCHEMA, path="data"):
         require(value >= schema.get("minimum", value), path, "value below minimum")
 
 
+def normalized_text(value, path):
+    # Share the bounded fixed point: gh-aw decodes entities and normalizes Unicode.
+    for _ in range(10):
+        decoded = html.unescape(unicodedata.normalize("NFKC", value))
+        if decoded == value:
+            return value
+        value = decoded
+    require(html.unescape(unicodedata.normalize("NFKC", value)) == value, path, "excessively nested HTML entities")
+    return value
+
+
 def substantive(text, path):
     # This is placeholder detection on prose, not parsing the publication layout.
-    visible = html.unescape(text)
+    visible = normalized_text(text, path)
     visible = re.sub(r"!?\[([^\]\n]*)\]\([^\n]*?\)", r"\1", visible)
-    visible = re.sub(r"<[^>]*>", "", visible)
+    visible = re.sub(r"</?(?:strong|em|b|i|s|del|code|span|u|p|div|br)\b[^>]*>", "", visible, flags=re.I)
     visible = re.sub(r"[*_`~]", "", visible).lower()
     visible = " ".join(visible.split())
     visible = visible.strip("".join(char for char in set(visible) if unicodedata.category(char).startswith("P")) + " ")
@@ -186,7 +197,7 @@ def substantive(text, path):
 
 def reason(text, path):
     substantive(text, path)
-    require(len(text.split()) >= 2, path, "provide a specific missing-evidence reason")
+    require(len(normalized_text(text, path).split()) >= 2, path, "provide a specific missing-evidence reason")
 
 
 def unique_index(records, key, path):
@@ -410,14 +421,7 @@ def validate_review(data, context):
 
 def text(value):
     """Use code spans so gh-aw's sanitizer preserves literal markup and decorators."""
-    # gh-aw decodes entities even inside code. Normalize before selecting delimiters.
-    for _ in range(10):
-        decoded = html.unescape(value)
-        if decoded == value:
-            break
-        value = decoded
-    require(html.unescape(value) == value, "rendered.text", "excessively nested HTML entities")
-    value = unicodedata.normalize("NFKC", value)
+    value = normalized_text(value, "rendered.text")
     lines = value.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     result = []
     for line in lines:
@@ -433,10 +437,9 @@ def text(value):
 
 
 def link(url, label):
-    # Escape only link-destination delimiters. Keep immutable SHA and line anchors intact.
-    destination = (
-        url.replace("(", "%28").replace(")", "%29").replace("<", "%3C").replace(">", "%3E").replace("|", "%7C")
-    )
+    # URI-encode syntax that gh-aw would otherwise treat as mentions, HTML or Unicode
+    # confusables. This preserves the destination, including its SHA and line anchors.
+    destination = quote(url, safe="/:%#._-~")
     return f"[{text(label)}]({destination})"
 
 
