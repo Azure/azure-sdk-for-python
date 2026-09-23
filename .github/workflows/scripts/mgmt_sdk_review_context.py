@@ -518,6 +518,9 @@ def collect():
         raise GitHubApiError("Pull request metadata did not contain a valid changed_files count")
     if not all(isinstance(value, str) and SHA_PATTERN.fullmatch(value) for value in (latest_revision, base_revision)):
         raise GitHubApiError("Pull request metadata did not contain valid base and head SHAs")
+    expected_head = os.environ.get("REVIEW_HEAD_SHA")
+    if expected_head and latest_revision != expected_head:
+        raise GitHubApiError("PR head changed since the triggering event; rerun against the current head")
 
     compare = client.get(f"/repos/{repository}/compare/{base_revision}...{latest_revision}")
     merge_base_revision = compare.get("merge_base_commit", {}).get("sha")
@@ -595,6 +598,7 @@ def collect():
                     "latestRevision": latest_revision,
                     "status": "unverified",
                     "introducedEntries": [],
+                    "releases": [],
                     "emptyBreakingChangeSections": [],
                     "collectionIssues": [reason],
                     "releaseBaseline": unavailable,
@@ -730,6 +734,7 @@ def collect():
                 "latestRevision": latest_revision,
                 "status": "unverified" if collection_issues else "complete",
                 "introducedEntries": introduced,
+                "releases": new_parsed["releases"],
                 "emptyBreakingChangeSections": new_parsed["emptySections"],
                 "collectionIssues": [issue for issue in collection_issues if issue],
                 "releaseBaseline": release_baseline,
@@ -758,6 +763,7 @@ def collect():
     context = {
         "repository": repository,
         "pullRequestNumber": pr_number,
+        "toolingRevision": os.environ.get("REVIEW_TOOLING_SHA"),
         "rulesSource": f".github/copilot-instructions.md@{rules_revision}",
         "mgmtSdkCodeReviewRules": "\n".join(lines[start:end]).strip(),
         "packageDiscovery": {
@@ -804,6 +810,16 @@ def collect():
             "githubApiRequests": client.request_count,
         },
     }
+    if expected_head:
+        current = client.get(f"/repos/{repository}/pulls/{pr_number}")
+        if (
+            current.get("head", {}).get("sha") != latest_revision
+            or current.get("base", {}).get("sha") != base_revision
+            or current.get("changed_files") != expected_changed_files
+            or current.get("commits") != expected_commits
+        ):
+            raise GitHubApiError("PR changed during evidence collection; rerun to collect a consistent snapshot")
+        context["collectionLimits"]["githubApiRequests"] = client.request_count
     with open("review-context.json", "w", encoding="utf-8") as output:
         json.dump(context, output, indent=2)
         output.write("\n")
