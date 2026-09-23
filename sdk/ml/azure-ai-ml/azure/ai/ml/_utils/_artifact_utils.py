@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
+import errno
 import hashlib
 import logging
 import os
@@ -9,12 +10,13 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 import zipfile
 from collections import defaultdict
 from io import BytesIO
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from threading import Lock
-from typing import Iterable, List, Optional, Union
+from typing import List, Optional, Sequence, Union
 
 from typing_extensions import Literal
 
@@ -41,6 +43,8 @@ class ArtifactCache:
         "artifacts",
     )
     POSTFIX_CHECKSUM = "checksum"
+    _CACHE_PUBLISH_RETRIES = 50
+    _CACHE_PUBLISH_RETRY_DELAY = 0.1
     _instance_lock = Lock()
     _instance = None
 
@@ -69,8 +73,8 @@ class ArtifactCache:
             )
 
     def __init__(self, cache_directory=None):
-        self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
-        Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
+        self._cache_directory = Path(cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY)
+        self._cache_directory.mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None
         self._download_locks = defaultdict(Lock)
 
@@ -159,6 +163,39 @@ class ArtifactCache:
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     @staticmethod
+    def _cache_path_component(value: str, field: str) -> str:
+        error_message = f"Artifact {field} must be a non-empty, valid cache path component."
+        if not isinstance(value, str) or not value or value in (".", ".."):
+            raise ValueError(error_message)
+        if (
+            re.search(r'[\x00-\x1f\x7f<>:"/\\|?]', value)
+            or value.endswith((".", " "))
+            or PureWindowsPath(value).is_reserved()
+            or ("*" in value and field != "version")
+        ):
+            raise ValueError(error_message)
+        # Version selectors are valid CLI arguments, but not Windows filenames.
+        return value.replace("%", "%25").replace("*", "%2A")
+
+    def _get_cache_path(self, organization: str, project: str, feed: str, name: str, version: str) -> Path:
+        if not isinstance(organization, str) or not organization:
+            raise ValueError("Artifact organization must be a non-empty string.")
+        components = [
+            self._cache_path_component(self._format_organization_name(organization), "organization"),
+            self._cache_path_component(project, "project"),
+            self._cache_path_component(feed, "feed"),
+            self._cache_path_component(name, "name"),
+            self._cache_path_component(version, "version"),
+        ]
+        cache_root = self.cache_directory.resolve()
+        artifact_path = cache_root.joinpath(*components)
+        for path in (artifact_path, self._get_checksum_path(artifact_path)):
+            resolved_path = path.resolve()
+            if cache_root not in resolved_path.parents:
+                raise ValueError("Artifact cache paths must remain inside the cache directory.")
+        return artifact_path
+
+    @staticmethod
     def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
         """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
 
@@ -232,7 +269,7 @@ class ArtifactCache:
 
     def _download_artifacts(
         self,
-        download_cmd: Iterable[str],
+        download_cmd: Sequence[str],
         organization: Optional[str],
         name: str,
         version: str,
@@ -242,7 +279,7 @@ class ArtifactCache:
         """Download artifacts with retry.
 
         :param download_cmd: The command used to download the artifact
-        :type download_cmd: Iterable[str]
+        :type download_cmd: Sequence[str]
         :param organization: The artifact organization
         :type organization: Optional[str]
         :param name: The package name
@@ -300,7 +337,9 @@ class ArtifactCache:
         if checksum_path.exists():
             with open(checksum_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 checksum = f.read()
-                file_list = [os.path.join(root, f) for root, _, files in os.walk(path) for f in files]
+                file_list: List[Union[str, os.PathLike]] = [
+                    os.path.join(root, f) for root, _, files in os.walk(path) for f in files
+                ]
                 artifact_hash = self.hash_files_content(file_list)
                 return checksum == artifact_hash
         return False
@@ -337,18 +376,11 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Optional[Path]
         """
-        if not all([organization, project]):
+        if organization is None or project is None:
             org_val, project_val = self.get_organization_project_by_git()
-            organization = organization or org_val
-            project = project or project_val
-        artifact_package_path = (
-            Path(self.DEFAULT_DISK_CACHE_DIRECTORY)
-            / self._format_organization_name(organization)
-            / project
-            / feed
-            / name
-            / version
-        )
+            organization = org_val if organization is None else organization
+            project = project_val if project is None else project
+        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
         # Use lock to avoid downloading the same package at the same time.
         with self._download_locks[artifact_package_path]:
             if self._check_artifacts(artifact_package_path):
@@ -360,9 +392,8 @@ class ArtifactCache:
                     os.unlink(check_sum_path)
                 if artifact_package_path.exists():
                     # Remove invalid artifact package to avoid affecting download artifact.
-                    temp_folder = tempfile.mkdtemp()  # nosec B306
-                    os.rename(artifact_package_path, temp_folder)
-                    shutil.rmtree(temp_folder)
+                    with tempfile.TemporaryDirectory(dir=self.cache_directory) as temp_folder:
+                        os.rename(artifact_package_path, Path(temp_folder) / "invalid-artifact")
                 # Download artifact
                 return self.set(
                     feed=feed,
@@ -401,75 +432,85 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """
-        tempdir = tempfile.mkdtemp()  # nosec B306
-        download_cmd = [
-            shutil.which("az"),
-            "artifacts",
-            "universal",
-            "download",
-            "--feed",
-            feed,
-            "--name",
-            name,
-            "--version",
-            version,
-            "--scope",
-            scope,
-            "--path",
-            tempdir,
-        ]
-        if organization:
-            download_cmd.extend(["--org", organization])
-        if project:
-            download_cmd.extend(["--project", project])
-        _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
-        result = subprocess.run(
-            download_cmd,
-            capture_output=True,
-            encoding="utf-8",
-            check=False,
-        )
+        if organization is None or project is None:
+            org_val, project_val = self.get_organization_project_by_git()
+            organization = org_val if organization is None else organization
+            project = project_val if project is None else project
+        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+        az_executable = shutil.which("az")
+        if az_executable is None:
+            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
+        with tempfile.TemporaryDirectory(dir=self.cache_directory) as tempdir:
+            download_path = Path(tempdir) / "package"
+            download_path.mkdir()
+            download_cmd = [
+                az_executable,
+                "artifacts",
+                "universal",
+                "download",
+                "--feed",
+                feed,
+                "--name",
+                name,
+                "--version",
+                version,
+                "--scope",
+                scope,
+                "--path",
+                str(download_path),
+                "--org",
+                organization,
+                "--project",
+                project,
+            ]
+            _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
+            result = subprocess.run(
+                download_cmd,
+                capture_output=True,
+                encoding="utf-8",
+                check=False,
+            )
 
-        if result.returncode != 0:
-            artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
-            if re.findall(artifacts_tool_not_find_error_pattern, result.stderr):
-                # When download artifacts tool failed retry download artifacts command
-                _logger.warning(
-                    "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
-                )
-                download_cmd.append("--debug")
-                self._download_artifacts(download_cmd, organization, name, version, feed)
-            else:
-                raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}")
-        try:
-            # Copy artifact package from temp folder to the cache path.
-            if not all([organization, project]):
-                org_val, project_val = self.get_organization_project_by_git()
-                organization = organization or org_val
-                project = project or project_val
-            artifact_package_path = (
-                Path(self.DEFAULT_DISK_CACHE_DIRECTORY)
-                / self._format_organization_name(organization)
-                / project
-                / feed
-                / name
-                / version
-            )
-            artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
-            file_list = [os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files]
-            artifact_hash = self.hash_files_content(file_list)
-            os.rename(tempdir, artifact_package_path)
-            temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
-            with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                f.write(artifact_hash)
-            os.rename(
-                temp_checksum_file,
-                artifact_package_path.parent / f"{version}_{self.POSTFIX_CHECKSUM}",
-            )
-        except (FileExistsError, PermissionError, OSError):
-            # On Windows, if dst exists a FileExistsError is always raised.
-            # On Unix, if dst is a non-empty directory, an OSError is raised.
-            # If dst is being used by another process will raise PermissionError.
-            # https://docs.python.org/3/library/os.html#os.rename
-            pass
+            if result.returncode != 0:
+                artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
+                if re.findall(artifacts_tool_not_find_error_pattern, result.stderr):
+                    # When download artifacts tool failed retry download artifacts command
+                    _logger.warning(
+                        "Download package %s:%s from the feed %s failed: %s", name, version, feed, result.stderr
+                    )
+                    download_cmd.append("--debug")
+                    self._download_artifacts(download_cmd, organization, name, version, feed)
+                else:
+                    raise RuntimeError(
+                        f"Download package {name}:{version} from the feed {feed} failed: {result.stderr}"
+                    )
+
+            artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+            try:
+                artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
+                file_list: List[Union[str, os.PathLike]] = [
+                    os.path.join(root, f) for root, _, files in os.walk(download_path) for f in files
+                ]
+                artifact_hash = self.hash_files_content(file_list)
+                os.rename(download_path, artifact_package_path)
+                temp_checksum_file = Path(tempdir) / "checksum"
+                with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    f.write(artifact_hash)
+                os.replace(temp_checksum_file, self._get_checksum_path(artifact_package_path))
+            except OSError as error:
+                if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):
+                    raise
+                # A winning writer may still be publishing its separate checksum.
+                for attempt in range(self._CACHE_PUBLISH_RETRIES):
+                    try:
+                        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                        if self._check_artifacts(artifact_package_path):
+                            break
+                    except PermissionError:
+                        # Windows may temporarily deny reads while the checksum is being published.
+                        if attempt + 1 == self._CACHE_PUBLISH_RETRIES:
+                            raise
+                    time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
+                else:
+                    raise
         return artifact_package_path.absolute().resolve()
