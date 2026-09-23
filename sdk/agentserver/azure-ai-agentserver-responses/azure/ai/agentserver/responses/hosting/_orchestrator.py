@@ -3189,8 +3189,6 @@ class _ResponseOrchestrator:
             store=ctx.store,
         )
 
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
-
         # Stored responses (background / resilient) ALWAYS run via the resilient
         # task + per-response wire stream, regardless of SSE keep-alive. The
         # resilient body runs in its own task, independent of the client
@@ -3227,6 +3225,7 @@ class _ResponseOrchestrator:
                 state.execution_task = asyncio.current_task()
                 start_record.execution_task = state.execution_task
                 state.bg_record = start_record
+                handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
                 try:
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
@@ -3292,6 +3291,9 @@ class _ResponseOrchestrator:
                     _resilient_stream_fallback,
                     disposition=_unified_disposition,
                 )
+            except asyncio.CancelledError:
+                await self._runtime_state.discard_pending(ctx.response_id)
+                raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 await self._runtime_state.discard_pending(ctx.response_id)
                 if not getattr(exc, PLATFORM_ERROR_TAG, False):
@@ -3319,6 +3321,7 @@ class _ResponseOrchestrator:
         # --- Ephemeral (non-stored) responses: no resilient task ---
         # The request owns this producer even without keep-alives. Keeping handler
         # iteration in one task lets cleanup finish outside the ASGI cancel scope.
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
             async for chunk in ephemeral_stream:
                 yield chunk

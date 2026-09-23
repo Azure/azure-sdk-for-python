@@ -302,6 +302,69 @@ class TestAsyncTerminalPersist:
             await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), 5)
 
     @pytest.mark.asyncio
+    async def test_rejected_admission_does_not_construct_handler(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        handler_called = False
+
+        def _handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+            nonlocal handler_called
+            handler_called = True
+
+            async def _events():
+                if False:
+                    yield None
+
+            return _events()
+
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_create_fn",
+            _handler,
+        )
+        await app._endpoint._runtime_state.begin_draining()  # pylint: disable=protected-access
+        client = _AsyncAsgiClient(app)
+
+        response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+        )
+
+        assert response.status_code == 200
+        assert handler_called is False
+
+    @pytest.mark.asyncio
+    async def test_cancelled_startup_discards_pending_record(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        startup_entered = asyncio.Event()
+        startup_release = asyncio.Event()
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        client = _AsyncAsgiClient(app)
+
+        async def _blocked_start(*_args: Any, **_kwargs: Any) -> None:
+            startup_entered.set()
+            await startup_release.wait()
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_start_resilient_background",
+            _blocked_start,
+        )
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+            )
+        )
+        try:
+            await asyncio.wait_for(startup_entered.wait(), 5)
+            post_task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await post_task
+            assert await app._endpoint._runtime_state.list_records() == []  # pylint: disable=protected-access
+        finally:
+            startup_release.set()
+            await asyncio.gather(post_task, return_exceptions=True)
+
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("background", [False, True])
     @pytest.mark.parametrize("empty_handler", [False, True])
     @pytest.mark.parametrize("cancel_delete", [False, True])
