@@ -15,7 +15,8 @@ from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
-from typing import Iterable, List, Optional, Union
+from typing import List, Optional, Sequence, Union
+from urllib.parse import urlsplit
 
 from typing_extensions import Literal
 
@@ -162,6 +163,47 @@ class ArtifactCache:
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     @staticmethod
+    def _get_organization_name(organization: str) -> str:
+        organization_name = r"[a-z0-9](?:[a-z0-9-]{0,48}[a-z0-9])?"
+        pattern = (
+            rf"https://(?:(?P<legacy>{organization_name})\.visualstudio\.com(?::443)?/?"
+            rf"|dev\.azure\.com(?::443)?/(?P<current>{organization_name})/?)"
+        )
+        match = (
+            re.fullmatch(pattern, organization, flags=re.IGNORECASE | re.ASCII)
+            if isinstance(organization, str)
+            else None
+        )
+        if match is None:
+            raise ValueError("Invalid artifact organization URL. Use an HTTPS Azure DevOps organization URL.")
+        return (match.group("legacy") or match.group("current")).lower()
+
+    @staticmethod
+    def _validate_tool_download_url(uri: object) -> str:
+        if (
+            not isinstance(uri, str)
+            or not uri
+            or any(ord(character) <= 32 or ord(character) == 127 for character in uri)
+            or "\\" in uri
+            or "#" in uri
+        ):
+            raise ValueError("Invalid artifact tool download URL.")
+        try:
+            parsed = urlsplit(uri)
+            valid = (
+                parsed.scheme == "https"
+                and bool(parsed.hostname)
+                and parsed.username is None
+                and parsed.password is None
+                and parsed.port in (None, 443)
+            )
+        except ValueError as error:
+            raise ValueError("Invalid artifact tool download URL.") from error
+        if not valid:
+            raise ValueError("Invalid artifact tool download URL.")
+        return uri
+
+    @staticmethod
     def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
         """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
 
@@ -282,7 +324,7 @@ class ArtifactCache:
 
     def _download_artifacts(
         self,
-        download_cmd: Iterable[str],
+        download_cmd: Sequence[str],
         organization: Optional[str],
         name: str,
         version: str,
@@ -292,7 +334,7 @@ class ArtifactCache:
         """Download artifacts with retry.
 
         :param download_cmd: The command used to download the artifact
-        :type download_cmd: Iterable[str]
+        :type download_cmd: Sequence[str]
         :param organization: The artifact organization
         :type organization: Optional[str]
         :param name: The package name
@@ -451,9 +493,12 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """
+        az_executable = shutil.which("az")
+        if az_executable is None:
+            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
         tempdir = tempfile.mkdtemp()  # nosec B306
         download_cmd = [
-            shutil.which("az"),
+            az_executable,
             "artifacts",
             "universal",
             "download",

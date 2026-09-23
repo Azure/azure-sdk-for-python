@@ -105,8 +105,12 @@ def test_tool_request_is_canonical_and_token_is_not_forwarded(
     assert pipeline.get.call_args_list[1].args == ("https://downloads.example.test/artifacttool.zip",)
     assert pipeline.get.call_args_list[1].kwargs == {"permit_redirects": False}
     assert os.environ[_OVERRIDE] == str(tool_path.resolve())
+<<<<<<< HEAD
     tool_name = "artifacttool.exe" if os.name == "nt" else "artifacttool"
     assert (tool_path / tool_name).is_file()
+=======
+    assert (tool_path / "artifacttool").is_file()
+>>>>>>> a345f27073 (Validate artifact tool download request destinations)
     artifact_cache._redirect_artifacts_tool_path(organization)
     assert pipeline.get.call_count == 2
     assert credential.call_count == 1
@@ -219,6 +223,7 @@ def test_rejected_archive_does_not_install_tool(artifact_cache, tool_request, tm
     assert artifact_cache._artifacts_tool_path is None
 
 
+<<<<<<< HEAD
 @pytest.mark.parametrize("layout", ["empty", "unrelated", "nested", "directory"])
 @pytest.mark.parametrize("existing_override", [None, "pre-existing-tool"])
 def test_archive_without_executable_does_not_install_tool(
@@ -255,6 +260,8 @@ def test_archive_without_executable_does_not_install_tool(
     assert artifact_cache._artifacts_tool_path is None
 
 
+=======
+>>>>>>> a345f27073 (Validate artifact tool download request destinations)
 def test_fallback_does_not_swallow_validation_errors(artifact_cache, tool_request, mocker):
     credential, _ = tool_request
     run = mocker.patch(f"{_MODULE}.subprocess.run", side_effect=AssertionError("Unexpected retry"))

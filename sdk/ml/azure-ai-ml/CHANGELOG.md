@@ -8,9 +8,13 @@
 ### Bugs Fixed
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
 - Fixed artifact cache reads failing on transient Windows checksum-sharing errors during initial validation.
 - Improved the missing Azure CLI error reported when initializing the artifact cache.
+=======
+- Fixed Azure DevOps artifact tool downloads to validate request URLs and avoid installing an override when a download fails.
+>>>>>>> a345f27073 (Validate artifact tool download request destinations)
 =======
 - Fixed Azure DevOps artifact tool downloads to validate request URLs and avoid installing an override when a download fails.
 >>>>>>> a345f27073 (Validate artifact tool download request destinations)
