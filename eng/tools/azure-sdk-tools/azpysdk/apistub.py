@@ -7,7 +7,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError, run
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, find_whl
+from ci_tools.functions import install_into_venv, find_whl, get_interpreter_compatible_tags, check_whl_against_tags
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
@@ -52,6 +52,23 @@ def _resolve_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]
 
     linux_whls = [w for w in whls if any(marker in w for marker in LINUX_WHEEL_TAG_MARKERS)]
     if linux_whls:
+        if len(linux_whls) > 1:
+            # More than one Linux wheel can legitimately exist for the same package/version, e.g.
+            # cibuildwheel producing separate CPython and PyPy manylinux wheels. Picking blindly
+            # (as an earlier version of this function did) can select a wheel that isn't
+            # installable on the invoking interpreter. Narrow to the one(s) that actually match
+            # this interpreter's tags, same as find_whl does for the single-Linux-wheel case.
+            compatible_tags = get_interpreter_compatible_tags()
+            interpreter_compatible = [w for w in linux_whls if check_whl_against_tags(w, compatible_tags)]
+            if interpreter_compatible:
+                linux_whls = interpreter_compatible
+            else:
+                logger.error(
+                    f"Multiple Linux wheels found for {pkg_name}=={pkg_version} in {whl_dir}, but none match "
+                    f"the invoking interpreter's tags: {linux_whls}"
+                )
+                return find_whl(whl_dir, pkg_name, pkg_version)
+
         logger.info(
             f"Multiple platform-specific wheels found for {pkg_name}=={pkg_version} in {whl_dir}; "
             f"selecting Linux wheel: {linux_whls[0]}"

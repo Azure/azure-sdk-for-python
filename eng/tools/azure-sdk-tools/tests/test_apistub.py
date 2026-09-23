@@ -174,6 +174,62 @@ class TestGetPackageWheelPath:
         assert result == os.path.join(prebuilt, "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl")
         mock_find_whl.assert_called_once_with(prebuilt, "azure-storage-extensions", "1.0.0")
 
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    @patch("azpysdk.apistub.get_interpreter_compatible_tags")
+    def test_prebuilt_dir_picks_interpreter_compatible_whl_among_multiple_linux_whls(
+        self, mock_compatible_tags, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """A build (e.g. cibuildwheel) can legitimately produce more than one
+        Linux/manylinux wheel for the same package/version, one per Python implementation (CPython
+        vs PyPy). Picking the first Linux match unconditionally can select a wheel that isn't
+        installable on the invoking (CPython) interpreter."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-0.2.0-cp310-abi3-manylinux_2_17_x86_64.whl",
+            "azure_storage_extensions-0.2.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "0.2.0"
+        # Simulate a CPython 3.10 invoking interpreter: only the cp310-abi3 wheel's tags appear
+        # among what this interpreter reports as compatible.
+        mock_compatible_tags.return_value = ["cp310-abi3-manylinux_2_17_x86_64", "cp310-cp310-manylinux_2_17_x86_64"]
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-0.2.0-cp310-abi3-manylinux_2_17_x86_64.whl")
+        mock_find_whl.assert_not_called()
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    @patch("azpysdk.apistub.get_interpreter_compatible_tags")
+    def test_prebuilt_dir_falls_back_to_find_whl_when_no_linux_whl_matches_interpreter(
+        self, mock_compatible_tags, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple Linux wheels are present but none match the invoking interpreter's tags,
+        fall back to find_whl instead of arbitrarily picking one."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl",
+            "azure_storage_extensions-0.2.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "0.2.0"
+        # None of the candidate wheels' tags match this interpreter.
+        mock_compatible_tags.return_value = ["cp310-abi3-manylinux_2_17_x86_64"]
+        mock_find_whl.return_value = "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl")
+        mock_find_whl.assert_called_once_with(prebuilt, "azure-storage-extensions", "0.2.0")
+
 
 # ── run() output directory logic ─────────────────────────────────────────
 
