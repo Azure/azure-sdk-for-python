@@ -2,7 +2,7 @@
 ../../core/azure-core
 ../../identity/azure-identity
 marshmallow>=3.5,<4.0.0
-marshmallow-jsonschema==0.10.0
+marshmallow-jsonschema==0.14.0
 mock
 pytest-cov
 pytest-forked
@@ -24,4 +24,4 @@ python-dotenv
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "CPython" and python_version < "3.13" and (sys_platform != "darwin" or platform_machine != "arm64")
 azureml-dataprep-rslex>=2.22.0; platform_python_implementation == "PyPy" and python_version < "3.10"
 pip
-setuptools==77.0.3
+setuptools==83.0.0
