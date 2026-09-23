@@ -113,12 +113,46 @@ sampling, checkpoint, and deletion methods accept that ID. Creation supports
 requires a LoRA configuration with a rank; use values supported by the selected
 model rather than assuming a client-side default.
 
+### Forward-only passes and session deletion
+
+Both capabilities are available through maintained convenience methods. In the
+table below, `session` is a `FineTuningSession` and `async_client` is an
+`azure.ai.finetuningsessions.aio.FineTuningSessionClient`.
+
+| Operation | Synchronous API | Asynchronous API |
+|---|---|---|
+| Forward-only pass | `session.forward(batch)` | `await async_client.forward(session_id, batch)` |
+| Delete a session | `session.delete()` | `await async_client.delete_session(session_id)` |
+
+Forward-only passes do not accumulate gradients. These forward methods split
+large batches into chunks, submit requests, and poll request IDs until the
+completed result is available. Alternatively,
+`await async_client.forward_async(session_id, batch)` returns an awaitable for
+the result; await that returned object to obtain the completed result.
+
+The delete methods stop the session heartbeat, send HTTP DELETE, and return
+`None`. They treat HTTP 404 as success, so deleting an already absent session is
+safe to repeat. The service handles cascading deletion of the session's models,
+checkpoints, and sampling sessions; the SDK does not wait for background storage
+cleanup. Deletion is distinct from `session.close()` or
+`await async_client.close_session(session_id)`, which unload the session.
+
 ## Generated operations versus convenience methods
 
 Use `FineTuningSession` or the async client's convenience methods for training,
 sampling, checkpoints, and session lifecycle operations, as in the tested Loom
-SDK. They submit HTTP 200 requests, poll the returned request identifier, and
-normalize results with the existing retries, chunking, heartbeat, and error handling.
+SDK. For request-ID-based operations, they submit HTTP 200 requests, poll the
+returned request identifier, and normalize results with the existing retries,
+chunking, heartbeat, and error handling. Deletion sends HTTP DELETE directly;
+it does not poll a request ID.
+
+The raw operation-group methods `client.sessions.delete()` and
+`client.training.forward()` are intentionally not generated in this preview.
+The convenience entry points above preserve the established preview API used
+by Loom and provide the lifecycle, chunking, and polling behavior described
+above. Their supported Python customization hooks are included during SDK
+regeneration; the REST specification still defines both operations. Adding raw
+operation-group entry points would be a separate additive API change.
 
 The older raw `begin_*` surface is retained through supported operation hooks,
 including its Azure LRO behavior; it is not a newly corrected request-ID poller. Likewise,

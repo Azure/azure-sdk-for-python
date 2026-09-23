@@ -16,10 +16,10 @@
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
     "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
-    "commit": "b3d1b8bcfaddba25fc07188672a4a4d5c80cc501",
+    "commit": "ff3fe7d6edc892aed8079760ba41a7289f64eab1",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "d5b09bbcae90a2de0aa861280471632ca7bf094edbb65c01f0e1f6ae60bd4159",
-    "client_sha256": "bba367bec721f5dad5229b80cdaaa57a83bd00205460cd0de8a72531fc3aecf1",
+    "source_fingerprint_sha256": "7fbd441d5867d6fa07d22615c2803fcfc0dbd88a81f9c0a75e970e7c7044d26d",
+    "client_sha256": "c5f3e01c29afe683c0651365aa15edf060d4f1cf62ad07816b792ff015162f49",
     "models_sha256": "51e81c378f4742dac9f12ff83d2dbcce3b29197ed0cde81431387a1d9466f93b",
     "config_sha256": "0bf14509b0ec1fe883b63783779249629ed90d68eeeee65f656ed70d0e157262",
     "remote_generation_blocker": null

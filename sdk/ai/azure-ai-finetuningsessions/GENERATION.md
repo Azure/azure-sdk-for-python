@@ -1,5 +1,19 @@
 # Reproducible preview SDK generation
 
+## Operation coverage documentation (2026-09-23)
+
+TypeSpec commit `ff3fe7d6edc892aed8079760ba41a7289f64eab1` expands only line
+comments explaining the intentional exclusion of raw generated session deletion
+and forward-only operations. The package README documents the existing sync
+and async convenience entry points, including chunking, request-ID polling,
+heartbeat shutdown, and deletion response handling. These maintained hooks are
+included during regeneration; both REST operations remain defined.
+
+The current source pin and source/client fingerprints include this comment-only
+change. Operation scopes, the generated API and metadata, runtime code, tests,
+generator pins, and compatibility expectations are unchanged. Adding raw
+operation-group methods would be a separate additive API change.
+
 ## Shared Foundry feature opt-in review (2026-09-23)
 
 The shared `FoundryFeaturesOptInKeys` union now omits the bare `string` variant
@@ -9,7 +23,7 @@ contract. This is a specific reviewed exception to the general extensible-union
 rule, not an automatic exemption for all input-only unions. The SDK-only Loom
 model projection and all route/client customizations remain unchanged.
 
-Validated inputs are pinned to TypeSpec `b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`:
+This review was validated at TypeSpec `b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`:
 
 - Full Foundry and fine-tuning Python entrypoints compile with warnings treated
   as errors; TypeSpec validation and the canonical formatting check pass.
@@ -23,11 +37,11 @@ Validated inputs are pinned to TypeSpec `b3d1b8bcfaddba25fc07188672a4a4d5c80cc50
   without diagnostics. All 501 existing Python 3.13 tests pass.
 - No runtime, API metadata, test, verifier, or comparison exception changed.
 
-The source pointer and provenance now pin the pushed TypeSpec review fix at
-`b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`. Its committed inputs match the
-validated source fingerprint; remote regeneration no longer requires local,
-uncommitted TypeSpec changes. The existing generation and test results above
-apply to these same inputs and the unchanged SDK runtime.
+The reviewed TypeSpec change was pushed at
+`b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`. The operation-coverage documentation
+above advances the current source pin without changing this reviewed contract
+or SDK runtime. The generation and test results in this section describe the
+feature opt-in review snapshot.
 
 References: [TypeSpec suppression directives](https://typespec.io/docs/language-basics/directives/)
 and [the extensible-union rule](https://azure.github.io/typespec-azure/docs/libraries/azure-core/rules/no-closed-literal-union/).
@@ -60,7 +74,7 @@ No test, verifier, or approved comparison exception was changed.
 
 The TypeSpec refactor was pushed at
 `05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`, with committed inputs matching the
-validated working-tree hashes. The shared feature opt-in review above advances
+validated working-tree hashes. The later reviews above advance
 the current source pin without changing this refactor. The starting commits
 above remain the comparison baselines.
 
@@ -290,10 +304,11 @@ cross-language SDK readiness.
 ## Current source pin and review validation
 
 [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
-`b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`, which contains the validated model
+`ff3fe7d6edc892aed8079760ba41a7289f64eab1`, which contains the validated model
 projection, route-deduplicated client customization, CI repairs, and closed
-agent-definition and shared Foundry feature opt-in unions. Its source
-fingerprint and remote-generation status are recorded separately
+agent-definition and shared Foundry feature opt-in unions. It also documents
+the maintained forward-only and deletion entry points. Its source fingerprint
+and remote-generation status are recorded separately
 in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
 independently reproducible. Two independent emissions verified these exact
