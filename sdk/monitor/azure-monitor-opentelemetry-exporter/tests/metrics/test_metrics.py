@@ -185,6 +185,61 @@ class TestAzureMetricExporter(unittest.TestCase):
             result = exporter.export(self._metrics_data)
             self.assertEqual(result, MetricExportResult.FAILURE)
 
+    def test_statsbeat_export_prints_success_status(self):
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+        cases = (
+            (ExportResult.SUCCESS, MetricExportResult.SUCCESS, "True"),
+            (ExportResult.FAILED_RETRYABLE, MetricExportResult.FAILURE, "False"),
+            (ExportResult.FAILED_NOT_RETRYABLE, MetricExportResult.FAILURE, "False"),
+        )
+
+        for transmit_result, expected_result, successful in cases:
+            with self.subTest(transmit_result=transmit_result):
+                with mock.patch.object(exporter, "_transmit", return_value=transmit_result), mock.patch.object(
+                    exporter, "_handle_transmit_from_storage"
+                ), mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._sdkstats_debug"
+                ) as debug:
+                    result = exporter.export(self._metrics_data)
+
+                self.assertEqual(result, expected_result)
+                debug.assert_any_call(
+                    f"exporter=statsbeat metric export successful={successful} result={transmit_result.name}"
+                )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._logger")
+    def test_statsbeat_export_prints_exception_status(self, logger_mock):
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+        with mock.patch.object(exporter, "_transmit", side_effect=RuntimeError), mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._sdkstats_debug"
+        ) as debug:
+            result = exporter.export(self._metrics_data)
+
+        self.assertEqual(result, MetricExportResult.FAILURE)
+        debug.assert_any_call("exporter=statsbeat metric export successful=False exception=RuntimeError")
+        logger_mock.exception.assert_called_once()
+
+    def test_statsbeat_empty_export_prints_success_status(self):
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._sdkstats_debug"
+        ) as debug:
+            result = exporter.export(None)
+
+        self.assertEqual(result, MetricExportResult.SUCCESS)
+        debug.assert_called_once_with(
+            "exporter=statsbeat metric export successful=True reason=no-metrics"
+        )
+
     def test_point_to_envelope_partA(self):
         exporter = self._exporter
         resource = Resource(

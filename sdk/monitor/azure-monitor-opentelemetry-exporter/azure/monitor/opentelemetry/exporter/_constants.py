@@ -154,8 +154,10 @@ _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME = "APPLICATIONINSIGHTS_STA
 _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL"
 _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME = "APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL"
 # pylint: disable=line-too-long
-_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
-_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+# _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
+# _DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/"
+_DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://tst-data.stats.monitor.azure.com/"
+_DEFAULT_EU_STATS_CONNECTION_STRING = "InstrumentationKey=7dc56bab-3c0c-4e9f-9ebb-d1acadee8d0f;IngestionEndpoint=https://tst-data.stats.monitor.azure.com/"
 _DEFAULT_STATS_SHORT_EXPORT_INTERVAL = 15 * 60  # 15 minutes in s
 _DEFAULT_STATS_LONG_EXPORT_INTERVAL = 24 * 60 * 60  # 24 hours in s
 _EU_ENDPOINTS = [

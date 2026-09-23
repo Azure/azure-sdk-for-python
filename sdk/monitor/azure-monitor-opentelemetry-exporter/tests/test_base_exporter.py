@@ -1090,6 +1090,62 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_called_once()
 
+    def test_statsbeat_transmission_206_prints_failure_details(self):
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+        track_response = TrackResponse(
+            items_received=2,
+            items_accepted=0,
+            errors=[
+                TelemetryErrorDetails(
+                    index=0,
+                    status_code=400,
+                    message="invalid metric value",
+                ),
+                TelemetryErrorDetails(
+                    index=1,
+                    status_code=429,
+                    message="rate limit\nexceeded",
+                ),
+            ],
+        )
+
+        with mock.patch.object(exporter.client, "track", return_value=track_response), mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._sdkstats_debug"
+        ) as debug:
+            result = exporter._transmit(self._envelopes_to_export * 2)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        final_message = next(
+            call.args[0]
+            for call in debug.call_args_list
+            if "send complete result=FAILED_NOT_RETRYABLE" in call.args[0]
+        )
+        self.assertIn("items_received=2 items_accepted=0", final_message)
+        self.assertIn("index=0 status=400 message=invalid metric value", final_message)
+        self.assertIn("index=1 status=429 message=rate limit exceeded", final_message)
+
+    def test_statsbeat_transmission_exception_prints_failure_details(self):
+        exporter = AzureMonitorMetricExporter(
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+
+        with mock.patch.object(exporter.client, "track", side_effect=ValueError("test")), mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._sdkstats_debug"
+        ) as debug:
+            result = exporter._transmit(self._envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        final_message = next(
+            call.args[0]
+            for call in debug.call_args_list
+            if "send complete result=FAILED_NOT_RETRYABLE" in call.args[0]
+        )
+        self.assertIn("failure_details=client-exception type=ValueError", final_message)
+
     def test_transmission_206_no_retry(self):
         exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()

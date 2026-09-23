@@ -16,10 +16,12 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_shutdown,  # Add this import
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _debug_connection_string_selection,
     _get_stats_connection_string,
     _get_stats_long_export_interval,
     _get_stats_short_export_interval,
     _get_connection_string_for_region_from_config,
+    _sdkstats_debug,
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
@@ -61,7 +63,11 @@ class StatsbeatConfig:
                 # Validate connection string
                 ConnectionStringParser(connection_string)
                 self.connection_string = connection_string
-            except Exception:  # pylint: disable=broad-except
+                _debug_connection_string_selection("provided-config", self.connection_string)
+            except Exception as ex:  # pylint: disable=broad-except
+                _sdkstats_debug(
+                    f"provided connection-string invalid exception={ex.__class__.__name__}; using fallback"
+                )
                 logger.error("Invalid connection string obtained from config. Reverting to default.")
                 self.connection_string = _get_stats_connection_string(endpoint)
         else:
@@ -73,15 +79,19 @@ class StatsbeatConfig:
         # Create configuration from an exporter instance
         # Validate required fields from exporter
         if not hasattr(exporter, "_instrumentation_key") or not exporter._instrumentation_key:
+            _sdkstats_debug("config creation skipped reason=missing-instrumentation-key")
             logger.warning("Exporter is missing a valid instrumentation key.")
             return None
         if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
+            _sdkstats_debug("config creation skipped reason=missing-customer-endpoint")
             logger.warning("Exporter is missing a valid endpoint.")
             return None
         if not hasattr(exporter, "_region") or not exporter._region:
+            _sdkstats_debug("config creation skipped reason=missing-region")
             logger.warning("Exporter is missing a valid region.")
             return None
 
+        _sdkstats_debug("config creation from exporter result=valid")
         return cls(
             endpoint=exporter._endpoint,
             region=exporter._region,
@@ -109,14 +119,18 @@ class StatsbeatConfig:
         :return: Updated StatsbeatConfig instance
         :rtype: StatsbeatConfig
         """
+        _sdkstats_debug(f"config update from OneSettings setting_count={len(config_dict)}")
         # Validate required fields
         if not base_config.instrumentation_key:
+            _sdkstats_debug("config update skipped reason=missing-instrumentation-key")
             logger.warning("Base configuration is missing a valid instrumentation key.")
             return None
         if not base_config.region:
+            _sdkstats_debug("config update skipped reason=missing-region")
             logger.warning("Base configuration is missing a valid region.")
             return None
         if not base_config.endpoint:
+            _sdkstats_debug("config update skipped reason=missing-customer-endpoint")
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
 
@@ -124,9 +138,11 @@ class StatsbeatConfig:
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
+            _debug_connection_string_selection("existing-config-fallback", connection_string)
 
         return cls(
-            endpoint=base_config.endpoint,
+            # endpoint=base_config.endpoint,
+            endpoint="https://tst-data.stats.monitor.azure.com/",
             region=base_config.region,
             instrumentation_key=base_config.instrumentation_key,
             # Preserve the customer's setting across reconfigures (used only for DISK_RETRY reporting).
@@ -220,20 +236,26 @@ class StatsbeatManager(metaclass=Singleton):
     def initialize(self, config: StatsbeatConfig) -> bool:  # pyright: ignore
         # Initialize statsbeat collection with thread safety.
         if not is_statsbeat_enabled():
+            _sdkstats_debug("manager initialize skipped reason=statsbeat-disabled")
             return False
 
         # Validate config before proceeding
         if not self._validate_config(config):
+            _sdkstats_debug("manager initialize skipped reason=invalid-config")
             return False
 
+        _debug_connection_string_selection("manager-initialize", config.connection_string)
         with self._lock:
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
+                    _sdkstats_debug("manager initialize no-op reason=config-unchanged")
                     return True
                 # If config is different, reconfigure
+                _sdkstats_debug("manager initialize action=reconfigure")
                 return self._reconfigure(config)
 
+            _sdkstats_debug("manager initialize action=create")
             return self._do_initialize(config)
 
     def _do_initialize(self, config: StatsbeatConfig) -> bool:
@@ -252,6 +274,9 @@ class StatsbeatManager(metaclass=Singleton):
                 disable_offline_storage=True,
                 is_sdkstats=True,
             )
+            _sdkstats_debug(
+                f"exporter initialized kind=statsbeat ingestion_endpoint={statsbeat_exporter._endpoint}"
+            )
 
             # Create metric reader
             reader = PeriodicExportingMetricReader(
@@ -269,6 +294,9 @@ class StatsbeatManager(metaclass=Singleton):
             # should have passed before a long interval collect
             short_interval = _get_stats_short_export_interval()
             long_interval = _get_stats_long_export_interval()
+            _sdkstats_debug(
+                f"metric pipeline initialized short_interval_s={short_interval} long_interval_s={long_interval}"
+            )
 
             long_interval_threshold = long_interval // short_interval
 
@@ -276,7 +304,8 @@ class StatsbeatManager(metaclass=Singleton):
             self._metrics = _StatsbeatMetrics(
                 self._meter_provider,
                 config.instrumentation_key,
-                config.endpoint,
+                # config.endpoint,
+                "https://tst-data.stats.monitor.azure.com/",
                 config.disable_offline_storage,
                 long_interval_threshold,
                 config.credential is not None,
@@ -289,9 +318,11 @@ class StatsbeatManager(metaclass=Singleton):
 
             self._config = config
             self._initialized = True
+            _sdkstats_debug("manager initialize result=success")
             return True
 
         except Exception as e:  # pylint: disable=broad-except
+            _sdkstats_debug(f"manager initialize result=failure exception={e.__class__.__name__}")
             # Log the error for debugging
             logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                 "Failed to initialize statsbeat: %s", e
@@ -306,8 +337,10 @@ class StatsbeatManager(metaclass=Singleton):
             if not self._initialized or meter_provider is None:
                 return
             try:
+                _sdkstats_debug("warmup flush action=force_flush")
                 meter_provider.force_flush()
             except Exception as e:  # pylint: disable=broad-except
+                _sdkstats_debug(f"warmup flush result=failure exception={e.__class__.__name__}")
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to force flush statsbeat after warmup: %s", e
                 )
@@ -355,19 +388,24 @@ class StatsbeatManager(metaclass=Singleton):
 
     def _reconfigure(self, new_config: StatsbeatConfig) -> bool:
         # Internal reconfiguration method.
+        _debug_connection_string_selection("manager-reconfigure", new_config.connection_string)
         # Shutdown current instance with timeout
         if self._meter_provider:
             try:
                 # Force flush before shutdown to ensure data is sent
+                _sdkstats_debug("reconfigure action=force_flush")
                 self._meter_provider.force_flush(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
+                _sdkstats_debug(f"reconfigure force_flush failed exception={e.__class__.__name__}")
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to flush meter provider during reconfiguration: %s", e
                 )
 
             try:
+                _sdkstats_debug("reconfigure action=shutdown-old-provider")
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
+                _sdkstats_debug(f"reconfigure shutdown failed exception={e.__class__.__name__}")
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to shutdown meter provider during reconfiguration: %s", e
                 )
@@ -380,10 +418,12 @@ class StatsbeatManager(metaclass=Singleton):
         success: bool = self._do_initialize(new_config)
 
         if not success:
+            _sdkstats_debug("manager reconfigure result=failure")
             # If reinitialization failed, mark as not initialized
             logger.error("Failed to reinitialize statsbeat with new configuration.")
             self._initialized = False
         else:
+            _sdkstats_debug("manager reconfigure result=success")
             logger.info("Statsbeat successfully reconfigured with new settings.")
 
         return success
@@ -399,7 +439,8 @@ class StatsbeatManager(metaclass=Singleton):
                 return None
             # Return a copy to prevent external modification
             return StatsbeatConfig(
-                endpoint=self._config.endpoint,
+                # endpoint=self._config.endpoint,
+                endpoint="https://tst-data.stats.monitor.azure.com/",
                 region=self._config.region,
                 instrumentation_key=self._config.instrumentation_key,
                 disable_offline_storage=self._config.disable_offline_storage,
