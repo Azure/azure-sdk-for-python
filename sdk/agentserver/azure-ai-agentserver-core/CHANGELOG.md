@@ -4,11 +4,23 @@
 
 ### Features Added
 
+- Added `flush_spans_async`, a non-blocking variant of `flush_spans` that
+  offloads the blocking `TracerProvider.force_flush` to a worker thread so it
+  does not stall the asyncio event loop, and `schedule_flush_spans`, a
+  fire-and-forget helper that flushes in the background without delaying the
+  caller. Background flushes are coalesced: at most one runs at a time and
+  concurrent requests collapse into a single follow-up flush, so the work does
+  not grow with the request rate. Async flushes drain queued or running exports
+  before propagating request cancellation.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
+  non-blocking span flush helpers.
 
 ## 2.2.0b1 (2026-09-03)
 
