@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from aiohttp import ClientConnectorError
@@ -48,6 +49,19 @@ async def test_connect_closes_session_on_unexpected_error():
 
     with patch("aiohttp.ClientSession", return_value=session):
         with pytest.raises(RuntimeError, match="unexpected"):
+            await transport.connect()
+
+    session.close.assert_awaited_once()
+    assert transport.session is None
+
+
+@pytest.mark.asyncio
+async def test_connect_closes_session_on_cancelled_error():
+    transport = WebSocketTransportAsync("example.servicebus.windows.net")
+    session = _session_with_connect_error(asyncio.CancelledError())
+
+    with patch("aiohttp.ClientSession", return_value=session):
+        with pytest.raises(asyncio.CancelledError):
             await transport.connect()
 
     session.close.assert_awaited_once()
