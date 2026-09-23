@@ -3225,8 +3225,18 @@ class _ResponseOrchestrator:
                 state.execution_task = asyncio.current_task()
                 start_record.execution_task = state.execution_task
                 state.bg_record = start_record
-                handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
                 try:
+                    try:
+                        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        logger.error(
+                            "Handler raised before response.created (response_id=%s)",
+                            ctx.response_id,
+                            exc_info=exc,
+                        )
+                        state.captured_error = exc
+                        await self._emit_standalone_error(ctx)
+                        return
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
                     if state.pending_terminal is not None:

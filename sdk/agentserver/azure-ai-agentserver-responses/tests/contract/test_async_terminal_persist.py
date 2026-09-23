@@ -365,6 +365,34 @@ class TestAsyncTerminalPersist:
             await asyncio.gather(post_task, return_exceptions=True)
 
     @pytest.mark.asyncio
+    async def test_synchronous_handler_failure_closes_stream_and_discards_pending(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        client = _AsyncAsgiClient(app)
+
+        def _failing_handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+            raise RuntimeError("Simulated synchronous handler failure")
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_create_fn",
+            _failing_handler,
+        )
+
+        response = await asyncio.wait_for(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+            ),
+            5,
+        )
+
+        assert response.status_code == 200
+        assert [event["type"] for event in _parse_sse_bytes(response.body)] == ["error"]
+        assert await app._endpoint._runtime_state.list_records() == []  # pylint: disable=protected-access
+
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("background", [False, True])
     @pytest.mark.parametrize("empty_handler", [False, True])
     @pytest.mark.parametrize("cancel_delete", [False, True])
