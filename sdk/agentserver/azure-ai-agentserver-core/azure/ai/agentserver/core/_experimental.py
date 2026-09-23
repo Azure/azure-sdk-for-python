@@ -58,7 +58,7 @@ def experimental(wrapped: type[T] | Callable[P, T]) -> type[T] | Callable[P, T]:
 
     if is_class(wrapped):
         return _add_class_docstring(wrapped)
-    if inspect.iscoroutinefunction(wrapped):
+    if inspect.iscoroutinefunction(wrapped) and inspect.isfunction(wrapped):
         return _add_async_function_docstring(wrapped)  # type: ignore[return-value]
     if inspect.isfunction(wrapped):
         return _add_function_docstring(wrapped)
