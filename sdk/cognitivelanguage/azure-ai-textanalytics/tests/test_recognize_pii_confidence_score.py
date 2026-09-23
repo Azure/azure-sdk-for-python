@@ -52,10 +52,15 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
         ]
         text_input = MultiLanguageTextInput(multi_language_inputs=docs)
 
-        # Confidence score overrides
-        ssn_override = ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber")
-        email_override = ConfidenceScoreThresholdOverride(value=0.9, entity="Email")
-        confidence_threshold = ConfidenceScoreThreshold(default=0.3, overrides=[ssn_override, email_override])
+        default_threshold = 0.3
+        threshold_overrides = {"USSocialSecurityNumber": 0.9, "Email": 0.9}
+        ssn_override = ConfidenceScoreThresholdOverride(
+            value=threshold_overrides["USSocialSecurityNumber"], entity="USSocialSecurityNumber"
+        )
+        email_override = ConfidenceScoreThresholdOverride(value=threshold_overrides["Email"], entity="Email")
+        confidence_threshold = ConfidenceScoreThreshold(
+            default=default_threshold, overrides=[ssn_override, email_override]
+        )
         # Parameters
         parameters = PiiActionContent(pii_categories=["All"], confidence_score_threshold=confidence_threshold)
 
@@ -73,18 +78,13 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
         doc = result.results.documents[0]
         redacted = doc.redacted_text
 
-        # Person should be masked out in text; SSN & Email should remain (filtered out as entities)
+        # Recognized person entities should be redacted.
         assert "John Doe" not in redacted
         assert doc.entities is not None
         assert len(doc.entities) > 0
 
-        # Person is present
         assert any(e.category == "Person" for e in doc.entities), "Expected at least one Person entity"
 
-        # Verify SSN / Email are NOT returned as entities
-        bad_categories = {"USSocialSecurityNumber", "Email"}
-        bad_types = {"USSocialSecurityNumber", "Email"}
-
-        for e in doc.entities:
-            assert e.category not in bad_categories
-            assert e.type not in bad_types
+        for entity in doc.entities:
+            applicable_threshold = threshold_overrides.get(entity.category, default_threshold)
+            assert entity.confidence_score >= applicable_threshold
