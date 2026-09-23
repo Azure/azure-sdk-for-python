@@ -36,3 +36,5 @@ extends:
       safeName: azureconfidentialledgercertificate
     - name: azure-mgmt-confidentialledger
       safeName: azuremgmtconfidentialledger
+    - name: azure-codetransparency
+      safeName: azurecodetransparency
