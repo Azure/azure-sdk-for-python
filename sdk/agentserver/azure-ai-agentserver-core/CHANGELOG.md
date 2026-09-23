@@ -19,6 +19,9 @@
 
 ### Other Changes
 
+- `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
+  non-blocking span flush helpers.
+
 ## 2.2.0b1 (2026-09-03)
 
 ### Features Added

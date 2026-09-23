@@ -47,7 +47,7 @@ def _context(provider, prefetched=None, *, conversation=None, previous="previous
     )
 
 
-async def _resolve(owner, provider, *, previous="previous", conversation=None, limit=100, platform=None):
+async def _resolve(owner, provider, *, previous="previous", conversation=None, limit=-1, platform=None):
     return await _resolve_history_item_ids(
         provider,
         previous,
@@ -385,7 +385,7 @@ async def test_all_persistence_callsites_use_exact_request_resolver(
             provider=provider,
             context=owner,
             response_id="response",
-            history_limit=100,
+            history_limit=options.default_fetch_history_count,
             initial_snapshot=snapshot,
         )
     elif path == "bg-terminal":
@@ -395,7 +395,7 @@ async def test_all_persistence_callsites_use_exact_request_resolver(
             provider=provider,
             context=owner,
             response_id="response",
-            history_limit=100,
+            history_limit=options.default_fetch_history_count,
             exit_for_recovery=False,
             provider_created=False,
             agent_reference={},

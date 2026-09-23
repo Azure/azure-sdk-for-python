@@ -12,6 +12,10 @@
 - Closed a graceful-shutdown admission race for stored streams and bounded
   DELETE waits when deferred terminal persistence is stalled.
 
+- Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
+  automatic truncation of conversation history. Positive limits remain supported.
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the
