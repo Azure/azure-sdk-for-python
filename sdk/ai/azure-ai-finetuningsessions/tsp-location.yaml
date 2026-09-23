@@ -1,7 +1,8 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
 # Validated Python-specific preview inputs, including loom-models.tsp.
 # Includes the validated decorator-only route-deduplication refactor.
-commit: 05c7c9af0f866ed349f9d7e0870eb7d2d849d1de
+# Includes the reviewed closure of the shared FoundryFeaturesOptInKeys union.
+commit: b3d1b8bcfaddba25fc07188672a4a4d5c80cc501
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

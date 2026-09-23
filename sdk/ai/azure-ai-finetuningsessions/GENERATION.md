@@ -1,5 +1,37 @@
 # Reproducible preview SDK generation
 
+## Shared Foundry feature opt-in review (2026-09-23)
+
+The shared `FoundryFeaturesOptInKeys` union now omits the bare `string` variant
+and retains all 13 named feature keys. API review requested a declaration-scoped
+`no-closed-literal-union` suppression, matching the agent-definition opt-in
+contract. This is a specific reviewed exception to the general extensible-union
+rule, not an automatic exemption for all input-only unions. The SDK-only Loom
+model projection and all route/client customizations remain unchanged.
+
+Validated inputs are pinned to TypeSpec `b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`:
+
+- Full Foundry and fine-tuning Python entrypoints compile with warnings treated
+  as errors; TypeSpec validation and the canonical formatting check pass.
+- The shared Java agents, Java projects, and Python/JavaScript projects client
+  entrypoints also compile with warnings treated as errors. Their language
+  packages were not regenerated or certified unchanged.
+- All four independently regenerated REST OpenAPI files are byte-identical to
+  the committed outputs, so no tracked OpenAPI update is needed.
+- The unchanged generation verifier matches all 21 generated inventory entries
+  and the complete customized runtime in two independent pinned emissions,
+  without diagnostics. All 501 existing Python 3.13 tests pass.
+- No runtime, API metadata, test, verifier, or comparison exception changed.
+
+The source pointer and provenance now pin the pushed TypeSpec review fix at
+`b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`. Its committed inputs match the
+validated source fingerprint; remote regeneration no longer requires local,
+uncommitted TypeSpec changes. The existing generation and test results above
+apply to these same inputs and the unchanged SDK runtime.
+
+References: [TypeSpec suppression directives](https://typespec.io/docs/language-basics/directives/)
+and [the extensible-union rule](https://azure.github.io/typespec-azure/docs/libraries/azure-core/rules/no-closed-literal-union/).
+
 ## Route-deduplication refactor (2026-09-23)
 
 The public TypeSpec client customization now reuses the service operations in
@@ -26,11 +58,11 @@ comparison (20 paired cases, 45 exported types, 76 model cases, 336 raw cases).
 The installed candidate wheel passes the same tests and compatibility checks.
 No test, verifier, or approved comparison exception was changed.
 
-The source pointer and provenance pin the pushed TypeSpec refactor at
-`05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`. The committed inputs match the
-validated working-tree hashes; remote regeneration no longer requires
-uncommitted TypeSpec changes. The starting commits above remain the comparison
-baselines.
+The TypeSpec refactor was pushed at
+`05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`, with committed inputs matching the
+validated working-tree hashes. The shared feature opt-in review above advances
+the current source pin without changing this refactor. The starting commits
+above remain the comparison baselines.
 
 ## Reviewed fixes after the parity baseline
 
@@ -258,14 +290,14 @@ cross-language SDK readiness.
 ## Current source pin and review validation
 
 [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
-`05c7c9af0f866ed349f9d7e0870eb7d2d849d1de`, which contains the validated model
+`b3d1b8bcfaddba25fc07188672a4a4d5c80cc501`, which contains the validated model
 projection, route-deduplicated client customization, CI repairs, and closed
-agent-definition opt-in union. The source
-fingerprint is recorded separately
+agent-definition and shared Foundry feature opt-in unions. Its source
+fingerprint and remote-generation status are recorded separately
 in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
-independently reproducible. The new source pointer and matching provenance have
-been verified against the pushed TypeSpec commit and two independent emissions.
+independently reproducible. Two independent emissions verified these exact
+inputs, and the source pin now names their pushed TypeSpec commit.
 
 The [agent opt-in review](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4073849886)
 removes the unrestricted `string` member from `AgentDefinitionOptInKeys` only.

@@ -16,9 +16,9 @@
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
     "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
-    "commit": "05c7c9af0f866ed349f9d7e0870eb7d2d849d1de",
+    "commit": "b3d1b8bcfaddba25fc07188672a4a4d5c80cc501",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "7c976b74b0f73dcecbebdcfb539f7306bf4295581c73f74a1daf1c98a4fc6779",
+    "source_fingerprint_sha256": "d5b09bbcae90a2de0aa861280471632ca7bf094edbb65c01f0e1f6ae60bd4159",
     "client_sha256": "bba367bec721f5dad5229b80cdaaa57a83bd00205460cd0de8a72531fc3aecf1",
     "models_sha256": "51e81c378f4742dac9f12ff83d2dbcce3b29197ed0cde81431387a1d9466f93b",
     "config_sha256": "0bf14509b0ec1fe883b63783779249629ed90d68eeeee65f656ed70d0e157262",
@@ -73,6 +73,17 @@
       "base_spec_commit": "2cb54f4534b1c262cdd5eb5dd60bf43c8ed76c74",
       "rest_delta": "Only AgentDefinitionOptInKeys changes from an open string union to the same declared literal values in all four OpenAPI outputs.",
       "fine_tuning_sdk_delta": "No generated API, metadata, or runtime changes; only source pin, provenance, and generation documentation updated."
+    },
+    "foundry_features_opt_in_review": {
+      "base_spec_commit": "05c7c9af0f866ed349f9d7e0870eb7d2d849d1de",
+      "base_sdk_commit": "1302cd4f3d429b6a30d3a59ec0ef949b155b7706",
+      "spec_commit": "b3d1b8bcfaddba25fc07188672a4a4d5c80cc501",
+      "uncommitted": false,
+      "named_feature_keys_preserved": 13,
+      "rest_openapi_files_byte_identical": 4,
+      "fine_tuning_sdk_delta": "No generated API, metadata, or runtime changes; two independent pinned emissions match all 21 generated entries and the complete customized runtime.",
+      "python_313_tests_passed": 501,
+      "new_loom_comparison_exceptions": 0
     },
     "route_deduplication": {
       "base_spec_commit": "a170cb1188d5fc706a6433a0c95a13caf30c72fe",
