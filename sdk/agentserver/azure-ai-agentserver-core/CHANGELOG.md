@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.0b2 (Unreleased)
+## 2.2.0b2 (2026-09-23)
 
 ### Features Added
 
@@ -11,7 +11,8 @@
   caller. Background flushes are coalesced: at most one runs at a time and
   concurrent requests collapse into a single follow-up flush, so the work does
   not grow with the request rate. Async flushes drain queued or running exports
-  before propagating request cancellation.
+  before propagating request cancellation. Both helpers are marked
+  `@experimental` while the API surface is validated in preview.
 
 ### Breaking Changes
 
