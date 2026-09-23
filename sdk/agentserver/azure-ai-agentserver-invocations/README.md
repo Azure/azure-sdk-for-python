@@ -304,7 +304,7 @@ app.run()
 
 The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
 
-[starlette-ws]: https://www.starlette.io/websockets/
+[starlette-ws]: https://starlette.dev/websockets/
 
 ## Typed Voice Live Bridge submodule (preview)
 
