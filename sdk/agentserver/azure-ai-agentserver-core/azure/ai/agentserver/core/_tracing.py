@@ -604,14 +604,22 @@ _bg_flush_pending: bool = False
 _bg_flush_pending_timeout_millis: int = 0
 
 
-async def _flush_spans_async_impl(timeout_millis: int = 5000) -> None:
-    """Implementation for :func:`flush_spans_async`, undecorated for internal reuse.
+@experimental
+async def flush_spans_async(timeout_millis: int = 5000) -> None:
+    """Non-blocking variant of :func:`flush_spans`.
 
-    Kept separate from the public, ``@experimental``-decorated
-    :func:`flush_spans_async` so that :func:`_coalesced_flush` (invoked from
-    :func:`schedule_flush_spans`) does not trigger a second, distinctly
-    cached experimental warning on top of the one already emitted for
-    ``schedule_flush_spans`` itself.
+    ``TracerProvider.force_flush`` blocks the calling thread until the exporter
+    drains its queue.  On the request hot path -- which runs inside an ``async``
+    handler -- that blocks the asyncio event loop, serialising every concurrent
+    request behind a single export (head-of-line blocking).  Offload the
+    blocking call to the default thread pool so the event loop stays free to
+    send the response and service other requests concurrently.
+
+    Cancellation is deferred until the flush completes, including when the
+    worker is still queued. Exporter failures are handled by :func:`flush_spans`.
+
+    No-op when the OTel SDK is not installed or the provider does not support
+    ``force_flush``.
 
     :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
         Defaults to 5000 (5 seconds).
@@ -634,30 +642,6 @@ async def _flush_spans_async_impl(timeout_millis: int = 5000) -> None:
         raise cancellation
 
 
-@experimental
-async def flush_spans_async(timeout_millis: int = 5000) -> None:
-    """Non-blocking variant of :func:`flush_spans`.
-
-    ``TracerProvider.force_flush`` blocks the calling thread until the exporter
-    drains its queue.  On the request hot path -- which runs inside an ``async``
-    handler -- that blocks the asyncio event loop, serialising every concurrent
-    request behind a single export (head-of-line blocking).  Offload the
-    blocking call to the default thread pool so the event loop stays free to
-    send the response and service other requests concurrently.
-
-    Cancellation is deferred until the flush completes, including when the
-    worker is still queued. Exporter failures are handled by :func:`flush_spans`.
-
-    No-op when the OTel SDK is not installed or the provider does not support
-    ``force_flush``.
-
-    :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
-        Defaults to 5000 (5 seconds).
-    :type timeout_millis: int
-    """
-    await _flush_spans_async_impl(timeout_millis)
-
-
 async def _coalesced_flush(timeout_millis: int) -> None:
     """Run a background flush, then one more pass per pending coalesced request.
 
@@ -673,12 +657,12 @@ async def _coalesced_flush(timeout_millis: int) -> None:
     :type timeout_millis: int
     """
     global _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
-    await _flush_spans_async_impl(timeout_millis)
+    await flush_spans_async(timeout_millis)
     while _bg_flush_pending:
         _bg_flush_pending = False
         pending_timeout_millis = _bg_flush_pending_timeout_millis
         _bg_flush_pending_timeout_millis = 0
-        await _flush_spans_async_impl(pending_timeout_millis)
+        await flush_spans_async(pending_timeout_millis)
 
 
 @experimental

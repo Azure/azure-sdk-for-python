@@ -30,6 +30,7 @@ _EXPERIMENTAL_WRAPPED_INIT_ATTR = "_azure_agentserver_experimental_wrapped_init"
 
 _warning_cache: set[str] = set()
 _experimental_init_active: ContextVar[bool] = ContextVar("experimental_init_active", default=False)
+_experimental_call_active: ContextVar[bool] = ContextVar("experimental_call_active", default=False)
 module_logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
@@ -132,9 +133,16 @@ def _add_async_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
             f"Method {func.__module__}.{func.__qualname__}: "
             f"{EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
         )
-        if not _should_skip_warning() and not _is_warning_cached(cache_key):
+        active = _experimental_call_active.get()
+        if not active and not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
-        return await func(*args, **kwargs)  # type: ignore[misc]
+        if active:
+            return await func(*args, **kwargs)  # type: ignore[misc]
+        token = _experimental_call_active.set(True)
+        try:
+            return await func(*args, **kwargs)  # type: ignore[misc]
+        finally:
+            _experimental_call_active.reset(token)
 
     return wrapped
 
@@ -153,9 +161,16 @@ def _add_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
             f"Method {func.__module__}.{func.__qualname__}: "
             f"{EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
         )
-        if not _should_skip_warning() and not _is_warning_cached(cache_key):
+        active = _experimental_call_active.get()
+        if not active and not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
-        return func(*args, **kwargs)
+        if active:
+            return func(*args, **kwargs)
+        token = _experimental_call_active.set(True)
+        try:
+            return func(*args, **kwargs)
+        finally:
+            _experimental_call_active.reset(token)
 
     return wrapped
 
