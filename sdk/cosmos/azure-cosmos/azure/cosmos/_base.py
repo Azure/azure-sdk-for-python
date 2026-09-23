@@ -555,10 +555,7 @@ def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """
     # For named based, the resource link is the full name
     if IsNameBased(resource_link):
-        # URL-encode the signing link the same way GetPathFromLink encodes the
-        # request path, so the auth signature matches the resource link the
-        # server reconstructs from the URL (e.g. container ids with spaces).
-        return urllib_quote(TrimBeginningAndEndingSlashes(resource_link), safe="/")
+        return TrimBeginningAndEndingSlashes(resource_link)
 
     # Padding the resource link with leading and trailing slashes if not already
     if resource_link[-1] != "/":

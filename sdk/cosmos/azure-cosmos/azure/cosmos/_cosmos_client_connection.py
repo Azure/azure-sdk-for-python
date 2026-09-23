@@ -2356,6 +2356,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Specified url to perform background operation to delete all items by partition key
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        # The partitionkeydelete sub-resource is the one path where the service
+        # validates the auth signature against the URL-encoded resource link
+        # (see https://github.com/Azure/azure-sdk-for-python/issues/47503).
+        # Standard resource URLs are validated against the unencoded link, so
+        # the encoding must stay scoped to this operation.
+        collection_id = urllib.parse.quote(collection_id, safe="/")
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id,
                                   http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options)
         request_params = RequestObject(http_constants.ResourceType.PartitionKey,
