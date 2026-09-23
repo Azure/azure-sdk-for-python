@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Unit tests for ID generation behavior."""
+# cspell:ignore progo
 
 from __future__ import annotations
 
@@ -102,6 +103,8 @@ def test_id_generator__new_item_id_dispatches_by_wire_type() -> None:
     item_compaction = {"type": "compaction"}
     item_memory_search = {"type": "memory_search_call"}
     item_tool_search = {"type": "tool_search_call"}
+    item_program = {"type": "program"}
+    item_program_output = {"type": "program_output"}
     item_workflow_action = {"type": "workflow_action"}
     item_reference = {"type": "item_reference", "id": "item_1"}
 
@@ -109,6 +112,8 @@ def test_id_generator__new_item_id_dispatches_by_wire_type() -> None:
     compaction_id = IdGenerator.new_item_id(item_compaction)
     memory_search_id = IdGenerator.new_item_id(item_memory_search)
     tool_search_id = IdGenerator.new_item_id(item_tool_search)
+    program_id = IdGenerator.new_item_id(item_program)
+    program_output_id = IdGenerator.new_item_id(item_program_output)
     workflow_action_id = IdGenerator.new_item_id(item_workflow_action)
 
     assert generated_id is not None
@@ -119,6 +124,10 @@ def test_id_generator__new_item_id_dispatches_by_wire_type() -> None:
     assert memory_search_id.startswith("mem_")
     assert tool_search_id is not None
     assert tool_search_id.startswith("ts_")
+    assert program_id is not None
+    assert program_id.startswith("prog_")
+    assert program_output_id is not None
+    assert program_output_id.startswith("progo_")
     assert workflow_action_id is not None
     assert workflow_action_id.startswith("wfa_")
     assert IdGenerator.new_item_id(item_reference) is None

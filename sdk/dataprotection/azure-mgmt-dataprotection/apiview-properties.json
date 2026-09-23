@@ -59,6 +59,7 @@
         "azure.mgmt.dataprotection.models.CmkKeyVaultProperties": "Microsoft.DataProtection.CmkKeyVaultProperties",
         "azure.mgmt.dataprotection.models.CopyOption": "Microsoft.DataProtection.CopyOption",
         "azure.mgmt.dataprotection.models.CopyOnExpiryOption": "Microsoft.DataProtection.CopyOnExpiryOption",
+        "azure.mgmt.dataprotection.models.CostManagementSettings": "Microsoft.DataProtection.CostManagementSettings",
         "azure.mgmt.dataprotection.models.CrossRegionRestoreDetails": "Microsoft.DataProtection.CrossRegionRestoreDetails",
         "azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest": "Microsoft.DataProtection.CrossRegionRestoreJobRequest",
         "azure.mgmt.dataprotection.models.CrossRegionRestoreJobsRequest": "Microsoft.DataProtection.CrossRegionRestoreJobsRequest",
@@ -92,11 +93,13 @@
         "azure.mgmt.dataprotection.models.FeatureValidationResponseBase": "Microsoft.DataProtection.FeatureValidationResponseBase",
         "azure.mgmt.dataprotection.models.FeatureValidationResponse": "Microsoft.DataProtection.FeatureValidationResponse",
         "azure.mgmt.dataprotection.models.FetchSecondaryRPsRequestParameters": "Microsoft.DataProtection.FetchSecondaryRPsRequestParameters",
+        "azure.mgmt.dataprotection.models.GenericBackupDatasourceParameters": "Microsoft.DataProtection.GenericBackupDatasourceParameters",
+        "azure.mgmt.dataprotection.models.ItemLevelRestoreCriteria": "Microsoft.DataProtection.ItemLevelRestoreCriteria",
+        "azure.mgmt.dataprotection.models.GenericRestoreDatasourceCriteria": "Microsoft.DataProtection.GenericRestoreDatasourceCriteria",
         "azure.mgmt.dataprotection.models.IdentityDetails": "Microsoft.DataProtection.IdentityDetails",
         "azure.mgmt.dataprotection.models.ImmediateCopyOption": "Microsoft.DataProtection.ImmediateCopyOption",
         "azure.mgmt.dataprotection.models.ImmutabilitySettings": "Microsoft.DataProtection.ImmutabilitySettings",
         "azure.mgmt.dataprotection.models.InnerError": "Microsoft.DataProtection.InnerError",
-        "azure.mgmt.dataprotection.models.ItemLevelRestoreCriteria": "Microsoft.DataProtection.ItemLevelRestoreCriteria",
         "azure.mgmt.dataprotection.models.RestoreTargetInfoBase": "Microsoft.DataProtection.RestoreTargetInfoBase",
         "azure.mgmt.dataprotection.models.ItemLevelRestoreTargetInfo": "Microsoft.DataProtection.ItemLevelRestoreTargetInfo",
         "azure.mgmt.dataprotection.models.ItemPathBasedRestoreCriteria": "Microsoft.DataProtection.ItemPathBasedRestoreCriteria",
@@ -129,6 +132,7 @@
         "azure.mgmt.dataprotection.models.ResourceGuardProxyBase": "Microsoft.DataProtection.ResourceGuardProxyBase",
         "azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource": "Microsoft.DataProtection.ResourceGuardProxyBaseResource",
         "azure.mgmt.dataprotection.models.ResourceGuardResource": "Microsoft.DataProtection.ResourceGuardResource",
+        "azure.mgmt.dataprotection.models.ResourceListSelectionCriteria": "Microsoft.DataProtection.ResourceListSelectionCriteria",
         "azure.mgmt.dataprotection.models.ResourceMoveDetails": "Microsoft.DataProtection.ResourceMoveDetails",
         "azure.mgmt.dataprotection.models.RestorableTimeRange": "Microsoft.DataProtection.RestorableTimeRange",
         "azure.mgmt.dataprotection.models.RestoreFilesTargetInfo": "Microsoft.DataProtection.RestoreFilesTargetInfo",
@@ -181,6 +185,7 @@
         "azure.mgmt.dataprotection.models.SourceDataStoreType": "Microsoft.DataProtection.SourceDataStoreType",
         "azure.mgmt.dataprotection.models.SyncType": "Microsoft.DataProtection.SyncType",
         "azure.mgmt.dataprotection.models.AlertsState": "Microsoft.DataProtection.AlertsState",
+        "azure.mgmt.dataprotection.models.GranularityLevel": "Microsoft.DataProtection.GranularityLevel",
         "azure.mgmt.dataprotection.models.ProvisioningState": "Microsoft.DataProtection.ProvisioningState",
         "azure.mgmt.dataprotection.models.ResourceMoveState": "Microsoft.DataProtection.ResourceMoveState",
         "azure.mgmt.dataprotection.models.SoftDeleteState": "Microsoft.DataProtection.SoftDeleteState",
@@ -354,5 +359,5 @@
         "azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list",
         "azure.mgmt.dataprotection.aio.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list"
     },
-    "CrossLanguageVersion": "6dd052749fec"
+    "CrossLanguageVersion": "cb99eef1dbd7"
 }

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+
 from copy import deepcopy
 from typing import TYPE_CHECKING, Iterator, cast
 
@@ -87,7 +88,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         :rtype: ResponseFunctionCallArgumentsDeltaEvent
         """
         return cast(
-            response_models.ResponseFunctionCallArgumentsDeltaEvent,
+            "response_models.ResponseFunctionCallArgumentsDeltaEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.function_call_arguments.delta",
@@ -108,7 +109,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         self._final_arguments = arguments
         return cast(
-            response_models.ResponseFunctionCallArgumentsDoneEvent,
+            "response_models.ResponseFunctionCallArgumentsDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.function_call_arguments.done",

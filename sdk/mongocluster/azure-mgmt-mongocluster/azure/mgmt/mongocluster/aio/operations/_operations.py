@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -67,7 +67,6 @@ from .._configuration import MongoClusterMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -280,13 +279,13 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview", "2026-06-01"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01", "2026-06-15-preview"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: Union[_models.MongoCluster, JSON, IO[bytes]],
+        resource: Union[_models.MongoCluster, _types.MongoCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -390,7 +389,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: JSON,
+        resource: _types.MongoCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -404,7 +403,7 @@ class MongoClustersOperations:
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.MongoCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -456,13 +455,13 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview", "2026-06-01"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01", "2026-06-15-preview"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: Union[_models.MongoCluster, JSON, IO[bytes]],
+        resource: Union[_models.MongoCluster, _types.MongoCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
         """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
@@ -473,9 +472,10 @@ class MongoClustersOperations:
         :type resource_group_name: str
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
-        :param resource: Resource create parameters. Is one of the following types: MongoCluster, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.MongoCluster or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a MongoCluster type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.MongoCluster or
+         ~azure.mgmt.mongocluster.types.MongoCluster or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoCluster. The MongoCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -537,7 +537,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoClusterUpdate, _types.MongoClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -642,7 +642,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: JSON,
+        properties: _types.MongoClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -656,7 +656,7 @@ class MongoClustersOperations:
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.mongocluster.types.MongoClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -700,7 +700,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoClusterUpdate, _types.MongoClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoCluster]:
         """Updates an existing mongo cluster. The request body can contain one to many of the properties
@@ -711,9 +711,10 @@ class MongoClustersOperations:
         :type resource_group_name: str
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         MongoClusterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a MongoClusterUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate or
+         ~azure.mgmt.mongocluster.types.MongoClusterUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoCluster. The MongoCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1181,14 +1182,19 @@ class MongoClustersOperations:
 
     @overload
     async def check_name_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1219,15 +1225,19 @@ class MongoClustersOperations:
 
     @distributed_trace_async
     async def check_name_availability(
-        self, location: str, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The CheckAvailability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
@@ -1320,13 +1330,14 @@ class MongoClustersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _promote_initial(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        body: Union[_models.PromoteReplicaRequest, _types.PromoteReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1428,7 +1439,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: JSON,
+        body: _types.PromoteReplicaRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1441,7 +1452,7 @@ class MongoClustersOperations:
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.mongocluster.types.PromoteReplicaRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1499,13 +1510,14 @@ class MongoClustersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_promote(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        body: Union[_models.PromoteReplicaRequest, _types.PromoteReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Promotes a replica mongo cluster to a primary role.
@@ -1515,9 +1527,10 @@ class MongoClustersOperations:
         :type resource_group_name: str
         :param mongo_cluster_name: The name of the mongo cluster. Required.
         :type mongo_cluster_name: str
-        :param body: The content of the action request. Is one of the following types:
-         PromoteReplicaRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a PromoteReplicaRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest or
+         ~azure.mgmt.mongocluster.types.PromoteReplicaRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1667,7 +1680,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.FirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1776,7 +1789,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: JSON,
+        resource: _types.FirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1791,7 +1804,7 @@ class FirewallRulesOperations:
         :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.FirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1838,7 +1851,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.FirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FirewallRule]:
         """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
@@ -1850,9 +1863,10 @@ class FirewallRulesOperations:
         :type mongo_cluster_name: str
         :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
         :type firewall_rule_name: str
-        :param resource: Resource create parameters. Is one of the following types: FirewallRule, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.FirewallRule or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FirewallRule type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.FirewallRule or
+         ~azure.mgmt.mongocluster.types.FirewallRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FirewallRule. The FirewallRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
@@ -2340,7 +2354,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2451,7 +2465,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.PrivateEndpointConnectionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2467,7 +2481,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2517,7 +2531,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnectionResource]:
         """Create a Private endpoint connection.
@@ -2530,10 +2544,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         PrivateEndpointConnectionResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a PrivateEndpointConnectionResource type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource or
+         ~azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnectionResource. The
          PrivateEndpointConnectionResource is compatible with MutableMapping
         :rtype:
@@ -2883,6 +2897,7 @@ class ReplicasOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list_by_parent(
@@ -3024,6 +3039,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def get(
@@ -3120,6 +3136,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -3127,7 +3144,7 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: Union[_models.User, JSON, IO[bytes]],
+        resource: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3235,7 +3252,7 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: JSON,
+        resource: _types.User,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3250,7 +3267,7 @@ class UsersOperations:
         :param user_name: The name of the mongo cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3312,6 +3329,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -3319,7 +3337,7 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: Union[_models.User, JSON, IO[bytes]],
+        resource: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
         """Creates a new user or updates an existing user on a mongo cluster.
@@ -3331,9 +3349,10 @@ class UsersOperations:
         :type mongo_cluster_name: str
         :param user_name: The name of the mongo cluster user. Required.
         :type user_name: str
-        :param resource: Resource create parameters. Is one of the following types: User, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.User or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a User type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.User or ~azure.mgmt.mongocluster.types.User or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns User. The User is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.mongocluster.models.User]
@@ -3410,6 +3429,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def _delete_initial(
@@ -3493,6 +3513,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     async def begin_delete(
@@ -3575,6 +3596,7 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
         ],
     )
     def list_by_mongo_cluster(

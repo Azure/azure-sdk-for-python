@@ -96,7 +96,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "gpuProfile": {
                                     "driver": "str",
                                     "driverType": "str",
-                                    "nvidia": {"managementMode": "str", "migStrategy": "str"},
+                                    "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
                                 },
                                 "hostGroupID": "str",
                                 "kubeletConfig": {
@@ -106,6 +106,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                     "cpuCfsQuota": bool,
                                     "cpuCfsQuotaPeriod": "str",
                                     "cpuManagerPolicy": "str",
+                                    "evictionMaxPodGracePeriodInSeconds": 0,
                                     "failSwapOn": bool,
                                     "hardEvictionThreshold": {
                                         "memoryAvailable": "str",
@@ -117,6 +118,16 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                     "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                                     "podMaxPids": 0,
                                     "seccompDefault": "str",
+                                    "softEvictionGracePeriod": {
+                                        "memoryAvailable": "str",
+                                        "nodeFsAvailable": "str",
+                                        "nodeFsInodesFree": "str",
+                                    },
+                                    "softEvictionThreshold": {
+                                        "memoryAvailable": "str",
+                                        "nodeFsAvailable": "str",
+                                        "nodeFsInodesFree": "str",
+                                    },
                                     "topologyManagerPolicy": "str",
                                 },
                                 "kubeletDiskType": "str",
@@ -191,10 +202,20 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "networkProfile": {
                                     "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                                     "applicationSecurityGroups": ["str"],
+                                    "dranet": {"mode": "str"},
                                     "nodePublicIPPrefixIDs": ["str"],
                                     "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                                     "secondaryNetworkInterfaces": [
-                                        {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                                        {
+                                            "enableAcceleratedNetworking": bool,
+                                            "publicIPAddressConfiguration": {
+                                                "publicIPAddressVersion": "str",
+                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "publicIPPrefixID": "str",
+                                            },
+                                            "type": "str",
+                                            "vnetSubnetId": "str",
+                                        }
                                     ],
                                 },
                                 "nodeImageVersion": "str",
@@ -298,7 +319,6 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             },
                             "containerInsights": {
                                 "containerNetworkLogs": "str",
-                                "disableCustomMetrics": bool,
                                 "disablePrometheusMetricsScraping": bool,
                                 "enabled": bool,
                                 "logAnalyticsWorkspaceResourceId": "str",
@@ -323,6 +343,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "dnsPrefix": "str",
                         "enableFIPS": bool,
                         "enableNamespaceResources": bool,
+                        "enableNodeHardening": bool,
                         "enableRBAC": bool,
                         "fqdn": "str",
                         "fqdnSubdomain": "str",
@@ -408,6 +429,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "managedOutboundIPProfile": {"count": 0, "countIPv6": 0},
                                 "outboundIPPrefixes": {"publicIPPrefixes": ["str"]},
                                 "outboundIPs": {"publicIPs": ["str"]},
+                                "sku": "str",
                             },
                             "networkDataplane": "str",
                             "networkMode": "str",

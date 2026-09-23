@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/AIManagers_Get.json
+# x-ms-original-file: 2026-09-02-preview/AIManagers_Get.json
 if __name__ == "__main__":
     main()

@@ -94,6 +94,17 @@ def main():
                 "notifications": [{"notificationType": "SubscriptionNotification", "skipNotifications": "Disabled"}],
                 "openApiConfiguration": {"validation": {"allowNoncompliantCollectionResponse": True}},
                 "policyExecutionType": "BypassPolicies",
+                "privateEndpointConfiguration": {
+                    "groupConnectivityInformation": [
+                        {
+                            "groupId": "Sql",
+                            "redirectMapId": "test",
+                            "requiredMembers": ["Sql_Member"],
+                            "requiredZoneNames": ["Zone"],
+                        }
+                    ],
+                    "minApiVersion": "2022-10-01",
+                },
                 "regionality": "Regional",
                 "requestHeaderOptions": {"optOutHeaders": "SystemDataCreatedByLastModifiedBy"},
                 "resourceCache": {"enableResourceCache": True, "resourceCacheExpirationTimespan": "PT2M"},
@@ -129,6 +140,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/DirectResourceTypeRegistrations_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/DirectResourceTypeRegistrations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

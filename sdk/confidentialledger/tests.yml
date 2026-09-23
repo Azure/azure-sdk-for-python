@@ -12,3 +12,11 @@ extends:
         TEST_MODE: "RunLiveNoRecord" # use when allowing preparers to create the rgs for you
         AZURE_TEST_RUN_LIVE: "true" # use when utilizing the New-TestResources Script
         AZURE_SKIP_LIVE_RECORDING: 'True'
+      # Confidential Ledger test resources are expensive to provision: every matrix leg stands
+      # up a dedicated three-replica CCF cluster on confidential (SNP) hardware, which takes
+      # roughly eight minutes. Run one representative leg on the nightly pipeline and keep the
+      # full platform matrix on tests-weekly.
+      ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
+        MatrixFilters:
+          - PythonVersion=3.10
+          - CoverageArg=^$

@@ -4,6 +4,9 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
 ## 12.27.0b1 (2026-08-10)
 
 ### Features Added

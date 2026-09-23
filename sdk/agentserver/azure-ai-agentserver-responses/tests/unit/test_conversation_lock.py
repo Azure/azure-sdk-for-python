@@ -11,6 +11,7 @@ Tests:
 from __future__ import annotations
 
 import asyncio
+from types import SimpleNamespace
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -38,7 +39,9 @@ def _resilient_input_from(ctx_params):
         request=CreateResponse(body),
         response_id=ctx_params["response_id"],
         disposition="re-invoke",
+        agent_reference=ctx_params.get("agent_reference"),
         agent_session_id=ctx_params.get("session_id"),
+        agent_session_guid=ctx_params.get("session_guid"),
     )
 
 
@@ -89,6 +92,7 @@ class TestConflictHandling:
             )
         assert excinfo.value.current_status == "in_progress"
 
+
     @pytest.mark.asyncio
     async def test_conflict_error_contains_current_status(self) -> None:
         """Under the spec-022 narrow surface, ``TaskConflictError`` carries
@@ -131,6 +135,168 @@ class TestConflictHandling:
             await orch.start_resilient(
                 record=record, resilient_input=_resilient_input_from(ctx_params), refs=_empty_refs()
             )
+
+
+class TestSessionGuidTaskMigration:
+    """Session GUID rollout reuses active pre-rollout multi-turn tasks."""
+
+    @staticmethod
+    def _orchestrator() -> ResilientResponseOrchestrator:
+        options = MagicMock(
+            steerable_conversations=True,
+            max_pending=10,
+            default_fetch_history_count=100,
+        )
+        orchestrator = ResilientResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=options,
+        )
+        primitive = MagicMock()
+        primitive._get = AsyncMock()
+        primitive.start = AsyncMock(return_value=SimpleNamespace(is_queued=False))
+        orchestrator._multi_turn_task_fn = primitive
+        return orchestrator
+
+    @staticmethod
+    def _input() -> Any:
+        return _resilient_input_from(
+            {
+                "response_id": "resp-turn-2",
+                "agent_reference": {"name": "agent", "version": "1"},
+                "session_id": "same-public-name",
+                "session_guid": "1" * 32,
+                "conversation_id": "conv-1",
+                "previous_response_id": "resp-turn-1",
+            }
+        )
+
+    @pytest.mark.asyncio
+    async def test_legacy_suspended_task_is_reused(self) -> None:
+        from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
+
+        orchestrator = self._orchestrator()
+        orchestrator._multi_turn_task_fn._get.side_effect = [
+            None,
+            SimpleNamespace(status="suspended"),
+        ]
+        resilient_input = self._input()
+        expected_legacy_id = derive_task_id(
+            conversation_id="conv-1",
+            previous_response_id="resp-turn-1",
+            response_id="resp-turn-2",
+            agent_name="agent",
+            session_id="same-public-name",
+            steerable=True,
+        )
+
+        await orchestrator.start_resilient(
+            record=MagicMock(),
+            resilient_input=resilient_input,
+            refs=_empty_refs(),
+        )
+
+        assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_legacy_id
+
+    @pytest.mark.asyncio
+    async def test_no_existing_task_uses_guid_scoped_id(self) -> None:
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
+
+        orchestrator = self._orchestrator()
+        orchestrator._multi_turn_task_fn._get.side_effect = [None, None]
+        resilient_input = self._input()
+        expected_guid_id = derive_task_id(
+            conversation_id="conv-1",
+            previous_response_id="resp-turn-1",
+            response_id="resp-turn-2",
+            agent_name="agent",
+            session_id="same-public-name",
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
+            steerable=True,
+        )
+
+        await orchestrator.start_resilient(
+            record=MagicMock(),
+            resilient_input=resilient_input,
+            refs=_empty_refs(),
+        )
+
+        assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_guid_id
+
+    @pytest.mark.asyncio
+    async def test_existing_guid_task_skips_legacy_lookup(self) -> None:
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
+
+        orchestrator = self._orchestrator()
+        orchestrator._multi_turn_task_fn._get.side_effect = [
+            SimpleNamespace(status="suspended"),
+            SimpleNamespace(status="suspended"),
+        ]
+        resilient_input = self._input()
+        expected_guid_id = derive_task_id(
+            conversation_id="conv-1",
+            previous_response_id="resp-turn-1",
+            response_id="resp-turn-2",
+            agent_name="agent",
+            session_id="same-public-name",
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
+            steerable=True,
+        )
+
+        await orchestrator.start_resilient(
+            record=MagicMock(),
+            resilient_input=resilient_input,
+            refs=_empty_refs(),
+        )
+
+        assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_guid_id
+        orchestrator._multi_turn_task_fn._get.assert_awaited_once_with(expected_guid_id)
+
+    @pytest.mark.asyncio
+    async def test_completed_legacy_task_is_not_reused(self) -> None:
+        from azure.ai.agentserver.responses.hosting._task_id import (
+            derive_task_id,
+            derive_task_session_scope,
+        )
+
+        orchestrator = self._orchestrator()
+        orchestrator._multi_turn_task_fn._get.side_effect = [
+            None,
+            SimpleNamespace(status="completed"),
+        ]
+        resilient_input = self._input()
+        expected_guid_id = derive_task_id(
+            conversation_id="conv-1",
+            previous_response_id="resp-turn-1",
+            response_id="resp-turn-2",
+            agent_name="agent",
+            session_id="same-public-name",
+            task_session_id=derive_task_session_scope(
+                session_id="same-public-name",
+                session_guid="1" * 32,
+            ),
+            steerable=True,
+        )
+
+        await orchestrator.start_resilient(
+            record=MagicMock(),
+            resilient_input=resilient_input,
+            refs=_empty_refs(),
+        )
+
+        assert orchestrator._multi_turn_task_fn.start.await_args.kwargs["task_id"] == expected_guid_id
 
 
 class TestNonBackgroundRecovery:

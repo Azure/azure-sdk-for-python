@@ -1,10 +1,21 @@
 # Release History
 
-## 1.35.0 (unreleased)
+## 1.36.0 (unreleased)
 
 ### Features Added
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
+- Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
+- Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.
+
+## 1.35.0 (2026-09-08)
+
+### Features Added
+
+### Bugs Fixed
+- Fixed slow iteration over `MLClient.jobs.list()` (issue [#48415](https://github.com/Azure/azure-sdk-for-python/issues/48415)) caused by `_append_tid_to_studio_url` calling `credential.get_token()` on every job to extract the tenant id from a JWT. The tenant id is now decoded once per `JobOperations` instance and reused for subsequent jobs.
+- Simplified schedule validation errors so invalid local job paths report the relevant file error instead of errors from every supported job schema.
 - Fixed internal pipeline `Command` node dropping node-level interactive `services` (SSH, JupyterLab, TensorBoard, VS Code, etc.) during serialization, which prevented interactive endpoints from being created for Singularity jobs. The `services` are now serialized into the pipeline REST request and round-tripped on deserialization, matching the public `Command` node behavior.
 - Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.
 - Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.

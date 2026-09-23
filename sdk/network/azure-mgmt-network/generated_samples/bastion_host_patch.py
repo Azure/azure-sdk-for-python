@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,14 +31,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.bastion_hosts.begin_update_tags(
+    response = client.bastion_hosts.begin_update(
         resource_group_name="rg1",
         bastion_host_name="bastionhosttenant",
-        parameters={"tags": {"tag1": "value1", "tag2": "value2"}},
+        parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/bastionidentity": {}
+                },
+            },
+            "tags": {"tag1": "value1", "tag2": "value2"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/BastionHostPatch.json
+# x-ms-original-file: 2026-01-01/BastionHostPatch.json
 if __name__ == "__main__":
     main()

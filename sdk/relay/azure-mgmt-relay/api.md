@@ -1336,6 +1336,7 @@ namespace azure.mgmt.relay.models
     class azure.mgmt.relay.models.RelayNamespaceProperties(_Model):
         created_at: Optional[datetime]
         metric_id: Optional[str]
+        minimum_tls_version: Optional[Union[str, TlsVersion]]
         private_endpoint_connections: Optional[list[PrivateEndpointConnection]]
         provisioning_state: Optional[str]
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
@@ -1347,6 +1348,7 @@ namespace azure.mgmt.relay.models
         def __init__(
                 self, 
                 *, 
+                minimum_tls_version: Optional[Union[str, TlsVersion]] = ..., 
                 private_endpoint_connections: Optional[list[PrivateEndpointConnection]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ...
             ) -> None: ...
@@ -1461,6 +1463,11 @@ namespace azure.mgmt.relay.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.relay.models.TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENUM_1_2 = "1.2"
+        ENUM_1_3 = "1.3"
 
 
     class azure.mgmt.relay.models.TrackedResource(Resource):
@@ -2319,7 +2326,7 @@ namespace azure.mgmt.relay.types
         location: str
         name: str
         properties: AuthorizationRuleProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2351,7 +2358,7 @@ namespace azure.mgmt.relay.types
         location: str
         name: str
         properties: HybridConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2361,18 +2368,18 @@ namespace azure.mgmt.relay.types
         key "requiresClientAuthorization": bool
         key "updatedAt": str
         key "userMetadata": str
-        created_at: str
-        listener_count: int
-        requires_client_authorization: bool
-        updated_at: str
-        user_metadata: str
+        createdAt: str
+        listenerCount: int
+        requiresClientAuthorization: bool
+        updatedAt: str
+        userMetadata: str
 
 
     class azure.mgmt.relay.types.NWRuleSetIpRules(TypedDict, total=False):
         key "action": Union[str, NetworkRuleIPAction]
         key "ipMask": str
         action: Union[str, NetworkRuleIPAction]
-        ip_mask: str
+        ipMask: str
 
 
     class azure.mgmt.relay.types.NetworkRuleSet(ProxyResource):
@@ -2384,7 +2391,7 @@ namespace azure.mgmt.relay.types
         id: str
         name: str
         properties: NetworkRuleSetProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2392,11 +2399,10 @@ namespace azure.mgmt.relay.types
         key "defaultAction": Union[str, DefaultAction]
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "trustedServiceAccessEnabled": bool
-        default_action: Union[str, DefaultAction]
+        defaultAction: Union[str, DefaultAction]
         ipRules: list[NWRuleSetIpRules]
-        ip_rules: list[NWRuleSetIpRules]
-        public_network_access: Union[str, PublicNetworkAccess]
-        trusted_service_access_enabled: bool
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        trustedServiceAccessEnabled: bool
 
 
     class azure.mgmt.relay.types.PrivateEndpoint(TypedDict, total=False):
@@ -2415,7 +2421,7 @@ namespace azure.mgmt.relay.types
         location: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2423,9 +2429,9 @@ namespace azure.mgmt.relay.types
         key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('ConnectionState', module='types')
         key "provisioningState": Union[str, EndPointProvisioningState]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: ConnectionState
-        provisioning_state: Union[str, EndPointProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: ConnectionState
+        provisioningState: Union[str, EndPointProvisioningState]
 
 
     class azure.mgmt.relay.types.ProxyResource(Resource):
@@ -2435,7 +2441,7 @@ namespace azure.mgmt.relay.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2443,7 +2449,7 @@ namespace azure.mgmt.relay.types
         key "key": str
         key "keyType": Required[Union[str, KeyType]]
         key: str
-        key_type: Union[str, KeyType]
+        keyType: Union[str, KeyType]
 
 
     class azure.mgmt.relay.types.RelayNamespace(TrackedResource):
@@ -2459,7 +2465,7 @@ namespace azure.mgmt.relay.types
         name: str
         properties: RelayNamespaceProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2467,20 +2473,21 @@ namespace azure.mgmt.relay.types
     class azure.mgmt.relay.types.RelayNamespaceProperties(TypedDict, total=False):
         key "createdAt": str
         key "metricId": str
+        key "minimumTlsVersion": Union[str, TlsVersion]
         key "provisioningState": str
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "serviceBusEndpoint": str
         key "status": str
         key "updatedAt": str
-        created_at: str
-        metric_id: str
+        createdAt: str
+        metricId: str
+        minimumTlsVersion: Union[str, TlsVersion]
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccess]
-        service_bus_endpoint: str
+        provisioningState: str
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        serviceBusEndpoint: str
         status: str
-        updated_at: str
+        updatedAt: str
 
 
     class azure.mgmt.relay.types.RelayUpdateParameters(ResourceNamespacePatch):
@@ -2494,7 +2501,7 @@ namespace azure.mgmt.relay.types
         name: str
         properties: RelayNamespaceProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2506,7 +2513,7 @@ namespace azure.mgmt.relay.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2517,7 +2524,7 @@ namespace azure.mgmt.relay.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2536,12 +2543,12 @@ namespace azure.mgmt.relay.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.relay.types.TrackedResource(Resource):
@@ -2553,7 +2560,7 @@ namespace azure.mgmt.relay.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2569,7 +2576,7 @@ namespace azure.mgmt.relay.types
         location: str
         name: str
         properties: WcfRelayProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2582,14 +2589,14 @@ namespace azure.mgmt.relay.types
         key "requiresTransportSecurity": bool
         key "updatedAt": str
         key "userMetadata": str
-        created_at: str
-        is_dynamic: bool
-        listener_count: int
-        relay_type: Union[str, Relaytype]
-        requires_client_authorization: bool
-        requires_transport_security: bool
-        updated_at: str
-        user_metadata: str
+        createdAt: str
+        isDynamic: bool
+        listenerCount: int
+        relayType: Union[str, Relaytype]
+        requiresClientAuthorization: bool
+        requiresTransportSecurity: bool
+        updatedAt: str
+        userMetadata: str
 
 
 ```

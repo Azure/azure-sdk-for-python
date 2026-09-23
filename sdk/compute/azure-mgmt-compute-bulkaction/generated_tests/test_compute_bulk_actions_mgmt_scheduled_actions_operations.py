@@ -50,8 +50,7 @@ class TestComputeBulkActionsMgmtScheduledActionsOperations(AzureMgmtRecordedTest
                         "timeZone": "str",
                         "deadlineType": "str",
                         "executionParameters": {
-                            "optimizationPreference": "str",
-                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
+                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0}
                         },
                         "requestedDaysOfTheMonth": [0],
                         "requestedMonths": ["str"],
@@ -96,8 +95,7 @@ class TestComputeBulkActionsMgmtScheduledActionsOperations(AzureMgmtRecordedTest
                     "schedule": {
                         "deadlineType": "str",
                         "executionParameters": {
-                            "optimizationPreference": "str",
-                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
+                            "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0}
                         },
                         "requestedDaysOfTheMonth": [0],
                         "requestedMonths": ["str"],

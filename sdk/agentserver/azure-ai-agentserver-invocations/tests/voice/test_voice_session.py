@@ -66,7 +66,13 @@ async def test_session_has_only_transport_and_send_gate_and_serializes_writes():
     websocket = _BlockingWebSocket()
     session = Session._create(websocket)  # pylint: disable=protected-access
     assert not hasattr(session, "__dict__")
-    assert set(Session.__slots__) == {"_websocket", "_send_lock", "_terminal"}
+    assert set(Session.__slots__) == {
+        "_connection_context",
+        "_send_lock",
+        "_terminal",
+        "_termination",
+        "_websocket",
+    }
 
     first = asyncio.create_task(session.send(SessionReady()))
     await websocket.entered.wait()

@@ -8,9 +8,11 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any, cast
 
-from ..models import OutputItem
+
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
+from .. import models as _public_models
+
 
 
 def _json_safe_agent_reference(value: Any) -> dict[str, Any]:
@@ -48,6 +50,7 @@ class _RuntimeState:
     def __init__(self) -> None:
         """Initialize the runtime state with empty record and deletion sets."""
         self._records: dict[str, ResponseExecution] = {}
+        self._pending_records: dict[str, ResponseExecution] = {}
         self._deleted_response_ids: set[str] = set()
         self._lock = asyncio.Lock()
 
@@ -60,8 +63,31 @@ class _RuntimeState:
         :rtype: None
         """
         async with self._lock:
+            self._pending_records.pop(record.response_id, None)
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
+
+    async def add_pending(self, record: ResponseExecution) -> None:
+        """Track an unpublished execution for shutdown without exposing it via GET.
+
+        :param record: The execution awaiting its first response event.
+        :type record: ResponseExecution
+        :return: None
+        :rtype: None
+        """
+        async with self._lock:
+            self._pending_records[record.response_id] = record
+
+    async def discard_pending(self, response_id: str) -> None:
+        """Discard shutdown bookkeeping for an execution that never published.
+
+        :param response_id: The pending execution's response ID.
+        :type response_id: str
+        :return: None
+        :rtype: None
+        """
+        async with self._lock:
+            self._pending_records.pop(response_id, None)
 
     async def get(self, response_id: str) -> ResponseExecution | None:
         """Look up an execution record by response ID.
@@ -160,7 +186,7 @@ class _RuntimeState:
             return True  # No enforcement when created without a key
         return stored_key == request_user_id_key
 
-    async def get_input_items(self, response_id: str) -> list[OutputItem]:
+    async def get_input_items(self, response_id: str) -> list[_public_models.OutputItem]:
         """Retrieve the full input item chain for a response, including ancestors.
 
         Walks the ``previous_response_id`` chain to build the complete ordered
@@ -183,7 +209,7 @@ class _RuntimeState:
             if not record.visible_via_get:
                 raise KeyError(f"response '{response_id}' not found")
 
-            history: list[OutputItem] = []
+            history: list[_public_models.OutputItem] = []
             cursor = record.previous_response_id
             visited: set[str] = set()
 
@@ -198,13 +224,13 @@ class _RuntimeState:
             return [*history, *deepcopy(record.input_items)]
 
     async def list_records(self) -> list[ResponseExecution]:
-        """Return a snapshot list of all execution records in the store.
+        """Return published and pending execution records for shutdown draining.
 
-        :return: List of all current execution records.
+        :return: List of all current execution records, including unpublished work.
         :rtype: list[ResponseExecution]
         """
         async with self._lock:
-            return list(self._records.values())
+            return list(self._records.values()) + list(self._pending_records.values())
 
     @staticmethod
     def to_snapshot(execution: ResponseExecution) -> dict[str, Any]:

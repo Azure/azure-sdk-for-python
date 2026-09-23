@@ -53,6 +53,7 @@ class TestContainerServiceFleetMgmtAutoUpgradeProfilesOperationsAsync(AzureMgmtR
                                 "message": "str",
                                 "target": "str",
                             },
+                            "lastTriggerMessage": "str",
                             "lastTriggerStatus": "str",
                             "lastTriggerUpgradeVersions": ["str"],
                             "lastTriggeredAt": "2020-02-20 00:00:00",

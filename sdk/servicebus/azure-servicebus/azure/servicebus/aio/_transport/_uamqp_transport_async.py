@@ -22,6 +22,7 @@ try:
     from .._async_utils import get_running_loop
     from ..._common.tracing import get_receive_links, receive_trace_context_manager
     from ..._common.constants import ServiceBusReceiveMode
+    from ..._common.utils import get_attempt_timeout
 
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
@@ -240,7 +241,7 @@ try:
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
-                await receiver._open()
+                await receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter_async()
                 uamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
@@ -292,7 +293,16 @@ try:
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
+            *,
+            await_outcome: bool = False,
+            outcome_timeout: Optional[float] = None,
         ) -> None:
+            if await_outcome:
+                # uamqp cannot observe outcomes; fail loudly rather than return a false success.
+                raise NotImplementedError(
+                    "Awaiting the settlement outcome is not supported by the uamqp transport. "
+                    "Use the default pyamqp transport to enable it."
+                )
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(

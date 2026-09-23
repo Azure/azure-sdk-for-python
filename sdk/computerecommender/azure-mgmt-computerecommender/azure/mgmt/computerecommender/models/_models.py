@@ -417,6 +417,70 @@ class SkuMixPlacementBase(ProxyResource):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
+class SkuMixPlacementCapacityLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Capacity availability for a single requested (VM size, zone) combination, independent of the
+    recommended placement.
+
+    :ivar name: VM size name (e.g. Standard_D2s_v3). Required.
+    :vartype name: str
+    :ivar priority: Priority of this entry (Regular or Spot). Required. Known values are: "Regular"
+     and "Spot".
+    :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
+    :ivar zone: Logical zone (e.g. "1", "2", "3"). Omitted or empty for regional requests.
+    :vartype zone: str
+    :ivar limit: Upper bound, in VMs, on how much capacity can be allocated for this (VM size,
+     zone): the smallest of the requested capacity, the available capacity, and the available quota,
+     but never below the capacity already recommended for the slot. 0 when nothing is available.
+     Required.
+    :vartype limit: int
+    :ivar reason: Why the limit is below the requested capacity, or None when the request is fully
+     available. Required. Known values are: "None", "InsufficientCapacity", "InsufficientQuota", and
+     "SkuNotAvailable".
+    :vartype reason: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimitReason
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """VM size name (e.g. Standard_D2s_v3). Required."""
+    priority: Union[str, "_models.SkuMixPlacementPriority"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Priority of this entry (Regular or Spot). Required. Known values are: \"Regular\" and \"Spot\"."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Logical zone (e.g. \"1\", \"2\", \"3\"). Omitted or empty for regional requests."""
+    limit: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Upper bound, in VMs, on how much capacity can be allocated for this (VM size, zone): the
+     smallest of the requested capacity, the available capacity, and the available quota, but never
+     below the capacity already recommended for the slot. 0 when nothing is available. Required."""
+    reason: Union[str, "_models.SkuMixPlacementCapacityLimitReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the limit is below the requested capacity, or None when the request is fully available.
+     Required. Known values are: \"None\", \"InsufficientCapacity\", \"InsufficientQuota\", and
+     \"SkuNotAvailable\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        priority: Union[str, "_models.SkuMixPlacementPriority"],
+        limit: int,
+        reason: Union[str, "_models.SkuMixPlacementCapacityLimitReason"],
+        zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capacity-related properties for the placement request.
 
@@ -430,8 +494,7 @@ class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keywo
     :ivar priority: The priority of the VMs to allocate. Required. Known values are: "Regular" and
      "Spot".
     :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
-    :ivar spot_priority_profile: Required when priority is Spot. Contains spot-specific
-     configuration.
+    :ivar spot_priority_profile: Contains spot-specific configuration.
     :vartype spot_priority_profile:
      ~azure.mgmt.computerecommender.models.SkuMixPlacementSpotPriorityProfile
     :ivar allocation_strategy: The allocation strategy for determining the optimal SKU split. Known
@@ -459,7 +522,7 @@ class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keywo
     spot_priority_profile: Optional["_models.SkuMixPlacementSpotPriorityProfile"] = rest_field(
         name="spotPriorityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required when priority is Spot. Contains spot-specific configuration."""
+    """Contains spot-specific configuration."""
     allocation_strategy: Optional[Union[str, "_models.SkuMixPlacementAllocationStrategy"]] = rest_field(
         name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -502,8 +565,6 @@ class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keywo
 class SkuMixPlacementDeploymentChoice(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single deployment choice recommendation.
 
-    :ivar id: Unique identifier for this deployment choice. Required.
-    :vartype id: str
     :ivar score: Placement score from 0 to 9 (inclusive). Higher is better. Required.
     :vartype score: int
     :ivar sku_split: The list of VM size / zone allocations that make up this deployment choice.
@@ -511,8 +572,6 @@ class SkuMixPlacementDeploymentChoice(_Model):  # pylint: disable=docstring-keyw
     :vartype sku_split: list[~azure.mgmt.computerecommender.models.SkuMixPlacementItem]
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for this deployment choice. Required."""
     score: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Placement score from 0 to 9 (inclusive). Higher is better. Required."""
     sku_split: list["_models.SkuMixPlacementItem"] = rest_field(
@@ -524,7 +583,6 @@ class SkuMixPlacementDeploymentChoice(_Model):  # pylint: disable=docstring-keyw
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
         score: int,
         sku_split: list["_models.SkuMixPlacementItem"],
     ) -> None: ...
@@ -580,8 +638,6 @@ class SkuMixPlacementItem(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
     :ivar capacity: Lower range of recommended allocation capacity. Required.
     :vartype capacity: int
-    :ivar capacity_max: Upper range of recommended allocation capacity.
-    :vartype capacity_max: int
     :ivar zone: Logical zone (e.g. "1", "2", "3"). Omitted or empty for regional deployments.
     :vartype zone: str
     """
@@ -595,10 +651,6 @@ class SkuMixPlacementItem(_Model):  # pylint: disable=docstring-keyword-should-m
      \"Spot\"."""
     capacity: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Lower range of recommended allocation capacity. Required."""
-    capacity_max: Optional[int] = rest_field(
-        name="capacityMax", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Upper range of recommended allocation capacity."""
     zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Logical zone (e.g. \"1\", \"2\", \"3\"). Omitted or empty for regional deployments."""
 
@@ -609,7 +661,6 @@ class SkuMixPlacementItem(_Model):  # pylint: disable=docstring-keyword-should-m
         name: str,
         priority: Union[str, "_models.SkuMixPlacementPriority"],
         capacity: int,
-        capacity_max: Optional[int] = None,
         zone: Optional[str] = None,
     ) -> None: ...
 
@@ -704,6 +755,10 @@ class SkuMixPlacementRequest(_Model):  # pylint: disable=docstring-keyword-shoul
 class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sku Mix Placement API response.
 
+    :ivar id: Unique identifier for this placement response, including responses that contain no
+     placement choices. Replaces the per-choice id that was present on placementChoices in earlier
+     API versions. Required.
+    :vartype id: str
     :ivar placement_choices: List of placement choice recommendations. Required.
     :vartype placement_choices:
      list[~azure.mgmt.computerecommender.models.SkuMixPlacementDeploymentChoice]
@@ -715,8 +770,18 @@ class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-shou
      "InsufficientQuota".
     :vartype partial_fulfillment_reason: str or
      ~azure.mgmt.computerecommender.models.SkuMixPlacementPartialFulfillmentReason
+    :ivar capacity_limits: Capacity availability for each requested (VM size, zone) combination,
+     independent of the recommended placement. An entry is present for every requested combination,
+     including those excluded by capacity or quota. Only returned for requests that describe
+     instances by VM sizes.
+    :vartype capacity_limits:
+     list[~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimit]
     """
 
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for this placement response, including responses that contain no placement
+     choices. Replaces the per-choice id that was present on placementChoices in earlier API
+     versions. Required."""
     placement_choices: list["_models.SkuMixPlacementDeploymentChoice"] = rest_field(
         name="placementChoices", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -731,14 +796,22 @@ class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-shou
     )
     """Indicates whether the response is a complete or partial fulfillment. Required. Known values
      are: \"None\", \"InsufficientCapacity\", and \"InsufficientQuota\"."""
+    capacity_limits: Optional[list["_models.SkuMixPlacementCapacityLimit"]] = rest_field(
+        name="capacityLimits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capacity availability for each requested (VM size, zone) combination, independent of the
+     recommended placement. An entry is present for every requested combination, including those
+     excluded by capacity or quota. Only returned for requests that describe instances by VM sizes."""
 
     @overload
     def __init__(
         self,
         *,
+        id: str,  # pylint: disable=redefined-builtin
         placement_choices: list["_models.SkuMixPlacementDeploymentChoice"],
         partial_fulfillment_reason: Union[str, "_models.SkuMixPlacementPartialFulfillmentReason"],
         valid_until: Optional[datetime.datetime] = None,
+        capacity_limits: Optional[list["_models.SkuMixPlacementCapacityLimit"]] = None,
     ) -> None: ...
 
     @overload
@@ -753,7 +826,7 @@ class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class SkuMixPlacementSpotPriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Spot priority configuration. Required when priority is Spot.
+    """Spot priority configuration.
 
     :ivar max_price_per_vm: Maximum price per VM the customer is willing to pay. Default: -1 (no
      price restriction).

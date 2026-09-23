@@ -5,20 +5,27 @@ namespace azure.mgmt.cosmosdb
         cassandra_clusters: CassandraClustersOperations
         cassandra_data_centers: CassandraDataCentersOperations
         cassandra_resources: CassandraResourcesOperations
+        chaos_fault: ChaosFaultOperations
         collection: CollectionOperations
         collection_partition: CollectionPartitionOperations
         collection_partition_region: CollectionPartitionRegionOperations
         collection_region: CollectionRegionOperations
+        copy_jobs: CopyJobsOperations
+        data_transfer_jobs: DataTransferJobsOperations
         database: DatabaseOperations
         database_account_region: DatabaseAccountRegionOperations
         database_accounts: DatabaseAccountsOperations
         fleet: FleetOperations
+        fleet_analytics: FleetAnalyticsOperations
         fleetspace: FleetspaceOperations
         fleetspace_account: FleetspaceAccountOperations
+        garnet_clusters: GarnetClustersOperations
+        graph_resources: GraphResourcesOperations
         gremlin_resources: GremlinResourcesOperations
         locations: LocationsOperations
         mongo_db_resources: MongoDBResourcesOperations
         mongo_mi_resources: MongoMIResourcesOperations
+        network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
         notebook_workspaces: NotebookWorkspacesOperations
         operations: Operations
         partition_key_range_id: PartitionKeyRangeIdOperations
@@ -41,8 +48,15 @@ namespace azure.mgmt.cosmosdb
         restorable_table_resources: RestorableTableResourcesOperations
         restorable_tables: RestorableTablesOperations
         service: ServiceOperations
+        soft_deleted_database_accounts: SoftDeletedDatabaseAccountsOperations
+        soft_deleted_sql_containers: SoftDeletedSqlContainersOperations
+        soft_deleted_sql_databases: SoftDeletedSqlDatabasesOperations
         sql_resources: SqlResourcesOperations
         table_resources: TableResourcesOperations
+        throughput_pool: ThroughputPoolOperations
+        throughput_pool_account: ThroughputPoolAccountOperations
+        throughput_pool_accounts: ThroughputPoolAccountsOperations
+        throughput_pools: ThroughputPoolsOperations
 
         def __init__(
                 self, 
@@ -73,20 +87,27 @@ namespace azure.mgmt.cosmosdb.aio
         cassandra_clusters: CassandraClustersOperations
         cassandra_data_centers: CassandraDataCentersOperations
         cassandra_resources: CassandraResourcesOperations
+        chaos_fault: ChaosFaultOperations
         collection: CollectionOperations
         collection_partition: CollectionPartitionOperations
         collection_partition_region: CollectionPartitionRegionOperations
         collection_region: CollectionRegionOperations
+        copy_jobs: CopyJobsOperations
+        data_transfer_jobs: DataTransferJobsOperations
         database: DatabaseOperations
         database_account_region: DatabaseAccountRegionOperations
         database_accounts: DatabaseAccountsOperations
         fleet: FleetOperations
+        fleet_analytics: FleetAnalyticsOperations
         fleetspace: FleetspaceOperations
         fleetspace_account: FleetspaceAccountOperations
+        garnet_clusters: GarnetClustersOperations
+        graph_resources: GraphResourcesOperations
         gremlin_resources: GremlinResourcesOperations
         locations: LocationsOperations
         mongo_db_resources: MongoDBResourcesOperations
         mongo_mi_resources: MongoMIResourcesOperations
+        network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
         notebook_workspaces: NotebookWorkspacesOperations
         operations: Operations
         partition_key_range_id: PartitionKeyRangeIdOperations
@@ -109,8 +130,15 @@ namespace azure.mgmt.cosmosdb.aio
         restorable_table_resources: RestorableTableResourcesOperations
         restorable_tables: RestorableTablesOperations
         service: ServiceOperations
+        soft_deleted_database_accounts: SoftDeletedDatabaseAccountsOperations
+        soft_deleted_sql_containers: SoftDeletedSqlContainersOperations
+        soft_deleted_sql_databases: SoftDeletedSqlDatabasesOperations
         sql_resources: SqlResourcesOperations
         table_resources: TableResourcesOperations
+        throughput_pool: ThroughputPoolOperations
+        throughput_pool_account: ThroughputPoolAccountOperations
+        throughput_pool_accounts: ThroughputPoolAccountsOperations
+        throughput_pools: ThroughputPoolsOperations
 
         def __init__(
                 self, 
@@ -229,6 +257,39 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[CommandOutput]: ...
 
+        @overload
+        async def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: CommandAsyncPostBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CommandPublicResource]: ...
+
+        @overload
+        async def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: CommandAsyncPostBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CommandPublicResource]: ...
+
+        @overload
+        async def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CommandPublicResource]: ...
+
         @distributed_trace_async
         async def begin_start(
                 self, 
@@ -278,6 +339,35 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> ClusterResource: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'backup_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get_backup(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                backup_id: str, 
+                **kwargs: Any
+            ) -> BackupResource: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'command_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                command_id: str, 
+                **kwargs: Any
+            ) -> CommandPublicResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_backups(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[BackupResource]: ...
+
         @distributed_trace
         def list_by_resource_group(
                 self, 
@@ -287,6 +377,15 @@ namespace azure.mgmt.cosmosdb.aio.operations
 
         @distributed_trace
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_command(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CommandPublicResource]: ...
 
         @distributed_trace_async
         async def status(
@@ -559,6 +658,45 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[CassandraTableGetResults]: ...
 
+        @overload
+        async def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: CassandraViewCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CassandraViewGetResults]: ...
+
+        @overload
+        async def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: CassandraViewCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CassandraViewGetResults]: ...
+
+        @overload
+        async def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CassandraViewGetResults]: ...
+
         @distributed_trace_async
         async def begin_delete_cassandra_keyspace(
                 self, 
@@ -597,6 +735,16 @@ namespace azure.mgmt.cosmosdb.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        async def begin_delete_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
         async def begin_migrate_cassandra_keyspace_to_autoscale(
                 self, 
                 resource_group_name: str, 
@@ -631,6 +779,26 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 account_name: str, 
                 keyspace_name: str, 
                 table_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @distributed_trace_async
+        async def begin_migrate_cassandra_view_to_autoscale(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @distributed_trace_async
+        async def begin_migrate_cassandra_view_to_manual_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
 
@@ -703,6 +871,45 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 account_name: str, 
                 keyspace_name: str, 
                 table_name: str, 
+                update_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        async def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                update_throughput_parameters: ThroughputSettingsUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        async def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                update_throughput_parameters: ThroughputSettingsUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        async def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
                 update_throughput_parameters: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
@@ -765,6 +972,26 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> ThroughputSettingsGetResults: ...
 
+        @distributed_trace_async
+        async def get_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> CassandraViewGetResults: ...
+
+        @distributed_trace_async
+        async def get_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> ThroughputSettingsGetResults: ...
+
         @distributed_trace
         def list_cassandra_keyspaces(
                 self, 
@@ -797,6 +1024,77 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 keyspace_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[CassandraTableGetResults]: ...
+
+        @distributed_trace
+        def list_cassandra_views(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CassandraViewGetResults]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.ChaosFaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: ChaosFaultResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ChaosFaultResource]: ...
+
+        @overload
+        async def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: ChaosFaultResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ChaosFaultResource]: ...
+
+        @overload
+        async def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ChaosFaultResource]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                **kwargs: Any
+            ) -> ChaosFaultResource: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ChaosFaultResource]: ...
 
 
     class azure.mgmt.cosmosdb.aio.operations.CollectionOperations:
@@ -917,6 +1215,214 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 filter: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Metric]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.CopyJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def cancel(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def complete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CopyJobGetResults, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CopyJobGetResults, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_database_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CopyJobGetResults]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def pause(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def resume(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.DataTransferJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def cancel(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def complete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CreateJobRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CreateJobRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_database_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[DataTransferJobGetResults]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def pause(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def resume(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
 
 
     class azure.mgmt.cosmosdb.aio.operations.DatabaseAccountRegionOperations:
@@ -1279,6 +1785,77 @@ namespace azure.mgmt.cosmosdb.aio.operations
             ) -> AsyncItemPaged[Usage]: ...
 
 
+    class azure.mgmt.cosmosdb.aio.operations.FleetAnalyticsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: FleetAnalyticsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: FleetAnalyticsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @overload
+        async def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[FleetAnalyticsResource]: ...
+
+
     class azure.mgmt.cosmosdb.aio.operations.FleetOperations:
 
         def __init__(
@@ -1562,6 +2139,185 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 fleet_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[FleetspaceResource]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.GarnetClustersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @overload
+        async def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @overload
+        async def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResourcePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResourcePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GarnetClusterResource]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> GarnetClusterResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[GarnetClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[GarnetClusterResource]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.GraphResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: GraphResourceCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GraphResourceGetResults]: ...
+
+        @overload
+        async def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: GraphResourceCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GraphResourceGetResults]: ...
+
+        @overload
+        async def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[GraphResourceGetResults]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'graph_name']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_delete_graph_resource(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'graph_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                **kwargs: Any
+            ) -> GraphResourceGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_graphs(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[GraphResourceGetResults]: ...
 
 
     class azure.mgmt.cosmosdb.aio.operations.GremlinResourcesOperations:
@@ -2209,6 +2965,45 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
+        @overload
+        async def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
         @distributed_trace_async
         async def begin_migrate_mongo_db_collection_to_autoscale(
                 self, 
@@ -2246,6 +3041,192 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 database_name: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        async def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
 
         @overload
         async def begin_retrieve_continuous_backup_information(
@@ -2582,6 +3563,44 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 account_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[MongoMIRoleDefinitionResource]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.NetworkSecurityPerimeterConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'network_security_perimeter_configuration_name']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_reconcile(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'network_security_perimeter_configuration_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[NetworkSecurityPerimeterConfiguration]: ...
 
 
     class azure.mgmt.cosmosdb.aio.operations.NotebookWorkspacesOperations:
@@ -3208,6 +4227,182 @@ namespace azure.mgmt.cosmosdb.aio.operations
             ) -> AsyncItemPaged[ServiceResource]: ...
 
 
+    class azure.mgmt.cosmosdb.aio.operations.SoftDeletedDatabaseAccountsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountGetResult: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def list_by_location(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountsListResult: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'api_version', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def list_by_resource_group_and_location(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountsListResult: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlContainersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlContainerGetResult: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def list(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlContainersListResult: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.SoftDeletedSqlDatabasesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        async def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlDatabaseGetResult: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        async def list(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlDatabasesListResult: ...
+
+
     class azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations:
 
         def __init__(
@@ -3598,6 +4793,45 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
+        @overload
+        async def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
         @distributed_trace_async
         async def begin_migrate_sql_container_to_autoscale(
                 self, 
@@ -3674,6 +4908,192 @@ namespace azure.mgmt.cosmosdb.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[BackupInformation]: ...
+
+        @overload
+        async def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        async def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        async def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[PhysicalPartitionThroughputInfoResult]: ...
 
         @overload
         async def begin_update_sql_container_throughput(
@@ -4216,6 +5636,196 @@ namespace azure.mgmt.cosmosdb.aio.operations
             ) -> AsyncItemPaged[TableGetResults]: ...
 
 
+    class azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: ThroughputPoolAccountResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolAccountResource]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: ThroughputPoolAccountResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolAccountResource]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolAccountResource]: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                **kwargs: Any
+            ) -> ThroughputPoolAccountResource: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.ThroughputPoolAccountsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ThroughputPoolAccountResource]: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.ThroughputPoolOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: ThroughputPoolResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: ThroughputPoolResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[ThroughputPoolUpdate] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[ThroughputPoolUpdate] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ThroughputPoolResource]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> ThroughputPoolResource: ...
+
+
+    class azure.mgmt.cosmosdb.aio.operations.ThroughputPoolsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> AsyncItemPaged[ThroughputPoolResource]: ...
+
+        @distributed_trace
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ThroughputPoolResource]: ...
+
+
 namespace azure.mgmt.cosmosdb.models
 
     class azure.mgmt.cosmosdb.models.ARMProxyResource(_Model):
@@ -4245,8 +5855,75 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.AccessRule(_Model):
+        name: Optional[str]
+        properties: Optional[AccessRuleProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                properties: Optional[AccessRuleProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INBOUND = "Inbound"
+        OUTBOUND = "Outbound"
+
+
+    class azure.mgmt.cosmosdb.models.AccessRuleProperties(_Model):
+        address_prefixes: Optional[list[str]]
+        direction: Optional[Union[str, AccessRuleDirection]]
+        email_addresses: Optional[list[str]]
+        fully_qualified_domain_names: Optional[list[str]]
+        network_security_perimeters: Optional[list[NetworkSecurityPerimeter]]
+        phone_numbers: Optional[list[str]]
+        subscriptions: Optional[list[AccessRulePropertiesSubscriptionsItem]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                address_prefixes: Optional[list[str]] = ..., 
+                direction: Optional[Union[str, AccessRuleDirection]] = ..., 
+                email_addresses: Optional[list[str]] = ..., 
+                fully_qualified_domain_names: Optional[list[str]] = ..., 
+                network_security_perimeters: Optional[list[NetworkSecurityPerimeter]] = ..., 
+                phone_numbers: Optional[list[str]] = ..., 
+                subscriptions: Optional[list[AccessRulePropertiesSubscriptionsItem]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.AccessRulePropertiesSubscriptionsItem(_Model):
+        id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.AccountKeyMetadata(_Model):
+        approximate_last_usage_time: Optional[datetime]
         generation_time: Optional[datetime]
+
+
+    class azure.mgmt.cosmosdb.models.AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "Active"
+        DEALLOCATED = "Deallocated"
 
 
     class azure.mgmt.cosmosdb.models.AnalyticalStorageConfiguration(_Model):
@@ -4376,6 +6053,51 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.AzureBlobContainer(_Model):
+        container_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.AzureBlobDataTransferDataSourceSink(DataTransferDataSourceSink, discriminator='AzureBlobStorage'):
+        component: Literal[DataTransferComponent.AZURE_BLOB_STORAGE]
+        container_name: str
+        endpoint_url: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_name: str, 
+                endpoint_url: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.AzureBlobSourceSinkDetails(_Model):
+        endpoint_url: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                endpoint_url: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.AzureConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NONE = "None"
         VPN = "VPN"
@@ -4441,6 +6163,28 @@ namespace azure.mgmt.cosmosdb.models
         PERIODIC = "Periodic"
 
 
+    class azure.mgmt.cosmosdb.models.BackupResource(_Model):
+        backup_expiry_timestamp: Optional[datetime]
+        backup_id: Optional[str]
+        backup_start_timestamp: Optional[datetime]
+        backup_state: Optional[Union[str, BackupState]]
+        backup_stop_timestamp: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_expiry_timestamp: Optional[datetime] = ..., 
+                backup_id: Optional[str] = ..., 
+                backup_start_timestamp: Optional[datetime] = ..., 
+                backup_state: Optional[Union[str, BackupState]] = ..., 
+                backup_stop_timestamp: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.BackupSchedule(_Model):
         cron_expression: Optional[str]
         retention_in_hours: Optional[int]
@@ -4459,10 +6203,88 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.BackupState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        INITIATED = "Initiated"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
+
+
     class azure.mgmt.cosmosdb.models.BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GEO = "Geo"
         LOCAL = "Local"
         ZONE = "Zone"
+
+
+    class azure.mgmt.cosmosdb.models.BaseCopyJobProperties(_Model):
+        job_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.BaseCopyJobTask(_Model):
+        processed_count: Optional[int]
+        total_count: Optional[int]
+
+
+    class azure.mgmt.cosmosdb.models.BaseCosmosDataTransferDataSourceSink(DataTransferDataSourceSink, discriminator='BaseCosmosDataTransferDataSourceSink'):
+        component: Literal[DataTransferComponent.BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK]
+        remote_account_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                remote_account_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.BlobToCassandraRUCopyJobProperties(BaseCopyJobProperties, discriminator='AzureBlobStorageToCassandraRU'):
+        destination_details: Optional[CosmosDBSourceSinkDetails]
+        job_type: Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU]
+        source_details: AzureBlobSourceSinkDetails
+        tasks: list[BlobToCassandraRUCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                source_details: AzureBlobSourceSinkDetails, 
+                tasks: list[BlobToCassandraRUCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.BlobToCassandraRUCopyJobTask(BaseCopyJobTask):
+        destination: CosmosDBCassandraTable
+        processed_count: int
+        source: AzureBlobContainer
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: CosmosDBCassandraTable, 
+                source: AzureBlobContainer
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.Capability(_Model):
@@ -4491,6 +6313,41 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CapacityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        PROVISIONED = "Provisioned"
+        SERVERLESS = "Serverless"
+
+
+    class azure.mgmt.cosmosdb.models.CapacityModeChangeTransitionState(_Model):
+        capacity_mode_last_successful_transition_end_timestamp: Optional[datetime]
+        capacity_mode_transition_begin_timestamp: Optional[datetime]
+        capacity_mode_transition_end_timestamp: Optional[datetime]
+        capacity_mode_transition_status: Optional[Union[str, CapacityModeTransitionStatus]]
+        current_capacity_mode: Optional[Union[str, CapacityMode]]
+        previous_capacity_mode: Optional[Union[str, CapacityMode]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                capacity_mode_transition_status: Optional[Union[str, CapacityModeTransitionStatus]] = ..., 
+                current_capacity_mode: Optional[Union[str, CapacityMode]] = ..., 
+                previous_capacity_mode: Optional[Union[str, CapacityMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CapacityModeTransitionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "Completed"
+        FAILED = "Failed"
+        INITIALIZED = "Initialized"
+        INVALID = "Invalid"
+        IN_PROGRESS = "InProgress"
 
 
     class azure.mgmt.cosmosdb.models.CassandraClusterDataCenterNodeItem(_Model):
@@ -4751,6 +6608,80 @@ namespace azure.mgmt.cosmosdb.models
                 self, 
                 *, 
                 name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraRUToBlobCopyJobProperties(BaseCopyJobProperties, discriminator='CassandraRUToAzureBlobStorage'):
+        destination_details: AzureBlobSourceSinkDetails
+        job_type: Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE]
+        source_details: Optional[CosmosDBSourceSinkDetails]
+        tasks: list[CassandraRUToBlobCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: AzureBlobSourceSinkDetails, 
+                source_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                tasks: list[CassandraRUToBlobCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraRUToBlobCopyJobTask(BaseCopyJobTask):
+        destination: AzureBlobContainer
+        processed_count: int
+        source: CosmosDBCassandraTable
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: AzureBlobContainer, 
+                source: CosmosDBCassandraTable
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraRUToCassandraRUCopyJobProperties(BaseCopyJobProperties, discriminator='CassandraRUToCassandraRU'):
+        destination_details: Optional[CosmosDBSourceSinkDetails]
+        job_type: Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU]
+        source_details: Optional[CosmosDBSourceSinkDetails]
+        tasks: list[CassandraRUToCassandraRUCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                source_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                tasks: list[CassandraRUToCassandraRUCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraRUToCassandraRUCopyJobTask(BaseCopyJobTask):
+        destination: CosmosDBCassandraTable
+        processed_count: int
+        source: CosmosDBCassandraTable
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: CosmosDBCassandraTable, 
+                source: CosmosDBCassandraTable
             ) -> None: ...
 
         @overload
@@ -5022,6 +6953,152 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateParameters(ARMResourceProperties):
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: CassandraViewCreateUpdateProperties
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: CassandraViewCreateUpdateProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateProperties(_Model):
+        options: Optional[CreateUpdateOptions]
+        resource: CassandraViewResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                options: Optional[CreateUpdateOptions] = ..., 
+                resource: CassandraViewResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewGetProperties(_Model):
+        options: Optional[CassandraViewGetPropertiesOptions]
+        resource: Optional[CassandraViewGetPropertiesResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                options: Optional[CassandraViewGetPropertiesOptions] = ..., 
+                resource: Optional[CassandraViewGetPropertiesResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewGetPropertiesOptions(OptionsResource):
+        autoscale_settings: AutoscaleSettings
+        throughput: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                autoscale_settings: Optional[AutoscaleSettings] = ..., 
+                throughput: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewGetPropertiesResource(CassandraViewResource):
+        etag: Optional[str]
+        id: str
+        rid: Optional[str]
+        ts: Optional[float]
+        view_definition: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str, 
+                view_definition: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewGetResults(ProxyResource):
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: Optional[str]
+        name: str
+        properties: Optional[CassandraViewGetProperties]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: Optional[CassandraViewGetProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CassandraViewResource(_Model):
+        id: str
+        view_definition: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str, 
+                view_definition: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.Certificate(_Model):
         pem: Optional[str]
 
@@ -5034,6 +7111,53 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ChaosFaultProperties(_Model):
+        action: Optional[Union[str, SupportedActions]]
+        container_name: Optional[str]
+        database_name: Optional[str]
+        provisioning_state: Optional[str]
+        region: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[Union[str, SupportedActions]] = ..., 
+                container_name: Optional[str] = ..., 
+                database_name: Optional[str] = ..., 
+                region: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ChaosFaultResource(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[ChaosFaultProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ChaosFaultProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.ClientEncryptionIncludedPath(_Model):
@@ -5254,6 +7378,7 @@ namespace azure.mgmt.cosmosdb.models
         cassandra_version: Optional[str]
         client_certificates: Optional[list[Certificate]]
         cluster_name_override: Optional[str]
+        cluster_type: Optional[Union[str, ClusterType]]
         deallocated: Optional[bool]
         delegated_management_subnet_id: Optional[str]
         extensions: Optional[list[str]]
@@ -5284,6 +7409,7 @@ namespace azure.mgmt.cosmosdb.models
                 cassandra_version: Optional[str] = ..., 
                 client_certificates: Optional[list[Certificate]] = ..., 
                 cluster_name_override: Optional[str] = ..., 
+                cluster_type: Optional[Union[str, ClusterType]] = ..., 
                 deallocated: Optional[bool] = ..., 
                 delegated_management_subnet_id: Optional[str] = ..., 
                 extensions: Optional[list[str]] = ..., 
@@ -5304,6 +7430,11 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NON_PRODUCTION = "NonProduction"
+        PRODUCTION = "Production"
+
+
     class azure.mgmt.cosmosdb.models.Column(_Model):
         name: Optional[str]
         type: Optional[str]
@@ -5314,6 +7445,28 @@ namespace azure.mgmt.cosmosdb.models
                 *, 
                 name: Optional[str] = ..., 
                 type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CommandAsyncPostBody(_Model):
+        arguments: Optional[Any]
+        cassandra_stop_start: Optional[bool]
+        command: str
+        host: str
+        read_write: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: Optional[Any] = ..., 
+                cassandra_stop_start: Optional[bool] = ..., 
+                command: str, 
+                host: str, 
+                read_write: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -5354,6 +7507,47 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CommandPublicResource(_Model):
+        arguments: Optional[Any]
+        cassandra_stop_start: Optional[bool]
+        command: Optional[str]
+        command_id: Optional[str]
+        host: Optional[str]
+        is_admin: Optional[bool]
+        output_file: Optional[str]
+        read_write: Optional[bool]
+        result: Optional[str]
+        status: Optional[Union[str, CommandStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: Optional[Any] = ..., 
+                cassandra_stop_start: Optional[bool] = ..., 
+                command: Optional[str] = ..., 
+                command_id: Optional[str] = ..., 
+                host: Optional[str] = ..., 
+                is_admin: Optional[bool] = ..., 
+                output_file: Optional[str] = ..., 
+                read_write: Optional[bool] = ..., 
+                result: Optional[str] = ..., 
+                status: Optional[Union[str, CommandStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CommandStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DONE = "Done"
+        ENQUEUE = "Enqueue"
+        FAILED = "Failed"
+        FINISHED = "Finished"
+        PROCESSING = "Processing"
+        RUNNING = "Running"
 
 
     class azure.mgmt.cosmosdb.models.CompositePath(_Model):
@@ -5549,7 +7743,74 @@ namespace azure.mgmt.cosmosdb.models
 
     class azure.mgmt.cosmosdb.models.ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CONTINUOUS30_DAYS = "Continuous30Days"
+        CONTINUOUS35_DAYS = "Continuous35Days"
         CONTINUOUS7_DAYS = "Continuous7Days"
+
+
+    class azure.mgmt.cosmosdb.models.CopyJobGetResults(ProxyResource):
+        id: str
+        name: str
+        properties: CopyJobProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: CopyJobProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CopyJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OFFLINE = "Offline"
+        ONLINE = "Online"
+
+
+    class azure.mgmt.cosmosdb.models.CopyJobProperties(_Model):
+        duration: Optional[str]
+        error: Optional[ErrorResponse]
+        job_properties: BaseCopyJobProperties
+        last_updated_utc_time: Optional[datetime]
+        mode: Optional[Union[str, CopyJobMode]]
+        processed_count: Optional[int]
+        status: Optional[Union[str, CopyJobStatus]]
+        total_count: Optional[int]
+        worker_count: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                job_properties: BaseCopyJobProperties, 
+                mode: Optional[Union[str, CopyJobMode]] = ..., 
+                worker_count: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CopyJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELLED = "Cancelled"
+        COMPLETED = "Completed"
+        FAULTED = "Faulted"
+        PARTITIONING = "Partitioning"
+        PAUSED = "Paused"
+        PENDING = "Pending"
+        RUNNING = "Running"
+
+
+    class azure.mgmt.cosmosdb.models.CopyJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB_STORAGE_TO_CASSANDRA_RU = "AzureBlobStorageToCassandraRU"
+        CASSANDRA_RU_TO_AZURE_BLOB_STORAGE = "CassandraRUToAzureBlobStorage"
+        CASSANDRA_RU_TO_CASSANDRA_RU = "CassandraRUToCassandraRU"
+        MONGO_RU_TO_MONGO_RU = "MongoRUToMongoRU"
+        MONGO_RU_TO_MONGO_V_CORE = "MongoRUToMongoVCore"
+        NO_SQL_RU_TO_NO_SQL_RU = "NoSqlRUToNoSqlRU"
 
 
     class azure.mgmt.cosmosdb.models.CorsPolicy(_Model):
@@ -5568,6 +7829,179 @@ namespace azure.mgmt.cosmosdb.models
                 allowed_origins: str, 
                 exposed_headers: Optional[str] = ..., 
                 max_age_in_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosCassandraDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, discriminator='CosmosDBCassandra'):
+        component: Literal[DataTransferComponent.COSMOS_DB_CASSANDRA]
+        keyspace_name: str
+        remote_account_name: str
+        table_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                keyspace_name: str, 
+                remote_account_name: Optional[str] = ..., 
+                table_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosDBCassandraTable(_Model):
+        keyspace_name: str
+        table_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                keyspace_name: str, 
+                table_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosDBMongoCollection(_Model):
+        collection_name: str
+        database_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                collection_name: str, 
+                database_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosDBMongoVCoreCollection(_Model):
+        collection_name: str
+        database_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                collection_name: str, 
+                database_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosDBNoSqlContainer(_Model):
+        container_name: str
+        database_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_name: str, 
+                database_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosDBSourceSinkDetails(_Model):
+        remote_account_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                remote_account_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosMongoDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, discriminator='CosmosDBMongo'):
+        collection_name: str
+        component: Literal[DataTransferComponent.COSMOS_DB_MONGO]
+        database_name: str
+        remote_account_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                collection_name: str, 
+                database_name: str, 
+                remote_account_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosMongoVCoreDataTransferDataSourceSink(DataTransferDataSourceSink, discriminator='CosmosDBMongoVCore'):
+        collection_name: str
+        component: Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE]
+        connection_string_key_vault_uri: Optional[str]
+        database_name: str
+        host_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                collection_name: str, 
+                connection_string_key_vault_uri: Optional[str] = ..., 
+                database_name: str, 
+                host_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CosmosSqlDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, discriminator='CosmosDBSql'):
+        component: Literal[DataTransferComponent.COSMOS_DB_SQL]
+        container_name: str
+        database_name: str
+        remote_account_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_name: str, 
+                database_name: str, 
+                remote_account_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.CreateJobRequest(ARMProxyResource):
+        id: str
+        name: str
+        properties: DataTransferJobProperties
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: DataTransferJobProperties
             ) -> None: ...
 
         @overload
@@ -5657,6 +8091,139 @@ namespace azure.mgmt.cosmosdb.models
                 provision_error: Optional[CassandraError] = ..., 
                 provisioning_state: Optional[Union[str, ManagedCassandraProvisioningState]] = ..., 
                 sku: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataMaskingPolicy(_Model):
+        excluded_paths: Optional[list[DataMaskingPolicyExcludedPathsItem]]
+        included_paths: Optional[list[DataMaskingPolicyIncludedPathsItem]]
+        is_policy_enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                excluded_paths: Optional[list[DataMaskingPolicyExcludedPathsItem]] = ..., 
+                included_paths: Optional[list[DataMaskingPolicyIncludedPathsItem]] = ..., 
+                is_policy_enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataMaskingPolicyExcludedPathsItem(_Model):
+        path: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                path: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataMaskingPolicyIncludedPathsItem(_Model):
+        length: Optional[int]
+        path: str
+        start_position: Optional[int]
+        strategy: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                length: Optional[int] = ..., 
+                path: str, 
+                start_position: Optional[int] = ..., 
+                strategy: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB_STORAGE = "AzureBlobStorage"
+        BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK = "BaseCosmosDataTransferDataSourceSink"
+        COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
+        COSMOS_DB_MONGO = "CosmosDBMongo"
+        COSMOS_DB_MONGO_V_CORE = "CosmosDBMongoVCore"
+        COSMOS_DB_SQL = "CosmosDBSql"
+
+
+    class azure.mgmt.cosmosdb.models.DataTransferDataSourceSink(_Model):
+        component: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                component: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataTransferJobGetResults(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[DataTransferJobProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[DataTransferJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.DataTransferJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OFFLINE = "Offline"
+        ONLINE = "Online"
+
+
+    class azure.mgmt.cosmosdb.models.DataTransferJobProperties(_Model):
+        destination: DataTransferDataSourceSink
+        duration: Optional[str]
+        error: Optional[ErrorResponseAutoGenerated]
+        job_name: Optional[str]
+        last_updated_utc_time: Optional[datetime]
+        mode: Optional[Union[str, DataTransferJobMode]]
+        processed_count: Optional[int]
+        source: DataTransferDataSourceSink
+        status: Optional[str]
+        total_count: Optional[int]
+        worker_count: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: DataTransferDataSourceSink, 
+                mode: Optional[Union[str, DataTransferJobMode]] = ..., 
+                source: DataTransferDataSourceSink, 
+                worker_count: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -5761,6 +8328,7 @@ namespace azure.mgmt.cosmosdb.models
         backup_policy: Optional[BackupPolicy]
         capabilities: Optional[list[Capability]]
         capacity: Optional[Capacity]
+        capacity_mode: Optional[Union[str, CapacityMode]]
         connector_offer: Optional[Union[str, ConnectorOffer]]
         consistency_policy: Optional[ConsistencyPolicy]
         cors: Optional[list[CorsPolicy]]
@@ -5769,13 +8337,16 @@ namespace azure.mgmt.cosmosdb.models
         database_account_offer_type: Literal["Standard"]
         default_identity: Optional[str]
         default_priority_level: Optional[Union[str, DefaultPriorityLevel]]
+        diagnostic_log_settings: Optional[DiagnosticLogSettings]
         disable_key_based_metadata_write_access: Optional[bool]
         disable_local_auth: Optional[bool]
+        enable_all_versions_and_deletes_change_feed: Optional[bool]
         enable_analytical_storage: Optional[bool]
         enable_automatic_failover: Optional[bool]
         enable_burst_capacity: Optional[bool]
         enable_cassandra_connector: Optional[bool]
         enable_free_tier: Optional[bool]
+        enable_materialized_views: Optional[bool]
         enable_multiple_write_locations: Optional[bool]
         enable_partition_merge: Optional[bool]
         enable_per_region_per_partition_autoscale: Optional[bool]
@@ -5791,6 +8362,7 @@ namespace azure.mgmt.cosmosdb.models
         network_acl_bypass_resource_ids: Optional[list[str]]
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         restore_parameters: Optional[RestoreParameters]
+        soft_delete_configuration: Optional[SoftDeleteConfiguration]
         virtual_network_rules: Optional[list[VirtualNetworkRule]]
 
         @overload
@@ -5802,6 +8374,7 @@ namespace azure.mgmt.cosmosdb.models
                 backup_policy: Optional[BackupPolicy] = ..., 
                 capabilities: Optional[list[Capability]] = ..., 
                 capacity: Optional[Capacity] = ..., 
+                capacity_mode: Optional[Union[str, CapacityMode]] = ..., 
                 connector_offer: Optional[Union[str, ConnectorOffer]] = ..., 
                 consistency_policy: Optional[ConsistencyPolicy] = ..., 
                 cors: Optional[list[CorsPolicy]] = ..., 
@@ -5809,13 +8382,16 @@ namespace azure.mgmt.cosmosdb.models
                 customer_managed_key_status: Optional[str] = ..., 
                 default_identity: Optional[str] = ..., 
                 default_priority_level: Optional[Union[str, DefaultPriorityLevel]] = ..., 
+                diagnostic_log_settings: Optional[DiagnosticLogSettings] = ..., 
                 disable_key_based_metadata_write_access: Optional[bool] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
+                enable_all_versions_and_deletes_change_feed: Optional[bool] = ..., 
                 enable_analytical_storage: Optional[bool] = ..., 
                 enable_automatic_failover: Optional[bool] = ..., 
                 enable_burst_capacity: Optional[bool] = ..., 
                 enable_cassandra_connector: Optional[bool] = ..., 
                 enable_free_tier: Optional[bool] = ..., 
+                enable_materialized_views: Optional[bool] = ..., 
                 enable_multiple_write_locations: Optional[bool] = ..., 
                 enable_partition_merge: Optional[bool] = ..., 
                 enable_per_region_per_partition_autoscale: Optional[bool] = ..., 
@@ -5830,6 +8406,7 @@ namespace azure.mgmt.cosmosdb.models
                 network_acl_bypass_resource_ids: Optional[list[str]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 restore_parameters: Optional[RestoreParameters] = ..., 
+                soft_delete_configuration: Optional[SoftDeleteConfiguration] = ..., 
                 virtual_network_rules: Optional[list[VirtualNetworkRule]] = ...
             ) -> None: ...
 
@@ -5843,6 +8420,8 @@ namespace azure.mgmt.cosmosdb.models
         backup_policy: Optional[BackupPolicy]
         capabilities: Optional[list[Capability]]
         capacity: Optional[Capacity]
+        capacity_mode: Optional[Union[str, CapacityMode]]
+        capacity_mode_change_transition_state: Optional[CapacityModeChangeTransitionState]
         connector_offer: Optional[Union[str, ConnectorOffer]]
         consistency_policy: Optional[ConsistencyPolicy]
         cors: Optional[list[CorsPolicy]]
@@ -5851,14 +8430,17 @@ namespace azure.mgmt.cosmosdb.models
         database_account_offer_type: Optional[Literal["Standard"]]
         default_identity: Optional[str]
         default_priority_level: Optional[Union[str, DefaultPriorityLevel]]
+        diagnostic_log_settings: Optional[DiagnosticLogSettings]
         disable_key_based_metadata_write_access: Optional[bool]
         disable_local_auth: Optional[bool]
         document_endpoint: Optional[str]
+        enable_all_versions_and_deletes_change_feed: Optional[bool]
         enable_analytical_storage: Optional[bool]
         enable_automatic_failover: Optional[bool]
         enable_burst_capacity: Optional[bool]
         enable_cassandra_connector: Optional[bool]
         enable_free_tier: Optional[bool]
+        enable_materialized_views: Optional[bool]
         enable_multiple_write_locations: Optional[bool]
         enable_partition_merge: Optional[bool]
         enable_per_region_per_partition_autoscale: Optional[bool]
@@ -5880,6 +8462,9 @@ namespace azure.mgmt.cosmosdb.models
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         read_locations: Optional[list[Location]]
         restore_parameters: Optional[RestoreParameters]
+        soft_delete_configuration: Optional[SoftDeleteConfiguration]
+        throughput_pool_dedicated_r_us: Optional[int]
+        throughput_pool_max_consumable_r_us: Optional[int]
         virtual_network_rules: Optional[list[VirtualNetworkRule]]
         write_locations: Optional[list[Location]]
 
@@ -5892,6 +8477,8 @@ namespace azure.mgmt.cosmosdb.models
                 backup_policy: Optional[BackupPolicy] = ..., 
                 capabilities: Optional[list[Capability]] = ..., 
                 capacity: Optional[Capacity] = ..., 
+                capacity_mode: Optional[Union[str, CapacityMode]] = ..., 
+                capacity_mode_change_transition_state: Optional[CapacityModeChangeTransitionState] = ..., 
                 connector_offer: Optional[Union[str, ConnectorOffer]] = ..., 
                 consistency_policy: Optional[ConsistencyPolicy] = ..., 
                 cors: Optional[list[CorsPolicy]] = ..., 
@@ -5899,13 +8486,16 @@ namespace azure.mgmt.cosmosdb.models
                 customer_managed_key_status: Optional[str] = ..., 
                 default_identity: Optional[str] = ..., 
                 default_priority_level: Optional[Union[str, DefaultPriorityLevel]] = ..., 
+                diagnostic_log_settings: Optional[DiagnosticLogSettings] = ..., 
                 disable_key_based_metadata_write_access: Optional[bool] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
+                enable_all_versions_and_deletes_change_feed: Optional[bool] = ..., 
                 enable_analytical_storage: Optional[bool] = ..., 
                 enable_automatic_failover: Optional[bool] = ..., 
                 enable_burst_capacity: Optional[bool] = ..., 
                 enable_cassandra_connector: Optional[bool] = ..., 
                 enable_free_tier: Optional[bool] = ..., 
+                enable_materialized_views: Optional[bool] = ..., 
                 enable_multiple_write_locations: Optional[bool] = ..., 
                 enable_partition_merge: Optional[bool] = ..., 
                 enable_per_region_per_partition_autoscale: Optional[bool] = ..., 
@@ -5919,6 +8509,9 @@ namespace azure.mgmt.cosmosdb.models
                 network_acl_bypass_resource_ids: Optional[list[str]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 restore_parameters: Optional[RestoreParameters] = ..., 
+                soft_delete_configuration: Optional[SoftDeleteConfiguration] = ..., 
+                throughput_pool_dedicated_r_us: Optional[int] = ..., 
+                throughput_pool_max_consumable_r_us: Optional[int] = ..., 
                 virtual_network_rules: Optional[list[VirtualNetworkRule]] = ...
             ) -> None: ...
 
@@ -6001,12 +8594,14 @@ namespace azure.mgmt.cosmosdb.models
 
     class azure.mgmt.cosmosdb.models.DatabaseAccountRegenerateKeyParameters(_Model):
         key_kind: Union[str, KeyKind]
+        skip_account_keys_last_usage_check: Optional[bool]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                key_kind: Union[str, KeyKind]
+                key_kind: Union[str, KeyKind], 
+                skip_account_keys_last_usage_check: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -6047,19 +8642,23 @@ namespace azure.mgmt.cosmosdb.models
         backup_policy: Optional[BackupPolicy]
         capabilities: Optional[list[Capability]]
         capacity: Optional[Capacity]
+        capacity_mode: Optional[Union[str, CapacityMode]]
         connector_offer: Optional[Union[str, ConnectorOffer]]
         consistency_policy: Optional[ConsistencyPolicy]
         cors: Optional[list[CorsPolicy]]
         customer_managed_key_status: Optional[str]
         default_identity: Optional[str]
         default_priority_level: Optional[Union[str, DefaultPriorityLevel]]
+        diagnostic_log_settings: Optional[DiagnosticLogSettings]
         disable_key_based_metadata_write_access: Optional[bool]
         disable_local_auth: Optional[bool]
+        enable_all_versions_and_deletes_change_feed: Optional[bool]
         enable_analytical_storage: Optional[bool]
         enable_automatic_failover: Optional[bool]
         enable_burst_capacity: Optional[bool]
         enable_cassandra_connector: Optional[bool]
         enable_free_tier: Optional[bool]
+        enable_materialized_views: Optional[bool]
         enable_multiple_write_locations: Optional[bool]
         enable_partition_merge: Optional[bool]
         enable_per_region_per_partition_autoscale: Optional[bool]
@@ -6074,6 +8673,7 @@ namespace azure.mgmt.cosmosdb.models
         network_acl_bypass: Optional[Union[str, NetworkAclBypass]]
         network_acl_bypass_resource_ids: Optional[list[str]]
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
+        soft_delete_configuration: Optional[SoftDeleteConfiguration]
         virtual_network_rules: Optional[list[VirtualNetworkRule]]
 
         @overload
@@ -6085,19 +8685,23 @@ namespace azure.mgmt.cosmosdb.models
                 backup_policy: Optional[BackupPolicy] = ..., 
                 capabilities: Optional[list[Capability]] = ..., 
                 capacity: Optional[Capacity] = ..., 
+                capacity_mode: Optional[Union[str, CapacityMode]] = ..., 
                 connector_offer: Optional[Union[str, ConnectorOffer]] = ..., 
                 consistency_policy: Optional[ConsistencyPolicy] = ..., 
                 cors: Optional[list[CorsPolicy]] = ..., 
                 customer_managed_key_status: Optional[str] = ..., 
                 default_identity: Optional[str] = ..., 
                 default_priority_level: Optional[Union[str, DefaultPriorityLevel]] = ..., 
+                diagnostic_log_settings: Optional[DiagnosticLogSettings] = ..., 
                 disable_key_based_metadata_write_access: Optional[bool] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
+                enable_all_versions_and_deletes_change_feed: Optional[bool] = ..., 
                 enable_analytical_storage: Optional[bool] = ..., 
                 enable_automatic_failover: Optional[bool] = ..., 
                 enable_burst_capacity: Optional[bool] = ..., 
                 enable_cassandra_connector: Optional[bool] = ..., 
                 enable_free_tier: Optional[bool] = ..., 
+                enable_materialized_views: Optional[bool] = ..., 
                 enable_multiple_write_locations: Optional[bool] = ..., 
                 enable_partition_merge: Optional[bool] = ..., 
                 enable_per_region_per_partition_autoscale: Optional[bool] = ..., 
@@ -6111,6 +8715,7 @@ namespace azure.mgmt.cosmosdb.models
                 network_acl_bypass: Optional[Union[str, NetworkAclBypass]] = ..., 
                 network_acl_bypass_resource_ids: Optional[list[str]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
+                soft_delete_configuration: Optional[SoftDeleteConfiguration] = ..., 
                 virtual_network_rules: Optional[list[VirtualNetworkRule]] = ...
             ) -> None: ...
 
@@ -6152,10 +8757,30 @@ namespace azure.mgmt.cosmosdb.models
         LOW = "Low"
 
 
+    class azure.mgmt.cosmosdb.models.DiagnosticLogSettings(_Model):
+        enable_full_text_query: Optional[Union[str, EnableFullTextQuery]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enable_full_text_query: Optional[Union[str, EnableFullTextQuery]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.DistanceFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COSINE = "cosine"
         DOTPRODUCT = "dotproduct"
         EUCLIDEAN = "euclidean"
+
+
+    class azure.mgmt.cosmosdb.models.EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FALSE = "False"
+        NONE = "None"
+        TRUE = "True"
 
 
     class azure.mgmt.cosmosdb.models.ErrorAdditionalInfo(_Model):
@@ -6244,6 +8869,54 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.FleetAnalyticsProperties(_Model):
+        provisioning_state: Optional[Union[str, Status]]
+        storage_location_type: Optional[Union[str, FleetAnalyticsPropertiesStorageLocationType]]
+        storage_location_uri: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                storage_location_type: Optional[Union[str, FleetAnalyticsPropertiesStorageLocationType]] = ..., 
+                storage_location_uri: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.FleetAnalyticsPropertiesStorageLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FABRIC_LAKEHOUSE = "FabricLakehouse"
+        STORAGE_ACCOUNT = "StorageAccount"
+
+
+    class azure.mgmt.cosmosdb.models.FleetAnalyticsResource(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[FleetAnalyticsProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[FleetAnalyticsProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.FleetResource(TrackedResource):
@@ -6505,6 +9178,129 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.GarnetAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENTRA = "Entra"
+
+
+    class azure.mgmt.cosmosdb.models.GarnetCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.cosmosdb.models.GarnetClusterResource(TrackedResource):
+        id: str
+        identity: Optional[ManagedCassandraManagedServiceIdentity]
+        location: str
+        name: str
+        properties: Optional[GarnetClusterResourceProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedCassandraManagedServiceIdentity] = ..., 
+                location: str, 
+                properties: Optional[GarnetClusterResourceProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GarnetClusterResourcePatch(_Model):
+        properties: Optional[GarnetClusterResourcePatchProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[GarnetClusterResourcePatchProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GarnetClusterResourcePatchProperties(_Model):
+        authentication_method: Optional[Union[str, GarnetAuthenticationType]]
+        cluster_type: Optional[Union[str, ClusterType]]
+        extensions: Optional[list[str]]
+        persistence: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_method: Optional[Union[str, GarnetAuthenticationType]] = ..., 
+                cluster_type: Optional[Union[str, ClusterType]] = ..., 
+                extensions: Optional[list[str]] = ..., 
+                persistence: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GarnetClusterResourceProperties(_Model):
+        allocation_state: Optional[Union[str, AllocationState]]
+        authentication_method: Optional[Union[str, GarnetAuthenticationType]]
+        availability_zone: Optional[bool]
+        cluster_type: Optional[Union[str, ClusterType]]
+        end_points: Optional[list[GarnetClusterResourcePropertiesEndPointsItem]]
+        extensions: Optional[list[str]]
+        node_sku: Optional[str]
+        persistence: Optional[bool]
+        provision_error: Optional[ErrorDetail]
+        provisioning_state: Optional[Union[str, GarnetCacheProvisioningState]]
+        replication_factor: Optional[int]
+        shard_count: Optional[int]
+        subnet_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allocation_state: Optional[Union[str, AllocationState]] = ..., 
+                authentication_method: Optional[Union[str, GarnetAuthenticationType]] = ..., 
+                availability_zone: Optional[bool] = ..., 
+                cluster_type: Optional[Union[str, ClusterType]] = ..., 
+                extensions: Optional[list[str]] = ..., 
+                node_sku: Optional[str] = ..., 
+                persistence: Optional[bool] = ..., 
+                provision_error: Optional[ErrorDetail] = ..., 
+                replication_factor: Optional[int] = ..., 
+                shard_count: Optional[int] = ..., 
+                subnet_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GarnetClusterResourcePropertiesEndPointsItem(_Model):
+        ip_address: Optional[str]
+        port: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ip_address: Optional[str] = ..., 
+                port: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.GraphAPIComputeRegionalServiceResource(RegionalServiceResource):
         graph_api_compute_endpoint: Optional[str]
         location: str
@@ -6549,6 +9345,145 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResource(_Model):
+        id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateParameters(ARMResourceProperties):
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: GraphResourceCreateUpdateProperties
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: GraphResourceCreateUpdateProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateProperties(_Model):
+        options: Optional[CreateUpdateOptions]
+        resource: GraphResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                options: Optional[CreateUpdateOptions] = ..., 
+                resource: GraphResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceGetProperties(_Model):
+        options: Optional[GraphResourceGetPropertiesOptions]
+        resource: Optional[GraphResourceGetPropertiesResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                options: Optional[GraphResourceGetPropertiesOptions] = ..., 
+                resource: Optional[GraphResourceGetPropertiesResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceGetPropertiesOptions(OptionsResource):
+        autoscale_settings: AutoscaleSettings
+        throughput: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                autoscale_settings: Optional[AutoscaleSettings] = ..., 
+                throughput: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceGetPropertiesResource(GraphResource):
+        id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.GraphResourceGetResults(ProxyResource):
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: Optional[str]
+        name: str
+        properties: Optional[GraphResourceGetProperties]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: Optional[GraphResourceGetProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -7072,6 +10007,13 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+        MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+        MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+        UNKNOWN = "Unknown"
+
+
     class azure.mgmt.cosmosdb.models.KeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PRIMARY = "primary"
         PRIMARY_READONLY = "primaryReadonly"
@@ -7225,6 +10167,41 @@ namespace azure.mgmt.cosmosdb.models
         principal_id: Optional[str]
 
 
+    class azure.mgmt.cosmosdb.models.MaterializedViewDefinition(_Model):
+        definition: str
+        source_collection_id: str
+        source_collection_rid: Optional[str]
+        throughput_bucket_for_build: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                definition: str, 
+                source_collection_id: str, 
+                throughput_bucket_for_build: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MaterializedViewDetails(_Model):
+        id: Optional[str]
+        rid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                rid: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.MaterializedViewsBuilderRegionalServiceResource(RegionalServiceResource):
         location: str
         name: str
@@ -7262,6 +10239,34 @@ namespace azure.mgmt.cosmosdb.models
                 *, 
                 instance_count: Optional[int] = ..., 
                 instance_size: Optional[Union[str, ServiceSize]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MaterializedViewsProperties(_Model):
+        throughput_bucket_for_build: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                throughput_bucket_for_build: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MergeParameters(_Model):
+        is_dry_run: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                is_dry_run: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -7769,6 +10774,80 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.MongoRUToMongoRUCopyJobProperties(BaseCopyJobProperties, discriminator='MongoRUToMongoRU'):
+        destination_details: Optional[CosmosDBSourceSinkDetails]
+        job_type: Literal[CopyJobType.MONGO_RU_TO_MONGO_RU]
+        source_details: Optional[CosmosDBSourceSinkDetails]
+        tasks: list[MongoRUToMongoRUCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                source_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                tasks: list[MongoRUToMongoRUCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):
+        destination: CosmosDBMongoCollection
+        processed_count: int
+        source: CosmosDBMongoCollection
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: CosmosDBMongoCollection, 
+                source: CosmosDBMongoCollection
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MongoRUToMongoVCoreCopyJobProperties(BaseCopyJobProperties, discriminator='MongoRUToMongoVCore'):
+        destination_details: MongoVCoreSourceSinkDetails
+        job_type: Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE]
+        source_details: Optional[CosmosDBSourceSinkDetails]
+        tasks: list[MongoRUToMongoVCoreCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: MongoVCoreSourceSinkDetails, 
+                source_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                tasks: list[MongoRUToMongoVCoreCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):
+        destination: CosmosDBMongoVCoreCollection
+        processed_count: int
+        source: CosmosDBMongoCollection
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: CosmosDBMongoVCoreCollection, 
+                source: CosmosDBMongoCollection
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.MongoRoleDefinitionCreateUpdateParameters(_Model):
         properties: Optional[MongoRoleDefinitionResource]
 
@@ -7916,9 +10995,150 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.MongoVCoreSourceSinkDetails(_Model):
+        connection_string_key_vault_uri: Optional[str]
+        host_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_string_key_vault_uri: Optional[str] = ..., 
+                host_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.NetworkAclBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SERVICES = "AzureServices"
         NONE = "None"
+
+
+    class azure.mgmt.cosmosdb.models.NetworkSecurityPerimeter(_Model):
+        id: Optional[str]
+        location: Optional[str]
+        perimeter_guid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                perimeter_guid: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfiguration(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[NetworkSecurityPerimeterConfigurationProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[NetworkSecurityPerimeterConfigurationProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfigurationProperties(_Model):
+        network_security_perimeter: Optional[NetworkSecurityPerimeter]
+        profile: Optional[NetworkSecurityProfile]
+        provisioning_issues: Optional[list[ProvisioningIssue]]
+        provisioning_state: Optional[Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]]
+        resource_association: Optional[ResourceAssociation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                network_security_perimeter: Optional[NetworkSecurityPerimeter] = ..., 
+                profile: Optional[NetworkSecurityProfile] = ..., 
+                resource_association: Optional[ResourceAssociation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "Accepted"
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.cosmosdb.models.NetworkSecurityProfile(_Model):
+        access_rules: Optional[list[AccessRule]]
+        access_rules_version: Optional[int]
+        diagnostic_settings_version: Optional[int]
+        enabled_log_categories: Optional[list[str]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_rules: Optional[list[AccessRule]] = ..., 
+                access_rules_version: Optional[int] = ..., 
+                diagnostic_settings_version: Optional[int] = ..., 
+                enabled_log_categories: Optional[list[str]] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.NoSqlRUToNoSqlRUCopyJobProperties(BaseCopyJobProperties, discriminator='NoSqlRUToNoSqlRU'):
+        destination_details: Optional[CosmosDBSourceSinkDetails]
+        job_type: Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU]
+        source_details: Optional[CosmosDBSourceSinkDetails]
+        tasks: list[NoSqlRUToNoSqlRUCopyJobTask]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                source_details: Optional[CosmosDBSourceSinkDetails] = ..., 
+                tasks: list[NoSqlRUToNoSqlRUCopyJobTask]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):
+        destination: CosmosDBNoSqlContainer
+        processed_count: int
+        source: CosmosDBNoSqlContainer
+        total_count: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destination: CosmosDBNoSqlContainer, 
+                source: CosmosDBNoSqlContainer
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -8140,6 +11360,120 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionId(_Model):
+        id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfo(_Model):
+        id: Optional[str]
+        storage_in_kb: Optional[float]
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection(_Model):
+        physical_partition_storage_info_collection: Optional[list[PhysicalPartitionStorageInfo]]
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoProperties(_Model):
+        physical_partition_throughput_info: Optional[list[PhysicalPartitionThroughputInfoResource]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                physical_partition_throughput_info: Optional[list[PhysicalPartitionThroughputInfoResource]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResource(_Model):
+        id: str
+        target_throughput: Optional[float]
+        throughput: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str, 
+                target_throughput: Optional[float] = ..., 
+                throughput: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult(ARMResourceProperties):
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: Optional[PhysicalPartitionThroughputInfoResultProperties]
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: Optional[PhysicalPartitionThroughputInfoResultProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultProperties(_Model):
+        resource: Optional[PhysicalPartitionThroughputInfoResultPropertiesResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource: Optional[PhysicalPartitionThroughputInfoResultPropertiesResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResultPropertiesResource(PhysicalPartitionThroughputInfoProperties):
+        physical_partition_throughput_info: list[PhysicalPartitionThroughputInfoResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                physical_partition_throughput_info: Optional[list[PhysicalPartitionThroughputInfoResource]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVERAGE = "Average"
         LAST = "Last"
@@ -8290,6 +11624,19 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.ProvisioningIssue(_Model):
+        name: Optional[str]
+        properties: Optional[ProvisioningIssueProperties]
+
+
+    class azure.mgmt.cosmosdb.models.ProvisioningIssueProperties(_Model):
+        description: Optional[str]
+        issue_type: Optional[Union[str, IssueType]]
+        severity: Optional[Union[str, Severity]]
+        suggested_access_rules: Optional[list[AccessRule]]
+        suggested_resource_ids: Optional[list[str]]
+
+
     class azure.mgmt.cosmosdb.models.ProxyResource(Resource):
         id: str
         name: str
@@ -8301,6 +11648,69 @@ namespace azure.mgmt.cosmosdb.models
         DISABLED = "Disabled"
         ENABLED = "Enabled"
         SECURED_BY_PERIMETER = "SecuredByPerimeter"
+
+
+    class azure.mgmt.cosmosdb.models.RedistributeThroughputParameters(ARMResourceProperties):
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: RedistributeThroughputProperties
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: RedistributeThroughputProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.RedistributeThroughputProperties(_Model):
+        resource: RedistributeThroughputPropertiesResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource: RedistributeThroughputPropertiesResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.RedistributeThroughputPropertiesResource(_Model):
+        source_physical_partition_throughput_info: list[PhysicalPartitionThroughputInfoResource]
+        target_physical_partition_throughput_info: list[PhysicalPartitionThroughputInfoResource]
+        throughput_policy: Union[str, ThroughputPolicyType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_physical_partition_throughput_info: list[PhysicalPartitionThroughputInfoResource], 
+                target_physical_partition_throughput_info: list[PhysicalPartitionThroughputInfoResource], 
+                throughput_policy: Union[str, ThroughputPolicyType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.RegionForOnlineOffline(_Model):
@@ -8328,6 +11738,28 @@ namespace azure.mgmt.cosmosdb.models
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
+
+
+    class azure.mgmt.cosmosdb.models.ResourceAssociation(_Model):
+        access_mode: Optional[Union[str, ResourceAssociationAccessMode]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_mode: Optional[Union[str, ResourceAssociationAccessMode]] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIT = "Audit"
+        ENFORCED = "Enforced"
+        LEARNING = "Learning"
 
 
     class azure.mgmt.cosmosdb.models.ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -8712,11 +12144,15 @@ namespace azure.mgmt.cosmosdb.models
         computed_properties: list[ComputedProperty]
         conflict_resolution_policy: ConflictResolutionPolicy
         create_mode: Union[str, CreateMode]
+        data_masking_policy: DataMaskingPolicy
         default_ttl: int
         etag: Optional[str]
         full_text_policy: FullTextPolicy
         id: str
         indexing_policy: IndexingPolicy
+        materialized_view_definition: MaterializedViewDefinition
+        materialized_views: list[MaterializedViewDetails]
+        materialized_views_properties: MaterializedViewsProperties
         partition_key: ContainerPartitionKey
         restore_parameters: ResourceRestoreParameters
         rid: Optional[str]
@@ -8734,10 +12170,14 @@ namespace azure.mgmt.cosmosdb.models
                 computed_properties: Optional[list[ComputedProperty]] = ..., 
                 conflict_resolution_policy: Optional[ConflictResolutionPolicy] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
+                data_masking_policy: Optional[DataMaskingPolicy] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[FullTextPolicy] = ..., 
                 id: str, 
                 indexing_policy: Optional[IndexingPolicy] = ..., 
+                materialized_view_definition: Optional[MaterializedViewDefinition] = ..., 
+                materialized_views: Optional[list[MaterializedViewDetails]] = ..., 
+                materialized_views_properties: Optional[MaterializedViewsProperties] = ..., 
                 partition_key: Optional[ContainerPartitionKey] = ..., 
                 restore_parameters: Optional[ResourceRestoreParameters] = ..., 
                 unique_key_policy: Optional[UniqueKeyPolicy] = ..., 
@@ -8956,6 +12396,65 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.RetrieveThroughputParameters(ARMResourceProperties):
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: RetrieveThroughputProperties
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: RetrieveThroughputProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.RetrieveThroughputProperties(_Model):
+        resource: RetrieveThroughputPropertiesResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource: RetrieveThroughputPropertiesResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.RetrieveThroughputPropertiesResource(_Model):
+        physical_partition_ids: list[PhysicalPartitionId]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                physical_partition_ids: list[PhysicalPartitionId]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.Role(_Model):
         db: Optional[str]
         role: Optional[str]
@@ -9099,6 +12598,258 @@ namespace azure.mgmt.cosmosdb.models
         SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
 
 
+    class azure.mgmt.cosmosdb.models.Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ERROR = "Error"
+        WARNING = "Warning"
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeleteActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PERMANENT_DELETE_RESOURCE = "PermanentDeleteResource"
+        RESTORE_SOFT_DELETED_RESOURCE = "RestoreSoftDeletedResource"
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeleteConfiguration(_Model):
+        min_minutes_before_permanent_deletion_allowed: Optional[int]
+        soft_delete_retention_period_in_minutes: Optional[int]
+        soft_deletion_enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                min_minutes_before_permanent_deletion_allowed: Optional[int] = ..., 
+                soft_delete_retention_period_in_minutes: Optional[int] = ..., 
+                soft_deletion_enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[SoftDeletedDatabaseAccountProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[SoftDeletedDatabaseAccountProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountProperties(_Model):
+        account_name: Optional[str]
+        resource: Optional[SoftDeletedDatabaseAccountResource]
+        soft_delete_configuration: Optional[SoftDeleteConfiguration]
+        soft_deletion_metadata: Optional[SoftDeletionMetadata]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                account_name: Optional[str] = ..., 
+                resource: Optional[SoftDeletedDatabaseAccountResource] = ..., 
+                soft_delete_configuration: Optional[SoftDeleteConfiguration] = ..., 
+                soft_deletion_metadata: Optional[SoftDeletionMetadata] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountResource(_Model):
+        locations: Optional[list[Location]]
+        read_locations: Optional[list[Location]]
+        write_locations: Optional[list[Location]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                locations: Optional[list[Location]] = ..., 
+                read_locations: Optional[list[Location]] = ..., 
+                write_locations: Optional[list[Location]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountsListResult(_Model):
+        next_link: Optional[str]
+        value: list[SoftDeletedDatabaseAccountGetResult]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                next_link: Optional[str] = ..., 
+                value: list[SoftDeletedDatabaseAccountGetResult]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[SoftDeletedSqlContainerProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[SoftDeletedSqlContainerProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerProperties(_Model):
+        resource: Optional[SoftDeletedSqlContainerResource]
+        soft_deletion_metadata: Optional[SoftDeletionMetadata]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource: Optional[SoftDeletedSqlContainerResource] = ..., 
+                soft_deletion_metadata: Optional[SoftDeletionMetadata] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerResource(_Model):
+        default_ttl: Optional[int]
+        id: str
+        partition_key: Optional[ContainerPartitionKey]
+        rid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                default_ttl: Optional[int] = ..., 
+                id: str, 
+                partition_key: Optional[ContainerPartitionKey] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlContainersListResult(_Model):
+        next_link: Optional[str]
+        value: list[SoftDeletedSqlContainerGetResult]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                next_link: Optional[str] = ..., 
+                value: list[SoftDeletedSqlContainerGetResult]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[SoftDeletedSqlDatabaseProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[SoftDeletedSqlDatabaseProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseProperties(_Model):
+        resource: Optional[SoftDeletedSqlDatabaseResource]
+        soft_deletion_metadata: Optional[SoftDeletionMetadata]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource: Optional[SoftDeletedSqlDatabaseResource] = ..., 
+                soft_deletion_metadata: Optional[SoftDeletionMetadata] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseResource(_Model):
+        id: str
+        rid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabasesListResult(_Model):
+        next_link: Optional[str]
+        value: list[SoftDeletedSqlDatabaseGetResult]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                next_link: Optional[str] = ..., 
+                value: list[SoftDeletedSqlDatabaseGetResult]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.SoftDeletionMetadata(_Model):
+        is_soft_deleted: Optional[bool]
+        soft_deletion_resource_expiration_timestamp: Optional[int]
+        soft_deletion_start_timestamp: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                is_soft_deleted: Optional[bool] = ..., 
+                soft_deletion_resource_expiration_timestamp: Optional[int] = ..., 
+                soft_deletion_start_timestamp: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.SpatialSpec(_Model):
         path: Optional[str]
         types: Optional[list[Union[str, SpatialType]]]
@@ -9207,11 +12958,15 @@ namespace azure.mgmt.cosmosdb.models
         computed_properties: list[ComputedProperty]
         conflict_resolution_policy: ConflictResolutionPolicy
         create_mode: Union[str, CreateMode]
+        data_masking_policy: DataMaskingPolicy
         default_ttl: int
         etag: Optional[str]
         full_text_policy: FullTextPolicy
         id: str
         indexing_policy: IndexingPolicy
+        materialized_view_definition: MaterializedViewDefinition
+        materialized_views: list[MaterializedViewDetails]
+        materialized_views_properties: MaterializedViewsProperties
         partition_key: ContainerPartitionKey
         restore_parameters: ResourceRestoreParameters
         rid: Optional[str]
@@ -9228,10 +12983,14 @@ namespace azure.mgmt.cosmosdb.models
                 computed_properties: Optional[list[ComputedProperty]] = ..., 
                 conflict_resolution_policy: Optional[ConflictResolutionPolicy] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
+                data_masking_policy: Optional[DataMaskingPolicy] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[FullTextPolicy] = ..., 
                 id: str, 
                 indexing_policy: Optional[IndexingPolicy] = ..., 
+                materialized_view_definition: Optional[MaterializedViewDefinition] = ..., 
+                materialized_views: Optional[list[MaterializedViewDetails]] = ..., 
+                materialized_views_properties: Optional[MaterializedViewsProperties] = ..., 
                 partition_key: Optional[ContainerPartitionKey] = ..., 
                 restore_parameters: Optional[ResourceRestoreParameters] = ..., 
                 unique_key_policy: Optional[UniqueKeyPolicy] = ..., 
@@ -9280,10 +13039,14 @@ namespace azure.mgmt.cosmosdb.models
         computed_properties: Optional[list[ComputedProperty]]
         conflict_resolution_policy: Optional[ConflictResolutionPolicy]
         create_mode: Optional[Union[str, CreateMode]]
+        data_masking_policy: Optional[DataMaskingPolicy]
         default_ttl: Optional[int]
         full_text_policy: Optional[FullTextPolicy]
         id: str
         indexing_policy: Optional[IndexingPolicy]
+        materialized_view_definition: Optional[MaterializedViewDefinition]
+        materialized_views: Optional[list[MaterializedViewDetails]]
+        materialized_views_properties: Optional[MaterializedViewsProperties]
         partition_key: Optional[ContainerPartitionKey]
         restore_parameters: Optional[ResourceRestoreParameters]
         unique_key_policy: Optional[UniqueKeyPolicy]
@@ -9298,10 +13061,14 @@ namespace azure.mgmt.cosmosdb.models
                 computed_properties: Optional[list[ComputedProperty]] = ..., 
                 conflict_resolution_policy: Optional[ConflictResolutionPolicy] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
+                data_masking_policy: Optional[DataMaskingPolicy] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[FullTextPolicy] = ..., 
                 id: str, 
                 indexing_policy: Optional[IndexingPolicy] = ..., 
+                materialized_view_definition: Optional[MaterializedViewDefinition] = ..., 
+                materialized_views: Optional[list[MaterializedViewDetails]] = ..., 
+                materialized_views_properties: Optional[MaterializedViewsProperties] = ..., 
                 partition_key: Optional[ContainerPartitionKey] = ..., 
                 restore_parameters: Optional[ResourceRestoreParameters] = ..., 
                 unique_key_policy: Optional[UniqueKeyPolicy] = ..., 
@@ -10055,6 +13822,11 @@ namespace azure.mgmt.cosmosdb.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.cosmosdb.models.SupportedActions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLE = "Disable"
+        ENABLE = "Enable"
+
+
     class azure.mgmt.cosmosdb.models.SystemData(_Model):
         created_at: Optional[datetime]
         created_by: Optional[str]
@@ -10322,6 +14094,24 @@ namespace azure.mgmt.cosmosdb.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cosmosdb.models.ThroughputBucketResource(_Model):
+        id: int
+        is_default_bucket: Optional[bool]
+        max_throughput_percentage: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: int, 
+                is_default_bucket: Optional[bool] = ..., 
+                max_throughput_percentage: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cosmosdb.models.ThroughputPolicyResource(_Model):
         increment_percent: Optional[int]
         is_enabled: Optional[bool]
@@ -10336,6 +14126,124 @@ namespace azure.mgmt.cosmosdb.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "custom"
+        EQUAL = "equal"
+        NONE = "none"
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPoolAccountProperties(_Model):
+        account_instance_id: Optional[str]
+        account_location: Optional[str]
+        account_resource_identifier: Optional[str]
+        provisioning_state: Optional[Union[str, Status]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                account_location: Optional[str] = ..., 
+                account_resource_identifier: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPoolAccountResource(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[ThroughputPoolAccountProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ThroughputPoolAccountProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPoolProperties(_Model):
+        max_throughput: Optional[int]
+        provisioning_state: Optional[Union[str, Status]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_throughput: Optional[int] = ..., 
+                provisioning_state: Optional[Union[str, Status]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPoolResource(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: Optional[ThroughputPoolProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: Optional[ThroughputPoolProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cosmosdb.models.ThroughputPoolUpdate(_Model):
+        properties: Optional[ThroughputPoolProperties]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ThroughputPoolProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.cosmosdb.models.ThroughputSettingsGetProperties(_Model):
@@ -10361,6 +14269,7 @@ namespace azure.mgmt.cosmosdb.models
         rid: Optional[str]
         soft_allowed_maximum_throughput: str
         throughput: int
+        throughput_buckets: list[ThroughputBucketResource]
         ts: Optional[float]
 
         @overload
@@ -10368,7 +14277,8 @@ namespace azure.mgmt.cosmosdb.models
                 self, 
                 *, 
                 autoscale_settings: Optional[AutoscaleSettingsResource] = ..., 
-                throughput: Optional[int] = ...
+                throughput: Optional[int] = ..., 
+                throughput_buckets: Optional[list[ThroughputBucketResource]] = ...
             ) -> None: ...
 
         @overload
@@ -10414,13 +14324,15 @@ namespace azure.mgmt.cosmosdb.models
         offer_replace_pending: Optional[str]
         soft_allowed_maximum_throughput: Optional[str]
         throughput: Optional[int]
+        throughput_buckets: Optional[list[ThroughputBucketResource]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 autoscale_settings: Optional[AutoscaleSettingsResource] = ..., 
-                throughput: Optional[int] = ...
+                throughput: Optional[int] = ..., 
+                throughput_buckets: Optional[list[ThroughputBucketResource]] = ...
             ) -> None: ...
 
         @overload
@@ -10742,6 +14654,39 @@ namespace azure.mgmt.cosmosdb.operations
                 **kwargs: Any
             ) -> LROPoller[CommandOutput]: ...
 
+        @overload
+        def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: CommandAsyncPostBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CommandPublicResource]: ...
+
+        @overload
+        def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: CommandAsyncPostBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CommandPublicResource]: ...
+
+        @overload
+        def begin_invoke_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CommandPublicResource]: ...
+
         @distributed_trace
         def begin_start(
                 self, 
@@ -10792,6 +14737,35 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> ClusterResource: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'backup_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get_backup(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                backup_id: str, 
+                **kwargs: Any
+            ) -> BackupResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'command_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get_command_async(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                command_id: str, 
+                **kwargs: Any
+            ) -> CommandPublicResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_backups(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[BackupResource]: ...
+
+        @distributed_trace
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -10800,6 +14774,15 @@ namespace azure.mgmt.cosmosdb.operations
 
         @distributed_trace
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_command(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CommandPublicResource]: ...
 
         @distributed_trace
         def status(
@@ -11072,6 +15055,45 @@ namespace azure.mgmt.cosmosdb.operations
                 **kwargs: Any
             ) -> LROPoller[CassandraTableGetResults]: ...
 
+        @overload
+        def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: CassandraViewCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CassandraViewGetResults]: ...
+
+        @overload
+        def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: CassandraViewCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CassandraViewGetResults]: ...
+
+        @overload
+        def begin_create_update_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                create_update_cassandra_view_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CassandraViewGetResults]: ...
+
         @distributed_trace
         def begin_delete_cassandra_keyspace(
                 self, 
@@ -11110,6 +15132,16 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        def begin_delete_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
         def begin_migrate_cassandra_keyspace_to_autoscale(
                 self, 
                 resource_group_name: str, 
@@ -11144,6 +15176,26 @@ namespace azure.mgmt.cosmosdb.operations
                 account_name: str, 
                 keyspace_name: str, 
                 table_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @distributed_trace
+        def begin_migrate_cassandra_view_to_autoscale(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @distributed_trace
+        def begin_migrate_cassandra_view_to_manual_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
                 **kwargs: Any
             ) -> LROPoller[ThroughputSettingsGetResults]: ...
 
@@ -11216,6 +15268,45 @@ namespace azure.mgmt.cosmosdb.operations
                 account_name: str, 
                 keyspace_name: str, 
                 table_name: str, 
+                update_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                update_throughput_parameters: ThroughputSettingsUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                update_throughput_parameters: ThroughputSettingsUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        def begin_update_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
                 update_throughput_parameters: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
@@ -11279,6 +15370,26 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> ThroughputSettingsGetResults: ...
 
         @distributed_trace
+        def get_cassandra_view(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> CassandraViewGetResults: ...
+
+        @distributed_trace
+        def get_cassandra_view_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                view_name: str, 
+                **kwargs: Any
+            ) -> ThroughputSettingsGetResults: ...
+
+        @distributed_trace
         def list_cassandra_keyspaces(
                 self, 
                 resource_group_name: str, 
@@ -11310,6 +15421,77 @@ namespace azure.mgmt.cosmosdb.operations
                 keyspace_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[CassandraTableGetResults]: ...
+
+        @distributed_trace
+        def list_cassandra_views(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                keyspace_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CassandraViewGetResults]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.ChaosFaultOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: ChaosFaultResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ChaosFaultResource]: ...
+
+        @overload
+        def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: ChaosFaultResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ChaosFaultResource]: ...
+
+        @overload
+        def begin_enable_disable(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                chaos_fault_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ChaosFaultResource]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                chaos_fault: str, 
+                **kwargs: Any
+            ) -> ChaosFaultResource: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ChaosFaultResource]: ...
 
 
     class azure.mgmt.cosmosdb.operations.CollectionOperations:
@@ -11430,6 +15612,214 @@ namespace azure.mgmt.cosmosdb.operations
                 filter: str, 
                 **kwargs: Any
             ) -> ItemPaged[Metric]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.CopyJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def cancel(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def complete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CopyJobGetResults, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CopyJobGetResults, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_database_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CopyJobGetResults]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def pause(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def resume(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> CopyJobGetResults: ...
+
+
+    class azure.mgmt.cosmosdb.operations.DataTransferJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def cancel(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def complete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CreateJobRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: CreateJobRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                job_create_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_database_account(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[DataTransferJobGetResults]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def pause(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'job_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def resume(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> DataTransferJobGetResults: ...
 
 
     class azure.mgmt.cosmosdb.operations.DatabaseAccountRegionOperations:
@@ -11792,6 +16182,77 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> ItemPaged[Usage]: ...
 
 
+    class azure.mgmt.cosmosdb.operations.FleetAnalyticsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: FleetAnalyticsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: FleetAnalyticsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @overload
+        def create(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                fleet_analytics_name: str, 
+                **kwargs: Any
+            ) -> FleetAnalyticsResource: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[FleetAnalyticsResource]: ...
+
+
     class azure.mgmt.cosmosdb.operations.FleetOperations:
 
         def __init__(
@@ -12075,6 +16536,185 @@ namespace azure.mgmt.cosmosdb.operations
                 fleet_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[FleetspaceResource]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.GarnetClustersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @overload
+        def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @overload
+        def begin_create_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-01-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResourcePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: GarnetClusterResourcePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GarnetClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> GarnetClusterResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[GarnetClusterResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[GarnetClusterResource]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.GraphResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: GraphResourceCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GraphResourceGetResults]: ...
+
+        @overload
+        def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: GraphResourceCreateUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GraphResourceGetResults]: ...
+
+        @overload
+        def begin_create_update_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                create_update_graph_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[GraphResourceGetResults]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'graph_name']}, api_versions_list=['2026-04-01-preview'])
+        def begin_delete_graph_resource(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'graph_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get_graph(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                graph_name: str, 
+                **kwargs: Any
+            ) -> GraphResourceGetResults: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_graphs(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[GraphResourceGetResults]: ...
 
 
     class azure.mgmt.cosmosdb.operations.GremlinResourcesOperations:
@@ -12722,6 +17362,45 @@ namespace azure.mgmt.cosmosdb.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
+        @overload
+        def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_list_mongo_db_collection_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
         @distributed_trace
         def begin_migrate_mongo_db_collection_to_autoscale(
                 self, 
@@ -12759,6 +17438,192 @@ namespace azure.mgmt.cosmosdb.operations
                 database_name: str, 
                 **kwargs: Any
             ) -> LROPoller[ThroughputSettingsGetResults]: ...
+
+        @overload
+        def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                collection_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_mongo_db_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_mongo_db_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
 
         @overload
         def begin_retrieve_continuous_backup_information(
@@ -13095,6 +17960,44 @@ namespace azure.mgmt.cosmosdb.operations
                 account_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[MongoMIRoleDefinitionResource]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.NetworkSecurityPerimeterConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'network_security_perimeter_configuration_name']}, api_versions_list=['2026-04-01-preview'])
+        def begin_reconcile(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'network_security_perimeter_configuration_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[NetworkSecurityPerimeterConfiguration]: ...
 
 
     class azure.mgmt.cosmosdb.operations.NotebookWorkspacesOperations:
@@ -13721,6 +18624,182 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> ItemPaged[ServiceResource]: ...
 
 
+    class azure.mgmt.cosmosdb.operations.SoftDeletedDatabaseAccountsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountGetResult: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_location(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountsListResult: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'api_version', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list_by_resource_group_and_location(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                **kwargs: Any
+            ) -> SoftDeletedDatabaseAccountsListResult: ...
+
+
+    class azure.mgmt.cosmosdb.operations.SoftDeletedSqlContainersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'container_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlContainerGetResult: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlContainersListResult: ...
+
+
+    class azure.mgmt.cosmosdb.operations.SoftDeletedSqlDatabasesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_purge(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'api_version', 'soft_delete_action_kind']}, api_versions_list=['2026-04-01-preview'])
+        def begin_restore(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                *, 
+                soft_delete_action_kind: Optional[Union[str, SoftDeleteActionKind]] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'database_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                database_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlDatabaseGetResult: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'account_name', 'accept']}, api_versions_list=['2026-04-01-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> SoftDeletedSqlDatabasesListResult: ...
+
+
     class azure.mgmt.cosmosdb.operations.SqlResourcesOperations:
 
         def __init__(
@@ -14111,6 +19190,45 @@ namespace azure.mgmt.cosmosdb.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
+        @overload
+        def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_list_sql_container_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
         @distributed_trace
         def begin_migrate_sql_container_to_autoscale(
                 self, 
@@ -14187,6 +19305,192 @@ namespace azure.mgmt.cosmosdb.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[BackupInformation]: ...
+
+        @overload
+        def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_container_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_container_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                container_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: MergeParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_sql_database_partition_merge(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                merge_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionStorageInfoCollection]: ...
+
+        @overload
+        def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: RedistributeThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_redistribute_throughput(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                redistribute_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: RetrieveThroughputParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
+
+        @overload
+        def begin_sql_database_retrieve_throughput_distribution(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                database_name: str, 
+                retrieve_throughput_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[PhysicalPartitionThroughputInfoResult]: ...
 
         @overload
         def begin_update_sql_container_throughput(
@@ -14729,6 +20033,196 @@ namespace azure.mgmt.cosmosdb.operations
             ) -> ItemPaged[TableGetResults]: ...
 
 
+    class azure.mgmt.cosmosdb.operations.ThroughputPoolAccountOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: ThroughputPoolAccountResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolAccountResource]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: ThroughputPoolAccountResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolAccountResource]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolAccountResource]: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                throughput_pool_account_name: str, 
+                **kwargs: Any
+            ) -> ThroughputPoolAccountResource: ...
+
+
+    class azure.mgmt.cosmosdb.operations.ThroughputPoolAccountsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ThroughputPoolAccountResource]: ...
+
+
+    class azure.mgmt.cosmosdb.operations.ThroughputPoolOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: ThroughputPoolResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: ThroughputPoolResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[ThroughputPoolUpdate] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[ThroughputPoolUpdate] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ThroughputPoolResource]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                throughput_pool_name: str, 
+                **kwargs: Any
+            ) -> ThroughputPoolResource: ...
+
+
+    class azure.mgmt.cosmosdb.operations.ThroughputPoolsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> ItemPaged[ThroughputPoolResource]: ...
+
+        @distributed_trace
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ThroughputPoolResource]: ...
+
+
 namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.ARMProxyResource(TypedDict, total=False):
@@ -14755,18 +20249,20 @@ namespace azure.mgmt.cosmosdb.types
 
 
     class azure.mgmt.cosmosdb.types.AccountKeyMetadata(TypedDict, total=False):
+        key "approximateLastUsageTime": str
         key "generationTime": str
-        generation_time: str
+        approximateLastUsageTime: str
+        generationTime: str
 
 
     class azure.mgmt.cosmosdb.types.AnalyticalStorageConfiguration(TypedDict, total=False):
         key "schemaType": Union[str, AnalyticalStorageSchemaType]
-        schema_type: Union[str, AnalyticalStorageSchemaType]
+        schemaType: Union[str, AnalyticalStorageSchemaType]
 
 
     class azure.mgmt.cosmosdb.types.ApiProperties(TypedDict, total=False):
         key "serverVersion": Union[str, ServerVersion]
-        server_version: Union[str, ServerVersion]
+        serverVersion: Union[str, ServerVersion]
 
 
     class azure.mgmt.cosmosdb.types.AuthenticationMethodLdapProperties(TypedDict, total=False):
@@ -14777,48 +20273,61 @@ namespace azure.mgmt.cosmosdb.types
         key "serverPort": int
         key "serviceUserDistinguishedName": str
         key "serviceUserPassword": str
-        connection_timeout_in_ms: int
-        search_base_distinguished_name: str
-        search_filter_template: str
+        connectionTimeoutInMs: int
+        searchBaseDistinguishedName: str
+        searchFilterTemplate: str
         serverCertificates: list[Certificate]
-        server_certificates: list[Certificate]
-        server_hostname: str
-        server_port: int
-        service_user_distinguished_name: str
-        service_user_password: str
+        serverHostname: str
+        serverPort: int
+        serviceUserDistinguishedName: str
+        serviceUserPassword: str
 
 
     class azure.mgmt.cosmosdb.types.AutoUpgradePolicyResource(TypedDict, total=False):
         key "throughputPolicy": ForwardRef('ThroughputPolicyResource', module='types')
-        throughput_policy: ThroughputPolicyResource
+        throughputPolicy: ThroughputPolicyResource
 
 
     class azure.mgmt.cosmosdb.types.AutoscaleSettings(TypedDict, total=False):
         key "maxThroughput": int
-        max_throughput: int
+        maxThroughput: int
 
 
     class azure.mgmt.cosmosdb.types.AutoscaleSettingsResource(TypedDict, total=False):
         key "autoUpgradePolicy": ForwardRef('AutoUpgradePolicyResource', module='types')
         key "maxThroughput": Required[int]
         key "targetMaxThroughput": int
-        auto_upgrade_policy: AutoUpgradePolicyResource
-        max_throughput: int
-        target_max_throughput: int
+        autoUpgradePolicy: AutoUpgradePolicyResource
+        maxThroughput: int
+        targetMaxThroughput: int
 
 
-    class azure.mgmt.cosmosdb.types.BackupInformation(TypedDict, total=False):
-        key "continuousBackupInformation": ForwardRef('ContinuousBackupInformation', module='types')
-        continuous_backup_information: ContinuousBackupInformation
+    class azure.mgmt.cosmosdb.types.AzureBlobContainer(TypedDict, total=False):
+        key "containerName": Required[str]
+        containerName: str
+
+
+    class azure.mgmt.cosmosdb.types.AzureBlobDataTransferDataSourceSink(TypedDict, total=False):
+        key "component": Required[Literal[DataTransferComponent.AZURE_BLOB_STORAGE]]
+        key "containerName": Required[str]
+        key "endpointUrl": str
+        component: Literal[DataTransferComponent.AZURE_BLOB_STORAGE]
+        containerName: str
+        endpointUrl: str
+
+
+    class azure.mgmt.cosmosdb.types.AzureBlobSourceSinkDetails(TypedDict, total=False):
+        key "endpointUrl": Required[str]
+        endpointUrl: str
 
 
     class azure.mgmt.cosmosdb.types.BackupPolicyMigrationState(TypedDict, total=False):
         key "startTime": str
         key "status": Union[str, BackupPolicyMigrationStatus]
         key "targetType": Union[str, BackupPolicyType]
-        start_time: str
+        startTime: str
         status: Union[str, BackupPolicyMigrationStatus]
-        target_type: Union[str, BackupPolicyType]
+        targetType: Union[str, BackupPolicyType]
 
 
     class azure.mgmt.cosmosdb.types.BackupPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -14830,9 +20339,38 @@ namespace azure.mgmt.cosmosdb.types
         key "cronExpression": str
         key "retentionInHours": int
         key "scheduleName": str
-        cron_expression: str
-        retention_in_hours: int
-        schedule_name: str
+        cronExpression: str
+        retentionInHours: int
+        scheduleName: str
+
+
+    class azure.mgmt.cosmosdb.types.BaseCopyJobTask(TypedDict, total=False):
+        key "processedCount": int
+        key "totalCount": int
+        processedCount: int
+        totalCount: int
+
+
+    class azure.mgmt.cosmosdb.types.BlobToCassandraRUCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "jobType": Required[Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU]]
+        key "sourceDetails": Required[AzureBlobSourceSinkDetails]
+        key "tasks": Required[list[BlobToCassandraRUCopyJobTask]]
+        destinationDetails: CosmosDBSourceSinkDetails
+        jobType: Literal[CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU]
+        sourceDetails: AzureBlobSourceSinkDetails
+        tasks: list[BlobToCassandraRUCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.BlobToCassandraRUCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[CosmosDBCassandraTable]
+        key "processedCount": int
+        key "source": Required[AzureBlobContainer]
+        key "totalCount": int
+        destination: CosmosDBCassandraTable
+        processedCount: int
+        source: AzureBlobContainer
+        totalCount: int
 
 
     class azure.mgmt.cosmosdb.types.Capability(TypedDict, total=False):
@@ -14842,65 +20380,7 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.Capacity(TypedDict, total=False):
         key "totalThroughputLimit": int
-        total_throughput_limit: int
-
-
-    class azure.mgmt.cosmosdb.types.CassandraClusterDataCenterNodeItem(TypedDict, total=False):
-        key "address": str
-        key "cassandraProcessStatus": str
-        key "cpuUsage": float
-        key "diskFreeKB": int
-        key "diskUsedKB": int
-        key "hostID": str
-        key "isLatestModel": bool
-        key "load": str
-        key "memoryBuffersAndCachedKB": int
-        key "memoryFreeKB": int
-        key "memoryTotalKB": int
-        key "memoryUsedKB": int
-        key "rack": str
-        key "size": int
-        key "state": Union[str, NodeState]
-        key "status": str
-        key "timestamp": str
-        address: str
-        cassandra_process_status: str
-        cpu_usage: float
-        disk_free_kb: int
-        disk_used_kb: int
-        host_id: str
-        is_latest_model: bool
-        load: str
-        memory_buffers_and_cached_kb: int
-        memory_free_kb: int
-        memory_total_kb: int
-        memory_used_kb: int
-        rack: str
-        size: int
-        state: Union[str, NodeState]
-        status: str
-        timestamp: str
-        tokens: list[str]
-
-
-    class azure.mgmt.cosmosdb.types.CassandraClusterPublicStatus(TypedDict, total=False):
-        key "eTag": str
-        key "reaperStatus": ForwardRef('ManagedCassandraReaperStatus', module='types')
-        connectionErrors: list[ConnectionError]
-        connection_errors: list[ConnectionError]
-        dataCenters: list[CassandraClusterPublicStatusDataCentersItem]
-        data_centers: list[CassandraClusterPublicStatusDataCentersItem]
-        e_tag: str
-        errors: list[CassandraError]
-        reaper_status: ManagedCassandraReaperStatus
-
-
-    class azure.mgmt.cosmosdb.types.CassandraClusterPublicStatusDataCentersItem(TypedDict, total=False):
-        key "name": str
-        name: str
-        nodes: list[CassandraClusterDataCenterNodeItem]
-        seedNodes: list[str]
-        seed_nodes: list[str]
+        totalThroughputLimit: int
 
 
     class azure.mgmt.cosmosdb.types.CassandraError(TypedDict, total=False):
@@ -14908,7 +20388,7 @@ namespace azure.mgmt.cosmosdb.types
         key "code": str
         key "message": str
         key "target": str
-        additional_error_info: str
+        additionalErrorInfo: str
         code: str
         message: str
         target: str
@@ -14937,46 +20417,6 @@ namespace azure.mgmt.cosmosdb.types
         resource: CassandraKeyspaceResource
 
 
-    class azure.mgmt.cosmosdb.types.CassandraKeyspaceGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('CassandraKeyspaceGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('CassandraKeyspaceGetPropertiesResource', module='types')
-        options: CassandraKeyspaceGetPropertiesOptions
-        resource: CassandraKeyspaceGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.CassandraKeyspaceGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.CassandraKeyspaceGetPropertiesResource(CassandraKeyspaceResource):
-        key "id": Required[str]
-        etag: str
-        id: str
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.CassandraKeyspaceGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('CassandraKeyspaceGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: CassandraKeyspaceGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.CassandraKeyspaceResource(TypedDict, total=False):
         key "id": Required[str]
         id: str
@@ -14985,6 +20425,50 @@ namespace azure.mgmt.cosmosdb.types
     class azure.mgmt.cosmosdb.types.CassandraPartitionKey(TypedDict, total=False):
         key "name": str
         name: str
+
+
+    class azure.mgmt.cosmosdb.types.CassandraRUToBlobCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": Required[AzureBlobSourceSinkDetails]
+        key "jobType": Required[Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE]]
+        key "sourceDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "tasks": Required[list[CassandraRUToBlobCopyJobTask]]
+        destinationDetails: AzureBlobSourceSinkDetails
+        jobType: Literal[CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE]
+        sourceDetails: CosmosDBSourceSinkDetails
+        tasks: list[CassandraRUToBlobCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.CassandraRUToBlobCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[AzureBlobContainer]
+        key "processedCount": int
+        key "source": Required[CosmosDBCassandraTable]
+        key "totalCount": int
+        destination: AzureBlobContainer
+        processedCount: int
+        source: CosmosDBCassandraTable
+        totalCount: int
+
+
+    class azure.mgmt.cosmosdb.types.CassandraRUToCassandraRUCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "jobType": Required[Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU]]
+        key "sourceDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "tasks": Required[list[CassandraRUToCassandraRUCopyJobTask]]
+        destinationDetails: CosmosDBSourceSinkDetails
+        jobType: Literal[CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU]
+        sourceDetails: CosmosDBSourceSinkDetails
+        tasks: list[CassandraRUToCassandraRUCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.CassandraRUToCassandraRUCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[CosmosDBCassandraTable]
+        key "processedCount": int
+        key "source": Required[CosmosDBCassandraTable]
+        key "totalCount": int
+        destination: CosmosDBCassandraTable
+        processedCount: int
+        source: CosmosDBCassandraTable
+        totalCount: int
 
 
     class azure.mgmt.cosmosdb.types.CassandraRoleAssignmentResource(ProxyResource):
@@ -14996,7 +20480,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: CassandraRoleAssignmentResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -15005,9 +20489,9 @@ namespace azure.mgmt.cosmosdb.types
         key "provisioningState": str
         key "roleDefinitionId": str
         key "scope": str
-        principal_id: str
-        provisioning_state: str
-        role_definition_id: str
+        principalId: str
+        provisioningState: str
+        roleDefinitionId: str
         scope: str
 
 
@@ -15020,7 +20504,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: CassandraRoleDefinitionResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -15029,19 +20513,16 @@ namespace azure.mgmt.cosmosdb.types
         key "roleName": str
         key "type": Union[str, RoleDefinitionType]
         assignableScopes: list[str]
-        assignable_scopes: list[str]
         id: str
         permissions: list[Permission]
-        role_name: str
+        roleName: str
         type: Union[str, RoleDefinitionType]
 
 
     class azure.mgmt.cosmosdb.types.CassandraSchema(TypedDict, total=False):
         clusterKeys: list[ClusterKey]
-        cluster_keys: list[ClusterKey]
         columns: list[Column]
         partitionKeys: list[CassandraPartitionKey]
-        partition_keys: list[CassandraPartitionKey]
 
 
     class azure.mgmt.cosmosdb.types.CassandraTableCreateUpdateParameters(ARMResourceProperties):
@@ -15067,61 +20548,45 @@ namespace azure.mgmt.cosmosdb.types
         resource: CassandraTableResource
 
 
-    class azure.mgmt.cosmosdb.types.CassandraTableGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('CassandraTableGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('CassandraTableGetPropertiesResource', module='types')
-        options: CassandraTableGetPropertiesOptions
-        resource: CassandraTableGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.CassandraTableGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.CassandraTableGetPropertiesResource(CassandraTableResource):
-        key "analyticalStorageTtl": int
-        key "defaultTtl": int
-        key "id": Required[str]
-        key "schema": ForwardRef('CassandraSchema', module='types')
-        analytical_storage_ttl: int
-        default_ttl: int
-        etag: str
-        id: str
-        rid: str
-        schema: CassandraSchema
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.CassandraTableGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('CassandraTableGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: CassandraTableGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.CassandraTableResource(TypedDict, total=False):
         key "analyticalStorageTtl": int
         key "defaultTtl": int
         key "id": Required[str]
         key "schema": ForwardRef('CassandraSchema', module='types')
-        analytical_storage_ttl: int
-        default_ttl: int
+        analyticalStorageTtl: int
+        defaultTtl: int
         id: str
         schema: CassandraSchema
+
+
+    class azure.mgmt.cosmosdb.types.CassandraViewCreateUpdateParameters(ARMResourceProperties):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": Required[CassandraViewCreateUpdateProperties]
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: CassandraViewCreateUpdateProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.CassandraViewCreateUpdateProperties(TypedDict, total=False):
+        key "options": ForwardRef('CreateUpdateOptions', module='types')
+        key "resource": Required[CassandraViewResource]
+        options: CreateUpdateOptions
+        resource: CassandraViewResource
+
+
+    class azure.mgmt.cosmosdb.types.CassandraViewResource(TypedDict, total=False):
+        key "id": Required[str]
+        key "viewDefinition": Required[str]
+        id: str
+        viewDefinition: str
 
 
     class azure.mgmt.cosmosdb.types.Certificate(TypedDict, total=False):
@@ -15129,14 +20594,40 @@ namespace azure.mgmt.cosmosdb.types
         pem: str
 
 
+    class azure.mgmt.cosmosdb.types.ChaosFaultProperties(TypedDict, total=False):
+        key "action": Union[str, SupportedActions]
+        key "containerName": str
+        key "databaseName": str
+        key "provisioningState": str
+        key "region": str
+        action: Union[str, SupportedActions]
+        containerName: str
+        databaseName: str
+        provisioningState: str
+        region: str
+
+
+    class azure.mgmt.cosmosdb.types.ChaosFaultResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ChaosFaultProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ChaosFaultProperties
+        systemData: SystemData
+        type: str
+
+
     class azure.mgmt.cosmosdb.types.ClientEncryptionIncludedPath(TypedDict, total=False):
         key "clientEncryptionKeyId": Required[str]
         key "encryptionAlgorithm": Required[str]
         key "encryptionType": Required[str]
         key "path": Required[str]
-        client_encryption_key_id: str
-        encryption_algorithm: str
-        encryption_type: str
+        clientEncryptionKeyId: str
+        encryptionAlgorithm: str
+        encryptionType: str
         path: str
 
 
@@ -15150,66 +20641,29 @@ namespace azure.mgmt.cosmosdb.types
         resource: ClientEncryptionKeyResource
 
 
-    class azure.mgmt.cosmosdb.types.ClientEncryptionKeyGetProperties(TypedDict, total=False):
-        key "resource": ForwardRef('ClientEncryptionKeyGetPropertiesResource', module='types')
-        resource: ClientEncryptionKeyGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.ClientEncryptionKeyGetPropertiesResource(ClientEncryptionKeyResource):
-        key "encryptionAlgorithm": str
-        key "id": str
-        key "keyWrapMetadata": ForwardRef('KeyWrapMetadata', module='types')
-        key "wrappedDataEncryptionKey": str
-        encryption_algorithm: str
-        etag: str
-        id: str
-        key_wrap_metadata: KeyWrapMetadata
-        rid: str
-        ts: float
-        wrapped_data_encryption_key: str
-
-
-    class azure.mgmt.cosmosdb.types.ClientEncryptionKeyGetResults(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ClientEncryptionKeyGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ClientEncryptionKeyGetProperties
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.ClientEncryptionKeyResource(TypedDict, total=False):
         key "encryptionAlgorithm": str
         key "id": str
         key "keyWrapMetadata": ForwardRef('KeyWrapMetadata', module='types')
         key "wrappedDataEncryptionKey": str
-        encryption_algorithm: str
+        encryptionAlgorithm: str
         id: str
-        key_wrap_metadata: KeyWrapMetadata
-        wrapped_data_encryption_key: str
+        keyWrapMetadata: KeyWrapMetadata
+        wrappedDataEncryptionKey: str
 
 
     class azure.mgmt.cosmosdb.types.ClientEncryptionPolicy(TypedDict, total=False):
         key "includedPaths": Required[list[ClientEncryptionIncludedPath]]
         key "policyFormatVersion": Required[int]
-        included_paths: list[ClientEncryptionIncludedPath]
-        policy_format_version: int
-
-
-    class azure.mgmt.cosmosdb.types.CloudError(TypedDict, total=False):
-        key "error": ForwardRef('ErrorResponseAutoGenerated', module='types')
-        error: ErrorResponseAutoGenerated
+        includedPaths: list[ClientEncryptionIncludedPath]
+        policyFormatVersion: int
 
 
     class azure.mgmt.cosmosdb.types.ClusterKey(TypedDict, total=False):
         key "name": str
         key "orderBy": str
         name: str
-        order_by: str
+        orderBy: str
 
 
     class azure.mgmt.cosmosdb.types.ClusterResource(ProxyResource):
@@ -15225,7 +20679,7 @@ namespace azure.mgmt.cosmosdb.types
         location: str
         name: str
         properties: ClusterResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -15237,6 +20691,7 @@ namespace azure.mgmt.cosmosdb.types
         key "cassandraAuditLoggingEnabled": bool
         key "cassandraVersion": str
         key "clusterNameOverride": str
+        key "clusterType": Union[str, ClusterType]
         key "deallocated": bool
         key "delegatedManagementSubnetId": str
         key "hoursBetweenBackups": int
@@ -15248,38 +20703,32 @@ namespace azure.mgmt.cosmosdb.types
         key "repairEnabled": bool
         key "restoreFromBackupId": str
         key "scheduledEventStrategy": Union[str, ScheduledEventStrategy]
-        authentication_method: Union[str, AuthenticationMethod]
-        auto_replicate: Union[str, AutoReplicate]
-        azure_connection_method: Union[str, AzureConnectionType]
+        authenticationMethod: Union[str, AuthenticationMethod]
+        autoReplicate: Union[str, AutoReplicate]
+        azureConnectionMethod: Union[str, AzureConnectionType]
         backupSchedules: list[BackupSchedule]
-        backup_schedules: list[BackupSchedule]
-        cassandra_audit_logging_enabled: bool
-        cassandra_version: str
+        cassandraAuditLoggingEnabled: bool
+        cassandraVersion: str
         clientCertificates: list[Certificate]
-        client_certificates: list[Certificate]
-        cluster_name_override: str
+        clusterNameOverride: str
+        clusterType: Union[str, ClusterType]
         deallocated: bool
-        delegated_management_subnet_id: str
+        delegatedManagementSubnetId: str
         extensions: list[str]
         externalDataCenters: list[str]
         externalGossipCertificates: list[Certificate]
         externalSeedNodes: list[SeedNode]
-        external_data_centers: list[str]
-        external_gossip_certificates: list[Certificate]
-        external_seed_nodes: list[SeedNode]
         gossipCertificates: list[Certificate]
-        gossip_certificates: list[Certificate]
-        hours_between_backups: int
-        initial_cassandra_admin_password: str
-        private_link_resource_id: str
-        prometheus_endpoint: SeedNode
-        provision_error: CassandraError
-        provisioning_state: Union[str, ManagedCassandraProvisioningState]
-        repair_enabled: bool
-        restore_from_backup_id: str
-        scheduled_event_strategy: Union[str, ScheduledEventStrategy]
+        hoursBetweenBackups: int
+        initialCassandraAdminPassword: str
+        privateLinkResourceId: str
+        prometheusEndpoint: SeedNode
+        provisionError: CassandraError
+        provisioningState: Union[str, ManagedCassandraProvisioningState]
+        repairEnabled: bool
+        restoreFromBackupId: str
+        scheduledEventStrategy: Union[str, ScheduledEventStrategy]
         seedNodes: list[SeedNode]
-        seed_nodes: list[SeedNode]
 
 
     class azure.mgmt.cosmosdb.types.Column(TypedDict, total=False):
@@ -15289,9 +20738,17 @@ namespace azure.mgmt.cosmosdb.types
         type: str
 
 
-    class azure.mgmt.cosmosdb.types.CommandOutput(TypedDict, total=False):
-        key "commandOutput": str
-        command_output: str
+    class azure.mgmt.cosmosdb.types.CommandAsyncPostBody(TypedDict):
+        key "arguments": Any
+        key "cassandra-stop-start": bool
+        key "command": Required[str]
+        key "host": Required[str]
+        key "readWrite": bool
+        arguments: Any
+        cassandra-stop-start: bool
+        command: str
+        host: str
+        readWrite: bool
 
 
     class azure.mgmt.cosmosdb.types.CommandPostBody(TypedDict):
@@ -15300,7 +20757,7 @@ namespace azure.mgmt.cosmosdb.types
         key "host": Required[str]
         key "readwrite": bool
         arguments: dict[str, str]
-        cassandra_stop_start: bool
+        cassandra-stop-start: bool
         command: str
         host: str
         readwrite: bool
@@ -15324,31 +20781,18 @@ namespace azure.mgmt.cosmosdb.types
         key "conflictResolutionPath": str
         key "conflictResolutionProcedure": str
         key "mode": Union[str, ConflictResolutionMode]
-        conflict_resolution_path: str
-        conflict_resolution_procedure: str
+        conflictResolutionPath: str
+        conflictResolutionProcedure: str
         mode: Union[str, ConflictResolutionMode]
-
-
-    class azure.mgmt.cosmosdb.types.ConnectionError(TypedDict, total=False):
-        key "connectionState": Union[str, ConnectionState]
-        key "exception": str
-        key "iPFrom": str
-        key "iPTo": str
-        key "port": int
-        connection_state: Union[str, ConnectionState]
-        exception: str
-        i_p_from: str
-        i_p_to: str
-        port: int
 
 
     class azure.mgmt.cosmosdb.types.ConsistencyPolicy(TypedDict, total=False):
         key "defaultConsistencyLevel": Required[Union[str, DefaultConsistencyLevel]]
         key "maxIntervalInSeconds": int
         key "maxStalenessPrefix": int
-        default_consistency_level: Union[str, DefaultConsistencyLevel]
-        max_interval_in_seconds: int
-        max_staleness_prefix: int
+        defaultConsistencyLevel: Union[str, DefaultConsistencyLevel]
+        maxIntervalInSeconds: int
+        maxStalenessPrefix: int
 
 
     class azure.mgmt.cosmosdb.types.ContainerPartitionKey(TypedDict, total=False):
@@ -15357,13 +20801,8 @@ namespace azure.mgmt.cosmosdb.types
         key "version": int
         kind: Union[str, PartitionKind]
         paths: list[str]
-        system_key: bool
+        systemKey: bool
         version: int
-
-
-    class azure.mgmt.cosmosdb.types.ContinuousBackupInformation(TypedDict, total=False):
-        key "latestRestorableTimestamp": str
-        latest_restorable_timestamp: str
 
 
     class azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation(TypedDict, total=False):
@@ -15375,8 +20814,8 @@ namespace azure.mgmt.cosmosdb.types
         key "continuousModeProperties": ForwardRef('ContinuousModeProperties', module='types')
         key "migrationState": ForwardRef('BackupPolicyMigrationState', module='types')
         key "type": Required[Literal[BackupPolicyType.CONTINUOUS]]
-        continuous_mode_properties: ContinuousModeProperties
-        migration_state: BackupPolicyMigrationState
+        continuousModeProperties: ContinuousModeProperties
+        migrationState: BackupPolicyMigrationState
         type: Literal[BackupPolicyType.CONTINUOUS]
 
 
@@ -15385,23 +20824,156 @@ namespace azure.mgmt.cosmosdb.types
         tier: Union[str, ContinuousTier]
 
 
+    class azure.mgmt.cosmosdb.types.CopyJobGetResults(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[CopyJobProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: CopyJobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.CopyJobProperties(TypedDict, total=False):
+        key "duration": str
+        key "error": ForwardRef('ErrorResponse', module='types')
+        key "jobProperties": Required[BaseCopyJobProperties]
+        key "lastUpdatedUtcTime": str
+        key "mode": Union[str, CopyJobMode]
+        key "processedCount": int
+        key "status": Union[str, CopyJobStatus]
+        key "totalCount": int
+        key "workerCount": int
+        duration: str
+        error: ErrorResponse
+        jobProperties: BaseCopyJobProperties
+        lastUpdatedUtcTime: str
+        mode: Union[str, CopyJobMode]
+        processedCount: int
+        status: Union[str, CopyJobStatus]
+        totalCount: int
+        workerCount: int
+
+
+    class azure.mgmt.cosmosdb.types.CopyJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB_STORAGE_TO_CASSANDRA_RU = "AzureBlobStorageToCassandraRU"
+        CASSANDRA_RU_TO_AZURE_BLOB_STORAGE = "CassandraRUToAzureBlobStorage"
+        CASSANDRA_RU_TO_CASSANDRA_RU = "CassandraRUToCassandraRU"
+        MONGO_RU_TO_MONGO_RU = "MongoRUToMongoRU"
+        MONGO_RU_TO_MONGO_V_CORE = "MongoRUToMongoVCore"
+        NO_SQL_RU_TO_NO_SQL_RU = "NoSqlRUToNoSqlRU"
+
+
     class azure.mgmt.cosmosdb.types.CorsPolicy(TypedDict, total=False):
         key "allowedHeaders": str
         key "allowedMethods": str
         key "allowedOrigins": Required[str]
         key "exposedHeaders": str
         key "maxAgeInSeconds": int
-        allowed_headers: str
-        allowed_methods: str
-        allowed_origins: str
-        exposed_headers: str
-        max_age_in_seconds: int
+        allowedHeaders: str
+        allowedMethods: str
+        allowedOrigins: str
+        exposedHeaders: str
+        maxAgeInSeconds: int
+
+
+    class azure.mgmt.cosmosdb.types.CosmosCassandraDataTransferDataSourceSink(TypedDict, total=False):
+        key "component": Required[Literal[DataTransferComponent.COSMOS_DB_CASSANDRA]]
+        key "keyspaceName": Required[str]
+        key "remoteAccountName": str
+        key "tableName": Required[str]
+        component: Literal[DataTransferComponent.COSMOS_DB_CASSANDRA]
+        keyspaceName: str
+        remoteAccountName: str
+        tableName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosDBCassandraTable(TypedDict, total=False):
+        key "keyspaceName": Required[str]
+        key "tableName": Required[str]
+        keyspaceName: str
+        tableName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosDBMongoCollection(TypedDict, total=False):
+        key "collectionName": Required[str]
+        key "databaseName": Required[str]
+        collectionName: str
+        databaseName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosDBMongoVCoreCollection(TypedDict, total=False):
+        key "collectionName": Required[str]
+        key "databaseName": Required[str]
+        collectionName: str
+        databaseName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosDBNoSqlContainer(TypedDict, total=False):
+        key "containerName": Required[str]
+        key "databaseName": Required[str]
+        containerName: str
+        databaseName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosDBSourceSinkDetails(TypedDict, total=False):
+        key "remoteAccountName": str
+        remoteAccountName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosMongoDataTransferDataSourceSink(TypedDict, total=False):
+        key "collectionName": Required[str]
+        key "component": Required[Literal[DataTransferComponent.COSMOS_DB_MONGO]]
+        key "databaseName": Required[str]
+        key "remoteAccountName": str
+        collectionName: str
+        component: Literal[DataTransferComponent.COSMOS_DB_MONGO]
+        databaseName: str
+        remoteAccountName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosMongoVCoreDataTransferDataSourceSink(TypedDict, total=False):
+        key "collectionName": Required[str]
+        key "component": Required[Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE]]
+        key "connectionStringKeyVaultUri": str
+        key "databaseName": Required[str]
+        key "hostName": str
+        collectionName: str
+        component: Literal[DataTransferComponent.COSMOS_DB_MONGO_V_CORE]
+        connectionStringKeyVaultUri: str
+        databaseName: str
+        hostName: str
+
+
+    class azure.mgmt.cosmosdb.types.CosmosSqlDataTransferDataSourceSink(TypedDict, total=False):
+        key "component": Required[Literal[DataTransferComponent.COSMOS_DB_SQL]]
+        key "containerName": Required[str]
+        key "databaseName": Required[str]
+        key "remoteAccountName": str
+        component: Literal[DataTransferComponent.COSMOS_DB_SQL]
+        containerName: str
+        databaseName: str
+        remoteAccountName: str
+
+
+    class azure.mgmt.cosmosdb.types.CreateJobRequest(ARMProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[DataTransferJobProperties]
+        key "type": str
+        id: str
+        name: str
+        properties: DataTransferJobProperties
+        type: str
 
 
     class azure.mgmt.cosmosdb.types.CreateUpdateOptions(TypedDict, total=False):
         key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
         key "throughput": int
-        autoscale_settings: AutoscaleSettings
+        autoscaleSettings: AutoscaleSettings
         throughput: int
 
 
@@ -15414,7 +20986,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: DataCenterResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -15434,66 +21006,88 @@ namespace azure.mgmt.cosmosdb.types
         key "provisionError": ForwardRef('CassandraError', module='types')
         key "provisioningState": Union[str, ManagedCassandraProvisioningState]
         key "sku": str
-        authentication_method_ldap_properties: AuthenticationMethodLdapProperties
-        availability_zone: bool
-        backup_storage_customer_key_uri: str
-        base64_encoded_cassandra_yaml_fragment: str
-        data_center_location: str
+        authenticationMethodLdapProperties: AuthenticationMethodLdapProperties
+        availabilityZone: bool
+        backupStorageCustomerKeyUri: str
+        base64EncodedCassandraYamlFragment: str
+        dataCenterLocation: str
         deallocated: bool
-        delegated_subnet_id: str
-        disk_capacity: int
-        disk_sku: str
-        managed_disk_customer_key_uri: str
-        node_count: int
-        private_endpoint_ip_address: str
-        provision_error: CassandraError
-        provisioning_state: Union[str, ManagedCassandraProvisioningState]
+        delegatedSubnetId: str
+        diskCapacity: int
+        diskSku: str
+        managedDiskCustomerKeyUri: str
+        nodeCount: int
+        privateEndpointIpAddress: str
+        provisionError: CassandraError
+        provisioningState: Union[str, ManagedCassandraProvisioningState]
         seedNodes: list[SeedNode]
-        seed_nodes: list[SeedNode]
         sku: str
 
 
-    class azure.mgmt.cosmosdb.types.DataTransferRegionalServiceResource(RegionalServiceResource):
-        key "location": str
-        key "name": str
-        key "status": Union[str, ServiceStatus]
-        location: str
-        name: str
-        status: Union[str, ServiceStatus]
+    class azure.mgmt.cosmosdb.types.DataMaskingPolicy(TypedDict, total=False):
+        key "isPolicyEnabled": bool
+        excludedPaths: list[DataMaskingPolicyExcludedPathsItem]
+        includedPaths: list[DataMaskingPolicyIncludedPathsItem]
+        isPolicyEnabled: bool
+
+
+    class azure.mgmt.cosmosdb.types.DataMaskingPolicyExcludedPathsItem(TypedDict, total=False):
+        key "path": Required[str]
+        path: str
+
+
+    class azure.mgmt.cosmosdb.types.DataMaskingPolicyIncludedPathsItem(TypedDict, total=False):
+        key "length": int
+        key "path": Required[str]
+        key "startPosition": int
+        key "strategy": str
+        length: int
+        path: str
+        startPosition: int
+        strategy: str
+
+
+    class azure.mgmt.cosmosdb.types.DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_BLOB_STORAGE = "AzureBlobStorage"
+        BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK = "BaseCosmosDataTransferDataSourceSink"
+        COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
+        COSMOS_DB_MONGO = "CosmosDBMongo"
+        COSMOS_DB_MONGO_V_CORE = "CosmosDBMongoVCore"
+        COSMOS_DB_SQL = "CosmosDBSql"
+
+
+    class azure.mgmt.cosmosdb.types.DataTransferJobProperties(TypedDict, total=False):
+        key "destination": Required[DataTransferDataSourceSink]
+        key "duration": str
+        key "error": ForwardRef('ErrorResponseAutoGenerated', module='types')
+        key "jobName": str
+        key "lastUpdatedUtcTime": str
+        key "mode": Union[str, DataTransferJobMode]
+        key "processedCount": int
+        key "source": Required[DataTransferDataSourceSink]
+        key "status": str
+        key "totalCount": int
+        key "workerCount": int
+        destination: DataTransferDataSourceSink
+        duration: str
+        error: ErrorResponseAutoGenerated
+        jobName: str
+        lastUpdatedUtcTime: str
+        mode: Union[str, DataTransferJobMode]
+        processedCount: int
+        source: DataTransferDataSourceSink
+        status: str
+        totalCount: int
+        workerCount: int
 
 
     class azure.mgmt.cosmosdb.types.DataTransferServiceResourceCreateUpdateProperties(TypedDict, total=False):
         key "instanceCount": int
         key "instanceSize": Union[str, ServiceSize]
         key "serviceType": Required[Literal[ServiceType.DATA_TRANSFER]]
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        service_type: Literal[ServiceType.DATA_TRANSFER]
-
-
-    class azure.mgmt.cosmosdb.types.DataTransferServiceResourceProperties(TypedDict, total=False):
-        key "creationTime": str
-        key "instanceCount": int
-        key "instanceSize": Union[str, ServiceSize]
-        key "serviceType": Required[Literal[ServiceType.DATA_TRANSFER]]
-        key "status": Union[str, ServiceStatus]
-        creation_time: str
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        locations: list[DataTransferRegionalServiceResource]
-        service_type: Literal[ServiceType.DATA_TRANSFER]
-        status: Union[str, ServiceStatus]
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountConnectionString(TypedDict, total=False):
-        key "connectionString": str
-        key "description": str
-        key "keyKind": Union[str, Kind]
-        key "type": Union[str, Type]
-        connection_string: str
-        description: str
-        key_kind: Union[str, Kind]
-        type: Union[str, Type]
+        instanceCount: int
+        instanceSize: Union[str, ServiceSize]
+        serviceType: Literal[ServiceType.DATA_TRANSFER]
 
 
     class azure.mgmt.cosmosdb.types.DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
@@ -15519,6 +21113,7 @@ namespace azure.mgmt.cosmosdb.types
         key "apiProperties": ForwardRef('ApiProperties', module='types')
         key "backupPolicy": ForwardRef('BackupPolicy', module='types')
         key "capacity": ForwardRef('Capacity', module='types')
+        key "capacityMode": Union[str, CapacityMode]
         key "connectorOffer": Union[str, ConnectorOffer]
         key "consistencyPolicy": ForwardRef('ConsistencyPolicy', module='types')
         key "createMode": Union[str, CreateMode]
@@ -15526,13 +21121,16 @@ namespace azure.mgmt.cosmosdb.types
         key "databaseAccountOfferType": Required[Literal["Standard"]]
         key "defaultIdentity": str
         key "defaultPriorityLevel": Union[str, DefaultPriorityLevel]
+        key "diagnosticLogSettings": ForwardRef('DiagnosticLogSettings', module='types')
         key "disableKeyBasedMetadataWriteAccess": bool
         key "disableLocalAuth": bool
+        key "enableAllVersionsAndDeletesChangeFeed": bool
         key "enableAnalyticalStorage": bool
         key "enableAutomaticFailover": bool
         key "enableBurstCapacity": bool
         key "enableCassandraConnector": bool
         key "enableFreeTier": bool
+        key "enableMaterializedViews": bool
         key "enableMultipleWriteLocations": bool
         key "enablePartitionMerge": bool
         key "enablePerRegionPerPartitionAutoscale": bool
@@ -15546,153 +21144,48 @@ namespace azure.mgmt.cosmosdb.types
         key "networkAclBypass": Union[str, NetworkAclBypass]
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "restoreParameters": ForwardRef('RestoreParameters', module='types')
-        analytical_storage_configuration: AnalyticalStorageConfiguration
-        api_properties: ApiProperties
-        backup_policy: BackupPolicy
+        key "softDeleteConfiguration": ForwardRef('SoftDeleteConfiguration', module='types')
+        analyticalStorageConfiguration: AnalyticalStorageConfiguration
+        apiProperties: ApiProperties
+        backupPolicy: BackupPolicy
         capabilities: list[Capability]
         capacity: Capacity
-        connector_offer: Union[str, ConnectorOffer]
-        consistency_policy: ConsistencyPolicy
+        capacityMode: Union[str, CapacityMode]
+        connectorOffer: Union[str, ConnectorOffer]
+        consistencyPolicy: ConsistencyPolicy
         cors: list[CorsPolicy]
-        create_mode: Union[str, CreateMode]
-        customer_managed_key_status: str
-        database_account_offer_type: Literal[Standard]
-        default_identity: str
-        default_priority_level: Union[str, DefaultPriorityLevel]
-        disable_key_based_metadata_write_access: bool
-        disable_local_auth: bool
-        enable_analytical_storage: bool
-        enable_automatic_failover: bool
-        enable_burst_capacity: bool
-        enable_cassandra_connector: bool
-        enable_free_tier: bool
-        enable_multiple_write_locations: bool
-        enable_partition_merge: bool
-        enable_per_region_per_partition_autoscale: bool
-        enable_priority_based_execution: bool
-        enforce_hierarchical_partition_key_id_last_level: bool
+        createMode: Union[str, CreateMode]
+        customerManagedKeyStatus: str
+        databaseAccountOfferType: Literal[Standard]
+        defaultIdentity: str
+        defaultPriorityLevel: Union[str, DefaultPriorityLevel]
+        diagnosticLogSettings: DiagnosticLogSettings
+        disableKeyBasedMetadataWriteAccess: bool
+        disableLocalAuth: bool
+        enableAllVersionsAndDeletesChangeFeed: bool
+        enableAnalyticalStorage: bool
+        enableAutomaticFailover: bool
+        enableBurstCapacity: bool
+        enableCassandraConnector: bool
+        enableFreeTier: bool
+        enableMaterializedViews: bool
+        enableMultipleWriteLocations: bool
+        enablePartitionMerge: bool
+        enablePerRegionPerPartitionAutoscale: bool
+        enablePriorityBasedExecution: bool
+        enforceHierarchicalPartitionKeyIdLastLevel: bool
         ipRules: list[IpAddressOrRange]
-        ip_rules: list[IpAddressOrRange]
-        is_virtual_network_filter_enabled: bool
-        key_vault_key_uri: str
-        keys_metadata: DatabaseAccountKeysMetadata
+        isVirtualNetworkFilterEnabled: bool
+        keyVaultKeyUri: str
+        keysMetadata: DatabaseAccountKeysMetadata
         locations: list[Location]
-        minimal_tls_version: Union[str, MinimalTlsVersion]
+        minimalTlsVersion: Union[str, MinimalTlsVersion]
+        networkAclBypass: Union[str, NetworkAclBypass]
         networkAclBypassResourceIds: list[str]
-        network_acl_bypass: Union[str, NetworkAclBypass]
-        network_acl_bypass_resource_ids: list[str]
-        public_network_access: Union[str, PublicNetworkAccess]
-        restore_parameters: RestoreParameters
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        restoreParameters: RestoreParameters
+        softDeleteConfiguration: SoftDeleteConfiguration
         virtualNetworkRules: list[VirtualNetworkRule]
-        virtual_network_rules: list[VirtualNetworkRule]
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountGetProperties(TypedDict, total=False):
-        key "analyticalStorageConfiguration": ForwardRef('AnalyticalStorageConfiguration', module='types')
-        key "apiProperties": ForwardRef('ApiProperties', module='types')
-        key "backupPolicy": ForwardRef('BackupPolicy', module='types')
-        key "capacity": ForwardRef('Capacity', module='types')
-        key "connectorOffer": Union[str, ConnectorOffer]
-        key "consistencyPolicy": ForwardRef('ConsistencyPolicy', module='types')
-        key "createMode": Union[str, CreateMode]
-        key "customerManagedKeyStatus": str
-        key "databaseAccountOfferType": Literal["Standard"]
-        key "defaultIdentity": str
-        key "defaultPriorityLevel": Union[str, DefaultPriorityLevel]
-        key "disableKeyBasedMetadataWriteAccess": bool
-        key "disableLocalAuth": bool
-        key "documentEndpoint": str
-        key "enableAnalyticalStorage": bool
-        key "enableAutomaticFailover": bool
-        key "enableBurstCapacity": bool
-        key "enableCassandraConnector": bool
-        key "enableFreeTier": bool
-        key "enableMultipleWriteLocations": bool
-        key "enablePartitionMerge": bool
-        key "enablePerRegionPerPartitionAutoscale": bool
-        key "enablePriorityBasedExecution": bool
-        key "enforceHierarchicalPartitionKeyIdLastLevel": bool
-        key "instanceId": str
-        key "isVirtualNetworkFilterEnabled": bool
-        key "keyVaultKeyUri": str
-        key "keyVaultKeyUriVersion": str
-        key "keysMetadata": ForwardRef('DatabaseAccountKeysMetadata', module='types')
-        key "minimalTlsVersion": Union[str, MinimalTlsVersion]
-        key "networkAclBypass": Union[str, NetworkAclBypass]
-        key "provisioningState": str
-        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
-        key "restoreParameters": ForwardRef('RestoreParameters', module='types')
-        analytical_storage_configuration: AnalyticalStorageConfiguration
-        api_properties: ApiProperties
-        backup_policy: BackupPolicy
-        capabilities: list[Capability]
-        capacity: Capacity
-        connector_offer: Union[str, ConnectorOffer]
-        consistency_policy: ConsistencyPolicy
-        cors: list[CorsPolicy]
-        create_mode: Union[str, CreateMode]
-        customer_managed_key_status: str
-        database_account_offer_type: Literal[Standard]
-        default_identity: str
-        default_priority_level: Union[str, DefaultPriorityLevel]
-        disable_key_based_metadata_write_access: bool
-        disable_local_auth: bool
-        document_endpoint: str
-        enable_analytical_storage: bool
-        enable_automatic_failover: bool
-        enable_burst_capacity: bool
-        enable_cassandra_connector: bool
-        enable_free_tier: bool
-        enable_multiple_write_locations: bool
-        enable_partition_merge: bool
-        enable_per_region_per_partition_autoscale: bool
-        enable_priority_based_execution: bool
-        enforce_hierarchical_partition_key_id_last_level: bool
-        failoverPolicies: list[FailoverPolicy]
-        failover_policies: list[FailoverPolicy]
-        instance_id: str
-        ipRules: list[IpAddressOrRange]
-        ip_rules: list[IpAddressOrRange]
-        is_virtual_network_filter_enabled: bool
-        key_vault_key_uri: str
-        key_vault_key_uri_version: str
-        keys_metadata: DatabaseAccountKeysMetadata
-        locations: list[Location]
-        minimal_tls_version: Union[str, MinimalTlsVersion]
-        networkAclBypassResourceIds: list[str]
-        network_acl_bypass: Union[str, NetworkAclBypass]
-        network_acl_bypass_resource_ids: list[str]
-        privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccess]
-        readLocations: list[Location]
-        read_locations: list[Location]
-        restore_parameters: RestoreParameters
-        virtualNetworkRules: list[VirtualNetworkRule]
-        virtual_network_rules: list[VirtualNetworkRule]
-        writeLocations: list[Location]
-        write_locations: list[Location]
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "kind": Union[str, DatabaseAccountKind]
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('DatabaseAccountGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        kind: Union[str, DatabaseAccountKind]
-        location: str
-        name: str
-        properties: DatabaseAccountGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
 
 
     class azure.mgmt.cosmosdb.types.DatabaseAccountKeysMetadata(TypedDict, total=False):
@@ -15700,38 +21193,17 @@ namespace azure.mgmt.cosmosdb.types
         key "primaryReadonlyMasterKey": ForwardRef('AccountKeyMetadata', module='types')
         key "secondaryMasterKey": ForwardRef('AccountKeyMetadata', module='types')
         key "secondaryReadonlyMasterKey": ForwardRef('AccountKeyMetadata', module='types')
-        primary_master_key: AccountKeyMetadata
-        primary_readonly_master_key: AccountKeyMetadata
-        secondary_master_key: AccountKeyMetadata
-        secondary_readonly_master_key: AccountKeyMetadata
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountListConnectionStringsResult(TypedDict, total=False):
-        connectionStrings: list[DatabaseAccountConnectionString]
-        connection_strings: list[DatabaseAccountConnectionString]
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountListKeysResult(DatabaseAccountListReadOnlyKeysResult):
-        key "primaryMasterKey": str
-        key "primaryReadonlyMasterKey": str
-        key "secondaryMasterKey": str
-        key "secondaryReadonlyMasterKey": str
-        primary_master_key: str
-        primary_readonly_master_key: str
-        secondary_master_key: str
-        secondary_readonly_master_key: str
-
-
-    class azure.mgmt.cosmosdb.types.DatabaseAccountListReadOnlyKeysResult(TypedDict, total=False):
-        key "primaryReadonlyMasterKey": str
-        key "secondaryReadonlyMasterKey": str
-        primary_readonly_master_key: str
-        secondary_readonly_master_key: str
+        primaryMasterKey: AccountKeyMetadata
+        primaryReadonlyMasterKey: AccountKeyMetadata
+        secondaryMasterKey: AccountKeyMetadata
+        secondaryReadonlyMasterKey: AccountKeyMetadata
 
 
     class azure.mgmt.cosmosdb.types.DatabaseAccountRegenerateKeyParameters(TypedDict, total=False):
         key "keyKind": Required[Union[str, KeyKind]]
-        key_kind: Union[str, KeyKind]
+        key "skipAccountKeysLastUsageCheck": bool
+        keyKind: Union[str, KeyKind]
+        skipAccountKeysLastUsageCheck: bool
 
 
     class azure.mgmt.cosmosdb.types.DatabaseAccountUpdateParameters(TypedDict, total=False):
@@ -15749,18 +21221,22 @@ namespace azure.mgmt.cosmosdb.types
         key "apiProperties": ForwardRef('ApiProperties', module='types')
         key "backupPolicy": ForwardRef('BackupPolicy', module='types')
         key "capacity": ForwardRef('Capacity', module='types')
+        key "capacityMode": Union[str, CapacityMode]
         key "connectorOffer": Union[str, ConnectorOffer]
         key "consistencyPolicy": ForwardRef('ConsistencyPolicy', module='types')
         key "customerManagedKeyStatus": str
         key "defaultIdentity": str
         key "defaultPriorityLevel": Union[str, DefaultPriorityLevel]
+        key "diagnosticLogSettings": ForwardRef('DiagnosticLogSettings', module='types')
         key "disableKeyBasedMetadataWriteAccess": bool
         key "disableLocalAuth": bool
+        key "enableAllVersionsAndDeletesChangeFeed": bool
         key "enableAnalyticalStorage": bool
         key "enableAutomaticFailover": bool
         key "enableBurstCapacity": bool
         key "enableCassandraConnector": bool
         key "enableFreeTier": bool
+        key "enableMaterializedViews": bool
         key "enableMultipleWriteLocations": bool
         key "enablePartitionMerge": bool
         key "enablePerRegionPerPartitionAutoscale": bool
@@ -15772,49 +21248,56 @@ namespace azure.mgmt.cosmosdb.types
         key "minimalTlsVersion": Union[str, MinimalTlsVersion]
         key "networkAclBypass": Union[str, NetworkAclBypass]
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
-        analytical_storage_configuration: AnalyticalStorageConfiguration
-        api_properties: ApiProperties
-        backup_policy: BackupPolicy
+        key "softDeleteConfiguration": ForwardRef('SoftDeleteConfiguration', module='types')
+        analyticalStorageConfiguration: AnalyticalStorageConfiguration
+        apiProperties: ApiProperties
+        backupPolicy: BackupPolicy
         capabilities: list[Capability]
         capacity: Capacity
-        connector_offer: Union[str, ConnectorOffer]
-        consistency_policy: ConsistencyPolicy
+        capacityMode: Union[str, CapacityMode]
+        connectorOffer: Union[str, ConnectorOffer]
+        consistencyPolicy: ConsistencyPolicy
         cors: list[CorsPolicy]
-        customer_managed_key_status: str
-        default_identity: str
-        default_priority_level: Union[str, DefaultPriorityLevel]
-        disable_key_based_metadata_write_access: bool
-        disable_local_auth: bool
-        enable_analytical_storage: bool
-        enable_automatic_failover: bool
-        enable_burst_capacity: bool
-        enable_cassandra_connector: bool
-        enable_free_tier: bool
-        enable_multiple_write_locations: bool
-        enable_partition_merge: bool
-        enable_per_region_per_partition_autoscale: bool
-        enable_priority_based_execution: bool
-        enforce_hierarchical_partition_key_id_last_level: bool
+        customerManagedKeyStatus: str
+        defaultIdentity: str
+        defaultPriorityLevel: Union[str, DefaultPriorityLevel]
+        diagnosticLogSettings: DiagnosticLogSettings
+        disableKeyBasedMetadataWriteAccess: bool
+        disableLocalAuth: bool
+        enableAllVersionsAndDeletesChangeFeed: bool
+        enableAnalyticalStorage: bool
+        enableAutomaticFailover: bool
+        enableBurstCapacity: bool
+        enableCassandraConnector: bool
+        enableFreeTier: bool
+        enableMaterializedViews: bool
+        enableMultipleWriteLocations: bool
+        enablePartitionMerge: bool
+        enablePerRegionPerPartitionAutoscale: bool
+        enablePriorityBasedExecution: bool
+        enforceHierarchicalPartitionKeyIdLastLevel: bool
         ipRules: list[IpAddressOrRange]
-        ip_rules: list[IpAddressOrRange]
-        is_virtual_network_filter_enabled: bool
-        key_vault_key_uri: str
-        keys_metadata: DatabaseAccountKeysMetadata
+        isVirtualNetworkFilterEnabled: bool
+        keyVaultKeyUri: str
+        keysMetadata: DatabaseAccountKeysMetadata
         locations: list[Location]
-        minimal_tls_version: Union[str, MinimalTlsVersion]
+        minimalTlsVersion: Union[str, MinimalTlsVersion]
+        networkAclBypass: Union[str, NetworkAclBypass]
         networkAclBypassResourceIds: list[str]
-        network_acl_bypass: Union[str, NetworkAclBypass]
-        network_acl_bypass_resource_ids: list[str]
-        public_network_access: Union[str, PublicNetworkAccess]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        softDeleteConfiguration: SoftDeleteConfiguration
         virtualNetworkRules: list[VirtualNetworkRule]
-        virtual_network_rules: list[VirtualNetworkRule]
 
 
     class azure.mgmt.cosmosdb.types.DatabaseRestoreResource(TypedDict, total=False):
         key "databaseName": str
         collectionNames: list[str]
-        collection_names: list[str]
-        database_name: str
+        databaseName: str
+
+
+    class azure.mgmt.cosmosdb.types.DiagnosticLogSettings(TypedDict, total=False):
+        key "enableFullTextQuery": Union[str, EnableFullTextQuery]
+        enableFullTextQuery: Union[str, EnableFullTextQuery]
 
 
     class azure.mgmt.cosmosdb.types.ErrorAdditionalInfo(TypedDict, total=False):
@@ -15829,7 +21312,6 @@ namespace azure.mgmt.cosmosdb.types
         key "message": str
         key "target": str
         additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
         code: str
         details: list[ErrorDetail]
         message: str
@@ -15855,16 +21337,38 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.FailoverPolicies(TypedDict, total=False):
         key "failoverPolicies": Required[list[FailoverPolicy]]
-        failover_policies: list[FailoverPolicy]
+        failoverPolicies: list[FailoverPolicy]
 
 
     class azure.mgmt.cosmosdb.types.FailoverPolicy(TypedDict, total=False):
         key "failoverPriority": int
         key "id": str
         key "locationName": str
-        failover_priority: int
+        failoverPriority: int
         id: str
-        location_name: str
+        locationName: str
+
+
+    class azure.mgmt.cosmosdb.types.FleetAnalyticsProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, Status]
+        key "storageLocationType": Union[str, FleetAnalyticsPropertiesStorageLocationType]
+        key "storageLocationUri": str
+        provisioningState: Union[str, Status]
+        storageLocationType: Union[str, FleetAnalyticsPropertiesStorageLocationType]
+        storageLocationUri: str
+
+
+    class azure.mgmt.cosmosdb.types.FleetAnalyticsResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FleetAnalyticsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: FleetAnalyticsProperties
+        systemData: SystemData
+        type: str
 
 
     class azure.mgmt.cosmosdb.types.FleetResource(TrackedResource):
@@ -15878,14 +21382,14 @@ namespace azure.mgmt.cosmosdb.types
         location: str
         name: str
         properties: FleetResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.cosmosdb.types.FleetResourceProperties(TypedDict, total=False):
         key "provisioningState": Union[str, Status]
-        provisioning_state: Union[str, Status]
+        provisioningState: Union[str, Status]
 
 
     class azure.mgmt.cosmosdb.types.FleetResourceUpdate(TypedDict, total=False):
@@ -15897,15 +21401,15 @@ namespace azure.mgmt.cosmosdb.types
     class azure.mgmt.cosmosdb.types.FleetspaceAccountProperties(TypedDict, total=False):
         key "globalDatabaseAccountProperties": ForwardRef('FleetspaceAccountPropertiesGlobalDatabaseAccountProperties', module='types')
         key "provisioningState": Union[str, Status]
-        global_database_account_properties: FleetspaceAccountPropertiesGlobalDatabaseAccountProperties
-        provisioning_state: Union[str, Status]
+        globalDatabaseAccountProperties: FleetspaceAccountPropertiesGlobalDatabaseAccountProperties
+        provisioningState: Union[str, Status]
 
 
     class azure.mgmt.cosmosdb.types.FleetspaceAccountPropertiesGlobalDatabaseAccountProperties(TypedDict, total=False):
         key "armLocation": str
         key "resourceId": str
-        arm_location: str
-        resource_id: str
+        armLocation: str
+        resourceId: str
 
 
     class azure.mgmt.cosmosdb.types.FleetspaceAccountResource(ProxyResource):
@@ -15917,7 +21421,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: FleetspaceAccountProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -15927,11 +21431,10 @@ namespace azure.mgmt.cosmosdb.types
         key "serviceTier": Union[str, FleetspacePropertiesServiceTier]
         key "throughputPoolConfiguration": ForwardRef('FleetspacePropertiesThroughputPoolConfiguration', module='types')
         dataRegions: list[str]
-        data_regions: list[str]
-        fleetspace_api_kind: Union[str, FleetspacePropertiesFleetspaceApiKind]
-        provisioning_state: Union[str, Status]
-        service_tier: Union[str, FleetspacePropertiesServiceTier]
-        throughput_pool_configuration: FleetspacePropertiesThroughputPoolConfiguration
+        fleetspaceApiKind: Union[str, FleetspacePropertiesFleetspaceApiKind]
+        provisioningState: Union[str, Status]
+        serviceTier: Union[str, FleetspacePropertiesServiceTier]
+        throughputPoolConfiguration: FleetspacePropertiesThroughputPoolConfiguration
 
 
     class azure.mgmt.cosmosdb.types.FleetspacePropertiesThroughputPoolConfiguration(TypedDict, total=False):
@@ -15939,10 +21442,10 @@ namespace azure.mgmt.cosmosdb.types
         key "maxConsumableRUs": int
         key "maxThroughput": int
         key "minThroughput": int
-        dedicated_r_us: int
-        max_consumable_r_us: int
-        max_throughput: int
-        min_throughput: int
+        dedicatedRUs: int
+        maxConsumableRUs: int
+        maxThroughput: int
+        minThroughput: int
 
 
     class azure.mgmt.cosmosdb.types.FleetspaceResource(ProxyResource):
@@ -15954,7 +21457,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: FleetspaceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -15977,45 +21480,112 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.FullTextPolicy(TypedDict, total=False):
         key "defaultLanguage": str
-        default_language: str
+        defaultLanguage: str
         fullTextPaths: list[FullTextPath]
-        full_text_paths: list[FullTextPath]
 
 
-    class azure.mgmt.cosmosdb.types.GraphAPIComputeRegionalServiceResource(RegionalServiceResource):
-        key "graphApiComputeEndpoint": str
-        key "location": str
+    class azure.mgmt.cosmosdb.types.GarnetClusterResource(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedCassandraManagedServiceIdentity', module='types')
+        key "location": Required[str]
         key "name": str
-        key "status": Union[str, ServiceStatus]
-        graph_api_compute_endpoint: str
+        key "properties": ForwardRef('GarnetClusterResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedCassandraManagedServiceIdentity
         location: str
         name: str
-        status: Union[str, ServiceStatus]
+        properties: GarnetClusterResourceProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.GarnetClusterResourcePatch(TypedDict, total=False):
+        key "properties": ForwardRef('GarnetClusterResourcePatchProperties', module='types')
+        properties: GarnetClusterResourcePatchProperties
+
+
+    class azure.mgmt.cosmosdb.types.GarnetClusterResourcePatchProperties(TypedDict, total=False):
+        key "authenticationMethod": Union[str, GarnetAuthenticationType]
+        key "clusterType": Union[str, ClusterType]
+        key "persistence": bool
+        authenticationMethod: Union[str, GarnetAuthenticationType]
+        clusterType: Union[str, ClusterType]
+        extensions: list[str]
+        persistence: bool
+
+
+    class azure.mgmt.cosmosdb.types.GarnetClusterResourceProperties(TypedDict, total=False):
+        key "allocationState": Union[str, AllocationState]
+        key "authenticationMethod": Union[str, GarnetAuthenticationType]
+        key "availabilityZone": bool
+        key "clusterType": Union[str, ClusterType]
+        key "nodeSku": str
+        key "persistence": bool
+        key "provisionError": ForwardRef('ErrorDetail', module='types')
+        key "provisioningState": Union[str, GarnetCacheProvisioningState]
+        key "replicationFactor": int
+        key "shardCount": int
+        key "subnetId": str
+        allocationState: Union[str, AllocationState]
+        authenticationMethod: Union[str, GarnetAuthenticationType]
+        availabilityZone: bool
+        clusterType: Union[str, ClusterType]
+        endPoints: list[GarnetClusterResourcePropertiesEndPointsItem]
+        extensions: list[str]
+        nodeSku: str
+        persistence: bool
+        provisionError: ErrorDetail
+        provisioningState: Union[str, GarnetCacheProvisioningState]
+        replicationFactor: int
+        shardCount: int
+        subnetId: str
+
+
+    class azure.mgmt.cosmosdb.types.GarnetClusterResourcePropertiesEndPointsItem(TypedDict, total=False):
+        key "ipAddress": str
+        key "port": int
+        ipAddress: str
+        port: int
 
 
     class azure.mgmt.cosmosdb.types.GraphAPIComputeServiceResourceCreateUpdateProperties(TypedDict, total=False):
         key "instanceCount": int
         key "instanceSize": Union[str, ServiceSize]
         key "serviceType": Required[Literal[ServiceType.GRAPH_API_COMPUTE]]
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        service_type: Literal[ServiceType.GRAPH_API_COMPUTE]
+        instanceCount: int
+        instanceSize: Union[str, ServiceSize]
+        serviceType: Literal[ServiceType.GRAPH_API_COMPUTE]
 
 
-    class azure.mgmt.cosmosdb.types.GraphAPIComputeServiceResourceProperties(TypedDict, total=False):
-        key "creationTime": str
-        key "graphApiComputeEndpoint": str
-        key "instanceCount": int
-        key "instanceSize": Union[str, ServiceSize]
-        key "serviceType": Required[Literal[ServiceType.GRAPH_API_COMPUTE]]
-        key "status": Union[str, ServiceStatus]
-        creation_time: str
-        graph_api_compute_endpoint: str
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        locations: list[GraphAPIComputeRegionalServiceResource]
-        service_type: Literal[ServiceType.GRAPH_API_COMPUTE]
-        status: Union[str, ServiceStatus]
+    class azure.mgmt.cosmosdb.types.GraphResource(TypedDict, total=False):
+        key "id": Required[str]
+        id: str
+
+
+    class azure.mgmt.cosmosdb.types.GraphResourceCreateUpdateParameters(ARMResourceProperties):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": Required[GraphResourceCreateUpdateProperties]
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: GraphResourceCreateUpdateProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.GraphResourceCreateUpdateProperties(TypedDict, total=False):
+        key "options": ForwardRef('CreateUpdateOptions', module='types')
+        key "resource": Required[GraphResource]
+        options: CreateUpdateOptions
+        resource: GraphResource
 
 
     class azure.mgmt.cosmosdb.types.GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -16041,64 +21611,19 @@ namespace azure.mgmt.cosmosdb.types
         resource: GremlinDatabaseResource
 
 
-    class azure.mgmt.cosmosdb.types.GremlinDatabaseGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('GremlinDatabaseGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('GremlinDatabaseGetPropertiesResource', module='types')
-        options: GremlinDatabaseGetPropertiesOptions
-        resource: GremlinDatabaseGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.GremlinDatabaseGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.GremlinDatabaseGetPropertiesResource(GremlinDatabaseResource):
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.GremlinDatabaseGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('GremlinDatabaseGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: GremlinDatabaseGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.GremlinDatabaseResource(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
         key "id": Required[str]
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
+        createMode: Union[str, CreateMode]
         id: str
-        restore_parameters: ResourceRestoreParameters
+        restoreParameters: ResourceRestoreParameters
 
 
     class azure.mgmt.cosmosdb.types.GremlinDatabaseRestoreResource(TypedDict, total=False):
         key "databaseName": str
-        database_name: str
+        databaseName: str
         graphNames: list[str]
-        graph_names: list[str]
 
 
     class azure.mgmt.cosmosdb.types.GremlinGraphCreateUpdateParameters(ARMResourceProperties):
@@ -16124,62 +21649,6 @@ namespace azure.mgmt.cosmosdb.types
         resource: GremlinGraphResource
 
 
-    class azure.mgmt.cosmosdb.types.GremlinGraphGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('GremlinGraphGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('GremlinGraphGetPropertiesResource', module='types')
-        options: GremlinGraphGetPropertiesOptions
-        resource: GremlinGraphGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.GremlinGraphGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.GremlinGraphGetPropertiesResource(GremlinGraphResource):
-        key "analyticalStorageTtl": int
-        key "conflictResolutionPolicy": ForwardRef('ConflictResolutionPolicy', module='types')
-        key "createMode": Union[str, CreateMode]
-        key "defaultTtl": int
-        key "id": Required[str]
-        key "indexingPolicy": ForwardRef('IndexingPolicy', module='types')
-        key "partitionKey": ForwardRef('ContainerPartitionKey', module='types')
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        key "uniqueKeyPolicy": ForwardRef('UniqueKeyPolicy', module='types')
-        analytical_storage_ttl: int
-        conflict_resolution_policy: ConflictResolutionPolicy
-        create_mode: Union[str, CreateMode]
-        default_ttl: int
-        etag: str
-        id: str
-        indexing_policy: IndexingPolicy
-        partition_key: ContainerPartitionKey
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-        unique_key_policy: UniqueKeyPolicy
-
-
-    class azure.mgmt.cosmosdb.types.GremlinGraphGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('GremlinGraphGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: GremlinGraphGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.GremlinGraphResource(TypedDict, total=False):
         key "analyticalStorageTtl": int
         key "conflictResolutionPolicy": ForwardRef('ConflictResolutionPolicy', module='types')
@@ -16190,15 +21659,15 @@ namespace azure.mgmt.cosmosdb.types
         key "partitionKey": ForwardRef('ContainerPartitionKey', module='types')
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
         key "uniqueKeyPolicy": ForwardRef('UniqueKeyPolicy', module='types')
-        analytical_storage_ttl: int
-        conflict_resolution_policy: ConflictResolutionPolicy
-        create_mode: Union[str, CreateMode]
-        default_ttl: int
+        analyticalStorageTtl: int
+        conflictResolutionPolicy: ConflictResolutionPolicy
+        createMode: Union[str, CreateMode]
+        defaultTtl: int
         id: str
-        indexing_policy: IndexingPolicy
-        partition_key: ContainerPartitionKey
-        restore_parameters: ResourceRestoreParameters
-        unique_key_policy: UniqueKeyPolicy
+        indexingPolicy: IndexingPolicy
+        partitionKey: ContainerPartitionKey
+        restoreParameters: ResourceRestoreParameters
+        uniqueKeyPolicy: UniqueKeyPolicy
 
 
     class azure.mgmt.cosmosdb.types.GremlinRoleAssignmentResource(ProxyResource):
@@ -16210,7 +21679,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: GremlinRoleAssignmentResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -16219,9 +21688,9 @@ namespace azure.mgmt.cosmosdb.types
         key "provisioningState": str
         key "roleDefinitionId": str
         key "scope": str
-        principal_id: str
-        provisioning_state: str
-        role_definition_id: str
+        principalId: str
+        provisioningState: str
+        roleDefinitionId: str
         scope: str
 
 
@@ -16234,7 +21703,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: GremlinRoleDefinitionResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -16243,10 +21712,9 @@ namespace azure.mgmt.cosmosdb.types
         key "roleName": str
         key "type": Union[str, RoleDefinitionType]
         assignableScopes: list[str]
-        assignable_scopes: list[str]
         id: str
         permissions: list[Permission]
-        role_name: str
+        roleName: str
         type: Union[str, RoleDefinitionType]
 
 
@@ -16260,7 +21728,7 @@ namespace azure.mgmt.cosmosdb.types
         key "dataType": Union[str, DataType]
         key "kind": Union[str, IndexKind]
         key "precision": int
-        data_type: Union[str, DataType]
+        dataType: Union[str, DataType]
         kind: Union[str, IndexKind]
         precision: int
 
@@ -16270,23 +21738,17 @@ namespace azure.mgmt.cosmosdb.types
         key "indexingMode": Union[str, IndexingMode]
         automatic: bool
         compositeIndexes: list[list[CompositePath]]
-        composite_indexes: list[list[CompositePath]]
         excludedPaths: list[ExcludedPath]
-        excluded_paths: list[ExcludedPath]
         fullTextIndexes: list[FullTextIndexPath]
-        full_text_indexes: list[FullTextIndexPath]
         includedPaths: list[IncludedPath]
-        included_paths: list[IncludedPath]
-        indexing_mode: Union[str, IndexingMode]
+        indexingMode: Union[str, IndexingMode]
         spatialIndexes: list[SpatialSpec]
-        spatial_indexes: list[SpatialSpec]
         vectorIndexes: list[VectorIndex]
-        vector_indexes: list[VectorIndex]
 
 
     class azure.mgmt.cosmosdb.types.IpAddressOrRange(TypedDict, total=False):
         key "ipAddressOrRange": str
-        ip_address_or_range: str
+        ipAddressOrRange: str
 
 
     class azure.mgmt.cosmosdb.types.KeyWrapMetadata(TypedDict, total=False):
@@ -16307,164 +21769,74 @@ namespace azure.mgmt.cosmosdb.types
         key "isZoneRedundant": bool
         key "locationName": str
         key "provisioningState": str
-        document_endpoint: str
-        failover_priority: int
+        documentEndpoint: str
+        failoverPriority: int
         id: str
-        is_zone_redundant: bool
-        location_name: str
-        provisioning_state: str
-
-
-    class azure.mgmt.cosmosdb.types.LocationGetResult(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('LocationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: LocationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.LocationProperties(TypedDict, total=False):
-        key "isResidencyRestricted": bool
-        key "isSubscriptionRegionAccessAllowedForAz": bool
-        key "isSubscriptionRegionAccessAllowedForRegular": bool
-        key "status": Union[str, Status]
-        key "supportsAvailabilityZone": bool
-        backupStorageRedundancies: list[Union[str, BackupStorageRedundancy]]
-        backup_storage_redundancies: list[Union[str, BackupStorageRedundancy]]
-        is_residency_restricted: bool
-        is_subscription_region_access_allowed_for_az: bool
-        is_subscription_region_access_allowed_for_regular: bool
-        status: Union[str, Status]
-        supports_availability_zone: bool
+        isZoneRedundant: bool
+        locationName: str
+        provisioningState: str
 
 
     class azure.mgmt.cosmosdb.types.ManagedCassandraManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ManagedCassandraResourceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedCassandraResourceIdentityType]
-
-
-    class azure.mgmt.cosmosdb.types.ManagedCassandraReaperStatus(TypedDict, total=False):
-        key "healthy": bool
-        healthy: bool
-        repairRunIds: dict[str, str]
-        repairSchedules: dict[str, str]
-        repair_run_ids: dict[str, str]
-        repair_schedules: dict[str, str]
 
 
     class azure.mgmt.cosmosdb.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ResourceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, ManagedServiceIdentityUserAssignedIdentity]
-        user_assigned_identities: dict[str, ManagedServiceIdentityUserAssignedIdentity]
 
 
     class azure.mgmt.cosmosdb.types.ManagedServiceIdentityUserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
-    class azure.mgmt.cosmosdb.types.MaterializedViewsBuilderRegionalServiceResource(RegionalServiceResource):
-        key "location": str
-        key "name": str
-        key "status": Union[str, ServiceStatus]
-        location: str
-        name: str
-        status: Union[str, ServiceStatus]
+    class azure.mgmt.cosmosdb.types.MaterializedViewDefinition(TypedDict, total=False):
+        key "definition": Required[str]
+        key "sourceCollectionId": Required[str]
+        key "sourceCollectionRid": str
+        key "throughputBucketForBuild": int
+        definition: str
+        sourceCollectionId: str
+        sourceCollectionRid: str
+        throughputBucketForBuild: int
+
+
+    class azure.mgmt.cosmosdb.types.MaterializedViewDetails(TypedDict, total=False):
+        key "id": str
+        _rid: str
+        id: str
 
 
     class azure.mgmt.cosmosdb.types.MaterializedViewsBuilderServiceResourceCreateUpdateProperties(TypedDict, total=False):
         key "instanceCount": int
         key "instanceSize": Union[str, ServiceSize]
         key "serviceType": Required[Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]]
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        service_type: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
+        instanceCount: int
+        instanceSize: Union[str, ServiceSize]
+        serviceType: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
 
 
-    class azure.mgmt.cosmosdb.types.MaterializedViewsBuilderServiceResourceProperties(TypedDict, total=False):
-        key "creationTime": str
-        key "instanceCount": int
-        key "instanceSize": Union[str, ServiceSize]
-        key "serviceType": Required[Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]]
-        key "status": Union[str, ServiceStatus]
-        creation_time: str
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        locations: list[MaterializedViewsBuilderRegionalServiceResource]
-        service_type: Literal[ServiceType.MATERIALIZED_VIEWS_BUILDER]
-        status: Union[str, ServiceStatus]
+    class azure.mgmt.cosmosdb.types.MaterializedViewsProperties(TypedDict, total=False):
+        key "throughputBucketForBuild": int
+        throughputBucketForBuild: int
 
 
-    class azure.mgmt.cosmosdb.types.Metric(TypedDict, total=False):
-        key "endTime": str
-        key "name": ForwardRef('MetricName', module='types')
-        key "startTime": str
-        key "timeGrain": str
-        key "unit": Union[str, UnitType]
-        end_time: str
-        metricValues: list[MetricValue]
-        metric_values: list[MetricValue]
-        name: MetricName
-        start_time: str
-        time_grain: str
-        unit: Union[str, UnitType]
-
-
-    class azure.mgmt.cosmosdb.types.MetricAvailability(TypedDict, total=False):
-        key "retention": str
-        key "timeGrain": str
-        retention: str
-        time_grain: str
-
-
-    class azure.mgmt.cosmosdb.types.MetricDefinition(TypedDict, total=False):
-        key "name": ForwardRef('MetricName', module='types')
-        key "primaryAggregationType": Union[str, PrimaryAggregationType]
-        key "resourceUri": str
-        key "unit": Union[str, UnitType]
-        metricAvailabilities: list[MetricAvailability]
-        metric_availabilities: list[MetricAvailability]
-        name: MetricName
-        primary_aggregation_type: Union[str, PrimaryAggregationType]
-        resource_uri: str
-        unit: Union[str, UnitType]
-
-
-    class azure.mgmt.cosmosdb.types.MetricName(TypedDict, total=False):
-        key "localizedValue": str
-        key "value": str
-        localized_value: str
-        value: str
-
-
-    class azure.mgmt.cosmosdb.types.MetricValue(TypedDict, total=False):
-        key "average": float
-        key "maximum": float
-        key "minimum": float
-        key "timestamp": str
-        key "total": float
-        average: float
-        count: int
-        maximum: float
-        minimum: float
-        timestamp: str
-        total: float
+    class azure.mgmt.cosmosdb.types.MergeParameters(TypedDict, total=False):
+        key "isDryRun": bool
+        isDryRun: bool
 
 
     class azure.mgmt.cosmosdb.types.MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
@@ -16490,67 +21862,17 @@ namespace azure.mgmt.cosmosdb.types
         resource: MongoDBCollectionResource
 
 
-    class azure.mgmt.cosmosdb.types.MongoDBCollectionGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('MongoDBCollectionGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('MongoDBCollectionGetPropertiesResource', module='types')
-        options: MongoDBCollectionGetPropertiesOptions
-        resource: MongoDBCollectionGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBCollectionGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBCollectionGetPropertiesResource(MongoDBCollectionResource):
-        key "analyticalStorageTtl": int
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        analytical_storage_ttl: int
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        indexes: list[MongoIndex]
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        shardKey: dict[str, str]
-        shard_key: dict[str, str]
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBCollectionGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('MongoDBCollectionGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: MongoDBCollectionGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.MongoDBCollectionResource(TypedDict, total=False):
         key "analyticalStorageTtl": int
         key "createMode": Union[str, CreateMode]
         key "id": Required[str]
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        analytical_storage_ttl: int
-        create_mode: Union[str, CreateMode]
+        analyticalStorageTtl: int
+        createMode: Union[str, CreateMode]
         id: str
         indexes: list[MongoIndex]
-        restore_parameters: ResourceRestoreParameters
+        restoreParameters: ResourceRestoreParameters
         shardKey: dict[str, str]
-        shard_key: dict[str, str]
 
 
     class azure.mgmt.cosmosdb.types.MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -16576,57 +21898,13 @@ namespace azure.mgmt.cosmosdb.types
         resource: MongoDBDatabaseResource
 
 
-    class azure.mgmt.cosmosdb.types.MongoDBDatabaseGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('MongoDBDatabaseGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('MongoDBDatabaseGetPropertiesResource', module='types')
-        options: MongoDBDatabaseGetPropertiesOptions
-        resource: MongoDBDatabaseGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBDatabaseGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBDatabaseGetPropertiesResource(MongoDBDatabaseResource):
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.MongoDBDatabaseGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('MongoDBDatabaseGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: MongoDBDatabaseGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.MongoDBDatabaseResource(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
         key "id": Required[str]
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
+        createMode: Union[str, CreateMode]
         id: str
-        restore_parameters: ResourceRestoreParameters
+        restoreParameters: ResourceRestoreParameters
 
 
     class azure.mgmt.cosmosdb.types.MongoIndex(TypedDict, total=False):
@@ -16638,13 +21916,12 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.MongoIndexKeys(TypedDict, total=False):
         keys: list[str]
-        keys_property: list[str]
 
 
     class azure.mgmt.cosmosdb.types.MongoIndexOptions(TypedDict, total=False):
         key "expireAfterSeconds": int
         key "unique": bool
-        expire_after_seconds: int
+        expireAfterSeconds: int
         unique: bool
 
 
@@ -16657,7 +21934,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: MongoMIRoleAssignmentResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -16666,9 +21943,9 @@ namespace azure.mgmt.cosmosdb.types
         key "provisioningState": str
         key "roleDefinitionId": str
         key "scope": str
-        principal_id: str
-        provisioning_state: str
-        role_definition_id: str
+        principalId: str
+        provisioningState: str
+        roleDefinitionId: str
         scope: str
 
 
@@ -16681,7 +21958,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: MongoMIRoleDefinitionResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -16690,11 +21967,54 @@ namespace azure.mgmt.cosmosdb.types
         key "roleName": str
         key "type": Union[str, RoleDefinitionType]
         assignableScopes: list[str]
-        assignable_scopes: list[str]
         id: str
         permissions: list[Permission]
-        role_name: str
+        roleName: str
         type: Union[str, RoleDefinitionType]
+
+
+    class azure.mgmt.cosmosdb.types.MongoRUToMongoRUCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "jobType": Required[Literal[CopyJobType.MONGO_RU_TO_MONGO_RU]]
+        key "sourceDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "tasks": Required[list[MongoRUToMongoRUCopyJobTask]]
+        destinationDetails: CosmosDBSourceSinkDetails
+        jobType: Literal[CopyJobType.MONGO_RU_TO_MONGO_RU]
+        sourceDetails: CosmosDBSourceSinkDetails
+        tasks: list[MongoRUToMongoRUCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[CosmosDBMongoCollection]
+        key "processedCount": int
+        key "source": Required[CosmosDBMongoCollection]
+        key "totalCount": int
+        destination: CosmosDBMongoCollection
+        processedCount: int
+        source: CosmosDBMongoCollection
+        totalCount: int
+
+
+    class azure.mgmt.cosmosdb.types.MongoRUToMongoVCoreCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": Required[MongoVCoreSourceSinkDetails]
+        key "jobType": Required[Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE]]
+        key "sourceDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "tasks": Required[list[MongoRUToMongoVCoreCopyJobTask]]
+        destinationDetails: MongoVCoreSourceSinkDetails
+        jobType: Literal[CopyJobType.MONGO_RU_TO_MONGO_V_CORE]
+        sourceDetails: CosmosDBSourceSinkDetails
+        tasks: list[MongoRUToMongoVCoreCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[CosmosDBMongoVCoreCollection]
+        key "processedCount": int
+        key "source": Required[CosmosDBMongoCollection]
+        key "totalCount": int
+        destination: CosmosDBMongoVCoreCollection
+        processedCount: int
+        source: CosmosDBMongoCollection
+        totalCount: int
 
 
     class azure.mgmt.cosmosdb.types.MongoRoleDefinitionCreateUpdateParameters(TypedDict, total=False):
@@ -16702,26 +22022,13 @@ namespace azure.mgmt.cosmosdb.types
         properties: MongoRoleDefinitionResource
 
 
-    class azure.mgmt.cosmosdb.types.MongoRoleDefinitionGetResults(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('MongoRoleDefinitionResource', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: MongoRoleDefinitionResource
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.MongoRoleDefinitionResource(TypedDict, total=False):
         key "databaseName": str
         key "roleName": str
         key "type": Union[str, MongoRoleDefinitionType]
-        database_name: str
+        databaseName: str
         privileges: list[Privilege]
-        role_name: str
+        roleName: str
         roles: list[Role]
         type: Union[str, MongoRoleDefinitionType]
 
@@ -16731,51 +22038,47 @@ namespace azure.mgmt.cosmosdb.types
         properties: MongoUserDefinitionResource
 
 
-    class azure.mgmt.cosmosdb.types.MongoUserDefinitionGetResults(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('MongoUserDefinitionResource', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: MongoUserDefinitionResource
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.MongoUserDefinitionResource(TypedDict, total=False):
         key "customData": str
         key "databaseName": str
         key "mechanisms": str
         key "password": str
         key "userName": str
-        custom_data: str
-        database_name: str
+        customData: str
+        databaseName: str
         mechanisms: str
         password: str
         roles: list[Role]
-        user_name: str
+        userName: str
 
 
-    class azure.mgmt.cosmosdb.types.NotebookWorkspace(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('NotebookWorkspaceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: NotebookWorkspaceProperties
-        system_data: SystemData
-        type: str
+    class azure.mgmt.cosmosdb.types.MongoVCoreSourceSinkDetails(TypedDict, total=False):
+        key "connectionStringKeyVaultUri": str
+        key "hostName": str
+        connectionStringKeyVaultUri: str
+        hostName: str
 
 
-    class azure.mgmt.cosmosdb.types.NotebookWorkspaceConnectionInfoResult(TypedDict, total=False):
-        key "authToken": str
-        key "notebookServerEndpoint": str
-        auth_token: str
-        notebook_server_endpoint: str
+    class azure.mgmt.cosmosdb.types.NoSqlRUToNoSqlRUCopyJobProperties(TypedDict, total=False):
+        key "destinationDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "jobType": Required[Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU]]
+        key "sourceDetails": ForwardRef('CosmosDBSourceSinkDetails', module='types')
+        key "tasks": Required[list[NoSqlRUToNoSqlRUCopyJobTask]]
+        destinationDetails: CosmosDBSourceSinkDetails
+        jobType: Literal[CopyJobType.NO_SQL_RU_TO_NO_SQL_RU]
+        sourceDetails: CosmosDBSourceSinkDetails
+        tasks: list[NoSqlRUToNoSqlRUCopyJobTask]
+
+
+    class azure.mgmt.cosmosdb.types.NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):
+        key "destination": Required[CosmosDBNoSqlContainer]
+        key "processedCount": int
+        key "source": Required[CosmosDBNoSqlContainer]
+        key "totalCount": int
+        destination: CosmosDBNoSqlContainer
+        processedCount: int
+        source: CosmosDBNoSqlContainer
+        totalCount: int
 
 
     class azure.mgmt.cosmosdb.types.NotebookWorkspaceCreateUpdateParameters(ARMProxyResource):
@@ -16787,123 +22090,12 @@ namespace azure.mgmt.cosmosdb.types
         type: str
 
 
-    class azure.mgmt.cosmosdb.types.NotebookWorkspaceProperties(TypedDict, total=False):
-        key "notebookServerEndpoint": str
-        key "status": str
-        notebook_server_endpoint: str
-        status: str
-
-
-    class azure.mgmt.cosmosdb.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "name": str
-        display: OperationDisplay
-        name: str
-
-
-    class azure.mgmt.cosmosdb.types.OperationDisplay(TypedDict, total=False):
-        key "Description": str
-        key "Operation": str
-        key "Provider": str
-        key "Resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.cosmosdb.types.OptionsResource(TypedDict, total=False):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.PartitionMetric(Metric):
-        key "endTime": str
-        key "name": ForwardRef('MetricName', module='types')
-        key "partitionId": str
-        key "partitionKeyRangeId": str
-        key "startTime": str
-        key "timeGrain": str
-        key "unit": Union[str, UnitType]
-        end_time: str
-        metricValues: list[MetricValue]
-        metric_values: list[MetricValue]
-        name: MetricName
-        partition_id: str
-        partition_key_range_id: str
-        start_time: str
-        time_grain: str
-        unit: Union[str, UnitType]
-
-
-    class azure.mgmt.cosmosdb.types.PartitionUsage(Usage):
-        key "currentValue": int
-        key "limit": int
-        key "name": ForwardRef('MetricName', module='types')
-        key "partitionId": str
-        key "partitionKeyRangeId": str
-        key "quotaPeriod": str
-        key "unit": Union[str, UnitType]
-        current_value: int
-        limit: int
-        name: MetricName
-        partition_id: str
-        partition_key_range_id: str
-        quota_period: str
-        unit: Union[str, UnitType]
-
-
-    class azure.mgmt.cosmosdb.types.PercentileMetric(TypedDict, total=False):
-        key "endTime": str
-        key "name": ForwardRef('MetricName', module='types')
-        key "startTime": str
-        key "timeGrain": str
-        key "unit": Union[str, UnitType]
-        end_time: str
-        metricValues: list[PercentileMetricValue]
-        metric_values: list[PercentileMetricValue]
-        name: MetricName
-        start_time: str
-        time_grain: str
-        unit: Union[str, UnitType]
-
-
-    class azure.mgmt.cosmosdb.types.PercentileMetricValue(MetricValue):
-        key "P10": float
-        key "P25": float
-        key "P50": float
-        key "P75": float
-        key "P90": float
-        key "P95": float
-        key "P99": float
-        key "average": float
-        key "maximum": float
-        key "minimum": float
-        key "timestamp": str
-        key "total": float
-        average: float
-        count: int
-        maximum: float
-        minimum: float
-        p10: float
-        p25: float
-        p50: float
-        p75: float
-        p90: float
-        p95: float
-        p99: float
-        timestamp: str
-        total: float
-
-
     class azure.mgmt.cosmosdb.types.PeriodicModeBackupPolicy(TypedDict, total=False):
         key "migrationState": ForwardRef('BackupPolicyMigrationState', module='types')
         key "periodicModeProperties": ForwardRef('PeriodicModeProperties', module='types')
         key "type": Required[Literal[BackupPolicyType.PERIODIC]]
-        migration_state: BackupPolicyMigrationState
-        periodic_mode_properties: PeriodicModeProperties
+        migrationState: BackupPolicyMigrationState
+        periodicModeProperties: PeriodicModeProperties
         type: Literal[BackupPolicyType.PERIODIC]
 
 
@@ -16911,18 +22103,30 @@ namespace azure.mgmt.cosmosdb.types
         key "backupIntervalInMinutes": int
         key "backupRetentionIntervalInHours": int
         key "backupStorageRedundancy": Union[str, BackupStorageRedundancy]
-        backup_interval_in_minutes: int
-        backup_retention_interval_in_hours: int
-        backup_storage_redundancy: Union[str, BackupStorageRedundancy]
+        backupIntervalInMinutes: int
+        backupRetentionIntervalInHours: int
+        backupStorageRedundancy: Union[str, BackupStorageRedundancy]
 
 
     class azure.mgmt.cosmosdb.types.Permission(TypedDict, total=False):
         key "id": str
         dataActions: list[str]
-        data_actions: list[str]
         id: str
         notDataActions: list[str]
-        not_data_actions: list[str]
+
+
+    class azure.mgmt.cosmosdb.types.PhysicalPartitionId(TypedDict, total=False):
+        key "id": Required[str]
+        id: str
+
+
+    class azure.mgmt.cosmosdb.types.PhysicalPartitionThroughputInfoResource(TypedDict, total=False):
+        key "id": Required[str]
+        key "targetThroughput": float
+        key "throughput": float
+        id: str
+        targetThroughput: float
+        throughput: float
 
 
     class azure.mgmt.cosmosdb.types.PrivateEndpointConnection(ProxyResource):
@@ -16934,7 +22138,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -16943,10 +22147,10 @@ namespace azure.mgmt.cosmosdb.types
         key "privateEndpoint": ForwardRef('PrivateEndpointProperty', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionStateProperty', module='types')
         key "provisioningState": str
-        group_id: str
-        private_endpoint: PrivateEndpointProperty
-        private_link_service_connection_state: PrivateLinkServiceConnectionStateProperty
-        provisioning_state: str
+        groupId: str
+        privateEndpoint: PrivateEndpointProperty
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionStateProperty
+        provisioningState: str
 
 
     class azure.mgmt.cosmosdb.types.PrivateEndpointProperty(TypedDict, total=False):
@@ -16954,33 +22158,11 @@ namespace azure.mgmt.cosmosdb.types
         id: str
 
 
-    class azure.mgmt.cosmosdb.types.PrivateLinkResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
     class azure.mgmt.cosmosdb.types.PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": str
-        actions_required: str
+        actionsRequired: str
         description: str
         status: str
 
@@ -17005,22 +22187,43 @@ namespace azure.mgmt.cosmosdb.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
+
+
+    class azure.mgmt.cosmosdb.types.RedistributeThroughputParameters(ARMResourceProperties):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": Required[RedistributeThroughputProperties]
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: RedistributeThroughputProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.RedistributeThroughputProperties(TypedDict, total=False):
+        key "resource": Required[RedistributeThroughputPropertiesResource]
+        resource: RedistributeThroughputPropertiesResource
+
+
+    class azure.mgmt.cosmosdb.types.RedistributeThroughputPropertiesResource(TypedDict, total=False):
+        key "sourcePhysicalPartitionThroughputInfo": Required[list[PhysicalPartitionThroughputInfoResource]]
+        key "targetPhysicalPartitionThroughputInfo": Required[list[PhysicalPartitionThroughputInfoResource]]
+        key "throughputPolicy": Required[Union[str, ThroughputPolicyType]]
+        sourcePhysicalPartitionThroughputInfo: list[PhysicalPartitionThroughputInfoResource]
+        targetPhysicalPartitionThroughputInfo: list[PhysicalPartitionThroughputInfoResource]
+        throughputPolicy: Union[str, ThroughputPolicyType]
 
 
     class azure.mgmt.cosmosdb.types.RegionForOnlineOffline(TypedDict, total=False):
         key "region": Required[str]
         region: str
-
-
-    class azure.mgmt.cosmosdb.types.RegionalServiceResource(TypedDict, total=False):
-        key "location": str
-        key "name": str
-        key "status": Union[str, ServiceStatus]
-        location: str
-        name: str
-        status: Union[str, ServiceStatus]
 
 
     class azure.mgmt.cosmosdb.types.Resource(TypedDict, total=False):
@@ -17030,7 +22233,7 @@ namespace azure.mgmt.cosmosdb.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -17038,374 +22241,9 @@ namespace azure.mgmt.cosmosdb.types
         key "restoreSource": str
         key "restoreTimestampInUtc": str
         key "restoreWithTtlDisabled": bool
-        restore_source: str
-        restore_timestamp_in_utc: str
-        restore_with_ttl_disabled: bool
-
-
-    class azure.mgmt.cosmosdb.types.RestorableDatabaseAccountGetResult(ProxyResource):
-        key "id": str
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('RestorableDatabaseAccountProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: RestorableDatabaseAccountProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableDatabaseAccountProperties(TypedDict, total=False):
-        key "accountName": str
-        key "apiType": Union[str, ApiType]
-        key "creationTime": str
-        key "deletionTime": str
-        key "oldestRestorableTime": str
-        account_name: str
-        api_type: Union[str, ApiType]
-        creation_time: str
-        deletion_time: str
-        oldest_restorable_time: str
-        restorableLocations: list[RestorableLocationResource]
-        restorable_locations: list[RestorableLocationResource]
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinDatabaseGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableGremlinDatabaseProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableGremlinDatabaseProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinDatabaseProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableGremlinDatabasePropertiesResource', module='types')
-        resource: RestorableGremlinDatabasePropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinDatabasePropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinGraphGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableGremlinGraphProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableGremlinGraphProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinGraphProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableGremlinGraphPropertiesResource', module='types')
-        resource: RestorableGremlinGraphPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinGraphPropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableGremlinResourcesGetResult(TypedDict, total=False):
-        key "databaseName": str
-        key "id": str
-        key "name": str
-        key "type": str
-        database_name: str
-        graphNames: list[str]
-        graph_names: list[str]
-        id: str
-        name: str
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableLocationResource(TypedDict, total=False):
-        key "creationTime": str
-        key "deletionTime": str
-        key "locationName": str
-        key "regionalDatabaseAccountInstanceId": str
-        creation_time: str
-        deletion_time: str
-        location_name: str
-        regional_database_account_instance_id: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbCollectionGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableMongodbCollectionProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableMongodbCollectionProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbCollectionProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableMongodbCollectionPropertiesResource', module='types')
-        resource: RestorableMongodbCollectionPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbCollectionPropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbDatabaseGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableMongodbDatabaseProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableMongodbDatabaseProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbDatabaseProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableMongodbDatabasePropertiesResource', module='types')
-        resource: RestorableMongodbDatabasePropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbDatabasePropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableMongodbResourcesGetResult(TypedDict, total=False):
-        key "databaseName": str
-        key "id": str
-        key "name": str
-        key "type": str
-        collectionNames: list[str]
-        collection_names: list[str]
-        database_name: str
-        id: str
-        name: str
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlContainerGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableSqlContainerProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableSqlContainerProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlContainerProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableSqlContainerPropertiesResource', module='types')
-        resource: RestorableSqlContainerPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlContainerPropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "container": ForwardRef('RestorableSqlContainerPropertiesResourceContainer', module='types')
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        container: RestorableSqlContainerPropertiesResourceContainer
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlContainerPropertiesResourceContainer(SqlContainerResource):
-        key "analyticalStorageTtl": int
-        key "clientEncryptionPolicy": ForwardRef('ClientEncryptionPolicy', module='types')
-        key "conflictResolutionPolicy": ForwardRef('ConflictResolutionPolicy', module='types')
-        key "createMode": Union[str, CreateMode]
-        key "defaultTtl": int
-        key "fullTextPolicy": ForwardRef('FullTextPolicy', module='types')
-        key "id": Required[str]
-        key "indexingPolicy": ForwardRef('IndexingPolicy', module='types')
-        key "partitionKey": ForwardRef('ContainerPartitionKey', module='types')
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        key "uniqueKeyPolicy": ForwardRef('UniqueKeyPolicy', module='types')
-        key "vectorEmbeddingPolicy": ForwardRef('VectorEmbeddingPolicy', module='types')
-        analytical_storage_ttl: int
-        client_encryption_policy: ClientEncryptionPolicy
-        computedProperties: list[ComputedProperty]
-        computed_properties: list[ComputedProperty]
-        conflict_resolution_policy: ConflictResolutionPolicy
-        create_mode: Union[str, CreateMode]
-        default_ttl: int
-        etag: str
-        full_text_policy: FullTextPolicy
-        id: str
-        indexing_policy: IndexingPolicy
-        partition_key: ContainerPartitionKey
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        self_property: str
-        ts: float
-        unique_key_policy: UniqueKeyPolicy
-        vector_embedding_policy: VectorEmbeddingPolicy
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlDatabaseGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableSqlDatabaseProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableSqlDatabaseProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlDatabaseProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableSqlDatabasePropertiesResource', module='types')
-        resource: RestorableSqlDatabasePropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlDatabasePropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "database": ForwardRef('RestorableSqlDatabasePropertiesResourceDatabase', module='types')
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        database: RestorableSqlDatabasePropertiesResourceDatabase
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource):
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        colls: str
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        self_property: str
-        ts: float
-        users: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableSqlResourcesGetResult(TypedDict, total=False):
-        key "databaseName": str
-        key "id": str
-        key "name": str
-        key "type": str
-        collectionNames: list[str]
-        collection_names: list[str]
-        database_name: str
-        id: str
-        name: str
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableTableGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RestorableTableProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RestorableTableProperties
-        type: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableTableProperties(TypedDict, total=False):
-        key "resource": ForwardRef('RestorableTablePropertiesResource', module='types')
-        resource: RestorableTablePropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.RestorableTablePropertiesResource(TypedDict, total=False):
-        key "canUndelete": str
-        key "canUndeleteReason": str
-        key "eventTimestamp": str
-        key "operationType": Union[str, OperationType]
-        key "ownerId": str
-        key "ownerResourceId": str
-        can_undelete: str
-        can_undelete_reason: str
-        event_timestamp: str
-        operation_type: Union[str, OperationType]
-        owner_id: str
-        owner_resource_id: str
-        rid: str
-
-
-    class azure.mgmt.cosmosdb.types.RestorableTableResourcesGetResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "type": str
-        id: str
-        name: str
-        type: str
+        restoreSource: str
+        restoreTimestampInUtc: str
+        restoreWithTtlDisabled: bool
 
 
     class azure.mgmt.cosmosdb.types.RestoreParameters(RestoreParametersBase):
@@ -17415,25 +22253,48 @@ namespace azure.mgmt.cosmosdb.types
         key "restoreWithTtlDisabled": bool
         key "sourceBackupLocation": str
         databasesToRestore: list[DatabaseRestoreResource]
-        databases_to_restore: list[DatabaseRestoreResource]
         gremlinDatabasesToRestore: list[GremlinDatabaseRestoreResource]
-        gremlin_databases_to_restore: list[GremlinDatabaseRestoreResource]
-        restore_mode: Union[str, RestoreMode]
-        restore_source: str
-        restore_timestamp_in_utc: str
-        restore_with_ttl_disabled: bool
-        source_backup_location: str
+        restoreMode: Union[str, RestoreMode]
+        restoreSource: str
+        restoreTimestampInUtc: str
+        restoreWithTtlDisabled: bool
+        sourceBackupLocation: str
         tablesToRestore: list[str]
-        tables_to_restore: list[str]
 
 
     class azure.mgmt.cosmosdb.types.RestoreParametersBase(TypedDict, total=False):
         key "restoreSource": str
         key "restoreTimestampInUtc": str
         key "restoreWithTtlDisabled": bool
-        restore_source: str
-        restore_timestamp_in_utc: str
-        restore_with_ttl_disabled: bool
+        restoreSource: str
+        restoreTimestampInUtc: str
+        restoreWithTtlDisabled: bool
+
+
+    class azure.mgmt.cosmosdb.types.RetrieveThroughputParameters(ARMResourceProperties):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": Required[RetrieveThroughputProperties]
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: RetrieveThroughputProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.RetrieveThroughputProperties(TypedDict, total=False):
+        key "resource": Required[RetrieveThroughputPropertiesResource]
+        resource: RetrieveThroughputPropertiesResource
+
+
+    class azure.mgmt.cosmosdb.types.RetrieveThroughputPropertiesResource(TypedDict, total=False):
+        key "physicalPartitionIds": Required[list[PhysicalPartitionId]]
+        physicalPartitionIds: list[PhysicalPartitionId]
 
 
     class azure.mgmt.cosmosdb.types.Role(TypedDict, total=False):
@@ -17445,20 +22306,7 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.SeedNode(TypedDict, total=False):
         key "ipAddress": str
-        ip_address: str
-
-
-    class azure.mgmt.cosmosdb.types.ServiceResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ServiceResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ServiceResourceProperties
-        system_data: SystemData
-        type: str
+        ipAddress: str
 
 
     class azure.mgmt.cosmosdb.types.ServiceResourceCreateUpdateParameters(TypedDict, total=False):
@@ -17471,6 +22319,15 @@ namespace azure.mgmt.cosmosdb.types
         GRAPH_API_COMPUTE = "GraphAPICompute"
         MATERIALIZED_VIEWS_BUILDER = "MaterializedViewsBuilder"
         SQL_DEDICATED_GATEWAY = "SqlDedicatedGateway"
+
+
+    class azure.mgmt.cosmosdb.types.SoftDeleteConfiguration(TypedDict, total=False):
+        key "minMinutesBeforePermanentDeletionAllowed": int
+        key "softDeleteRetentionPeriodInMinutes": int
+        key "softDeletionEnabled": bool
+        minMinutesBeforePermanentDeletionAllowed: int
+        softDeleteRetentionPeriodInMinutes: int
+        softDeletionEnabled: bool
 
 
     class azure.mgmt.cosmosdb.types.SpatialSpec(TypedDict, total=False):
@@ -17502,97 +22359,39 @@ namespace azure.mgmt.cosmosdb.types
         resource: SqlContainerResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlContainerGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('SqlContainerGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('SqlContainerGetPropertiesResource', module='types')
-        options: SqlContainerGetPropertiesOptions
-        resource: SqlContainerGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlContainerGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.SqlContainerGetPropertiesResource(SqlContainerResource):
-        key "analyticalStorageTtl": int
-        key "clientEncryptionPolicy": ForwardRef('ClientEncryptionPolicy', module='types')
-        key "conflictResolutionPolicy": ForwardRef('ConflictResolutionPolicy', module='types')
-        key "createMode": Union[str, CreateMode]
-        key "defaultTtl": int
-        key "fullTextPolicy": ForwardRef('FullTextPolicy', module='types')
-        key "id": Required[str]
-        key "indexingPolicy": ForwardRef('IndexingPolicy', module='types')
-        key "partitionKey": ForwardRef('ContainerPartitionKey', module='types')
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        key "uniqueKeyPolicy": ForwardRef('UniqueKeyPolicy', module='types')
-        key "vectorEmbeddingPolicy": ForwardRef('VectorEmbeddingPolicy', module='types')
-        analytical_storage_ttl: int
-        client_encryption_policy: ClientEncryptionPolicy
-        computedProperties: list[ComputedProperty]
-        computed_properties: list[ComputedProperty]
-        conflict_resolution_policy: ConflictResolutionPolicy
-        create_mode: Union[str, CreateMode]
-        default_ttl: int
-        etag: str
-        full_text_policy: FullTextPolicy
-        id: str
-        indexing_policy: IndexingPolicy
-        partition_key: ContainerPartitionKey
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-        unique_key_policy: UniqueKeyPolicy
-        vector_embedding_policy: VectorEmbeddingPolicy
-
-
-    class azure.mgmt.cosmosdb.types.SqlContainerGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('SqlContainerGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: SqlContainerGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlContainerResource(TypedDict, total=False):
         key "analyticalStorageTtl": int
         key "clientEncryptionPolicy": ForwardRef('ClientEncryptionPolicy', module='types')
         key "conflictResolutionPolicy": ForwardRef('ConflictResolutionPolicy', module='types')
         key "createMode": Union[str, CreateMode]
+        key "dataMaskingPolicy": ForwardRef('DataMaskingPolicy', module='types')
         key "defaultTtl": int
         key "fullTextPolicy": ForwardRef('FullTextPolicy', module='types')
         key "id": Required[str]
         key "indexingPolicy": ForwardRef('IndexingPolicy', module='types')
+        key "materializedViewDefinition": ForwardRef('MaterializedViewDefinition', module='types')
+        key "materializedViewsProperties": ForwardRef('MaterializedViewsProperties', module='types')
         key "partitionKey": ForwardRef('ContainerPartitionKey', module='types')
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
         key "uniqueKeyPolicy": ForwardRef('UniqueKeyPolicy', module='types')
         key "vectorEmbeddingPolicy": ForwardRef('VectorEmbeddingPolicy', module='types')
-        analytical_storage_ttl: int
-        client_encryption_policy: ClientEncryptionPolicy
+        analyticalStorageTtl: int
+        clientEncryptionPolicy: ClientEncryptionPolicy
         computedProperties: list[ComputedProperty]
-        computed_properties: list[ComputedProperty]
-        conflict_resolution_policy: ConflictResolutionPolicy
-        create_mode: Union[str, CreateMode]
-        default_ttl: int
-        full_text_policy: FullTextPolicy
+        conflictResolutionPolicy: ConflictResolutionPolicy
+        createMode: Union[str, CreateMode]
+        dataMaskingPolicy: DataMaskingPolicy
+        defaultTtl: int
+        fullTextPolicy: FullTextPolicy
         id: str
-        indexing_policy: IndexingPolicy
-        partition_key: ContainerPartitionKey
-        restore_parameters: ResourceRestoreParameters
-        unique_key_policy: UniqueKeyPolicy
-        vector_embedding_policy: VectorEmbeddingPolicy
+        indexingPolicy: IndexingPolicy
+        materializedViewDefinition: MaterializedViewDefinition
+        materializedViews: list[MaterializedViewDetails]
+        materializedViewsProperties: MaterializedViewsProperties
+        partitionKey: ContainerPartitionKey
+        restoreParameters: ResourceRestoreParameters
+        uniqueKeyPolicy: UniqueKeyPolicy
+        vectorEmbeddingPolicy: VectorEmbeddingPolicy
 
 
     class azure.mgmt.cosmosdb.types.SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
@@ -17618,70 +22417,13 @@ namespace azure.mgmt.cosmosdb.types
         resource: SqlDatabaseResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlDatabaseGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('SqlDatabaseGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('SqlDatabaseGetPropertiesResource', module='types')
-        options: SqlDatabaseGetPropertiesOptions
-        resource: SqlDatabaseGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlDatabaseGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.SqlDatabaseGetPropertiesResource(SqlDatabaseResource):
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        colls: str
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-        users: str
-
-
-    class azure.mgmt.cosmosdb.types.SqlDatabaseGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('SqlDatabaseGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: SqlDatabaseGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlDatabaseResource(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
         key "id": Required[str]
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
+        createMode: Union[str, CreateMode]
         id: str
-        restore_parameters: ResourceRestoreParameters
-
-
-    class azure.mgmt.cosmosdb.types.SqlDedicatedGatewayRegionalServiceResource(RegionalServiceResource):
-        key "location": str
-        key "name": str
-        key "sqlDedicatedGatewayEndpoint": str
-        key "status": Union[str, ServiceStatus]
-        location: str
-        name: str
-        sql_dedicated_gateway_endpoint: str
-        status: Union[str, ServiceStatus]
+        restoreParameters: ResourceRestoreParameters
 
 
     class azure.mgmt.cosmosdb.types.SqlDedicatedGatewayServiceResourceCreateUpdateProperties(TypedDict, total=False):
@@ -17689,28 +22431,10 @@ namespace azure.mgmt.cosmosdb.types
         key "instanceCount": int
         key "instanceSize": Union[str, ServiceSize]
         key "serviceType": Required[Literal[ServiceType.SQL_DEDICATED_GATEWAY]]
-        dedicated_gateway_type: Union[str, DedicatedGatewayType]
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        service_type: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
-
-
-    class azure.mgmt.cosmosdb.types.SqlDedicatedGatewayServiceResourceProperties(TypedDict, total=False):
-        key "creationTime": str
-        key "dedicatedGatewayType": Union[str, DedicatedGatewayType]
-        key "instanceCount": int
-        key "instanceSize": Union[str, ServiceSize]
-        key "serviceType": Required[Literal[ServiceType.SQL_DEDICATED_GATEWAY]]
-        key "sqlDedicatedGatewayEndpoint": str
-        key "status": Union[str, ServiceStatus]
-        creation_time: str
-        dedicated_gateway_type: Union[str, DedicatedGatewayType]
-        instance_count: int
-        instance_size: Union[str, ServiceSize]
-        locations: list[SqlDedicatedGatewayRegionalServiceResource]
-        service_type: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
-        sql_dedicated_gateway_endpoint: str
-        status: Union[str, ServiceStatus]
+        dedicatedGatewayType: Union[str, DedicatedGatewayType]
+        instanceCount: int
+        instanceSize: Union[str, ServiceSize]
+        serviceType: Literal[ServiceType.SQL_DEDICATED_GATEWAY]
 
 
     class azure.mgmt.cosmosdb.types.SqlRoleAssignmentCreateUpdateParameters(TypedDict, total=False):
@@ -17718,25 +22442,12 @@ namespace azure.mgmt.cosmosdb.types
         properties: SqlRoleAssignmentResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlRoleAssignmentGetResults(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('SqlRoleAssignmentResource', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: SqlRoleAssignmentResource
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlRoleAssignmentResource(TypedDict, total=False):
         key "principalId": str
         key "roleDefinitionId": str
         key "scope": str
-        principal_id: str
-        role_definition_id: str
+        principalId: str
+        roleDefinitionId: str
         scope: str
 
 
@@ -17745,26 +22456,12 @@ namespace azure.mgmt.cosmosdb.types
         properties: SqlRoleDefinitionResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlRoleDefinitionGetResults(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('SqlRoleDefinitionResource', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: SqlRoleDefinitionResource
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlRoleDefinitionResource(TypedDict, total=False):
         key "roleName": str
         key "type": Union[str, RoleDefinitionType]
         assignableScopes: list[str]
-        assignable_scopes: list[str]
         permissions: list[Permission]
-        role_name: str
+        roleName: str
         type: Union[str, RoleDefinitionType]
 
 
@@ -17789,39 +22486,6 @@ namespace azure.mgmt.cosmosdb.types
         key "resource": Required[SqlStoredProcedureResource]
         options: CreateUpdateOptions
         resource: SqlStoredProcedureResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlStoredProcedureGetProperties(TypedDict, total=False):
-        key "resource": ForwardRef('SqlStoredProcedureGetPropertiesResource', module='types')
-        resource: SqlStoredProcedureGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlStoredProcedureGetPropertiesResource(SqlStoredProcedureResource):
-        key "body": str
-        key "id": Required[str]
-        body: str
-        etag: str
-        id: str
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.SqlStoredProcedureGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('SqlStoredProcedureGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: SqlStoredProcedureGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
 
 
     class azure.mgmt.cosmosdb.types.SqlStoredProcedureResource(TypedDict, total=False):
@@ -17854,43 +22518,6 @@ namespace azure.mgmt.cosmosdb.types
         resource: SqlTriggerResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlTriggerGetProperties(TypedDict, total=False):
-        key "resource": ForwardRef('SqlTriggerGetPropertiesResource', module='types')
-        resource: SqlTriggerGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlTriggerGetPropertiesResource(SqlTriggerResource):
-        key "body": str
-        key "id": Required[str]
-        key "triggerOperation": Union[str, TriggerOperation]
-        key "triggerType": Union[str, TriggerType]
-        body: str
-        etag: str
-        id: str
-        rid: str
-        trigger_operation: Union[str, TriggerOperation]
-        trigger_type: Union[str, TriggerType]
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.SqlTriggerGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('SqlTriggerGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: SqlTriggerGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlTriggerResource(TypedDict, total=False):
         key "body": str
         key "id": Required[str]
@@ -17898,8 +22525,8 @@ namespace azure.mgmt.cosmosdb.types
         key "triggerType": Union[str, TriggerType]
         body: str
         id: str
-        trigger_operation: Union[str, TriggerOperation]
-        trigger_type: Union[str, TriggerType]
+        triggerOperation: Union[str, TriggerOperation]
+        triggerType: Union[str, TriggerType]
 
 
     class azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
@@ -17925,39 +22552,6 @@ namespace azure.mgmt.cosmosdb.types
         resource: SqlUserDefinedFunctionResource
 
 
-    class azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionGetProperties(TypedDict, total=False):
-        key "resource": ForwardRef('SqlUserDefinedFunctionGetPropertiesResource', module='types')
-        resource: SqlUserDefinedFunctionGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionGetPropertiesResource(SqlUserDefinedFunctionResource):
-        key "body": str
-        key "id": Required[str]
-        body: str
-        etag: str
-        id: str
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('SqlUserDefinedFunctionGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: SqlUserDefinedFunctionGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionResource(TypedDict, total=False):
         key "body": str
         key "id": Required[str]
@@ -17972,12 +22566,12 @@ namespace azure.mgmt.cosmosdb.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.cosmosdb.types.TableCreateUpdateParameters(ARMResourceProperties):
@@ -18003,57 +22597,13 @@ namespace azure.mgmt.cosmosdb.types
         resource: TableResource
 
 
-    class azure.mgmt.cosmosdb.types.TableGetProperties(TypedDict, total=False):
-        key "options": ForwardRef('TableGetPropertiesOptions', module='types')
-        key "resource": ForwardRef('TableGetPropertiesResource', module='types')
-        options: TableGetPropertiesOptions
-        resource: TableGetPropertiesResource
-
-
-    class azure.mgmt.cosmosdb.types.TableGetPropertiesOptions(OptionsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettings', module='types')
-        key "throughput": int
-        autoscale_settings: AutoscaleSettings
-        throughput: int
-
-
-    class azure.mgmt.cosmosdb.types.TableGetPropertiesResource(TableResource):
-        key "createMode": Union[str, CreateMode]
-        key "id": Required[str]
-        key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
-        etag: str
-        id: str
-        restore_parameters: ResourceRestoreParameters
-        rid: str
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.TableGetResults(ProxyResource):
-        key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('TableGetProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        identity: ManagedServiceIdentity
-        location: str
-        name: str
-        properties: TableGetProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
     class azure.mgmt.cosmosdb.types.TableResource(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
         key "id": Required[str]
         key "restoreParameters": ForwardRef('ResourceRestoreParameters', module='types')
-        create_mode: Union[str, CreateMode]
+        createMode: Union[str, CreateMode]
         id: str
-        restore_parameters: ResourceRestoreParameters
+        restoreParameters: ResourceRestoreParameters
 
 
     class azure.mgmt.cosmosdb.types.TableRoleAssignmentResource(ProxyResource):
@@ -18065,7 +22615,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: TableRoleAssignmentResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -18074,9 +22624,9 @@ namespace azure.mgmt.cosmosdb.types
         key "provisioningState": str
         key "roleDefinitionId": str
         key "scope": str
-        principal_id: str
-        provisioning_state: str
-        role_definition_id: str
+        principalId: str
+        provisioningState: str
+        roleDefinitionId: str
         scope: str
 
 
@@ -18089,7 +22639,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         name: str
         properties: TableRoleDefinitionResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -18098,59 +22648,78 @@ namespace azure.mgmt.cosmosdb.types
         key "roleName": str
         key "type": Union[str, RoleDefinitionType]
         assignableScopes: list[str]
-        assignable_scopes: list[str]
         id: str
         permissions: list[Permission]
-        role_name: str
+        roleName: str
         type: Union[str, RoleDefinitionType]
+
+
+    class azure.mgmt.cosmosdb.types.ThroughputBucketResource(TypedDict, total=False):
+        key "id": Required[int]
+        key "isDefaultBucket": bool
+        key "maxThroughputPercentage": Required[int]
+        id: int
+        isDefaultBucket: bool
+        maxThroughputPercentage: int
 
 
     class azure.mgmt.cosmosdb.types.ThroughputPolicyResource(TypedDict, total=False):
         key "incrementPercent": int
         key "isEnabled": bool
-        increment_percent: int
-        is_enabled: bool
+        incrementPercent: int
+        isEnabled: bool
 
 
-    class azure.mgmt.cosmosdb.types.ThroughputSettingsGetProperties(TypedDict, total=False):
-        key "resource": ForwardRef('ThroughputSettingsGetPropertiesResource', module='types')
-        resource: ThroughputSettingsGetPropertiesResource
+    class azure.mgmt.cosmosdb.types.ThroughputPoolAccountProperties(TypedDict, total=False):
+        key "accountInstanceId": str
+        key "accountLocation": str
+        key "accountResourceIdentifier": str
+        key "provisioningState": Union[str, Status]
+        accountInstanceId: str
+        accountLocation: str
+        accountResourceIdentifier: str
+        provisioningState: Union[str, Status]
 
 
-    class azure.mgmt.cosmosdb.types.ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource):
-        key "autoscaleSettings": ForwardRef('AutoscaleSettingsResource', module='types')
-        key "instantMaximumThroughput": str
-        key "minimumThroughput": str
-        key "offerReplacePending": str
-        key "softAllowedMaximumThroughput": str
-        key "throughput": int
-        autoscale_settings: AutoscaleSettingsResource
-        etag: str
-        instant_maximum_throughput: str
-        minimum_throughput: str
-        offer_replace_pending: str
-        rid: str
-        soft_allowed_maximum_throughput: str
-        throughput: int
-        ts: float
-
-
-    class azure.mgmt.cosmosdb.types.ThroughputSettingsGetResults(ProxyResource):
+    class azure.mgmt.cosmosdb.types.ThroughputPoolAccountResource(ProxyResource):
         key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
-        key "location": str
         key "name": str
-        key "properties": ForwardRef('ThroughputSettingsGetProperties', module='types')
+        key "properties": ForwardRef('ThroughputPoolAccountProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
-        identity: ManagedServiceIdentity
+        name: str
+        properties: ThroughputPoolAccountProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cosmosdb.types.ThroughputPoolProperties(TypedDict, total=False):
+        key "maxThroughput": int
+        key "provisioningState": Union[str, Status]
+        maxThroughput: int
+        provisioningState: Union[str, Status]
+
+
+    class azure.mgmt.cosmosdb.types.ThroughputPoolResource(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ThroughputPoolProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
         location: str
         name: str
-        properties: ThroughputSettingsGetProperties
-        system_data: SystemData
+        properties: ThroughputPoolProperties
+        systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.cosmosdb.types.ThroughputPoolUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ThroughputPoolProperties', module='types')
+        properties: ThroughputPoolProperties
 
 
     class azure.mgmt.cosmosdb.types.ThroughputSettingsResource(TypedDict, total=False):
@@ -18160,12 +22729,13 @@ namespace azure.mgmt.cosmosdb.types
         key "offerReplacePending": str
         key "softAllowedMaximumThroughput": str
         key "throughput": int
-        autoscale_settings: AutoscaleSettingsResource
-        instant_maximum_throughput: str
-        minimum_throughput: str
-        offer_replace_pending: str
-        soft_allowed_maximum_throughput: str
+        autoscaleSettings: AutoscaleSettingsResource
+        instantMaximumThroughput: str
+        minimumThroughput: str
+        offerReplacePending: str
+        softAllowedMaximumThroughput: str
         throughput: int
+        throughputBuckets: list[ThroughputBucketResource]
 
 
     class azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters(ARMResourceProperties):
@@ -18198,7 +22768,7 @@ namespace azure.mgmt.cosmosdb.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -18209,20 +22779,6 @@ namespace azure.mgmt.cosmosdb.types
 
     class azure.mgmt.cosmosdb.types.UniqueKeyPolicy(TypedDict, total=False):
         uniqueKeys: list[UniqueKey]
-        unique_keys: list[UniqueKey]
-
-
-    class azure.mgmt.cosmosdb.types.Usage(TypedDict, total=False):
-        key "currentValue": int
-        key "limit": int
-        key "name": ForwardRef('MetricName', module='types')
-        key "quotaPeriod": str
-        key "unit": Union[str, UnitType]
-        current_value: int
-        limit: int
-        name: MetricName
-        quota_period: str
-        unit: Union[str, UnitType]
 
 
     class azure.mgmt.cosmosdb.types.VectorEmbedding(TypedDict, total=False):
@@ -18230,15 +22786,14 @@ namespace azure.mgmt.cosmosdb.types
         key "dimensions": Required[int]
         key "distanceFunction": Required[Union[str, DistanceFunction]]
         key "path": Required[str]
-        data_type: Union[str, VectorDataType]
+        dataType: Union[str, VectorDataType]
         dimensions: int
-        distance_function: Union[str, DistanceFunction]
+        distanceFunction: Union[str, DistanceFunction]
         path: str
 
 
     class azure.mgmt.cosmosdb.types.VectorEmbeddingPolicy(TypedDict, total=False):
         vectorEmbeddings: list[VectorEmbedding]
-        vector_embeddings: list[VectorEmbedding]
 
 
     class azure.mgmt.cosmosdb.types.VectorIndex(TypedDict, total=False):
@@ -18246,19 +22801,18 @@ namespace azure.mgmt.cosmosdb.types
         key "path": Required[str]
         key "quantizationByteSize": int
         key "type": Required[Union[str, VectorIndexType]]
-        indexing_search_list_size: int
+        indexingSearchListSize: int
         path: str
-        quantization_byte_size: int
+        quantizationByteSize: int
         type: Union[str, VectorIndexType]
         vectorIndexShardKey: list[str]
-        vector_index_shard_key: list[str]
 
 
     class azure.mgmt.cosmosdb.types.VirtualNetworkRule(TypedDict, total=False):
         key "id": str
         key "ignoreMissingVNetServiceEndpoint": bool
         id: str
-        ignore_missing_v_net_service_endpoint: bool
+        ignoreMissingVNetServiceEndpoint: bool
 
 
 ```

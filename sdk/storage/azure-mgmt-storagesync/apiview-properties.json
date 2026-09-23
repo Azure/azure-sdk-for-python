@@ -14,6 +14,8 @@
         "azure.mgmt.storagesync.models.CloudEndpointCreateParametersProperties": "Microsoft.StorageSync.CloudEndpointCreateParametersProperties",
         "azure.mgmt.storagesync.models.CloudEndpointLastChangeEnumerationStatus": "Microsoft.StorageSync.CloudEndpointLastChangeEnumerationStatus",
         "azure.mgmt.storagesync.models.CloudEndpointProperties": "Microsoft.StorageSync.CloudEndpointProperties",
+        "azure.mgmt.storagesync.models.CloudEndpointUpdateParameters": "Microsoft.StorageSync.CloudEndpointUpdateParameters",
+        "azure.mgmt.storagesync.models.CloudEndpointUpdateProperties": "Microsoft.StorageSync.CloudEndpointUpdateProperties",
         "azure.mgmt.storagesync.models.CloudTieringCachePerformance": "Microsoft.StorageSync.CloudTieringCachePerformance",
         "azure.mgmt.storagesync.models.CloudTieringDatePolicyStatus": "Microsoft.StorageSync.CloudTieringDatePolicyStatus",
         "azure.mgmt.storagesync.models.CloudTieringFilesNotTiering": "Microsoft.StorageSync.CloudTieringFilesNotTiering",
@@ -102,6 +104,7 @@
         "azure.mgmt.storagesync.models.ServerEndpointHealthState": "Microsoft.StorageSync.ServerEndpointHealthState",
         "azure.mgmt.storagesync.models.ServerEndpointSyncActivityState": "Microsoft.StorageSync.ServerEndpointSyncActivityState",
         "azure.mgmt.storagesync.models.ServerEndpointSyncMode": "Microsoft.StorageSync.ServerEndpointSyncMode",
+        "azure.mgmt.storagesync.models.ServerEndpointSyncSessionWarningType": "Microsoft.StorageSync.ServerEndpointSyncSessionWarningType",
         "azure.mgmt.storagesync.models.ServerEndpointOfflineDataTransferState": "Microsoft.StorageSync.ServerEndpointOfflineDataTransferState",
         "azure.mgmt.storagesync.models.CloudTieringLowDiskModeState": "Microsoft.StorageSync.CloudTieringLowDiskModeState",
         "azure.mgmt.storagesync.models.InitialDownloadPolicy": "Microsoft.StorageSync.InitialDownloadPolicy",
@@ -148,6 +151,8 @@
         "azure.mgmt.storagesync.aio.operations.CloudEndpointsOperations.get": "Microsoft.StorageSync.CloudEndpoints.get",
         "azure.mgmt.storagesync.operations.CloudEndpointsOperations.begin_create": "Microsoft.StorageSync.CloudEndpoints.create",
         "azure.mgmt.storagesync.aio.operations.CloudEndpointsOperations.begin_create": "Microsoft.StorageSync.CloudEndpoints.create",
+        "azure.mgmt.storagesync.operations.CloudEndpointsOperations.begin_update": "Microsoft.StorageSync.CloudEndpoints.update",
+        "azure.mgmt.storagesync.aio.operations.CloudEndpointsOperations.begin_update": "Microsoft.StorageSync.CloudEndpoints.update",
         "azure.mgmt.storagesync.operations.CloudEndpointsOperations.begin_delete": "Microsoft.StorageSync.CloudEndpoints.delete",
         "azure.mgmt.storagesync.aio.operations.CloudEndpointsOperations.begin_delete": "Microsoft.StorageSync.CloudEndpoints.delete",
         "azure.mgmt.storagesync.operations.CloudEndpointsOperations.list_by_sync_group": "Microsoft.StorageSync.CloudEndpoints.listBySyncGroup",
@@ -203,5 +208,5 @@
         "azure.mgmt.storagesync.StorageSyncMgmtClient.location_operation_status": "Microsoft.StorageSync.locationOperationStatusGet",
         "azure.mgmt.storagesync.aio.StorageSyncMgmtClient.location_operation_status": "Microsoft.StorageSync.locationOperationStatusGet"
     },
-    "CrossLanguageVersion": "467789b7bf64"
+    "CrossLanguageVersion": "108eb3dd46a1"
 }

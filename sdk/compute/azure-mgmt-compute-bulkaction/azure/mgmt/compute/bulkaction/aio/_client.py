@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,7 +22,7 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ComputeBulkActionsMgmtClientConfiguration
 from .operations import (
     BulkCreateCustomOperations,
-    LaunchBulkInstancesOperationOperations,
+    BulkCreateOperations,
     OccurrenceExtensionOperations,
     OccurrencesOperations,
     Operations,
@@ -41,7 +42,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attributes
+class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ComputeBulkActionsMgmtClient.
 
     :ivar operations: Operations operations
@@ -49,12 +50,11 @@ class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attribu
     :ivar virtual_machine_bulk_operations: VirtualMachineBulkOperationsOperations operations
     :vartype virtual_machine_bulk_operations:
      azure.mgmt.compute.bulkaction.aio.operations.VirtualMachineBulkOperationsOperations
-    :ivar launch_bulk_instances_operation: LaunchBulkInstancesOperationOperations operations
-    :vartype launch_bulk_instances_operation:
-     azure.mgmt.compute.bulkaction.aio.operations.LaunchBulkInstancesOperationOperations
     :ivar bulk_create_custom: BulkCreateCustomOperations operations
     :vartype bulk_create_custom:
      azure.mgmt.compute.bulkaction.aio.operations.BulkCreateCustomOperations
+    :ivar bulk_create: BulkCreateOperations operations
+    :vartype bulk_create: azure.mgmt.compute.bulkaction.aio.operations.BulkCreateOperations
     :ivar scheduled_actions: ScheduledActionsOperations operations
     :vartype scheduled_actions:
      azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionsOperations
@@ -79,7 +79,7 @@ class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attribu
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-06-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-06-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -140,12 +140,10 @@ class ComputeBulkActionsMgmtClient:  # pylint: disable=too-many-instance-attribu
         self.virtual_machine_bulk_operations = VirtualMachineBulkOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.launch_bulk_instances_operation = LaunchBulkInstancesOperationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.bulk_create_custom = BulkCreateCustomOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.bulk_create = BulkCreateOperations(self._client, self._config, self._serialize, self._deserialize)
         self.scheduled_actions = ScheduledActionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

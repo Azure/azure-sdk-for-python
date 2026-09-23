@@ -2,23 +2,38 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import logging
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, TYPE_CHECKING, Union
 
 from azure.core.paging import ItemPaged
 
 from ._base_handler import BaseHandler
-from ._common.utils import create_authentication
+from ._common.utils import (
+    create_authentication,
+    get_link_ready_deadline,
+    check_link_ready_deadline,
+)
 from ._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from ._common import mgmt_handlers
 from .exceptions import OperationTimeoutError
 
+_LOGGER = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    try:
+        from uamqp import AMQPClient as uamqp_AMQPClientSync
+    except ImportError:
+        pass
+    from ._pyamqp.client import AMQPClient as pyamqp_AMQPClientSync
+
 # The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality) to switch
-# between "active messages" mode and "updated since" mode. The .NET AMQP library encodes
+# between default listing mode and updated-since mode. Default listing mode returns sessions
+# with active messages or stored session state. The .NET AMQP library encodes
 # DateTime.MaxValue as 253402300800000 ms (10000-01-01T00:00:00Z) due to double-to-long
 # rounding in TimeSpan.TotalMilliseconds, and its decoder clamps values beyond
 # DateTime.MaxValue.Ticks back to DateTime.MaxValue. This matches Track 1 Java's
@@ -31,7 +46,7 @@ _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     """Convert an optional filter datetime to the wire millisecond value.
 
-    Returns the DateTime.MaxValue sentinel (active-messages mode) when no filter
+    Returns the DateTime.MaxValue sentinel (default listing mode) when no filter
     is given; otherwise the UTC-normalized millisecond timestamp.
 
     :param state_updated_after: The optional filter datetime.
@@ -40,7 +55,7 @@ def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     :rtype: int
     """
     if state_updated_after is None:
-        # DateTime.MaxValue triggers "active messages" mode on the service side.
+        # DateTime.MaxValue triggers default listing mode on the service side.
         return _MAX_DATETIME_MS
     # Normalize naive datetimes to UTC. Python's datetime.timestamp() interprets
     # naive values as local time, which would make the wire value depend on the
@@ -54,7 +69,7 @@ def _to_last_updated_ms(state_updated_after: Optional[datetime]) -> int:
     # Compute milliseconds with integer timedelta arithmetic rather than float
     # `timestamp() * 1000`. The float path rounds the maximum representable
     # datetime up to _MAX_DATETIME_MS, which would silently switch an explicit
-    # filter into active-messages mode, and truncates pre-epoch fractional
+    # filter into default listing mode, and truncates pre-epoch fractional
     # milliseconds toward zero. Floor division keeps datetime.max at
     # 253402300799999 and rounds consistently downward.
     return (normalized - _EPOCH) // timedelta(milliseconds=1)
@@ -108,6 +123,8 @@ class _SessionBrowser(BaseHandler):
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = f"SBSessionBrowser-{uuid.uuid4()}"
         self._connection = kwargs.get("connection")
+        # _create_handler always assigns it, so narrow away the base class's Optional.
+        self._handler: Union["uamqp_AMQPClientSync", "pyamqp_AMQPClientSync"]
 
     def _create_handler(self, auth):
         self._handler = self._amqp_transport.create_mgmt_client(
@@ -118,21 +135,33 @@ class _SessionBrowser(BaseHandler):
             client_name=self._name,
         )
 
-    def _open(self):
+    def _open(self, timeout: Optional[float] = None):
         if self._running:
             return
+        deadline = get_link_ready_deadline(timeout)
         if self._handler:
+            check_link_ready_deadline(deadline)
             self._handler.close()
 
+        check_link_ready_deadline(deadline)
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
+            # The token fetch can use the budget, and open() cannot be cancelled once entered.
+            check_link_ready_deadline(deadline)
             self._handler.open(connection=self._connection)
-            while not self._handler.client_ready():
+            while True:
+                check_link_ready_deadline(deadline)
+                if self._handler.client_ready():
+                    break
                 time.sleep(0.05)
+            check_link_ready_deadline(deadline)
             self._running = True
         except:
-            self._close_handler()
+            try:
+                self._close_handler()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
             raise
 
     def list_sessions(
@@ -146,7 +175,8 @@ class _SessionBrowser(BaseHandler):
 
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned. If not specified,
-            returns sessions with active messages in the entity.
+            returns sessions with active messages or stored session state in the entity. Sessions
+            with neither are excluded.
         :keyword float timeout: The total operation timeout in seconds, spent across
             every page of the enumeration.
         :keyword _now: Monotonic clock function, injectable for tests. Internal.

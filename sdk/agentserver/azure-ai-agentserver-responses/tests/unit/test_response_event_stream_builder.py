@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import cast
 
 import pytest
@@ -152,7 +153,7 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
 
     usage = ResponseUsage(
         input_tokens=1,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 1},
         output_tokens=2,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=3,
@@ -164,31 +165,93 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     assert completed["type"] == "response.completed"
     assert completed["response"]["status"] == "completed"
     assert completed["response"]["usage"]["total_tokens"] == 3
+    assert completed["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 1
     assert isinstance(completed["response"]["completed_at"], int)
     assert completed["response"]["completed_at"] is not None
 
 
+def test_event_stream_builder__emit_completed_accepts_usage_without_cache_write_tokens() -> None:
+    stream = ResponseEventStream(response_id="resp_builder_completed_optional_cache_write")
+    stream.emit_created(status="in_progress")
+
+    usage = ResponseUsage(
+        input_tokens=1,
+        input_tokens_details={"cached_tokens": 0},
+        output_tokens=2,
+        output_tokens_details={"reasoning_tokens": 0},
+        total_tokens=3,
+    )
+
+    completed = stream.emit_completed(usage=usage)
+
+    assert completed["response"]["usage"]["input_tokens_details"] == {"cached_tokens": 0}
+
+
 def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
-    stream = ResponseEventStream(response_id="resp_builder_failed_params")
+    stream = ResponseEventStream(
+        response_id="resp_builder_failed_params",
+        request={"metadata": {"request": "preserved"}},
+    )
     stream.emit_created(status="in_progress")
 
     usage = ResponseUsage(
         input_tokens=4,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 2},
         output_tokens=5,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=9,
     )
 
-    failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
+    failed = stream.emit_failed(
+        code="server_error",
+        message="boom",
+        metadata={"failure": "details"},
+        usage=usage,
+    )
 
     assert isinstance(failed, dict)
     assert failed["type"] == "response.failed"
     assert failed["response"]["status"] == "failed"
     assert failed["response"]["error"]["code"] == "server_error"
     assert failed["response"]["error"]["message"] == "boom"
+    assert failed["response"]["metadata"] == {
+        "request": "preserved",
+        "failure": "details",
+    }
     assert failed["response"]["usage"]["total_tokens"] == 9
+    assert failed["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 2
     assert failed["response"].get("completed_at") is None
+
+
+def test_event_stream_builder__emit_failed_ignores_invalid_metadata(caplog: pytest.LogCaptureFixture) -> None:
+    stream = ResponseEventStream(
+        response_id="resp_builder_failed_metadata",
+        request={"metadata": {"request": "preserved"}},
+    )
+    stream.emit_created(status="in_progress")
+
+    with caplog.at_level(logging.WARNING):
+        failed = stream.emit_failed(metadata={"invalid": 1})  # type: ignore[dict-item]
+
+    assert failed["response"]["status"] == "failed"
+    assert failed["response"]["metadata"] == {"request": "preserved"}
+    assert "Ignoring invalid metadata supplied to emit_failed" in caplog.text
+    assert "metadata values must be str" in caplog.text
+
+
+def test_event_stream_builder__emit_failed_ignores_metadata_over_contract_limit(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    stream = ResponseEventStream(response_id="resp_builder_failed_metadata_limit")
+    stream.emit_created(status="in_progress")
+
+    with caplog.at_level(logging.WARNING):
+        failed = stream.emit_failed(metadata={f"k{index}": "value" for index in range(17)})
+
+    assert failed["response"]["status"] == "failed"
+    assert "metadata" not in failed["response"]
+    assert "Ignoring invalid metadata supplied to emit_failed" in caplog.text
+    assert "at most 16" in caplog.text
 
 
 def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
@@ -197,7 +260,7 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
 
     usage = ResponseUsage(
         input_tokens=2,
-        input_tokens_details={"cached_tokens": 0},
+        input_tokens_details={"cached_tokens": 0, "cache_write_tokens": 3},
         output_tokens=3,
         output_tokens_details={"reasoning_tokens": 0},
         total_tokens=5,
@@ -210,6 +273,7 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
     assert incomplete["response"]["status"] == "incomplete"
     assert incomplete["response"]["incomplete_details"]["reason"] == "max_output_tokens"
     assert incomplete["response"]["usage"]["total_tokens"] == 5
+    assert incomplete["response"]["usage"]["input_tokens_details"]["cache_write_tokens"] == 3
     assert incomplete["response"].get("completed_at") is None
 
 

@@ -33,4 +33,4 @@ class TestPureStorageBlockMgmtStoragePoolsOperationsAsync(AzureMgmtRecordedTestC
     async def test_storage_pools_list_by_subscription(self, resource_group):
         response = self.client.storage_pools.list_by_subscription()
         result = [r async for r in response]
-        assert response
+        assert len(result)

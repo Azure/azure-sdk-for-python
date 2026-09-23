@@ -1,13 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Unit tests for generated payload validator integration in parse flow."""
+# cspell:ignore progo
 
 from __future__ import annotations
 
 import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response
-from azure.ai.agentserver.responses.models._validators import validate_create_response_payload
+from azure.ai.agentserver.responses.models._validators import (
+    validate_create_response_payload,
+)
 from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 # ---------------------------------------------------------------------------
@@ -55,6 +58,112 @@ def test_generated_create_response_validator_accepts_array_input_items() -> None
     assert errors == []
 
 
+def test_generated_create_response_validator_accepts_output_text_without_logprobs() -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [{"type": "output_text", "text": "hello", "annotations": []}],
+                }
+            ]
+        }
+    )
+    assert errors == []
+
+
+def test_generated_create_response_validator_rejects_invalid_output_text_logprobs() -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "output_text",
+                            "text": "hello",
+                            "annotations": [],
+                            "logprobs": "invalid",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+
+    assert any(error["path"].endswith(".logprobs") and "array" in error["message"] for error in errors)
+
+
+@pytest.mark.parametrize(
+    "prompt_cache_options",
+    [
+        {"mode": 123},
+        {"mode": "invalid"},
+        {"ttl": "invalid"},
+    ],
+)
+def test_generated_create_response_validator_rejects_invalid_prompt_cache_options(
+    prompt_cache_options: dict,
+) -> None:
+    errors = validate_create_response_payload({"prompt_cache_options": prompt_cache_options})
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [
+        {},
+        {"type": "unknown"},
+        {"type": "program"},
+    ],
+)
+def test_generated_create_response_validator_rejects_invalid_tool_call_caller(
+    caller: dict,
+) -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "function_call",
+                    "call_id": "call_123",
+                    "name": "get_weather",
+                    "arguments": "{}",
+                    "caller": caller,
+                }
+            ]
+        }
+    )
+    assert errors
+
+
+@pytest.mark.parametrize(
+    "caller",
+    [
+        {"type": "direct"},
+        {"type": "program", "caller_id": "program_123"},
+    ],
+)
+def test_generated_create_response_validator_accepts_valid_tool_call_caller(
+    caller: dict,
+) -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": [
+                {
+                    "type": "function_call",
+                    "call_id": "call_123",
+                    "name": "get_weather",
+                    "arguments": "{}",
+                    "caller": caller,
+                }
+            ]
+        }
+    )
+    assert errors == []
+
+
 def test_generated_create_response_validator_accepts_scale_service_tier() -> None:
     errors = validate_create_response_payload({"input": "hello world", "service_tier": "scale"})
     assert errors == []
@@ -86,25 +195,25 @@ def test_generated_create_response_validator_rejects_non_string_non_array_input(
 
 def test_generated_create_response_validator_rejects_non_object_input_item() -> None:
     errors = validate_create_response_payload({"input": [123]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(e["path"] == "$.input[0]" and "Expected object" in e["message"] for e in errors)
 
 
-def test_generated_create_response_validator_rejects_input_item_missing_type() -> None:
+def test_generated_create_response_validator_rejects_input_item_missing_required_fields() -> None:
     errors = validate_create_response_payload({"input": [{}]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(e["path"] == "$.input[0].role" for e in errors)
 
 
 def test_generated_create_response_validator_rejects_input_item_type_with_wrong_primitive() -> None:
     errors = validate_create_response_payload({"input": [{"type": 1}]})
-    assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+    assert any(e["path"] == "$.input[0].type" for e in errors)
 
 
 @pytest.mark.parametrize(
     "payload,path",
     [
         ({"include": ["not_an_include"]}, "$.include[0]"),
-        ({"input": [{"type": "not_an_item"}]}, "$.input"),
-        ({"tool_choice": {"type": "not_a_tool_choice"}}, "$.tool_choice"),
+        ({"input": [{"type": "not_an_item"}]}, "$.input[0].type"),
+        ({"tool_choice": {"type": "not_a_tool_choice"}}, "$.tool_choice.type"),
         ({"text": {"format": {"type": "not_a_format"}}}, "$.text.format.type"),
     ],
 )
@@ -117,18 +226,28 @@ def test_generated_create_response_validator_rejects_invalid_literal_values(payl
 _VALID_INPUT_ITEMS: dict[str, dict] = {
     "message": {"type": "message", "role": "user", "content": "hello"},
     "item_reference": {"type": "item_reference", "id": "ref_123"},
-    "function_call_output": {"type": "function_call_output", "call_id": "call_123", "output": "result"},
+    "function_call_output": {
+        "type": "function_call_output",
+        "call_id": "call_123",
+        "output": "result",
+    },
     "computer_call_output": {
         "type": "computer_call_output",
         "call_id": "call_123",
         "output": {"type": "computer_screenshot"},
     },
-    "apply_patch_call_output": {"type": "apply_patch_call_output", "call_id": "call_123", "status": "completed"},
+    "apply_patch_call_output": {
+        "type": "apply_patch_call_output",
+        "call_id": "call_123",
+        "status": "completed",
+    },
 }
 
 
 @pytest.mark.parametrize("item_type", list(_VALID_INPUT_ITEMS))
-def test_generated_create_response_validator_accepts_multiple_input_item_types(item_type: str) -> None:
+def test_generated_create_response_validator_accepts_multiple_input_item_types(
+    item_type: str,
+) -> None:
     errors = validate_create_response_payload({"input": [_VALID_INPUT_ITEMS[item_type]]})
     assert errors == []
 
@@ -144,3 +263,51 @@ def test_generated_create_response_validator_accepts_mixed_input_item_types() ->
         }
     )
     assert errors == []
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        {
+            "type": "program",
+            "id": "prog_123",
+            "call_id": "call_123",
+            "code": "return 1;",
+            "fingerprint": "fp_123",
+        },
+        {
+            "type": "program_output",
+            "id": "progo_123",
+            "call_id": "call_123",
+            "result": "1",
+            "status": "completed",
+        },
+    ],
+)
+def test_generated_create_response_validator_accepts_program_items(
+    item: dict[str, str],
+) -> None:
+    assert validate_create_response_payload({"input": [item]}) == []
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
+        {
+            "type": "program",
+            "id": "prog_123",
+            "call_id": "call_123",
+            "code": "return 1;",
+        },
+        {
+            "type": "program_output",
+            "id": "progo_123",
+            "call_id": "call_123",
+            "status": "completed",
+        },
+    ],
+)
+def test_generated_create_response_validator_rejects_incomplete_program_items(
+    item: dict[str, str],
+) -> None:
+    assert validate_create_response_payload({"input": [item]})

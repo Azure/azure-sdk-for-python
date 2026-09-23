@@ -142,9 +142,11 @@ def test_claims_authenticated_with_empty_bot_app_id_has_empty_claims():
     but with no appid/audience entries."""
     claims = bridge._build_outbound_claims(ClaimsIdentity, digital_worker=False, is_hosted=True, bot_app_id="")
 
-    assert claims.is_authenticated is True
+    # ``is_authenticated`` is deprecated upstream and now derives from the claim
+    # dict being non-empty, so assert on the authentication type instead.
     assert claims.authentication_type == OutboundAuth.AUTH_TYPE_BEARER
     assert claims.get_claim_value(OutboundAuth.CLAIM_APP_ID) is None
+    assert claims.get_claim_value(OutboundAuth.CLAIM_AUDIENCE) is None
 
 
 # ---------------------------------------------------------------------------

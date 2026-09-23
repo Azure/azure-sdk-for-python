@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-09-01/Skus_ListByResourceTypeRegistrationsNestedResourceTypeFirst.json
+# x-ms-original-file: 2025-10-01/Skus_ListByResourceTypeRegistrationsNestedResourceTypeFirst.json
 if __name__ == "__main__":
     main()

@@ -61,7 +61,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "gpuProfile": {
                             "driver": "str",
                             "driverType": "str",
-                            "nvidia": {"managementMode": "str", "migStrategy": "str"},
+                            "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
                         },
                         "hostGroupID": "str",
                         "kubeletConfig": {
@@ -71,6 +71,7 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                             "cpuCfsQuota": bool,
                             "cpuCfsQuotaPeriod": "str",
                             "cpuManagerPolicy": "str",
+                            "evictionMaxPodGracePeriodInSeconds": 0,
                             "failSwapOn": bool,
                             "hardEvictionThreshold": {
                                 "memoryAvailable": "str",
@@ -82,6 +83,16 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                             "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                             "podMaxPids": 0,
                             "seccompDefault": "str",
+                            "softEvictionGracePeriod": {
+                                "memoryAvailable": "str",
+                                "nodeFsAvailable": "str",
+                                "nodeFsInodesFree": "str",
+                            },
+                            "softEvictionThreshold": {
+                                "memoryAvailable": "str",
+                                "nodeFsAvailable": "str",
+                                "nodeFsInodesFree": "str",
+                            },
                             "topologyManagerPolicy": "str",
                         },
                         "kubeletDiskType": "str",
@@ -156,10 +167,20 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "networkProfile": {
                             "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                             "applicationSecurityGroups": ["str"],
+                            "dranet": {"mode": "str"},
                             "nodePublicIPPrefixIDs": ["str"],
                             "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                             "secondaryNetworkInterfaces": [
-                                {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
+                                {
+                                    "enableAcceleratedNetworking": bool,
+                                    "publicIPAddressConfiguration": {
+                                        "publicIPAddressVersion": "str",
+                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                        "publicIPPrefixID": "str",
+                                    },
+                                    "type": "str",
+                                    "vnetSubnetId": "str",
+                                }
                             ],
                         },
                         "nodeImageVersion": "str",
@@ -328,6 +349,26 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
             agent_pool_name="str",
             body={},
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_agent_pools_begin_update(self, resource_group):
+        response = await (
+            await self.client.agent_pools.begin_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                agent_pool_name="str",
+                parameters={
+                    "properties": {
+                        "count": 0,
+                        "virtualMachinesProfile": {"scale": {"manual": [{"count": 0, "size": "str"}]}},
+                    }
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

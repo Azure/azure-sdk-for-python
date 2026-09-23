@@ -16,7 +16,10 @@ if TYPE_CHECKING:
         AutoUpgradeLastTriggerStatus,
         AutoUpgradeNodeImageSelectionType,
         AutoUpgradeProfileProvisioningState,
+        ClusterMeshProfileProvisioningState,
+        ClusterMeshState,
         CreatedByType,
+        DayOfWeek,
         DeletePolicy,
         FleetManagedNamespaceProvisioningState,
         FleetMemberProvisioningState,
@@ -27,11 +30,13 @@ if TYPE_CHECKING:
         LabelSelectorOperator,
         ManagedClusterUpgradeType,
         ManagedServiceIdentityType,
+        MeshMemberState,
         NodeImageSelectionType,
         PlacementType,
         PolicyRule,
         PropagationType,
         PropertySelectorOperator,
+        RolloutStrategyType,
         TaintEffect,
         TargetType,
         TolerationOperator,
@@ -51,6 +56,17 @@ class Affinity(TypedDict, total=False):
 
     clusterAffinity: "ClusterAffinity"
     """ClusterAffinity contains cluster affinity scheduling rules for the selected resources."""
+
+
+class AffinityPatch(TypedDict, total=False):
+    """The affinity settings that can be patched.
+
+    :ivar clusterAffinity: The cluster affinity settings that can be patched.
+    :vartype clusterAffinity: "ClusterAffinityPatch"
+    """
+
+    clusterAffinity: "ClusterAffinityPatch"
+    """The cluster affinity settings that can be patched."""
 
 
 class AgentProfile(TypedDict, total=False):
@@ -190,7 +206,7 @@ class AutoUpgradeProfileProperties(TypedDict, total=False):
      specified, the auto upgrade will run on all clusters which are members of the fleet.
     :vartype updateStrategyId: str
     :ivar channel: Configures how auto-upgrade will be run. Required. Known values are: "Stable",
-     "Rapid", "NodeImage", and "TargetKubernetesVersion".
+     "Rapid", "NodeImage", "TargetKubernetesVersion", and "SecurityPatch".
     :vartype channel: Union[str, "UpgradeChannel"]
     :ivar nodeImageSelection: The node image upgrade to be applied to the target clusters in auto
      upgrade.
@@ -205,7 +221,7 @@ class AutoUpgradeProfileProperties(TypedDict, total=False):
     :ivar targetKubernetesVersion:   This is the target Kubernetes version for auto-upgrade. The
      format must be ``{major version}.{minor version}``. For example, "1.30". By default, this is
      empty. If upgrade channel is set to TargetKubernetesVersion, this field must not be empty. If
-     upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
+     upgrade channel is not TargetKubernetesVersion, this field must be empty.
     :vartype targetKubernetesVersion: str
     :ivar longTermSupport:   If upgrade channel is not TargetKubernetesVersion, this field must be
      False. If set to True: Fleet auto upgrade will continue generate update runs for patches of
@@ -225,7 +241,7 @@ class AutoUpgradeProfileProperties(TypedDict, total=False):
      will run on all clusters which are members of the fleet."""
     channel: Required[Union[str, "UpgradeChannel"]]
     """Configures how auto-upgrade will be run. Required. Known values are: \"Stable\", \"Rapid\",
-     \"NodeImage\", and \"TargetKubernetesVersion\"."""
+     \"NodeImage\", \"TargetKubernetesVersion\", and \"SecurityPatch\"."""
     nodeImageSelection: "AutoUpgradeNodeImageSelection"
     """The node image upgrade to be applied to the target clusters in auto upgrade."""
     disabled: bool
@@ -239,7 +255,7 @@ class AutoUpgradeProfileProperties(TypedDict, total=False):
     """This is the target Kubernetes version for auto-upgrade. The format must be ``{major
      version}.{minor version}``. For example, \"1.30\". By default, this is empty. If upgrade
      channel is set to TargetKubernetesVersion, this field must not be empty. If upgrade channel is
-     Rapid, Stable or NodeImage, this field must be empty."""
+     not TargetKubernetesVersion, this field must be empty."""
     longTermSupport: bool
     """If upgrade channel is not TargetKubernetesVersion, this field must be False. If set to True:
      Fleet auto upgrade will continue generate update runs for patches of minor versions earlier
@@ -263,6 +279,8 @@ class AutoUpgradeProfileStatus(TypedDict, total=False):
     :ivar lastTriggerUpgradeVersions: The target Kubernetes version or node image versions of the
      last trigger.
     :vartype lastTriggerUpgradeVersions: list[str]
+    :ivar lastTriggerMessage: Additional information about the last trigger attempt.
+    :vartype lastTriggerMessage: str
     """
 
     lastTriggeredAt: str
@@ -274,6 +292,27 @@ class AutoUpgradeProfileStatus(TypedDict, total=False):
     """The error details of the last trigger."""
     lastTriggerUpgradeVersions: list[str]
     """The target Kubernetes version or node image versions of the last trigger."""
+    lastTriggerMessage: str
+    """Additional information about the last trigger attempt."""
+
+
+class CiliumProperties(TypedDict, total=False):
+    """The Cilium specific properties of the member cluster.
+
+    :ivar id: Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255.
+     The id is managed by Fleet and cannot be set by the user. Required.
+    :vartype id: int
+    :ivar name: Cilium requires each cluster to be assigned a unique human-readable name. The name
+     is managed by Fleet, based on the Fleet Member name, and cannot be set by the user. Required.
+    :vartype name: str
+    """
+
+    id: Required[int]
+    """Cilium requires each cluster to be assigned a unique numeric cluster id from 1 - 255. The id is
+     managed by Fleet and cannot be set by the user. Required."""
+    name: Required[str]
+    """Cilium requires each cluster to be assigned a unique human-readable name. The name is managed
+     by Fleet, based on the Fleet Member name, and cannot be set by the user. Required."""
 
 
 class ClusterAffinity(TypedDict, total=False):
@@ -294,17 +333,132 @@ class ClusterAffinity(TypedDict, total=False):
      or may not try to eventually remove the resource from the cluster."""
 
 
+class ClusterAffinityPatch(TypedDict, total=False):
+    """The cluster affinity rules that can be patched.
+
+    :ivar requiredDuringSchedulingIgnoredDuringExecution: The required cluster selector that can be
+     patched.
+    :vartype requiredDuringSchedulingIgnoredDuringExecution: "ClusterSelectorPatch"
+    """
+
+    requiredDuringSchedulingIgnoredDuringExecution: "ClusterSelectorPatch"
+    """The required cluster selector that can be patched."""
+
+
+class ClusterMeshProfile(ProxyResource):
+    """A cluster mesh profile stores the general information about the mesh.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ClusterMeshProfileProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "ClusterMeshProfileProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ClusterMeshProfileProperties(TypedDict, total=False):
+    """A cluster mesh profile stores the general information about the mesh.
+
+    :ivar provisioningState: The provisioning state of the cluster mesh profile. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "ClusterMeshProfileProvisioningState"]
+    :ivar memberSelector: Select the members of the mesh.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no Fleet members will be selected to join the mesh.
+    :vartype memberSelector: "MemberSelector"
+    :ivar status: The cluster mesh profile status.
+    :vartype status: "ClusterMeshProfileStatus"
+    """
+
+    provisioningState: Union[str, "ClusterMeshProfileProvisioningState"]
+    """The provisioning state of the cluster mesh profile. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    memberSelector: "MemberSelector"
+    """Select the members of the mesh.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no Fleet members will be selected to join the mesh."""
+    status: "ClusterMeshProfileStatus"
+    """The cluster mesh profile status."""
+
+
+class ClusterMeshProfileStatus(TypedDict, total=False):
+    """Status of the cluster mesh.
+
+    :ivar state: The state of the cluster mesh. Required. Known values are: "NotConnected",
+     "Applying", "Connected", "Degraded", and "Failed".
+    :vartype state: Union[str, "ClusterMeshState"]
+    :ivar lastAppliedMemberSelector: The last applied MemberSelector for the cluster mesh profile.
+    :vartype lastAppliedMemberSelector: "MemberSelector"
+    :ivar lastOperationId: The last operation ID for the cluster mesh profile.
+    :vartype lastOperationId: str
+    :ivar lastOperationError: The last operation error of the cluster mesh profile.
+    :vartype lastOperationError: "ErrorDetail"
+    """
+
+    state: Required[Union[str, "ClusterMeshState"]]
+    """The state of the cluster mesh. Required. Known values are: \"NotConnected\", \"Applying\",
+     \"Connected\", \"Degraded\", and \"Failed\"."""
+    lastAppliedMemberSelector: "MemberSelector"
+    """The last applied MemberSelector for the cluster mesh profile."""
+    lastOperationId: str
+    """The last operation ID for the cluster mesh profile."""
+    lastOperationError: "ErrorDetail"
+    """The last operation error of the cluster mesh profile."""
+
+
 class ClusterResourcePlacementSpec(TypedDict, total=False):
     """ClusterResourcePlacementSpec defines the desired state of ClusterResourcePlacement.
 
     :ivar policy: Policy defines how to select member clusters to place the selected resources. If
      unspecified, all the joined member clusters are selected.
     :vartype policy: "PlacementPolicy"
+    :ivar rolloutStrategy: The rollout strategy configuration for the cluster resource placement.
+    :vartype rolloutStrategy: "RolloutStrategy"
     """
 
     policy: "PlacementPolicy"
     """Policy defines how to select member clusters to place the selected resources. If unspecified,
      all the joined member clusters are selected."""
+    rolloutStrategy: "RolloutStrategy"
+    """The rollout strategy configuration for the cluster resource placement."""
+
+
+class ClusterResourcePlacementSpecPatch(TypedDict, total=False):
+    """The ClusterResourcePlacement settings that can be patched.
+
+    :ivar policy: The placement policy that can be patched.
+    :vartype policy: "PlacementPolicyPatch"
+    :ivar rolloutStrategy: The rollout strategy configuration that can be patched.
+    :vartype rolloutStrategy: "RolloutStrategy"
+    """
+
+    policy: "PlacementPolicyPatch"
+    """The placement policy that can be patched."""
+    rolloutStrategy: "RolloutStrategy"
+    """The rollout strategy configuration that can be patched."""
 
 
 class ClusterSelector(TypedDict, total=False):
@@ -317,6 +471,17 @@ class ClusterSelector(TypedDict, total=False):
 
     clusterSelectorTerms: Required[list["ClusterSelectorTerm"]]
     """ClusterSelectorTerms is a list of cluster selector terms. The terms are ``ORed``. Required."""
+
+
+class ClusterSelectorPatch(TypedDict, total=False):
+    """The cluster selector settings that can be patched.
+
+    :ivar clusterSelectorTerms: The cluster selector terms that can be patched.
+    :vartype clusterSelectorTerms: list["ClusterSelectorTermPatch"]
+    """
+
+    clusterSelectorTerms: list["ClusterSelectorTermPatch"]
+    """The cluster selector terms that can be patched."""
 
 
 class ClusterSelectorTerm(TypedDict, total=False):
@@ -346,6 +511,32 @@ class ClusterSelectorTerm(TypedDict, total=False):
      ``RequiredDuringSchedulingIgnoredDuringExecution`` affinity terms. This field is beta-level; it
      is for the property-based scheduling feature and is only functional when a property provider is
      enabled in the deployment."""
+
+
+class ClusterSelectorTermPatch(TypedDict, total=False):
+    """A cluster selector term that can be patched.
+
+    :ivar labelSelector: The label selector that can be patched.
+    :vartype labelSelector: "LabelSelectorPatch"
+    :ivar propertySelector: The property selector that can be patched.
+    :vartype propertySelector: "PropertySelectorPatch"
+    """
+
+    labelSelector: "LabelSelectorPatch"
+    """The label selector that can be patched."""
+    propertySelector: "PropertySelectorPatch"
+    """The property selector that can be patched."""
+
+
+class ClusterUpdateStrategyReference(TypedDict, total=False):
+    """A reference to an existing cluster staged update strategy.
+
+    :ivar name: The name of an existing cluster staged update strategy.
+    :vartype name: str
+    """
+
+    name: str
+    """The name of an existing cluster staged update strategy."""
 
 
 class ErrorAdditionalInfo(TypedDict, total=False):
@@ -528,10 +719,14 @@ class FleetManagedNamespacePatch(TypedDict, total=False):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: The updatable properties of the fleet managed namespace.
+    :vartype properties: "FleetManagedNamespacePropertiesPatch"
     """
 
     tags: dict[str, str]
     """Resource tags."""
+    properties: "FleetManagedNamespacePropertiesPatch"
+    """The updatable properties of the fleet managed namespace."""
 
 
 class FleetManagedNamespaceProperties(TypedDict, total=False):
@@ -573,6 +768,32 @@ class FleetManagedNamespaceProperties(TypedDict, total=False):
     """Status information of the last operation for fleet managed namespace."""
     portalFqdn: str
     """The Azure Portal FQDN of the Fleet hub."""
+
+
+class FleetManagedNamespacePropertiesPatch(TypedDict, total=False):
+    """The properties of a fleet managed namespace that can be patched.
+
+    :ivar managedNamespaceProperties: The namespace properties for the fleet managed namespace.
+    :vartype managedNamespaceProperties: "ManagedNamespaceProperties"
+    :ivar adoptionPolicy: Action if the managed namespace with the same name already exists. Known
+     values are: "Never", "IfIdentical", and "Always".
+    :vartype adoptionPolicy: Union[str, "AdoptionPolicy"]
+    :ivar deletePolicy: Delete options of a fleet managed namespace. Known values are: "Keep" and
+     "Delete".
+    :vartype deletePolicy: Union[str, "DeletePolicy"]
+    :ivar propagationPolicy: The profile of the propagation to create the namespace.
+    :vartype propagationPolicy: "PropagationPolicyPatch"
+    """
+
+    managedNamespaceProperties: "ManagedNamespaceProperties"
+    """The namespace properties for the fleet managed namespace."""
+    adoptionPolicy: Union[str, "AdoptionPolicy"]
+    """Action if the managed namespace with the same name already exists. Known values are: \"Never\",
+     \"IfIdentical\", and \"Always\"."""
+    deletePolicy: Union[str, "DeletePolicy"]
+    """Delete options of a fleet managed namespace. Known values are: \"Keep\" and \"Delete\"."""
+    propagationPolicy: "PropagationPolicyPatch"
+    """The profile of the propagation to create the namespace."""
 
 
 class FleetManagedNamespaceStatus(TypedDict, total=False):
@@ -639,6 +860,8 @@ class FleetMemberProperties(TypedDict, total=False):
     :vartype labels: dict[str, str]
     :ivar status: Status information of the last operation for fleet member.
     :vartype status: "FleetMemberStatus"
+    :ivar meshProperties: The Mesh Member Properties associated with this Fleet Member.
+    :vartype meshProperties: "MeshProperties"
     """
 
     clusterResourceId: Required[str]
@@ -655,6 +878,8 @@ class FleetMemberProperties(TypedDict, total=False):
     """The labels for the fleet member."""
     status: "FleetMemberStatus"
     """Status information of the last operation for fleet member."""
+    meshProperties: "MeshProperties"
+    """The Mesh Member Properties associated with this Fleet Member."""
 
 
 class FleetMemberStatus(TypedDict, total=False):
@@ -803,14 +1028,21 @@ class GateConfiguration(TypedDict, total=False):
 
     :ivar displayName: The human-readable display name of the Gate.
     :vartype displayName: str
-    :ivar type: The type of the Gate determines how it is completed. Required. "Approval"
+    :ivar type: The type of the Gate determines how it is completed. Required. Known values are:
+     "Approval" and "ScheduledStart".
     :vartype type: Union[str, "GateType"]
+    :ivar scheduledStartConfiguration: Scheduled start configuration for gates of type
+     ScheduledStart.
+    :vartype scheduledStartConfiguration: "ScheduledStartConfiguration"
     """
 
     displayName: str
     """The human-readable display name of the Gate."""
     type: Required[Union[str, "GateType"]]
-    """The type of the Gate determines how it is completed. Required. \"Approval\""""
+    """The type of the Gate determines how it is completed. Required. Known values are: \"Approval\"
+     and \"ScheduledStart\"."""
+    scheduledStartConfiguration: "ScheduledStartConfiguration"
+    """Scheduled start configuration for gates of type ScheduledStart."""
 
 
 class GatePatch(TypedDict, total=False):
@@ -858,6 +1090,25 @@ class LabelSelector(TypedDict, total=False):
     """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
 
 
+class LabelSelectorPatch(TypedDict, total=False):
+    """The label selector settings that can be patched.
+
+    :ivar matchLabels: matchLabels is a map of {key,value} pairs. A single {key,value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the
+     operator is "In", and the values array contains only "value". The requirements are ANDed.
+    :vartype matchLabels: dict[str, str]
+    :ivar matchExpressions: The label selector requirements that can be patched.
+    :vartype matchExpressions: list["LabelSelectorRequirementPatch"]
+    """
+
+    matchLabels: dict[str, str]
+    """matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is \"key\", the operator is
+     \"In\", and the values array contains only \"value\". The requirements are ANDed."""
+    matchExpressions: list["LabelSelectorRequirementPatch"]
+    """The label selector requirements that can be patched."""
+
+
 class LabelSelectorRequirement(TypedDict, total=False):
     """A label selector requirement is a selector that contains values, a key, and an operator that
     relates the key and values.
@@ -880,6 +1131,32 @@ class LabelSelectorRequirement(TypedDict, total=False):
     """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
      Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
      \"DoesNotExist\"."""
+    values: list[str]
+    """values is an array of string values. If the operator is In or NotIn, the values array must be
+     non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
+     array is replaced during a strategic merge patch."""
+
+
+class LabelSelectorRequirementPatch(TypedDict, total=False):
+    """A label selector requirement that can be patched.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: Union[str, "LabelSelectorOperator"]
+    :ivar values: values is an array of string values. If the operator is In or NotIn, the values
+     array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be
+     empty. This array is replaced during a strategic merge patch.
+    :vartype values: list[str]
+    """
+
+    key: str
+    """key is the label key that the selector applies to."""
+    operator: Union[str, "LabelSelectorOperator"]
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
     values: list[str]
     """values is an array of string values. If the operator is In or NotIn, the values array must be
      non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
@@ -971,6 +1248,18 @@ class ManagedServiceIdentity(TypedDict, total=False):
     """The identities assigned to this resource by the user."""
 
 
+class MemberSelector(TypedDict, total=False):
+    """Select members of a fleet.
+
+    :ivar byLabel: Kubernetes-style label selector for selecting Fleet members, e.g.
+     ``env=production``. Required.
+    :vartype byLabel: str
+    """
+
+    byLabel: Required[str]
+    """Kubernetes-style label selector for selecting Fleet members, e.g. ``env=production``. Required."""
+
+
 class MemberUpdateStatus(TypedDict, total=False):
     """The status of a member update operation.
 
@@ -996,6 +1285,52 @@ class MemberUpdateStatus(TypedDict, total=False):
     """The operation resource id of the latest attempt to perform the operation."""
     message: str
     """The status message after processing the member update operation."""
+
+
+class MeshMemberStatus(TypedDict, total=False):
+    """Status of the mesh member.
+
+    :ivar state: The mesh member state. Required. Known values are: "Connecting", "Connected",
+     "Disconnecting", and "Failed".
+    :vartype state: Union[str, "MeshMemberState"]
+    :ivar lastUpdatedAt: When the status was last updated.
+    :vartype lastUpdatedAt: str
+    :ivar lastOperationId: The last operation ID that affected the mesh properties of the fleet
+     member.
+    :vartype lastOperationId: str
+    :ivar error: The error affecting this member.
+    :vartype error: "ErrorDetail"
+    """
+
+    state: Required[Union[str, "MeshMemberState"]]
+    """The mesh member state. Required. Known values are: \"Connecting\", \"Connected\",
+     \"Disconnecting\", and \"Failed\"."""
+    lastUpdatedAt: str
+    """When the status was last updated."""
+    lastOperationId: str
+    """The last operation ID that affected the mesh properties of the fleet member."""
+    error: "ErrorDetail"
+    """The error affecting this member."""
+
+
+class MeshProperties(TypedDict, total=False):
+    """The Mesh Member data for a Fleet Member resource.
+
+    :ivar ciliumProperties: The Cilium cluster properties. Required.
+    :vartype ciliumProperties: "CiliumProperties"
+    :ivar status: The status of the mesh member. Required.
+    :vartype status: "MeshMemberStatus"
+    :ivar clusterMeshProfileResourceId: Resource id of the cluster mesh profile associated with
+     this mesh member. Required.
+    :vartype clusterMeshProfileResourceId: str
+    """
+
+    ciliumProperties: Required["CiliumProperties"]
+    """The Cilium cluster properties. Required."""
+    status: Required["MeshMemberStatus"]
+    """The status of the mesh member. Required."""
+    clusterMeshProfileResourceId: Required[str]
+    """Resource id of the cluster mesh profile associated with this mesh member. Required."""
 
 
 class NetworkPolicy(TypedDict, total=False):
@@ -1102,6 +1437,30 @@ class PlacementPolicy(TypedDict, total=False):
      deleted. This field is beta-level and is for the taints and tolerations feature."""
 
 
+class PlacementPolicyPatch(TypedDict, total=False):
+    """The placement policy settings that can be patched.
+
+    :ivar placementType: The placement type that can be patched. Known values are: "PickAll" and
+     "PickFixed".
+    :vartype placementType: Union[str, "PlacementType"]
+    :ivar clusterNames: The member cluster names that can be patched.
+    :vartype clusterNames: list[str]
+    :ivar affinity: The cluster affinity settings that can be patched.
+    :vartype affinity: "AffinityPatch"
+    :ivar tolerations: The tolerations that can be patched.
+    :vartype tolerations: list["Toleration"]
+    """
+
+    placementType: Union[str, "PlacementType"]
+    """The placement type that can be patched. Known values are: \"PickAll\" and \"PickFixed\"."""
+    clusterNames: list[str]
+    """The member cluster names that can be patched."""
+    affinity: "AffinityPatch"
+    """The cluster affinity settings that can be patched."""
+    tolerations: list["Toleration"]
+    """The tolerations that can be patched."""
+
+
 class PlacementProfile(TypedDict, total=False):
     """The configuration profile for default ClusterResourcePlacement for placement.
 
@@ -1112,6 +1471,18 @@ class PlacementProfile(TypedDict, total=False):
 
     defaultClusterResourcePlacement: "ClusterResourcePlacementSpec"
     """The default ClusterResourcePlacement policy configuration."""
+
+
+class PlacementProfilePatch(TypedDict, total=False):
+    """The placement profile settings that can be patched.
+
+    :ivar defaultClusterResourcePlacement: The default ClusterResourcePlacement policy
+     configuration that can be patched.
+    :vartype defaultClusterResourcePlacement: "ClusterResourcePlacementSpecPatch"
+    """
+
+    defaultClusterResourcePlacement: "ClusterResourcePlacementSpecPatch"
+    """The default ClusterResourcePlacement policy configuration that can be patched."""
 
 
 class PropagationPolicy(TypedDict, total=False):
@@ -1129,6 +1500,21 @@ class PropagationPolicy(TypedDict, total=False):
     """The profile to be used for propagation via placement."""
 
 
+class PropagationPolicyPatch(TypedDict, total=False):
+    """The propagation settings that can be patched.
+
+    :ivar type: The type of the policy to be used. "Placement"
+    :vartype type: Union[str, "PropagationType"]
+    :ivar placementProfile: The placement profile that can be patched.
+    :vartype placementProfile: "PlacementProfilePatch"
+    """
+
+    type: Union[str, "PropagationType"]
+    """The type of the policy to be used. \"Placement\""""
+    placementProfile: "PlacementProfilePatch"
+    """The placement profile that can be patched."""
+
+
 class PropertySelector(TypedDict, total=False):
     """PropertySelector helps user specify property requirements when picking clusters for resource
     placement.
@@ -1141,6 +1527,17 @@ class PropertySelector(TypedDict, total=False):
     matchExpressions: Required[list["PropertySelectorRequirement"]]
     """MatchExpressions is an array of PropertySelectorRequirements. The requirements are AND'd.
      Required."""
+
+
+class PropertySelectorPatch(TypedDict, total=False):
+    """The property selector settings that can be patched.
+
+    :ivar matchExpressions: The property selector requirements that can be patched.
+    :vartype matchExpressions: list["PropertySelectorRequirementPatch"]
+    """
+
+    matchExpressions: list["PropertySelectorRequirementPatch"]
+    """The property selector requirements that can be patched."""
 
 
 class PropertySelectorRequirement(TypedDict, total=False):
@@ -1177,6 +1574,27 @@ class PropertySelectorRequirement(TypedDict, total=False):
      <https://pkg.go.dev/k8s.io/apimachinery/pkg/api/resource#Quantity>`_. If the operator is Gt
      (greater than), Ge (greater than or equal to), Lt (less than), or ``Le`` (less than or equal
      to), Eq (equal to), or Ne (ne), exactly one value must be specified in the list. Required."""
+
+
+class PropertySelectorRequirementPatch(TypedDict, total=False):
+    """A property selector requirement that can be patched.
+
+    :ivar name: The property name that can be patched.
+    :vartype name: str
+    :ivar operator: The property selector operator that can be patched. Known values are: "Gt",
+     "Ge", "Eq", "Ne", "Lt", and "Le".
+    :vartype operator: Union[str, "PropertySelectorOperator"]
+    :ivar values: The property values that can be patched.
+    :vartype values: list[str]
+    """
+
+    name: str
+    """The property name that can be patched."""
+    operator: Union[str, "PropertySelectorOperator"]
+    """The property selector operator that can be patched. Known values are: \"Gt\", \"Ge\", \"Eq\",
+     \"Ne\", \"Lt\", and \"Le\"."""
+    values: list[str]
+    """The property values that can be patched."""
 
 
 class ResourceQuota(TypedDict, total=False):
@@ -1216,6 +1634,47 @@ class ResourceQuota(TypedDict, total=False):
     """The memory limit for the managed namespace. See more at
      `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
      <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_."""
+
+
+class RolloutStrategy(TypedDict, total=False):
+    """The rollout strategy configuration.
+
+    :ivar type: The type of rollout strategy. Default is RollingUpdate. Known values are:
+     "RollingUpdate" and "External".
+    :vartype type: Union[str, "RolloutStrategyType"]
+    :ivar clusterUpdateStrategy: Reference to an existing cluster update strategy. Required when
+     type is External.
+    :vartype clusterUpdateStrategy: "ClusterUpdateStrategyReference"
+    """
+
+    type: Union[str, "RolloutStrategyType"]
+    """The type of rollout strategy. Default is RollingUpdate. Known values are: \"RollingUpdate\" and
+     \"External\"."""
+    clusterUpdateStrategy: "ClusterUpdateStrategyReference"
+    """Reference to an existing cluster update strategy. Required when type is External."""
+
+
+class ScheduledStartConfiguration(TypedDict, total=False):
+    """Configuration for ScheduledStart gate.
+
+    :ivar startDay: The day of the week when the scheduled start occurs. Required. Known values
+     are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
+    :vartype startDay: Union[str, "DayOfWeek"]
+    :ivar startTime: The local time of day when the scheduled start occurs in 24-hour (HH:mm)
+     format. Required.
+    :vartype startTime: str
+    :ivar utcOffset: The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00.
+     Required.
+    :vartype utcOffset: str
+    """
+
+    startDay: Required[Union[str, "DayOfWeek"]]
+    """The day of the week when the scheduled start occurs. Required. Known values are: \"Monday\",
+     \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", and \"Sunday\"."""
+    startTime: Required[str]
+    """The local time of day when the scheduled start occurs in 24-hour (HH:mm) format. Required."""
+    utcOffset: Required[str]
+    """The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00. Required."""
 
 
 class SkipProperties(TypedDict, total=False):
@@ -1326,6 +1785,15 @@ class UpdateGroup(TypedDict, total=False):
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
+    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
+     within this group. Failures are evaluated over members within this group only. Accepts either:
+     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
+     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
+     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
+     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
+     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
+     considered failed.
+    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -1338,6 +1806,13 @@ class UpdateGroup(TypedDict, total=False):
      group upgrade at the same time. • "25%" --> up to 25% of the members in the group will be
      upgraded at the same time.
     :vartype maxConcurrency: str
+    :ivar memberSelector: Select the members of the group.
+
+     * If specified, label-based selection will override group name based selection,
+     and Name is only used as an identifier.
+     * If not specified, group name based selection will be used, and Name must match a
+     group name of an existing fleet member.
+    :vartype memberSelector: "MemberSelector"
     :ivar beforeGates: A list of Gates that will be created before this Group is executed.
     :vartype beforeGates: list["GateConfiguration"]
     :ivar afterGates: A list of Gates that will be created after this Group is executed.
@@ -1346,6 +1821,14 @@ class UpdateGroup(TypedDict, total=False):
 
     name: Required[str]
     """Name of the group. It must match a group name of an existing fleet member. Required."""
+    maxAllowedFailures: str
+    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
+     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
+     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
+     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
+     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
+     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
+     25% of the members in this group can fail their upgrade before the group is considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently in this specific group. Acts as a ceiling
      (and not a quota) for the number of concurrent upgrades within the group you want to tolerate
@@ -1358,6 +1841,13 @@ class UpdateGroup(TypedDict, total=False):
      upgrade at once. • \"100%\" --> “all at once”, up to all members for this group upgrade at the
      same time. • \"25%\" --> up to 25% of the members in the group will be upgraded at the same
      time."""
+    memberSelector: "MemberSelector"
+    """Select the members of the group.
+ 
+      * If specified, label-based selection will override group name based selection,
+      and Name is only used as an identifier.
+      * If not specified, group name based selection will be used, and Name must match a
+      group name of an existing fleet member."""
     beforeGates: list["GateConfiguration"]
     """A list of Gates that will be created before this Group is executed."""
     afterGates: list["GateConfiguration"]
@@ -1371,6 +1861,11 @@ class UpdateGroupStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
+    :ivar failureCount: The total member upgrade failures within the group.
+    :vartype failureCount: int
+    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this group,
+     resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
+    :vartype maxAllowedFailures: int
     :ivar maxConcurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -1387,6 +1882,11 @@ class UpdateGroupStatus(TypedDict, total=False):
     """The status of the UpdateGroup."""
     name: str
     """The name of the UpdateGroup."""
+    failureCount: int
+    """The total member upgrade failures within the group."""
+    maxAllowedFailures: int
+    """The max number of member upgrade failures allowed within this group, resolved from the
+     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -1532,6 +2032,8 @@ class UpdateRunStatus(TypedDict, total=False):
     :ivar nodeImageSelection: The node image upgrade specs for the update run. It is only set in
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype nodeImageSelection: "NodeImageSelectionStatus"
+    :ivar failureCount: Total member upgrade failures across the entire UpdateRun.
+    :vartype failureCount: int
     """
 
     status: "UpdateStatus"
@@ -1541,6 +2043,8 @@ class UpdateRunStatus(TypedDict, total=False):
     nodeImageSelection: "NodeImageSelectionStatus"
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
+    failureCount: int
+    """Total member upgrade failures across the entire UpdateRun."""
 
 
 class UpdateRunStrategy(TypedDict, total=False):
@@ -1569,9 +2073,26 @@ class UpdateStage(TypedDict, total=False):
     :ivar groups: Defines the groups to be executed in parallel in this stage. Duplicate groups are
      not allowed. Min size: 1.
     :vartype groups: list["UpdateGroup"]
+    :ivar memberSelector: Select the members of the stage.
+
+     * If specified without UpdateGroup, one implicit group containing the selected members
+       will be created.
+     * If specified with UpdateGroup, members will be pre-filtered before group-level selection
+       logic is applied.
+     * If not specified, group-level selection logic will be used.
+    :vartype memberSelector: "MemberSelector"
     :ivar afterStageWaitInSeconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype afterStageWaitInSeconds: int
+    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
+     within this stage. Failures are evaluated over all members within all groups within this stage.
+     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
+     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
+     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
+     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
+     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
+     fail their upgrade before the stage is considered failed.
+    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -1594,9 +2115,26 @@ class UpdateStage(TypedDict, total=False):
     groups: list["UpdateGroup"]
     """Defines the groups to be executed in parallel in this stage. Duplicate groups are not allowed.
      Min size: 1."""
+    memberSelector: "MemberSelector"
+    """Select the members of the stage.
+ 
+      * If specified without UpdateGroup, one implicit group containing the selected members
+        will be created.
+      * If specified with UpdateGroup, members will be pre-filtered before group-level selection
+        logic is applied.
+      * If not specified, group-level selection logic will be used."""
     afterStageWaitInSeconds: int
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
+    maxAllowedFailures: str
+    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
+     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
+     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
+     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
+     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
+     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
+     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
+     considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently across all groups in this stage. Acts as a
      ceiling (and not a quota) for the number of concurrent upgrades within the stage you want to
@@ -1621,6 +2159,11 @@ class UpdateStageStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateStage.
     :vartype name: str
+    :ivar failureCount: The total member upgrade failures within the stage.
+    :vartype failureCount: int
+    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this stage,
+     resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
+    :vartype maxAllowedFailures: int
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype maxConcurrency: int
@@ -1638,6 +2181,11 @@ class UpdateStageStatus(TypedDict, total=False):
     """The status of the UpdateStage."""
     name: str
     """The name of the UpdateStage."""
+    failureCount: int
+    """The total member upgrade failures within the stage."""
+    maxAllowedFailures: int
+    """The max number of member upgrade failures allowed within this stage, resolved from the
+     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""

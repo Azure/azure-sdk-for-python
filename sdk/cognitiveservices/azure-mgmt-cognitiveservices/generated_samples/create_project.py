@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,12 +38,19 @@ def main():
         project={
             "identity": {"type": "SystemAssigned"},
             "location": "West US",
-            "properties": {"description": "Description of this project", "displayName": "p1"},
+            "properties": {
+                "capabilitySettings": {
+                    "documentStore": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.DocumentDB/databaseAccounts/myProjectCosmosAccount",
+                    "vectorStore": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.Search/searchServices/myProjectSearchService",
+                },
+                "description": "Description of this project",
+                "displayName": "p1",
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/CreateProject.json
+# x-ms-original-file: 2026-07-15-preview/CreateProject.json
 if __name__ == "__main__":
     main()

@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/NetworkManagerCommitPut.json
+# x-ms-original-file: 2026-01-01/NetworkManagerCommitPut.json
 if __name__ == "__main__":
     main()

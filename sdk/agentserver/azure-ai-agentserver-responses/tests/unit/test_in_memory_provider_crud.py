@@ -374,6 +374,8 @@ def test_history__respects_limit() -> None:
 
     ids = asyncio.run(provider.get_history_item_ids("resp_lim", None, 3))
     assert len(ids) == 3
+    # Chronological order is oldest-first; truncation must keep the newest IDs.
+    assert ids == ["in_lim_7", "in_lim_8", "in_lim_9"]
 
 
 def test_history__zero_limit_returns_empty() -> None:

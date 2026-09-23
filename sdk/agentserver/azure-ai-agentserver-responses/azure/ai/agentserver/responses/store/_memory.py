@@ -12,10 +12,12 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
 from .._response_context import PlatformContext
-from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
+
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, _StreamReplayState
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ..models import _generated as _generated_models
+
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
@@ -29,7 +31,7 @@ class _StoreEntry:
         *,
         execution: ResponseExecution,
         replay: _StreamReplayState,
-        response: ResponseObject | None = None,
+        response: _generated_models.ResponseObject | None = None,
         input_item_ids: list[str] | None = None,
         output_item_ids: list[str] | None = None,
         history_item_ids: list[str] | None = None,
@@ -61,9 +63,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         """Initialize in-memory state and an async mutation lock."""
         self._entries: Dict[str, _StoreEntry] = {}
         self._lock = asyncio.Lock()
-        self._item_store: Dict[str, OutputItem] = {}
+        self._item_store: Dict[str, _generated_models.OutputItem] = {}
         self._conversation_responses: defaultdict[str, list[str]] = defaultdict(list)
-        self._stream_events: Dict[str, list[ResponseStreamEvent]] = {}
+        self._stream_events: Dict[str, list[_generated_models.ResponseStreamEvent]] = {}
 
     @contextlib.asynccontextmanager
     async def _locked(self) -> AsyncIterator[None]:
@@ -78,8 +80,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
     async def create_response(
         self,
-        response: ResponseObject,
-        input_items: Iterable[OutputItem] | None,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         context: PlatformContext | None = None,
@@ -134,7 +136,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             if conversation_id is not None:
                 self._conversation_responses[conversation_id].append(response_id)
 
-    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -151,7 +155,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
 
-    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
         """Update a stored response envelope.
 
         Replaces the stored response with a deep copy and updates
@@ -202,7 +208,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         before: str | None = None,
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem]:
+    ) -> list[_generated_models.OutputItem]:
         """Retrieve input/history items for a response with basic cursor paging.
 
         Returns deep copies of stored items, combining history and input item IDs
@@ -261,7 +267,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         item_ids: Iterable[str],
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem | None]:
+    ) -> list[_generated_models.OutputItem | None]:
         """Retrieve items by ID, preserving request order.
 
         Returns deep copies of stored items. Missing IDs produce ``None`` entries.
@@ -286,20 +292,22 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         *,
         context: PlatformContext | None = None,
     ) -> list[str]:
-        """Resolve history item IDs from previous response and/or conversation scope.
+        """Resolve item IDs from previous response and/or conversation scope.
 
-        Collects history item IDs from the previous response chain and/or
-        all responses within the given conversation, up to *limit*.
+        Collects history, input, and output item IDs from the previous
+        response chain and/or all responses within the given conversation.
+        When over *limit*, keeps the most recent N item IDs from the
+        resolved chain, preserving chronological order in the returned slice.
 
         :param previous_response_id: Optional response ID to chain history from.
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of history item IDs to return.
+        :param limit: Maximum number of item IDs to return (most recent N).
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of history item IDs within the given scope.
+        :returns: A list of item IDs from the resolved chain.
         :rtype: list[str]
         """
         async with self._locked():
@@ -325,7 +333,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             if limit <= 0:
                 return []
-            return resolved[:limit]
+            # Keep the most recent N item IDs from the resolved chain,
+            # preserving chronological order in the returned slice.
+            return resolved[-limit:]
 
     async def create_execution(self, execution: ResponseExecution, *, ttl_seconds: int | None = None) -> None:
         """Create a new execution and replay container for ``execution.response_id``.
@@ -363,7 +373,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
     async def set_response_snapshot(
         self,
         response_id: str,
-        response: ResponseObject,
+        response: _generated_models.ResponseObject,
         *,
         ttl_seconds: int | None = None,
     ) -> bool:
@@ -585,7 +595,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         return len(expired_ids)
 
-    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
+    def _store_output_items_unlocked(self, response: _generated_models.ResponseObject) -> list[str]:
         """Extract output items from a response, store them in the item store, and return their IDs.
 
         Must be called while holding ``self._lock``.
@@ -627,7 +637,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         return str(value) if value is not None else None
 
     @staticmethod
-    def _resolve_mode_flags_from_response(response: ResponseObject) -> ResponseModeFlags:
+    def _resolve_mode_flags_from_response(response: _generated_models.ResponseObject) -> ResponseModeFlags:
         """Build mode flags from a response snapshot where available.
 
         :param response: The response envelope to extract mode flags from.

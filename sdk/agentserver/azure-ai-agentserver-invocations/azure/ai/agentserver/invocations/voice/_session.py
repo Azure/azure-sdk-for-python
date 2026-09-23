@@ -9,16 +9,20 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import sys
 from collections.abc import Coroutine, MutableMapping
+from enum import Enum
 from threading import Lock
 from typing import Any, TypeVar, cast
 
+from opentelemetry.trace import SpanContext
 from starlette.types import Send
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import experimental
+from azure.core import CaseInsensitiveEnumMeta
 
 from ._codec import encode_outbound_message
 from ._models import OutboundVoiceMessage, SessionDisconnected
+from ._turn import TargetTurn, TargetTurnOrigin
 
 _VOICE_SESSION_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.session"
 _VOICE_CLOSE_CODE_SCOPE_KEY = "azure.ai.agentserver.invocations.voice.close_code"
@@ -31,6 +35,19 @@ _CLOSE_ATTEMPT_LOCK = Lock()
 
 
 _TransportResultT = TypeVar("_TransportResultT")
+
+
+@experimental
+class SessionTermination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """First source-aware terminal fact for one physical Voice connection."""
+
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    PROTOCOL_ERROR = "protocol_error"
+    ACCEPT_ERROR = "accept_error"
+    CALLBACK_ERROR = "callback_error"
+    INTERNAL_ERROR = "internal_error"
+    TRANSPORT_ERROR = "transport_error"
 
 
 class _OperationCancellationState:
@@ -230,10 +247,14 @@ async def _run_transport_operation(
 
 async def _run_close_attempt(
     send_lock: asyncio.Lock,
+    websocket: WebSocket,
     send: Send,
     message: dict[str, Any],
 ) -> None:
     async with send_lock:
+        scope = getattr(websocket, "scope", None)
+        if isinstance(scope, MutableMapping) and _VOICE_DISCONNECT_EVENT_SCOPE_KEY in scope:
+            return
         await send(message)
 
 
@@ -262,7 +283,7 @@ def _start_close_attempt(
             raise RuntimeError("Voice WebSocket close attempt limit reached")
         _CLOSE_ATTEMPT_RESERVATIONS += 1
         websocket.application_state = WebSocketState.DISCONNECTED
-    close_coroutine = _run_close_attempt(send_lock, send, message)
+    close_coroutine = _run_close_attempt(send_lock, websocket, send, message)
     try:
         task = contextvars.Context().run(asyncio.create_task, close_coroutine, name="voice_websocket_close")
     except BaseException as creation_error:  # pylint: disable=broad-exception-caught
@@ -294,23 +315,37 @@ class Session:
     registered callbacks.
     """
 
-    __slots__ = ("_send_lock", "_terminal", "_websocket")
+    __slots__ = (
+        "_connection_context",
+        "_send_lock",
+        "_terminal",
+        "_termination",
+        "_websocket",
+    )
+    _connection_context: Any
     _send_lock: asyncio.Lock
     _terminal: bool
+    _termination: SessionTermination | None
     _websocket: WebSocket
 
     def __init__(self) -> None:
         raise TypeError("Session instances are created by VoiceAgentServerHost")
 
     @classmethod
-    def _create(cls, websocket: WebSocket) -> "Session":
+    def _create(cls, websocket: WebSocket, *, connection_context: Any = None) -> "Session":
         current = cls._current(websocket)
         if current is not None:
+            # pylint: disable=protected-access
+            if not current._terminal and current._connection_context is None and connection_context is not None:
+                current._connection_context = connection_context
+            # pylint: enable=protected-access
             return current
         instance = object.__new__(cls)
         instance._websocket = websocket
+        instance._connection_context = connection_context
         instance._send_lock = asyncio.Lock()
         instance._terminal = False
+        instance._termination = None
         scope = getattr(websocket, "scope", None)
         if isinstance(scope, MutableMapping):
             scope[_VOICE_SESSION_SCOPE_KEY] = instance
@@ -330,8 +365,16 @@ class Session:
         if isinstance(scope, MutableMapping) and scope.get(_VOICE_SESSION_SCOPE_KEY) is session:
             del scope[_VOICE_SESSION_SCOPE_KEY]
 
-    def _begin_termination(self) -> None:
+    @property
+    def termination(self) -> SessionTermination | None:
+        """Return the first physical connection terminal fact, when committed."""
+        return self._termination
+
+    def _begin_termination(self, termination: SessionTermination | None = None) -> None:
         self._terminal = True
+        self._connection_context = None
+        if self._termination is None and termination is not None:
+            self._termination = termination
 
     def _start_close(self, code: int, reason: str) -> asyncio.Task[None] | None:
         self._begin_termination()
@@ -368,6 +411,32 @@ class Session:
         if self._terminal:
             raise RuntimeError("Voice Session is terminating")
 
+    def start_target_turn(
+        self,
+        *,
+        origin: TargetTurnOrigin | str,
+        input_count: int,
+        trigger_context: SpanContext | None = None,
+    ) -> TargetTurn:
+        """Start one application-owned target-agent decision trace.
+
+        :keyword origin: Application-declared decision origin.
+        :paramtype origin: TargetTurnOrigin or str
+        :keyword input_count: Number of inputs consumed by the decision.
+        :paramtype input_count: int
+        :keyword trigger_context: Optional ended trigger context to link to this decision.
+        :paramtype trigger_context: opentelemetry.trace.SpanContext or None
+        :return: A handle the application activates around model/tool work and completes explicitly.
+        :rtype: TargetTurn
+        """
+        self._ensure_writable()
+        return TargetTurn._create(  # pylint: disable=protected-access
+            self._connection_context,
+            origin=origin,
+            input_count=input_count,
+            trigger_context=trigger_context,
+        )
+
     async def send(self, message: OutboundVoiceMessage) -> None:
         """Encode and send one explicit agent-to-Bridge event.
 
@@ -389,7 +458,7 @@ class Session:
                         await self._websocket.send_text(frame)
                     except WebSocketDisconnect as error:
                         if cancellation_state.cancellation is None or _find_cancellation(error) is None:
-                            self._begin_termination()
+                            self._begin_termination(SessionTermination.TRANSPORT_ERROR)
                             scope = getattr(self._websocket, "scope", None)
                             if isinstance(scope, MutableMapping):
                                 raw_reason = getattr(error, "reason", None)

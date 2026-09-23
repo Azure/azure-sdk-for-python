@@ -6,8 +6,9 @@ The chain id is the stable, agent/session-scoped identity of a conversation
 chain. Since Spec 038 it follows the native IdGenerator convention
 (``cchain_…`` / ``rchain_…``), or is the ``response_id`` verbatim for a
 non-steerable one-shot. Because chained response IDs all inherit one partition
-key, every turn of a chain resolves to the SAME chain id, and
-``task_id == conversation_chain_id`` exactly.
+key, every turn of a chain resolves to the SAME chain id. The legacy/default
+task scope still produces ``task_id == conversation_chain_id``; hosted session
+GUID scoping is covered separately by ``test_task_id.py``.
 """
 
 from __future__ import annotations
