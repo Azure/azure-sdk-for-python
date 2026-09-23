@@ -14,10 +14,6 @@
   before propagating request cancellation. Both helpers are marked
   `@experimental`.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
