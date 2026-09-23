@@ -29,7 +29,7 @@ from typing import Any, Iterable
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.store._base import ResponseProviderProtocol
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -170,6 +170,227 @@ def _parse_sse_bytes(body: bytes) -> list[dict[str, Any]]:
 
 class TestAsyncTerminalPersist:
     """The in-process streaming path defers the terminal write off the wire."""
+
+    @pytest.mark.asyncio
+    async def test_delete_is_bounded_when_deferred_write_stalls(self) -> None:
+        release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider(), release=release)
+        app = ResponsesAgentServerHost(
+            store=provider,
+            options=ResponsesServerOptions(shutdown_grace_period_seconds=1),
+        )
+        app.response_handler(_simple_completed_handler)
+        client = _AsyncAsgiClient(app)
+
+        post_response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+        )
+        events = _parse_sse_bytes(post_response.body)
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+        await asyncio.wait_for(provider.update_started.wait(), 5)
+
+        delete_task = asyncio.create_task(client.delete(f"/responses/{response_id}"))
+        try:
+            deleted = await asyncio.wait_for(delete_task, 2)
+            assert deleted.status_code == 400
+            assert deleted.json()["error"]["message"] == "Response persistence is still in progress. Retry deletion."
+            assert not provider.delete_started.is_set()
+        finally:
+            release.set()
+            await asyncio.wait_for(asyncio.gather(delete_task, return_exceptions=True), 5)
+
+    @pytest.mark.asyncio
+    async def test_delete_logs_concurrent_execution_failure_and_continues(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        drain_started = asyncio.Event()
+        drain_release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider())
+        app = _make_app(provider)
+        client = _AsyncAsgiClient(app)
+
+        async def _failing_drain(_ctx: Any, _state: Any) -> None:
+            drain_started.set()
+            await drain_release.wait()
+            raise RuntimeError("deferred drain failed")
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_drain_deferred_terminal_persist",
+            _failing_drain,
+        )
+        post_response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+        )
+        events = _parse_sse_bytes(post_response.body)
+        response_id = _extract_response_id(events)
+        assert response_id is not None
+        await asyncio.wait_for(drain_started.wait(), 5)
+
+        delete_task = asyncio.create_task(client.delete(f"/responses/{response_id}"))
+        try:
+            await asyncio.sleep(0)
+            assert not delete_task.done()
+            drain_release.set()
+            deleted = await asyncio.wait_for(delete_task, 5)
+            assert deleted.status_code == 200
+            assert deleted.json()["deleted"] is True
+        finally:
+            drain_release.set()
+            await asyncio.wait_for(asyncio.gather(delete_task, return_exceptions=True), 5)
+
+    @pytest.mark.asyncio
+    async def test_shutdown_drains_fallback_created_before_pending_registration(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        release = asyncio.Event()
+        provider = _ControllableProvider(InMemoryResponseProvider(), release=release)
+        app = _make_app(provider)
+        client = _AsyncAsgiClient(app)
+        original_create_task = asyncio.create_task
+        fallback_captured = asyncio.Event()
+        captured: dict[str, Any] = {}
+
+        def _delay_fallback_task(coro: Any, *args: Any, **kwargs: Any) -> Any:
+            if getattr(getattr(coro, "cr_code", None), "co_name", "") == "_resilient_stream_fallback":
+                captured["coro"] = coro
+                captured["placeholder"] = asyncio.get_running_loop().create_future()
+                fallback_captured.set()
+                return captured["placeholder"]
+            return original_create_task(coro, *args, **kwargs)
+
+        monkeypatch.setattr(asyncio, "create_task", _delay_fallback_task)
+        post_task = original_create_task(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+            )
+        )
+        fallback_task = None
+        try:
+            await asyncio.wait_for(fallback_captured.wait(), 5)
+            shutdown_task = original_create_task(app._endpoint.handle_shutdown())
+            done, _ = await asyncio.wait({shutdown_task}, timeout=0.25)
+            shutdown_completed_before_registration = shutdown_task in done
+
+            monkeypatch.setattr(asyncio, "create_task", original_create_task)
+            fallback_task = original_create_task(captured["coro"])
+            response = await asyncio.wait_for(post_task, 5)
+            assert response.status_code == 200
+            await asyncio.wait_for(provider.update_started.wait(), 5)
+            release.set()
+            await asyncio.wait_for(fallback_task, 5)
+            await asyncio.wait_for(shutdown_task, 5)
+
+            assert not shutdown_completed_before_registration, (
+                "shutdown completed before the already-created fallback task registered itself"
+            )
+        finally:
+            monkeypatch.setattr(asyncio, "create_task", original_create_task)
+            release.set()
+            placeholder = captured.get("placeholder")
+            if placeholder is not None and not placeholder.done():
+                placeholder.cancel()
+            tasks = [post_task]
+            if fallback_task is not None:
+                tasks.append(fallback_task)
+            if "shutdown_task" in locals():
+                tasks.append(shutdown_task)
+            await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), 5)
+
+    @pytest.mark.asyncio
+    async def test_rejected_admission_does_not_construct_handler(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        handler_called = False
+
+        def _handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+            nonlocal handler_called
+            handler_called = True
+
+            async def _events():
+                if False:
+                    yield None
+
+            return _events()
+
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_create_fn",
+            _handler,
+        )
+        await app._endpoint._runtime_state.begin_draining()  # pylint: disable=protected-access
+        client = _AsyncAsgiClient(app)
+
+        response = await client.post(
+            "/responses",
+            json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+        )
+
+        assert response.status_code == 200
+        assert handler_called is False
+
+    @pytest.mark.asyncio
+    async def test_cancelled_startup_discards_pending_record(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        startup_entered = asyncio.Event()
+        startup_release = asyncio.Event()
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        client = _AsyncAsgiClient(app)
+
+        async def _blocked_start(*_args: Any, **_kwargs: Any) -> None:
+            startup_entered.set()
+            await startup_release.wait()
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_start_resilient_background",
+            _blocked_start,
+        )
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+            )
+        )
+        try:
+            await asyncio.wait_for(startup_entered.wait(), 5)
+            post_task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await post_task
+            assert await app._endpoint._runtime_state.list_records() == []  # pylint: disable=protected-access
+        finally:
+            startup_release.set()
+            await asyncio.gather(post_task, return_exceptions=True)
+
+    @pytest.mark.asyncio
+    async def test_synchronous_handler_failure_closes_stream_and_discards_pending(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        app = _make_app(_ControllableProvider(InMemoryResponseProvider()))
+        client = _AsyncAsgiClient(app)
+
+        def _failing_handler(_request: Any, _context: Any, _cancellation_signal: Any) -> Any:
+            raise RuntimeError("Simulated synchronous handler failure")
+
+        monkeypatch.setattr(
+            app._endpoint._orchestrator,  # pylint: disable=protected-access
+            "_create_fn",
+            _failing_handler,
+        )
+
+        response = await asyncio.wait_for(
+            client.post(
+                "/responses",
+                json_body={"model": "m", "input": "hi", "stream": True, "store": True},
+            ),
+            5,
+        )
+
+        assert response.status_code == 200
+        assert [event["type"] for event in _parse_sse_bytes(response.body)] == ["error"]
+        assert await app._endpoint._runtime_state.list_records() == []  # pylint: disable=protected-access
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("background", [False, True])

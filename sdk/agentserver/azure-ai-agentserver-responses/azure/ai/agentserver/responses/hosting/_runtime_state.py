@@ -52,6 +52,7 @@ class _RuntimeState:
         self._records: dict[str, ResponseExecution] = {}
         self._pending_records: dict[str, ResponseExecution] = {}
         self._deleted_response_ids: set[str] = set()
+        self._draining = False
         self._lock = asyncio.Lock()
 
     async def add(self, record: ResponseExecution) -> None:
@@ -67,16 +68,29 @@ class _RuntimeState:
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
 
-    async def add_pending(self, record: ResponseExecution) -> None:
-        """Track an unpublished execution for shutdown without exposing it via GET.
+    async def add_pending(self, record: ResponseExecution) -> bool:
+        """Track accepted unpublished work unless shutdown has started.
 
         :param record: The execution awaiting its first response event.
         :type record: ResponseExecution
-        :return: None
-        :rtype: None
+        :return: ``True`` when registered, ``False`` when shutdown is already draining.
+        :rtype: bool
         """
         async with self._lock:
+            if self._draining:
+                return False
             self._pending_records[record.response_id] = record
+            return True
+
+    async def begin_draining(self) -> list[ResponseExecution]:
+        """Atomically reject new pending work and snapshot active executions.
+
+        :return: Published and pending executions accepted before shutdown.
+        :rtype: list[ResponseExecution]
+        """
+        async with self._lock:
+            self._draining = True
+            return list(self._records.values()) + list(self._pending_records.values())
 
     async def discard_pending(self, response_id: str) -> None:
         """Discard shutdown bookkeeping for an execution that never published.
