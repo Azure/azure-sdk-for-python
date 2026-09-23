@@ -9,6 +9,8 @@
 
 ### Bugs Fixed
 
+- Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
+  automatic truncation of conversation history. Positive limits remain supported.
 - Restored compatibility with usage payloads that omit
   `ResponseUsageInputTokensDetails.cache_write_tokens`.
 - The per-request span flush in the Responses endpoint no longer blocks the
