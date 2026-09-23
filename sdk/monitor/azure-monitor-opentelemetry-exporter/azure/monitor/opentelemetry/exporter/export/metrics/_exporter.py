@@ -108,6 +108,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         """
         envelopes = []
         if metrics_data is None:
+            self._debug_sdkstats("metric export successful=True reason=no-metrics")
             return MetricExportResult.SUCCESS
         for resource_metric in metrics_data.resource_metrics:
             for scope_metric in resource_metric.scope_metrics:
@@ -122,11 +123,19 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                             )
                             if envelope is not None:
                                 envelopes.append(envelope)
+        self._debug_sdkstats(f"metric batch created envelope_count={len(envelopes)}")
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
-            return _get_metric_export_result(result)
-        except Exception:  # pylint: disable=broad-except
+            export_result = _get_metric_export_result(result)
+            self._debug_sdkstats(
+                f"metric export successful={export_result == MetricExportResult.SUCCESS} result={result.name}"
+            )
+            return export_result
+        except Exception as ex:  # pylint: disable=broad-except
+            self._debug_sdkstats(
+                f"metric export successful=False exception={ex.__class__.__name__}"
+            )
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 

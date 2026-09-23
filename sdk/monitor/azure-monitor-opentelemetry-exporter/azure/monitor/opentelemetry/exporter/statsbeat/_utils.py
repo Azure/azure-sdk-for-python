@@ -3,10 +3,13 @@
 import os
 import logging
 import json
+import sys
 from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict, List
+from urllib.parse import urlparse
 from opentelemetry.metrics import CallbackOptions, Observation
 
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
     _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME,
@@ -28,14 +31,33 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 
 
+def _sdkstats_debug(message: str) -> None:
+    print(f"[SDKSTATS DEBUG] {message}", file=sys.stderr, flush=True)
+
+
+def _debug_connection_string_selection(source: str, connection_string: Optional[str]) -> None:
+    try:
+        endpoint = ConnectionStringParser(connection_string).endpoint if connection_string else "<missing>"
+        if endpoint != "<missing>":
+            parsed = urlparse(endpoint)
+            endpoint = f"{parsed.scheme}://{parsed.netloc.rsplit('@', 1)[-1]}{parsed.path}"
+    except Exception as ex:  # pylint: disable=broad-except
+        _sdkstats_debug(f"connection-string source={source} parse_failed={ex.__class__.__name__}")
+        return
+    _sdkstats_debug(f"connection-string source={source} ingestion_endpoint={endpoint}")
+
+
 def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
     if cs_env:
+        _debug_connection_string_selection("environment", cs_env)
         return cs_env
     for endpoint_location in _EU_ENDPOINTS:
         if endpoint_location in endpoint:
             # Use statsbeat EU endpoint if user is in EU region
+            _debug_connection_string_selection("built-in-eu", _DEFAULT_EU_STATS_CONNECTION_STRING)
             return _DEFAULT_EU_STATS_CONNECTION_STRING
+    _debug_connection_string_selection("built-in-non-eu", _DEFAULT_NON_EU_STATS_CONNECTION_STRING)
     return _DEFAULT_NON_EU_STATS_CONNECTION_STRING
 
 
@@ -107,13 +129,15 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
     """
     logger = logging.getLogger(__name__)
 
-    default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
+    # default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
+    default_connection_string = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://tst-data.stats.monitor.azure.com/"
 
     try:
         # Get supported data boundaries
         supported_boundaries = settings.get(_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY)
         if not supported_boundaries:
             logger.warning("Supported data boundaries key not found in configuration")
+            _debug_connection_string_selection("onesettings-default-no-boundaries", default_connection_string)
             return default_connection_string
 
         # Parse if it's a JSON string
@@ -147,6 +171,7 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
                     connection_string = settings.get(connection_string_key)
 
                     if connection_string:
+                        _debug_connection_string_selection(f"onesettings-{boundary}", connection_string)
                         return connection_string
 
                     logger.warning("Connection string key '%s' not found in configuration", connection_string_key)
@@ -154,18 +179,24 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         # Region not found in any specific boundary, try DEFAULT
         if not default_connection_string:
             logger.warning("Default stats connection string not found in configuration")
+            _sdkstats_debug("connection-string source=onesettings-default result=missing")
             return None
+        _debug_connection_string_selection("onesettings-default", default_connection_string)
         return default_connection_string
     except (ValueError, TypeError, KeyError) as ex:
+        _sdkstats_debug(f"connection-string selection failed exception={ex.__class__.__name__}")
         logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "Error parsing configuration for region '%s': %s", target_region, str(ex)
         )
         return None
     except Exception as ex:  # pylint: disable=broad-exception-caught
+        _sdkstats_debug(f"connection-string selection failed exception={ex.__class__.__name__}")
         logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "Unexpected error getting stats connection string for region '%s': %s", target_region, str(ex)
         )
         return None
+
+
 def _get_additional_observations(metric_name: str, options: CallbackOptions) -> List[Observation]:
     """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
 
