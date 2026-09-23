@@ -486,6 +486,15 @@ class StructuredReviewTests(unittest.TestCase):
                 source["url"] = original.replace("README.md", quote(filename, safe=""))
                 self.reject(".sources[0].url: control/format characters")
 
+    def test_percent_encoded_evidence_paths_are_preserved(self):
+        source = self.package["checks"][0]["sources"][0]
+        source["url"] = source["url"].replace("README.md", "My%20Model%25Name.md")
+        body = self.render()
+        self.assertIn(source["url"], body)
+        self.assertIn("My Model%Name.md", body)
+        self.assertNotIn("%2520", body)
+        self.assertNotIn("%2525", body)
+
     def test_diagnostic_only_review_rejected(self):
         for check in self.package["checks"]:
             check.update(outcome="unverified", reason="Pinned file was inaccessible.", sources=[])
@@ -732,7 +741,7 @@ class PublicationIntegrationTests(unittest.TestCase):
         add_entry(data, trusted, direct=True)
         entry = data["packages"][0]["attribution"]["entries"][0]
         entry["sources"][0]["url"] = entry["sources"][0]["url"].replace(
-            "main.tsp", "@renamedFrom(Widget)&\uff21Widget.tsp"
+            "main.tsp", "@renamedFrom(Widget)&\uff21Widget%20file.tsp"
         )
         entry["explanation"] = "\n".join(
             '@renamedFrom("a") @@clientName <Widget> \\| `name` "quoted" \\ path' for _ in range(15)
@@ -770,6 +779,7 @@ class PublicationIntegrationTests(unittest.TestCase):
         self.assertEqual(49107, published["comment"]["issue_number"])
         self.assertIn(NEW_SPEC, published["comment"]["body"])
         self.assertIn(quote(entry["sources"][0]["url"], safe="/:%#._-~"), published["comment"]["body"])
+        self.assertNotIn("%2520", published["comment"]["body"])
         self.assertIn("<Widget>", published["comment"]["body"])
         self.assertEqual(15, published["comment"]["body"].count('@renamedFrom("a")'))
         self.assertNotIn("Structured data:", published["comment"]["body"])

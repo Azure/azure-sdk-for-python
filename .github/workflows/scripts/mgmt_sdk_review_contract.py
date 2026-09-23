@@ -239,7 +239,7 @@ def source_identity(source, path):
     decoded = unquote(filename)
     normalized_text(decoded, path + ".url")
     require(
-        not any(part in {"", ".", ".."} for part in decoded.split("/")) and not re.search(r"[\x00-\x20\\]", decoded),
+        not any(part in {"", ".", ".."} for part in decoded.split("/")) and not re.search(r"[\x00-\x1f\\]", decoded),
         path + ".url",
         "invalid source path",
     )
