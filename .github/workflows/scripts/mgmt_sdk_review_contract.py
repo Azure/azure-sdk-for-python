@@ -115,6 +115,14 @@ def require(condition, path, message):
         raise ValueError(f"{path}: {message}")
 
 
+def validate_characters(value, path):
+    require(
+        not any(unicodedata.category(char) in {"Cc", "Cf"} and char not in "\n\r\t" for char in value),
+        path,
+        "control/format characters are not allowed",
+    )
+
+
 def validate_schema(value, schema=SCHEMA, path="data"):
     kind = schema["type"]
     valid = {
@@ -144,19 +152,17 @@ def validate_schema(value, schema=SCHEMA, path="data"):
         require(len(value) >= schema.get("minLength", 0), path, "text is required")
         if "pattern" in schema:
             require(re.fullmatch(schema["pattern"], value), path, "invalid identity")
-        require(
-            not any(unicodedata.category(char) in {"Cc", "Cf"} and char not in "\n\r\t" for char in value),
-            path,
-            "control/format characters are not allowed",
-        )
+        validate_characters(value, path)
     elif kind == "integer":
         require(value >= schema.get("minimum", value), path, "value below minimum")
 
 
 def normalized_text(value, path):
     # Share the bounded fixed point: gh-aw decodes entities and normalizes Unicode.
+    validate_characters(value, path)
     for _ in range(10):
         decoded = html.unescape(unicodedata.normalize("NFKC", value))
+        validate_characters(decoded, path)
         if decoded == value:
             return value
         value = decoded
@@ -219,6 +225,7 @@ def source_identity(source, path):
     require(match, path + ".url", "expected an immutable GitHub blob URL with a full commit SHA")
     repository, revision, filename, start, end = match.groups()
     decoded = unquote(filename)
+    normalized_text(decoded, path + ".url")
     require(
         not any(part in {"", ".", ".."} for part in decoded.split("/")) and not re.search(r"[\x00-\x20\\]", decoded),
         path + ".url",

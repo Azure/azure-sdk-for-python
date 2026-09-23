@@ -416,6 +416,27 @@ class StructuredReviewTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "excessively nested"):
                 function()
 
+    def test_control_characters_are_rejected_after_normalization(self):
+        for character in ("\u202e", "\u2066", "\u200b"):
+            for value in (character, f"&#{ord(character)};", f"&amp;#{ord(character)};"):
+                with self.subTest(value=value):
+                    self.package["checks"][0].update(
+                        outcome="unverified", reason=f"Pinned {value} file unavailable.", sources=[]
+                    )
+                    self.reject("control/format characters")
+                    with self.assertRaisesRegex(ValueError, "control/format characters"):
+                        MODULE.text(value)
+        self.assertIn("Second\tvalue", MODULE.text("First&#10;Second&#9;value"))
+        self.assertIn("<br>", MODULE.text("First&#10;Second"))
+
+    def test_encoded_source_controls_are_rejected_with_field_path(self):
+        source = self.package["checks"][0]["sources"][0]
+        original = source["url"]
+        for filename in ("\u202eREADME.md", "&#8238;README.md", "&amp;#8238;README.md"):
+            with self.subTest(filename=filename):
+                source["url"] = original.replace("README.md", quote(filename, safe=""))
+                self.reject(".sources[0].url: control/format characters")
+
     def test_diagnostic_only_review_rejected(self):
         for check in self.package["checks"]:
             check.update(outcome="unverified", reason="Pinned file was inaccessible.", sources=[])
