@@ -17,6 +17,7 @@ from azure.ai.textanalytics.models import (
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
+    NoMaskPolicyType,
     SyntheticReplacementPolicyType,
 )
 
@@ -65,12 +66,12 @@ class TestTextAnalysisCase(TestTextAnalysis):
             entity_types=["USSocialSecurityNumber"],
         )
 
-        synthetic_policy = SyntheticReplacementPolicyType(
-            policy_name="syntheticMaskForPerson", entity_types=["Person", "Email"]
-        )
+        synthetic_policy = SyntheticReplacementPolicyType(policy_name="syntheticMaskForPerson", entity_types=["Person"])
+        no_mask_policy = NoMaskPolicyType(policy_name="noMaskForEmail", entity_types=["Email"])
 
         parameters = PiiActionContent(
-            pii_categories=["All"], redaction_policies=[default_policy, ssn_policy, synthetic_policy]
+            pii_categories=["All"],
+            redaction_policies=[default_policy, ssn_policy, synthetic_policy, no_mask_policy],
         )
 
         body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
@@ -91,7 +92,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert redacted is not None
             assert "John Doe" not in redacted
             assert "123-45-6789" not in redacted
-            assert "john@example.com" not in redacted
+            assert "john@example.com" in redacted
 
             # Must detect 3 PII entities
             assert len(doc.entities) == 3
@@ -109,8 +110,6 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert "*" in ssn.mask
             assert "123-45-6789" not in redacted
 
-            # Validate Email is replaced (synthetic replacement)
+            # Validate Email is not masked.
             email = next(e for e in doc.entities if e.category == "Email")
-            assert email.mask is not None
-            assert email.mask != email.text
-            assert "john@example.com" not in redacted
+            assert email.mask == email.text

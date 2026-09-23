@@ -37,6 +37,7 @@ from azure.ai.textanalytics.models import (
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
+    NoMaskPolicyType,
     SyntheticReplacementPolicyType,
     AnalyzeTextPiiResult,
 )
@@ -72,11 +73,13 @@ def sample_pii_with_redaction_policies():
                     unmask_from_end=False,
                     entity_types=["USSocialSecurityNumber"],
                 ),
-                # For Person & Email: replace with synthetic data (fake names/emails)
+                # For Person: replace with synthetic data (a fake name)
                 SyntheticReplacementPolicyType(
                     policy_name="syntheticPolicy",
-                    entity_types=["Person", "Email"],
+                    entity_types=["Person"],
                 ),
+                # For Email: detect the entity without masking it
+                NoMaskPolicyType(policy_name="noMaskPolicy", entity_types=["Email"]),
             ],
         ),
     )
