@@ -687,7 +687,21 @@ def collect():
                     "entries or empty Breaking Changes sections. No previous release baseline is required."
                 ),
             }
-            merge_base_provenance.update(status="not_applicable", reason=release_baseline["reason"], issues=[])
+            merge_base_provenance.update(
+                status="not_applicable",
+                reason=release_baseline["reason"],
+                issues=[],
+                files=[
+                    {
+                        "path": file["path"],
+                        "revision": file["revision"],
+                        "status": "not_applicable",
+                        "reason": release_baseline["reason"],
+                        "retrieval": file,
+                    }
+                    for file in merge_base_provenance["files"]
+                ],
+            )
         else:
             release_baseline = resolve_release_tag(client, package_path.rsplit("/", 1)[-1], previous_version)
         if release_baseline["status"] == "available":
