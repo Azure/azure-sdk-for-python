@@ -10,10 +10,9 @@ import pytest
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -27,16 +26,20 @@ from azure.ai.textanalytics.models import (
 )
 
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient, is_async=True)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCase(TestTextAnalysis):
@@ -44,9 +47,9 @@ class TestTextAnalysisCase(TestTextAnalysis):
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_recognize_pii_redaction_policies_async(
-        self, text_analysis_endpoint, text_analysis_key
+        self, text_analysis_endpoint
     ):  # pylint: disable=name-too-long
-        async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
+        async with self.create_client(text_analysis_endpoint) as client:
 
             # Documents
             documents = [
