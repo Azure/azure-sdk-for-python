@@ -16,9 +16,11 @@ safety. Caller-owned ``policies`` and ``pipeline`` are also unchanged. Redirect
 handling and explicit application-level retry decisions remain unchanged.
 """
 
+import re
 from typing import Any, Union
 from urllib.parse import urlparse, urlsplit
 
+from azure.core import __version__ as _CORE_VERSION
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse, policies
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -27,6 +29,9 @@ from ._version import VERSION
 
 #: Hostnames that count as "local dev" for the purpose of allowing plain http://.
 _LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
+# Azure Core 1.38.3 moved the cleanup flag from transient options to context.
+# Older supported versions consume the option before sending to the transport.
+_LEGACY_REDIRECT_CONTEXT = tuple(int(part) for part in re.findall(r"\d+", _CORE_VERSION)[:3]) < (1, 38, 3)
 
 
 class _NoPostRetryPolicy(policies.RetryPolicy):
@@ -104,6 +109,8 @@ class _ApiKeyTransportPolicy(policies.SansIOHTTPPolicy):
         # strip auth for an equivalent explicit default port. Once an origin
         # was crossed, keep cleanup enabled for the rest of this redirect chain.
         request.context["insecure_domain_change"] = crossed_origin
+        if _LEGACY_REDIRECT_CONTEXT:
+            request.context.options["insecure_domain_change"] = crossed_origin
 
 
 class _ScopedAzureKeyCredentialPolicy(AzureKeyCredentialPolicy):

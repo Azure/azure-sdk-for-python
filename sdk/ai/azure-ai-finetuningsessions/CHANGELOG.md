@@ -20,6 +20,7 @@
 
 ### Bugs Fixed
 
+- Preserve credential redirect protections with the declared minimum Azure Core 1.37.0 as well as current versions; handle the cleanup flag location change in Azure Core 1.38.3.
 - Drain async heartbeat tasks before session/client shutdown, including concurrent cancellation; share the sync client's pipeline so custom policies work and all transports close normally.
 - Bound creation and sustained-error retry sleeps; tolerate bounded request-store propagation after creation and reject unexpected polling states immediately.
 - Reject empty training batches and incomplete sampler identifiers; bound synchronous chunk workers and offload async forward chunking.

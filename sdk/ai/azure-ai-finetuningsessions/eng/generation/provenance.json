@@ -44,7 +44,7 @@
     "runtime_files": 28,
     "runtime_python_modules": 27,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
-    "runtime_fingerprint_sha256": "90cf81eaa656b19ab420bf6fc9379846060a21921991fcd274a998796716cd89",
+    "runtime_fingerprint_sha256": "e47b133413def2e8b201a9bd5600064b062a6197124693529c0d8eb82a25b070",
     "maintained_modules": [
       "_patch.py",
       "aio/_patch.py",
@@ -91,6 +91,11 @@
       "local_pyright_passed": true,
       "python_310_runtime": "3.10.21",
       "python_313_runtime": "3.13.14",
+      "minimum_azure_core": "1.37.0",
+      "minimum_core_python_310_tests_passed": 1636,
+      "minimum_core_python_310_tests_skipped": 1,
+      "current_azure_core": "1.41.0",
+      "current_core_python_313_tests_passed": 1637,
       "remote_ci_green_verified": false,
       "external_requirements": ["Python package-name approval/reservation", "Required human review approval"]
     },
