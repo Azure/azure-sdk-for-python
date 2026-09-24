@@ -70,13 +70,13 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.38.0",
         "isodate<1.0.0,>=0.6.1",
         "typing-extensions>=4.3.0",
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]<2.0.0,>=1.24.0",
+            "azure-core[aio]<2.0.0,>=1.38.0",
         ],
     },
 )
