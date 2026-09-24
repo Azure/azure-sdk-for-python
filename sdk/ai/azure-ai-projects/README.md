@@ -267,6 +267,19 @@ openai_logger.addHandler(handler)
 #handler.setFormatter(formatter)
 ```
 
+#### Voice agent WebSocket logging
+
+Voice agents accessed through `.beta.voice_agents.realtime` use a WebSocket transport instead of the HTTP pipeline. The `azure` logger configured above includes WebSocket logs for both the synchronous and asynchronous clients. To enable only these logs, configure the corresponding module logger:
+
+```python
+voice_logger = logging.getLogger("azure.ai.projects._realtime")
+# For the asynchronous client, use "azure.ai.projects.aio._realtime" instead.
+voice_logger.setLevel(logging.DEBUG)
+voice_logger.addHandler(handler)
+```
+
+At `DEBUG` level, the WebSocket logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens. The `logging_enable` client option controls HTTP pipeline logging and does not add WebSocket payload logging.
+
 By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python

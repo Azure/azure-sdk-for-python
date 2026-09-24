@@ -153,6 +153,8 @@ foreach ($f in $files) {
 }
 
 # Remove malformed overloads where the emitter assigns a body List type to the ETag parameter.
+# If only one overload remains for that method, remove that stub too because @overload requires
+# at least two declarations. The concrete implementation remains available.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $lines = Get-Content $f
@@ -165,18 +167,27 @@ foreach ($f in $files) {
         }
 
         $indent = $Matches[1]
-        $end = $i + 1
-        while ($end -lt $lines.Length -and $lines[$end] -notmatch ('^' + [regex]::Escape($indent) + '@')) {
-            $end++
-        }
-        $overload = $lines[$i..($end - 1)]
-        if ($overload -match '^\s*etag:\s*List\[[^\]]+\]') {
+        $overloads = @()
+        while ($i -lt $lines.Length -and $lines[$i] -match ('^' + [regex]::Escape($indent) + '@overload\s*$')) {
+            $end = $i + 1
+            while ($end -lt $lines.Length -and $lines[$end] -notmatch ('^' + [regex]::Escape($indent) + '@')) {
+                $end++
+            }
+            $overload = $lines[$i..($end - 1)]
+            $overloads += ,@{
+                Lines = $overload
+                MalformedEtag = [bool]($overload -match '^\s*etag:\s*List\[[^\]]+\]')
+            }
             $i = $end
-            continue
         }
 
-        $out += $overload
-        $i = $end
+        $validOverloads = @($overloads | Where-Object { -not $_.MalformedEtag })
+        $removedMalformedEtag = $validOverloads.Count -ne $overloads.Count
+        if (-not $removedMalformedEtag -or $validOverloads.Count -gt 1) {
+            foreach ($overload in $validOverloads) {
+                $out += $overload.Lines
+            }
+        }
     }
     Set-Content $f $out
 }
