@@ -1,5 +1,15 @@
 # Release History
 
+## 4.0.0 (2026-09-24)
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `AzureDatabricksManagementClient.outbound_network_dependencies_endpoints`
+  - Deleted or renamed model `EndpointDependency`
+  - Deleted or renamed model `EndpointDetail`
+  - Deleted or renamed model `OutboundEnvironmentEndpoint`
+  - Deleted or renamed model `OutboundNetworkDependenciesEndpointsOperations`
+
 ## 3.1.0 (2026-09-24)
 
 tool can't generate changelog for this release, please update manually.

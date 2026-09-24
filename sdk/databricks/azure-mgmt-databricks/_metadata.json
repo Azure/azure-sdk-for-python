@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Databricks": "2026-01-01"
   },
-  "commit": "74f4a55555f7e67433cd1a4b844bfca26086dba9",
+  "commit": "d31a0b9d4d3615626e8b41539c7744245be44f0b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/databricks/resource-manager/Microsoft.Databricks/Databricks",
   "emitterVersion": "0.63.8",

@@ -4,7 +4,6 @@ namespace azure.mgmt.databricks
     class azure.mgmt.databricks.AzureDatabricksManagementClient: implements ContextManager 
         access_connectors: AccessConnectorsOperations
         operations: Operations
-        outbound_network_dependencies_endpoints: OutboundNetworkDependenciesEndpointsOperations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
         vnet_peering: VNetPeeringOperations
@@ -38,7 +37,6 @@ namespace azure.mgmt.databricks.aio
     class azure.mgmt.databricks.aio.AzureDatabricksManagementClient: implements AsyncContextManager 
         access_connectors: AccessConnectorsOperations
         operations: Operations
-        outbound_network_dependencies_endpoints: OutboundNetworkDependenciesEndpointsOperations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
         vnet_peering: VNetPeeringOperations
@@ -180,23 +178,6 @@ namespace azure.mgmt.databricks.aio.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> AsyncItemPaged[Operation]: ...
-
-
-    class azure.mgmt.databricks.aio.operations.OutboundNetworkDependenciesEndpointsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def list(
-                self, 
-                resource_group_name: str, 
-                workspace_name: str, 
-                **kwargs: Any
-            ) -> List[OutboundEnvironmentEndpoint]: ...
 
 
     class azure.mgmt.databricks.aio.operations.PrivateEndpointConnectionsOperations:
@@ -690,42 +671,6 @@ namespace azure.mgmt.databricks.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.databricks.models.EndpointDependency(_Model):
-        domain_name: Optional[str]
-        endpoint_details: Optional[list[EndpointDetail]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                domain_name: Optional[str] = ..., 
-                endpoint_details: Optional[list[EndpointDetail]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.databricks.models.EndpointDetail(_Model):
-        ip_address: Optional[str]
-        is_accessible: Optional[bool]
-        latency: Optional[float]
-        port: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                ip_address: Optional[str] = ..., 
-                is_accessible: Optional[bool] = ..., 
-                latency: Optional[float] = ..., 
-                port: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.databricks.models.EnhancedSecurityComplianceDefinition(_Model):
         automatic_cluster_update: Optional[AutomaticClusterUpdateDefinition]
         compliance_security_profile: Optional[ComplianceSecurityProfileDefinition]
@@ -963,22 +908,6 @@ namespace azure.mgmt.databricks.models
                 operation: Optional[str] = ..., 
                 provider: Optional[str] = ..., 
                 resource: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.databricks.models.OutboundEnvironmentEndpoint(_Model):
-        category: Optional[str]
-        endpoints: Optional[list[EndpointDependency]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                category: Optional[str] = ..., 
-                endpoints: Optional[list[EndpointDependency]] = ...
             ) -> None: ...
 
         @overload
@@ -1641,23 +1570,6 @@ namespace azure.mgmt.databricks.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> ItemPaged[Operation]: ...
-
-
-    class azure.mgmt.databricks.operations.OutboundNetworkDependenciesEndpointsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                resource_group_name: str, 
-                workspace_name: str, 
-                **kwargs: Any
-            ) -> List[OutboundEnvironmentEndpoint]: ...
 
 
     class azure.mgmt.databricks.operations.PrivateEndpointConnectionsOperations:

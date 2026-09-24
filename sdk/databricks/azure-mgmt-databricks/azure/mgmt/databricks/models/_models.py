@@ -531,92 +531,6 @@ class EncryptionV2KeyVaultProperties(_Model):  # pylint: disable=docstring-keywo
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A domain name or IP address the Workspace is reaching at.
-
-    :ivar domain_name: The domain name of the dependency.
-    :vartype domain_name: str
-    :ivar endpoint_details: The Ports used when connecting to domainName.
-    :vartype endpoint_details: list[~azure.mgmt.databricks.models.EndpointDetail]
-    """
-
-    domain_name: Optional[str] = rest_field(
-        name="domainName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The domain name of the dependency."""
-    endpoint_details: Optional[list["_models.EndpointDetail"]] = rest_field(
-        name="endpointDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Ports used when connecting to domainName."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        domain_name: Optional[str] = None,
-        endpoint_details: Optional[list["_models.EndpointDetail"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Connect information from the Workspace to a single endpoint.
-
-    :ivar ip_address: An IP Address that Domain Name currently resolves to.
-    :vartype ip_address: str
-    :ivar port: The port an endpoint is connected to.
-    :vartype port: int
-    :ivar latency: The time in milliseconds it takes for the connection to be created from the
-     Workspace to this IpAddress at this Port.
-    :vartype latency: float
-    :ivar is_accessible: Whether it is possible to create a connection from the Workspace to this
-     IpAddress at this Port.
-    :vartype is_accessible: bool
-    """
-
-    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
-    """An IP Address that Domain Name currently resolves to."""
-    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The port an endpoint is connected to."""
-    latency: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The time in milliseconds it takes for the connection to be created from the Workspace to this
-     IpAddress at this Port."""
-    is_accessible: Optional[bool] = rest_field(
-        name="isAccessible", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether it is possible to create a connection from the Workspace to this IpAddress at this
-     Port."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        ip_address: Optional[str] = None,
-        port: Optional[int] = None,
-        latency: Optional[float] = None,
-        is_accessible: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EnhancedSecurityComplianceDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of settings related to the Enhanced Security and Compliance Add-On.
 
@@ -1130,42 +1044,6 @@ class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-matc
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Egress endpoints which Workspace connects to for common purposes.
-
-    :ivar category: The category of endpoints accessed by the Workspace, e.g. azure-storage,
-     azure-mysql, etc.
-    :vartype category: str
-    :ivar endpoints: The endpoints that Workspace connect to.
-    :vartype endpoints: list[~azure.mgmt.databricks.models.EndpointDependency]
-    """
-
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The category of endpoints accessed by the Workspace, e.g. azure-storage, azure-mysql, etc."""
-    endpoints: Optional[list["_models.EndpointDependency"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The endpoints that Workspace connect to."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Optional[str] = None,
-        endpoints: Optional[list["_models.EndpointDependency"]] = None,
     ) -> None: ...
 
     @overload
