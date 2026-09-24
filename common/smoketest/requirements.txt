@@ -1,4 +1,4 @@
-azure-core
+azure-core>=1.38.0
 azure-identity
 azure-cosmos>=4.0.0b5
 azure-eventhub

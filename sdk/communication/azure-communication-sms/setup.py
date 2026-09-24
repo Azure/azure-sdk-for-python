@@ -67,7 +67,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.27.0",
+        "azure-core>=1.38.0",
         "msrest>=0.7.1",  # TODO: This should be removed once code has been regenerated.
         "typing-extensions>=4.6.0",
     ],
