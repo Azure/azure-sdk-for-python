@@ -3,7 +3,6 @@ import importlib.util
 import io
 import json
 from pathlib import Path
-import textwrap
 import unittest
 from unittest import mock
 import urllib.error
@@ -27,26 +26,19 @@ class WorkflowBootstrapTests(unittest.TestCase):
         self.assertTrue(uses)
         self.assertTrue(all(line == f"uses: github/gh-aw-actions/setup@{setup['sha']} # {setup['version']}" for line in uses))
 
-    def test_single_trusted_collector_has_valid_python(self):
+    def test_single_collector_uses_executing_workflow_revision(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.md").read_text(encoding="utf-8")
-        blocks = workflow.split("python - <<'PY'")[1:]
-        self.assertEqual(2, len(blocks))
-        source = textwrap.dedent(blocks[0].split("\n      PY", 1)[0])
-        compile(source, "collector-bootstrap", "exec")
-        self.assertIn('revision = os.environ["TRUSTED_BASE_SHA"]', source)
-        self.assertIn("TRUSTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}", workflow)
-        self.assertEqual(1, workflow.count("      python mgmt_sdk_review_context.py"))
+        self.assertIn("ref: ${{ github.workflow_sha }}", workflow)
+        self.assertIn("REVIEW_TOOLING_SHA: ${{ github.workflow_sha }}", workflow)
+        self.assertNotIn("TRUSTED_BASE_SHA", workflow)
+        self.assertEqual(1, workflow.count("python mgmt_sdk_review_context.py"))
 
-    def test_generated_bootstrap_has_valid_python(self):
+    def test_generated_collector_is_isolated_from_agent(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.lock.yml").read_text(encoding="utf-8")
-        runs = [
-            json.loads(line.strip().removeprefix("run: "))
-            for line in workflow.splitlines()
-            if line.strip().startswith('run: "python - ')
-        ]
-        self.assertEqual(1, len(runs))
-        source = runs[0].split("python - <<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
-        compile(source, "generated-collector-bootstrap", "exec")
+        collector = workflow.split("\n  review_context:\n", 1)[1].split("\n  safe_outputs:", 1)[0]
+        self.assertIn("python mgmt_sdk_review_context.py", collector)
+        self.assertIn("Upload trusted review snapshot", collector)
+        self.assertNotIn("agent_output.json", collector)
 
 
 class BreakingChangeParserTests(unittest.TestCase):
@@ -272,6 +264,7 @@ class CollectionTests(unittest.TestCase):
     def collect_context(
         self, *, old_status=200, changelog_status="modified", commit_count=1, package_count=1, annotated_tag=False,
         changelog=None, changed_files=None, file_errors=None, directory_status=404, expected_changed_files=None,
+        event_head=None, later_head=None,
     ):
         packages = [f"sdk/contoso/azure-mgmt-contoso{index}" for index in range(package_count)]
         if changelog is None:
@@ -279,8 +272,10 @@ class CollectionTests(unittest.TestCase):
         if changed_files is None:
             changed_files = [{"filename": f"{package}/CHANGELOG.md", "status": changelog_status} for package in packages]
         file_errors = file_errors or {}
+        pr_requests = 0
 
         def respond(request, timeout):
+            nonlocal pr_requests
             parsed = urllib.parse.urlparse(request.full_url)
             path = parsed.path.removeprefix("/repos/Azure/azure-sdk-for-python")
             query = urllib.parse.parse_qs(parsed.query)
@@ -289,10 +284,11 @@ class CollectionTests(unittest.TestCase):
             elif path == "/branches/main":
                 data = {"commit": {"sha": "f" * 40}}
             elif path == "/pulls/1":
+                pr_requests += 1
                 data = {
                     "changed_files": len(changed_files) if expected_changed_files is None else expected_changed_files,
                     "commits": commit_count,
-                    "head": {"sha": "b" * 40},
+                    "head": {"sha": later_head if later_head and pr_requests > 1 else "b" * 40},
                     "base": {"sha": "e" * 40},
                 }
             elif path.startswith("/compare/"):
@@ -347,11 +343,26 @@ class CollectionTests(unittest.TestCase):
             mock.patch.object(MODULE.urllib.request, "urlopen", side_effect=respond) as requests,
             mock.patch("builtins.open", output),
         ):
+            if event_head:
+                MODULE.os.environ["REVIEW_HEAD_SHA"] = event_head
+                MODULE.os.environ["REVIEW_TOOLING_SHA"] = "9" * 40
             MODULE.collect()
         output.assert_called_once_with("review-context.json", "w", encoding="utf-8")
         context = json.loads("".join(call.args[0] for call in output().write.call_args_list))
         self.assertEqual(requests.call_count, context["collectionLimits"]["githubApiRequests"])
         return context
+
+    def test_snapshot_matches_event_and_tracks_tooling_separately(self):
+        context = self.collect_context(event_head="b" * 40)
+        self.assertEqual("9" * 40, context["toolingRevision"])
+        self.assertEqual("c" * 40, context["mergeBaseRevision"])
+        self.assertEqual("a" * 40, context["firstRevision"])
+
+    def test_snapshot_rejects_stale_event_or_head_change_during_collection(self):
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "triggering event"):
+            self.collect_context(event_head="8" * 40)
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "during evidence collection"):
+            self.collect_context(event_head="b" * 40, later_head="8" * 40)
 
     def collect_initial_release(self, **overrides):
         package = "sdk/contoso/azure-mgmt-contoso0"
@@ -559,6 +570,15 @@ class CollectionTests(unittest.TestCase):
                 context = self.collect_context(annotated_tag=True)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
                 self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
+
+    def test_event_head_budget_reserves_the_final_consistency_request(self):
+        for limit, expected in ((31, "unverified"), (32, "complete")):
+            with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
+                context = self.collect_context(annotated_tag=True, event_head="b" * 40)
+                self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
+                self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
+                if expected == "complete":
+                    self.assertEqual(limit, context["collectionLimits"]["githubApiRequests"])
 
 
 class FailureHandlingTests(unittest.TestCase):
