@@ -249,6 +249,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 # pylint: disable=protected-access
+# pylint: disable=too-many-locals
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
 @no_type_check
 def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
