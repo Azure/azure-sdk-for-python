@@ -27,6 +27,7 @@
 
 ### Other Changes
 
+- Regenerate from the reviewed Foundry required-preview operation contract and updated schema defaults; preserve the existing Python API and request query ordering through supported customization hooks. Synchronize the Loom SDK runtime and reviewed regressions with this package.
 - Regenerate the preview from pinned TypeSpec inputs and supported Python hooks, preserving the tested public API and behavior of Loom commit `485774df502642879fdf3a53777be4a0d95155dc`. Immutable reference hashes remain in `loom-source.json`; separate generation provenance records the local source inputs.
 - Preserved Loom's `/fine_tuning/sessions` routes, generated signatures, models, authentication guards, retry behavior, and convenience APIs. The public-only `use_legacy_routes` option is not part of this snapshot.
 - At the historical SDK parity baseline `39c2b3c882526897619785089074176b367099a6`, pinned to TypeSpec `d912f0d0bc6af9e87e0c0833922dd85fa32abf97`, verified two independent emissions, the complete customized runtime, all 434 upstream tests, public types/signatures/serialization, and raw-operation parity. Authentication, exports, legacy operations, and non-emittable sampling annotations survive regeneration without editing generated files; this is not final validation of later CI repairs.

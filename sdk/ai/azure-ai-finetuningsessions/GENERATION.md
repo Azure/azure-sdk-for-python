@@ -1,5 +1,56 @@
 # Reproducible preview SDK generation
 
+## Foundry review batch (2026-09-23)
+
+The current source pin is TypeSpec commit
+`68b7f96fdabbeb966213596cc92ddfec207e52cc`. The shared Foundry service namespace
+and the independent `azure-ai-finetuningsessions` Python package are unchanged.
+The following decisions address the numbered review comments. Related comments
+3/4 and 6/8 share a commit rather than duplicating the same change.
+
+| Comments | Decision and reason | TypeSpec commit |
+|---|---|---|
+| 1 | Retain `utcDateTime` and document RFC 3339 strings. The current service serializes these timestamps as strings; adopting Unix-encoded `FoundryTimestamp` would require a coordinated wire-format migration. | `f328f6f7237` |
+| 2 | Add `@minLength(1)` to all four checkpoint/reference properties whose existing anchored `+` patterns already reject empty strings. Do not impose unverified restrictions on free-form strings. | `d1c79498f12` |
+| 3, 4 | Use the existing extensible `FineTuningSessionType` in the create response, matching the request and session resource while retaining future string values. | `eef0597d330` |
+| 5 | Add the actual `created` initial status to the extensible REST union. The Python preview projection remains unchanged. | `08bcdccafd3` |
+| 6, 8 | Omit redundant deletion/heartbeat identity markers from the REST models; neither is a union discriminator. Make heartbeat `session_id` optional because existing service responses can omit it. Existing additional wire fields and Python compatibility models are retained, not removed from deployed services. | `3f912750975` |
+| 7 | Retain and explain meaningful session-category, image-input, and sampler-command `type` properties. Renaming existing request keys would change the wire contract. | `38b003f6c2e` |
+| 9 | Use `FoundryDataPlaneRequiredPreviewOperation` with the shared API-version parameter and `ApiErrorResponse`. Retain the optional `x-ms-error-code` response header and required preview opt-in. | `64c55f134a2` |
+| 10 | Remove the redundant service-import file and import shared dependencies directly. Service identity and generated REST output are preserved. | `68b7f96fdab` |
+
+Earlier pending comments were committed separately: the input-chunk union move
+in `f99783d5ff3`, and explicit fixed defaults plus consistent service-default
+wording in `5228c5cd596`. Rank, random seeds, derived weights, and conditional
+training-tier defaults were not replaced with invented constants.
+
+The operation-template comparison covers both REST versions: all 13 paths and
+15 methods retain their request bodies, HTTP 200 success responses, required
+API-version query, and required preview header. Parameter ordering changes and
+the shared API-version parameter no longer declares the old `minLength: 1`;
+the 4XX/5XX body references now use the shared error model. These are explicit
+metadata changes, not a claim that the OpenAPI files are byte-identical.
+
+Actual Azure SDK MCP generation agrees with independent pinned emission.
+The final nine maintained hooks reproduce all 21 generated inventory entries
+and the complete 28-file runtime in two clean emissions with no diagnostics.
+The maintained request hook preserves the previous API-version query ordering
+without rewriting generated builders or relaxing compatibility checks.
+
+The synchronized Loom runtime has the same 28 files, byte-for-byte, as this
+public package. Its tests retain every original assertion, adapt the two
+private heartbeat mocks to the already-reviewed async cleanup, and include
+the public regression tests. Source validation passes 501 SDK tests in each
+repository and 17 lightweight cookbook contract checks; the heavyweight
+cookbook import test is not included. The current public/Loom comparison has
+zero differences across 20 convenience cases, 45 public types, and 336 raw
+operation cases. The immutable upstream reference remains separate and uses
+only the existing reviewed contracts, with no new exceptions.
+
+These are local reproducibility and offline compatibility results, not live
+service/GPU validation, a package release, or a claim that remote CI is green.
+All older validation sections below describe their stated historical snapshots.
+
 ## Operation coverage documentation (2026-09-23)
 
 TypeSpec commit `ff3fe7d6edc892aed8079760ba41a7289f64eab1` expands only line
@@ -9,7 +60,7 @@ and async convenience entry points, including chunking, request-ID polling,
 heartbeat shutdown, and deletion response handling. These maintained hooks are
 included during regeneration; both REST operations remain defined.
 
-The current source pin and source/client fingerprints include this comment-only
+That source pin and its source/client fingerprints include this comment-only
 change. Operation scopes, the generated API and metadata, runtime code, tests,
 generator pins, and compatibility expectations are unchanged. Adding raw
 operation-group methods would be a separate additive API change.
@@ -304,10 +355,11 @@ cross-language SDK readiness.
 ## Current source pin and review validation
 
 [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) pins public TypeSpec commit
-`ff3fe7d6edc892aed8079760ba41a7289f64eab1`, which contains the validated model
+`68b7f96fdabbeb966213596cc92ddfec207e52cc`, which contains the validated model
 projection, route-deduplicated client customization, CI repairs, and closed
 agent-definition and shared Foundry feature opt-in unions. It also documents
-the maintained forward-only and deletion entry points. Its source fingerprint
+the maintained forward-only and deletion entry points and includes the review
+decisions listed in the current batch above. Its source fingerprint
 and remote-generation status are recorded separately
 in [generation-provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/generation-provenance.json). The preview-parity
 baseline is committed separately from subsequent review fixes so it remains
@@ -325,4 +377,6 @@ needed. This source-pin update records the reviewed shared TypeSpec input.
 Archived public-only tests remain in [review_tests/](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/review_tests/DEFERRED.md), and
 the earlier implementation is recoverable at SDK commit `8ebc1ea5c9`. The heartbeat
 regressions were reactivated with the separate tested review fixes.
-No Loom checkout/index changes, deployment, or publication are part of this work.
+The current batch synchronizes Loom's SDK runtime and tests; the earlier
+baseline validation did not change that checkout. No service deployment or
+package publication is part of this work.

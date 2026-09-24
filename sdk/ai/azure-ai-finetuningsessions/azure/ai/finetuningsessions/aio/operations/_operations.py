@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...models._enums import FoundryFeaturesOptInKeys
 from ...operations._operations import (
@@ -77,14 +77,11 @@ class SessionsOperations:
         self,
         session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -103,8 +100,8 @@ class SessionsOperations:
             _content = json.dumps(session, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_sessions_create_request(
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -129,7 +126,12 @@ class SessionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -143,8 +145,8 @@ class SessionsOperations:
         self,
         session: _models.CreateSessionRequest,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -155,12 +157,12 @@ class SessionsOperations:
 
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -175,8 +177,8 @@ class SessionsOperations:
         self,
         session: JSON,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -187,12 +189,12 @@ class SessionsOperations:
 
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -207,8 +209,8 @@ class SessionsOperations:
         self,
         session: IO[bytes],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -219,12 +221,12 @@ class SessionsOperations:
 
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -239,8 +241,8 @@ class SessionsOperations:
         self,
         session: Union[_models.CreateSessionRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Create a fine-tuning session.
@@ -251,12 +253,12 @@ class SessionsOperations:
         :param session: Configuration of the fine-tuning session to create. Is one of the following
          types: CreateSessionRequest, JSON, IO[bytes] Required.
         :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -273,8 +275,8 @@ class SessionsOperations:
         if cont_token is None:
             raw_result = await self._create_initial(
                 session=session,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -319,8 +321,8 @@ class SessionsOperations:
     async def list(
         self,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         **kwargs: Any
@@ -329,26 +331,23 @@ class SessionsOperations:
 
         List fine-tuning sessions in this project using offset-based pagination.
 
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
-        :keyword limit: Maximum number of sessions to return in this page. Defaults to 20. Default
-         value is None.
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
+        :keyword limit: Maximum number of sessions to return in this page. If omitted, the service
+         defaults to 20. Default value is None.
         :paramtype limit: int
-        :keyword offset: Number of sessions to skip before returning this page. Defaults to zero.
-         Default value is None.
+        :keyword offset: Number of sessions to skip before returning this page. If omitted, the service
+         defaults to 0. Default value is None.
         :paramtype offset: int
         :return: SessionList. The SessionList is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.SessionList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -359,8 +358,8 @@ class SessionsOperations:
         cls: ClsType[_models.SessionList] = kwargs.pop("cls", None)
 
         _request = build_sessions_list_request(
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             limit=limit,
             offset=offset,
             headers=_headers,
@@ -386,7 +385,12 @@ class SessionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -403,8 +407,8 @@ class SessionsOperations:
         self,
         session_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> _models.Session:
         """Get a fine-tuning session.
@@ -413,20 +417,17 @@ class SessionsOperations:
 
         :param session_id: Identifier of the fine-tuning session to retrieve. Required.
         :type session_id: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: Session. The Session is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.Session
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -438,8 +439,8 @@ class SessionsOperations:
 
         _request = build_sessions_get_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -463,7 +464,12 @@ class SessionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -479,14 +485,11 @@ class SessionsOperations:
         self,
         session_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -498,8 +501,8 @@ class SessionsOperations:
 
         _request = build_sessions_unload_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -522,7 +525,12 @@ class SessionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -536,8 +544,8 @@ class SessionsOperations:
         self,
         session_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Unload a fine-tuning session.
@@ -547,12 +555,12 @@ class SessionsOperations:
 
         :param session_id: Identifier of the fine-tuning session to unload. Required.
         :type session_id: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -568,8 +576,8 @@ class SessionsOperations:
         if cont_token is None:
             raw_result = await self._unload_initial(
                 session_id=session_id,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -614,8 +622,8 @@ class SessionsOperations:
         self,
         session_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> _models.HeartbeatResponse:
         """Session heartbeat.
@@ -624,20 +632,17 @@ class SessionsOperations:
 
         :param session_id: Identifier of the fine-tuning session to keep active. Required.
         :type session_id: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: HeartbeatResponse. The HeartbeatResponse is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.HeartbeatResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -649,8 +654,8 @@ class SessionsOperations:
 
         _request = build_sessions_heartbeat_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -674,7 +679,12 @@ class SessionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -709,14 +719,11 @@ class TrainingOperations:
         session_id: str,
         request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -736,8 +743,8 @@ class TrainingOperations:
 
         _request = build_training_forward_backward_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -762,7 +769,12 @@ class TrainingOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -777,8 +789,8 @@ class TrainingOperations:
         session_id: str,
         request: _models.ForwardBackwardRequest,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -791,12 +803,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -812,8 +824,8 @@ class TrainingOperations:
         session_id: str,
         request: JSON,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -826,12 +838,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -847,8 +859,8 @@ class TrainingOperations:
         session_id: str,
         request: IO[bytes],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -861,12 +873,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -882,8 +894,8 @@ class TrainingOperations:
         session_id: str,
         request: Union[_models.ForwardBackwardRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Forward and backward pass.
@@ -896,12 +908,12 @@ class TrainingOperations:
         :param request: Training batch and loss configuration for the forward-backward pass. Is one of
          the following types: ForwardBackwardRequest, JSON, IO[bytes] Required.
         :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -919,8 +931,8 @@ class TrainingOperations:
             raw_result = await self._forward_backward_initial(
                 session_id=session_id,
                 request=request,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -966,14 +978,11 @@ class TrainingOperations:
         session_id: str,
         request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -993,8 +1002,8 @@ class TrainingOperations:
 
         _request = build_training_optim_step_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -1019,7 +1028,12 @@ class TrainingOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -1034,8 +1048,8 @@ class TrainingOperations:
         session_id: str,
         request: _models.OptimStepRequest,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1049,12 +1063,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1070,8 +1084,8 @@ class TrainingOperations:
         session_id: str,
         request: JSON,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1085,12 +1099,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1106,8 +1120,8 @@ class TrainingOperations:
         session_id: str,
         request: IO[bytes],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1121,12 +1135,12 @@ class TrainingOperations:
         :type session_id: str
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1142,8 +1156,8 @@ class TrainingOperations:
         session_id: str,
         request: Union[_models.OptimStepRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Optimizer step.
@@ -1157,12 +1171,12 @@ class TrainingOperations:
         :param request: Adam optimizer configuration for applying accumulated gradients. Is one of the
          following types: OptimStepRequest, JSON, IO[bytes] Required.
         :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -1180,8 +1194,8 @@ class TrainingOperations:
             raw_result = await self._optim_step_initial(
                 session_id=session_id,
                 request=request,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1245,14 +1259,11 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1272,8 +1283,8 @@ class CheckpointsOperations:
 
         _request = build_checkpoints_save_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -1298,7 +1309,12 @@ class CheckpointsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -1313,8 +1329,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: _models.SaveCheckpointRequest,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1327,12 +1343,12 @@ class CheckpointsOperations:
         :type session_id: str
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1348,8 +1364,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: JSON,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1362,12 +1378,12 @@ class CheckpointsOperations:
         :type session_id: str
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1383,8 +1399,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: IO[bytes],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1397,12 +1413,12 @@ class CheckpointsOperations:
         :type session_id: str
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1418,8 +1434,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: Union[_models.SaveCheckpointRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Save a training checkpoint.
@@ -1433,12 +1449,12 @@ class CheckpointsOperations:
          following types: SaveCheckpointRequest, JSON, IO[bytes] Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -1456,8 +1472,8 @@ class CheckpointsOperations:
             raw_result = await self._save_initial(
                 session_id=session_id,
                 checkpoint=checkpoint,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1503,14 +1519,11 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1530,8 +1543,8 @@ class CheckpointsOperations:
 
         _request = build_checkpoints_save_sampler_weights_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -1556,7 +1569,12 @@ class CheckpointsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -1571,8 +1589,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: _models.SaveSamplerWeightsRequest,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1587,12 +1605,12 @@ class CheckpointsOperations:
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1608,8 +1626,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: JSON,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1624,12 +1642,12 @@ class CheckpointsOperations:
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
         :type checkpoint: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1645,8 +1663,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: IO[bytes],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -1661,12 +1679,12 @@ class CheckpointsOperations:
         :param checkpoint: Explicit checkpoint identifier or sequence identifiers for the sampler
          weights. Required.
         :type checkpoint: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1682,8 +1700,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint: Union[_models.SaveSamplerWeightsRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Save sampler weights.
@@ -1698,12 +1716,12 @@ class CheckpointsOperations:
          weights. Is one of the following types: SaveSamplerWeightsRequest, JSON, IO[bytes] Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest or JSON or
          IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -1721,8 +1739,8 @@ class CheckpointsOperations:
             raw_result = await self._save_sampler_weights_initial(
                 session_id=session_id,
                 checkpoint=checkpoint,
-                api_version=api_version,
                 foundry_features=foundry_features,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1768,8 +1786,8 @@ class CheckpointsOperations:
         self,
         session_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> _models.CheckpointList:
         """List checkpoints.
@@ -1779,20 +1797,17 @@ class CheckpointsOperations:
         :param session_id: Identifier of the fine-tuning session whose checkpoints will be listed.
          Required.
         :type session_id: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: CheckpointList. The CheckpointList is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.CheckpointList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1804,8 +1819,8 @@ class CheckpointsOperations:
 
         _request = build_checkpoints_list_request(
             session_id=session_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1829,7 +1844,12 @@ class CheckpointsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -1847,8 +1867,8 @@ class CheckpointsOperations:
         session_id: str,
         checkpoint_id: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> _models.CheckpointInfo:
         """Get checkpoint info.
@@ -1859,20 +1879,17 @@ class CheckpointsOperations:
         :type session_id: str
         :param checkpoint_id: Identifier of the checkpoint to retrieve. Required.
         :type checkpoint_id: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: CheckpointInfo. The CheckpointInfo is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.CheckpointInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1885,8 +1902,8 @@ class CheckpointsOperations:
         _request = build_checkpoints_get_request(
             session_id=session_id,
             checkpoint_id=checkpoint_id,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1910,7 +1927,12 @@ class CheckpointsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -1945,15 +1967,12 @@ class SamplingOperations:
         session_id: str,
         sample: Union[_models.SampleRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
-        checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        checkpoint_id: str,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -1973,9 +1992,9 @@ class SamplingOperations:
 
         _request = build_sampling_sample_request(
             session_id=session_id,
-            api_version=api_version,
-            checkpoint_id=checkpoint_id,
             foundry_features=foundry_features,
+            checkpoint_id=checkpoint_id,
+            api_version=api_version,
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -2000,7 +2019,12 @@ class SamplingOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -2015,9 +2039,9 @@ class SamplingOperations:
         session_id: str,
         sample: _models.SampleRequest,
         *,
-        api_version: str,
-        checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        checkpoint_id: str,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -2032,15 +2056,15 @@ class SamplingOperations:
         :type session_id: str
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: ~azure.ai.finetuningsessions.models.SampleRequest
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2056,9 +2080,9 @@ class SamplingOperations:
         session_id: str,
         sample: JSON,
         *,
-        api_version: str,
-        checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        checkpoint_id: str,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -2073,15 +2097,15 @@ class SamplingOperations:
         :type session_id: str
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: JSON
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2097,9 +2121,9 @@ class SamplingOperations:
         session_id: str,
         sample: IO[bytes],
         *,
-        api_version: str,
-        checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        checkpoint_id: str,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
@@ -2114,15 +2138,15 @@ class SamplingOperations:
         :type session_id: str
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2138,9 +2162,9 @@ class SamplingOperations:
         session_id: str,
         sample: Union[_models.SampleRequest, JSON, IO[bytes]],
         *,
-        api_version: str,
-        checkpoint_id: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        checkpoint_id: str,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationResult]:
         """Generate completions.
@@ -2155,15 +2179,15 @@ class SamplingOperations:
         :param sample: Prompt and generation parameters for the requested completions. Is one of the
          following types: SampleRequest, JSON, IO[bytes] Required.
         :type sample: ~azure.ai.finetuningsessions.models.SampleRequest or JSON or IO[bytes]
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
-        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
-         Required.
-        :paramtype checkpoint_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
+         Required.
+        :paramtype checkpoint_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns OperationResult. The OperationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.finetuningsessions.models.OperationResult]
@@ -2181,9 +2205,9 @@ class SamplingOperations:
             raw_result = await self._sample_initial(
                 session_id=session_id,
                 sample=sample,
-                api_version=api_version,
-                checkpoint_id=checkpoint_id,
                 foundry_features=foundry_features,
+                checkpoint_id=checkpoint_id,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2248,8 +2272,8 @@ class Operations:
         session_id: str,
         request_id_parameter: str,
         *,
-        api_version: str,
         foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
+        api_version: str,
         **kwargs: Any
     ) -> _models.OperationResult:
         """Poll request status.
@@ -2262,20 +2286,17 @@ class Operations:
         :type session_id: str
         :param request_id_parameter: Request identifier returned when the work was submitted. Required.
         :type request_id_parameter: str
-        :keyword api_version: The API version to use for this operation. Required.
-        :paramtype api_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: OperationResult. The OperationResult is compatible with MutableMapping
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2288,8 +2309,8 @@ class Operations:
         _request = build_operations_get_request(
             session_id=session_id,
             request_id_parameter=request_id_parameter,
-            api_version=api_version,
             foundry_features=foundry_features,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2313,7 +2334,12 @@ class Operations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = None
+            if 400 <= response.status_code <= 499:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            elif 500 <= response.status_code <= 599:
+                error = _failsafe_deserialize(_models.ApiErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()

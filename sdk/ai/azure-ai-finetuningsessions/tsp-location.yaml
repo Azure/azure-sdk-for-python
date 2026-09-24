@@ -3,7 +3,8 @@ directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-f
 # Includes the validated decorator-only route-deduplication refactor.
 # Includes the reviewed closure of the shared FoundryFeaturesOptInKeys union.
 # Documents the maintained Python forward-only and session deletion entry points.
-commit: ff3fe7d6edc892aed8079760ba41a7289f64eab1
+# Includes the reviewed defaults, response contracts, and required-preview operation.
+commit: 68b7f96fdabbeb966213596cc92ddfec207e52cc
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

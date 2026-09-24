@@ -77,7 +77,12 @@ def _request(operation, builder, arguments, body, options):
     # The supported compatibility hook requires generated client, configuration, and serialization internals.
     # pylint: disable=protected-access
     headers = case_insensitive_dict(options.pop("headers", {}) or {})
-    params = options.pop("params", {}) or {}
+    params = case_insensitive_dict(options.pop("params", {}) or {})
+    # Preserve the preview query ordering after adopting the shared Foundry
+    # operation template. The generated builder still serializes and replaces
+    # this value; existing caller parameters keep their original positions.
+    if "api_version" in arguments and "api-version" not in params:
+        params["api-version"] = arguments["api_version"]
     if body is not _NO_BODY:
         content_type = options.pop("content_type", headers.pop("Content-Type", None))
         arguments["content_type"] = content_type or "application/json"
