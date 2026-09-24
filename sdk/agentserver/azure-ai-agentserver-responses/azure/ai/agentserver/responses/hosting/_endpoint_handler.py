@@ -1545,7 +1545,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         execution_task = record.execution_task
         if execution_task is not None:
             if not execution_task.done():
-                await asyncio.wait({execution_task})
+                done, _ = await asyncio.wait(
+                    {execution_task},
+                    timeout=float(self._runtime_options.shutdown_grace_period_seconds),
+                )
+                if execution_task not in done:
+                    return _invalid_request(
+                        "Response persistence is still in progress. Retry deletion.",
+                        _hdrs,
+                        param="response_id",
+                    )
             if not execution_task.cancelled():
                 error = execution_task.exception()
                 if error is not None:
@@ -1947,7 +1956,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         is_resilient_server = self._runtime_options.resilient_background
 
-        records = await self._runtime_state.list_records()
+        records = await self._runtime_state.begin_draining()
         for record in records:
             if record.response_context is not None:
                 # Fire ``context.shutdown`` so handlers awaiting it (or

@@ -9,6 +9,9 @@
 
 ### Bugs Fixed
 
+- Closed a graceful-shutdown admission race for stored streams and bounded
+  DELETE waits when deferred terminal persistence is stalled.
+
 - Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
   automatic truncation of conversation history. Positive limits remain supported.
 - Restored compatibility with usage payloads that omit
