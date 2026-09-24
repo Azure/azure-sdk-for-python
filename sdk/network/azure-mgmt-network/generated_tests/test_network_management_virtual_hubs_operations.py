@@ -24,7 +24,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_hubs.get(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             virtual_hub_parameters={"tags": {"str": "str"}},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_hubs.begin_delete(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -125,7 +125,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
     def test_virtual_hubs_list_by_resource_group(self, resource_group):
         response = self.client.virtual_hubs.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_hubs_list(self, resource_group):
         response = self.client.virtual_hubs.list(
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_hubs.begin_get_effective_virtual_hub_routes(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -160,7 +160,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             get_inbound_routes_parameters={"connectionType": "str", "resourceUri": "str"},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -173,7 +173,7 @@ class TestNetworkManagementVirtualHubsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             get_outbound_routes_parameters={"connectionType": "str", "resourceUri": "str"},
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
