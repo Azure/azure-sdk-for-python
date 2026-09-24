@@ -8,13 +8,14 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.data.ai.aio import AzureDataAIClient
+from azure.data.ai.types import SemanticRerankingInferenceRequest
 
 
 async def main() -> None:
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
     credential = AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"])
     async with AzureDataAIClient(endpoint, credential) as client:
-        request = {
+        request: SemanticRerankingInferenceRequest = {
             "query": "What is the capital of France?",
             "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],
             "topK": 2,
@@ -27,7 +28,7 @@ async def main() -> None:
         }
         result = await client.semantic_rerank(request)
 
-    for score in result.get("Scores", []):
+    for score in result.get("scores", []):
         print(score["index"], score["score"], score.get("document"))
         for sentence in score.get("sentenceScores", []):
             print("  Sentence", sentence["index"], "score:", sentence["score"])

@@ -103,18 +103,48 @@ namespace azure.data.ai.aio
 
 namespace azure.data.ai.models
 
-    class azure.data.ai.models.LatencyResult(_Model):
-        data_preprocess_time: Optional[float]
-        inference_time: Optional[float]
-        post_process_time: Optional[float]
+    class azure.data.ai.models.InferenceErrorResponse(_Model):
+        error: ProblemDetails
 
         @overload
         def __init__(
                 self, 
                 *, 
-                data_preprocess_time: Optional[float] = ..., 
-                inference_time: Optional[float] = ..., 
-                post_process_time: Optional[float] = ...
+                error: ProblemDetails
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.InnerError(_Model):
+        code: Optional[str]
+        innererror: Optional[InnerError]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Optional[str] = ..., 
+                innererror: Optional[InnerError] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.LatencyResult(_Model):
+        data_preprocess_time: Optional[timedelta]
+        inference_time: Optional[timedelta]
+        post_process_time: Optional[timedelta]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_preprocess_time: Optional[timedelta] = ..., 
+                inference_time: Optional[timedelta] = ..., 
+                post_process_time: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
@@ -122,10 +152,15 @@ namespace azure.data.ai.models
 
 
     class azure.data.ai.models.ProblemDetails(_Model):
+        code: str
         detail: Optional[str]
+        details: Optional[list[ODataV4Format]]
         extensions: Optional[dict[str, Any]]
+        innererror: Optional[InnerError]
         instance: Optional[str]
+        message: str
         status: Optional[int]
+        target: Optional[str]
         title: Optional[str]
         type: Optional[str]
 
@@ -133,10 +168,15 @@ namespace azure.data.ai.models
         def __init__(
                 self, 
                 *, 
+                code: str, 
                 detail: Optional[str] = ..., 
+                details: Optional[list[ODataV4Format]] = ..., 
                 extensions: Optional[dict[str, Any]] = ..., 
+                innererror: Optional[InnerError] = ..., 
                 instance: Optional[str] = ..., 
+                message: str, 
                 status: Optional[int] = ..., 
+                target: Optional[str] = ..., 
                 title: Optional[str] = ..., 
                 type: Optional[str] = ...
             ) -> None: ...
@@ -262,6 +302,20 @@ namespace azure.data.ai.models
                 self, 
                 *, 
                 total_tokens: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.data.ai.models.TooManyRequestsResponse(_Model):
+        error: ProblemDetails
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: ProblemDetails
             ) -> None: ...
 
         @overload

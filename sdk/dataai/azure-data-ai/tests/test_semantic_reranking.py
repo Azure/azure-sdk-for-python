@@ -128,9 +128,9 @@ async def test_response_is_not_normalized(open_client, invoke, respond, request_
 async def test_json_documents(open_client, invoke, respond, transport, result_payload):
     payload = {
         "query": "caf\u00e9",
-        "documents": [json.dumps({"description": "a caf\u00e9 in Paris"})],
+        "documents": [json.dumps({"meta": {"content": "a caf\u00e9 in Paris"}})],
         "documentType": "json",
-        "targetPaths": "/description",
+        "targetPaths": "meta.content",
         "model": "test-model",
         "returnDocuments": False,
     }
@@ -279,7 +279,7 @@ async def test_request_options_and_endpoint_path_are_preserved(
 
 @pytest.mark.asyncio
 async def test_custom_error_map_is_preserved(open_client, invoke, respond, request_payload):
-    respond((400, {"title": "Custom error", "status": 400}, {}))
+    respond((400, {"error": {"code": "CustomError", "message": "Custom error", "status": 400}}, {}))
     error_map = {400: ResourceNotFoundError}
     async with open_client() as client:
         with pytest.raises(ResourceNotFoundError) as caught:
@@ -304,6 +304,8 @@ async def test_service_errors_are_propagated(
     open_client, invoke, respond, transport, request_payload, status, error_type
 ):
     problem = {
+        "code": "ServiceError",
+        "message": "The request could not be completed.",
         "type": None,
         "title": "Service error",
         "status": status,
@@ -311,14 +313,17 @@ async def test_service_errors_are_propagated(
         "instance": "/inference/semanticReranking",
         "extensions": {"diagnostic": "test"},
     }
-    respond((status, problem, {"Retry-After": "3"}))
+    response_body = {"error": problem}
+    respond((status, response_body, {"Retry-After": "3", "x-ms-error-code": "ServiceError"}))
     async with open_client(retry_total=0) as client:
         with pytest.raises(error_type) as caught:
             await invoke(client, request_payload)
     assert caught.value.status_code == status
-    assert caught.value.response.json() == problem
+    assert caught.value.response.json() == response_body
+    assert caught.value.error.code == "ServiceError"
     assert caught.value.response.headers["X-Correlation-ID"] == "test-correlation-id"
     assert caught.value.response.headers["Retry-After"] == "3"
+    assert caught.value.response.headers["x-ms-error-code"] == "ServiceError"
     transport.send.assert_called_once()
 
 
@@ -326,7 +331,14 @@ async def test_service_errors_are_propagated(
 async def test_retry_after_uses_core_policy(
     open_client, invoke, respond, transport, request_payload, result_payload, asynchronous
 ):
-    respond((429, {"title": "Too many requests", "status": 429}, {"Retry-After": "3"}), (200, result_payload, {}))
+    respond(
+        (
+            429,
+            {"error": {"code": "TooManyRequests", "message": "Too many requests", "status": 429}},
+            {"Retry-After": "3", "x-ms-error-code": "TooManyRequests"},
+        ),
+        (200, result_payload, {}),
+    )
     async with open_client(retry_total=1) as client:
         result = await invoke(client, request_payload)
     assert result == result_payload

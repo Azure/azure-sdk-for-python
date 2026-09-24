@@ -141,7 +141,7 @@ for score in result.scores or []:
 | `batchSize` | `int` | Optional. Number of documents processed per batch, from 1 to 2147483647. |
 | `sort` | `bool` | Optional. Return scores sorted by relevance. |
 | `documentType` | `str` | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings. |
-| `targetPaths` | `str` | Optional string identifying the JSON paths to rank when `documentType` is `json`. |
+| `targetPaths` | `str` | Required for JSON documents. Use dot notation for nested properties, such as `meta.content`, and commas for multiple paths, such as `meta.content,id`. |
 | `returnSentenceScore` | `bool` | Optional. Include sentence-level scores. |
 
 Put these options inside the request dictionary, not in method keyword arguments.
@@ -154,13 +154,19 @@ Responses expose optional `scores` and `meta` fields. Score entries can include
 or `token_usage`, `latency`, `model_name`, and `model_version` as model attributes
 on `SemanticRerankingMetaResult`.
 
+Latency fields `dataPreprocessTime`, `inferenceTime`, and `postProcessTime` contain
+numeric milliseconds in the JSON response. The corresponding `LatencyResult` model
+attributes are `datetime.timedelta` values; dictionary-style access and `as_dict()`
+retain the numeric millisecond representation.
+
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
 inclusive range 0–1. Sentence indices are not capped at 2.
 
 The SDK follows the pinned TypeSpec contract without renaming response keys or
 normalizing legacy payloads. Use an endpoint implementing the
-`2026-09-01-preview` contract. The samples accept an optional `--model` argument
-and otherwise leave model selection to the service.
+`2026-09-01-preview` contract. The samples set `model` in their request dictionaries.
+Choose a model supported by your endpoint, or remove that field to use the service's
+default model.
 
 ## Examples
 
@@ -285,8 +291,10 @@ service-level .NET retry-default customization is not part of this generated bas
 
 Unsuccessful service responses raise `azure.core.exceptions.HttpResponseError`
 or a more specific Azure Core exception, such as `ClientAuthenticationError`.
-For a JSON `ProblemDetails` response, inspect `error.response.json()` to retrieve
-its fields. Response headers retain `X-Correlation-ID` and `Retry-After`.
+For a JSON error response, inspect `error.response.json()["error"]` to retrieve
+the required `code` and `message` and any additional `ProblemDetails` fields.
+Errors can include a `target`, detailed errors, and nested `innererror` information.
+Response headers retain `x-ms-error-code`, `X-Correlation-ID`, and `Retry-After`.
 
 Do not log credentials or sensitive document content. For HTTP 401/403, confirm
 the credential type and that the key belongs to the endpoint with key-based
@@ -297,7 +305,7 @@ resource permissions.
 
 `tsp-location.yaml` records the REST contract from
 [Azure/azure-rest-api-specs-pr#30255][spec_pr] at
-`b95cc18a80a8e8cc5cd5daa61f4cc1f3031bc769`. Its service title is **Azure Data AI**
+`30d0780f8eb3b8c94e98fd681993ae8d6069317d`. Its service title is **Azure Data AI**
 and its namespace is `Azure.Data.AI`; the route, authentication header/token
 audience, request fields, and API version remain unchanged.
 This package adopts the default output of `@azure-tools/typespec-python` 0.63.8,
@@ -332,11 +340,6 @@ python -m pip install -r dev_requirements.txt
 python -m pip install -e .
 python -m pytest tests
 ```
-
-This publishable package lives in `sdk/dataai/azure-data-ai`, with the
-`azure.data.ai` import namespace. The separate prototype lives in
-`sdk/cosmos/azure-data-ai-inference` and uses `azure.data.ai_inference`, so it cannot
-shadow the publishable SDK when an IDE adds the prototype to its source roots.
 
 Follow the [Azure SDK Python design guidelines][python_guidelines] for changes.
 

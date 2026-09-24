@@ -30,7 +30,10 @@ class SemanticRerankingInferenceRequest(TypedDict, total=False):
     :vartype sort: bool
     :ivar documentType: The format of the submitted documents. Known values are: "text" and "json".
     :vartype documentType: Union[str, "SemanticRerankingDocumentType"]
-    :ivar targetPaths: The JSON paths containing text to rank when the document type is JSON.
+    :ivar targetPaths: The property containing text to rank when the document type is JSON. This
+     property is required for JSON documents. Use dot notation for a nested property, for example
+     ``meta.content``. You can specify multiple property paths separated by commas, for example
+     ``meta.content,id``.
     :vartype targetPaths: str
     :ivar model: The name of the model used for the semantic reranking operation.
     :vartype model: str
@@ -53,7 +56,9 @@ class SemanticRerankingInferenceRequest(TypedDict, total=False):
     documentType: Union[str, "SemanticRerankingDocumentType"]
     """The format of the submitted documents. Known values are: \"text\" and \"json\"."""
     targetPaths: str
-    """The JSON paths containing text to rank when the document type is JSON."""
+    """The property containing text to rank when the document type is JSON. This property is required
+     for JSON documents. Use dot notation for a nested property, for example ``meta.content``. You
+     can specify multiple property paths separated by commas, for example ``meta.content,id``."""
     model: str
     """The name of the model used for the semantic reranking operation."""
     returnSentenceScore: bool

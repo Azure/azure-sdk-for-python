@@ -5,16 +5,14 @@
 
 import json
 import os
-from typing import Any
 
-from azure.core.credentials import AzureKeyCredential
 from azure.data.ai import AzureDataAIClient
+from azure.data.ai.types import SemanticRerankingInferenceRequest
+from azure.identity import DefaultAzureCredential
 
 
 def main() -> None:
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
-    credential = AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"])
-    client = AzureDataAIClient(endpoint=endpoint, credential=credential)
     documents = [
         {
             "id": "cosmos-db",
@@ -35,7 +33,7 @@ def main() -> None:
             "metadata": {"category": "database"},
         },
     ]
-    request: dict[str, Any] = {
+    request: SemanticRerankingInferenceRequest = {
         "query": "How does Azure Cosmos DB scale globally?",
         # Each document is a JSON-encoded string, not a dictionary.
         "documents": [json.dumps(document) for document in documents],
@@ -48,9 +46,9 @@ def main() -> None:
         "targetPaths": "title,description",
         "model": "aisearch-reranker",
     }
-
-
-    result = client.semantic_rerank(request)
+    with DefaultAzureCredential() as credential:
+        with AzureDataAIClient(endpoint=endpoint, credential=credential) as client:
+            result = client.semantic_rerank(request)
 
     for score in result.get("scores", []):
         print(score["index"], score["score"])

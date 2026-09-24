@@ -4,10 +4,7 @@
 """JSON-document wire coverage using real SDK policies and mocked transport."""
 
 from copy import deepcopy
-from contextlib import ExitStack
-import importlib.util
 import json
-from pathlib import Path
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -115,11 +112,13 @@ async def test_invalid_json_document_errors_are_service_errors(
 ):
     payload = {"query": "text", "documents": documents, "documentType": "json", "targetPaths": "description"}
     problem = {"code": "InvalidRequestBody", "message": "Invalid JSON document"}
-    respond((400, problem, {}))
+    respond((400, {"error": problem}, {"x-ms-error-code": "InvalidRequestBody"}))
     async with open_client(json_credential) as client:
         with pytest.raises(HttpResponseError) as caught:
             await invoke(client, payload)
     assert caught.value.status_code == 400
-    assert caught.value.response.json() == problem
+    assert caught.value.response.json() == {"error": problem}
+    assert caught.value.model.error.code == "InvalidRequestBody"
+    assert caught.value.response.headers["x-ms-error-code"] == "InvalidRequestBody"
     assert json.loads(transport.send.call_args.args[0].content) == payload
     transport.send.assert_called_once()

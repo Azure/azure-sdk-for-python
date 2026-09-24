@@ -9,9 +9,8 @@ The SDK takes its endpoint and credential directly from the application. Environ
 variables are optional configuration conventions, not SDK requirements.
 
 The synchronous `semantic_reranking.py` sample uses the endpoint, key, and request configured
-in `get_sample_inputs()`. The throttling benchmark reuses that function, so configuration
-changes apply to both samples. Preserve local configuration privately; do not commit real credentials.
-The asynchronous and Entra samples read these environment variables:
+in `get_sample_inputs()`. Preserve local configuration privately; do not commit real credentials.
+The samples read these environment variables:
 
 | Variable | Value |
 | --- | --- |
@@ -22,18 +21,14 @@ Never put real credentials in source code intended to be shared.
 
 - `python samples/semantic_reranking.py`: synchronous `AzureKeyCredential` example with sentence scores.
 - `python samples/semantic_reranking_async.py`: asynchronous `AzureKeyCredential` example.
-- `python samples/semantic_reranking_entra.py`: synchronous Microsoft Entra example.
-  Install `azure-identity` and configure a supported credential with permission
+- `python samples/semantic_reranking_entra.py`: synchronous Microsoft Entra example using
+  `DefaultAzureCredential`. Install `azure-identity` and configure a supported credential with permission
   to invoke the service endpoint.
 - `python samples/semantic_reranking_entra_json.py`: Microsoft Entra example for
-  JSON documents, selected fields, and document/sentence scores.
-- `python samples/semantic_reranking_throttling.py`: bounded asynchronous throttling benchmark
-  using the original synchronous sample's current endpoint, key, query, documents, and options.
+  JSON documents, selected fields, and document/sentence scores, using `DefaultAzureCredential`.
 
-For the async sample, install `aiohttp`. The Entra sample only needs
+For the async sample, install `aiohttp`. The Entra samples only need
 `AZURE_DATA_AI_ENDPOINT`, not `AZURE_DATA_AI_KEY`.
-The synchronous sample also retains local `AzureCliCredential` configuration, which
-requires `azure-identity`; its current client call uses the key instead.
 
 Both clients accept `AzureKeyCredential` or the appropriate sync/async token
 credential. Wrap raw keys with `AzureKeyCredential`. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a
@@ -41,23 +36,21 @@ key issued for an endpoint with key-based authentication enabled.
 
 ## Model selection and request options
 
-The asynchronous and Entra examples accept `--model`. Omitting it leaves model selection to the service.
-The original synchronous example uses the model configured in `get_sample_inputs()`.
+Each sample sets `model` directly in its request dictionary. Change that field to a
+model supported by your endpoint, or remove it to leave model selection to the service.
+The synchronous example configures its request in `get_sample_inputs()`.
 The TypeSpec example uses `semantic-reranker-v1`; choose a model supported by your
 endpoint rather than assuming that every endpoint exposes that model.
 
-```bash
-python samples/semantic_reranking_async.py --model semantic-reranker-v1
-python samples/semantic_reranking_entra.py --model semantic-reranker-v1
-```
-
 The request dictionaries demonstrate `topK`, `batchSize`, `sort`, `returnDocuments`,
-`returnSentenceScore`, and `documentType`. When supplied, the model argument becomes
-the request's `model` field. These are service request-body fields, not method keyword
-arguments.
+`returnSentenceScore`, and `documentType`. They use the generated
+`azure.data.ai.types.SemanticRerankingInferenceRequest` TypedDict for type checking.
+These are service request-body fields, not method keyword arguments.
 
-For JSON documents, JSON-encode each document string and use `documentType: "json"`
-with a `targetPaths` string. See the [JSON document and model-selection example](../README.md#model-selection-and-json-documents).
+For JSON documents, JSON-encode each document string and use `documentType: "json"`.
+Supply `targetPaths`, using dot notation for nested properties and commas for
+multiple paths, such as `"meta.content,id"`.
+See the [JSON document and model-selection example](../README.md#model-selection-and-json-documents).
 
 Python method names use snake_case, but dictionary keys keep the service's JSON
 names: `topK`, `returnDocuments`, `returnSentenceScore`, and `sentenceScores`.
@@ -72,10 +65,9 @@ configuration, without an API key:
 
 ```bash
 python samples/semantic_reranking_entra_json.py
-python samples/semantic_reranking_entra_json.py --model semantic-reranker-v1
 ```
 
-Use a model supported by your endpoint, or omit `--model` for its default.
+Use a model supported by your endpoint, or remove the request's `model` field for its default.
 The sample serializes each document with `json.dumps`, sets `documentType` to
 `"json"`, and passes `"title,description"` as the comma-separated `targetPaths`
 string. Do not pass dictionaries directly in the `documents` array.
@@ -84,48 +76,3 @@ Returned document text remains a JSON-encoded string; the sample uses `json.load
 to display its fields. It also prints any returned sentence scores. Only one
 JSON sample is provided; automated coverage exercises both sync/async clients and
 generated-model and dictionary requests with `AzureKeyCredential` and Entra authentication.
-
-## Throttling benchmark
-
-Use only an endpoint/account where you are authorized to generate test traffic.
-The benchmark needs `aiohttp` and uses your original sample's local configuration;
-it neither copies the key into another file nor prints credentials or document contents.
-No wheel rebuild is needed for these sample-only changes.
-
-From this package directory, run a burst with retries disabled so 429 responses
-remain visible:
-
-```bash
-python samples/semantic_reranking_throttling.py --requests 60 --concurrency 25
-```
-
-The defaults are 60 logical calls, at most 25 concurrent calls, and a 60-second
-deadline per call. These settings provide a burst above the reported 20-request
-threshold, but **20 requests is not assumed to mean 20 requests per second**.
-The limiter's time window, scope, and traffic from other callers affect the results.
-No warm-up traffic is sent.
-
-To exercise Azure Core's built-in retries and `Retry-After` handling:
-
-```bash
-python samples/semantic_reranking_throttling.py --requests 60 --concurrency 25 --retry-total 3
-```
-
-`--retry-total` changes the total retry budget; Azure Core's other retry rules and
-per-error limits still apply. Retries increase HTTP traffic beyond the logical
-call count. `--timeout` includes retry waits, so increase it when testing long
-`Retry-After` delays. `--model` optionally overrides the original sample's model
-for this run without changing that sample.
-
-The JSON report distinguishes final logical-call outcomes from all HTTP responses.
-`throttled_calls` counts calls that end in 429; `http_status_counts["429"]` also
-includes throttles recovered by retries. `additional_http_attempts` counts attempts
-beyond the first attempt per completed call, including retries or redirects.
-The report includes throughput, overall and successful-call p50/p95/p99 latency,
-`Retry-After` values, and up to ten error-response correlation IDs. Logical latency
-includes retry/backoff time; fast rejected calls are excluded from success latency.
-
-HTTP 429 is an expected benchmark outcome. Other HTTP errors, transport failures,
-or timeouts produce a nonzero exit code. HTTP 401/403 stops scheduling new calls;
-already-running calls are allowed to finish. If no 429 is observed, the report
-says so rather than claiming that the limiter is absent or inferring its window.

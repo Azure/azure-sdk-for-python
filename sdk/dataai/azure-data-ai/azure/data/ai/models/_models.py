@@ -7,7 +7,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
+import datetime
 from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+
+from azure.core.exceptions import ODataV4Format
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -15,38 +18,109 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The result of the latency in the semantic reranking operation.
+class InferenceErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An unexpected error response.
 
-    :ivar data_preprocess_time: The time spent on data preprocessing in the semantic reranking
-     operation.
-    :vartype data_preprocess_time: float
-    :ivar inference_time: The time spent on inference in the semantic reranking operation.
-    :vartype inference_time: float
-    :ivar post_process_time: The time spent on post-processing in the semantic reranking operation.
-    :vartype post_process_time: float
+    :ivar error: The error object. Required.
+    :vartype error: ~azure.data.ai.models.ProblemDetails
     """
 
-    data_preprocess_time: Optional[float] = rest_field(
-        name="dataPreprocessTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The time spent on data preprocessing in the semantic reranking operation."""
-    inference_time: Optional[float] = rest_field(
-        name="inferenceTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The time spent on inference in the semantic reranking operation."""
-    post_process_time: Optional[float] = rest_field(
-        name="postProcessTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The time spent on post-processing in the semantic reranking operation."""
+    error: "_models.ProblemDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        data_preprocess_time: Optional[float] = None,
-        inference_time: Optional[float] = None,
-        post_process_time: Optional[float] = None,
+        error: "_models.ProblemDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An object containing more specific information about the error. As per Azure REST API
+    guidelines - `https://aka.ms/AzureRestApiGuidelines#handling-errors
+    <https://aka.ms/AzureRestApiGuidelines#handling-errors>`_.
+
+    :ivar code: One of a server-defined set of error codes.
+    :vartype code: str
+    :ivar innererror: Inner error.
+    :vartype innererror: ~azure.data.ai.models.InnerError
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """One of a server-defined set of error codes."""
+    innererror: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inner error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        innererror: Optional["_models.InnerError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result of the latency in the semantic reranking operation.
+
+    :ivar data_preprocess_time: The time spent on data preprocessing in the semantic reranking
+     operation, in milliseconds.
+    :vartype data_preprocess_time: ~datetime.timedelta
+    :ivar inference_time: The time spent on inference in the semantic reranking operation, in
+     milliseconds.
+    :vartype inference_time: ~datetime.timedelta
+    :ivar post_process_time: The time spent on post-processing in the semantic reranking operation,
+     in milliseconds.
+    :vartype post_process_time: ~datetime.timedelta
+    """
+
+    data_preprocess_time: Optional[datetime.timedelta] = rest_field(
+        name="dataPreprocessTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="duration-milliseconds-float",
+    )
+    """The time spent on data preprocessing in the semantic reranking operation, in milliseconds."""
+    inference_time: Optional[datetime.timedelta] = rest_field(
+        name="inferenceTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="duration-milliseconds-float",
+    )
+    """The time spent on inference in the semantic reranking operation, in milliseconds."""
+    post_process_time: Optional[datetime.timedelta] = rest_field(
+        name="postProcessTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="duration-milliseconds-float",
+    )
+    """The time spent on post-processing in the semantic reranking operation, in milliseconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_preprocess_time: Optional[datetime.timedelta] = None,
+        inference_time: Optional[datetime.timedelta] = None,
+        post_process_time: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -63,6 +137,17 @@ class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-k
 class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about an HTTP API error.
 
+    :ivar code: One of a server-defined set of error codes. Required.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error. Required.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.core.ODataV4Format]
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.data.ai.models.InnerError
     :ivar type: A URI reference identifying the problem type.
     :vartype type: str
     :ivar title: A short, human-readable summary of the problem.
@@ -77,6 +162,16 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype extensions: dict[str, any]
     """
 
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """One of a server-defined set of error codes. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error. Required."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error."""
+    details: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of details about specific errors that led to this reported error."""
+    innererror: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An object containing more specific information than the current object about the error."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A URI reference identifying the problem type."""
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -94,6 +189,11 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     def __init__(
         self,
         *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+        details: Optional[list[ODataV4Format]] = None,
+        innererror: Optional["_models.InnerError"] = None,
         type: Optional[str] = None,
         title: Optional[str] = None,
         status: Optional[int] = None,
@@ -131,7 +231,10 @@ class SemanticRerankingInferenceRequest(_Model):  # pylint: disable=docstring-ke
     :ivar document_type: The format of the submitted documents. Known values are: "text" and
      "json".
     :vartype document_type: str or ~azure.data.ai.models.SemanticRerankingDocumentType
-    :ivar target_paths: The JSON paths containing text to rank when the document type is JSON.
+    :ivar target_paths: The property containing text to rank when the document type is JSON. This
+     property is required for JSON documents. Use dot notation for a nested property, for example
+     ``meta.content``. You can specify multiple property paths separated by commas, for example
+     ``meta.content,id``.
     :vartype target_paths: str
     :ivar model: The name of the model used for the semantic reranking operation.
     :vartype model: str
@@ -160,7 +263,9 @@ class SemanticRerankingInferenceRequest(_Model):  # pylint: disable=docstring-ke
     target_paths: Optional[str] = rest_field(
         name="targetPaths", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The JSON paths containing text to rank when the document type is JSON."""
+    """The property containing text to rank when the document type is JSON. This property is required
+     for JSON documents. Use dot notation for a nested property, for example ``meta.content``. You
+     can specify multiple property paths separated by commas, for example ``meta.content,id``."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the model used for the semantic reranking operation."""
     return_sentence_score: Optional[bool] = rest_field(
@@ -374,6 +479,34 @@ class TokenUsageResult(_Model):  # pylint: disable=docstring-keyword-should-matc
         self,
         *,
         total_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TooManyRequestsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request was rejected because the service is receiving too many requests.
+
+    :ivar error: The error object. Required.
+    :vartype error: ~azure.data.ai.models.ProblemDetails
+    """
+
+    error: "_models.ProblemDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error object. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.ProblemDetails",
     ) -> None: ...
 
     @overload

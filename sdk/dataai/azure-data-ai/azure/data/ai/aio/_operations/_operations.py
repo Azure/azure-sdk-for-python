@@ -163,10 +163,10 @@ class _AzureDataAIClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = None
             if response.status_code == 429:
-                error = _failsafe_deserialize(_models.ProblemDetails, response)
+                error = _failsafe_deserialize(_models.TooManyRequestsResponse, response)
             else:
                 error = _failsafe_deserialize(
-                    _models.ProblemDetails,
+                    _models.InferenceErrorResponse,
                     response,
                 )
             raise HttpResponseError(response=response, model=error)
