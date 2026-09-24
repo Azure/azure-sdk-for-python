@@ -224,9 +224,12 @@ stages:
           - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
           - task: UsePythonVersion@0
-            displayName: "Use Python $(PythonVersion)"
+            displayName: "Use Python 3.11 (arm64)"
             inputs:
-              versionSpec: $(PythonVersion)
+              # The hosted macOS image is ARM64-only. The signed wheels use abi3,
+              # so Python 3.11 can install and exercise the cp310-abi3 wheel.
+              versionSpec: '3.11'
+              architecture: arm64
 
           - task: DownloadPipelineArtifact@2
             displayName: Download signed mac wheel
