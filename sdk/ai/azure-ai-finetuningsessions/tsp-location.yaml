@@ -1,6 +1,6 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
 # Required LoRA inputs and structured-output sampling; use the repository's shared emitter.
-commit: 3ac067b3b4893b29febbeec28b5fae365507b112
+commit: 04f4e85f3fa11874c95f3ea96c29d1ab36bfa340
 repo: Azure/azure-rest-api-specs
 additionalDirectories:
 - specification/ai-foundry/data-plane/Foundry/src/session-finetuning

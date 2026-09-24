@@ -16,9 +16,9 @@
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
     "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
-    "commit": "3ac067b3b4893b29febbeec28b5fae365507b112",
+    "commit": "04f4e85f3fa11874c95f3ea96c29d1ab36bfa340",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "68e6ee31ee0a4009ad6ca87bee6682c9ca3ac59855a81a4a1f35f46ada52aae9",
+    "source_fingerprint_sha256": "83227e4aa42b4f213e4ef1a86d3fc0fbe096314ebd7f341c2f972c14d05a575b",
     "client_sha256": "6d42936cde05c792f1e62205d7cae259b6092fa70bc69e9e692318f5047b552d",
     "models_sha256": "fcabb03f521187b150369621e7451ff6c7ca89569a3ccddcac0b7030f70bc4a9",
     "config_sha256": "795ab0b5d268402651f8115ea20bf29dd1b1076258eb13c64b09772628d3ef90",
@@ -40,7 +40,7 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "40ff4065278a056cb5529373132a9d7fe24e2778a4c9bc2243b0a8de5618897e",
+    "generated_inventory_fingerprint_sha256": "4ba517fd9b901ecb043b7a0cb8e05afb062a9648d8ab6a3ba8970ad5afcee4f6",
     "runtime_files": 28,
     "runtime_python_modules": 27,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
@@ -59,6 +59,14 @@
     "method": "Seed only maintained modules before emission; pinned emitter preserves/formats them; compare complete output with public runtime. No generated-source rewriting."
   },
   "validation": {
+    "query_decorator_cleanup_20260924": {
+      "spec_commit": "04f4e85f3fa11874c95f3ea96c29d1ab36bfa340",
+      "change": "Use bare @query for limit and offset; their wire names, pagination annotations, optionality and defaults are unchanged.",
+      "independent_emissions": 2,
+      "runtime_files_unchanged": 28,
+      "rest_openapi_files_unchanged": 4,
+      "generated_delta": "Only the emitted APIView CrossLanguageVersion source fingerprint changed; public API and runtime are unchanged."
+    },
     "upstream_tests": 434,
     "upstream_test_files": 19,
     "current_tests": 1637,
