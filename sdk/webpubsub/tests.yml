@@ -1,10 +1,18 @@
 trigger: none
 
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-mgmt-webpubsub
+      - azure-messaging-webpubsubservice
+      - azure-messaging-webpubsubclient
+
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: azure*
       ServiceDirectory: webpubsub
+      Packages: ${{ parameters.Services }}
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

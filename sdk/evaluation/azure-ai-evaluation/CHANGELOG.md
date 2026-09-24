@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.6 (Unreleased)
+## 1.18.7 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.18.6 (2026-09-23)
+
+### Bugs Fixed
+
+- Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+- Prevented AOAI data-source generation from mutating nested input data shared with callable evaluators.
 
 ## 1.18.5 (2026-09-02)
 
