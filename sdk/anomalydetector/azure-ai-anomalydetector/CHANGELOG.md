@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.6 is no longer supported. Please use Python version 3.9 or later.
+
 ## 3.0.0b6 (2022-12-08)
   **Features**
   - Added `OneTable` and `MultiTable` two data schemas.
