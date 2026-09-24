@@ -1,10 +1,15 @@
 # Release History
 
-## 7.15.0b3 (Unreleased)
+## 7.15.0 (2026-10-06)
 
 ### Features Added
 
 - Added an opt-in `try_timeout` client keyword that bounds a single attempt rather than the whole operation. Applies to sending, management operations, and AMQP link acquisition, where the wait for the link to become ready was previously unbounded. Each attempt gets a fresh `try_timeout`, still capped by the caller's remaining time; exceeding it raises a retryable `OperationTimeoutError` and retries. Must be greater than 0 if specified, and defaults to `None` (off), preserving existing behavior. It also caps the link acquisition performed by `receive_messages()` and by receiver iteration, but does not bound the `receive_messages()` long poll, the iterator's own wait, or message settlement. Opening, closing and error-path cleanup of the AMQP handler are bounded on the async client, where a slow call is cancelled once the budget is spent and a cleanup failure never replaces the error that triggered it; the sync client cannot interrupt a blocking call and so detects the overrun only once it returns. Mirrors `TryTimeout` in the .NET, Java and Go SDKs.
+
+- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
+- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages or stored session state, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
+- Added `sql_filter_count` and `correlation_filter_count` properties to `TopicRuntimeProperties`, exposing the total number of SQL filters and correlation filters across all of a topic's subscriptions.
+- Added API version `2024-05` and made it the default for the management client, which is required for the topic filter counts above.
 
 ### Breaking Changes
 
@@ -14,19 +19,6 @@
 
 - Fixed a leak of `aiohttp.ClientSession` instances when the async `AmqpOverWebsocket` transport could not connect or its WebSocket failed while closing. ([#49131](https://github.com/Azure/azure-sdk-for-python/issues/49131))
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
-
-### Other Changes
-
-## 7.15.0b2 (2026-08-21)
-
-### Features Added
-
-- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
-- Added `ServiceBusClient.list_queue_sessions()` and `ServiceBusClient.list_subscription_sessions()` (sync and async) to list session IDs for entities with active messages or stored session state, with optional filtering by session-state update timestamp. The methods return an `ItemPaged[str]` (`AsyncItemPaged[str]` on the async client) so callers can iterate every session transparently or page with `by_page()`. Implements the `com.microsoft:get-message-sessions` management operation. ([#46575](https://github.com/Azure/azure-sdk-for-python/pull/46575))
-- Added `sql_filter_count` and `correlation_filter_count` properties to `TopicRuntimeProperties`, exposing the total number of SQL filters and correlation filters across all of a topic's subscriptions.
-- Added API version `2024-05` and made it the default for the management client, which is required for the topic filter counts above.
-
-### Bugs Fixed
 
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
 - Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
@@ -44,6 +36,7 @@
 - Clarified in the `application_properties` documentation (the `ServiceBusMessage` constructor, the `application_properties` property, and the README) that when a message is received, its keys and any string values are returned as `bytes`, not `str`, along with the recommended bytes-key access and decoding pattern. ([#45082](https://github.com/Azure/azure-sdk-for-python/issues/45082))
 - When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
 - Management operations (peek, deferred receive, message settlement over the management link, lock renewal, session state, session listing, schedule/cancel) now send `com.microsoft:server-timeout`: the caller's remaining time less one second, or 60 seconds when none was given. Previously no bound was sent, so a stalled service held the call until the AMQP link failed; it now raises a retryable `OperationTimeoutError`, so a persistently stalled service surfaces after roughly four minutes at default retry settings. Matches the .NET, Java and Go SDKs.
+- Removed the deprecation warning for the legacy uAMQP transport. The `uamqp_transport=True` option remains available in 7.15.0.
 
 ## 7.14.3 (2025-11-11)
 
