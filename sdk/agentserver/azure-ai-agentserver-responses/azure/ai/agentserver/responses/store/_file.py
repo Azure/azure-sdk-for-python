@@ -544,7 +544,8 @@ class FileResponseStore(ResponseProviderProtocol):
         - When ``conversation_id`` is set, iterates all non-deleted
           responses in that conversation and contributes their
           ``history_item_ids + input_item_ids + output_item_ids``.
-        - Both may be set; results are concatenated in the same order.
+        - Both may be set; results are combined in the same order and duplicate
+          item IDs are removed while preserving their first occurrence.
         - When over ``limit``, keeps the most recent N item IDs from the
           resolved chain, preserving chronological order in the returned slice.
 
@@ -554,12 +555,12 @@ class FileResponseStore(ResponseProviderProtocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation id to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of item IDs to return (most recent N).
+        :param limit: Maximum number of item IDs to return (most recent N), or -1 for all items.
         :type limit: int
         :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
         :paramtype context: PlatformContext | None
-        :returns: List of item IDs from the resolved chain (possibly empty).
+        :returns: Ordered list of unique item IDs from the resolved chain (possibly empty).
         :rtype: list[str]
         """
         del context
@@ -585,6 +586,9 @@ class FileResponseStore(ResponseProviderProtocol):
                     resolved.extend(indexes.get("input_item_ids") or [])
                     resolved.extend(indexes.get("output_item_ids") or [])
 
+            resolved = list(dict.fromkeys(resolved))
+            if limit == -1:
+                return resolved
             if limit <= 0:
                 return []
             # Keep the most recent N item IDs from the resolved chain,

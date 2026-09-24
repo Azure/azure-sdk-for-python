@@ -3,8 +3,12 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
+- Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
+- Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.
 
 ## 1.35.0 (2026-09-08)
 

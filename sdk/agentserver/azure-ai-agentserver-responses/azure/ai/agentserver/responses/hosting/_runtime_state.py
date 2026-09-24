@@ -50,7 +50,9 @@ class _RuntimeState:
     def __init__(self) -> None:
         """Initialize the runtime state with empty record and deletion sets."""
         self._records: dict[str, ResponseExecution] = {}
+        self._pending_records: dict[str, ResponseExecution] = {}
         self._deleted_response_ids: set[str] = set()
+        self._draining = False
         self._lock = asyncio.Lock()
 
     async def add(self, record: ResponseExecution) -> None:
@@ -62,8 +64,44 @@ class _RuntimeState:
         :rtype: None
         """
         async with self._lock:
+            self._pending_records.pop(record.response_id, None)
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
+
+    async def add_pending(self, record: ResponseExecution) -> bool:
+        """Track accepted unpublished work unless shutdown has started.
+
+        :param record: The execution awaiting its first response event.
+        :type record: ResponseExecution
+        :return: ``True`` when registered, ``False`` when shutdown is already draining.
+        :rtype: bool
+        """
+        async with self._lock:
+            if self._draining:
+                return False
+            self._pending_records[record.response_id] = record
+            return True
+
+    async def begin_draining(self) -> list[ResponseExecution]:
+        """Atomically reject new pending work and snapshot active executions.
+
+        :return: Published and pending executions accepted before shutdown.
+        :rtype: list[ResponseExecution]
+        """
+        async with self._lock:
+            self._draining = True
+            return list(self._records.values()) + list(self._pending_records.values())
+
+    async def discard_pending(self, response_id: str) -> None:
+        """Discard shutdown bookkeeping for an execution that never published.
+
+        :param response_id: The pending execution's response ID.
+        :type response_id: str
+        :return: None
+        :rtype: None
+        """
+        async with self._lock:
+            self._pending_records.pop(response_id, None)
 
     async def get(self, response_id: str) -> ResponseExecution | None:
         """Look up an execution record by response ID.
@@ -200,13 +238,13 @@ class _RuntimeState:
             return [*history, *deepcopy(record.input_items)]
 
     async def list_records(self) -> list[ResponseExecution]:
-        """Return a snapshot list of all execution records in the store.
+        """Return published and pending execution records for shutdown draining.
 
-        :return: List of all current execution records.
+        :return: List of all current execution records, including unpublished work.
         :rtype: list[ResponseExecution]
         """
         async with self._lock:
-            return list(self._records.values())
+            return list(self._records.values()) + list(self._pending_records.values())
 
     @staticmethod
     def to_snapshot(execution: ResponseExecution) -> dict[str, Any]:
