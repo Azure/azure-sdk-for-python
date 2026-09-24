@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b3 (2026-09-24)
+
+### Other Changes
+
+- Updated the package version to validate APIView creation for signed binary
+  packages with multiple platform-specific wheels.
+
 ## 1.0.0b2 (2026-09-24)
 
 ### Other Changes

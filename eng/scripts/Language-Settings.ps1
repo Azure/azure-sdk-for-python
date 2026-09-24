@@ -410,17 +410,24 @@ function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
   $whlDirectory = (Join-Path -Path $artifactDir -ChildPath $packageName)
 
   Write-Host "Searching for $($artifactName) wheel in artifact path $($whlDirectory)"
-  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")})
+  $files = @(Get-ChildItem $whlDirectory | ? {$_.Name.EndsWith(".whl")} | Sort-Object Name)
   if (!$files)
   {
     Write-Host "$whlDirectory does not have wheel package for $($artifactName)"
     return $null
   }
-  elseif($files.Count -ne 1)
+  elseif($files.Count -gt 1)
   {
-    Write-Host "$whlDirectory should contain only one published wheel package for $($artifactName)"
-    Write-Host "No of Packages $($files.Count)"
-    return $null
+    $linuxFiles = @($files | ? {$_.Name -match "(manylinux|musllinux|linux_(x86_64|aarch64))"})
+    if (!$linuxFiles)
+    {
+      Write-Host "$whlDirectory contains multiple wheel packages for $($artifactName), but none are Linux wheels."
+      Write-Host "No of Packages $($files.Count)"
+      return $null
+    }
+
+    $files = @($linuxFiles[0])
+    Write-Host "Found multiple wheel packages for $($artifactName); selecting representative Linux wheel $($files[0].Name)"
   }
 
   # Python requires pregenerated token file in addition to wheel to generate API review.
