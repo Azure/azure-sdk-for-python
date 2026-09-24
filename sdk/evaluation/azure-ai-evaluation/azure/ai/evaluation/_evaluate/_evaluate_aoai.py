@@ -261,12 +261,16 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
         not kwargs
         or not kwargs.get("item_schema")
         or not isinstance(kwargs["item_schema"], dict)
-        or "properties" not in kwargs["item_schema"]
+        or (
+            "properties" not in kwargs["item_schema"]
+            and not isinstance(kwargs["item_schema"].get("additionalProperties"), dict)
+        )
     ):
         return
 
     if "item_schema" in data_source_config:
         explicit_schema = deepcopy(kwargs["item_schema"])
+        explicit_properties = explicit_schema.get("properties", {})
         combined = deepcopy(data_source_config["item_schema"])
         properties = combined.setdefault("properties", {})
         inherited_required = combined.get("required", [])
@@ -274,9 +278,9 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
             # Inferred properties would bypass an explicit restriction on additional properties.
             properties = {}
             inherited_required = []
-        properties.update(explicit_schema["properties"])
+        properties.update(explicit_properties)
         # Explicit subtrees are authoritative, including optional properties and constraints.
-        required = [name for name in inherited_required if name not in explicit_schema["properties"]]
+        required = [name for name in inherited_required if name not in explicit_properties]
         for name in explicit_schema.get("required", []):
             if name not in required:
                 required.append(name)
@@ -960,7 +964,13 @@ def _get_data_source(
     """
 
     explicit_properties = item_schema.get("properties", {}) if item_schema is not None else {}
+    explicit_additional_properties = (
+        isinstance(item_schema.get("additionalProperties"), dict) if item_schema is not None else False
+    )
     missing = object()
+
+    def _has_explicit_schema(key: str) -> bool:
+        return key in explicit_properties or explicit_additional_properties
 
     def _convert_value(val: Any, explicit: bool = False) -> Any:
         """Convert to AOAI-friendly representation while preserving structure when useful."""
@@ -1083,13 +1093,21 @@ def _get_data_source(
     explicit_source_columns = {
         spec["dataframe_col"]
         for spec in path_specs
-        if spec["relative_parts"][0] in explicit_properties and not spec["is_run_output"]
+        if _has_explicit_schema(spec["relative_parts"][0]) and not spec["is_run_output"]
     }
+
+    def _is_flattened_field(key: str, source: Dict[str, Any]) -> bool:
+        root_key = key.split(".", 1)[0]
+        return (
+            key not in explicit_properties
+            and root_key != key
+            and (key in explicit_source_columns or (root_key in source and _has_explicit_schema(root_key)))
+        )
 
     # iterrows can promote integer columns to floats when another column contains floats.
     rows = (
         (dict(zip(input_data_df.columns, values)) for values in input_data_df.itertuples(index=False, name=None))
-        if explicit_properties
+        if explicit_properties or explicit_additional_properties
         else (row.to_dict() for _, row in input_data_df.iterrows())
     )
     for row in rows:
@@ -1099,7 +1117,11 @@ def _get_data_source(
         if isinstance(source_item, dict):
             # Flattened mappings omit empty objects and can omit siblings of mapped leaves.
             item_root.update(
-                {key: _convert_value(source_item[key], True) for key in explicit_properties if key in source_item}
+                {
+                    key: _convert_value(value, True)
+                    for key, value in source_item.items()
+                    if _has_explicit_schema(key) and not _is_flattened_field(key, source_item)
+                }
             )
 
         # Track which top-level keys under the wrapper have been populated via mappings
@@ -1110,7 +1132,7 @@ def _get_data_source(
             if not rel_parts:
                 continue
 
-            explicit = rel_parts[0] in explicit_properties
+            explicit = _has_explicit_schema(rel_parts[0])
             if spec["is_run_output"]:
                 val = row.get(spec["dataframe_col"], missing if explicit else None)
             elif explicit:
@@ -1145,14 +1167,10 @@ def _get_data_source(
                     continue
                 if key in item_root:
                     continue
-                root_key = key.split(".", 1)[0]
-                if key not in explicit_properties and (
-                    key in explicit_source_columns
-                    or (root_key != key and root_key in explicit_properties and root_key in wrapper_view)
-                ):
+                if _is_flattened_field(key, wrapper_view):
                     # Do not duplicate flattened leaves alongside their explicitly declared object.
                     continue
-                item_root[key] = _convert_value(raw_val, key in explicit_properties)
+                item_root[key] = _convert_value(raw_val, _has_explicit_schema(key))
 
         content_row: Dict[str, Any] = {}
 

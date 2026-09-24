@@ -420,8 +420,32 @@ class TestGenerateDataSourceConfig:
 class TestGetDataSource:
     """Test suite for the _get_data_source function."""
 
+    @pytest.mark.parametrize("mapped", [False, True])
+    @pytest.mark.parametrize("declaration", [{"type": ["integer", "null"]}, {"type": "string"}])
+    def test_additional_properties_preserve_null_and_missing(self, mapped, declaration):
+        schema = {"type": "object", "additionalProperties": declaration}
+        frame = pd.DataFrame([{"count": 0, "empty": None}], dtype=object)
+        mapping = {key: f"${{data.{key}}}" for key in ("count", "empty", "missing")} if mapped else {}
+
+        item = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"][0]["item"]
+
+        assert item == {"count": 0, "empty": None}
+        assert type(item["count"]) is int
+        assert item["empty"] is None
+        assert "missing" not in item
+
+    @pytest.mark.parametrize("additional_properties", [True, False])
+    def test_boolean_additional_properties_keep_legacy_extra_values(self, additional_properties):
+        schema = {"properties": {"label": {"type": "string"}}, "additionalProperties": additional_properties}
+        frame = pd.DataFrame([{"label": "synthetic", "extra": 0}], dtype=object)
+
+        item = _get_data_source(frame, {"extra": "${data.extra}"}, item_schema=schema)["source"]["content"][0]["item"]
+
+        assert item == {"label": "synthetic", "extra": "0"}
+
     @pytest.mark.parametrize("source", ["mapped", "unmapped", "target"])
-    def test_explicit_values_are_preserved_without_coercion(self, source):
+    @pytest.mark.parametrize("additional_properties", [False, True])
+    def test_explicit_values_are_preserved_without_coercion(self, source, additional_properties):
         values = {
             "count": 0,
             "ratio": 1.5,
@@ -449,6 +473,8 @@ class TestGetDataSource:
             "integer",
         ]
         schema = {"type": "object", "properties": {key: {"type": kind} for key, kind in zip(values, types)}}
+        if additional_properties:
+            schema = {"type": "object", "additionalProperties": {}}
         snapshot = deepcopy(values)
         frame = pd.DataFrame(
             [{f"__outputs.{key}" if source == "target" else key: value for key, value in values.items()}],
@@ -473,7 +499,8 @@ class TestGetDataSource:
 
     @pytest.mark.parametrize("wrapped", [False, True])
     @pytest.mark.parametrize("reverse", [False, True])
-    def test_explicit_container_and_leaf_overlap_preserves_sparse_values(self, wrapped, reverse):
+    @pytest.mark.parametrize("additional_properties", [False, True])
+    def test_explicit_container_and_leaf_overlap_preserves_sparse_values(self, wrapped, reverse, additional_properties):
         trees = [{"count": 0, "nullable": None, "sibling": [1, 2]}, {"sibling": [3]}]
         prefix = "item." if wrapped else ""
         rows = [{"item": {"tree": tree}} if wrapped else {"tree": tree} for tree in trees]
@@ -503,6 +530,8 @@ class TestGetDataSource:
                 }
             }
         }
+        if additional_properties:
+            schema = {"additionalProperties": schema["properties"]["tree"]}
 
         content = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"]
 

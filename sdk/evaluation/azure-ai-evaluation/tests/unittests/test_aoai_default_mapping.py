@@ -381,7 +381,10 @@ def capture_typed_requests(tmp_path, aoai_boundary):
         assert kwargs == kwargs_snapshot
         assert data.read_text(encoding="utf-8") == serialized
         if mixed:
-            assert received[: len(rows)] == received[len(rows) :]
+            # Concurrent evaluator calls can arrive in different orders; preserve values and duplicate counts.
+            baseline_inputs = sorted(json.dumps(row, sort_keys=True) for row in received[: len(rows)])
+            mixed_inputs = sorted(json.dumps(row, sort_keys=True) for row in received[len(rows) :])
+            assert baseline_inputs == mixed_inputs
             assert [row["outputs.python.count"] for row in result["rows"]] == [
                 row["outputs.python.count"] for row in baseline["rows"]
             ]
@@ -440,6 +443,82 @@ def constrained_record():
         "details": {"sibling": 2, "optional": None},
     }
     return schema, item
+
+
+@pytest.mark.parametrize("route", ["item_schema", "data_source_config"])
+@pytest.mark.parametrize("wrapped", [False, True])
+@pytest.mark.parametrize(
+    "declaration,value",
+    [
+        ({"type": "number", "minimum": 0}, 2),
+        ({"type": "number"}, "2"),
+        ({"type": "string"}, 2),
+        ({"type": "integer"}, False),
+        ({"type": "integer", "minimum": 0}, -1),
+        ({"type": "boolean"}, False),
+        ({"type": "array", "items": {"type": "integer"}}, [0, 2]),
+        ({"type": "array", "items": {"type": "integer"}}, [0, False]),
+        (
+            {
+                "type": "object",
+                "properties": {"count": {"type": "integer"}, "optional": {"type": "null"}},
+                "required": ["count"],
+                "additionalProperties": False,
+            },
+            {"count": 0, "optional": None},
+        ),
+        ({"type": "object", "properties": {}}, {}),
+    ],
+)
+def test_additional_properties_preserve_values_at_request_boundary(
+    capture_typed_requests, route, wrapped, declaration, value
+):
+    schema = {
+        "type": "object",
+        "properties": {"label": {"type": "string"}},
+        "required": ["label"],
+        "additionalProperties": declaration,
+    }
+    row = {"label": "synthetic", "extra": value}
+    snapshot = deepcopy(row)
+    expected_errors = {(tuple(error.path), error.validator) for error in Draft7Validator(schema).iter_errors(row)}
+    requests, _ = capture_typed_requests([{"item": row} if wrapped else row], schema, route, mixed=True)
+
+    for validator, items in requests:
+        assert items == [snapshot]
+        assert type(items[0]["extra"]) is type(value)
+        assert {(tuple(error.path), error.validator) for error in validator.iter_errors(items[0])} == expected_errors
+    assert row == snapshot
+
+
+@pytest.mark.parametrize("route", ["item_schema", "data_source_config"])
+@pytest.mark.parametrize("wrapped", [False, True])
+def test_additional_properties_without_named_properties_at_request_boundary(tmp_path, aoai_boundary, route, wrapped):
+    schema = {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}}
+    snapshot = deepcopy(schema)
+    row = {"count": 0, "ratio": 1.5}
+    data = tmp_path / "additional-properties.jsonl"
+    data.write_text(json.dumps({"item": row} if wrapped else row) + "\n", encoding="utf-8")
+    kwargs = (
+        {"item_schema": schema}
+        if route == "item_schema"
+        else {"data_source_config": {"type": "custom", "item_schema": schema}}
+    )
+
+    _evaluate(data, {"grader": _grader()}, **kwargs)
+
+    captured_schema = aoai_boundary.evals.create.call_args.kwargs["data_source_config"]["item_schema"]
+    items = [
+        entry["item"] for entry in aoai_boundary.evals.runs.create.call_args.kwargs["data_source"]["source"]["content"]
+    ]
+    assert captured_schema.get("properties", {}) == {}
+    assert captured_schema.get("required", []) == []
+    assert captured_schema["additionalProperties"] == schema["additionalProperties"]
+    assert items == [row]
+    assert type(items[0]["count"]) is int
+    assert type(items[0]["ratio"]) is float
+    Draft7Validator(captured_schema).validate(items[0])
+    assert schema == snapshot
 
 
 @pytest.mark.parametrize("route", ["item_schema", "data_source_config"])

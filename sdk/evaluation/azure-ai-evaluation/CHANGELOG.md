@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and stringifying corresponding typed input values during request construction.
+- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and converting corresponding typed input values to strings during request construction, including fields governed by a schema-valued `additionalProperties`.
 
 ### Other Changes
 
