@@ -296,6 +296,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         Collects history, input, and output item IDs from the previous
         response chain and/or all responses within the given conversation.
+        Duplicate item IDs are removed while preserving their first occurrence.
         When over *limit*, keeps the most recent N item IDs from the
         resolved chain, preserving chronological order in the returned slice.
 
@@ -303,11 +304,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of item IDs to return (most recent N).
+        :param limit: Maximum number of item IDs to return (most recent N), or -1 for all items.
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of item IDs from the resolved chain.
+        :returns: An ordered list of unique item IDs from the resolved chain.
         :rtype: list[str]
         """
         async with self._locked():
@@ -331,6 +332,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     resolved.extend(entry.input_item_ids or [])
                     resolved.extend(entry.output_item_ids or [])
 
+            resolved = list(dict.fromkeys(resolved))
+            if limit == -1:
+                return resolved
             if limit <= 0:
                 return []
             # Keep the most recent N item IDs from the resolved chain,

@@ -3,7 +3,6 @@ import importlib.util
 import io
 import json
 from pathlib import Path
-import textwrap
 import unittest
 from unittest import mock
 import urllib.error
@@ -27,26 +26,19 @@ class WorkflowBootstrapTests(unittest.TestCase):
         self.assertTrue(uses)
         self.assertTrue(all(line == f"uses: github/gh-aw-actions/setup@{setup['sha']} # {setup['version']}" for line in uses))
 
-    def test_single_trusted_collector_has_valid_python(self):
+    def test_single_collector_uses_executing_workflow_revision(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.md").read_text(encoding="utf-8")
-        blocks = workflow.split("python - <<'PY'")[1:]
-        self.assertEqual(2, len(blocks))
-        source = textwrap.dedent(blocks[0].split("\n      PY", 1)[0])
-        compile(source, "collector-bootstrap", "exec")
-        self.assertIn('revision = os.environ["TRUSTED_BASE_SHA"]', source)
-        self.assertIn("TRUSTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}", workflow)
-        self.assertEqual(1, workflow.count("      python mgmt_sdk_review_context.py"))
+        self.assertIn("ref: ${{ github.workflow_sha }}", workflow)
+        self.assertIn("REVIEW_TOOLING_SHA: ${{ github.workflow_sha }}", workflow)
+        self.assertNotIn("TRUSTED_BASE_SHA", workflow)
+        self.assertEqual(1, workflow.count("python mgmt_sdk_review_context.py"))
 
-    def test_generated_bootstrap_has_valid_python(self):
+    def test_generated_collector_is_isolated_from_agent(self):
         workflow = (SCRIPT.parents[1] / "mgmt-sdk-pr-review.lock.yml").read_text(encoding="utf-8")
-        runs = [
-            json.loads(line.strip().removeprefix("run: "))
-            for line in workflow.splitlines()
-            if line.strip().startswith('run: "python - ')
-        ]
-        self.assertEqual(1, len(runs))
-        source = runs[0].split("python - <<'PY'\n", 1)[1].split("\nPY\n", 1)[0]
-        compile(source, "generated-collector-bootstrap", "exec")
+        collector = workflow.split("\n  review_context:\n", 1)[1].split("\n  safe_outputs:", 1)[0]
+        self.assertIn("python mgmt_sdk_review_context.py", collector)
+        self.assertIn("Upload trusted review snapshot", collector)
+        self.assertNotIn("agent_output.json", collector)
 
 
 class BreakingChangeParserTests(unittest.TestCase):
@@ -270,12 +262,20 @@ class ProvenanceTests(unittest.TestCase):
 
 class CollectionTests(unittest.TestCase):
     def collect_context(
-        self, *, old_status=200, changelog_status="modified", commit_count=1, package_count=1, annotated_tag=False
+        self, *, old_status=200, changelog_status="modified", commit_count=1, package_count=1, annotated_tag=False,
+        changelog=None, changed_files=None, file_errors=None, directory_status=404, expected_changed_files=None,
+        event_head=None, later_head=None,
     ):
         packages = [f"sdk/contoso/azure-mgmt-contoso{index}" for index in range(package_count)]
-        changelog = "## 1.0.0 (2026-01-01)\n### Breaking Changes\n- Historical entry.\n"
+        if changelog is None:
+            changelog = "## 1.0.0 (2026-01-01)\n### Breaking Changes\n- Historical entry.\n"
+        if changed_files is None:
+            changed_files = [{"filename": f"{package}/CHANGELOG.md", "status": changelog_status} for package in packages]
+        file_errors = file_errors or {}
+        pr_requests = 0
 
         def respond(request, timeout):
+            nonlocal pr_requests
             parsed = urllib.parse.urlparse(request.full_url)
             path = parsed.path.removeprefix("/repos/Azure/azure-sdk-for-python")
             query = urllib.parse.parse_qs(parsed.query)
@@ -284,16 +284,17 @@ class CollectionTests(unittest.TestCase):
             elif path == "/branches/main":
                 data = {"commit": {"sha": "f" * 40}}
             elif path == "/pulls/1":
+                pr_requests += 1
                 data = {
-                    "changed_files": package_count,
+                    "changed_files": len(changed_files) if expected_changed_files is None else expected_changed_files,
                     "commits": commit_count,
-                    "head": {"sha": "b" * 40},
+                    "head": {"sha": later_head if later_head and pr_requests > 1 else "b" * 40},
                     "base": {"sha": "e" * 40},
                 }
             elif path.startswith("/compare/"):
                 data = {"merge_base_commit": {"sha": "c" * 40}}
             elif path == "/pulls/1/files":
-                data = [{"filename": f"{package}/CHANGELOG.md", "status": changelog_status} for package in packages]
+                data = changed_files
             elif path == "/pulls/1/commits":
                 offset = (int(query["page"][0]) - 1) * 100
                 data = [{"sha": "a" * 40}] * max(0, min(100, min(commit_count, 250) - offset))
@@ -303,6 +304,18 @@ class CollectionTests(unittest.TestCase):
                 data = {"object": {"type": "commit", "sha": "d" * 40}}
             elif path.startswith("/contents/"):
                 filename = urllib.parse.unquote(path.removeprefix("/contents/"))
+                status = file_errors.get((query["ref"][0], filename), 200)
+                if status != 200:
+                    raise urllib.error.HTTPError(request.full_url, status, "file unavailable", {}, None)
+                if filename in packages:
+                    self.assertEqual("c" * 40, query["ref"][0])
+                    if directory_status != 200:
+                        raise urllib.error.HTTPError(
+                            request.full_url, directory_status, "package directory unavailable", {}, None
+                        )
+                    response = io.BytesIO(json.dumps([{"type": "file", "name": "README.md"}]).encode())
+                    response.headers = {}
+                    return response
                 if filename == ".github/copilot-instructions.md":
                     content = "## MGMT SDK Code Review Rules\nReview the package.\n"
                 elif filename.endswith("/CHANGELOG.md"):
@@ -330,11 +343,179 @@ class CollectionTests(unittest.TestCase):
             mock.patch.object(MODULE.urllib.request, "urlopen", side_effect=respond) as requests,
             mock.patch("builtins.open", output),
         ):
+            if event_head:
+                MODULE.os.environ["REVIEW_HEAD_SHA"] = event_head
+                MODULE.os.environ["REVIEW_TOOLING_SHA"] = "9" * 40
             MODULE.collect()
         output.assert_called_once_with("review-context.json", "w", encoding="utf-8")
         context = json.loads("".join(call.args[0] for call in output().write.call_args_list))
         self.assertEqual(requests.call_count, context["collectionLimits"]["githubApiRequests"])
         return context
+
+    def test_snapshot_matches_event_and_tracks_tooling_separately(self):
+        context = self.collect_context(event_head="b" * 40)
+        self.assertEqual("9" * 40, context["toolingRevision"])
+        self.assertEqual("c" * 40, context["mergeBaseRevision"])
+        self.assertEqual("a" * 40, context["firstRevision"])
+
+    def test_snapshot_rejects_stale_event_or_head_change_during_collection(self):
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "triggering event"):
+            self.collect_context(event_head="8" * 40)
+        with self.assertRaisesRegex(MODULE.GitHubApiError, "during evidence collection"):
+            self.collect_context(event_head="b" * 40, later_head="8" * 40)
+
+    def collect_initial_release(self, **overrides):
+        package = "sdk/contoso/azure-mgmt-contoso0"
+        options = {
+            "old_status": 404,
+            "changelog": "## 1.0.0b1 (2026-09-22)\n### Other Changes\n- Initial version.\n",
+            "changed_files": [
+                {"filename": f"{package}/{name}", "status": "added"}
+                for name in ("CHANGELOG.md", "_metadata.json", "pyproject.toml")
+            ],
+            "file_errors": {("c" * 40, f"{package}/{name}"): 404 for name in MODULE.PROVENANCE_PATHS},
+        }
+        options.update(overrides)
+        return self.collect_context(**options)
+
+    def test_confirmed_initial_release_has_no_missing_baseline_failure(self):
+        context = self.collect_initial_release()
+        package = context["breakingChangeContext"][0]
+        self.assertEqual("complete", package["status"])
+        self.assertEqual([], package["introducedEntries"])
+        self.assertEqual([], package["collectionIssues"])
+        self.assertEqual("not_applicable", package["releaseBaseline"]["status"])
+        self.assertIn("Initial release", package["releaseBaseline"]["reason"])
+        self.assertIn("c" * 40, package["releaseBaseline"]["reason"])
+        self.assertEqual("not_applicable", package["provenance"]["mergeBase"]["status"])
+        self.assertEqual([], package["provenance"]["mergeBase"]["issues"])
+        for file in package["provenance"]["mergeBase"]["files"]:
+            self.assertEqual("not_applicable", file["status"])
+            self.assertEqual(package["releaseBaseline"]["reason"], file["reason"])
+            self.assertNotIn("error", file)
+            self.assertEqual("missing", file["retrieval"]["status"])
+            self.assertEqual(file["path"], file["retrieval"]["path"])
+            self.assertEqual(file["revision"], file["retrieval"]["revision"])
+            self.assertIn("404", file["retrieval"]["error"])
+        self.assertTrue(all(file["status"] == "available" for file in package["provenance"]["latest"]["files"]))
+        self.assertEqual("not_applicable", package["specificationSources"]["mergeBase"]["status"])
+        self.assertEqual("not_applicable", package["specificationSources"]["release"]["status"])
+        self.assertEqual("unchanged", context["apiVersionDrift"][0]["status"])
+
+    def test_initial_release_requires_confirmed_absent_package_directory(self):
+        for status in (200, 403, 503):
+            with self.subTest(status=status):
+                package = self.collect_initial_release(directory_status=status)["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+                if status != 200:
+                    self.assertTrue(any(str(status) in issue for issue in package["collectionIssues"]))
+
+    def test_initial_release_requires_complete_added_file_evidence(self):
+        package_path = "sdk/contoso/azure-mgmt-contoso0"
+        for status in ("modified", "renamed", "removed"):
+            with self.subTest(status=status):
+                context = self.collect_initial_release(changed_files=[
+                    {"filename": f"{package_path}/CHANGELOG.md", "status": "added"},
+                    {"filename": f"{package_path}/README.md", "status": status},
+                ])
+                self.assertEqual("unverified", context["breakingChangeContext"][0]["status"])
+        context = self.collect_initial_release(expected_changed_files=4)
+        self.assertEqual("unverified", context["packageDiscovery"]["status"])
+        self.assertEqual("unverified", context["breakingChangeContext"][0]["status"])
+
+    def test_initial_release_does_not_hide_existing_or_unavailable_provenance(self):
+        package_path = "sdk/contoso/azure-mgmt-contoso0"
+        for status in (200, 403, 503):
+            with self.subTest(status=status):
+                errors = {("c" * 40, f"{package_path}/{name}"): 404 for name in MODULE.PROVENANCE_PATHS}
+                errors[("c" * 40, f"{package_path}/pyproject.toml")] = status
+                package = self.collect_initial_release(file_errors=errors)["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+
+    def test_initial_release_requires_readable_changelog_evidence(self):
+        for status in (403, 503):
+            with self.subTest(status=status):
+                package = self.collect_initial_release(old_status=status)["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+        package_path = "sdk/contoso/azure-mgmt-contoso0"
+        errors = {("c" * 40, f"{package_path}/{name}"): 404 for name in MODULE.PROVENANCE_PATHS}
+        errors[("b" * 40, f"{package_path}/CHANGELOG.md")] = 403
+        package = self.collect_initial_release(file_errors=errors)["breakingChangeContext"][0]
+        self.assertEqual("unverified", package["status"])
+        self.assertTrue(any("403" in issue for issue in package["collectionIssues"]))
+
+    def test_initial_release_does_not_treat_a_move_as_a_new_package(self):
+        package_path = "sdk/contoso/azure-mgmt-contoso0"
+        context = self.collect_initial_release(changed_files=[
+            {"filename": f"{package_path}/CHANGELOG.md", "status": "added"},
+            {
+                "filename": f"{package_path}/_metadata.json",
+                "previous_filename": "sdk/old/azure-mgmt-old/_metadata.json",
+                "status": "added",
+            },
+        ])
+        self.assertEqual("unverified", context["breakingChangeContext"][0]["status"])
+
+    def test_initial_release_retains_latest_evidence_failures(self):
+        package_path = "sdk/contoso/azure-mgmt-contoso0"
+        errors = {("c" * 40, f"{package_path}/{name}"): 404 for name in MODULE.PROVENANCE_PATHS}
+        errors[("b" * 40, f"{package_path}/_metadata.json")] = 403
+        package = self.collect_initial_release(file_errors=errors)["breakingChangeContext"][0]
+        self.assertEqual("unverified", package["status"])
+        self.assertTrue(any("403" in issue for issue in package["collectionIssues"]))
+
+    def test_initial_release_does_not_suppress_breaking_changes_or_ambiguous_history(self):
+        changelogs = (
+            "## 1.0.0b1 (2026-09-22)\n### Breaking Changes\n- Removed Widget.\n",
+            "## 1.0.0b1 (2026-09-22)\n### Breaking Changes\n",
+            "## 2.0.0 (2026-09-22)\n### Other Changes\n- Update.\n## 1.0.0 (2025-01-01)\n",
+            "## 0.0.0 (Unreleased)\n### Other Changes\n- Pending.\n",
+            "",
+        )
+        for changelog in changelogs:
+            with self.subTest(changelog=changelog):
+                package = self.collect_initial_release(changelog=changelog)["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+                if "- Removed Widget." in changelog:
+                    self.assertEqual("Removed Widget.", package["introducedEntries"][0]["text"])
+
+    def test_initial_release_stays_within_existing_request_budget(self):
+        with mock.patch.object(MODULE, "MAX_API_REQUESTS", 31):
+            context = self.collect_initial_release()
+        self.assertEqual("complete", context["breakingChangeContext"][0]["status"])
+        self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], 31)
+
+    def test_initial_release_requires_a_valid_dated_release_heading(self):
+        for heading in (
+            "Notes",
+            "1.0.0",
+            "1.0.0 (Unreleased)",
+            "0.0.0 (2026-09-22)",
+            "1.0 (2026-09-22)",
+            "1.0.0b (2026-09-22)",
+            "1.0.0 (2026-9-22)",
+            "1.0.0 (2026-02-30)",
+            "1.0.0 (2026-13-01)",
+            "1.0.0 (2026-09-22) Additional notes",
+        ):
+            with self.subTest(heading=heading):
+                package = self.collect_initial_release(
+                    changelog=f"## {heading}\n### Other Changes\n- Initial version.\n"
+                )["breakingChangeContext"][0]
+                self.assertEqual("unverified", package["status"])
+                self.assertEqual("unverified", package["releaseBaseline"]["status"])
+                self.assertTrue(package["collectionIssues"])
+        for heading in ("1.0.0 (2026-09-22)", "1.0.0b1 (2026-09-22)", "1.0.0b12 (2024-02-29)"):
+            with self.subTest(heading=heading):
+                package = self.collect_initial_release(
+                    changelog=f"## {heading}\n### Other Changes\n- Initial version.\n"
+                )["breakingChangeContext"][0]
+                self.assertEqual("complete", package["status"])
+                self.assertEqual("not_applicable", package["releaseBaseline"]["status"])
 
     def test_unavailable_baseline_never_emits_historical_deltas(self):
         for status in (403, 404, 503):
@@ -389,6 +570,15 @@ class CollectionTests(unittest.TestCase):
                 context = self.collect_context(annotated_tag=True)
                 self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
                 self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
+
+    def test_event_head_budget_reserves_the_final_consistency_request(self):
+        for limit, expected in ((31, "unverified"), (32, "complete")):
+            with self.subTest(limit=limit), mock.patch.object(MODULE, "MAX_API_REQUESTS", limit):
+                context = self.collect_context(annotated_tag=True, event_head="b" * 40)
+                self.assertEqual(expected, context["breakingChangeContext"][0]["status"])
+                self.assertLessEqual(context["collectionLimits"]["githubApiRequests"], limit)
+                if expected == "complete":
+                    self.assertEqual(limit, context["collectionLimits"]["githubApiRequests"])
 
 
 class FailureHandlingTests(unittest.TestCase):
