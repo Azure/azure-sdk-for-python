@@ -102,6 +102,8 @@ async def sample_pii_with_redaction_policies_async():
                         if entity.subcategory:
                             print(f"  Subcategory: {entity.subcategory}")
                         print(f"  Masked As: {entity.mask}")
+                        print(f"  Mask Offset: {entity.mask_offset}")
+                        print(f"  Mask Length: {entity.mask_length}")
                         print(f"  Offset: {entity.offset}")
                         print(f"  Length: {entity.length}")
                         print(f"  Confidence score: {entity.confidence_score}\n")

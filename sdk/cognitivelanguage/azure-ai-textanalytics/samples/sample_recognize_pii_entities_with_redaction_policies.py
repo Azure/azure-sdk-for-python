@@ -98,6 +98,8 @@ def sample_pii_with_redaction_policies():
                 print(f"  Text: {entity.text}")
                 print(f"  Category: {entity.category}")
                 print(f"  Masked As: {entity.mask}")
+                print(f"  Mask Offset: {entity.mask_offset}")
+                print(f"  Mask Length: {entity.mask_length}")
                 print(f"  Confidence: {entity.confidence_score}")
                 print("")
     else:

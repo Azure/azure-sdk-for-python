@@ -112,15 +112,19 @@ class TestTextAnalysisCase(TestTextAnalysis):
                 assert len(doc.entities) == 3
                 categories = {e.category for e in doc.entities}
                 assert categories == {"Person", "USSocialSecurityNumber", "Email"}
+                for entity in doc.entities:
+                    assert entity.mask is not None
+                    assert entity.mask_offset is not None
+                    assert entity.mask_length is not None
+                    assert entity.mask_length == len(entity.mask)
+                    assert redacted[entity.mask_offset : entity.mask_offset + entity.mask_length] == entity.mask
 
                 # Validate Person entity was replaced (synthetic replacement)
                 person = next(e for e in doc.entities if e.category == "Person")
-                assert person.mask is not None
                 assert person.mask != person.text  # replaced with a different name
 
                 # Validate SSN is masked with asterisks
                 ssn = next(e for e in doc.entities if e.category == "USSocialSecurityNumber")
-                assert ssn.mask is not None
                 assert "*" in ssn.mask
                 assert "123-45-6789" not in redacted
 
