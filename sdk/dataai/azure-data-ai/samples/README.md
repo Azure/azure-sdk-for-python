@@ -1,7 +1,9 @@
 # Azure Data AI samples
 
-These samples use dictionary requests and responses with Azure Data AI, hosted by Azure Inference Service.
-They do not require any model classes or a Cosmos DB account.
+These samples use Azure Data AI, hosted by Azure Inference Service. The generated
+SDK accepts dictionary requests or `SemanticRerankingInferenceRequest` models and
+returns `SemanticRerankingResult`. Dictionary-style response access remains supported.
+The samples do not require a Cosmos DB account.
 
 The SDK takes its endpoint and credential directly from the application. Environment
 variables are optional configuration conventions, not SDK requirements.
@@ -18,7 +20,7 @@ The asynchronous and Entra samples read these environment variables:
 
 Never put real credentials in source code intended to be shared.
 
-- `python samples/semantic_reranking.py`: synchronous raw-string API-key example with sentence scores.
+- `python samples/semantic_reranking.py`: synchronous `AzureKeyCredential` example with sentence scores.
 - `python samples/semantic_reranking_async.py`: asynchronous `AzureKeyCredential` example.
 - `python samples/semantic_reranking_entra.py`: synchronous Microsoft Entra example.
   Install `azure-identity` and configure a supported credential with permission
@@ -33,8 +35,8 @@ For the async sample, install `aiohttp`. The Entra sample only needs
 The synchronous sample also retains local `AzureCliCredential` configuration, which
 requires `azure-identity`; its current client call uses the key instead.
 
-Both clients accept a key string, `AzureKeyCredential`, or the appropriate sync/async
-token credential. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a
+Both clients accept `AzureKeyCredential` or the appropriate sync/async token
+credential. Wrap raw keys with `AzureKeyCredential`. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a
 key issued for an endpoint with key-based authentication enabled.
 
 ## Model selection and request options
@@ -81,7 +83,7 @@ string. Do not pass dictionaries directly in the `documents` array.
 Returned document text remains a JSON-encoded string; the sample uses `json.loads`
 to display its fields. It also prints any returned sentence scores. Only one
 JSON sample is provided; automated coverage exercises both sync/async clients and
-raw-key, `AzureKeyCredential`, and Entra authentication.
+generated-model and dictionary requests with `AzureKeyCredential` and Entra authentication.
 
 ## Throttling benchmark
 

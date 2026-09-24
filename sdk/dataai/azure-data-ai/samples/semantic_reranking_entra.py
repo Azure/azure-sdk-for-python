@@ -7,7 +7,6 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.data.ai import AzureDataAIClient
-from azure.identity import AzureCliCredential
 
 
 def main() -> None:

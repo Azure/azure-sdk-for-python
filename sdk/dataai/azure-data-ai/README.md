@@ -4,19 +4,17 @@
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
-The Python API accepts and returns ordinary dictionaries. You do not need to import
-or construct request or response model classes. This package does not depend on
+The Python API accepts generated request models or ordinary dictionaries and returns
+generated response models that also support dictionary-style access. This package does not depend on
 `azure-cosmos`, `openai`, or another database SDK. Embedding APIs are not included
 in this preview.
 
 The package uses the `2026-09-01-preview` service API.
 
-The runtime is a thin handwritten wrapper around Azure Core's `PipelineClient`
-and `AsyncPipelineClient`. Azure Core performs the HTTP requests and supplies the
-authentication, retry, transport, and diagnostic policies. The SDK only supplies
-the service URL, API version, request dictionary, and error handling.
-The public clients delegate reranking POST requests to internal `_reranker.py`
-implementations, which reuse the clients' existing Azure Core pipelines.
+The runtime is generated from TypeSpec with `@azure-tools/typespec-python`.
+It includes client configuration, operation implementations, request/response models,
+TypedDict definitions, and serialization helpers. Azure Core supplies the HTTP
+transport, authentication, retry, and diagnostic policies.
 
 ## Getting started
 
@@ -72,11 +70,11 @@ with AzureDataAIClient(
 ```
 
 The key is sent in the `Ocp-Apim-Subscription-Key` header using Azure Core's
-`AzureKeyCredentialPolicy`. Both synchronous and asynchronous clients also accept
-a raw key string directly:
+`AzureKeyCredentialPolicy`. Wrap key strings in `AzureKeyCredential` for both
+synchronous and asynchronous clients:
 
 ```python
-client = AzureDataAIClient(endpoint, credential=key)
+client = AzureDataAIClient(endpoint, credential=AzureKeyCredential(key))
 ```
 
 Use `AzureKeyCredential` when you need to rotate a key with `credential.update(new_key)`
@@ -112,10 +110,26 @@ The client requests tokens for `https://dbinference.azure.com/.default`.
 `AzureDataAIClient` is the entry point. Call `client.semantic_rerank(request)`
 directly; there is no intermediate inference subclient.
 
-Dictionary keys use the service's JSON names, not Python attribute names. For
-example, use `"topK"`, not `"top_k"`, and read `result["scores"][0]["score"]`, not
-`result.scores[0].score`. Dictionaries are sent as supplied; the service validates
-their contents.
+Dictionary keys use the service's JSON names, such as `"topK"`. Generated model
+attributes use Python names, such as `top_k`. Both response access forms work:
+`result["scores"][0]["score"]` and `result.scores[0].score`. Use `result.as_dict()`
+when an ordinary nested dictionary is needed.
+
+```python
+from azure.data.ai.models import SemanticRerankingDocumentType, SemanticRerankingInferenceRequest
+
+request = SemanticRerankingInferenceRequest(
+    query="capital of France",
+    documents=["Paris is the capital of France.", "Berlin is the capital of Germany."],
+    top_k=1,
+    return_documents=True,
+    return_sentence_score=True,
+    document_type=SemanticRerankingDocumentType.TEXT,
+)
+result = client.semantic_rerank(request)
+for score in result.scores or []:
+    print(score.index, score.score, score.document)
+```
 
 | Request key | Type | Meaning |
 | --- | --- | --- |
@@ -134,15 +148,14 @@ Put these options inside the request dictionary, not in method keyword arguments
 Omitted options use service-defined defaults. The SDK does not restrict model names
 or filter additional request fields.
 
-Responses contain optional `scores` and `meta` keys. Score entries can include
+Responses expose optional `scores` and `meta` fields. Score entries can include
 `index`, `score`, `document`, and `sentenceScores`. Metadata can include
-`tokenUsage`, `latency`, `modelName`, and `modelVersion`. All nested objects are
-dictionaries too.
+`tokenUsage`, `latency`, `modelName`, and `modelVersion` through dictionary access,
+or `token_usage`, `latency`, `model_name`, and `model_version` as model attributes
+on `SemanticRerankingMetaResult`.
 
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
-inclusive range 0–1. Sentence indices are not capped at 2. The SDK returns these
-values as received; it does not truncate sentence results, clamp scores, or add
-client-side response validation.
+inclusive range 0–1. Sentence indices are not capped at 2.
 
 The SDK follows the pinned TypeSpec contract without renaming response keys or
 normalizing legacy payloads. Use an endpoint implementing the
@@ -240,9 +253,33 @@ result = client.semantic_rerank(
 print(response_headers.get("X-Correlation-ID"))
 ```
 
-Standard Azure Core retry policies apply, including `Retry-After` handling for
-HTTP 429. Configure `retry_total`, `connection_timeout`, and `read_timeout` on the
-client as needed. This package does not inherit the Cosmos DB SDK's retry defaults.
+The generated clients inherit Azure Core's native retry and timeout defaults.
+These are not necessarily identical to the .NET SDK's defaults. Configure the
+desired values when constructing the client:
+
+```python
+client = AzureDataAIClient(
+    endpoint,
+    credential,
+    retry_total=3,          # Use 0 to disable automatic retries.
+    retry_backoff_max=60,
+    connection_timeout=100,
+    read_timeout=100,
+)
+```
+
+Azure Core also supports separate `retry_connect`, `retry_read`, and `retry_status`
+limits. For reranking POST requests, include `retry_on_methods=["POST"]` on the
+operation call when retries should apply to statuses such as 429 and 502 even
+without `Retry-After`:
+
+```python
+result = client.semantic_rerank(request, retry_on_methods=["POST"])
+```
+
+A service `Retry-After` can require a wait longer than the calculated backoff cap.
+Connection/read timeouts are not an overall deadline including retries. Automatic
+service-level .NET retry-default customization is not part of this generated baseline.
 
 ## Troubleshooting
 
@@ -260,22 +297,33 @@ resource permissions.
 
 `tsp-location.yaml` records the REST contract from
 [Azure/azure-rest-api-specs-pr#30255][spec_pr] at
-`6834c9b873d205ea639cfcacc191633afdfcd760`. Its service title is **Azure Data AI**
+`b95cc18a80a8e8cc5cd5daa61f4cc1f3031bc769`. Its service title is **Azure Data AI**
 and its namespace is `Azure.Data.AI`; the route, authentication header/token
 audience, request fields, and API version remain unchanged.
-TypeSpec remains the contract reference,
-but **does not generate this Python runtime**. Do not run `tsp-client update` in
-this package: it would restore the generated implementation. Update the thin
-clients, reranking helpers, and their contract tests deliberately when the service API changes.
+This package adopts the default output of `@azure-tools/typespec-python` 0.63.8,
+generated from that contract. The emitter dependency and lock files under `eng/`
+pin the generation toolchain. Request/response model generation is enabled.
 
-The handwritten Python API uses `AzureDataAIClient` in both `azure.data.ai` and
+The generated Python API uses `AzureDataAIClient` in both `azure.data.ai` and
 `azure.data.ai.aio`. The TypeSpec explicitly selects this client name for Python
 and C#. The package lives at
 `sdk/dataai/azure-data-ai`, matching the spec's `sdk/dataai` service directory.
 
-The public surface is `AzureDataAIClient.semantic_rerank(request)`, plus
-client lifecycle methods. Generic raw-request methods, binary-body overloads,
-model classes, and general-purpose serialization helpers are intentionally absent.
+The public surface includes `AzureDataAIClient.semantic_rerank(request)`,
+request/response models, TypedDict definitions, raw `send_request`, and client
+lifecycle methods. Reranking accepts model, dictionary, and binary request forms
+and treats HTTP 200 as the successful response.
+
+Regenerate with the repository's standard TypeSpec workflow, for example from this
+package directory:
+
+```bash
+npm exec --prefix ../../../eng/common/tsp-client --no -- tsp-client update \
+  --emitter-options "package-version=0.1.0b1"
+```
+
+Do not edit files marked as generated. Keep handwritten customizations in the
+supported `_patch.py` hooks, and retain tests and samples across regeneration.
 
 To run the offline tests:
 

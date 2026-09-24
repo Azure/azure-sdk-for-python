@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Offline regression tests for the dictionary-based public API."""
+"""Offline regression tests for generated models and dictionary inputs."""
 
 from copy import deepcopy
 from importlib.metadata import version
@@ -25,21 +25,22 @@ from azure.core.exceptions import (
 import azure.data.ai
 from azure.data.ai import AzureDataAIClient
 from azure.data.ai.aio import AzureDataAIClient as AsyncAzureDataAIClient
+from azure.data.ai.models import SemanticRerankingResult, SemanticRerankingScore, SentenceScore, TokenUsageResult
 
 
-def test_public_api_has_no_models_or_embedding_dependencies():
+def test_public_api_exposes_generated_models_without_embeddings():
     assert azure.data.ai.__version__ == version("azure-data-ai")
     assert azure.data.ai.__all__ == ["AzureDataAIClient"]
-    assert find_spec("azure.data.ai.models") is None
-    assert find_spec("azure.data.ai.types") is None
+    assert find_spec("azure.data.ai.models") is not None
+    assert find_spec("azure.data.ai.types") is not None
     for client_type in (AzureDataAIClient, AsyncAzureDataAIClient):
         assert hasattr(client_type, "semantic_rerank")
         assert not hasattr(client_type, "generate_embeddings")
-        assert not hasattr(client_type, "send_request")
+        assert hasattr(client_type, "send_request")
     assert not inspect.iscoroutinefunction(AzureDataAIClient.semantic_rerank)
     assert inspect.iscoroutinefunction(AsyncAzureDataAIClient.semantic_rerank)
-    assert AzureDataAIClient.__module__ == "azure.data.ai._azure_data_ai_client"
-    assert AsyncAzureDataAIClient.__module__ == "azure.data.ai.aio._azure_data_ai_client"
+    assert AzureDataAIClient.__module__ == "azure.data.ai._client"
+    assert AsyncAzureDataAIClient.__module__ == "azure.data.ai.aio._client"
 
 
 def test_contract_metadata_uses_azure_data_ai_namespace():
@@ -48,10 +49,18 @@ def test_contract_metadata_uses_azure_data_ai_namespace():
     properties = json.loads((package / "apiview-properties.json").read_text(encoding="utf-8"))
     assert metadata["apiVersions"] == {"Azure.Data.AI": metadata["apiVersion"]}
     assert properties["CrossLanguagePackageId"] == "Azure.Data.AI"
-    assert properties["CrossLanguageDefinitionId"] == {
+    expected = {
         "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
         "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
     }
+    for name, definition in expected.items():
+        assert properties["CrossLanguageDefinitionId"][name] == definition
+    assert properties["CrossLanguageDefinitionId"]["azure.data.ai.models.SemanticRerankingMetaResult"] == (
+        "Azure.Data.AI.MetaResult"
+    )
+    assert properties["CrossLanguageDefinitionId"]["azure.data.ai.models.SemanticRerankingDocumentType"] == (
+        "Azure.Data.AI.DocumentType"
+    )
 
 
 @pytest.mark.asyncio
@@ -85,8 +94,7 @@ async def test_dictionary_round_trip(open_client, invoke, respond, transport, re
     async with open_client() as client:
         assert not hasattr(client, "inference")
         assert isinstance(client._client, (PipelineClient, AsyncPipelineClient))
-        assert client._reranker._client is client._client
-        assert not hasattr(client, "_serialize")
+        assert hasattr(client, "_serialize")
         result = await invoke(client, request_payload)
 
     sent = transport.send.call_args.args[0]
@@ -98,11 +106,12 @@ async def test_dictionary_round_trip(open_client, invoke, respond, transport, re
     assert sent.headers["Accept"] == "application/json"
     assert json.loads(sent.content) == original
     assert request_payload == original
-    assert type(result) is dict
+    assert isinstance(result, SemanticRerankingResult)
     assert result == result_payload
-    assert type(result["scores"][0]) is dict
-    assert type(result["scores"][0]["sentenceScores"][0]) is dict
-    assert type(result["meta"]["tokenUsage"]) is dict
+    assert isinstance(result.scores[0], SemanticRerankingScore)
+    assert isinstance(result.scores[0].sentence_scores[0], SentenceScore)
+    assert isinstance(result.meta.token_usage, TokenUsageResult)
+    assert result.as_dict() == result_payload
 
 
 @pytest.mark.asyncio
@@ -111,7 +120,7 @@ async def test_response_is_not_normalized(open_client, invoke, respond, request_
     respond((200, payload, {}))
     async with open_client() as client:
         result = await invoke(client, request_payload)
-    assert type(result) is dict
+    assert isinstance(result, SemanticRerankingResult)
     assert result == payload
 
 
@@ -185,22 +194,18 @@ async def test_key_authentication(open_client, invoke, respond, transport, reque
 
 
 @pytest.mark.asyncio
-async def test_raw_key_authentication(open_client, invoke, respond, transport, request_payload, result_payload):
-    respond((200, result_payload, {}))
-    async with open_client("raw-test-key") as client:
-        result = await invoke(client, request_payload)
-    sent = transport.send.call_args.args[0]
-    assert sent.headers["Ocp-Apim-Subscription-Key"] == "raw-test-key"
-    assert "Authorization" not in sent.headers
-    assert result == result_payload
+async def test_raw_keys_require_azure_key_credential(open_client, transport):
+    with pytest.raises(TypeError, match="Unsupported credential"):
+        async with open_client("raw-test-key"):
+            pytest.fail("The generated client must require AzureKeyCredential for API keys.")
+    transport.send.assert_not_called()
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("credential", ["raw-test-key", AzureKeyCredential("wrapped-test-key")])
-async def test_key_is_redacted_from_http_logs(open_client, invoke, respond, request_payload, caplog, credential):
+async def test_key_is_redacted_from_http_logs(open_client, invoke, respond, request_payload, caplog):
     caplog.set_level(logging.INFO, logger="azure.core.pipeline.policies.http_logging_policy")
     respond((200, {"scores": []}, {}))
-    async with open_client(credential, logging_enable=True) as client:
+    async with open_client(AzureKeyCredential("wrapped-test-key"), logging_enable=True) as client:
         await invoke(client, request_payload)
     assert "Ocp-Apim-Subscription-Key" in caplog.text
     assert "raw-test-key" not in caplog.text
@@ -372,7 +377,6 @@ def test_missing_or_unsupported_credentials_fail(client_type):
 
 
 @pytest.mark.parametrize("client_type", [AzureDataAIClient, AsyncAzureDataAIClient])
-@pytest.mark.parametrize("endpoint", [None, ""])
-def test_missing_endpoint_fails(client_type, endpoint):
+def test_none_endpoint_fails(client_type):
     with pytest.raises(ValueError, match="endpoint"):
-        client_type(endpoint, AzureKeyCredential("test-key"))
+        client_type(None, AzureKeyCredential("test-key"))

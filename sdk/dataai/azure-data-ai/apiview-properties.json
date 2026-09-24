@@ -1,8 +1,17 @@
 {
     "CrossLanguagePackageId": "Azure.Data.AI",
     "CrossLanguageDefinitionId": {
+        "azure.data.ai.models.LatencyResult": "Azure.Data.AI.LatencyResult",
+        "azure.data.ai.models.ProblemDetails": "Azure.Data.AI.ProblemDetails",
+        "azure.data.ai.models.SemanticRerankingInferenceRequest": "Azure.Data.AI.SemanticRerankingInferenceRequest",
+        "azure.data.ai.models.SemanticRerankingMetaResult": "Azure.Data.AI.MetaResult",
+        "azure.data.ai.models.SemanticRerankingResult": "Azure.Data.AI.SemanticRerankingResult",
+        "azure.data.ai.models.SemanticRerankingScore": "Azure.Data.AI.SemanticRerankingScore",
+        "azure.data.ai.models.SentenceScore": "Azure.Data.AI.SentenceScore",
+        "azure.data.ai.models.TokenUsageResult": "Azure.Data.AI.TokenUsageResult",
+        "azure.data.ai.models.SemanticRerankingDocumentType": "Azure.Data.AI.DocumentType",
         "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
         "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
     },
-    "CrossLanguageVersion": "03cf9d91e3c5"
+    "CrossLanguageVersion": "98f6a3f05a4b"
 }

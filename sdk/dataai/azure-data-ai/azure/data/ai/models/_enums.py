@@ -6,4 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0b1"
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
+
+
+class SemanticRerankingDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of a document submitted for semantic reranking."""
+
+    TEXT = "text"
+    """A plain-text document."""
+    JSON = "json"
+    """A JSON document."""

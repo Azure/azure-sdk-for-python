@@ -14,6 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.ai import AzureDataAIClient
+from azure.data.ai.models import SemanticRerankingInferenceRequest, SemanticRerankingResult
 
 
 @pytest.fixture
@@ -29,12 +30,10 @@ def json_documents():
     ]
 
 
-@pytest.fixture(params=["raw-key", "key-credential", "entra"])
+@pytest.fixture(params=["key-credential", "entra"])
 def json_credential(request, token_credential):
     if request.param == "entra":
         return token_credential
-    if request.param == "raw-key":
-        return "json-test-key"
     return AzureKeyCredential("json-test-key")
 
 
@@ -42,6 +41,7 @@ def json_credential(request, token_credential):
 @pytest.mark.parametrize("target_paths", [None, "description", "title,description"])
 @pytest.mark.parametrize("return_documents", [False, True])
 @pytest.mark.parametrize("return_sentence_score", [False, True])
+@pytest.mark.parametrize("request_kind", ["dictionary", "model"])
 async def test_json_round_trip_all_clients_and_credentials(
     open_client,
     invoke,
@@ -52,6 +52,7 @@ async def test_json_round_trip_all_clients_and_credentials(
     target_paths,
     return_documents,
     return_sentence_score,
+    request_kind,
 ):
     serialized = [json.dumps(document, ensure_ascii=False) for document in json_documents]
     payload = {
@@ -80,7 +81,8 @@ async def test_json_round_trip_all_clients_and_credentials(
     respond((200, response, {}))
 
     async with open_client(json_credential) as client:
-        result = await invoke(client, payload)
+        request = SemanticRerankingInferenceRequest(payload) if request_kind == "model" else payload
+        result = await invoke(client, request)
 
     sent = transport.send.call_args.args[0]
     wire = json.loads(sent.content)
@@ -96,6 +98,7 @@ async def test_json_round_trip_all_clients_and_credentials(
         assert sent.headers["Ocp-Apim-Subscription-Key"] == "json-test-key"
         assert "Authorization" not in sent.headers
     assert result == response
+    assert isinstance(result, SemanticRerankingResult)
     assert [item["index"] for item in result["scores"]] == [1, 0]
     for item in result["scores"]:
         assert ("document" in item) is return_documents
