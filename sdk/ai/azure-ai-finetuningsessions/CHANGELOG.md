@@ -27,6 +27,7 @@
 
 ### Other Changes
 
+- Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths. Wire training-tier values, the generated Python API, and both public/Loom SDK runtimes are unchanged after verified regeneration.
 - Regenerate from the reviewed Foundry required-preview operation contract and updated schema defaults; preserve the existing Python API and request query ordering through supported customization hooks. Synchronize the Loom SDK runtime and reviewed regressions with this package.
 - Regenerate the preview from pinned TypeSpec inputs and supported Python hooks, preserving the tested public API and behavior of Loom commit `485774df502642879fdf3a53777be4a0d95155dc`. Immutable reference hashes remain in `loom-source.json`; separate generation provenance records the local source inputs.
 - Preserved Loom's `/fine_tuning/sessions` routes, generated signatures, models, authentication guards, retry behavior, and convenience APIs. The public-only `use_legacy_routes` option is not part of this snapshot.

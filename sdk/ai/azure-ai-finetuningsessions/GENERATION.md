@@ -1,8 +1,60 @@
 # Reproducible preview SDK generation
 
-## Foundry review batch (2026-09-23)
+## Training-tier names and string constraints (2026-09-23)
 
 The current source pin is TypeSpec commit
+`3bf298e19180ed0829e922c81b3dbd99146b859e`. These two follow-up changes are
+committed separately and do not change the Python API or runtime:
+
+- `449e55c8714` renames only the `FineTuningTrainingType` member identifiers to
+  `global_standard`, `datazone_standard`, and `developer_tier`. The wire values
+  remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; the union
+  remains open to other strings. This rename leaves all four REST outputs
+  byte-identical. No service work item was created.
+- `3bf298e1918` adds `@minLength(1)` to 11 response identifier declarations and
+  16 route parameters: 13 session paths, one checkpoint path, the checkpoint
+  query, and one request path. The four previously constrained checkpoint
+  save/reference fields retain their existing patterns and length limits.
+  Model spreading produces 12 response-property constraints per OpenAPI
+  document. These 12 additions and 16 parameter constraints are the only REST
+  output changes; requiredness, nullability, routes, headers, request bodies,
+  response codes, and wire values are unchanged.
+
+The audit was checked against service validation and identifier production.
+Session/request identifiers are service-produced; checkpoint names are
+validated on save or generated for sampler checkpoints. Empty identities do
+not identify a valid session, checkpoint, or request. Free-form text, errors,
+messages, metadata, stop strings, and extensible string variants remain
+unconstrained. No minimum was inferred for `base_model` or `model_name`:
+model-catalog validation can be skipped in development/test configurations.
+Optional `sampling_session_id` also remains unconstrained because its current
+schema permits an empty string when `seq_id` is supplied. The optional
+heartbeat response identifier remains optional; its minimum applies only
+when the service includes it.
+
+Actual SDK generation into clean staging, seeded with only the nine maintained
+hooks, matches two independent pinned emissions: all 21 generated inventory
+entries and the complete 28-file runtime are unchanged from public SDK
+`96b410cbdb8567b1aae76677566ea300236613bf`. The public and Loom runtimes remain
+byte-identical. Only the source pin, provenance, and generation documentation
+are updated; no generated source, hook, test, or comparison rule is rewritten.
+
+Both existing Python 3.13 source suites pass all 501 tests. The unchanged
+immutable-reference gate passes 20 paired convenience cases, 134 requests and
+2,246 checks per SDK, plus 45 public types and 336 raw-operation cases using
+only the previously reviewed contracts. The current public/Loom surface
+comparison has zero differences and requires no exceptions. REST and Python
+entrypoints compile with warnings treated as errors; TypeSpec validation and
+canonical formatting pass. Wheels were not rebuilt for this runtime-unchanged
+follow-up; earlier wheel results below remain historical, not new test runs.
+No live-service validation, release, or remote-CI success is claimed.
+
+References: [named union variants](https://typespec.io/docs/language-basics/unions/#named-unions)
+and [string minimum lengths](https://typespec.io/docs/standard-library/built-in-decorators/#@minLength).
+
+## Foundry review batch (2026-09-23)
+
+The source pin for this review batch was TypeSpec commit
 `68b7f96fdabbeb966213596cc92ddfec207e52cc`. The shared Foundry service namespace
 and the independent `azure-ai-finetuningsessions` Python package are unchanged.
 The following decisions address the numbered review comments. Related comments
