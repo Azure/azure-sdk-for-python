@@ -1,5 +1,13 @@
 trigger: none
 
+schedules:
+  - cron: '0 6 */3 * *'
+    displayName: Voice agent live test (every 3 days)
+    branches:
+      include:
+        - feature/azure-ai-projects/vnext
+    always: true
+
 variables:
   # Non-secret setting with a checked-in default (matching the samples' default), so this
   # pipeline is runnable without any out-of-band Azure DevOps variable configuration. Override
