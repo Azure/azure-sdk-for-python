@@ -52,7 +52,9 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
             body = TextPiiEntitiesRecognitionInput(
                 text_input=MultiLanguageTextInput(
                     multi_language_inputs=[
-                        MultiLanguageInput(id="A", text="My BANK is 123456789.", language="en")
+                        MultiLanguageInput(
+                            id="A", text="My BANK is 123456789.", language="en"
+                        )
                     ]
                 ),
                 action_content=PiiActionContent(entity_synonyms=[entity_synonyms]),

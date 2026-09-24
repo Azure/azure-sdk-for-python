@@ -5,7 +5,11 @@
 # --------------------------------------------------------------------------
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    PowerShellPreparer,
+    recorded_by_proxy,
+)
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     AnalyzeTextPiiResult,
@@ -49,7 +53,9 @@ class TestTextAnalysisCase(TestTextAnalysis):
         body = TextPiiEntitiesRecognitionInput(
             text_input=MultiLanguageTextInput(
                 multi_language_inputs=[
-                    MultiLanguageInput(id="A", text="My BANK is 123456789.", language="en")
+                    MultiLanguageInput(
+                        id="A", text="My BANK is 123456789.", language="en"
+                    )
                 ]
             ),
             action_content=PiiActionContent(entity_synonyms=[entity_synonyms]),

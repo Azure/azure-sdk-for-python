@@ -64,17 +64,24 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             default_threshold = 0.3
             threshold_overrides = {"USSocialSecurityNumber": 0.9, "Email": 0.9}
             ssn_override = ConfidenceScoreThresholdOverride(
-                value=threshold_overrides["USSocialSecurityNumber"], entity="USSocialSecurityNumber"
+                value=threshold_overrides["USSocialSecurityNumber"],
+                entity="USSocialSecurityNumber",
             )
-            email_override = ConfidenceScoreThresholdOverride(value=threshold_overrides["Email"], entity="Email")
+            email_override = ConfidenceScoreThresholdOverride(
+                value=threshold_overrides["Email"], entity="Email"
+            )
             confidence_threshold = ConfidenceScoreThreshold(
                 default=default_threshold, overrides=[ssn_override, email_override]
             )
 
             # Parameters
-            parameters = PiiActionContent(pii_categories=["All"], confidence_score_threshold=confidence_threshold)
+            parameters = PiiActionContent(
+                pii_categories=["All"], confidence_score_threshold=confidence_threshold
+            )
 
-            body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
+            body = TextPiiEntitiesRecognitionInput(
+                text_input=text_input, action_content=parameters
+            )
 
             # Async (non-LRO) call
             result = await client.analyze_text(body=body)
@@ -93,8 +100,12 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             assert doc.entities is not None
             assert len(doc.entities) > 0
 
-            assert any(e.category == "Person" for e in doc.entities), "Expected at least one Person entity"
+            assert any(
+                e.category == "Person" for e in doc.entities
+            ), "Expected at least one Person entity"
 
             for entity in doc.entities:
-                applicable_threshold = threshold_overrides.get(entity.category, default_threshold)
+                applicable_threshold = threshold_overrides.get(
+                    entity.category, default_threshold
+                )
                 assert entity.confidence_score >= applicable_threshold
