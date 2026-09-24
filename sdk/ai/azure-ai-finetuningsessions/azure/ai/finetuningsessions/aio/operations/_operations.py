@@ -13,10 +13,7 @@ from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar,
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
