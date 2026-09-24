@@ -56,7 +56,7 @@ namespace azure.ai.finetuningsessions
                 *,
                 base_model: str,
                 from_checkpoint: Optional[FromCheckpoint] = ...,
-                lora_config: Optional[LoRAConfig] = ...,
+                lora_config: LoRAConfig,
                 timeout_sec: float = 600.0,
                 training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
@@ -70,7 +70,7 @@ namespace azure.ai.finetuningsessions
                 *,
                 base_model: str,
                 checkpoint_path: str,
-                lora_config: Optional[LoRAConfig] = ...,
+                lora_config: LoRAConfig,
                 timeout_sec: float = 600.0,
                 type: str = "training"
             ) -> FineTuningSession: ...
@@ -290,7 +290,7 @@ namespace azure.ai.finetuningsessions.aio
                 *,
                 base_model: str,
                 from_checkpoint: Optional[FromCheckpoint] = ...,
-                lora_config: Optional[LoRAConfig] = ...,
+                lora_config: LoRAConfig,
                 timeout_sec: float = 600.0,
                 training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
@@ -302,7 +302,7 @@ namespace azure.ai.finetuningsessions.aio
                 *,
                 base_model: str,
                 checkpoint_path: str,
-                lora_config: Optional[LoRAConfig] = ...,
+                lora_config: LoRAConfig,
                 timeout_sec: float = 600.0,
                 type: str = "training"
             ) -> str: ...
@@ -896,13 +896,8 @@ namespace azure.ai.finetuningsessions.models
         TRAINING = "training"
 
 
-    class azure.ai.finetuningsessions.models.CreateSessionRequest(_Model):
-        base_model: str
-        ejectable: Optional[bool]
-        lora_config: Optional[LoRAConfig]
-        training_type: Optional[Union[str, TrainingType]]
-        type: Union[str, SessionType]
-        user_metadata: Optional[dict[str, Any]]
+    class azure.ai.finetuningsessions.models.CreateSessionRequest(CreateSessionRequest):
+        lora_config: LoRAConfig
 
         @overload
         def __init__(
@@ -910,7 +905,7 @@ namespace azure.ai.finetuningsessions.models
                 *,
                 base_model: str,
                 ejectable: Optional[bool] = ...,
-                lora_config: Optional[LoRAConfig] = ...,
+                lora_config: LoRAConfig,
                 training_type: Optional[Union[str, TrainingType]] = ...,
                 type: Union[str, SessionType],
                 user_metadata: Optional[dict[str, Any]] = ...
@@ -1103,12 +1098,8 @@ namespace azure.ai.finetuningsessions.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.finetuningsessions.models.LoRAConfig(_Model):
-        alpha: Optional[float]
-        freeze_multi_modal_projector: Optional[bool]
-        freeze_vision_tower: Optional[bool]
-        rank: Optional[int]
-        seed: Optional[int]
+    class azure.ai.finetuningsessions.models.LoRAConfig(LoRAConfig):
+        rank: int
 
         @overload
         def __init__(
@@ -1117,7 +1108,7 @@ namespace azure.ai.finetuningsessions.models
                 alpha: Optional[float] = ...,
                 freeze_multi_modal_projector: Optional[bool] = ...,
                 freeze_vision_tower: Optional[bool] = ...,
-                rank: Optional[int] = ...,
+                rank: int,
                 seed: Optional[int] = ...
             ) -> None: ...
 
@@ -1328,19 +1319,33 @@ namespace azure.ai.finetuningsessions.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.finetuningsessions.models.SamplingParams(_Model):
-        max_tokens: int
-        seed: Optional[int]
-        stop_criteria: Optional[StopCriteria]
-        temperature: float
-        top_k: int
-        top_p: float
+    class azure.ai.finetuningsessions.models.SamplingOperationResult(SampleOperationResult, discriminator='sample'):
+        prompt_logprobs: Optional[list[Optional[float]]]
+        topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                metrics: Optional[dict[str, Any]] = ...,
+                prompt_logprobs: Optional[list[Optional[float]]] = ...,
+                sequences: list[SampledSequence],
+                topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.SamplingParams(SamplingParams):
+        response_format: Optional[Dict[str, Any]]
 
         @overload
         def __init__(
                 self,
                 *,
                 max_tokens: int,
+                response_format: Optional[Dict[str, Any]] = ...,
                 seed: Optional[int] = ...,
                 stop_criteria: Optional[StopCriteria] = ...,
                 temperature: float,

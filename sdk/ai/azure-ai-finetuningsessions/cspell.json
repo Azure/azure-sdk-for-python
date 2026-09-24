@@ -9,6 +9,10 @@
   ],
   "overrides": [
     {
+      "filename": "tests/test_service_contracts.py",
+      "words": ["localns", "kwonlyargs"]
+    },
+    {
       "filename": "{emitter-package-lock,cspell}.json",
       "words": [
         "chownr", "cliui", "esbuild", "fastq", "fsevents", "globby", "iojs", "isaacs",

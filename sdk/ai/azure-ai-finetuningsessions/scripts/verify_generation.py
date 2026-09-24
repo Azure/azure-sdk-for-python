@@ -8,9 +8,12 @@ the hooks, is checked separately from the immutable Loom API/behavior comparison
 
 This check never updates the package, installs dependencies, or changes Git state.
 Run with --spec-repo pointing to the public azure-rest-api-specs working tree.
-Use --toolchain for an isolated installation of emitter-package.json, or omit it
-to use the spec repository's installed libraries. Only temporary build inputs
-and outputs are written; the source tree and SDK package are not rewritten.
+Use --toolchain for an isolated installation of the SDK repository's shared
+eng/emitter-package.json and eng/emitter-package-lock.json. Their location is
+discovered above this package, or selected with --sdk-repo. Outside an SDK
+checkout, eng/generation contains an archived shared pair, not an active package
+override. Without --toolchain, node_modules beside the selected manifest is used.
+Only temporary build inputs and outputs are written; sources are not rewritten.
 """
 
 from __future__ import annotations
@@ -23,16 +26,88 @@ import shutil
 import subprocess
 import tempfile
 
-PACKAGE = Path(__file__).resolve().parent
+PACKAGE = Path(__file__).resolve().parent.parent
+GENERATION = PACKAGE / "eng/generation"
 MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
-TOOL_VERSIONS = json.loads((PACKAGE / "emitter-package.json").read_text(encoding="utf-8"))["dependencies"]
 HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py", "_operation_compat.py"}
+MAINTAINED_MODULES = HANDWRITTEN_MODULES | {
+    "_patch.py", "aio/_patch.py", "models/_patch.py", "operations/_patch.py", "aio/operations/_patch.py"
+}
+HASH_NORMALIZATION = "CRLF-to-LF"
 
 
 def normalized_bytes(path: Path) -> bytes:
     """Ignore Windows checkout line endings, not generated content differences."""
     return path.read_bytes().replace(b"\r\n", b"\n")
+
+
+def toolchain_paths(sdk_repo: Path | None = None, *, package: Path = PACKAGE) -> tuple[Path, Path]:
+    """Prefer the public SDK checkout's central pair; never a package-local pin."""
+    package = package.resolve()
+    if sdk_repo is not None:
+        directory = sdk_repo.resolve() / "eng"
+    else:
+        directory = package / "eng/generation"
+        for parent in package.parents:
+            # A standalone reference repository can contain unrelated tooling.
+            # Only discover central SDK tooling above the SDK's sdk/ tree.
+            if package.relative_to(parent).parts[0] == "sdk" and (parent / "eng/emitter-package.json").is_file():
+                directory = parent / "eng"
+                break
+    paths = directory / "emitter-package.json", directory / "emitter-package-lock.json"
+    for path in paths:
+        if not path.is_file():
+            raise RuntimeError(f"Missing shared generation input {path}; supply --sdk-repo or archive the shared pair.")
+    return paths
+
+
+def locked_tool_versions(manifest_path: Path, lock_path: Path) -> dict[str, str]:
+    """Resolve every shared direct dependency from lock packages, not npm ranges."""
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    packages = lock.get("packages", {})
+    root = packages.get("")
+    if lock.get("lockfileVersion") not in (2, 3) or not isinstance(root, dict):
+        raise RuntimeError("The shared npm lock must contain a root packages entry (lockfile version 2 or 3).")
+    if manifest.get("name") != root.get("name"):
+        raise RuntimeError("Shared emitter manifest and lock root names disagree.")
+    dependencies = {}
+    for section in ("dependencies", "devDependencies"):
+        declared = manifest.get(section, {})
+        if declared != root.get(section, {}):
+            raise RuntimeError(f"Shared emitter manifest/lock {section} disagree; update them together.")
+        for name, requirement in declared.items():
+            if name in dependencies and dependencies[name] != requirement:
+                raise RuntimeError(f"Conflicting shared dependency declarations for {name}.")
+            dependencies[name] = requirement
+    if not dependencies:
+        raise RuntimeError("The shared emitter manifest declares no generation dependencies.")
+    versions = {}
+    for name in sorted(dependencies):
+        version = packages.get(f"node_modules/{name}", {}).get("version")
+        if not isinstance(version, str) or not version:
+            raise RuntimeError(f"No exact locked package version for {name}.")
+        versions[name] = version
+    return versions
+
+
+def toolchain_fingerprints(sdk_repo: Path | None = None) -> dict[str, str]:
+    """Provenance hashes cover full file bytes after CRLF-to-LF normalization only.
+
+    Record these manifest_sha256, lockfile_sha256 and hash_normalization fields
+    under provenance.toolchain. JSON ordering and whitespace remain significant.
+    """
+    manifest, lock = toolchain_paths(sdk_repo)
+    locked_tool_versions(manifest, lock)
+    return {
+        "manifest_sha256": hashlib.sha256(normalized_bytes(manifest)).hexdigest(),
+        "lockfile_sha256": hashlib.sha256(normalized_bytes(lock)).hexdigest(),
+        "hash_normalization": HASH_NORMALIZATION,
+    }
+
+
+TOOL_VERSIONS = locked_tool_versions(*toolchain_paths())
 
 
 def generated_files(package: Path) -> dict[str, bytes]:
@@ -71,8 +146,17 @@ def package_hashes(package: Path = PACKAGE) -> dict[str, str]:
     }
 
 
-def check_tools(toolchain: Path) -> None:
-    for name, expected in TOOL_VERSIONS.items():
+def check_tools(toolchain: Path, sdk_repo: Path | None = None) -> None:
+    shared_manifest, shared_lock = toolchain_paths(sdk_repo)
+    versions = locked_tool_versions(shared_manifest, shared_lock)
+    # Isolated npm installations rename the shared pair to package*.json.
+    # Reject edited installation inputs even when node_modules was not updated.
+    installed_inputs = toolchain / "package.json", toolchain / "package-lock.json"
+    if any(path.exists() for path in installed_inputs):
+        for installed, shared in zip(installed_inputs, (shared_manifest, shared_lock)):
+            if not installed.is_file() or normalized_bytes(installed) != normalized_bytes(shared):
+                raise RuntimeError(f"Installed toolchain input {installed} differs from the shared {shared.name}.")
+    for name, expected in versions.items():
         manifest = toolchain / "node_modules" / name / "package.json"
         if not manifest.exists():
             raise RuntimeError(f"Missing generation dependency {name}; install the pinned tooling first.")
@@ -81,9 +165,10 @@ def check_tools(toolchain: Path) -> None:
             raise RuntimeError(f"Expected {name} {expected}, found {actual}; do not compare different toolchains.")
 
 
-def check_provenance(spec_repo: Path) -> None:
+def check_provenance(spec_repo: Path, sdk_repo: Path | None = None) -> None:
     """Reject a stale checked-in provenance claim rather than silently updating it."""
-    provenance = json.loads((PACKAGE / "generation-provenance.json").read_text(encoding="utf-8"))
+    provenance = json.loads((GENERATION / "provenance.json").read_text(encoding="utf-8"))
+    tooling = toolchain_fingerprints(sdk_repo)
     source = source_hashes(spec_repo)
     source_fingerprint = hashlib.sha256(json.dumps(source, sort_keys=True).encode()).hexdigest()
     generated = {name: hashlib.sha256(value).hexdigest() for name, value in generated_files(PACKAGE).items()}
@@ -91,20 +176,28 @@ def check_provenance(spec_repo: Path) -> None:
         "source": source_fingerprint,
         "generated": hashlib.sha256(json.dumps(generated, sort_keys=True).encode()).hexdigest(),
         "runtime": hashlib.sha256(json.dumps(package_hashes(), sort_keys=True).encode()).hexdigest(),
-        "lock": hashlib.sha256((PACKAGE / "emitter-package-lock.json").read_bytes()).hexdigest(),
+        "manifest": tooling["manifest_sha256"],
+        "lock": tooling["lockfile_sha256"],
+        "hash_normalization": tooling["hash_normalization"],
+        "archived_manifest": hashlib.sha256(normalized_bytes(GENERATION / "emitter-package.json")).hexdigest(),
+        "archived_lock": hashlib.sha256(normalized_bytes(GENERATION / "emitter-package-lock.json")).hexdigest(),
     }
     expected = {
         "source": provenance["typespec"]["source_fingerprint_sha256"],
         "generated": provenance["assembly"]["generated_inventory_fingerprint_sha256"],
         "runtime": provenance["assembly"]["runtime_fingerprint_sha256"],
+        "manifest": provenance["toolchain"].get("manifest_sha256"),
         "lock": provenance["toolchain"]["lockfile_sha256"],
+        "hash_normalization": provenance["toolchain"].get("hash_normalization"),
+        "archived_manifest": provenance["toolchain"].get("manifest_sha256"),
+        "archived_lock": provenance["toolchain"]["lockfile_sha256"],
     }
     if actual != expected:
         raise RuntimeError(f"Generation provenance is stale: expected={expected}; actual={actual}")
 
 
 def emit(spec_repo: Path, output: Path, toolchain: Path | None = None) -> dict[str, bytes]:
-    toolchain = (toolchain or spec_repo).resolve()
+    toolchain = (toolchain or toolchain_paths()[0].parent).resolve()
     # Keep a complete local input snapshot under the selected toolchain so
     # package resolution cannot accidentally mix pnpm and old npm libraries.
     with tempfile.TemporaryDirectory(prefix="finetuning-inputs-", dir=toolchain, ignore_cleanup_errors=True) as directory:
@@ -115,14 +208,13 @@ def emit(spec_repo: Path, output: Path, toolchain: Path | None = None) -> dict[s
         # Seed only explicit customization inputs. The emitter's documented
         # _patch.py preservation is verified, not simulated by copying a
         # completed SDK over the generated output afterward.
-        for path in (PACKAGE / MODULE).rglob("*"):
-            if not path.is_file() or "__pycache__" in path.parts:
-                continue
-            relative = path.relative_to(PACKAGE / MODULE)
-            if path.name == "_patch.py" or relative.as_posix() in HANDWRITTEN_MODULES:
-                destination = output / MODULE / relative
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(path, destination)
+        for relative in sorted(MAINTAINED_MODULES):
+            path = PACKAGE / MODULE / relative
+            if not path.is_file():
+                raise RuntimeError(f"Missing maintained generation hook: {relative}")
+            destination = output / MODULE / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, destination)
         _compile(inputs / PROJECT.name, output, toolchain)
     return generated_files(output)
 
@@ -137,6 +229,9 @@ def _compile(project: Path, output: Path, toolchain: Path) -> None:
         str(project / "tspconfig.yaml"),
         "--option",
         f"@azure-tools/typespec-python.emitter-output-dir={output.as_posix()}",
+        "--option",
+        "@azure-tools/typespec-python.generate-packaging-files=false",
+        "--warn-as-error",
         "--pretty",
         "false",
     ]
@@ -157,11 +252,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spec-repo", type=Path, required=True)
     parser.add_argument("--toolchain", type=Path, help="Directory containing the pinned generation node_modules")
+    parser.add_argument("--sdk-repo", type=Path, help="SDK checkout containing the authoritative eng/emitter-package*.json")
     args = parser.parse_args()
     spec_repo = args.spec_repo.resolve()
-    toolchain = (args.toolchain or spec_repo).resolve()
-    check_tools(toolchain)
-    check_provenance(spec_repo)
+    toolchain = (args.toolchain or toolchain_paths(args.sdk_repo)[0].parent).resolve()
+    check_tools(toolchain, args.sdk_repo)
+    check_provenance(spec_repo, args.sdk_repo)
     before_source = source_hashes(spec_repo)
     before_package = package_hashes()
     with tempfile.TemporaryDirectory(prefix="finetuning-generation-", ignore_cleanup_errors=True) as directory:

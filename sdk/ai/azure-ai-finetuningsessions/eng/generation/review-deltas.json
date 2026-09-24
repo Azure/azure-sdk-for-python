@@ -3,9 +3,33 @@
   "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
   "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
   "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
-  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum"],
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling"],
+  "service_contracts": {
+    "version": 1,
+    "required_lora": {
+      "models": {"LoRAConfig": "rank", "CreateSessionRequest": "lora_config"},
+      "methods": ["sync.create", "sync.create_from_checkpoint", "async.create_session", "async.create_session_from_checkpoint"],
+      "default": "required; no client default"
+    },
+    "response_format": {"model": "SamplingParams", "field": "response_format", "type": "Optional[Dict[str, Any]]", "default": null},
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": true},
+    "security": {
+      "api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
+      "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides"
+    },
+    "retry": {"default_post_retries": 0, "caller_owned_policy": "unchanged"},
+    "raw_polling": {
+      "acceptance_status": 200,
+      "locator": ["session_id", "request_id"],
+      "poll": "GET pending then completed; never repeat POST",
+      "result": "exact OperationResult deserialization and cls",
+      "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
+      "legacy_cases": 336
+    }
+  },
   "adapted_upstream_tests": {
-    "tests/test_create_session_id_normalization.py": "64ef8fbd9f20fe1d5405a78df6d2a25537814f2d0915f097a4d537137468a699",
+    "tests/test_create_session_id_normalization.py": "dbc5531f34fd9e4e7fa3462717f94f55b2d1f271e3e204b370be8f9db25fcda8",
+    "tests/test_create_session_user_metadata.py": "38fc663dd608c11dd43e203963d2c4ede5fe3c205e3c56f40b2e6597fd393bea",
     "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db",
     "tests/test_forward_backward_waves.py": "81c6909c59c6c0b4438cacbce8ca874a461d5bb67df5453aa94a5839f5135540",
     "tests/test_forward_result.py": "5045dc1800820408004e96bce747bae2d51521db23ab01fd67418654f611311a",
@@ -19,8 +43,14 @@
   },
   "added_tests": {
     "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
-    "tests/test_review_regressions.py": "0f2b9f3a3a76abfa8dbbe328d8d3e5f80d45f1ea3dd7112b125d38a15b1fc16f",
-    "tests/test_training_type.py": "0b64b9ca1522b7ececd6f6731fec0067deec6f06068b9415d9e6576bf29de7b1"
+    "tests/test_review_regressions.py": "4773bb9ae863a21e23ca6050dcadb641fea7f9126d78d0505b5bf9a5d6738ab6",
+    "tests/test_training_type.py": "673e82d5cbdca67eff404c922b696dad7113e9a8436ba49dfd9194cd16a840f7",
+    "tests/test_error_image_regressions.py": "aaed6c38c42c431406a2c5d3572087b9468a73d43fa33c06d35cb9198d1443d9",
+    "tests/test_mutation_transport_retry.py": "491cfe662195e52558d15f8ebe32e0181c47207ebca88fa76def3759b7d81cf2",
+    "tests/test_raw_request_polling.py": "a6d2061efd49f217785d52db52f8d6c872a3adc0d01b66abf647bc03b193d966",
+    "tests/test_sampling_response_format.py": "ec6c2dec34d8520c1ff6e70e3d8ac3331a10d78951587c7741455ee81cfe6b8c",
+    "tests/test_service_contracts.py": "e7295cf1524bbb5009c0af0a50471a760517a4251d50c85eae0116ff292d10c9",
+    "tests/test_transport_security.py": "f234e7402ca256a7e2df4dccf4eec44f4a36edda00034cc468886f7864513936"
   },
   "training_type_contract": {
     "type": "TrainingType",
@@ -30,6 +60,9 @@
     "behavior": "String inputs remain accepted without coercion; omission stays omitted; no client-side default or service validation change. Only this export, exact members, and four annotation sites are allowed by the comparison."
   },
   "changes": [
+    {"comments": [], "change": "Explicitly approved service contracts supersede the earlier deferred decisions: require LoRAConfig.rank and CreateSessionRequest.lora_config plus four convenience arguments, without inferred defaults; add optional SamplingParams.response_format and an identical SamplingOperationResult alias. Guard the original immutable reference before each exact projection."},
+    {"comments": [4049473726, 4066580692], "change": "Explicitly approved API-key HTTPS/origin protection, cleanup of prepopulated SDK-default direct headers outside scope, and no automatic POST retries in the default policy; distinct caller-owned overrides remain unchanged."},
+    {"comments": [4071314957], "change": "Explicitly approved raw begin service protocol: real HTTP 200 acceptance plus request_id and session_id, pending/completed GET polling, no POST replay, and caller-owned custom polling/continuation retained. Execute all original 336 reference fixtures unchanged and transform only fixed contract observations for the candidate; do not waive or remove begin cases."},
     {"comments": [], "change": "Address the training_type enum review by reusing the canonical REST union, adding the string-backed TrainingType export and four explicit optional str-or-enum annotation sites. Existing wire values, future strings, and omission behavior remain unchanged."},
     {"comments": [], "change": "Replace 17 duplicated SDK TypeSpec definitions with canonical references, retain documented compatibility exceptions, and correct copied documentation without changing existing constructors or operation behavior."},
     {"comments": [], "change": "Document explicit training-tier selection rather than promoting legacy DeveloperTier metadata; preserve the service fallback and do not introduce a client default."},
@@ -53,9 +86,6 @@
     {"comments": [4071315065], "change": "ModelInput field and constructor overload accept the already-supported ImageChunk alongside token chunks."}
   ],
   "deferred_contract_decisions": [
-    {"comments": [3411972551], "reason": "Changing heartbeat startup to opt-in changes the tested session-liveness default; retain until an explicit API/lifecycle decision."},
-    {"comments": [4049473726], "reason": "Remote API-key HTTP rejection changes an existing compatibility/authentication policy and requires security review; recommend HTTPS now."},
-    {"comments": [4066580692], "reason": "No verified server deduplication contract; changing non-idempotent submission recovery needs service-owner review and fault-injection validation. Do not claim existing retries are duplicate-safe."},
-    {"comments": [4071314957], "reason": "Replacing or removing the legacy raw async LRO API changes the explicitly preserved preview contract, including continuation/custom-poll semantics. Keep its documented limitation and use tested request-ID conveniences until an API decision."}
+    {"comments": [3411972551], "reason": "Changing heartbeat startup to opt-in changes the tested session-liveness default; retain until an explicit API/lifecycle decision."}
   ]
 }

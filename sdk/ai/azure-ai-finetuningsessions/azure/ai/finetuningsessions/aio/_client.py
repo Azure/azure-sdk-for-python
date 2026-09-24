@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,11 +19,16 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import FineTuningSessionClientConfiguration
 from .operations import CheckpointsOperations, Operations, SamplingOperations, SessionsOperations, TrainingOperations
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FineTuningSessionClient:  # pylint: disable=client-accepts-api-version-keyword
+class FineTuningSessionClient:  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """FineTuningSessionClient.
 
     :ivar sessions: SessionsOperations operations

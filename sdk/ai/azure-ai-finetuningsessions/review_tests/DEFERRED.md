@@ -1,23 +1,27 @@
 # Archived pre-parity public-SDK tests
 
-The active preview baseline preserves the tested Loom customer API and behavior
-identified by [../loom-source.json](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/loom-source.json), using TypeSpec generation
-plus supported Python hooks. It is not the earlier public-only contract or the
-exact old internal file layout. See [../GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/GENERATION.md).
+The historical preview oracle is identified by
+[../eng/generation/reference.json](../eng/generation/reference.json). The active
+SDK uses TypeSpec generation plus supported Python hooks, with explicit reviewed
+changes recorded in [../eng/generation/review-deltas.json](../eng/generation/review-deltas.json).
+It is not a byte-identical copy of that oracle or the earlier public-only
+implementation. See [../GENERATION.md](../GENERATION.md).
 
-The Python files in this directory preserve the previous public-only tests for
-the next review stage. They are deliberately **not part of the active baseline
-test suite**. Several require models or helpers that do not exist in the Loom
-snapshot. Do not interpret their exclusion as proof that the reviewed issues
-are fixed. The independently reproduced heartbeat shutdown regression has now
-been reactivated under the normal tests directory with the reviewed fix; the
-remaining historical tests still assume superseded public-only API shapes.
+These Python files preserve superseded public-only tests and are **not part of
+active test discovery or passing-test totals**. Several depend on obsolete model
+or helper shapes. Their exclusion does not prove an issue fixed or still open.
+Applicable heartbeat-shutdown, credential security, POST-retry, and raw
+request-ID polling regressions are now covered by active tests; those fixes are
+not deferred. Only the change from automatic heartbeat startup to opt-in-only
+startup remains an unimplemented lifecycle decision.
 
-Reintroduce each applicable test with its corresponding separately reviewed fix
-after baseline parity and TypeSpec reconciliation. The complete prior public
-implementation and tests are also retained in Git commit
+Use the current contracts when adapting any remaining applicable regression;
+do not restore obsolete API expectations merely to reactivate an archived file.
+The complete prior implementation and tests remain in Git commit
 `8ebc1ea5c9d0682edfa857388c0cabc863c6ab70`.
 
-The copied upstream tests in `tests/` remain unchanged apart from the approved
-package/import spelling and run normally. The compatibility gate rejects
-missing, added, or modified files in that upstream test inventory.
+The immutable 48-file oracle, including its 19 upstream test files, is unchanged.
+Active tests retain upstream coverage with specifically recorded adaptations
+and additions. The compatibility gate checks exact inventories and hashes;
+unrecorded changes or missing upstream tests fail rather than being normalized
+away. Historical test and wheel results are not validation of the current SDK.

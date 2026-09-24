@@ -7,61 +7,166 @@
 
 Both public client subclasses use this helper instead of editing generated
 configuration or replacing a caller-supplied policy list or pipeline.
+
+Default retry policies never replay POST, including heartbeats, regardless of
+client or per-call retry counts or method allowlists. To opt into transport
+retries for POST, supply an explicit ``retry_policy`` (``RetryPolicy`` for sync,
+``AsyncRetryPolicy`` for async) and take responsibility for mutation replay
+safety. Caller-owned ``policies`` and ``pipeline`` are also unchanged. Redirect
+handling and explicit application-level retry decisions remain unchanged.
 """
 
 from typing import Any, Union
 from urllib.parse import urlparse, urlsplit
 
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import policies
+from azure.core.pipeline import PipelineRequest, PipelineResponse, policies
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
 from ._version import VERSION
-
 
 #: Hostnames that count as "local dev" for the purpose of allowing plain http://.
 _LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 
 
+class _NoPostRetryPolicy(policies.RetryPolicy):
+    """Keep Azure Core retry configuration except for non-idempotent POST."""
+
+    def send(self, request: PipelineRequest[Any]) -> PipelineResponse[Any, Any]:
+        """Disable POST retries before Azure Core consumes per-call options.
+
+        :param request: Request passing through the default client pipeline.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The response from the remaining pipeline policies.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if request.http_request.method.upper() == "POST":
+            # Reapply on each redirect: core pops retry_total from options.
+            request.context.options["retry_total"] = 0
+        return super().send(request)
+
+
+class _AsyncNoPostRetryPolicy(policies.AsyncRetryPolicy):
+    """Keep async Azure Core retries except for non-idempotent POST."""
+
+    async def send(self, request: PipelineRequest[Any]) -> PipelineResponse[Any, Any]:
+        """Disable POST retries before Azure Core consumes per-call options.
+
+        :param request: Request passing through the default async client pipeline.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The response from the remaining pipeline policies.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if request.http_request.method.upper() == "POST":
+            request.context.options["retry_total"] = 0
+        return await super().send(request)
+
+
+def _origin(url: str) -> tuple:
+    """Compare scheme, normalized hostname and effective port, not just netloc.
+
+    :param str url: Endpoint or request URL to inspect.
+    :return: Scheme, hostname, and effective port.
+    :rtype: tuple
+    """
+    # Requests/urllib3 may treat a backslash before '@' as a path separator,
+    # whereas urlsplit treats it as userinfo. Never authenticate that ambiguity.
+    if "\\" in url:
+        raise ValueError("Endpoint and request URLs must not contain backslashes.")
+    parts = urlsplit(url)
+    scheme = parts.scheme.lower()
+    port = parts.port
+    return scheme, parts.hostname, port if port is not None else {"http": 80, "https": 443}.get(scheme)
+
+
+class _ApiKeyTransportPolicy(policies.SansIOHTTPPolicy):
+    """Reject unsafe key transports before auth, including explicit auth policies."""
+
+    def __init__(self, endpoint: str, *, allow_insecure_http: bool = False) -> None:
+        self.origin = _origin(endpoint)
+        self._allow_http = allow_insecure_http and _is_local_endpoint(endpoint)
+        self._context_key = f"finetuning-key-origin-{id(self)}"
+
+    def on_request(self, request: Any) -> None:
+        target_origin = _origin(request.http_request.url)
+        if target_origin[0] != "https" and not (self._allow_http and target_origin == self.origin):
+            # A configuration may be constructed for compatibility, but sending
+            # credentials is fail-closed. Unlike a transient transport error,
+            # this ValueError must not itself trigger connection retries.
+            raise ValueError(
+                "API key authentication requires HTTPS. allow_insecure_http=True only permits "
+                "the configured loopback HTTP origin (localhost, 127.0.0.1, [::1])."
+            )
+        initial_origin, crossed_origin = request.context.get(self._context_key, (target_origin, False))
+        crossed_origin = crossed_origin or target_origin != initial_origin
+        request.context[self._context_key] = (initial_origin, crossed_origin)
+        # Azure Core compares netloc only: include scheme changes, but do not
+        # strip auth for an equivalent explicit default port. Once an origin
+        # was crossed, keep cleanup enabled for the rest of this redirect chain.
+        request.context["insecure_domain_change"] = crossed_origin
+
+
+class _ScopedAzureKeyCredentialPolicy(AzureKeyCredentialPolicy):
+    """Authenticate only the configured origin, even when core cleanup is disabled."""
+
+    def __init__(self, credential: AzureKeyCredential, endpoint: str, *, allow_insecure_http: bool = False) -> None:
+        super().__init__(credential, name="api-key")
+        self._transport_policy = _ApiKeyTransportPolicy(endpoint, allow_insecure_http=allow_insecure_http)
+        self._context_key = f"finetuning-api-key-{id(self)}"
+
+    def on_request(self, request: Any) -> None:
+        self._transport_policy.on_request(request)
+        headers = request.http_request.headers
+        if _origin(request.http_request.url) != self._transport_policy.origin:
+            injected = request.context.pop(self._context_key, None)
+            if injected is not None and headers.get("api-key") == injected:
+                headers.pop("api-key", None)
+            return
+        super().on_request(request)
+        # Retain the value actually sent, not the credential's possibly rotated
+        # value, so redirects cannot retain an earlier SDK-injected key.
+        request.context[self._context_key] = headers["api-key"]
+
+
 class _DirectContextPolicy(policies.SansIOHTTPPolicy):
     """Apply existing direct-route context only to this endpoint's session calls.
 
-    A retry policy placement ensures redirects are rechecked. Only headers added
-    by this policy are removed when a redirect leaves the configured endpoint.
-    Caller-supplied headers and custom pipeline policies remain caller-owned.
+    A retry policy placement ensures redirects are rechecked. Headers equal to
+    SDK defaults include those prepopulated by conveniences. Track those values
+    and remove them outside this scope, without claiming differing caller
+    overrides. An identical explicit value cannot be distinguished from an SDK
+    default and is conservatively scoped to the endpoint too.
     """
 
     def __init__(self, endpoint: str) -> None:
-        self._endpoint = urlsplit(endpoint)
-        self._prefix = self._endpoint.path.rstrip("/") + "/fine_tuning/sessions"
+        self._origin = _origin(endpoint)
+        self._prefix = urlsplit(endpoint).path.rstrip("/") + "/fine_tuning/sessions"
         self._context_key = f"finetuning-direct-headers-{id(self)}"
 
     def on_request(self, request: Any) -> None:
         target = urlsplit(request.http_request.url)
-        endpoint = self._endpoint
-
-        def origin(parts: Any) -> tuple:
-            return parts.scheme.lower(), parts.hostname, parts.port or (443 if parts.scheme == "https" else 80)
-
-        matches = origin(target) == origin(endpoint) and (
+        matches = _origin(request.http_request.url) == self._origin and (
             target.path == self._prefix or target.path.startswith(self._prefix + "/")
         )
         injected = request.context.get(self._context_key, {})
-        if not matches:
-            for name, value in injected.items():
-                if request.http_request.headers.get(name) == value:
-                    request.http_request.headers.pop(name, None)
-            request.context[self._context_key] = {}
-            return
+        # HttpRequest headers are case-insensitive, including a caller override
+        # of a differently cased key from the plain dict returned by _base_headers.
+        headers = request.http_request.headers
         # Lazy import avoids a root-patch/configuration import cycle.
         from ._patch import _base_headers
 
         for name, value in _base_headers().items():
             if name.lower() in {"accept", "foundry-features"}:
                 continue
-            if name not in request.http_request.headers:
-                request.http_request.headers[name] = value
-                injected[name] = value
+            if matches and name not in headers:
+                headers[name] = value
+            if headers.get(name) == value:
+                injected[name.lower()] = value
+        if not matches:
+            for name, value in injected.items():
+                if headers.get(name) == value:
+                    headers.pop(name, None)
+            injected = {}
         request.context[self._context_key] = injected
 
 
@@ -77,12 +182,20 @@ def _is_local_endpoint(endpoint: str) -> bool:
     :return: Whether the URL uses HTTP and a recognized loopback host.
     :rtype: bool
     """
+    if "\\" in endpoint:
+        return False
     try:
         parsed = urlparse(endpoint)
     except ValueError:
         return False
     hostname = parsed.hostname
-    return parsed.scheme.casefold() == "http" and hostname is not None and hostname.casefold() in _LOCAL_HOSTS
+    return (
+        parsed.scheme.casefold() == "http"
+        and hostname is not None
+        and hostname.casefold() in _LOCAL_HOSTS
+        and parsed.username is None
+        and parsed.password is None
+    )
 
 
 def _is_http_endpoint(endpoint: str) -> bool:
@@ -131,7 +244,7 @@ def _prepare_client_options(
     :type credential: ~typing.Any
     :param options: Caller options, copied before adding preview-compatible defaults.
     :type options: dict[str, ~typing.Any]
-    :keyword allow_insecure_http: Permit bearer authentication on loopback HTTP only.
+    :keyword allow_insecure_http: Permit authentication on loopback HTTP only.
     :paramtype allow_insecure_http: bool
     :keyword asynchronous: Select policies compatible with the async pipeline.
     :paramtype asynchronous: bool
@@ -160,12 +273,25 @@ def _prepare_client_options(
     # Explicit policy lists/pipelines remain owned by the caller. Default
     # pipelines get the same environment context as the training conveniences.
     if kwargs.get("policies") is None and kwargs.get("pipeline") is None:
+        if kwargs.get("retry_policy") is None:
+            kwargs["retry_policy"] = _AsyncNoPostRetryPolicy(**kwargs) if asynchronous else _NoPostRetryPolicy(**kwargs)
         custom = kwargs.get("per_retry_policies") or []
         custom = list(custom) if isinstance(custom, (list, tuple)) else [custom]
+        if isinstance(credential, AzureKeyCredential):
+            custom.append(_ApiKeyTransportPolicy(endpoint, allow_insecure_http=allow_insecure_http))
+        # Do not replace the built-in blocked headers or mutate the caller's
+        # list. Cleanup runs after authentication and catches reinjection by an
+        # explicit auth policy. Direct-context headers are value-owned instead:
+        # globally blocking their names would discard distinct caller overrides.
+        blocked = policies.SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS | {"api-key"}
+        blocked.update(kwargs.get("blocked_redirect_headers") or [])
+        kwargs["blocked_redirect_headers"] = sorted({name.lower() for name in blocked})
         kwargs["per_retry_policies"] = [*custom, _DirectContextPolicy(endpoint)]
     if credential and not kwargs.get("authentication_policy"):
         if isinstance(credential, AzureKeyCredential):
-            kwargs["authentication_policy"] = AzureKeyCredentialPolicy(credential, name="api-key")
+            kwargs["authentication_policy"] = _ScopedAzureKeyCredentialPolicy(
+                credential, endpoint, allow_insecure_http=allow_insecure_http
+            )
         else:
             policy_cls: type[Union[policies.BearerTokenCredentialPolicy, policies.AsyncBearerTokenCredentialPolicy]]
             if asynchronous:

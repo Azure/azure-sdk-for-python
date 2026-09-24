@@ -40,7 +40,7 @@ def test_training_type_members_and_string_behavior():
 @pytest.mark.parametrize("mapping", [False, True])
 @pytest.mark.parametrize("value", VALUES)
 def test_model_accepts_enum_and_existing_or_future_strings(mapping, value):
-    data = {"type": "training", "base_model": "test-model", "training_type": value}
+    data = {"type": "training", "base_model": "test-model", "lora_config": {"rank": 16}, "training_type": value}
     model = CreateSessionRequest(data) if mapping else CreateSessionRequest(**data)
     assert wire(model) == data
     model.training_type = "AnotherFutureTier"
@@ -50,7 +50,7 @@ def test_model_accepts_enum_and_existing_or_future_strings(mapping, value):
 @pytest.mark.parametrize("explicit_none", [False, True])
 @pytest.mark.parametrize("metadata", [None, {"DeveloperTier": True}, {"DeveloperTier": "true"}])
 def test_omission_does_not_inject_a_training_tier(explicit_none, metadata):
-    data = {"type": "training", "base_model": "test-model", "user_metadata": metadata}
+    data = {"type": "training", "base_model": "test-model", "lora_config": {"rank": 16}, "user_metadata": metadata}
     if explicit_none:
         data["training_type"] = None
     body = wire(CreateSessionRequest(**data))

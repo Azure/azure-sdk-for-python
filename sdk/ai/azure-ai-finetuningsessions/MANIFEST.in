@@ -1,17 +1,18 @@
 include *.md
 include LICENSE
-include loom-source.json
-include verify_loom_snapshot.py
-include verify_loom_compatibility.py
-include verify_loom_surface.py
-include verify_generation.py
-include emitter-package.json
-include emitter-package-lock.json
-include generator-requirements.txt
-include generation-provenance.json
+include scripts/verify_generation.py
+include scripts/verify_reference_snapshot.py
+include scripts/verify_compatibility.py
+include scripts/verify_surface.py
+include scripts/test_review_contracts.py
+include eng/generation/reference.json
+include eng/generation/review-deltas.json
+include eng/generation/provenance.json
+include eng/generation/emitter-package.json
+include eng/generation/emitter-package-lock.json
+include eng/generation/requirements.txt
 include tsp-location.yaml
 include review_tests/DEFERRED.md
-include review-deltas.json
 include REVIEW.md
 include api.md
 include api.metadata.yml
@@ -19,5 +20,7 @@ include azure/ai/finetuningsessions/py.typed
 recursive-include doc *.rst
 recursive-include tests *.py
 recursive-include samples *.py *.md
+recursive-exclude scripts __pycache__ *.pyc *.pyo
+recursive-exclude tests __pycache__ *.pyc *.pyo
 include azure/__init__.py
 include azure/ai/__init__.py

@@ -6,23 +6,25 @@
 Run with the existing Python environment (azure-core and the SDK dependencies
 must already be installed):
 
-    python verify_loom_compatibility.py --loom-repo C:\\path\\to\\loom
+    python scripts/verify_compatibility.py --loom-repo C:\\path\\to\\loom
 
 The parent imports neither SDK. Two fresh, isolated Python subprocesses import
-azure.ai.finetuningsessions from their respective source roots, run the same 20
-cases with real clients and buffered fake transports, and return JSON snapshots.
-The reference is materialized from the immutable commit in loom-source.json,
+azure.ai.finetuningsessions from their respective source roots, run all 20 cases
+with real clients and buffered fake transports, and return JSON snapshots.
+The reference is materialized from the immutable commit in eng/generation/reference.json,
 not from the possibly older or dirty Loom working tree. Upstream test files and
-the reference hashes are exact; the customer-facing API and behavior must match
-without additive allowances. Supported internal hook organization may differ.
+the reference hashes are exact; customer-facing API and behavior must match
+except fixed, guarded review contracts. The immutable reference always uses
+its original fixtures; candidate fixture adaptations require those contracts.
+Supported internal hook organization may differ.
 Both workers use their default routes without a route-selection flag. URLs are checked at the
 transport boundary, NEVER rewritten by this verifier. No install, generation,
 package alias, test-module import, or service is involved.
 
 Internal inspection interface:
 
-    python verify_loom_compatibility.py --snapshot <package-directory>
-    python verify_loom_compatibility.py --snapshot <package-directory> --legacy-routes
+    python scripts/verify_compatibility.py --snapshot <package-directory>
+    python scripts/verify_compatibility.py --snapshot <package-directory> --legacy-routes
 
 Snapshots contain no wall-clock timestamps, process IDs, random request IDs, or task reprs.
 They retain complete JSON request/result bodies and numeric types. Only header
@@ -56,7 +58,7 @@ from typing import Any, Callable
 from urllib.parse import urlencode
 from uuid import UUID
 
-PACKAGE = Path(__file__).resolve().parent
+PACKAGE = Path(__file__).resolve().parent.parent
 MODULE = Path("azure/ai/finetuningsessions")
 NAMESPACE = "azure.ai.finetuningsessions"
 ENDPOINT = "https://offline.invalid/api/projects/compatibility"
@@ -66,6 +68,32 @@ BASE_MODEL = "offline-base-model"
 PREVIEW = "FineTuningSessions=V1Preview"
 KEY = "offline-verifier-key-not-a-secret"
 TOKEN = "offline-verifier-token-not-a-secret"
+ORIGINAL_CONTRACTS = ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]
+SERVICE_CONTRACTS = [
+    "required-lora-config", "sampling-response-format", "sampling-operation-result-alias",
+    "credential-transport-security", "no-post-retries", "raw-request-id-polling",
+]
+# This is a fixed specification, not an allowlist of diff paths or candidate values.
+SERVICE_CONTRACT_DEFINITIONS = {
+    "version": 1,
+    "required_lora": {
+        "models": {"LoRAConfig": "rank", "CreateSessionRequest": "lora_config"},
+        "methods": ["sync.create", "sync.create_from_checkpoint", "async.create_session",
+                    "async.create_session_from_checkpoint"],
+        "default": "required; no client default",
+    },
+    "response_format": {"model": "SamplingParams", "field": "response_format",
+                        "type": "Optional[Dict[str, Any]]", "default": None},
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": True},
+    "security": {"api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
+                 "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides"},
+    "retry": {"default_post_retries": 0, "caller_owned_policy": "unchanged"},
+    "raw_polling": {"acceptance_status": 200, "locator": ["session_id", "request_id"],
+                    "poll": "GET pending then completed; never repeat POST",
+                    "result": "exact OperationResult deserialization and cls",
+                    "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
+                    "legacy_cases": 336},
+}
 IMAGE = b"\xff\xd8\xffoffline-jpeg"
 IMAGE_WIRE = {
     "type": "image",
@@ -135,11 +163,11 @@ NORMALIZATIONS = [
     "User-Agent must have the expected SDK moniker/version; only the exact Python/platform suffix is removed.",
     "JSON object ordering/whitespace and Python tuple/list JSON encoding are not wire differences; scalar numeric types are preserved.",
     "Package origins and supported internal hook placement differ; immutable reference blobs and upstream tests are verified exactly.",
-    "Workload signatures compare names, kinds, defaults and binding; verify_loom_surface.py additionally checks all types and overloads.",
+    "Workload signatures compare names, kinds, defaults and binding; scripts/verify_surface.py additionally checks all types and overloads.",
 ]
 LIMITATIONS = [
     "This workload exercises convenience APIs and selected generated reads, not every raw generated call.",
-    "The legacy begin_* machinery is separately compared offline; its pre-existing sync/async status inconsistency is not a service certification.",
+    "All original begin_* cases remain in the separate raw gate; additional HTTP-200 request-ID protocol probes are not live-service certification.",
     "Generated wire parity covers sessions.get/list/heartbeat and checkpoints.get/list with per-operation api_version='v1' only.",
     "Immediate fixture completion proves client behavior, not service/GPU correctness, retry timing, multi-chunk concurrency, or background heartbeats.",
 ]
@@ -322,6 +350,7 @@ class _Reply:
     body: Any
     payload: Any
     status: int = 200
+    headers: dict | None = None
 
 
 class _Case:
@@ -331,6 +360,7 @@ class _Case:
         self.requests: list[dict[str, Any]] = []
         self.token_calls: list[Any] = []
         self.checks = 0
+        self.poll_sleeps: list[float] = []
 
     def check(self, condition: bool, label: str) -> None:
         self.checks += 1
@@ -446,7 +476,7 @@ def _transport_types() -> tuple[type, type]:
         def initialize(self, reply: _Reply) -> None:
             self.status_code = reply.status
             self.reason = "OK" if reply.status < 400 else "Offline fixture error"
-            self.headers = case_insensitive_dict({"content-type": "application/json"})
+            self.headers = case_insensitive_dict({"content-type": "application/json", **(reply.headers or {})})
             self.content_type = "application/json"
             self._body = _dump(reply.payload).encode("utf-8")
             self.is_closed = False
@@ -535,6 +565,9 @@ def _transport_types() -> tuple[type, type]:
             self.close()
 
         def sleep(self, duration: float) -> None:
+            if duration == 0 and getattr(self.case, "allow_zero_poll_sleep", False):
+                self.case.poll_sleeps.append(duration)
+                return
             raise AssertionError("Immediate offline fixtures must not trigger transport retries/sleeps")
 
     class _AsyncTransport(AsyncHttpTransport):
@@ -558,19 +591,23 @@ def _transport_types() -> tuple[type, type]:
             await self.close()
 
         async def sleep(self, duration: float) -> None:
+            if duration == 0 and getattr(self.case, "allow_zero_poll_sleep", False):
+                self.case.poll_sleeps.append(duration)
+                return
             raise AssertionError("Immediate offline fixtures must not trigger transport retries/sleeps")
 
     return _SyncTransport, _AsyncTransport
 
 
 class _Context:
-    def __init__(self, legacy_routes: bool) -> None:
+    def __init__(self, legacy_routes: bool, service_contracts: bool = False) -> None:
         self.sdk = importlib.import_module(NAMESPACE)
         self.aio = importlib.import_module(NAMESPACE + ".aio")
         self.models = importlib.import_module(NAMESPACE + ".models")
         self.model_base = importlib.import_module(NAMESPACE + "._utils.model_base")
         self.async_patch = importlib.import_module(NAMESPACE + ".aio._patch")
         self.legacy_routes = legacy_routes
+        self.service_contracts = service_contracts
         # Preserve the upstream Loom moniker; do not change the SDK merely to
         # satisfy the earlier regenerated public SDK's user-agent convention.
         self.moniker = f"azsdk-python-finetuning-sessions/{self.sdk.__version__}"
@@ -717,6 +754,8 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
     )
     case.check(ctx.sdk.EngineDeadError is ctx.sdk.TrainingEngineError, "EngineDeadError alias")
     case.check(ctx.sdk.MalformedDatumError is ctx.sdk.RequestValidationError, "MalformedDatumError alias")
+    if hasattr(ctx.models, "SamplingOperationResult") and ctx.models.SamplingOperationResult is not ctx.models.SampleOperationResult:
+        raise AssertionError("SamplingOperationResult must be the identical SampleOperationResult class")
     return {
         "version": ctx.sdk.__version__,
         "exports": exports,
@@ -750,8 +789,10 @@ def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
     restored = m.ImageChunk(IMAGE_WIRE)
     case.check(restored.data == IMAGE and restored.length == 2, "Image bytes and token length round-trip")
     case.equal(ctx.value(ctx.batch()), BATCH, "Mixed-image Datum/LossFnInputs/TensorData construction")
-    request = m.CreateSessionRequest(type="training", base_model=BASE_MODEL, user_metadata=METADATA)
     expected_request = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA}
+    if ctx.service_contracts:
+        expected_request["lora_config"] = LORA
+    request = m.CreateSessionRequest(**expected_request)
     output["CreateSessionRequest"] = ctx.model(
         case, request, "CreateSessionRequest", expected_request, ("type", "base_model", "user_metadata", "lora_config")
     )
@@ -808,7 +849,7 @@ def _create_options(ctx: _Context, index: int) -> tuple[dict, dict]:
         "timeout_sec": 5.0,
     }
     body = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA, "training_type": "DeveloperTier"}
-    if index == 1:
+    if index == 1 or ctx.service_contracts:
         options["lora_config"], body["lora_config"] = ctx.models.LoRAConfig(**LORA), LORA
     if index == 2:
         options["from_checkpoint"] = ctx.models.FromCheckpoint(
@@ -871,9 +912,12 @@ def _sync_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> list:
             "base_model": BASE_MODEL,
             "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
         }
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
         case.create("model_resumed", "model_resumed", body, f"resume_{index}")
         session = ctx.sdk.FineTuningSession.create_from_checkpoint(
-            client, checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0
+            client, checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0, **options
         )
         state = {"session_id": session.session_id, "resource_id": session._resource_session_id}
         case.equal(state, {"session_id": "session_resumed", "resource_id": "model_resumed"}, "Resumed session identity")
@@ -1266,9 +1310,12 @@ async def _async_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> l
             "base_model": BASE_MODEL,
             "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
         }
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
         case.create("model_resumed", "model_resumed", body, f"resume_{index}")
         session_id = await client.create_session_from_checkpoint(
-            checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0
+            checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0, **options
         )
         case.equal(session_id, "session_resumed", "Async resumed identity")
         case.equal(client._session_resource_ids, {"session_resumed": "model_resumed"}, "Async resumed resource map")
@@ -1381,8 +1428,12 @@ async def _async_sampling(ctx: _Context, case: _Case, client: Any) -> list:
 async def _async_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
     output = []
     for index, (raw, canonical, resource) in enumerate(IDENTITIES):
-        case.create(raw, resource, {"type": "training", "base_model": BASE_MODEL}, f"lifecycle_{index}")
-        session_id = await client.create_session(base_model=BASE_MODEL, timeout_sec=5.0)
+        body = {"type": "training", "base_model": BASE_MODEL}
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
+        case.create(raw, resource, body, f"lifecycle_{index}")
+        session_id = await client.create_session(base_model=BASE_MODEL, timeout_sec=5.0, **options)
         case.equal(session_id, canonical, "Lifecycle canonical ID")
         case.equal(client._session_resource_ids[session_id], resource, "Lifecycle resource map")
         # Background heartbeats are disabled. Explicitly exercise the real
@@ -1487,7 +1538,7 @@ async def _run_async_cases(ctx: _Context, results: dict) -> None:
         results[name] = case.finish(output, error)
 
 
-def _snapshot(package: Path, legacy_routes: bool) -> dict:
+def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = False) -> dict:
     sys.dont_write_bytecode = True
     _offline_environment()
     if any(name == NAMESPACE or name.startswith(NAMESPACE + ".") for name in sys.modules):
@@ -1497,6 +1548,9 @@ def _snapshot(package: Path, legacy_routes: bool) -> dict:
     # Windows asyncio may create an internal wakeup socket here. The SDK has not
     # been imported, and all later socket connections (including loopback) fail.
     loop = asyncio.new_event_loop()
+    # Windows discovery may invoke a subprocess/open NUL; finish it before
+    # the guard rather than allowing filesystem writes or subprocesses in it.
+    platform.platform()
     _install_offline_guard()
     sys.path.insert(0, str(package))
     try:
@@ -1504,7 +1558,7 @@ def _snapshot(package: Path, legacy_routes: bool) -> dict:
         from azure.core.settings import settings
 
         settings.tracing_enabled = False
-        ctx = _Context(legacy_routes)
+        ctx = _Context(legacy_routes, service_contracts)
         expected_origin = (package / MODULE / "__init__.py").resolve()
         if Path(ctx.sdk.__file__).resolve() != expected_origin:
             raise RuntimeError(f"Imported the wrong SDK: {ctx.sdk.__file__}; expected {expected_origin}")
@@ -1539,6 +1593,7 @@ def _snapshot(package: Path, legacy_routes: bool) -> dict:
             },
             "runtime": {
                 "legacy_routes": legacy_routes,
+                "service_contracts": service_contracts,
                 "network_guard": True,
                 "write_guard": True,
                 "heartbeat_start_disabled": True,
@@ -1606,10 +1661,12 @@ def _apply_review_header_contract(cases: dict, *, raw: bool) -> dict:
     return result
 
 
-def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
+def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool = False) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
         command.append("--legacy-routes")
+    if service_contracts:
+        command.append("--service-contracts")
     completed = subprocess.run(
         command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False
     )
@@ -1623,6 +1680,7 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
         raise RuntimeError(f"Snapshot setup failed for {package}: {_dump(report)}\n{completed.stderr}")
     expected_runtime = {
         "legacy_routes": legacy_routes,
+        "service_contracts": service_contracts,
         "network_guard": True,
         "write_guard": True,
         "heartbeat_start_disabled": True,
@@ -1645,15 +1703,61 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
 
 
 def _review_contracts(deltas: dict) -> list[str]:
-    """Accept only the original reviewed contracts and the explicit enum addition."""
-    original = ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]
+    """Reject unknown, partial or modified specifications, including extra fields."""
     contracts = deltas.get("fixture_contracts")
-    if contracts not in (original, original + ["training-type-enum"]):
+    previous = ORIGINAL_CONTRACTS + ["training-type-enum"]
+    if contracts not in (ORIGINAL_CONTRACTS, previous, previous + SERVICE_CONTRACTS):
         raise ValueError("Unsupported review comparison contract")
+    if contracts == previous + SERVICE_CONTRACTS:
+        if _dump(deltas.get("service_contracts")) != _dump(SERVICE_CONTRACT_DEFINITIONS):
+            raise ValueError("The fixed service contract definitions changed")
+    elif "service_contracts" in deltas:
+        raise ValueError("Service definitions require the complete explicit service contract set")
     return contracts
 
 
-def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_enum: bool = False) -> int:
+def _require_baseline(value: Any, digest: str, label: str) -> None:
+    """Guard immutable observations BEFORE a delta; never hash candidate values."""
+    if hashlib.sha256(_dump(value).encode("utf-8")).hexdigest() != digest:
+        raise ValueError(f"The immutable {label} baseline changed; refusing the reviewed transformation")
+
+
+def _apply_service_contracts(cases: dict) -> dict:
+    """Adapt only required LoRA inputs, four signatures and one identical alias.
+
+    The digest is of all 20 ORIGINAL-fixture Loom observations, obtained from
+    verified commit 485774df, before header/TrainingType projections. It guards
+    every old assertion, request, signature, default and output, not source code.
+    """
+    _require_baseline(cases, "ef14400ae5ba19baf73758c3d9da1fdad3c4078fa2a64ff3f37bfff9555cc981", "20-case")
+    result = deepcopy(cases)
+    surface = result["surface_and_signatures"]["output"]
+    surface["exports"]["models"] = sorted([*surface["exports"]["models"], "SamplingOperationResult"])
+    for method in SERVICE_CONTRACT_DEFINITIONS["required_lora"]["methods"]:
+        parameter = next(p for p in surface["signatures"][method] if p["name"] == "lora_config")
+        if parameter != {"name": "lora_config", "kind": "KEYWORD_ONLY", "default": None}:
+            raise ValueError(f"Unexpected baseline parameter: {method}.lora_config")
+        del parameter["default"]
+    model = result["serialization_and_error_contracts"]["output"]["CreateSessionRequest"]
+    model["json"]["lora_config"] = deepcopy(LORA)
+    model["attributes"]["lora_config"] = deepcopy(LORA)
+    for name in ("sync_create_identifiers", "async_create_identifiers", "sync_create_from_checkpoint",
+                 "async_create_from_checkpoint", "async_lifecycle"):
+        for request in result[name]["requests"]:
+            if request["method"] == "POST" and request["url"] == ENDPOINT + ROUTE + "?api-version=v1":
+                body = request["body"]
+                if "lora_config" not in body:
+                    if request["headers"]["content-length"] != str(len(json.dumps(body).encode("utf-8"))):
+                        raise ValueError("Unexpected baseline create-body encoding")
+                    body["lora_config"] = deepcopy(LORA)
+                    request["headers"]["content-length"] = str(len(json.dumps(body).encode("utf-8")))
+    return result
+
+
+def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_enum: bool = False,
+             service_contracts: bool = False) -> int:
+    if service_contracts:
+        loom = {**loom, "cases": _apply_service_contracts(loom["cases"])}
     if reviewed:
         loom = {**loom, "cases": _apply_review_header_contract(loom["cases"], raw=False)}
     if training_type_enum:
@@ -1687,10 +1791,12 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
         if len(differences) > 20:
             print(f"  ... {len(differences) - 20} further differences; use --snapshot to inspect full actual records.")
     print("\nExplicitly allowed surface differences:")
-    print("  " + ("Only the exact direct-context header additions recorded in review-deltas.json." if reviewed
+    print("  " + ("Only the exact direct-context header additions recorded in eng/generation/review-deltas.json." if reviewed
                   else "None. Customer-facing API and behavior must match; internal hook placement may differ."))
     if training_type_enum:
         print("  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences.")
+    if service_contracts:
+        print("  Also fixed required-LoRA inputs/four signatures and the identical sampling alias; original reference fixtures remain unchanged.")
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1704,26 +1810,30 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
 
 
 def main() -> int:
+    platform.platform()
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--loom-repo", type=Path, help="Local Git clone containing the pinned upstream Loom commit")
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--legacy-routes", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--artifacts", type=Path, help="Save original and candidate worker JSON without altering the source oracle")
     args = parser.parse_args()
     if args.snapshot is not None:
         if args.loom_repo is not None:
             parser.error("--snapshot and --loom-repo are mutually exclusive")
         try:
             with redirect_stdout(sys.stderr):
-                report = _snapshot(args.snapshot, args.legacy_routes)
+                report = _snapshot(args.snapshot, args.legacy_routes, args.service_contracts)
             print(_dump(report))
             return 0 if all(case["ok"] for case in report["cases"].values()) else 1
         except Exception as exc:
             print(_dump({"fatal": {"type": type(exc).__name__, "message": str(exc)}}))
             return 2
-    if args.loom_repo is None or args.legacy_routes:
+    if args.loom_repo is None or args.legacy_routes or args.service_contracts:
         parser.error("--loom-repo is required; --legacy-routes is for internal --snapshot mode only")
     try:
-        from verify_loom_snapshot import reference_package, load_manifest, upstream_files, normalized_bytes
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from verify_reference_snapshot import reference_package, load_manifest, upstream_files, normalized_bytes
 
         public_package = _check_package(PACKAGE)
         manifest = load_manifest(public_package)
@@ -1734,7 +1844,7 @@ def main() -> int:
             for path in (public_package / "tests").rglob("*")
             if path.is_file() and not {"__pycache__", ".pytest_cache"}.intersection(path.parts)
         }
-        delta_path = PACKAGE / "review-deltas.json"
+        delta_path = PACKAGE / "eng/generation/review-deltas.json"
         deltas = json.loads(delta_path.read_text(encoding="utf-8")) if delta_path.exists() else None
         if deltas is None:
             if expected_tests != actual_tests:
@@ -1754,20 +1864,28 @@ def main() -> int:
                     raise ValueError(f"Unrecorded regression-test change: {name}")
         print(f"Immutable Loom reference verified: {manifest['source_commit']}\nPublic source: {public_package}")
         with reference_package(args.loom_repo, public_package) as reference:
+            service_contracts = deltas is not None and "raw-request-id-polling" in _review_contracts(deltas)
             loom = _run_worker(_check_package(reference), legacy_routes=False)
-            public = _run_worker(public_package, legacy_routes=False)
+            public = _run_worker(public_package, legacy_routes=False, service_contracts=service_contracts)
+            if args.artifacts:
+                args.artifacts.mkdir(parents=True, exist_ok=True)
+                for name, report in (("reference-convenience", loom), ("candidate-convenience", public)):
+                    (args.artifacts / f"{name}.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
             if _compare(
                 loom, public, reviewed=deltas is not None,
                 training_type_enum=deltas is not None and "training-type-enum" in _review_contracts(deltas),
+                service_contracts=service_contracts,
             ):
                 return 1
             command = [
-                sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "verify_loom_surface.py"),
+                sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "scripts/verify_surface.py"),
                 "--reference", str(reference), "--candidate", str(public_package),
                 "--harness", str(Path(__file__).resolve()),
             ]
             if deltas is not None:
                 command.extend(["--review-deltas", str(delta_path)])
+            if args.artifacts:
+                command.extend(["--artifacts", str(args.artifacts.resolve())])
             completed = subprocess.run(command, check=False)
             return completed.returncode
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:

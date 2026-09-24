@@ -6,6 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Union
+from typing import TypeAlias, Union
 
-StopCriteria = Union[list[int], list[str]]
+StopCriteria: TypeAlias = Union[list[int], list[str]]

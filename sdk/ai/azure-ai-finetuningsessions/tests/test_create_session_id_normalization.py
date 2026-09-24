@@ -14,7 +14,10 @@ import pytest
 
 from azure.ai.finetuningsessions import _patch as _sync_patch
 from azure.ai.finetuningsessions.aio import _patch as _aio_patch
-from azure.ai.finetuningsessions.models import FromCheckpoint
+from azure.ai.finetuningsessions.models import FromCheckpoint, LoRAConfig
+
+
+_LORA_CONFIG = LoRAConfig(rank=32)
 
 
 class _FakeResponse:
@@ -76,6 +79,7 @@ def test_sync_create_preserves_canonical_server_session_id() -> None:
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -91,6 +95,7 @@ def test_sync_create_serializes_developer_tier_string() -> None:
         _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             training_type="DeveloperTier",
             timeout_sec=1,
         )
@@ -106,6 +111,7 @@ def test_sync_create_routes_legacy_server_session_id() -> None:
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -121,6 +127,7 @@ def test_sync_create_normalizes_raw_server_session_id() -> None:
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -136,6 +143,7 @@ async def test_async_create_preserves_canonical_server_session_id() -> None:
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -151,6 +159,7 @@ async def test_async_create_routes_legacy_server_session_id() -> None:
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -166,6 +175,7 @@ async def test_async_create_normalizes_raw_server_session_id() -> None:
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -198,6 +208,7 @@ def test_sync_post_create_operation_uses_server_resource_id(
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
     session.save_weights("checkpoint-1")
@@ -234,6 +245,7 @@ async def test_async_post_create_operation_uses_server_resource_id(
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
     await _aio_patch.save_weights(client, session_id, "checkpoint-1")
@@ -267,6 +279,7 @@ def test_sync_post_create_close_uses_server_resource_id(
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
     session.close()
@@ -299,6 +312,7 @@ async def test_async_post_create_close_uses_server_resource_id(
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
     await _aio_patch.close_session(client, session_id)
@@ -323,6 +337,7 @@ def test_sync_legacy_create_heartbeat_uses_server_resource_id(
         session = _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
     session.heartbeat()
@@ -344,6 +359,7 @@ async def test_async_legacy_create_heartbeat_uses_server_resource_id(
         session_id = await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -367,6 +383,7 @@ def test_sync_create_serializes_checkpoint_source_as_session_id() -> None:
         _sync_patch.FineTuningSession.create(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             from_checkpoint=FromCheckpoint(
                 source_session_id="model_deadbeef",
                 checkpoint_id="checkpoint-1",
@@ -386,6 +403,7 @@ def test_sync_create_from_checkpoint_canonicalizes_result_path_source_session_id
             client,
             checkpoint_path="loom://model_deadbeef/weights/checkpoint-1",
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -404,6 +422,7 @@ async def test_async_create_from_checkpoint_canonicalizes_result_path_source_ses
             client,
             checkpoint_path="loom://model_deadbeef/weights/checkpoint-1",
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             timeout_sec=1,
         )
 
@@ -421,6 +440,7 @@ async def test_async_create_serializes_checkpoint_source_as_session_id() -> None
         await _aio_patch.create_session(
             client,
             base_model="test-model",
+            lora_config=_LORA_CONFIG,
             from_checkpoint=FromCheckpoint(
                 source_session_id="model_deadbeef",
                 checkpoint_id="checkpoint-1",

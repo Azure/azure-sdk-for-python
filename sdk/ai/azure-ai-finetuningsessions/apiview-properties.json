@@ -71,5 +71,6 @@
         "azure.ai.finetuningsessions.aio.operations.SamplingOperations.begin_sample": "Azure.AI.Projects.SessionFineTuning.Sampling.sample",
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get"
-    }
+    },
+    "CrossLanguageVersion": "7b2d6d6a8988"
 }

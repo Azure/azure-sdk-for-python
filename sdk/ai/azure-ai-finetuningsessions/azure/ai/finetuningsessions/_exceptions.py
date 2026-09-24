@@ -31,6 +31,7 @@ Customers should branch on exception type rather than grepping message strings:
 Each exception carries structured metadata extracted from the server's response
 body so callers can make decisions without string parsing.
 """
+
 from __future__ import annotations
 
 import math
@@ -342,7 +343,7 @@ class RequestValidationError(FineTuningSessionsError):
 
 def _classify_http_error(
     status_code: int,
-    body: Optional[dict],
+    body: Any,
     *,
     response: Any = None,
     session_id: Optional[str] = None,
@@ -353,8 +354,8 @@ def _classify_http_error(
     should fall through to generic error handling).
 
     :param int status_code: HTTP status code of the failed request.
-    :param body: Decoded error response body, or ``None`` if unavailable.
-    :type body: dict or None
+    :param body: Decoded JSON error response body, or ``None`` if unavailable.
+    :type body: ~typing.Any
     :keyword ~typing.Any response: HTTP response associated with the error, if available.
     :keyword session_id: Session identifier to attach to engine errors, if known.
     :type session_id: str or None
@@ -364,7 +365,7 @@ def _classify_http_error(
     # Preserve the tested HTTP-status decision table and its legacy precedence.
     # Splitting or merging branches can change which public exception wins.
     # pylint: disable=too-many-return-statements,too-many-branches,too-many-statements
-    if body is None:
+    if not isinstance(body, dict):
         body = {}
 
     # --- HTTP 413: Batch too large ---
@@ -515,7 +516,9 @@ def _classify_http_error(
         if body.get("retry_after_sec") is not None:
             try:
                 retry_after = float(body["retry_after_sec"])
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, OverflowError):
+                retry_after = None
+            if retry_after is not None and (not math.isfinite(retry_after) or retry_after < 0):
                 retry_after = None
         if retry_after is None and response is not None:
             raw = None
@@ -527,7 +530,9 @@ def _classify_http_error(
             if raw is not None:
                 try:
                     retry_after = float(raw)
-                except (ValueError, TypeError):
+                except (ValueError, TypeError, OverflowError):
+                    retry_after = None
+                if retry_after is not None and (not math.isfinite(retry_after) or retry_after < 0):
                     retry_after = None
         return RateLimitedError(msg, retry_after_sec=retry_after, reason=reason, response=response)
 
@@ -610,7 +615,9 @@ def _classify_poll_failure(
         retry_after = envelope.get("retry_after_sec")
         try:
             retry_after = float(retry_after) if retry_after is not None else None
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
+            retry_after = None
+        if retry_after is not None and (not math.isfinite(retry_after) or retry_after <= 0):
             retry_after = None
         return RequestRetryableError(
             error_msg,

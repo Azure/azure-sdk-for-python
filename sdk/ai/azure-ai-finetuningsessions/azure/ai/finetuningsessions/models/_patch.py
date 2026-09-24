@@ -11,8 +11,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Any, Dict, Literal, Mapping, Optional, Union, overload
 
+from .. import _unions
 from .._utils.model_base import Model as _Model, rest_field
 from . import _models
+from ._enums import SessionType, TrainingType
 
 MAX_IMAGE_BYTES = 10_000_000
 MAX_IMAGES_PER_EXAMPLE = 64
@@ -93,8 +95,13 @@ class ImageChunk(_Model):
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        kwargs.setdefault("type", "image")
         super().__init__(*args, **kwargs)
+        # Positional mappings ignore keyword defaults. Check the original
+        # marker before fixing the discriminator on the model's own copy.
+        values = args[0] if args else kwargs
+        if values.get("type", "image") != "image":
+            raise ValueError("image type must be 'image'")
+        self.type = "image"
         if not isinstance(self.data, bytes):
             raise TypeError("image data must be bytes")
         if len(self.data) > MAX_IMAGE_BYTES:
@@ -109,6 +116,96 @@ class ImageChunk(_Model):
     @property
     def length(self) -> int:
         return self.expected_tokens
+
+
+class LoRAConfig(_models.LoRAConfig):
+    """Adapter settings with an explicit rank; no model-independent default is assumed.
+
+    :ivar rank: Required number of LoRA rank dimensions.
+    :vartype rank: int
+    """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rank: int,
+        alpha: Optional[float] = None,
+        seed: Optional[int] = None,
+        freeze_vision_tower: Optional[bool] = None,
+        freeze_multi_modal_projector: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if self.rank is None:
+            raise ValueError("lora_config.rank is required; pass LoRAConfig(rank=<integer>)")
+
+
+class CreateSessionRequest(_models.CreateSessionRequest):
+    """Session creation with the explicit adapter configuration required by the service.
+
+    :ivar lora_config: Required adapter configuration, including rank.
+    :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
+    """
+
+    lora_config: LoRAConfig = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, SessionType],
+        base_model: str,
+        lora_config: LoRAConfig,
+        user_metadata: Optional[dict[str, Any]] = None,
+        ejectable: Optional[bool] = None,
+        training_type: Optional[Union[str, TrainingType]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if self.lora_config is None:
+            raise ValueError("lora_config is required; pass LoRAConfig(rank=<integer>)")
+        # Model conversion preserves a mapping when construction fails. Validate
+        # that fallback rather than sending an invalid nested configuration.
+        if isinstance(self.lora_config, Mapping) and self.lora_config.get("rank") is None:
+            raise ValueError("lora_config.rank is required; pass LoRAConfig(rank=<integer>)")
+
+
+class SamplingParams(_models.SamplingParams):
+    """Token generation settings, including an optional structured-output format.
+
+    :ivar response_format: Response format passed to compatible sampling providers.
+    :vartype response_format: dict[str, typing.Any] or None
+    """
+
+    response_format: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+        top_k: int,
+        seed: Optional[int] = None,
+        stop_criteria: Optional[_unions.StopCriteria] = None,
+        response_format: Optional[Dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SampleOperationResult(_models.SampleOperationResult, discriminator="sample"):
@@ -143,6 +240,11 @@ class SampleOperationResult(_models.SampleOperationResult, discriminator="sample
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+# Preferred descriptive spelling; retain the existing public name and class
+# identity for consumers, discriminator dispatch, and isinstance checks.
+SamplingOperationResult = SampleOperationResult
 
 
 class SaveCheckpointRequest(_models.SaveCheckpointRequest):
@@ -202,8 +304,12 @@ class ModelInput(_models.ModelInput):
 __all__: list[str] = [
     "FromCheckpoint",
     "ImageChunk",
+    "LoRAConfig",
+    "CreateSessionRequest",
+    "SamplingParams",
     "ModelInput",
     "SampleOperationResult",
+    "SamplingOperationResult",
     "SaveCheckpointRequest",
 ]
 

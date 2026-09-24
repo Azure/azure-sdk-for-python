@@ -27,6 +27,7 @@ Note: the generated ``begin_*`` methods on sub-clients use the Azure LRO (202 +
 Operation-Location header) pattern and will **not** work against loom, which returns
 200.  Always use ``FineTuningSession`` methods for training operations.
 """
+
 from __future__ import annotations
 
 import concurrent.futures as _futures
@@ -1135,7 +1136,7 @@ class FineTuningSession:
         client: "FineTuningSessionClient",
         *,
         base_model: str,
-        lora_config: Optional[LoRAConfig] = None,
+        lora_config: LoRAConfig,
         type: str = "training",
         from_checkpoint: Optional[FromCheckpoint] = None,
         timeout_sec: float = 600.0,
@@ -1152,9 +1153,8 @@ class FineTuningSession:
         :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
         :keyword base_model: Name of the base model to load (e.g. ``"Llama-3.1-8B"``).
         :paramtype base_model: str
-        :keyword lora_config: LoRA adapter configuration. Optional in the compatibility signature;
-            the service requires a configuration with rank for session creation.
-        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+        :keyword lora_config: Required LoRA adapter configuration, including rank.
+        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
         :keyword type: Session type string. Defaults to ``"training"``.
         :paramtype type: str
         :keyword from_checkpoint: Optional :class:`FromCheckpoint` specifying the
@@ -1383,7 +1383,7 @@ class FineTuningSession:
         *,
         checkpoint_path: str,
         base_model: str,
-        lora_config: Optional[LoRAConfig] = None,
+        lora_config: LoRAConfig,
         type: str = "training",
         timeout_sec: float = 600.0,
     ) -> "FineTuningSession":
@@ -1399,8 +1399,8 @@ class FineTuningSession:
         :paramtype checkpoint_path: str
         :keyword base_model: Base model matching the checkpoint source.
         :paramtype base_model: str
-        :keyword lora_config: Optional LoRA configuration override.
-        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+        :keyword lora_config: Required LoRA configuration matching the checkpoint.
+        :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
         :keyword type: Session type, defaulting to training.
         :paramtype type: str
         :keyword timeout_sec: Maximum seconds to wait for model loading.

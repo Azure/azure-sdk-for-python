@@ -18,6 +18,7 @@ from azure.ai.finetuningsessions import FineTuningSession, FineTuningSessionClie
 from azure.ai.finetuningsessions import _patch as sync
 from azure.ai.finetuningsessions import _exceptions as errors
 from azure.ai.finetuningsessions.aio import _patch as aio
+from azure.ai.finetuningsessions.models import LoRAConfig
 
 
 class Response:
@@ -163,9 +164,9 @@ async def test_create_unknown_status_is_immediate_protocol_error(clock, asynchro
         client.send_request = AsyncMock(side_effect=lambda _: next(responses))
     with pytest.raises(RuntimeError, match="Unexpected.*status"):
         if asynchronous:
-            await aio.create_session(client, base_model="m")
+            await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16))
         else:
-            FineTuningSession.create(client, base_model="m")
+            FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16))
     assert clock.waits == []
 
 
@@ -184,9 +185,9 @@ async def test_create_waits_are_deadline_bounded(clock, asynchronous):
     client = SimpleNamespace(send_request=AsyncMock(side_effect=send) if asynchronous else send)
     with pytest.raises(RuntimeError, match="Timed out"):
         if asynchronous:
-            await aio.create_session(client, base_model="m", timeout_sec=3)
+            await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16), timeout_sec=3)
         else:
-            FineTuningSession.create(client, base_model="m", timeout_sec=3)
+            FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16), timeout_sec=3)
     assert clock.now <= 3
     assert max(clock.waits) <= 3
 
@@ -208,9 +209,9 @@ async def test_create_404_grace_does_not_resubmit(clock, asynchronous):
 
     client = SimpleNamespace(send_request=AsyncMock(side_effect=send) if asynchronous else send)
     if asynchronous:
-        assert await aio.create_session(client, base_model="m") == "session_test"
+        assert await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16)) == "session_test"
     else:
-        assert FineTuningSession.create(client, base_model="m").session_id == "session_test"
+        assert FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16)).session_id == "session_test"
     assert calls == ["POST", "GET", "GET"]
     assert clock.waits
 
@@ -229,9 +230,9 @@ async def test_create_default_logs_do_not_contain_payload(clock, caplog, asynchr
     )
     with caplog.at_level(logging.INFO):
         if asynchronous:
-            await aio.create_session(client, base_model="m")
+            await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16))
         else:
-            FineTuningSession.create(client, base_model="m")
+            FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16))
     assert marker not in caplog.text
 
 

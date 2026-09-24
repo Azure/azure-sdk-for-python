@@ -3,7 +3,7 @@
 """Verify the immutable Loom source oracle, or an explicitly supplied exact snapshot.
 
 The shipping SDK is regenerated plus supported hooks, not a byte-identical copy.
-Its acceptance gate is verify_loom_compatibility.py. This tool preserves the
+Its acceptance gate is scripts/verify_compatibility.py. This tool preserves the
 stronger byte/hash validation for the reference and for archived exact snapshots.
 No dependencies are installed and neither repository nor its index is modified.
 """
@@ -19,7 +19,7 @@ import subprocess
 import tempfile
 from typing import Iterator
 
-PACKAGE = Path(__file__).resolve().parent
+PACKAGE = Path(__file__).resolve().parent.parent
 NORMALIZATIONS = (
     ("azure.ai.finetuning_sessions", "azure.ai.finetuningsessions"),
     ("azure/ai/finetuning_sessions", "azure/ai/finetuningsessions"),
@@ -40,7 +40,7 @@ def renamed_bytes(content: bytes) -> bytes:
 
 
 def load_manifest(package: Path = PACKAGE) -> dict:
-    manifest = json.loads((package / "loom-source.json").read_text(encoding="utf-8"))
+    manifest = json.loads((package / "eng/generation/reference.json").read_text(encoding="utf-8"))
     if manifest.get("schema_version") != 1 or manifest.get("status") != "loom-preview-snapshot":
         raise ValueError("Unsupported Loom snapshot manifest")
     expected = [{"from": old, "to": new} for old, new in NORMALIZATIONS]

@@ -1,9 +1,10 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b1 (2026-09-24)
 
 ### Features Added
 
+- Add optional `SamplingParams.response_format` for compatible sampling providers and the friendly `SamplingOperationResult` alias for `SampleOperationResult`.
 - Add the string-backed `TrainingType` enum, reusing the REST training-tier definition. Existing string inputs and omission behavior remain supported.
 - Initial preview of interactive fine-tuning sessions with synchronous and asynchronous clients.
 - Forward-only requests, checkpoint resume and deletion, JSON-valued session metadata, and training-tier selection.
@@ -12,8 +13,10 @@
 
 ### Breaking Changes
 
+- Require Python 3.10 or later; Python 3.9 is no longer supported.
+- Require an explicit `lora_config` with `LoRAConfig.rank` in session creation and checkpoint-resume methods, and in `CreateSessionRequest`. No implicit rank or empty configuration is supplied.
 - The distribution is named `azure-ai-finetuningsessions` and Python imports now use `azure.ai.finetuningsessions`. Remove older preview installations and update imports/dependency files before installing this build.
-- The preview baseline now matches the tested Loom SDK instead of the earlier public-only regenerated surface. Public-only raw models, extra operation methods, keyword adapters, and request-ID poller replacements are not included in this baseline.
+- The preview baseline replaces the earlier regenerated-only surface with the established preview API plus explicitly documented contract changes. Callers of earlier raw models, operation methods, or keyword adapters should check the current signatures when migrating.
 
 ### Bugs Fixed
 
@@ -23,24 +26,26 @@
 - Preserve generic handling for explicit non-batch payload limits and typed errors for malformed capacity retry hints; reject unhandled redirects during deletion.
 - Propagate direct-route context headers through default raw-operation pipelines with endpoint scoping and caller overrides; omit response payloads from normal INFO logs.
 - Preserve the sync heartbeat thread when shutdown has not completed, validate mapping-form image inputs, and return actual completed Tasks from async multichunk/wave methods as documented.
-- Includes upstream Loom handling of nested HTTP 503 error details while preserving flat-response compatibility.
-- Includes upstream Loom mapping of `engine_dead` polling failures to `TrainingEngineError`, preserving error codes and diagnostic references without retrying lost engine state.
+- Handle nested HTTP 503 error details while preserving flat-response compatibility.
+- Map `engine_dead` polling failures to `TrainingEngineError`, preserving error codes and diagnostic references without retrying lost engine state.
+- Handle non-object error bodies safely, ignore invalid or non-finite retry hints, and validate positional image mappings consistently with keyword inputs.
+- Require HTTPS and configured-origin scoping for default API-key authentication, with explicit configured-loopback HTTP opt-in only. Remove SDK-default direct-route headers outside their origin/path scope, including prepopulated defaults, while preserving distinct caller overrides.
+- Disable automatic POST transport retries in default sync/async policies, including heartbeats. Explicit retry policies remain caller-owned; this does not guarantee deduplication or change convenience-level recovery decisions.
+- Make default raw `begin_*` pollers use HTTP 200 acceptance and session/request-ID GET polling in both clients, without POST replay or synthetic HTTP 202. Preserve result callbacks, custom polling, no-polling, and strategy-specific continuation behavior.
 
 ### Other Changes
 
 - Reuse 17 canonical TypeSpec definitions instead of maintaining duplicate SDK models, retain explicitly documented compatibility exceptions, and correct LoRA, sampling, and training-tier documentation without changing service behavior.
-- Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths. Wire training-tier values, the generated Python API, and both public/Loom SDK runtimes are unchanged after verified regeneration.
-- Regenerate from the reviewed Foundry required-preview operation contract and updated schema defaults; preserve the existing Python API and request query ordering through supported customization hooks. Synchronize the Loom SDK runtime and reviewed regressions with this package.
-- Regenerate the preview from pinned TypeSpec inputs and supported Python hooks, preserving the tested public API and behavior of Loom commit `485774df502642879fdf3a53777be4a0d95155dc`. Immutable reference hashes remain in `loom-source.json`; separate generation provenance records the local source inputs.
-- Preserved Loom's `/fine_tuning/sessions` routes, generated signatures, models, authentication guards, retry behavior, and convenience APIs. The public-only `use_legacy_routes` option is not part of this snapshot.
-- At the historical SDK parity baseline `39c2b3c882526897619785089074176b367099a6`, pinned to TypeSpec `d912f0d0bc6af9e87e0c0833922dd85fa32abf97`, verified two independent emissions, the complete customized runtime, all 434 upstream tests, public types/signatures/serialization, and raw-operation parity. Authentication, exports, legacy operations, and non-emittable sampling annotations survive regeneration without editing generated files; this is not final validation of later CI repairs.
-- Preserve the separately committed Loom-equivalent baseline and document each intentional review delta. Security/retry-contract redesigns remain owner decisions; no service deduplication guarantee is implied.
+- Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths; training-tier wire values are unchanged.
+- Use the Foundry required-preview operation contract and documented schema defaults with supported Python customization hooks for request query ordering and established convenience behavior.
+- Use the repository's shared Python emitter `0.63.8`, backend `0.37.3`, compiler `1.16.0`, and client generator core `0.72.1`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
+- Remove the package-local emitter override. Keep standalone tooling archives and validation records under the package's engineering directory, and verification commands under its scripts directory; standard README and generation guidance remain at the package root.
+- Record the unchanged 48-file historical oracle at source commit `485774df502642879fdf3a53777be4a0d95155dc` in [eng/generation/reference.json](eng/generation/reference.json). See [GENERATION.md](GENERATION.md) for current guidance, exact reviewed contracts, and historical evidence.
+- Retain `/fine_tuning/sessions` routes and established convenience APIs. The earlier `use_legacy_routes` option is not included in this preview.
+- Use AST overload inspection on all supported Python versions rather than importing Python 3.11-only `typing.get_overloads`; retain the assertions on Python 3.10.
+- Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
 
-#### CI repair snapshot (2026-09-22; local only)
-
-- Repair the Python 3.10 overload-inspection failure from SDK baseline CI build `6867846` by using AST inspection on all Python versions instead of importing `typing.get_overloads`. Local tests: Python 3.10, 500 passed and 1 Python 3.12+ eager-task skip; Python 3.13, 501 passed.
-- Pass local Pylint 4.0.4 with Azure checker 0.5.7 after helper documentation and dictionary-literal fixes, with explicit line/function exceptions for preview compatibility and existing state-machine complexity. This is not an exception-free pass or a full refactoring of all findings.
-- Pass strict Sphinx 8.2 against the actual sdist with the repository override's five namespace RST pages and all verification scripts retained; only offline intersphinx downloads were disabled. The MCP README check passed; the last root CSpell run covered 84 files with 0 issues.
-- Pass compiler 1.16 warnings-as-errors checks for REST and Python entry points. Only three expected error-field descriptions change in REST output; Python/wire types and HTTP/schema/protocol behavior remain unchanged. Exact-node compatibility exceptions still need human review, and 14 C#-only naming mappings still require other-language CI validation.
-- Enable packaging generation for clean MCP output while maintained-SDK generation overrides `generate-packaging-files=false`. Actual MCP generation passed and a separate pinned emission matches all 21 generated inventory entries, including the model documentation-only update.
-- Final formatter, repeated generation/provenance, source pointer, and repair commit/push work remain pending in the parent validation task; remote CI has not run these changes. The PyPI name still needs the approved reservation pipeline, REST documentation-preview infrastructure is blocked, and 64 review replies remain local after EMU HTTP 403. Detailed exceptions and limitations are recorded in [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) and [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/feature/finetuning-sessions-sdk/sdk/ai/azure-ai-finetuningsessions/REVIEW.md).
+Recorded local validation: **1,637 SDK tests passed on Python 3.13.14**. The
+comparison and negative-guard counts, generation method, and limitations are in
+[GENERATION.md](GENERATION.md). These results do not claim a new final-wheel run,
+validation of the new tests on Python 3.10, remote CI success, or release approval.

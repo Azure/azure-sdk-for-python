@@ -22,7 +22,7 @@ import json
 from typing import Any
 
 from azure.ai.finetuningsessions.aio import _patch as _aio_mod
-from azure.ai.finetuningsessions.models._models import CreateSessionRequest
+from azure.ai.finetuningsessions.models import CreateSessionRequest, LoRAConfig
 
 
 def test_model_preserves_boolean_user_metadata():
@@ -30,6 +30,7 @@ def test_model_preserves_boolean_user_metadata():
     req = CreateSessionRequest(
         type="training",
         base_model="Qwen/Qwen3-14B",
+        lora_config=LoRAConfig(rank=32),
         user_metadata={
             "customBoolean": True,
             "customFalseBoolean": False,
@@ -94,6 +95,7 @@ def test_create_session_payload_preserves_boolean_metadata(monkeypatch):
         _aio_mod.create_session(
             client,
             base_model="Qwen/Qwen3-14B",
+            lora_config=LoRAConfig(rank=32),
             user_metadata={
                 "customBoolean": True,
                 "customFalseBoolean": False,

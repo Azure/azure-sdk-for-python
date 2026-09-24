@@ -1,0 +1,8 @@
+# Official install_requires from @typespec/http-client-python 0.37.3 generator/setup.py.
+# Install into the emitter's isolated venv, not the SDK runtime environment.
+black==26.3.1
+docutils>=0.20.1
+Jinja2==3.1.6
+PyYAML==6.0.1
+tomli==2.0.1
+setuptools==83.0.0

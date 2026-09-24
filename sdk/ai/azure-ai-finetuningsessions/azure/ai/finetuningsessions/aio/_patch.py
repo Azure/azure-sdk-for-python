@@ -26,6 +26,7 @@ Usage::
         opt = await client.optim_step(session_id, AdamParams(learning_rate=1e-4))
         await client.close_session(session_id)
 """
+
 from __future__ import annotations
 
 # The public API returns asyncio.Task; create_task, shield, semaphores and
@@ -1184,7 +1185,7 @@ async def create_session(
     self: "FineTuningSessionClient",
     *,
     base_model: str,
-    lora_config: Optional[LoRAConfig] = None,
+    lora_config: LoRAConfig,
     type: str = "training",
     from_checkpoint: Optional[FromCheckpoint] = None,
     timeout_sec: float = 600.0,
@@ -1195,9 +1196,8 @@ async def create_session(
 
     :keyword base_model: Name of the base model to load.
     :paramtype base_model: str
-    :keyword lora_config: LoRA adapter configuration. Optional in the compatibility signature;
-        the service requires a configuration with rank for session creation.
-    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+    :keyword lora_config: Required LoRA adapter configuration, including rank.
+    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :keyword type: Session type string. Defaults to ``"training"``.
     :paramtype type: str
     :keyword from_checkpoint: Optional checkpoint to resume from.
@@ -1417,7 +1417,7 @@ async def create_session_from_checkpoint(
     *,
     checkpoint_path: str,
     base_model: str,
-    lora_config: Optional[LoRAConfig] = None,
+    lora_config: LoRAConfig,
     type: str = "training",
     timeout_sec: float = 600.0,
 ) -> str:
@@ -1428,8 +1428,8 @@ async def create_session_from_checkpoint(
     :paramtype checkpoint_path: str
     :keyword base_model: Base model name.
     :paramtype base_model: str
-    :keyword lora_config: Optional LoRA config override.
-    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
+    :keyword lora_config: Required LoRA configuration matching the checkpoint.
+    :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :keyword type: Session type. Defaults to ``"training"``.
     :paramtype type: str
     :keyword timeout_sec: Maximum seconds to wait for model load.
