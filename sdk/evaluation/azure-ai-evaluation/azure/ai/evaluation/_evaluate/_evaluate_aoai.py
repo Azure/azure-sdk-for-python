@@ -183,11 +183,12 @@ def _begin_single_aoai_evaluation(
     data_source_config: Dict[str, Any] = {}
 
     if kwargs.get("data_source_config") is not None:
-        data_source_config = kwargs.get("data_source_config", {})
+        data_source_config = deepcopy(kwargs.get("data_source_config", {}))
 
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source", {})
 
+    explicit_item_schema = data_source_config.get("item_schema")
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
     client = list(graders.values())[0].get_client()
@@ -206,6 +207,10 @@ def _begin_single_aoai_evaluation(
 
     # Combine with the item schema with generated data outside Eval SDK
     _combine_item_schemas(data_source_config, kwargs)
+    if explicit_item_schema is not None:
+        explicit_item_schema = data_source_config.get("item_schema")
+    elif isinstance(kwargs.get("item_schema"), dict):
+        explicit_item_schema = deepcopy(kwargs["item_schema"])
 
     eval_group_info = client.evals.create(
         data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
@@ -228,7 +233,15 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
+    eval_run_id = _begin_eval_run(
+        client,
+        eval_group_info.id,
+        run_name,
+        data,
+        effective_column_mapping,
+        data_source,
+        item_schema=explicit_item_schema,
+    )
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -253,13 +266,24 @@ def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, 
         return
 
     if "item_schema" in data_source_config:
-        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
-        for key in kwargs["item_schema"]["properties"]:
-            if key not in data_source_config["item_schema"]["properties"]:
-                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
-
-                if key in item_schema:
-                    data_source_config["item_schema"]["required"].append(key)
+        explicit_schema = deepcopy(kwargs["item_schema"])
+        combined = deepcopy(data_source_config["item_schema"])
+        properties = combined.setdefault("properties", {})
+        inherited_required = combined.get("required", [])
+        if explicit_schema.get("additionalProperties", True) is not True:
+            # Inferred properties would bypass an explicit restriction on additional properties.
+            properties = {}
+            inherited_required = []
+        properties.update(explicit_schema["properties"])
+        # Explicit subtrees are authoritative, including optional properties and constraints.
+        required = [name for name in inherited_required if name not in explicit_schema["properties"]]
+        for name in explicit_schema.get("required", []):
+            if name not in required:
+                required.append(name)
+        combined.update(explicit_schema)
+        combined["properties"] = properties
+        combined["required"] = required
+        data_source_config["item_schema"] = combined
 
 
 def _get_evaluation_run_results(
@@ -915,7 +939,11 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+def _get_data_source(
+    input_data_df: pd.DataFrame,
+    column_mapping: Dict[str, str],
+    item_schema: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """
     Given a dataframe of data to be evaluated, and a column mapping,
     produce a dictionary that can be used as the data source input for an OAI evaluation run.
@@ -925,12 +953,26 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :type input_data_df: pd.DataFrame
     :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
     :type column_mapping: Optional[Dict[str, str]]
+    :param item_schema: Explicit item schema, excluding inferred defaults. Declared values are not coerced.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
 
-    def _convert_value(val: Any) -> Any:
+    explicit_properties = item_schema.get("properties", {}) if item_schema is not None else {}
+    missing = object()
+
+    def _convert_value(val: Any, explicit: bool = False) -> Any:
         """Convert to AOAI-friendly representation while preserving structure when useful."""
+        if explicit:
+            # Unbox pandas/numpy scalars without converting between JSON types.
+            if pd.api.types.is_bool(val):
+                return bool(val)
+            if pd.api.types.is_integer(val):
+                return int(val)
+            if pd.api.types.is_float(val):
+                return float(val)
+            return deepcopy(val)
         if val is None:
             return ""
         if isinstance(val, str):
@@ -953,6 +995,21 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             cursor = cursor.get(segment)
             if cursor is None:
                 return None
+        return cursor
+
+    def _get_explicit_value(row: Dict[str, Any], normalized_row: Dict[str, Any], path: str) -> Any:
+        parts = path.split(".")
+        # Original containers retain nulls, missing keys and integer types lost by flattening.
+        if parts[0] in row:
+            cursor: Any = row
+        elif path in row:
+            return row[path]
+        else:
+            cursor = normalized_row
+        for part in parts:
+            if not isinstance(cursor, dict) or part not in cursor:
+                return missing
+            cursor = cursor[part]
         return cursor
 
     LOGGER.info(
@@ -1023,10 +1080,27 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     LOGGER.info(f"AOAI: Processed {len(path_specs)} path specifications from column mappings.")
     content: List[Dict[str, Any]] = []
+    explicit_source_columns = {
+        spec["dataframe_col"]
+        for spec in path_specs
+        if spec["relative_parts"][0] in explicit_properties and not spec["is_run_output"]
+    }
 
-    for _, row in input_data_df.iterrows():
-        normalized_row = _normalize_row_for_item_wrapper(row.to_dict())
+    # iterrows can promote integer columns to floats when another column contains floats.
+    rows = (
+        (dict(zip(input_data_df.columns, values)) for values in input_data_df.itertuples(index=False, name=None))
+        if explicit_properties
+        else (row.to_dict() for _, row in input_data_df.iterrows())
+    )
+    for row in rows:
+        normalized_row = _normalize_row_for_item_wrapper(row)
         item_root: Dict[str, Any] = {}
+        source_item = row.get(WRAPPER_KEY, row)
+        if isinstance(source_item, dict):
+            # Flattened mappings omit empty objects and can omit siblings of mapped leaves.
+            item_root.update(
+                {key: _convert_value(source_item[key], True) for key in explicit_properties if key in source_item}
+            )
 
         # Track which top-level keys under the wrapper have been populated via mappings
         processed_root_keys: Set[str] = set()
@@ -1036,15 +1110,20 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             if not rel_parts:
                 continue
 
+            explicit = rel_parts[0] in explicit_properties
             if spec["is_run_output"]:
-                val = row.get(spec["dataframe_col"], None)
+                val = row.get(spec["dataframe_col"], missing if explicit else None)
+            elif explicit:
+                val = _get_explicit_value(row, normalized_row, cast(str, spec["source_path"]))
             else:
                 source_path = cast(str, spec["source_path"])
                 val = _get_value_from_path(normalized_row, source_path)
                 if val is None:
                     val = row.get(spec["dataframe_col"], None)
 
-            norm_val = _convert_value(val)
+            if val is missing:
+                continue
+            norm_val = _convert_value(val, explicit)
 
             cursor = item_root
             for seg in rel_parts[:-1]:
@@ -1066,7 +1145,14 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
                     continue
                 if key in item_root:
                     continue
-                item_root[key] = _convert_value(raw_val)
+                root_key = key.split(".", 1)[0]
+                if key not in explicit_properties and (
+                    key in explicit_source_columns
+                    or (root_key != key and root_key in explicit_properties and root_key in wrapper_view)
+                ):
+                    # Do not duplicate flattened leaves alongside their explicitly declared object.
+                    continue
+                item_root[key] = _convert_value(raw_val, key in explicit_properties)
 
         content_row: Dict[str, Any] = {}
 
@@ -1090,6 +1176,7 @@ def _begin_eval_run(
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
     data_source_params: Optional[Dict[str, Any]] = None,
+    item_schema: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -1105,12 +1192,14 @@ def _begin_eval_run(
     :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
         helper function.
     :type input_data_df: pd.DataFrame
+    :param item_schema: Explicit item schema used to preserve declared data types during serialization.
+    :type item_schema: Optional[Dict[str, Any]]
     :return: The ID of the evaluation run.
     :rtype: str
     """
 
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
-    data_source = _get_data_source(input_data_df, column_mapping)
+    data_source = _get_data_source(input_data_df, column_mapping, item_schema=item_schema)
     if data_source_params is not None:
         data_source.update(data_source_params)
 

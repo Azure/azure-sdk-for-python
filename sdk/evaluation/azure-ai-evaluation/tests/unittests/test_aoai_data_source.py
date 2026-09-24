@@ -7,6 +7,8 @@ import pytest
 import pandas as pd
 import os
 import pathlib
+import json
+from copy import deepcopy
 from typing import Dict, Any
 
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
@@ -417,6 +419,137 @@ class TestGenerateDataSourceConfig:
 @pytest.mark.unittest
 class TestGetDataSource:
     """Test suite for the _get_data_source function."""
+
+    @pytest.mark.parametrize("source", ["mapped", "unmapped", "target"])
+    def test_explicit_values_are_preserved_without_coercion(self, source):
+        values = {
+            "count": 0,
+            "ratio": 1.5,
+            "flag": False,
+            "empty": None,
+            "text": "0",
+            "values": [0, None, {"count": 2}],
+            "details": {"count": 0},
+            "invalid_count": "0",
+            "invalid_text": 0,
+            "invalid_boolean": "false",
+            "invalid_integer_boolean": False,
+        }
+        types = [
+            "integer",
+            "number",
+            "boolean",
+            "null",
+            "string",
+            "array",
+            "object",
+            "integer",
+            "string",
+            "boolean",
+            "integer",
+        ]
+        schema = {"type": "object", "properties": {key: {"type": kind} for key, kind in zip(values, types)}}
+        snapshot = deepcopy(values)
+        frame = pd.DataFrame(
+            [{f"__outputs.{key}" if source == "target" else key: value for key, value in values.items()}],
+            dtype=object,
+        )
+        mapping = {}
+        if source != "unmapped":
+            prefix = "run.outputs" if source == "target" else "data"
+            mapping = {key: f"${{{prefix}.{key}}}" for key in values}
+
+        item = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"][0]["item"]
+
+        for key, value in values.items():
+            assert item[key] == value
+            assert type(item[key]) is type(value)
+        json.dumps(item, allow_nan=False)
+        item["values"][2]["count"] = 9
+        item["details"]["count"] = 9
+        assert values == snapshot
+        column = "__outputs.details" if source == "target" else "details"
+        assert frame.at[0, column] == {"count": 0}
+
+    @pytest.mark.parametrize("wrapped", [False, True])
+    @pytest.mark.parametrize("reverse", [False, True])
+    def test_explicit_container_and_leaf_overlap_preserves_sparse_values(self, wrapped, reverse):
+        trees = [{"count": 0, "nullable": None, "sibling": [1, 2]}, {"sibling": [3]}]
+        prefix = "item." if wrapped else ""
+        rows = [{"item": {"tree": tree}} if wrapped else {"tree": tree} for tree in trees]
+        frame = pd.DataFrame(rows)
+        # Simulate flattened columns with pandas' inferred float/null representations.
+        frame[f"{prefix}tree.count"] = [0.0, float("nan")]
+        frame[f"{prefix}tree.nullable"] = [float("nan"), float("nan")]
+        frame[f"{prefix}tree.missing"] = [None, None]
+        snapshot = deepcopy(frame.to_dict("records"))
+        entries = [
+            ("tree", f"${{data.{prefix}tree}}"),
+            ("count", f"${{data.{prefix}tree.count}}"),
+            ("nullable", f"${{data.{prefix}tree.nullable}}"),
+            ("missing", f"${{data.{prefix}tree.missing}}"),
+        ]
+        mapping = dict(reversed(entries) if reverse else entries)
+        schema = {
+            "properties": {
+                "tree": {
+                    "type": "object",
+                    "properties": {
+                        "count": {"type": "integer"},
+                        "nullable": {"type": ["integer", "null"]},
+                        "missing": {"type": "null"},
+                        "sibling": {"type": "array", "items": {"type": "integer"}},
+                    },
+                }
+            }
+        }
+
+        content = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"]
+
+        assert content == [{"item": {"tree": tree}} for tree in trees]
+        assert type(content[0]["item"]["tree"]["count"]) is int
+        assert content[0]["item"]["tree"]["nullable"] is None
+        content[0]["item"]["tree"]["sibling"].append(9)
+        root = frame.at[0, "item"]["tree"] if wrapped else frame.at[0, "tree"]
+        assert root == trees[0]
+        assert (frame.at[0, "item"] if wrapped else frame.at[0, "tree"]) == snapshot[0]["item" if wrapped else "tree"]
+
+    def test_explicit_flattened_only_columns_and_missing_null(self):
+        frame = pd.DataFrame([{"item.count": 0, "item.empty": None}], dtype=object)
+        schema = {
+            "properties": {"count": {"type": "integer"}, "empty": {"type": "null"}, "missing": {"type": "null"}},
+            "required": ["missing"],
+        }
+        mapping = {key: f"${{data.item.{key}}}" for key in schema["properties"]}
+
+        item = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"][0]["item"]
+
+        assert item["count"] == 0
+        assert type(item["count"]) is int
+        assert item["empty"] is None
+        assert "missing" not in item
+        assert item == {"count": 0, "empty": None}
+
+    def test_explicit_pandas_scalars_do_not_fabricate_nulls(self):
+        frame = pd.DataFrame(
+            {
+                "count": pd.Series([0, pd.NA], dtype="Int64"),
+                "ratio": pd.Series([1.5, pd.NA], dtype="Float64"),
+                "flag": pd.Series([False, pd.NA], dtype="boolean"),
+            }
+        )
+        schema = {
+            "properties": {"count": {"type": "integer"}, "ratio": {"type": "number"}, "flag": {"type": "boolean"}}
+        }
+        mapping = {key: f"${{data.{key}}}" for key in schema["properties"]}
+
+        content = _get_data_source(frame, mapping, item_schema=schema)["source"]["content"]
+
+        assert content[0]["item"] == {"count": 0, "ratio": 1.5, "flag": False}
+        assert type(content[0]["item"]["count"]) is int
+        assert type(content[0]["item"]["ratio"]) is float
+        assert type(content[0]["item"]["flag"]) is bool
+        assert all(value is pd.NA for value in content[1]["item"].values())
 
     def test_flat_data_source_generation(self, flat_test_data):
         """Test generating data source from flat data."""
