@@ -15,7 +15,7 @@ from typing_extensions import Protocol
 from azure.core.exceptions import AzureError, HttpResponseError
 
 from .models import StorageErrorCode
-from .._generated.models import CreateSessionConfiguration, CreateSessionResponse
+from azure.storage.blob._generated.models import CreateSessionConfiguration, CreateSessionResponse
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -201,7 +201,7 @@ class ContainerSessionProvider:
     """
 
     def __init__(self, service_url: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        from .._blob_service_client import BlobServiceClient  # module-level import would cycle
+        from azure.storage.blob import BlobServiceClient  # module-level import would cycle
 
         if not hasattr(credential, "get_token"):
             raise TypeError(
