@@ -13,10 +13,7 @@ from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Unio
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
-    ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
