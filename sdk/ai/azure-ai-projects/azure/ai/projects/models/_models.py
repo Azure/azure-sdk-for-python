@@ -164,18 +164,46 @@ class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
+class _MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """_MisalignmentSteer.
+
+    :ivar message: The public continuation instruction. Required.
+    :vartype message: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public continuation instruction. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool that can be used to generate a response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
-    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationPreviewTool,
-    CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
-    CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
-    GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam, MCPTool,
-    MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool, ProgrammaticToolCallingParam,
-    SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebIQPreviewTool,
-    WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
+    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
+    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
+    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
+    MCPTool, MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool,
+    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
+    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -280,7 +308,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """An abstract representation of a tool stored in a toolbox.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool,
+    A2AToolboxTool, A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationToolboxTool,
     BrowserAutomationPreviewToolboxTool, CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool,
     FileSearchToolboxTool, MCPToolboxTool, OpenApiToolboxTool, ReminderPreviewToolboxTool,
     ShellToolboxTool, ToolSearchToolboxTool, ToolboxSearchPreviewToolboxTool,
@@ -289,7 +317,7 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
      "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search",
-     "toolbox_search_preview", "a2a", "shell", and "web_iq_preview".
+     "toolbox_search_preview", "a2a", "shell", "web_iq_preview", and "browser_automation".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -306,8 +334,8 @@ class ToolboxTool(_Model):  # pylint: disable=docstring-keyword-should-match-key
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\", and
-     \"web_iq_preview\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", \"toolbox_search_preview\", \"a2a\", \"shell\",
+     \"web_iq_preview\", and \"browser_automation\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3301,6 +3329,8 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     :vartype param: str
     :ivar type:
     :vartype type: str
+    :ivar misalignment:
+    :vartype misalignment: ~azure.ai.projects.models.MisalignmentErrorDetailsResource
     :ivar details:
     :vartype details: list[~azure.ai.projects.models.ApiError]
     :ivar additional_info:
@@ -3315,6 +3345,9 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
     """Required."""
     param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     additional_info: Optional[dict[str, Any]] = rest_field(
         name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
@@ -3331,6 +3364,7 @@ class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         message: str,
         param: Optional[str] = None,
         type: Optional[str] = None,
+        misalignment: Optional["_models.MisalignmentErrorDetailsResource"] = None,
         details: Optional[list["_models.ApiError"]] = None,
         additional_info: Optional[dict[str, Any]] = None,
         debug_info: Optional[dict[str, Any]] = None,
@@ -4726,6 +4760,92 @@ class BrowserAutomationPreviewToolboxTool(
         self.type = ToolboxToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
 
 
+class BrowserAutomationTool(
+    Tool, discriminator="browser_automation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+
+    :ivar type: The object type, which is always 'browser_automation'. Required.
+     BROWSER_AUTOMATION.
+    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal[ToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. BROWSER_AUTOMATION."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.BROWSER_AUTOMATION  # type: ignore
+
+
+class BrowserAutomationToolboxTool(
+    ToolboxTool, discriminator="browser_automation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A browser automation tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. BROWSER_AUTOMATION.
+    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal[ToolboxToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. BROWSER_AUTOMATION."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.BROWSER_AUTOMATION  # type: ignore
+
+
 class BrowserAutomationToolConnectionParameters(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -5603,7 +5723,7 @@ class Connection(_Model):
     :vartype id: str
     :ivar type: Category of the connection. Required. Known values are: "AzureOpenAI", "AzureBlob",
      "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey", "AppConfig", "AppInsights",
-     "CustomKeys", and "RemoteTool_Preview".
+     "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
     :vartype type: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -5623,7 +5743,7 @@ class Connection(_Model):
     type: Union[str, "_models.ConnectionType"] = rest_field(visibility=["read"])
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"AzureBlob\",
      \"AzureStorageAccount\", \"CognitiveSearch\", \"CosmosDB\", \"ApiKey\", \"AppConfig\",
-     \"AppInsights\", \"CustomKeys\", and \"RemoteTool_Preview\"."""
+     \"AppInsights\", \"CustomKeys\", \"RemoteTool_Preview\", \"OpenAPI\", and \"RemoteA2A\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
     is_default: bool = rest_field(name="isDefault", visibility=["read"])
@@ -6716,6 +6836,9 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
     :vartype type: str or ~azure.ai.projects.models.CUSTOM
     :ivar name: The name of the custom tool, used to identify it in tool calls. Required.
     :vartype name: str
+    :ivar async_property: Whether the tool response can be returned asynchronously versus
+     immediately returned on next response creation.
+    :vartype async_property: bool
     :ivar description: Optional description of the custom tool, used to provide more context.
     :vartype description: str
     :ivar format: The input format for the custom tool. Default is unconstrained text.
@@ -6730,6 +6853,11 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
     """The type of the custom tool. Always ``custom``. Required. CUSTOM."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the custom tool, used to identify it in tool calls. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool response can be returned asynchronously versus immediately returned on next
+     response creation."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional description of the custom tool, used to provide more context."""
     format: Optional["_models.CustomToolParamFormat"] = rest_field(
@@ -6747,6 +6875,7 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
         self,
         *,
         name: str,
+        async_property: Optional[bool] = None,
         description: Optional[str] = None,
         format: Optional["_models.CustomToolParamFormat"] = None,
         defer_loading: Optional[bool] = None,
@@ -9951,6 +10080,8 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
     :vartype type: str or ~azure.ai.projects.models.FUNCTION
     :ivar name: The name of the function to call. Required.
     :vartype name: str
+    :ivar async_property:
+    :vartype async_property: bool
     :ivar description:
     :vartype description: str
     :ivar parameters: Required.
@@ -9969,6 +10100,9 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
     """The type of the function tool. Always ``function``. Required. FUNCTION."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     parameters: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
@@ -9988,6 +10122,7 @@ class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring
         name: str,
         parameters: dict[str, Any],
         strict: bool,
+        async_property: Optional[bool] = None,
         description: Optional[str] = None,
         output_schema: Optional[dict[str, Any]] = None,
         defer_loading: Optional[bool] = None,
@@ -10019,6 +10154,9 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype strict: bool
     :ivar type: Required. Default value is "function".
     :vartype type: str
+    :ivar async_property: Whether the tool response can be returned asynchronously versus
+     immediately returned on next response creation.
+    :vartype async_property: bool
     :ivar output_schema:
     :vartype output_schema: dict[str, any]
     :ivar defer_loading: Whether this function should be deferred and discovered via tool search.
@@ -10036,6 +10174,11 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
     strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. Default value is \"function\"."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool response can be returned asynchronously versus immediately returned on next
+     response creation."""
     output_schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether this function should be deferred and discovered via tool search."""
@@ -10051,6 +10194,7 @@ class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-mat
         description: Optional[str] = None,
         parameters: Optional["_models.EmptyModelParam"] = None,
         strict: Optional[bool] = None,
+        async_property: Optional[bool] = None,
         output_schema: Optional[dict[str, Any]] = None,
         defer_loading: Optional[bool] = None,
         allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
@@ -10640,8 +10784,9 @@ class ImageGenTool(
      IMAGE_GENERATION.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
     :ivar model: Is one of the following types: Literal["gpt-image-1"],
-     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str
-    :vartype model: str or str or str or str
+     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], Literal["gpt-image-2"],
+     Literal["gpt-image-2-2026-04-21"], str
+    :vartype model: str or str or str or str or str or str
     :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``, or
      ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
      Literal["high"], Literal["auto"]
@@ -10667,9 +10812,11 @@ class ImageGenTool(
     :ivar moderation: Moderation level for the generated image. Default: ``auto``. Is either a
      Literal["auto"] type or a Literal["low"] type.
     :vartype moderation: str or str
-    :ivar background: Background type for the generated image. One of ``transparent``, ``opaque``,
-     or ``auto``. Default: ``auto``. Is one of the following types: Literal["transparent"],
-     Literal["opaque"], Literal["auto"]
+    :ivar background: Set the background of the generated image. One of ``transparent``,
+     ``opaque``, or ``auto``. Transparent backgrounds are available for supported GPT Image models.
+     For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, this support is in preview. When using
+     ``transparent``, set the output format to ``png`` or ``webp``. Default: ``auto``. Is one of the
+     following types: Literal["transparent"], Literal["opaque"], Literal["auto"]
     :vartype background: str or str or str
     :ivar input_fidelity: Known values are: "high" and "low".
     :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
@@ -10694,11 +10841,18 @@ class ImageGenTool(
 
     type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
-    model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
-    )
+    model: Optional[
+        Union[
+            Literal["gpt-image-1"],
+            Literal["gpt-image-1-mini"],
+            Literal["gpt-image-1.5"],
+            Literal["gpt-image-2"],
+            Literal["gpt-image-2-2026-04-21"],
+            str,
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
-     Literal[\"gpt-image-1.5\"], str"""
+     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"], str"""
     quality: Optional[Literal["low", "medium", "high", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10733,9 +10887,11 @@ class ImageGenTool(
     background: Optional[Literal["transparent", "opaque", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Background type for the generated image. One of ``transparent``, ``opaque``, or ``auto``.
-     Default: ``auto``. Is one of the following types: Literal[\"transparent\"],
-     Literal[\"opaque\"], Literal[\"auto\"]"""
+    """Set the background of the generated image. One of ``transparent``, ``opaque``, or ``auto``.
+     Transparent backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
+     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
+     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
+     Literal[\"transparent\"], Literal[\"opaque\"], Literal[\"auto\"]"""
     input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10766,7 +10922,14 @@ class ImageGenTool(
         self,
         *,
         model: Optional[
-            Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
+            Union[
+                Literal["gpt-image-1"],
+                Literal["gpt-image-1-mini"],
+                Literal["gpt-image-1.5"],
+                Literal["gpt-image-2"],
+                Literal["gpt-image-2-2026-04-21"],
+                str,
+            ]
         ] = None,
         quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
         size: Optional[
@@ -13017,6 +13180,52 @@ class MicrosoftFabricPreviewTool(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.FABRIC_DATAAGENT_PREVIEW  # type: ignore
+
+
+class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MisalignmentErrorDetailsResource.
+
+    :ivar error_type: An optional classification; clients must accept additional values. Known
+     values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
+     "potentially_unintended_destructive_activity", and "other".
+    :vartype error_type: str or ~azure.ai.projects.models._MisalignmentErrorType
+    :ivar detailed_explanation: The public explanation for this block.
+    :vartype detailed_explanation: str
+    :ivar steer: An optional public continuation instruction.
+    :vartype steer: ~azure.ai.projects.models._MisalignmentSteer
+    """
+
+    error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional classification; clients must accept additional values. Known values are:
+     \"potentially_unintended_data_transfer\", \"potentially_unintended_data_access\",
+     \"potentially_unintended_destructive_activity\", and \"other\"."""
+    detailed_explanation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public explanation for this block."""
+    steer: Optional["_models._MisalignmentSteer"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional public continuation instruction."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = None,
+        detailed_explanation: Optional[str] = None,
+        steer: Optional["_models._MisalignmentSteer"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ModelCredentialRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

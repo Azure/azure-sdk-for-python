@@ -2607,8 +2607,8 @@ namespace azure.ai.projects.aio.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                etag: List[TelephonyTransferTarget], 
+                match_condition: str, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -2619,8 +2619,8 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                etag: List[TelephonyTransferTarget], 
+                match_condition: str, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -4414,6 +4414,7 @@ namespace azure.ai.projects.models
         debug_info: Optional[dict[str, Any]]
         details: Optional[list[ApiError]]
         message: str
+        misalignment: Optional[MisalignmentErrorDetailsResource]
         param: Optional[str]
         type: Optional[str]
 
@@ -4426,6 +4427,7 @@ namespace azure.ai.projects.models
                 debug_info: Optional[dict[str, Any]] = ..., 
                 details: Optional[list[ApiError]] = ..., 
                 message: str, 
+                misalignment: Optional[MisalignmentErrorDetailsResource] = ..., 
                 param: Optional[str] = ..., 
                 type: Optional[str] = ...
             ) -> None: ...
@@ -5133,6 +5135,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.BrowserAutomationTool(Tool, discriminator='browser_automation'):
+        browser_automation: BrowserAutomationToolParameters
+        type: Literal[ToolType.BROWSER_AUTOMATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                browser_automation: BrowserAutomationToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.BrowserAutomationToolConnectionParameters(_Model):
         project_connection_id: str
 
@@ -5155,6 +5172,27 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 connection: BrowserAutomationToolConnectionParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.BrowserAutomationToolboxTool(ToolboxTool, discriminator='browser_automation'):
+        browser_automation: BrowserAutomationToolParameters
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.BROWSER_AUTOMATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                browser_automation: BrowserAutomationToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -5450,6 +5488,8 @@ namespace azure.ai.projects.models
         AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
         COSMOS_DB = "CosmosDB"
         CUSTOM = "CustomKeys"
+        OPEN_API = "OpenAPI"
+        REMOTE_A2_A = "RemoteA2A"
         REMOTE_TOOL = "RemoteTool_Preview"
 
 
@@ -5853,6 +5893,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.CustomToolParam(Tool, discriminator='custom'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
         defer_loading: Optional[bool]
         description: Optional[str]
         format: Optional[CustomToolParamFormat]
@@ -5864,6 +5905,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 format: Optional[CustomToolParamFormat] = ..., 
@@ -7396,6 +7438,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.FunctionTool(Tool, discriminator='function'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
         defer_loading: Optional[bool]
         description: Optional[str]
         name: str
@@ -7409,6 +7452,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 name: str, 
@@ -7423,6 +7467,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.FunctionToolParam(_Model):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
         defer_loading: Optional[bool]
         description: Optional[str]
         name: str
@@ -7436,6 +7481,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
                 defer_loading: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
                 name: str, 
@@ -7681,7 +7727,7 @@ namespace azure.ai.projects.models
         description: Optional[str]
         input_fidelity: Optional[Union[str, InputFidelity]]
         input_image_mask: Optional[ImageGenToolInputImageMask]
-        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], str]]
+        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], str]]
         moderation: Optional[Literal["auto", "low"]]
         name: Optional[str]
         output_compression: Optional[int]
@@ -7701,7 +7747,7 @@ namespace azure.ai.projects.models
                 description: Optional[str] = ..., 
                 input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
                 input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]] = ..., 
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], str]] = ..., 
                 moderation: Optional[Literal[auto, low]] = ..., 
                 name: Optional[str] = ..., 
                 output_compression: Optional[int] = ..., 
@@ -8704,6 +8750,24 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 fabric_dataagent_preview: FabricDataAgentToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MisalignmentErrorDetailsResource(_Model):
+        detailed_explanation: Optional[str]
+        error_type: Optional[Union[str, _MisalignmentErrorType]]
+        steer: Optional[_MisalignmentSteer]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                detailed_explanation: Optional[str] = ..., 
+                error_type: Optional[Union[str, _MisalignmentErrorType]] = ..., 
+                steer: Optional[_MisalignmentSteer] = ...
             ) -> None: ...
 
         @overload
@@ -13743,6 +13807,7 @@ namespace azure.ai.projects.models
         A2A_PREVIEW = "a2a_preview"
         A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
+        BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
         CODE_INTERPRETER = "code_interpreter"
         FABRIC_IQ_PREVIEW = "fabric_iq_preview"
@@ -18873,8 +18938,8 @@ namespace azure.ai.projects.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                etag: List[TelephonyTransferTarget], 
+                match_condition: str, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -18885,8 +18950,8 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
+                etag: List[TelephonyTransferTarget], 
+                match_condition: str, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 

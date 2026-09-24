@@ -59,6 +59,19 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
 
+class _MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of _MisalignmentErrorType."""
+
+    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
+    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
+    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
+    OTHER = "other"
+    """OTHER."""
+
+
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported A2A protocol versions."""
 
@@ -455,6 +468,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Keys."""
     REMOTE_TOOL = "RemoteTool_Preview"
     """Remote tool."""
+    OPEN_API = "OpenAPI"
+    """OpenAPI connection."""
+    REMOTE_A2_A = "RemoteA2A"
+    """Remote agent-to-agent (A2A) connection."""
 
 
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2060,6 +2077,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHELL."""
     WEB_IQ_PREVIEW = "web_iq_preview"
     """WEB_IQ_PREVIEW."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """BROWSER_AUTOMATION."""
 
 
 class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
