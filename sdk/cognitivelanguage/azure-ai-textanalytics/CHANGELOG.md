@@ -4,14 +4,11 @@
 
 This version of the client library defaults to the service API version `2026-05-15-preview`.
 
-### Features Added
+### Other Changes
 
-- Added `cancel_after` to `begin_analyze_text_job` to cancel jobs that do not complete within the specified duration.
-- Added PII entity synonyms through `PiiActionContent.entity_synonyms`.
-- Added PII value exclusions through `PiiActionContent.value_exclusion_policy`.
-- Added PII category exclusions through `PiiActionContent.exclude_pii_categories`.
-- Added the `NoMask` redaction policy and PII entity mask metadata, including `mask`, `mask_offset`, and `mask_length`.
-- Added entity recognition inclusion and exclusion lists through `EntitiesActionContent.inclusions` and `EntitiesActionContent.exclusions`.
+- Added sync and async tests and samples for the existing `cancel_after` parameter on `begin_analyze_text_job`.
+- Expanded PII test and sample coverage for existing entity synonyms, value exclusions, excluded categories, `NoMask` redaction, and entity mask metadata.
+- Updated tests to authenticate with Microsoft Entra ID.
 
 ## 6.0.0b2 (2025-11-06)
 
