@@ -18,7 +18,10 @@ from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_RESPONSE_STATUS_CODE,
 )
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
-from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
+from opentelemetry.semconv._incubating.attributes import (
+    gen_ai_attributes,
+    session_attributes,
+)
 
 try:
     from opentelemetry.semconv._incubating.attributes import (
@@ -95,6 +98,10 @@ _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "thread.",
     "fass.",
     "code.",
+]
+# Avoid session.id attribute from being included in the custom dimensions
+_STANDARD_OPENTELEMETRY_ATTRIBUTES = [
+    session_attributes.SESSION_ID,
 ]
 
 _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
@@ -264,6 +271,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
+    session_id = span.attributes.get(session_attributes.SESSION_ID) if span.attributes else None
+    if isinstance(session_id, str):
+        envelope.tags[ContextTagKeys.AI_SESSION_ID] = session_id
     measurements = _utils._filter_custom_measurements(span.attributes)
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
@@ -553,6 +563,9 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
         envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
         envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
+        session_id = span.attributes.get(session_attributes.SESSION_ID) if span.attributes else None
+        if isinstance(session_id, str):
+            envelope.tags[ContextTagKeys.AI_SESSION_ID] = session_id
         if span.context and span.context.span_id:
             envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.context.span_id)
 
@@ -630,7 +643,11 @@ def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+    return (
+        key in _STANDARD_OPENTELEMETRY_ATTRIBUTES
+        or key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
+        or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+    )
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:

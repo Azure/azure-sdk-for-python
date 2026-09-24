@@ -21,6 +21,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+from opentelemetry.semconv._incubating.attributes import session_attributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -294,6 +295,8 @@ class TestAzureTraceExporter(unittest.TestCase):
             attributes={
                 "enduser.id": "testAuthId",
                 "enduser.pseudo.id": "testUserId",
+                session_attributes.SESSION_ID: "testSessionId",
+                session_attributes.SESSION_PREVIOUS_ID: "testPreviousSessionId",
                 "user_agent.synthetic.type": "bot",
             },
             parent=context,
@@ -339,6 +342,12 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_AUTH_USER_ID), "testAuthId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testUserId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "testSessionId")
+        self.assertNotIn(session_attributes.SESSION_ID, envelope.data.base_data.properties)
+        self.assertEqual(
+            envelope.data.base_data.properties.get(session_attributes.SESSION_PREVIOUS_ID),
+            "testPreviousSessionId",
+        )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
@@ -1694,6 +1703,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
+            attributes={session_attributes.SESSION_ID: "testSessionId"},
         )
         attributes = {
             EXCEPTION_TYPE: "ZeroDivisionError",
@@ -1736,6 +1746,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
             "{:016x}".format(span.context.span_id),
         )
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "testSessionId")
         self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
