@@ -46,7 +46,6 @@
   - Added model `SliSelection`
   - Added enum `SliType`
   - Added enum `SliTypeMatchState`
-  - Added model `UserConfirmationItem`
   - Model `DrillRunsOperations` added parameter `content_type` in method `begin_reprotect`
   - Model `DrillRunsOperations` added method `begin_generate_report`
   - Model `DrillRunsOperations` added method `begin_list_report_download_url`
@@ -58,7 +57,7 @@
   - Model `ZonalDrillProperties` deleted or renamed its instance variable `managed_on_behalf_of_configuration`
   - Deleted or renamed model `ManagedOnBehalfOfConfiguration`
   - Deleted or renamed model `MoboBrokerResource`
-  - Deleted or renamed model `UserConfirmationForHighAvailabilityItem`
+  - Renamed model `UserConfirmationForHighAvailabilityItem` to `UserConfirmationItem`
 
 ## 1.0.0b1 (2026-06-16)
 
