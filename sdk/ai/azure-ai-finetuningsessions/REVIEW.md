@@ -2,9 +2,9 @@
 
 ## Current review status (2026-09-24)
 
-Source pins and fingerprints are authoritative in [tsp-location.yaml](tsp-location.yaml)
-and [eng/generation/provenance.json](eng/generation/provenance.json), not historical
-SHAs in this assessment. [GENERATION.md](GENERATION.md) documents genuine shared
+Source pins and fingerprints are authoritative in [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml)
+and [eng/generation/provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/provenance.json), not historical
+SHAs in this assessment. [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) documents genuine shared
 emission with only nine seeded hooks and exact comparison of the 28-file runtime.
 The shared toolchain is emitter **0.63.8**, backend **0.37.3**, compiler **1.16.0**,
 and TCGC **0.72.1**. Regeneration includes the upstream unused-import CI fix,
@@ -14,7 +14,7 @@ Previously deferred API-key transport/origin protection, default no-POST
 transport retries, and raw HTTP 200 request-ID polling are now implemented.
 Required LoRA configuration/rank, optional `SamplingParams.response_format`, and
 the identical `SamplingOperationResult` alias are explicit reviewed contracts in
-[eng/generation/review-deltas.json](eng/generation/review-deltas.json).
+[eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json).
 Non-object error bodies, finite/non-negative retry hints, and positional image
 mappings also have focused regression coverage. **Opt-in-only heartbeat startup
 remains unimplemented**; convenience creation still starts background heartbeats.
@@ -123,7 +123,7 @@ does not post replies or change thread status.
 
 - Human CI request [4711333779](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711333779): addressed by package artifact registration.
 - Human binary request [4711364910](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711364910): no wheel/binary artifact is tracked in the PR; validation artifacts stay outside the repository.
-- Human shared-lock request [4711371552](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711371552): generation now uses the central shared emitter manifest/lock. The package override is removed; [eng/generation/emitter-package.json](eng/generation/emitter-package.json) and [eng/generation/emitter-package-lock.json](eng/generation/emitter-package-lock.json) are standalone archives of that pair, not a separate old-emitter pin.
+- Human shared-lock request [4711371552](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711371552): generation now uses the central shared emitter manifest/lock. The package override is removed; [eng/generation/emitter-package.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/emitter-package.json) and [eng/generation/emitter-package-lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/emitter-package-lock.json) are standalone archives of that pair, not a separate old-emitter pin.
 - Human spelling request [4711438302](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-4711438302): package dictionary exists and now contains legitimate terms; CI explicitly loads the root configuration, so a package-scoped root override is necessary too. Tests are not broadly excluded to hide misspellings.
 - Stale/closure notices [5365466456](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-5365466456) and [5448718968](https://github.com/Azure/azure-sdk-for-python/pull/47495#issuecomment-5448718968): historical; the PR had been reopened at the review snapshot. This document does not assert a freshly queried PR state.
 - Seven pipeline-analysis comments (5734582572, 5768011529, 5768551504, 5769203598, 5769685768, 5772655667, 5776391975): code was checked rather than trusting stale line numbers. README sections, spelling, typing, payload-safe logs, checkpoint docstrings, and duplicate reason docs were addressed. Removed legacy modules/duplicate classes were obsolete findings. Narrow exceptions preserve intentional preview signatures and hook integration; the historical local lint pass was not exception-free. The new shared emitter incorporates the upstream unused-import fix through generation, not blanket suppression. None of these local results establishes current remote CI success.
@@ -162,7 +162,7 @@ AST inspection repaired it without bypassing assertions: that snapshot passed
 500 tests with one eager-task skip on Python 3.10, and 501 on Python 3.13.
 Its local lint, type, strict Sphinx, README, spelling, and installed-wheel results
 remain historical evidence only. Technical exceptions and generation rationale
-are retained in [GENERATION.md](GENERATION.md#ci-repair-validation-2026-09-22),
+are retained in [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md#ci-repair-validation-2026-09-22),
 not repeated as current passes.
 
 The original 434-test baseline remains the comparison foundation. Later exact

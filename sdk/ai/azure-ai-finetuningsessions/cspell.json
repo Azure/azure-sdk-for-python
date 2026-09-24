@@ -4,14 +4,10 @@
     "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
     "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
     "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
-    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd",
+    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd", "localns", "kwonlyargs",
     "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "undoc", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
   ],
   "overrides": [
-    {
-      "filename": "tests/test_service_contracts.py",
-      "words": ["localns", "kwonlyargs"]
-    },
     {
       "filename": "{emitter-package-lock,cspell}.json",
       "words": [

@@ -2,9 +2,9 @@
 
 ## Current source pin and review validation
 
-Use [tsp-location.yaml](tsp-location.yaml) for the TypeSpec repository, entry point,
+Use [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml) for the TypeSpec repository, entry point,
 additional source directories, and exact commit. Use
-[eng/generation/provenance.json](eng/generation/provenance.json) for source,
+[eng/generation/provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/provenance.json) for source,
 toolchain, generated-output, and complete-runtime fingerprints. Historical SHAs
 below are decision records, **not the current source pin**.
 
@@ -24,7 +24,7 @@ These results were obtained before this documentation-only update, not rerun her
 | Convenience comparison | 20 cases, 134 requests, and 2,246 checks **per SDK**, with fixed reviewed contracts. |
 | Public surface and raw operations | 47 exported model/enum names, including the identical sampling alias; all 336 original raw cases retained. The candidate adds exactly 28 polling GETs (308 reference requests, 336 candidate requests). |
 | Additional service/security probes | 328 passed. |
-| Review-contract guard suite | 38 passed using [scripts/test_review_contracts.py](scripts/test_review_contracts.py) with captured comparison artifacts. |
+| Review-contract guard suite | 38 passed using [scripts/test_review_contracts.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/test_review_contracts.py) with captured comparison artifacts. |
 | Distribution | Source distribution and wheel built successfully; all 28 distributed runtime files match source bytes; the installed wheel passed all 1,637 tests. |
 | Code quality | CI-pinned Pylint and Mypy passed; repository-configured Pyright passed. Strict Sphinx passed using sdist runtime/pages and the final README, with only external inventory downloads disabled locally. |
 
@@ -35,18 +35,18 @@ exact test-inventory and provenance gates also pass against the finalized record
 ## Pinned generation tools
 
 Generation uses the SDK repository's central
-[../../../eng/emitter-package.json](../../../eng/emitter-package.json) and
-[../../../eng/emitter-package-lock.json](../../../eng/emitter-package-lock.json).
+[../../../eng/emitter-package.json](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/emitter-package.json) and
+[../../../eng/emitter-package-lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/emitter-package-lock.json).
 The package-local emitter override has been removed. The validated shared lock
 resolves Python emitter **0.63.8**, Python backend **0.37.3**, TypeSpec compiler
 **1.16.0**, and TypeSpec client generator core (TCGC) **0.72.1**. Genuine
 regeneration incorporates the upstream unused-import fix; generated imports
 are not manually edited or exempted from CI checks.
 
-[eng/generation/emitter-package.json](eng/generation/emitter-package.json) and
-[eng/generation/emitter-package-lock.json](eng/generation/emitter-package-lock.json)
+[eng/generation/emitter-package.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/emitter-package.json) and
+[eng/generation/emitter-package-lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/emitter-package-lock.json)
 archive the shared pair for standalone verification, not an active per-package
-toolchain. [eng/generation/requirements.txt](eng/generation/requirements.txt)
+toolchain. [eng/generation/requirements.txt](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/requirements.txt)
 records the Python backend requirements; these belong in the emitter environment,
 not the SDK runtime. The verifier resolves exact versions from the lock, rejects
 mismatched installations, and checks both shared and archived input hashes.
@@ -77,12 +77,12 @@ SDK-to-SDK compatibility, and service conformance are separate checks.
 
 | Maintained input | Responsibility |
 |---|---|
-| [azure/ai/finetuningsessions/_patch.py](azure/ai/finetuningsessions/_patch.py), [azure/ai/finetuningsessions/aio/_patch.py](azure/ai/finetuningsessions/aio/_patch.py) | Training conveniences, request-ID polling, chunking, recovery, identifiers, lifecycle, and exports. |
-| [azure/ai/finetuningsessions/models/_patch.py](azure/ai/finetuningsessions/models/_patch.py) | Image/checkpoint helpers and reviewed model constructors, annotations, and aliases. |
-| [azure/ai/finetuningsessions/operations/_patch.py](azure/ai/finetuningsessions/operations/_patch.py), [azure/ai/finetuningsessions/aio/operations/_patch.py](azure/ai/finetuningsessions/aio/operations/_patch.py) | Established raw signatures/overloads, JSON submission, and poller integration. |
-| [azure/ai/finetuningsessions/_client_options.py](azure/ai/finetuningsessions/_client_options.py) | Credential transport/origin rules, scoped context headers, default POST-retry policy, and constructor compatibility. |
-| [azure/ai/finetuningsessions/_operation_compat.py](azure/ai/finetuningsessions/_operation_compat.py) | Generated request builders, raw HTTP 200 request-ID polling, callbacks, custom polling/continuation, and the legacy sampling request shape. |
-| [azure/ai/finetuningsessions/_exceptions.py](azure/ai/finetuningsessions/_exceptions.py), [azure/ai/finetuningsessions/_logging_setup.py](azure/ai/finetuningsessions/_logging_setup.py) | Typed errors, validated retry hints, and logging. |
+| [azure/ai/finetuningsessions/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_patch.py), [azure/ai/finetuningsessions/aio/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/aio/_patch.py) | Training conveniences, request-ID polling, chunking, recovery, identifiers, lifecycle, and exports. |
+| [azure/ai/finetuningsessions/models/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/models/_patch.py) | Image/checkpoint helpers and reviewed model constructors, annotations, and aliases. |
+| [azure/ai/finetuningsessions/operations/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/operations/_patch.py), [azure/ai/finetuningsessions/aio/operations/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/aio/operations/_patch.py) | Established raw signatures/overloads, JSON submission, and poller integration. |
+| [azure/ai/finetuningsessions/_client_options.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_client_options.py) | Credential transport/origin rules, scoped context headers, default POST-retry policy, and constructor compatibility. |
+| [azure/ai/finetuningsessions/_operation_compat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_operation_compat.py) | Generated request builders, raw HTTP 200 request-ID polling, callbacks, custom polling/continuation, and the legacy sampling request shape. |
+| [azure/ai/finetuningsessions/_exceptions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_exceptions.py), [azure/ai/finetuningsessions/_logging_setup.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_logging_setup.py) | Typed errors, validated retry hints, and logging. |
 
 ### Verification commands
 
@@ -99,14 +99,14 @@ python scripts/verify_compatibility.py --loom-repo <reference-repo> --artifacts 
 python scripts/test_review_contracts.py --artifacts <artifacts-dir>
 ```
 
-[scripts/verify_generation.py](scripts/verify_generation.py) checks provenance
+[scripts/verify_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_generation.py) checks provenance
 before emitting and never updates the package or installs tooling.
-[scripts/verify_reference_snapshot.py](scripts/verify_reference_snapshot.py)
+[scripts/verify_reference_snapshot.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_reference_snapshot.py)
 verifies the immutable Git blobs and manifest; `--snapshot` is only for an
 archived exact reference, not the regenerated SDK.
-[scripts/verify_compatibility.py](scripts/verify_compatibility.py) validates exact
+[scripts/verify_compatibility.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_compatibility.py) validates exact
 test inventories/hashes, materializes the unchanged reference, captures both
-convenience reports, and invokes [scripts/verify_surface.py](scripts/verify_surface.py)
+convenience reports, and invokes [scripts/verify_surface.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_surface.py)
 for surface/raw-operation reports and service/security probes. Pass the same
 artifact directory to the guard suite; it checks that unauthorized contract,
 reference, candidate, and probe mutations are rejected, not runtime behavior.
@@ -118,7 +118,7 @@ The distribution is `azure-ai-finetuningsessions` version `1.0.0b1`, importing
 at the package root; executable verifiers and engineering records are separated
 into their directories above.
 
-[eng/generation/reference.json](eng/generation/reference.json) preserves the
+[eng/generation/reference.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/reference.json) preserves the
 unchanged **48-file oracle** from source commit
 `485774df502642879fdf3a53777be4a0d95155dc`: 29 reference runtime files (including
 shared Azure namespace parents) and 19 upstream test files. Only the agreed
@@ -133,7 +133,7 @@ output to make a comparison pass.
 
 ## Reviewed fixes after the parity baseline
 
-[eng/generation/review-deltas.json](eng/generation/review-deltas.json) records
+[eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json) records
 fixed, guarded contracts, exact test adaptations, and additions. The allowed
 contracts are specific, not a general API or behavior allowlist:
 
@@ -150,7 +150,7 @@ contracts are specific, not a general API or behavior allowlist:
 
 Additional reviewed fixes cover non-object error JSON, finite/non-negative retry
 hints, positional image mappings, bounded waits/chunk workers, payload-safe INFO
-logging, and heartbeat shutdown ordering. See [REVIEW.md](REVIEW.md) for decisions.
+logging, and heartbeat shutdown ordering. See [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/REVIEW.md) for decisions.
 Active tests retain upstream coverage with exact reviewed changes, not a blanket
 claim that all active test files remain byte-identical to the oracle.
 
@@ -432,7 +432,7 @@ This section records the **2026-09-22 snapshot only**:
   success; supported subclasses, `__all__`, and `patch_sdk()` supplied integration.
 
 Historical infrastructure/reservation failures and review replies not posted are
-described in [REVIEW.md](REVIEW.md). They are not current CI status assertions.
+described in [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/REVIEW.md). They are not current CI status assertions.
 
 ## Baseline acceptance checks (before review fixes)
 
@@ -446,5 +446,5 @@ and no shared Azure initializers or tests. Four REST outputs were unchanged;
 the recorded 29 REST/99 Python warnings belong to that old toolchain snapshot.
 
 Archived superseded tests and their exclusion from active totals are explained
-in [review_tests/DEFERRED.md](review_tests/DEFERRED.md). Historical exact parity
+in [review_tests/DEFERRED.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/review_tests/DEFERRED.md). Historical exact parity
 does not erase later reviewed fixes or establish current wheel/CI readiness.

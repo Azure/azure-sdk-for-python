@@ -40,12 +40,12 @@
 - Use the Foundry required-preview operation contract and documented schema defaults with supported Python customization hooks for request query ordering and established convenience behavior.
 - Use the repository's shared Python emitter `0.63.8`, backend `0.37.3`, compiler `1.16.0`, and client generator core `0.72.1`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
 - Remove the package-local emitter override. Keep standalone tooling archives and validation records under the package's engineering directory, and verification commands under its scripts directory; standard README and generation guidance remain at the package root.
-- Record the unchanged 48-file historical oracle at source commit `485774df502642879fdf3a53777be4a0d95155dc` in [eng/generation/reference.json](eng/generation/reference.json). See [GENERATION.md](GENERATION.md) for current guidance, exact reviewed contracts, and historical evidence.
+- Record the unchanged 48-file historical oracle at source commit `485774df502642879fdf3a53777be4a0d95155dc` in [eng/generation/reference.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/reference.json). See [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) for current guidance, exact reviewed contracts, and historical evidence.
 - Retain `/fine_tuning/sessions` routes and established convenience APIs. The earlier `use_legacy_routes` option is not included in this preview.
 - Use AST overload inspection on all supported Python versions rather than importing Python 3.11-only `typing.get_overloads`; retain the assertions on Python 3.10.
-- Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
+- Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
 
 Recorded local validation: **1,637 SDK tests passed on Python 3.13.14**. The
 comparison and negative-guard counts, generation method, and limitations are in
-[GENERATION.md](GENERATION.md). These results do not claim a new final-wheel run,
+[GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md). These results do not claim a new final-wheel run,
 validation of the new tests on Python 3.10, remote CI success, or release approval.

@@ -1,11 +1,11 @@
 # Archived pre-parity public-SDK tests
 
 The historical preview oracle is identified by
-[../eng/generation/reference.json](../eng/generation/reference.json). The active
+[../eng/generation/reference.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/reference.json). The active
 SDK uses TypeSpec generation plus supported Python hooks, with explicit reviewed
-changes recorded in [../eng/generation/review-deltas.json](../eng/generation/review-deltas.json).
+changes recorded in [../eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json).
 It is not a byte-identical copy of that oracle or the earlier public-only
-implementation. See [../GENERATION.md](../GENERATION.md).
+implementation. See [../GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md).
 
 These Python files preserve superseded public-only tests and are **not part of
 active test discovery or passing-test totals**. Several depend on obsolete model
