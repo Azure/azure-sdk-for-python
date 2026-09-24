@@ -170,7 +170,7 @@ default model.
 
 ## Examples
 
-See the [samples](samples/README.md) for runnable sync and async examples.
+See the [samples][samples] for runnable sync and async examples.
 
 ### Model selection and JSON documents
 
@@ -301,10 +301,15 @@ the credential type and that the key belongs to the endpoint with key-based
 authentication enabled, or that the Entra token has the correct audience and
 resource permissions.
 
+## Next steps
+
+Explore the [samples][samples] to rerank text or JSON documents with API-key or
+Microsoft Entra authentication. Adapt the request's model, target paths, and
+scoring options to your application's documents and endpoint.
+
 ## Development
 
-`tsp-location.yaml` records the REST contract from
-[Azure/azure-rest-api-specs-pr#30255][spec_pr] at
+`tsp-location.yaml` records the generation source and pins the TypeSpec contract to
 `30d0780f8eb3b8c94e98fd681993ae8d6069317d`. Its service title is **Azure Data AI**
 and its namespace is `Azure.Data.AI`; the route, authentication header/token
 audience, request fields, and API version remain unchanged.
@@ -364,5 +369,5 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
 [cosmos_reranker]: https://learn.microsoft.com/azure/cosmos-db/gen-ai/semantic-reranker
-[spec_pr]: https://github.com/Azure/azure-rest-api-specs-pr/pull/30255
+[samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/dataai/azure-data-ai/samples/README.md
 [python_guidelines]: https://azure.github.io/azure-sdk/python_design.html

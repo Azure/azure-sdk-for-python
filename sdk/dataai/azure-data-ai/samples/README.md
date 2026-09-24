@@ -50,7 +50,7 @@ These are service request-body fields, not method keyword arguments.
 For JSON documents, JSON-encode each document string and use `documentType: "json"`.
 Supply `targetPaths`, using dot notation for nested properties and commas for
 multiple paths, such as `"meta.content,id"`.
-See the [JSON document and model-selection example](../README.md#model-selection-and-json-documents).
+See the [JSON document and model-selection example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/dataai/azure-data-ai/README.md#model-selection-and-json-documents).
 
 Python method names use snake_case, but dictionary keys keep the service's JSON
 names: `topK`, `returnDocuments`, `returnSentenceScore`, and `sentenceScores`.

@@ -1674,6 +1674,16 @@
       ]
     },
     {
+      "filename": "sdk/dataai/azure-data-ai/**",
+      "words": [
+        "aisearch",
+        "dataai",
+        "rerank",
+        "reranker",
+        "reranks"
+      ]
+    },
+    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
