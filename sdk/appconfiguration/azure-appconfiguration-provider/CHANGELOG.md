@@ -16,6 +16,7 @@
 
 ### Other Changes
 
+- Python 3.6 is no longer supported. Please use Python version 3.9 or later.
 - Bumped minimum dependency on `azure-core` to `>=1.31.0`.
 
 ## 2.5.0 (2026-05-22)
