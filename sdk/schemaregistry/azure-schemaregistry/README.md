@@ -40,7 +40,7 @@ pip install azure-schemaregistry[jsonencoder]
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
-* Python 3.8 or later - [Install Python][python]
+* Python 3.9 or later - [Install Python][python]
 
 ### Authenticate the client
 

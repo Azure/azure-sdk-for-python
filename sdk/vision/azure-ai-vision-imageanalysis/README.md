@@ -20,7 +20,7 @@ Use the Image Analysis client library to:
 
 ### Prerequisites
 
-* [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
+* [Python 3.9](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
 * An [Azure subscription](https://azure.microsoft.com/free).
 * A [Computer Vision resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision) deployed to your Azure subscription. Note that in order to run Image Analysis with the `Caption` or `Dense Captions` features, the Computer Vision resource needs to be from a GPU-supported region. See this [document](https://learn.microsoft.com/azure/ai-services/computer-vision/concept-describe-images-40) for a list of supported regions.
 * An endpoint URL. It can be found in the "overview" tab of your Computer Vision resource in the Azure portal, and has the form `https://your-resource-name.cognitiveservices.azure.com` where `your-resource-name` is your unique Computer Vision resource name. The samples below assume the environment variable `VISION_ENDPOINT` has been set to this value.

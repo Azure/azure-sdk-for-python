@@ -27,7 +27,7 @@ Additionally, for each sample, there are corresponding files in the [`samples/as
 
 To run the samples, you need:
 
-- A [python][get_python] environment. Supported versions are 2.7 and 3.6+.
+- A [python][get_python] environment. Supported versions are 3.9+.
 - An Azure subscription. Create a free subscription [here][azure_free_sub].
 - A FarmBeats resource. See [installation docs][install_farmbeats] to create a new FarmBeats resource.
 
