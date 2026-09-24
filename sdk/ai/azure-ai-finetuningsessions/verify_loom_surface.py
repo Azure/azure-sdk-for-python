@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 from contextlib import redirect_stdout
+from copy import deepcopy
 from enum import Enum
 import importlib
 import importlib.util
@@ -355,6 +356,47 @@ def worker(package, harness_path):
         loop.close()
 
 
+def _apply_training_type_contract(report):
+    """Add only the reviewed enum and four annotation sites to a baseline report.
+
+    Expected values are fixed here, never copied from candidate output. Exports,
+    enum members, constructor defaults, wire metadata, and all other types still
+    undergo the original exhaustive comparison.
+    """
+    result = deepcopy(report)
+    surface = result["surface"]
+    exports = surface["modules"][".models"]
+    if "TrainingType" in exports or "TrainingType" in surface["models"]:
+        raise RuntimeError("The reference already exposes TrainingType")
+    if exports.count("SessionType") != 1:
+        raise RuntimeError("The reference SessionType export changed")
+    exports.insert(exports.index("SessionType") + 1, "TrainingType")
+    surface["models"]["TrainingType"] = {
+        "enum": [["GLOBAL_STANDARD", "GlobalStandard"], ["DATAZONE_STANDARD", "DatazoneStandard"],
+                 ["DEVELOPER_TIER", "DeveloperTier"]]
+    }
+    original = {"origin": "Union", "args": ["str", "None"]}
+    expected = {"origin": "Union", "args": ["str", "TrainingType", "None"]}
+    model = surface["models"]["CreateSessionRequest"]
+    field = model["fields"]["training_type"]
+    if field["type"] != original or field["wire_name"] != "training_type":
+        raise RuntimeError("The reference training_type field changed")
+    field["type"] = deepcopy(expected)
+
+    def widen(signature):
+        fields = [p for p in signature["parameters"] if p["name"] == "training_type"]
+        if len(fields) != 1 or fields[0] != {
+            "name": "training_type", "kind": "KEYWORD_ONLY", "type": original, "default": None,
+        }:
+            raise RuntimeError("The reference training_type parameter changed")
+        fields[0]["type"] = deepcopy(expected)
+
+    widen(model["overloads"][0])
+    widen(surface["clients"][".FineTuningSession"]["create"]["signature"])
+    widen(surface["clients"][".aio.FineTuningSessionClient"]["create_session"]["signature"])
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", type=Path)
@@ -362,6 +404,7 @@ def main():
     parser.add_argument("--worker", type=Path)
     parser.add_argument("--harness", type=Path, required=True)
     parser.add_argument("--review-deltas", type=Path, help="Explicit, versioned post-baseline bug-fix contracts")
+    parser.add_argument("--training-type-enum", action="store_true", help="Apply only the reviewed additive TrainingType contract")
     args = parser.parse_args()
     if args.worker:
         with redirect_stdout(sys.stderr):
@@ -371,7 +414,7 @@ def main():
     if args.reference is None or args.candidate is None:
         parser.error("--reference and --candidate are required unless --worker is used")
     sys.path.insert(0, str(args.harness.parent))
-    from verify_loom_compatibility import _differences, _apply_review_header_contract
+    from verify_loom_compatibility import _differences, _apply_review_header_contract, _review_contracts
     reports = []
     for package in (args.reference, args.candidate):
         result = subprocess.run([sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()),
@@ -382,8 +425,7 @@ def main():
         reports.append(json.loads(result.stdout))
     if args.review_deltas:
         deltas = json.loads(args.review_deltas.read_text(encoding="utf-8"))
-        if deltas.get("fixture_contracts") != ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]:
-            raise RuntimeError("Unsupported review comparison contract")
+        contracts = _review_contracts(deltas)
         reports[0]["raw"] = _apply_review_header_contract(reports[0]["raw"], raw=True)
         for client, original in ((".FineTuningSessionClient", "TokenCredential"),
                                  (".aio.FineTuningSessionClient", "AsyncTokenCredential")):
@@ -404,6 +446,11 @@ def main():
              "returns": "None", "async": False},
         ]
         print("Applied only recorded header, dual-auth, and multimodal typing contracts; all other fields remain exact.")
+    else:
+        contracts = []
+    if args.training_type_enum or "training-type-enum" in contracts:
+        reports[0] = _apply_training_type_contract(reports[0])
+        print("Applied only the exact TrainingType export, members, and four annotation sites; all other fields remain exact.")
     differences = _differences(*reports)
     print(f"Public models/enums: {len(reports[0]['surface']['models'])}; raw cases: {len(reports[0]['raw'])}")
     for delta in differences[:60]:

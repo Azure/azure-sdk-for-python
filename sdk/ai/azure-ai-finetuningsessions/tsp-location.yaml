@@ -5,7 +5,8 @@ directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-f
 # Documents the maintained Python forward-only and session deletion entry points.
 # Includes the reviewed defaults, response contracts, and required-preview operation.
 # Includes snake_case training-tier member names and non-empty identifier metadata.
-commit: 3bf298e19180ed0829e922c81b3dbd99146b859e
+# Reuses canonical models and the extensible TrainingType enum; retains explicit compatibility models.
+commit: 22a790dd840b0898c800bd8a6014d1814ea52938
 repo: Azure/azure-rest-api-specs
 entrypointFile: client.tsp
 emitterPackageJsonPath: sdk/ai/azure-ai-finetuningsessions/emitter-package.json

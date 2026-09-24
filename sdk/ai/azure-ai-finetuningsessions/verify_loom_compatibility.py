@@ -709,6 +709,7 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
             "SessionStatus",
             "SessionType",
         )
+        + (("TrainingType",) if hasattr(ctx.models, "TrainingType") else ())
     }
     groups = sorted(name for name in vars(client) if not name.startswith("_"))
     case.equal(
@@ -1643,9 +1644,30 @@ def _run_worker(package: Path, *, legacy_routes: bool) -> dict:
     return report
 
 
-def _compare(loom: dict, public: dict, *, reviewed: bool = False) -> int:
+def _review_contracts(deltas: dict) -> list[str]:
+    """Accept only the original reviewed contracts and the explicit enum addition."""
+    original = ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]
+    contracts = deltas.get("fixture_contracts")
+    if contracts not in (original, original + ["training-type-enum"]):
+        raise ValueError("Unsupported review comparison contract")
+    return contracts
+
+
+def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_enum: bool = False) -> int:
     if reviewed:
         loom = {**loom, "cases": _apply_review_header_contract(loom["cases"], raw=False)}
+    if training_type_enum:
+        loom = deepcopy(loom)
+        surface = loom["cases"]["surface_and_signatures"]["output"]
+        exports = surface["exports"]["models"]
+        if "TrainingType" in exports or "TrainingType" in surface["enums"]:
+            raise ValueError("The immutable baseline already contains TrainingType")
+        surface["exports"]["models"] = sorted([*exports, "TrainingType"])
+        surface["enums"]["TrainingType"] = {
+            "GLOBAL_STANDARD": "GlobalStandard",
+            "DATAZONE_STANDARD": "DatazoneStandard",
+            "DEVELOPER_TIER": "DeveloperTier",
+        }
     failed = []
     for name in CASE_NAMES:
         left, right = loom["cases"][name], public["cases"][name]
@@ -1667,6 +1689,8 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False) -> int:
     print("\nExplicitly allowed surface differences:")
     print("  " + ("Only the exact direct-context header additions recorded in review-deltas.json." if reviewed
                   else "None. Customer-facing API and behavior must match; internal hook placement may differ."))
+    if training_type_enum:
+        print("  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences.")
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1716,8 +1740,7 @@ def main() -> int:
             if expected_tests != actual_tests:
                 raise ValueError("The complete upstream test inventory must remain byte-identical after naming normalization")
         else:
-            if deltas.get("fixture_contracts") != ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]:
-                raise ValueError("Unsupported review comparison contract")
+            _review_contracts(deltas)
             adapted = deltas["adapted_upstream_tests"]
             additions = deltas["added_tests"]
             if actual_tests.keys() != expected_tests.keys() | additions.keys():
@@ -1733,7 +1756,10 @@ def main() -> int:
         with reference_package(args.loom_repo, public_package) as reference:
             loom = _run_worker(_check_package(reference), legacy_routes=False)
             public = _run_worker(public_package, legacy_routes=False)
-            if _compare(loom, public, reviewed=deltas is not None):
+            if _compare(
+                loom, public, reviewed=deltas is not None,
+                training_type_enum=deltas is not None and "training-type-enum" in _review_contracts(deltas),
+            ):
                 return 1
             command = [
                 sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "verify_loom_surface.py"),

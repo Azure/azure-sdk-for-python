@@ -85,6 +85,7 @@ from .models import (
     SaveCheckpointRequest,
     SaveSamplerWeightsRequest,
     TensorData,
+    TrainingType,
     FoundryFeaturesOptInKeys,
 )
 from ._client import FineTuningSessionClient as FineTuningSessionClientGenerated
@@ -1139,7 +1140,7 @@ class FineTuningSession:
         from_checkpoint: Optional[FromCheckpoint] = None,
         timeout_sec: float = 600.0,
         user_metadata: Optional[dict[str, Any]] = None,
-        training_type: Optional[str] = None,
+        training_type: Optional[Union[str, TrainingType]] = None,
     ) -> "FineTuningSession":
         """Create a fine-tuning session and wait until the model is loaded.
 
@@ -1151,7 +1152,8 @@ class FineTuningSession:
         :type client: ~azure.ai.finetuningsessions.FineTuningSessionClient
         :keyword base_model: Name of the base model to load (e.g. ``"Llama-3.1-8B"``).
         :paramtype base_model: str
-        :keyword lora_config: Optional LoRA adapter config. Server default is used if omitted.
+        :keyword lora_config: LoRA adapter configuration. Optional in the compatibility signature;
+            the service requires a configuration with rank for session creation.
         :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
         :keyword type: Session type string. Defaults to ``"training"``.
         :paramtype type: str
@@ -1164,9 +1166,9 @@ class FineTuningSession:
         :keyword user_metadata: Optional user-defined metadata to associate with the session.
             Defaults to ``None``.
         :paramtype user_metadata: dict[str, typing.Any] or None
-        :keyword training_type: Training SKU type: ``"GlobalStandard"`` (default),
-            ``"DatazoneStandard"``, or ``"DeveloperTier"``.
-        :paramtype training_type: str or None
+        :keyword training_type: Training tier, specified as a string or :class:`TrainingType`.
+            Set this explicitly to select a tier; omission leaves selection to the service.
+        :paramtype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType or None
         :note: Poll cadence is controlled by an internal adaptive backoff
             (``_RETRIEVE_POLL_MIN`` doubling up to ``_RETRIEVE_POLL_MAX``);
             it is not currently caller-configurable.

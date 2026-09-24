@@ -1,8 +1,109 @@
 # Reproducible preview SDK generation
 
+## Model reuse and training-tier review (2026-09-24)
+
+Current TypeSpec pin: `22a790dd840b0898c800bd8a6014d1814ea52938`.
+The three decisions are separately committed:
+
+| Review concern | Resolution | TypeSpec commit |
+|---|---|---|
+| Duplicated contracts | Replace 17 copied definitions with references to the authoritative REST types. Retain only explicitly explained preview compatibility shapes and correct copied documentation. | `382a34146c1` |
+| String-only training tier | Generate Python `TrainingType` from the existing `FineTuningTrainingType` union, using Python-scoped naming. The SDK create model spreads the canonical `training_type` property rather than redeclaring its type, optionality, or documentation. | `154731972ec` |
+| Legacy DeveloperTier description | Recommend explicit tier selection; otherwise leave selection to the service. Remove the legacy metadata mechanism from the public property description without falsely promising an unconditional default. | `22a790dd840` |
+
+### One service contract, explicit compatibility exceptions
+
+The REST entrypoint remains authoritative for HTTP routes, request/response
+shapes, validation, and service defaults. The Python-only entrypoint imports
+that contract; it never defines another service or another set of routes.
+Aliases are references to the same TypeSpec type graph, not independent copies.
+Python `clientName` and `usage` customizations preserve existing public names
+and exports without changing REST or other-language naming.
+
+The following 17 SDK definitions now reuse canonical types directly:
+`CheckpointType`, `LossFn`, `SessionType`, `StopCriteria`, `TensorData`,
+`ModelInputChunk`, `Cursor`, `LossFnConfig`, `Datum`, `ForwardBackwardInput`,
+`ForwardBackwardRequest`, `ForwardRequest`, `OptimStepRequest`, `Session`,
+`SessionList`, `CheckpointList`, and `SaveCheckpointRequest`. Their nested
+types still use a compatibility mapping where that nested type differs.
+`TrainingType` additionally reuses the existing service union rather than
+introducing another list of training-tier values.
+
+The compatibility file is retained, reduced from 36 to 23 model declarations
+and from eight to four union declarations (the original count includes
+`StopCriteria`). These remaining groups have concrete reasons:
+
+| Retained definitions | Compatibility requirement / service distinction |
+|---|---|
+| `AdamParams`, `SamplingParams`, `SampleRequest`, `LossFnInputs` | Existing Python constructors require fields the service can default or derive. Preserve constructor signatures and emitted values rather than silently changing defaults. |
+| `LoRAConfig`, `CreateSessionRequest` | Existing Python construction permits omitted configuration/rank and has the legacy `ejectable` field. The service still requires configuration with rank. Resume is provided by the maintained `FromCheckpoint` hook. These model shapes do not promise that every constructible request is accepted by the service. |
+| `Checkpoint`, `CheckpointInfo`, `SessionModelData`, `SessionSummary`, `SampledSequence`, `HeartbeatResponse` | Preserve existing field inventories, optional/nullable Python representations, and required heartbeat constructor arguments. REST exposes additional checkpoint metadata and may omit the heartbeat identifier; these differences are not erased or asserted to be wire-equivalent. |
+| `ModelInput` | Preserve the generated token-only base expected by the existing multimodal `ModelInput`/`ImageChunk` hook. The public SDK supports images; the base alone is not its complete public model. |
+| `ForwardInput` | Preserve its public inheritance from `ForwardBackwardInput`; the REST model uses composition. |
+| `OperationResult` and its five derived results, `OperationStatus`, `OperationType` | Preserve legacy public result classes and raw poller APIs. Real training conveniences submit HTTP 200 requests and poll request-ID/status envelopes. The raw legacy protocol limitations remain documented; this refactor does not claim to repair or replace them. |
+| `ApiError`, `ApiErrorResponse` | Preserve existing Python error names, recursive detail representation, optionality, and encoded additional/debug information. |
+| `SessionStatus` | Preserve the previously exported named members. REST also names `created`; the Python union remains open and can represent that string without adding an unrelated enum member in this review. |
+| `FoundryFeaturesOptInKeys` | Preserve the older public enum inventory and open-string behavior, rather than changing the shared service's closed opt-in contract or adding unrelated public members. |
+
+Deleting all remaining definitions would change constructor signatures,
+inheritance, public exports, or legacy results. That is a separate migration,
+not a safe response to the duplication comment. Future reuse must preserve
+existing calls or identify an explicit reviewed API change. Source reuse is
+checked by generation; compatibility with the old SDK and conformance to the
+service are distinct checks, not interchangeable claims.
+
+The copied statements that rank is fixed server-side and can safely be omitted
+were corrected. The sampling model now documents the service's actual
+`topk_prompt_logprobs` default of zero, while retaining the old required Python
+constructor argument. Legacy result documentation no longer advertises a
+nonexistent operation-status route. None of these documentation corrections
+changes constructor defaults or server behavior.
+
+### Training tier: additive enum, unchanged wire behavior
+
+The new enum has exactly `GLOBAL_STANDARD = "GlobalStandard"`,
+`DATAZONE_STANDARD = "DatazoneStandard"`, and `DEVELOPER_TIER = "DeveloperTier"`.
+Existing strings and unknown future strings still serialize unchanged. The
+create model and sync/async creation helpers accept an optional string or enum;
+omission stays omitted and does not inject a client-side default.
+
+The service's legacy metadata fallback is deliberately not removed. Explicit
+`training_type` takes precedence; omission leaves selection to the service,
+including its existing compatibility behavior. Removing that backend fallback
+would need a separate service migration. No service deployment or work item
+is included here.
+
+### Validation scope
+
+The reuse-only candidate passed the existing exhaustive comparison with zero
+API/behavior differences: 45 public types and 336 raw-operation cases. Its
+executable AST, excluding documentation strings, was unchanged. REST output
+was byte-identical before the separate documentation edit; that edit changes
+only the exact training-tier description in each of four REST documents.
+
+Final actual SDK generation, seeded only with the nine maintained hooks, agrees
+with two independent pinned emissions for all 21 generated inventory entries
+and the complete 28-file runtime. The candidate passes all 501 existing tests
+plus 42 new training-tier tests (543 total). The focused tests cover enum and
+string values, unknown strings, omission with legacy metadata, and exact
+sync/async create/resume request payloads with explicit LoRA rank.
+
+The only new historical comparison contract is `training-type-enum`: one
+export, three fixed wire values, and four specified annotation sites. Expected
+values are fixed in the verifier, never learned from candidate output. All
+other exports, fields, constructor defaults, signatures, and payloads remain
+under the original strict comparisons. The immutable upstream reference and
+every existing test assertion remain unchanged. These are local offline
+results, not live GPU validation or a statement that every legacy raw method
+conforms to the current service.
+
+References: [TypeSpec aliases](https://typespec.io/docs/language-basics/alias/),
+[model reuse](https://typespec.io/docs/language-basics/models/), and
+[Python-scoped client customizations](https://azure.github.io/typespec-azure/docs/libraries/typespec-client-generator-core/reference/decorators/).
+
 ## Training-tier names and string constraints (2026-09-23)
 
-The current source pin is TypeSpec commit
+The source pin for this earlier review was TypeSpec commit
 `3bf298e19180ed0829e922c81b3dbd99146b859e`. These two follow-up changes are
 committed separately and do not change the Python API or runtime:
 

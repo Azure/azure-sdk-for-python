@@ -60,6 +60,7 @@ from ._enums import (  # type: ignore
     OperationType,
     SessionStatus,
     SessionType,
+    TrainingType,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -109,6 +110,7 @@ __all__ = [
     "OperationType",
     "SessionStatus",
     "SessionType",
+    "TrainingType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

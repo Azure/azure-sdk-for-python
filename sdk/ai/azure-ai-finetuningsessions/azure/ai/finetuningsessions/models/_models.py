@@ -218,12 +218,13 @@ class CheckpointInfo(_Model):
 class CheckpointList(_Model):
     """List of all checkpoints for a session (no pagination).
 
-    :ivar checkpoints: Checkpoints belonging to the session. Required.
+    :ivar checkpoints: All training and sampler checkpoints for the session, returned in one page.
+     Required.
     :vartype checkpoints: list[~azure.ai.finetuningsessions.models.Checkpoint]
     """
 
     checkpoints: list["_models.Checkpoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Checkpoints belonging to the session. Required."""
+    """All training and sampler checkpoints for the session, returned in one page. Required."""
 
     @overload
     def __init__(
@@ -250,16 +251,17 @@ class CreateSessionRequest(_Model):
     :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
     :ivar base_model: Base model to use for the fine-tuning session. Required.
     :vartype base_model: str
-    :ivar lora_config: LoRA adapter config. Rank is fixed server-side for v1; omit to use the
-     server default.
+    :ivar lora_config: LoRA adapter configuration. Optional in this compatibility model; session
+     creation requires a configuration with rank.
     :vartype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig
     :ivar user_metadata: User-provided metadata associated with the session.
     :vartype user_metadata: dict[str, any]
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
-    :ivar training_type: Training SKU type: 'GlobalStandard', 'DatazoneStandard', or
-     'DeveloperTier'. Default 'GlobalStandard'.
-    :vartype training_type: str
+    :ivar training_type: Training tier. Set this property explicitly to select the tier. If
+     omitted, tier selection is left to the service. Known values are: "GlobalStandard",
+     "DatazoneStandard", and "DeveloperTier".
+    :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
 
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -267,14 +269,18 @@ class CreateSessionRequest(_Model):
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base model to use for the fine-tuning session. Required."""
     lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """LoRA adapter config. Rank is fixed server-side for v1; omit to use the server default."""
+    """LoRA adapter configuration. Optional in this compatibility model; session creation requires a
+     configuration with rank."""
     user_metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User-provided metadata associated with the session."""
     ejectable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Opt the session into idle hibernation. Default False."""
-    training_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training SKU type: 'GlobalStandard', 'DatazoneStandard', or 'DeveloperTier'. Default
-     'GlobalStandard'."""
+    training_type: Optional[Union[str, "_models.TrainingType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Training tier. Set this property explicitly to select the tier. If omitted, tier selection is
+     left to the service. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
+     \"DeveloperTier\"."""
 
     @overload
     def __init__(
@@ -285,7 +291,7 @@ class CreateSessionRequest(_Model):
         lora_config: Optional["_models.LoRAConfig"] = None,
         user_metadata: Optional[dict[str, Any]] = None,
         ejectable: Optional[bool] = None,
-        training_type: Optional[str] = None,
+        training_type: Optional[Union[str, "_models.TrainingType"]] = None,
     ) -> None: ...
 
     @overload
@@ -340,14 +346,14 @@ class Cursor(_Model):
 class Datum(_Model):
     """A single training example.
 
-    :ivar model_input: Token-ID input to the model. Required.
+    :ivar model_input: Token-ID and optional image input to the model. Required.
     :vartype model_input: ~azure.ai.finetuningsessions.models.ModelInput
     :ivar loss_fn_inputs: Loss-function targets, aligned with model_input tokens. Required.
     :vartype loss_fn_inputs: ~azure.ai.finetuningsessions.models.LossFnInputs
     """
 
     model_input: "_models.ModelInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Token-ID input to the model. Required."""
+    """Token-ID and optional image input to the model. Required."""
     loss_fn_inputs: "_models.LossFnInputs" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Loss-function targets, aligned with model_input tokens. Required."""
 
@@ -373,24 +379,24 @@ class Datum(_Model):
 class ForwardBackwardInput(_Model):
     """Inner payload for a forward-backward request.
 
-    :ivar data: Training examples to process in the pass. Required.
+    :ivar data: Training examples to process in this batch. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Loss function to apply to the training examples. Required. Known values are:
+    :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
      "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config: Hyper-parameters for the selected loss function.
+    :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
     data: list["_models.Datum"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Training examples to process in the pass. Required."""
+    """Training examples to process in this batch. Required."""
     loss_fn: Union[str, "_models.LossFn"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Loss function to apply to the training examples. Required. Known values are: \"cross_entropy\",
+    """Loss function to evaluate for the batch. Required. Known values are: \"cross_entropy\",
      \"importance_sampling\", \"ppo\", \"cispo\", and \"sapo\"."""
     loss_fn_config: Optional["_models.LossFnConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Hyper-parameters for the selected loss function."""
+    """Optional hyper-parameters for the selected loss function."""
 
     @overload
     def __init__(
@@ -413,8 +419,9 @@ class ForwardBackwardInput(_Model):
 
 
 class OperationResult(_Model):
-    """Discriminated union of all async operation results. Returned by GET
-    /fine_tuning/sessions/{sessionId}/operations/{operationId}.
+    """Legacy Python operation-result base retained for existing raw poller APIs. The service returns
+    request-ID/status envelopes, not this discriminator shape. Maintained convenience hooks
+    implement the service's request-status polling.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ForwardBackwardOperationResult, OptimStepOperationResult, SampleOperationResult,
@@ -526,15 +533,15 @@ class ForwardBackwardOperationResult(OperationResult, discriminator="forward_bac
 class ForwardBackwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
 
-    :ivar forward_backward_input: Training examples and loss configuration for the forward-backward
-     pass. Required.
+    :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
+     Required.
     :vartype forward_backward_input: ~azure.ai.finetuningsessions.models.ForwardBackwardInput
     """
 
     forward_backward_input: "_models.ForwardBackwardInput" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Training examples and loss configuration for the forward-backward pass. Required."""
+    """Batch inputs for the combined forward and backward pass. Required."""
 
     @overload
     def __init__(
@@ -561,12 +568,12 @@ class ForwardInput(ForwardBackwardInput):
     that the forward endpoint has its own type in the SDK, allowing the
     contract to diverge later (e.g. making loss_fn optional for forward).
 
-    :ivar data: Training examples to process in the pass. Required.
+    :ivar data: Training examples to process in this batch. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
-    :ivar loss_fn: Loss function to apply to the training examples. Required. Known values are:
+    :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
      "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
-    :ivar loss_fn_config: Hyper-parameters for the selected loss function.
+    :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
     """
 
@@ -593,12 +600,12 @@ class ForwardInput(ForwardBackwardInput):
 class ForwardRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
 
-    :ivar forward_input: Input data and loss configuration for the forward-only pass. Required.
+    :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
     """
 
     forward_input: "_models.ForwardInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Input data and loss configuration for the forward-only pass. Required."""
+    """Batch inputs for the forward-only pass. Required."""
 
     @overload
     def __init__(
@@ -647,8 +654,8 @@ class HeartbeatResponse(_Model):
 
 
 class LoRAConfig(_Model):
-    """LoRA adapter configuration. ``rank`` is fixed server-side for v1; omit to use the server
-    default.
+    """LoRA adapter configuration with the existing optional Python constructor fields. Session
+    creation requires rank; this model does not provide a client-side default.
 
     :ivar rank: Number of LoRA rank dimensions.
     :vartype rank: int
@@ -907,12 +914,12 @@ class OptimStepOperationResult(OperationResult, discriminator="optim_step"):
 class OptimStepRequest(_Model):
     """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
 
-    :ivar adam_params: Adam optimizer hyper-parameters to use for this step. Required.
+    :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
     """
 
     adam_params: "_models.AdamParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Adam optimizer hyper-parameters to use for this step. Required."""
+    """Adam optimizer parameters used to apply accumulated gradients. Required."""
 
     @overload
     def __init__(
@@ -1052,8 +1059,8 @@ class SampleRequest(_Model):
      1-D float32 numpy array, shape ``(prompt_length,)``. ``NaN`` at positions where logprobs were
      not computed (e.g. the first prompt token).
     :vartype prompt_logprobs: bool
-    :ivar topk_prompt_logprobs: Number of top-k log-probabilities to return per prompt token. 0 =
-     none. Must be between 0 and 20 (default 20). Required.
+    :ivar topk_prompt_logprobs: Number of top-k log-probabilities per prompt token, from 0 to 20.
+     Zero disables this output. The service defaults to 0 when omitted. Required.
     :vartype topk_prompt_logprobs: int
     """
 
@@ -1072,8 +1079,8 @@ class SampleRequest(_Model):
      shape ``(prompt_length,)``. ``NaN`` at positions where logprobs were not computed (e.g. the
      first prompt token)."""
     topk_prompt_logprobs: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of top-k log-probabilities to return per prompt token. 0 = none. Must be between 0 and
-     20 (default 20). Required."""
+    """Number of top-k log-probabilities per prompt token, from 0 to 20. Zero disables this output.
+     The service defaults to 0 when omitted. Required."""
 
     @overload
     def __init__(
@@ -1330,7 +1337,8 @@ class Session(_Model):
 
     :ivar session_id: Unique identifier for this fine-tuning session. Required.
     :vartype session_id: str
-    :ivar type: The session type. Required. "training"
+    :ivar type: Session category, using the same wire values as the create-session request.
+     Required. "training"
     :vartype type: str or ~azure.ai.finetuningsessions.models.SessionType
     :ivar status: Current lifecycle status of the session. Required. Known values are: "queued",
      "running", "succeeded", and "failed".
@@ -1342,7 +1350,8 @@ class Session(_Model):
     session_id: str = rest_field(visibility=["read"])
     """Unique identifier for this fine-tuning session. Required."""
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The session type. Required. \"training\""""
+    """Session category, using the same wire values as the create-session request. Required.
+     \"training\""""
     status: Union[str, "_models.SessionStatus"] = rest_field(visibility=["read"])
     """Current lifecycle status of the session. Required. Known values are: \"queued\", \"running\",
      \"succeeded\", and \"failed\"."""
@@ -1371,16 +1380,16 @@ class Session(_Model):
 class SessionList(_Model):
     """Paginated list of fine-tuning sessions.
 
-    :ivar data: Session summaries in the current page. Required.
+    :ivar data: Sessions returned in the current page. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.SessionSummary]
-    :ivar cursor: Pagination information for the session list. Required.
+    :ivar cursor: Offset, limit, and total count for the requested page. Required.
     :vartype cursor: ~azure.ai.finetuningsessions.models.Cursor
     """
 
     data: list["_models.SessionSummary"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Session summaries in the current page. Required."""
+    """Sessions returned in the current page. Required."""
     cursor: "_models.Cursor" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Pagination information for the session list. Required."""
+    """Offset, limit, and total count for the requested page. Required."""
 
     @overload
     def __init__(

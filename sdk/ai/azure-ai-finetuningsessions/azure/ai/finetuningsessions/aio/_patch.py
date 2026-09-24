@@ -74,6 +74,7 @@ from ..models import (
     SamplingParams,
     SaveCheckpointRequest,
     SaveSamplerWeightsRequest,
+    TrainingType,
     FoundryFeaturesOptInKeys,
 )
 from .._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder, _deserialize as _deserialize_model
@@ -1188,13 +1189,14 @@ async def create_session(
     from_checkpoint: Optional[FromCheckpoint] = None,
     timeout_sec: float = 600.0,
     user_metadata: Optional[dict[str, Any]] = None,
-    training_type: Optional[str] = None,
+    training_type: Optional[Union[str, TrainingType]] = None,
 ) -> str:
     """Create a fine-tuning session and wait until the model is loaded.
 
     :keyword base_model: Name of the base model to load.
     :paramtype base_model: str
-    :keyword lora_config: Optional LoRA adapter config.
+    :keyword lora_config: LoRA adapter configuration. Optional in the compatibility signature;
+        the service requires a configuration with rank for session creation.
     :paramtype lora_config: ~azure.ai.finetuningsessions.models.LoRAConfig or None
     :keyword type: Session type string. Defaults to ``"training"``.
     :paramtype type: str
@@ -1205,11 +1207,12 @@ async def create_session(
     :keyword user_metadata: Optional key/value metadata stored on the session
         record.
     :paramtype user_metadata: dict[str, ~typing.Any] or None
-    :keyword training_type: Training SKU type: ``"GlobalStandard"`` (default),
-        ``"DatazoneStandard"``, or ``"DeveloperTier"``. Global jobs can run on
+    :keyword training_type: Training tier, specified as a string or :class:`TrainingType`.
+        Set this explicitly to select a tier; omission leaves selection to the service.
+        Global jobs can run on
         any worker; datazone jobs require a worker in the same datazone as the
         API's region; Developer Tier jobs use eligible development capacity.
-    :paramtype training_type: str or None
+    :paramtype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType or None
     :return: The ``session_id`` string (e.g. ``"session_abc12345"``).
     :rtype: str
     """

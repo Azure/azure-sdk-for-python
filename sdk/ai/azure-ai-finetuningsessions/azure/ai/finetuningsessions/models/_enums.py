@@ -100,3 +100,14 @@ class SessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRAINING = "training"
     """A training session for fine-tuning a model."""
+
+
+class TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Training tiers available for fine-tuning sessions."""
+
+    GLOBAL_STANDARD = "GlobalStandard"
+    """Standard training using globally available capacity."""
+    DATAZONE_STANDARD = "DatazoneStandard"
+    """Standard training constrained to the applicable data zone."""
+    DEVELOPER_TIER = "DeveloperTier"
+    """Developer-tier training, subject to service eligibility."""

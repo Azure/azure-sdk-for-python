@@ -3,7 +3,7 @@
   "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
   "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
   "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
-  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"],
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum"],
   "adapted_upstream_tests": {
     "tests/test_create_session_id_normalization.py": "64ef8fbd9f20fe1d5405a78df6d2a25537814f2d0915f097a4d537137468a699",
     "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db",
@@ -19,9 +19,20 @@
   },
   "added_tests": {
     "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
-    "tests/test_review_regressions.py": "0f2b9f3a3a76abfa8dbbe328d8d3e5f80d45f1ea3dd7112b125d38a15b1fc16f"
+    "tests/test_review_regressions.py": "0f2b9f3a3a76abfa8dbbe328d8d3e5f80d45f1ea3dd7112b125d38a15b1fc16f",
+    "tests/test_training_type.py": "0b64b9ca1522b7ececd6f6731fec0067deec6f06068b9415d9e6576bf29de7b1"
+  },
+  "training_type_contract": {
+    "type": "TrainingType",
+    "source": "Azure.AI.Projects.SessionFineTuning.FineTuningTrainingType",
+    "members": {"GLOBAL_STANDARD": "GlobalStandard", "DATAZONE_STANDARD": "DatazoneStandard", "DEVELOPER_TIER": "DeveloperTier"},
+    "annotation_sites": ["CreateSessionRequest.training_type", "CreateSessionRequest.__init__ keyword overload", "FineTuningSession.create.training_type", "aio.FineTuningSessionClient.create_session.training_type"],
+    "behavior": "String inputs remain accepted without coercion; omission stays omitted; no client-side default or service validation change. Only this export, exact members, and four annotation sites are allowed by the comparison."
   },
   "changes": [
+    {"comments": [], "change": "Address the training_type enum review by reusing the canonical REST union, adding the string-backed TrainingType export and four explicit optional str-or-enum annotation sites. Existing wire values, future strings, and omission behavior remain unchanged."},
+    {"comments": [], "change": "Replace 17 duplicated SDK TypeSpec definitions with canonical references, retain documented compatibility exceptions, and correct copied documentation without changing existing constructors or operation behavior."},
+    {"comments": [], "change": "Document explicit training-tier selection rather than promoting legacy DeveloperTier metadata; preserve the service fallback and do not introduce a client default."},
     {"comments": [4049473889, 4049474086, 4049474688, 4066580814], "change": "Reuse one generated sync pipeline; custom policies work and normal close releases the session transport."},
     {"comments": [4049474583, 4066580951], "change": "Drain cancelled heartbeat tasks before session close/delete and async client close; concurrent cancellation does not interrupt cleanup."},
     {"comments": [4049473646, 4049473833, 4066929882], "change": "Default raw-operation pipelines receive existing environment-backed identity headers scoped to the configured origin and session path; caller overrides and custom pipelines are preserved."},

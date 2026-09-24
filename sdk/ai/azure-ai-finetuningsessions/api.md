@@ -58,7 +58,7 @@ namespace azure.ai.finetuningsessions
                 from_checkpoint: Optional[FromCheckpoint] = ...,
                 lora_config: Optional[LoRAConfig] = ...,
                 timeout_sec: float = 600.0,
-                training_type: Optional[str] = ...,
+                training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
                 user_metadata: Optional[dict[str, Any]] = ...
             ) -> FineTuningSession: ...
@@ -292,7 +292,7 @@ namespace azure.ai.finetuningsessions.aio
                 from_checkpoint: Optional[FromCheckpoint] = ...,
                 lora_config: Optional[LoRAConfig] = ...,
                 timeout_sec: float = 600.0,
-                training_type: Optional[str] = ...,
+                training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
                 user_metadata: Optional[dict[str, Any]] = ...
             ) -> str: ...
@@ -900,7 +900,7 @@ namespace azure.ai.finetuningsessions.models
         base_model: str
         ejectable: Optional[bool]
         lora_config: Optional[LoRAConfig]
-        training_type: Optional[str]
+        training_type: Optional[Union[str, TrainingType]]
         type: Union[str, SessionType]
         user_metadata: Optional[dict[str, Any]]
 
@@ -911,7 +911,7 @@ namespace azure.ai.finetuningsessions.models
                 base_model: str,
                 ejectable: Optional[bool] = ...,
                 lora_config: Optional[LoRAConfig] = ...,
-                training_type: Optional[str] = ...,
+                training_type: Optional[Union[str, TrainingType]] = ...,
                 type: Union[str, SessionType],
                 user_metadata: Optional[dict[str, Any]] = ...
             ) -> None: ...
@@ -1522,6 +1522,12 @@ namespace azure.ai.finetuningsessions.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATAZONE_STANDARD = "DatazoneStandard"
+        DEVELOPER_TIER = "DeveloperTier"
+        GLOBAL_STANDARD = "GlobalStandard"
 
 
 namespace azure.ai.finetuningsessions.operations

@@ -89,14 +89,14 @@ exception is restricted to loopback development servers.
 
 ```python
 from azure.ai.finetuningsessions import FineTuningSession
-from azure.ai.finetuningsessions.models import LoRAConfig
+from azure.ai.finetuningsessions.models import LoRAConfig, TrainingType
 
 session = FineTuningSession.create(
         client,
         base_model="<supported-base-model>",
         lora_config=LoRAConfig(rank=16),
         user_metadata={"experiment": "example", "enabled": True},
-        training_type="GlobalStandard",
+        training_type=TrainingType.GLOBAL_STANDARD,
 )
 try:
         sampler = session.save_weights_for_sampler(seq_id=0, sampling_session_seq_id=0)
@@ -112,6 +112,11 @@ sampling, checkpoint, and deletion methods accept that ID. Creation supports
 `from_checkpoint`, JSON-valued `user_metadata`, and `training_type`. The service
 requires a LoRA configuration with a rank; use values supported by the selected
 model rather than assuming a client-side default.
+
+`training_type` accepts `TrainingType` members or strings. The known wire values
+remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; future strings
+are passed through without client-side validation. Set the property explicitly
+to select a tier. If omitted, the SDK leaves selection to the service.
 
 ### Forward-only passes and session deletion
 
