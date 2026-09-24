@@ -24,7 +24,7 @@ These results were obtained before this documentation-only update, not rerun her
 | Convenience comparison | 20 cases, 134 requests, and 2,246 checks **per SDK**, with fixed reviewed contracts. |
 | Public surface and raw operations | 47 exported model/enum names, including the identical sampling alias; all 336 original raw cases retained. The candidate adds exactly 28 polling GETs (308 reference requests, 336 candidate requests). |
 | Additional service/security probes | 328 passed. |
-| Review-contract guard suite | 38 passed using [scripts/test_review_contracts.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/test_review_contracts.py) with captured comparison artifacts. |
+| Review-contract guard suite | 38 passed using [scripts/check_review_contracts.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/check_review_contracts.py) with captured comparison artifacts. |
 | Distribution | Source distribution and wheel built successfully; all 28 distributed runtime files match source bytes; the installed wheel passed all 1,637 tests. |
 | Code quality | CI-pinned Pylint and Mypy passed; repository-configured Pyright passed. Strict Sphinx passed using sdist runtime/pages and the final README, with only external inventory downloads disabled locally. |
 
@@ -96,7 +96,7 @@ beside the selected manifest. Outside an SDK checkout, it uses the archived pair
 python scripts/verify_generation.py --spec-repo <spec-repo> --sdk-repo <sdk-repo> --toolchain <shared-toolchain>
 python scripts/verify_reference_snapshot.py --loom-repo <reference-repo>
 python scripts/verify_compatibility.py --loom-repo <reference-repo> --artifacts <artifacts-dir>
-python scripts/test_review_contracts.py --artifacts <artifacts-dir>
+python scripts/check_review_contracts.py --artifacts <artifacts-dir>
 ```
 
 [scripts/verify_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_generation.py) checks provenance

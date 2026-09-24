@@ -47,7 +47,7 @@
     "tests/test_training_type.py": "673e82d5cbdca67eff404c922b696dad7113e9a8436ba49dfd9194cd16a840f7",
     "tests/test_error_image_regressions.py": "aaed6c38c42c431406a2c5d3572087b9468a73d43fa33c06d35cb9198d1443d9",
     "tests/test_mutation_transport_retry.py": "491cfe662195e52558d15f8ebe32e0181c47207ebca88fa76def3759b7d81cf2",
-    "tests/test_raw_request_polling.py": "a6d2061efd49f217785d52db52f8d6c872a3adc0d01b66abf647bc03b193d966",
+    "tests/test_raw_request_polling.py": "b040f1260e6616451af6c5685e3462cea35413085a41e4a2e136550672f0659d",
     "tests/test_sampling_response_format.py": "ec6c2dec34d8520c1ff6e70e3d8ac3331a10d78951587c7741455ee81cfe6b8c",
     "tests/test_service_contracts.py": "e7295cf1524bbb5009c0af0a50471a760517a4251d50c85eae0116ff292d10c9",
     "tests/test_transport_security.py": "f234e7402ca256a7e2df4dccf4eec44f4a36edda00034cc468886f7864513936"

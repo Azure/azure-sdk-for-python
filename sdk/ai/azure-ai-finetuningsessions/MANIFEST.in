@@ -4,7 +4,7 @@ include scripts/verify_generation.py
 include scripts/verify_reference_snapshot.py
 include scripts/verify_compatibility.py
 include scripts/verify_surface.py
-include scripts/test_review_contracts.py
+include scripts/check_review_contracts.py
 include eng/generation/reference.json
 include eng/generation/review-deltas.json
 include eng/generation/provenance.json

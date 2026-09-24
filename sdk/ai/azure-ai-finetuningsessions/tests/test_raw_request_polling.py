@@ -7,6 +7,7 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass, field
 import base64
+import hashlib
 from io import BytesIO
 import json
 import math
@@ -232,9 +233,23 @@ async def close_client(client: Any, asynchronous: bool) -> None:
 
 
 def test_public_source_import() -> None:
-    """Require the explicitly tested source or installed-wheel package root."""
-    package = Path(os.environ.get("FINETUNING_TEST_PACKAGE_ROOT", Path(__file__).resolve().parents[1])).resolve()
-    assert Path(_operation_compat.__file__).resolve() == package / "azure/ai/finetuningsessions/_operation_compat.py"
+    """Source and installed-wheel runs must load the complete reviewed runtime."""
+    imported = Path(_operation_compat.__file__).resolve()
+    explicit_root = os.environ.get("FINETUNING_TEST_PACKAGE_ROOT")
+    if explicit_root is not None:
+        assert imported == Path(explicit_root).resolve() / "azure/ai/finetuningsessions/_operation_compat.py"
+    source = Path(__file__).resolve().parents[1] / "azure/ai/finetuningsessions"
+
+    def inventory(directory):
+        return {
+            file.relative_to(directory).as_posix(): hashlib.sha256(file.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            for file in directory.rglob("*")
+            if file.is_file() and "__pycache__" not in file.parts
+        }
+
+    expected = inventory(source)
+    assert len(expected) == 28
+    assert inventory(imported.parent) == expected
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
