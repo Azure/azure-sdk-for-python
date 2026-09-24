@@ -831,6 +831,8 @@ class ShareProperties(DictMixin):
     """The share's next allowed provisioned throughput downgrade time."""
     next_provisioned_bandwidth_downgrade: Optional["datetime"]
     """The share's next allowed provisioned bandwidth downgrade time."""
+    creation_time: Optional["datetime"] = None
+    """The creation time of the share."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -868,6 +870,7 @@ class ShareProperties(DictMixin):
         self.next_provisioned_bandwidth_downgrade = kwargs.get(  # pylint: disable=name-too-long
             "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"
         )
+        self.creation_time = kwargs.get("x-ms-share-creation-time")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -907,6 +910,7 @@ class ShareProperties(DictMixin):
         props.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
             generated.properties.next_allowed_provisioned_bandwidth_downgrade_time
         )
+        props.creation_time = generated.properties.creation_time
         return props
 
 
