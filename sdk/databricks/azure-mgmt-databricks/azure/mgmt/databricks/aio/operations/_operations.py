@@ -69,7 +69,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -181,7 +181,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1056,7 +1056,7 @@ class WorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1654,7 +1654,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccessConnectorsOperations:
+class AccessConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2527,7 +2527,7 @@ class AccessConnectorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-too-long
+class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2625,7 +2625,7 @@ class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-to
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2827,7 +2827,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VNetPeeringOperations:
+class VNetPeeringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

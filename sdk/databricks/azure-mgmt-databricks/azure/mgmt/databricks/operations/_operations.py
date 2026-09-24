@@ -725,7 +725,7 @@ def build_vnet_peering_list_by_workspace_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -837,7 +837,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1712,7 +1712,7 @@ class WorkspacesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2305,7 +2305,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AccessConnectorsOperations:
+class AccessConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3174,7 +3174,7 @@ class AccessConnectorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-too-long
+class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3272,7 +3272,7 @@ class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-to
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3473,7 +3473,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VNetPeeringOperations:
+class VNetPeeringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

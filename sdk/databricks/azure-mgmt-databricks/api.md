@@ -1946,16 +1946,15 @@ namespace azure.mgmt.databricks.types
         location: str
         name: str
         properties: AccessConnectorProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.databricks.types.AccessConnectorProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         referedBy: list[str]
-        refered_by: list[str]
 
 
     class azure.mgmt.databricks.types.AccessConnectorUpdate(TypedDict, total=False):
@@ -1966,7 +1965,6 @@ namespace azure.mgmt.databricks.types
 
     class azure.mgmt.databricks.types.AddressSpace(TypedDict, total=False):
         addressPrefixes: list[str]
-        address_prefixes: list[str]
 
 
     class azure.mgmt.databricks.types.AutomaticClusterUpdateDefinition(TypedDict, total=False):
@@ -1977,7 +1975,6 @@ namespace azure.mgmt.databricks.types
     class azure.mgmt.databricks.types.ComplianceSecurityProfileDefinition(TypedDict, total=False):
         key "value": Union[str, ComplianceSecurityProfileValue]
         complianceStandards: list[str]
-        compliance_standards: list[str]
         value: Union[str, ComplianceSecurityProfileValue]
 
 
@@ -1985,7 +1982,7 @@ namespace azure.mgmt.databricks.types
         key "applicationId": str
         key "oid": str
         key "puid": str
-        application_id: str
+        applicationId: str
         oid: str
         puid: str
 
@@ -1993,8 +1990,8 @@ namespace azure.mgmt.databricks.types
     class azure.mgmt.databricks.types.DefaultCatalogProperties(TypedDict, total=False):
         key "initialName": str
         key "initialType": Union[str, InitialType]
-        initial_name: str
-        initial_type: Union[str, InitialType]
+        initialName: str
+        initialType: Union[str, InitialType]
 
 
     class azure.mgmt.databricks.types.Encryption(TypedDict, total=False):
@@ -2002,42 +1999,42 @@ namespace azure.mgmt.databricks.types
         key "keySource": Union[str, KeySource]
         key "keyvaulturi": str
         key "keyversion": str
-        key_name: str
-        key_source: Union[str, KeySource]
-        key_vault_uri: str
-        key_version: str
+        KeyName: str
+        keySource: Union[str, KeySource]
+        keyvaulturi: str
+        keyversion: str
 
 
     class azure.mgmt.databricks.types.EncryptionEntitiesDefinition(TypedDict, total=False):
         key "managedDisk": ForwardRef('ManagedDiskEncryption', module='types')
         key "managedServices": ForwardRef('EncryptionV2', module='types')
-        managed_disk: ManagedDiskEncryption
-        managed_services: EncryptionV2
+        managedDisk: ManagedDiskEncryption
+        managedServices: EncryptionV2
 
 
     class azure.mgmt.databricks.types.EncryptionV2(TypedDict, total=False):
         key "keySource": Required[Union[str, EncryptionKeySource]]
         key "keyVaultProperties": ForwardRef('EncryptionV2KeyVaultProperties', module='types')
-        key_source: Union[str, EncryptionKeySource]
-        key_vault_properties: EncryptionV2KeyVaultProperties
+        keySource: Union[str, EncryptionKeySource]
+        keyVaultProperties: EncryptionV2KeyVaultProperties
 
 
     class azure.mgmt.databricks.types.EncryptionV2KeyVaultProperties(TypedDict, total=False):
         key "keyName": Required[str]
         key "keyVaultUri": Required[str]
         key "keyVersion": Required[str]
-        key_name: str
-        key_vault_uri: str
-        key_version: str
+        keyName: str
+        keyVaultUri: str
+        keyVersion: str
 
 
     class azure.mgmt.databricks.types.EnhancedSecurityComplianceDefinition(TypedDict, total=False):
         key "automaticClusterUpdate": ForwardRef('AutomaticClusterUpdateDefinition', module='types')
         key "complianceSecurityProfile": ForwardRef('ComplianceSecurityProfileDefinition', module='types')
         key "enhancedSecurityMonitoring": ForwardRef('EnhancedSecurityMonitoringDefinition', module='types')
-        automatic_cluster_update: AutomaticClusterUpdateDefinition
-        compliance_security_profile: ComplianceSecurityProfileDefinition
-        enhanced_security_monitoring: EnhancedSecurityMonitoringDefinition
+        automaticClusterUpdate: AutomaticClusterUpdateDefinition
+        complianceSecurityProfile: ComplianceSecurityProfileDefinition
+        enhancedSecurityMonitoring: EnhancedSecurityMonitoringDefinition
 
 
     class azure.mgmt.databricks.types.EnhancedSecurityMonitoringDefinition(TypedDict, total=False):
@@ -2049,26 +2046,26 @@ namespace azure.mgmt.databricks.types
         key "keySource": Required[Union[str, EncryptionKeySource]]
         key "keyVaultProperties": Required[ManagedDiskEncryptionKeyVaultProperties]
         key "rotationToLatestKeyVersionEnabled": bool
-        key_source: Union[str, EncryptionKeySource]
-        key_vault_properties: ManagedDiskEncryptionKeyVaultProperties
-        rotation_to_latest_key_version_enabled: bool
+        keySource: Union[str, EncryptionKeySource]
+        keyVaultProperties: ManagedDiskEncryptionKeyVaultProperties
+        rotationToLatestKeyVersionEnabled: bool
 
 
     class azure.mgmt.databricks.types.ManagedDiskEncryptionKeyVaultProperties(TypedDict, total=False):
         key "keyName": Required[str]
         key "keyVaultUri": Required[str]
         key "keyVersion": Required[str]
-        key_name: str
-        key_vault_uri: str
-        key_version: str
+        keyName: str
+        keyVaultUri: str
+        keyVersion: str
 
 
     class azure.mgmt.databricks.types.ManagedIdentityConfiguration(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": str
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: str
 
 
@@ -2076,11 +2073,10 @@ namespace azure.mgmt.databricks.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.databricks.types.PrivateEndpoint(TypedDict, total=False):
@@ -2097,7 +2093,7 @@ namespace azure.mgmt.databricks.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2106,17 +2102,16 @@ namespace azure.mgmt.databricks.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.databricks.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Required[Union[str, PrivateLinkServiceConnectionStatus]]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateLinkServiceConnectionStatus]
 
@@ -2128,7 +2123,7 @@ namespace azure.mgmt.databricks.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2139,7 +2134,7 @@ namespace azure.mgmt.databricks.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2157,12 +2152,12 @@ namespace azure.mgmt.databricks.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.databricks.types.TrackedResource(Resource):
@@ -2174,7 +2169,7 @@ namespace azure.mgmt.databricks.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2182,8 +2177,8 @@ namespace azure.mgmt.databricks.types
     class azure.mgmt.databricks.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.databricks.types.VirtualNetworkPeering(ProxyResource):
@@ -2195,7 +2190,7 @@ namespace azure.mgmt.databricks.types
         id: str
         name: str
         properties: VirtualNetworkPeeringPropertiesFormat
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2210,16 +2205,16 @@ namespace azure.mgmt.databricks.types
         key "remoteAddressSpace": ForwardRef('AddressSpace', module='types')
         key "remoteVirtualNetwork": Required[VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork]
         key "useRemoteGateways": bool
-        allow_forwarded_traffic: bool
-        allow_gateway_transit: bool
-        allow_virtual_network_access: bool
-        databricks_address_space: AddressSpace
-        databricks_virtual_network: VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork
-        peering_state: Union[str, PeeringState]
-        provisioning_state: Union[str, PeeringProvisioningState]
-        remote_address_space: AddressSpace
-        remote_virtual_network: VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork
-        use_remote_gateways: bool
+        allowForwardedTraffic: bool
+        allowGatewayTransit: bool
+        allowVirtualNetworkAccess: bool
+        databricksAddressSpace: AddressSpace
+        databricksVirtualNetwork: VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork
+        peeringState: Union[str, PeeringState]
+        provisioningState: Union[str, PeeringProvisioningState]
+        remoteAddressSpace: AddressSpace
+        remoteVirtualNetwork: VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork
+        useRemoteGateways: bool
 
 
     class azure.mgmt.databricks.types.VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork(TypedDict, total=False):
@@ -2245,7 +2240,7 @@ namespace azure.mgmt.databricks.types
         name: str
         properties: WorkspaceProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2281,22 +2276,22 @@ namespace azure.mgmt.databricks.types
         key "storageAccountName": ForwardRef('WorkspaceCustomStringParameter', module='types')
         key "storageAccountSkuName": ForwardRef('WorkspaceCustomStringParameter', module='types')
         key "vnetAddressPrefix": ForwardRef('WorkspaceCustomStringParameter', module='types')
-        aml_workspace_id: WorkspaceCustomStringParameter
-        custom_private_subnet_name: WorkspaceCustomStringParameter
-        custom_public_subnet_name: WorkspaceCustomStringParameter
-        custom_virtual_network_id: WorkspaceCustomStringParameter
-        enable_no_public_ip: WorkspaceNoPublicIPBooleanParameter
+        amlWorkspaceId: WorkspaceCustomStringParameter
+        customPrivateSubnetName: WorkspaceCustomStringParameter
+        customPublicSubnetName: WorkspaceCustomStringParameter
+        customVirtualNetworkId: WorkspaceCustomStringParameter
+        enableNoPublicIp: WorkspaceNoPublicIPBooleanParameter
         encryption: WorkspaceEncryptionParameter
-        load_balancer_backend_pool_name: WorkspaceCustomStringParameter
-        load_balancer_id: WorkspaceCustomStringParameter
-        nat_gateway_name: WorkspaceCustomStringParameter
-        prepare_encryption: WorkspaceCustomBooleanParameter
-        public_ip_name: WorkspaceCustomStringParameter
-        require_infrastructure_encryption: WorkspaceCustomBooleanParameter
-        resource_tags: WorkspaceCustomObjectParameter
-        storage_account_name: WorkspaceCustomStringParameter
-        storage_account_sku_name: WorkspaceCustomStringParameter
-        vnet_address_prefix: WorkspaceCustomStringParameter
+        loadBalancerBackendPoolName: WorkspaceCustomStringParameter
+        loadBalancerId: WorkspaceCustomStringParameter
+        natGatewayName: WorkspaceCustomStringParameter
+        prepareEncryption: WorkspaceCustomBooleanParameter
+        publicIpName: WorkspaceCustomStringParameter
+        requireInfrastructureEncryption: WorkspaceCustomBooleanParameter
+        resourceTags: WorkspaceCustomObjectParameter
+        storageAccountName: WorkspaceCustomStringParameter
+        storageAccountSkuName: WorkspaceCustomStringParameter
+        vnetAddressPrefix: WorkspaceCustomStringParameter
 
 
     class azure.mgmt.databricks.types.WorkspaceCustomStringParameter(TypedDict, total=False):
@@ -2342,30 +2337,29 @@ namespace azure.mgmt.databricks.types
         key "updatedBy": ForwardRef('CreatedBy', module='types')
         key "workspaceId": str
         key "workspaceUrl": str
-        access_connector: WorkspacePropertiesAccessConnector
+        accessConnector: WorkspacePropertiesAccessConnector
         authorizations: list[WorkspaceProviderAuthorization]
-        compute_mode: Union[str, ComputeMode]
-        created_by: CreatedBy
-        created_date_time: str
-        default_catalog: DefaultCatalogProperties
-        default_storage_firewall: Union[str, DefaultStorageFirewall]
-        disk_encryption_set_id: str
+        computeMode: Union[str, ComputeMode]
+        createdBy: CreatedBy
+        createdDateTime: str
+        defaultCatalog: DefaultCatalogProperties
+        defaultStorageFirewall: Union[str, DefaultStorageFirewall]
+        diskEncryptionSetId: str
         encryption: WorkspacePropertiesEncryption
-        enhanced_security_compliance: EnhancedSecurityComplianceDefinition
-        is_uc_enabled: bool
-        managed_disk_identity: ManagedIdentityConfiguration
-        managed_resource_group_id: str
+        enhancedSecurityCompliance: EnhancedSecurityComplianceDefinition
+        isUcEnabled: bool
+        managedDiskIdentity: ManagedIdentityConfiguration
+        managedResourceGroupId: str
         parameters: WorkspaceCustomParameters
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
-        required_nsg_rules: Union[str, RequiredNsgRules]
-        storage_account_identity: ManagedIdentityConfiguration
-        ui_definition_uri: str
-        updated_by: CreatedBy
-        workspace_id: str
-        workspace_url: str
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        requiredNsgRules: Union[str, RequiredNsgRules]
+        storageAccountIdentity: ManagedIdentityConfiguration
+        uiDefinitionUri: str
+        updatedBy: CreatedBy
+        workspaceId: str
+        workspaceUrl: str
 
 
     class azure.mgmt.databricks.types.WorkspacePropertiesAccessConnector(TypedDict, total=False):
@@ -2373,8 +2367,8 @@ namespace azure.mgmt.databricks.types
         key "identityType": Required[Union[str, IdentityType]]
         key "userAssignedIdentityId": str
         id: str
-        identity_type: Union[str, IdentityType]
-        user_assigned_identity_id: str
+        identityType: Union[str, IdentityType]
+        userAssignedIdentityId: str
 
 
     class azure.mgmt.databricks.types.WorkspacePropertiesEncryption(TypedDict, total=False):
@@ -2385,8 +2379,8 @@ namespace azure.mgmt.databricks.types
     class azure.mgmt.databricks.types.WorkspaceProviderAuthorization(TypedDict, total=False):
         key "principalId": Required[str]
         key "roleDefinitionId": Required[str]
-        principal_id: str
-        role_definition_id: str
+        principalId: str
+        roleDefinitionId: str
 
 
     class azure.mgmt.databricks.types.WorkspaceUpdate(TypedDict, total=False):

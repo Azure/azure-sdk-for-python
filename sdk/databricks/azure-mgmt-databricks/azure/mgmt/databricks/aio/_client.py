@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureDatabricksManagementClient:  # pylint: disable=too-many-instance-attributes
+class AzureDatabricksManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ARM Databricks.
 
     :ivar operations: Operations operations

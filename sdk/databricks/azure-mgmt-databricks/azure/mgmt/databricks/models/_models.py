@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AccessConnector(TrackedResource):
+class AccessConnector(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about Azure Databricks Access Connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -164,7 +164,7 @@ class AccessConnectorProperties(_Model):
     """List of workspaces referring this Access Connector."""
 
 
-class AccessConnectorUpdate(_Model):
+class AccessConnectorUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update to an Azure Databricks Access Connector.
 
     :ivar tags: Resource tags.
@@ -199,7 +199,7 @@ class AccessConnectorUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddressSpace(_Model):
+class AddressSpace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual
     network.
 
@@ -231,7 +231,7 @@ class AddressSpace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticClusterUpdateDefinition(_Model):
+class AutomaticClusterUpdateDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of automated cluster updates feature.
 
     :ivar value: Known values are: "Enabled" and "Disabled".
@@ -261,7 +261,7 @@ class AutomaticClusterUpdateDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComplianceSecurityProfileDefinition(_Model):
+class ComplianceSecurityProfileDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of Compliance Security Profile feature.
 
     :ivar compliance_standards: Compliance standards associated with the workspace.
@@ -319,7 +319,7 @@ class CreatedBy(_Model):
      example, Azure Portal."""
 
 
-class DefaultCatalogProperties(_Model):
+class DefaultCatalogProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """These properties lets user specify default catalog properties during workspace creation. Not
     allowed in Serverless ComputeMode workspace.
 
@@ -362,7 +362,7 @@ class DefaultCatalogProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Encryption(_Model):
+class Encryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that contains details of encryption used on the workspace.
 
     :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
@@ -413,7 +413,7 @@ class Encryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionEntitiesDefinition(_Model):
+class EncryptionEntitiesDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption entities for databricks workspace resource.
 
     :ivar managed_services: Encryption properties for the databricks managed services. Supported in
@@ -454,7 +454,7 @@ class EncryptionEntitiesDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionV2(_Model):
+class EncryptionV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that contains details of encryption used on the workspace.
 
     :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
@@ -493,7 +493,7 @@ class EncryptionV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionV2KeyVaultProperties(_Model):
+class EncryptionV2KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault input properties for encryption.
 
     :ivar key_vault_uri: The Uri of KeyVault. Required.
@@ -531,7 +531,7 @@ class EncryptionV2KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name or IP address the Workspace is reaching at.
 
     :ivar domain_name: The domain name of the dependency.
@@ -568,7 +568,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connect information from the Workspace to a single endpoint.
 
     :ivar ip_address: An IP Address that Domain Name currently resolves to.
@@ -617,7 +617,7 @@ class EndpointDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnhancedSecurityComplianceDefinition(_Model):
+class EnhancedSecurityComplianceDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of settings related to the Enhanced Security and Compliance Add-On.
 
     :ivar automatic_cluster_update: Status of automated cluster updates feature.
@@ -664,7 +664,7 @@ class EnhancedSecurityComplianceDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnhancedSecurityMonitoringDefinition(_Model):
+class EnhancedSecurityMonitoringDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of Enhanced Security Monitoring feature.
 
     :ivar value: Known values are: "Enabled" and "Disabled".
@@ -694,7 +694,7 @@ class EnhancedSecurityMonitoringDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetail(_Model):
+class ErrorDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error details.
 
     :ivar code: The error's code. Required.
@@ -732,7 +732,7 @@ class ErrorDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorInfo(_Model):
+class ErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The code and message for an error.
 
     :ivar code: A machine readable error code. Required.
@@ -777,7 +777,7 @@ class ErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains details when the response code indicates an error.
 
     :ivar error: The error details. Required.
@@ -822,7 +822,7 @@ class ProxyResource(Resource):
     """
 
 
-class GroupIdInformation(ProxyResource):
+class GroupIdInformation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The group information for creating a private endpoint on a workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -863,7 +863,7 @@ class GroupIdInformation(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GroupIdInformationProperties(_Model):
+class GroupIdInformationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties for a group information object.
 
     :ivar group_id: The group id.
@@ -905,7 +905,7 @@ class GroupIdInformationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDiskEncryption(_Model):
+class ManagedDiskEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that contains details of encryption used on the workspace.
 
     :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
@@ -955,7 +955,7 @@ class ManagedDiskEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDiskEncryptionKeyVaultProperties(_Model):
+class ManagedDiskEncryptionKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Vault input properties for encryption.
 
     :ivar key_vault_uri: The URI of KeyVault. Required.
@@ -1013,7 +1013,7 @@ class ManagedIdentityConfiguration(_Model):
     """The type of Identity created. It can be either SystemAssigned or UserAssigned."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1065,7 +1065,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -1100,7 +1100,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that represents the operation.
 
     :ivar provider: Service provider: ex Microsoft.Databricks.
@@ -1143,7 +1143,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Egress endpoints which Workspace connects to for common purposes.
 
     :ivar category: The category of endpoints accessed by the Workspace, e.g. azure-storage,
@@ -1190,7 +1190,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection of a workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1231,7 +1231,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint.
@@ -1285,7 +1285,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current state of a private endpoint connection.
 
     :ivar status: The status of a private endpoint connection. Required. Known values are:
@@ -1329,7 +1329,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU for the resource.
 
     :ivar name: The SKU name. Required.
@@ -1362,7 +1362,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1444,7 +1444,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VirtualNetworkPeering(ProxyResource):
+class VirtualNetworkPeering(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Peerings in a VirtualNetwork resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1516,7 +1516,7 @@ class VirtualNetworkPeering(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VirtualNetworkPeeringPropertiesFormat(_Model):
+class VirtualNetworkPeeringPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the virtual network peering.
 
     :ivar allow_virtual_network_access: Whether the VMs in the local virtual network space would be
@@ -1636,7 +1636,9 @@ class VirtualNetworkPeeringPropertiesFormat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork(_Model):  # pylint: disable=name-too-long
+class VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The remote virtual network should be in the same region. See here to learn more
     (`https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering
     <https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering>`_).
@@ -1666,7 +1668,9 @@ class VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork(_Model):  # pylint: disable=name-too-long
+class VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The remote virtual network should be in the same region. See here to learn more
     (`https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering
     <https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering>`_).
@@ -1696,7 +1700,7 @@ class VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class Workspace(TrackedResource):
+class Workspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1790,7 +1794,7 @@ class Workspace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceCustomBooleanParameter(_Model):
+class WorkspaceCustomBooleanParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The value which should be used for this field.
 
     :ivar type: The type of variable that this is. Known values are: "Bool", "Object", and
@@ -1826,7 +1830,7 @@ class WorkspaceCustomBooleanParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceCustomObjectParameter(_Model):
+class WorkspaceCustomObjectParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The value which should be used for this field.
 
     :ivar type: The type of variable that this is. Known values are: "Bool", "Object", and
@@ -1862,7 +1866,7 @@ class WorkspaceCustomObjectParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceCustomParameters(_Model):
+class WorkspaceCustomParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Parameters used for Workspace Creation. Not allowed in Serverless ComputeMode workspace.
 
     :ivar aml_workspace_id: The ID of a Azure Machine Learning workspace to link with Databricks
@@ -2036,7 +2040,7 @@ class WorkspaceCustomParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceCustomStringParameter(_Model):
+class WorkspaceCustomStringParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Value.
 
     :ivar type: The type of variable that this is. Known values are: "Bool", "Object", and
@@ -2072,7 +2076,7 @@ class WorkspaceCustomStringParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceEncryptionParameter(_Model):
+class WorkspaceEncryptionParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that contains details of encryption used on the workspace.
 
     :ivar type: The type of variable that this is. Known values are: "Bool", "Object", and
@@ -2108,7 +2112,7 @@ class WorkspaceEncryptionParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceNoPublicIPBooleanParameter(_Model):
+class WorkspaceNoPublicIPBooleanParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The value which should be used for this field.
 
     :ivar type: The type of variable that this is. Known values are: "Bool", "Object", and
@@ -2144,7 +2148,7 @@ class WorkspaceNoPublicIPBooleanParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceProperties(_Model):
+class WorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace properties.
 
     :ivar compute_mode: The workspace compute mode. Required on create, cannot be changed. Possible
@@ -2360,7 +2364,7 @@ class WorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePropertiesAccessConnector(_Model):
+class WorkspacePropertiesAccessConnector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Connector Resource that is going to be associated with Databricks Workspace. Not allowed
     in Serverless ComputeMode workspace.
 
@@ -2408,7 +2412,7 @@ class WorkspacePropertiesAccessConnector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspacePropertiesEncryption(_Model):
+class WorkspacePropertiesEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption properties for databricks workspace. Supported in both Serverless and Hybrid
     ComputeMode workspace.
 
@@ -2439,7 +2443,7 @@ class WorkspacePropertiesEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceProviderAuthorization(_Model):
+class WorkspaceProviderAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace provider authorization.
 
     :ivar principal_id: The provider's principal identifier. This is the identity that the provider
@@ -2480,7 +2484,7 @@ class WorkspaceProviderAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceUpdate(_Model):
+class WorkspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An update to a workspace.
 
     :ivar tags: Resource tags.

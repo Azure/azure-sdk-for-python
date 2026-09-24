@@ -45,9 +45,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -73,9 +73,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -99,9 +99,9 @@ class AccessConnector(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -121,12 +121,12 @@ class AccessConnector(TrackedResource):
 class AccessConnectorProperties(TypedDict, total=False):
     """AccessConnectorProperties.
 
-    :ivar provisioning_state: Provisioning status of the Access Connector. Known values are:
+    :ivar provisioningState: Provisioning status of the Access Connector. Known values are:
      "Accepted", "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled",
      "Failed", "Succeeded", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar refered_by: List of workspaces referring this Access Connector.
-    :vartype refered_by: list[str]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar referedBy: List of workspaces referring this Access Connector.
+    :vartype referedBy: list[str]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -156,9 +156,9 @@ class AddressSpace(TypedDict, total=False):
     """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual
     network.
 
-    :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
+    :ivar addressPrefixes: A list of address blocks reserved for this virtual network in CIDR
      notation.
-    :vartype address_prefixes: list[str]
+    :vartype addressPrefixes: list[str]
     """
 
     addressPrefixes: list[str]
@@ -179,8 +179,8 @@ class AutomaticClusterUpdateDefinition(TypedDict, total=False):
 class ComplianceSecurityProfileDefinition(TypedDict, total=False):
     """Status of Compliance Security Profile feature.
 
-    :ivar compliance_standards: Compliance standards associated with the workspace.
-    :vartype compliance_standards: list[str]
+    :ivar complianceStandards: Compliance standards associated with the workspace.
+    :vartype complianceStandards: list[str]
     :ivar value: Known values are: "Enabled" and "Disabled".
     :vartype value: Union[str, "ComplianceSecurityProfileValue"]
     """
@@ -198,9 +198,9 @@ class CreatedBy(TypedDict, total=False):
     :vartype oid: str
     :ivar puid: The Personal Object ID corresponding to the object ID above.
     :vartype puid: str
-    :ivar application_id: The application ID of the application that initiated the creation of the
+    :ivar applicationId: The application ID of the application that initiated the creation of the
      workspace. For example, Azure Portal.
-    :vartype application_id: str
+    :vartype applicationId: str
     """
 
     oid: str
@@ -216,13 +216,13 @@ class DefaultCatalogProperties(TypedDict, total=False):
     """These properties lets user specify default catalog properties during workspace creation. Not
     allowed in Serverless ComputeMode workspace.
 
-    :ivar initial_type: Defines the initial type of the default catalog. Possible values
+    :ivar initialType: Defines the initial type of the default catalog. Possible values
      (case-insensitive):  HiveMetastore, UnityCatalog. Known values are: "HiveMetastore" and
      "UnityCatalog".
-    :vartype initial_type: Union[str, "InitialType"]
-    :ivar initial_name: Specifies the initial Name of default catalog. If not specified, the name
-     of the workspace will be used.
-    :vartype initial_name: str
+    :vartype initialType: Union[str, "InitialType"]
+    :ivar initialName: Specifies the initial Name of default catalog. If not specified, the name of
+     the workspace will be used.
+    :vartype initialName: str
     """
 
     initialType: Union[str, "InitialType"]
@@ -236,15 +236,15 @@ class DefaultCatalogProperties(TypedDict, total=False):
 class Encryption(TypedDict, total=False):
     """The object that contains details of encryption used on the workspace.
 
-    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+    :ivar keySource: The encryption keySource (provider). Possible values (case-insensitive):
      Default, Microsoft.Keyvault. Known values are: "Default" and "Microsoft.Keyvault".
-    :vartype key_source: Union[str, "KeySource"]
-    :ivar key_name: The name of KeyVault key.
-    :vartype key_name: str
-    :ivar key_version: The version of KeyVault key.
-    :vartype key_version: str
-    :ivar key_vault_uri: The Uri of KeyVault.
-    :vartype key_vault_uri: str
+    :vartype keySource: Union[str, "KeySource"]
+    :ivar KeyName: The name of KeyVault key.
+    :vartype KeyName: str
+    :ivar keyversion: The version of KeyVault key.
+    :vartype keyversion: str
+    :ivar keyvaulturi: The Uri of KeyVault.
+    :vartype keyvaulturi: str
     """
 
     keySource: Union[str, "KeySource"]
@@ -261,12 +261,12 @@ class Encryption(TypedDict, total=False):
 class EncryptionEntitiesDefinition(TypedDict, total=False):
     """Encryption entities for databricks workspace resource.
 
-    :ivar managed_services: Encryption properties for the databricks managed services. Supported in
+    :ivar managedServices: Encryption properties for the databricks managed services. Supported in
      both Serverless and Hybrid ComputeMode.
-    :vartype managed_services: "EncryptionV2"
-    :ivar managed_disk: Encryption properties for the databricks managed disks. Not allowed in
+    :vartype managedServices: "EncryptionV2"
+    :ivar managedDisk: Encryption properties for the databricks managed disks. Not allowed in
      Serverless ComputeMode workspace.
-    :vartype managed_disk: "ManagedDiskEncryption"
+    :vartype managedDisk: "ManagedDiskEncryption"
     """
 
     managedServices: "EncryptionV2"
@@ -280,11 +280,11 @@ class EncryptionEntitiesDefinition(TypedDict, total=False):
 class EncryptionV2(TypedDict, total=False):
     """The object that contains details of encryption used on the workspace.
 
-    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+    :ivar keySource: The encryption keySource (provider). Possible values (case-insensitive):
      Microsoft.Keyvault. Required. "Microsoft.Keyvault"
-    :vartype key_source: Union[str, "EncryptionKeySource"]
-    :ivar key_vault_properties: Key Vault input properties for encryption.
-    :vartype key_vault_properties: "EncryptionV2KeyVaultProperties"
+    :vartype keySource: Union[str, "EncryptionKeySource"]
+    :ivar keyVaultProperties: Key Vault input properties for encryption.
+    :vartype keyVaultProperties: "EncryptionV2KeyVaultProperties"
     """
 
     keySource: Required[Union[str, "EncryptionKeySource"]]
@@ -297,12 +297,12 @@ class EncryptionV2(TypedDict, total=False):
 class EncryptionV2KeyVaultProperties(TypedDict, total=False):
     """Key Vault input properties for encryption.
 
-    :ivar key_vault_uri: The Uri of KeyVault. Required.
-    :vartype key_vault_uri: str
-    :ivar key_name: The name of KeyVault key. Required.
-    :vartype key_name: str
-    :ivar key_version: The version of KeyVault key. Required.
-    :vartype key_version: str
+    :ivar keyVaultUri: The Uri of KeyVault. Required.
+    :vartype keyVaultUri: str
+    :ivar keyName: The name of KeyVault key. Required.
+    :vartype keyName: str
+    :ivar keyVersion: The version of KeyVault key. Required.
+    :vartype keyVersion: str
     """
 
     keyVaultUri: Required[str]
@@ -316,12 +316,12 @@ class EncryptionV2KeyVaultProperties(TypedDict, total=False):
 class EnhancedSecurityComplianceDefinition(TypedDict, total=False):
     """Status of settings related to the Enhanced Security and Compliance Add-On.
 
-    :ivar automatic_cluster_update: Status of automated cluster updates feature.
-    :vartype automatic_cluster_update: "AutomaticClusterUpdateDefinition"
-    :ivar compliance_security_profile: Status of Compliance Security Profile feature.
-    :vartype compliance_security_profile: "ComplianceSecurityProfileDefinition"
-    :ivar enhanced_security_monitoring: Status of Enhanced Security Monitoring feature.
-    :vartype enhanced_security_monitoring: "EnhancedSecurityMonitoringDefinition"
+    :ivar automaticClusterUpdate: Status of automated cluster updates feature.
+    :vartype automaticClusterUpdate: "AutomaticClusterUpdateDefinition"
+    :ivar complianceSecurityProfile: Status of Compliance Security Profile feature.
+    :vartype complianceSecurityProfile: "ComplianceSecurityProfileDefinition"
+    :ivar enhancedSecurityMonitoring: Status of Enhanced Security Monitoring feature.
+    :vartype enhancedSecurityMonitoring: "EnhancedSecurityMonitoringDefinition"
     """
 
     automaticClusterUpdate: "AutomaticClusterUpdateDefinition"
@@ -354,24 +354,24 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
 class ManagedDiskEncryption(TypedDict, total=False):
     """The object that contains details of encryption used on the workspace.
 
-    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+    :ivar keySource: The encryption keySource (provider). Possible values (case-insensitive):
      Microsoft.Keyvault. Not allowed in Serverless ComputeMode workspace. Required.
      "Microsoft.Keyvault"
-    :vartype key_source: Union[str, "EncryptionKeySource"]
-    :ivar key_vault_properties: Key Vault input properties for encryption. Required.
-    :vartype key_vault_properties: "ManagedDiskEncryptionKeyVaultProperties"
-    :ivar rotation_to_latest_key_version_enabled: Indicate whether the latest key version should be
+    :vartype keySource: Union[str, "EncryptionKeySource"]
+    :ivar keyVaultProperties: Key Vault input properties for encryption. Required.
+    :vartype keyVaultProperties: "ManagedDiskEncryptionKeyVaultProperties"
+    :ivar rotationToLatestKeyVersionEnabled: Indicate whether the latest key version should be
      automatically used for Managed Disk Encryption.
-    :vartype rotation_to_latest_key_version_enabled: bool
+    :vartype rotationToLatestKeyVersionEnabled: bool
     """
 
     keySource: Required[Union[str, "EncryptionKeySource"]]
@@ -387,12 +387,12 @@ class ManagedDiskEncryption(TypedDict, total=False):
 class ManagedDiskEncryptionKeyVaultProperties(TypedDict, total=False):
     """Key Vault input properties for encryption.
 
-    :ivar key_vault_uri: The URI of KeyVault. Required.
-    :vartype key_vault_uri: str
-    :ivar key_name: The name of KeyVault key. Required.
-    :vartype key_name: str
-    :ivar key_version: The version of KeyVault key. Required.
-    :vartype key_version: str
+    :ivar keyVaultUri: The URI of KeyVault. Required.
+    :vartype keyVaultUri: str
+    :ivar keyName: The name of KeyVault key. Required.
+    :vartype keyName: str
+    :ivar keyVersion: The version of KeyVault key. Required.
+    :vartype keyVersion: str
     """
 
     keyVaultUri: Required[str]
@@ -406,11 +406,11 @@ class ManagedDiskEncryptionKeyVaultProperties(TypedDict, total=False):
 class ManagedIdentityConfiguration(TypedDict, total=False):
     """The Managed Identity details for storage account.
 
-    :ivar principal_id: The objectId of the Managed Identity that is linked to the Managed Storage
+    :ivar principalId: The objectId of the Managed Identity that is linked to the Managed Storage
      account.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant Id where the Managed Identity is created.
-    :vartype tenant_id: str
+    :vartype principalId: str
+    :ivar tenantId: The tenant Id where the Managed Identity is created.
+    :vartype tenantId: str
     :ivar type: The type of Identity created. It can be either SystemAssigned or UserAssigned.
     :vartype type: str
     """
@@ -426,17 +426,17 @@ class ManagedIdentityConfiguration(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -474,9 +474,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The private endpoint connection properties. Required.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -488,15 +488,15 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """The properties of a private endpoint connection.
 
-    :ivar private_endpoint: Private endpoint.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar group_ids: GroupIds from the private link service resource.
-    :vartype group_ids: list[str]
-    :ivar private_link_service_connection_state: Private endpoint connection state. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+    :ivar privateEndpoint: Private endpoint.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar groupIds: GroupIds from the private link service resource.
+    :vartype groupIds: list[str]
+    :ivar privateLinkServiceConnectionState: Private endpoint connection state. Required.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: Provisioning state of the private endpoint connection. Known values
      are: "Succeeded", "Creating", "Updating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """
 
     privateEndpoint: "PrivateEndpoint"
@@ -518,8 +518,8 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateLinkServiceConnectionStatus"]
     :ivar description: The description for the current state of a private endpoint connection.
     :vartype description: str
-    :ivar actions_required: Actions required for a private endpoint connection.
-    :vartype actions_required: str
+    :ivar actionsRequired: Actions required for a private endpoint connection.
+    :vartype actionsRequired: str
     """
 
     status: Required[Union[str, "PrivateLinkServiceConnectionStatus"]]
@@ -549,20 +549,20 @@ class Sku(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -584,10 +584,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -607,9 +607,9 @@ class VirtualNetworkPeering(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: List of properties for vNet Peering. Required.
     :vartype properties: "VirtualNetworkPeeringPropertiesFormat"
     """
@@ -621,42 +621,42 @@ class VirtualNetworkPeering(ProxyResource):
 class VirtualNetworkPeeringPropertiesFormat(TypedDict, total=False):
     """Properties of the virtual network peering.
 
-    :ivar allow_virtual_network_access: Whether the VMs in the local virtual network space would be
+    :ivar allowVirtualNetworkAccess: Whether the VMs in the local virtual network space would be
      able to access the VMs in remote virtual network space.
-    :vartype allow_virtual_network_access: bool
-    :ivar allow_forwarded_traffic: Whether the forwarded traffic from the VMs in the local virtual
+    :vartype allowVirtualNetworkAccess: bool
+    :ivar allowForwardedTraffic: Whether the forwarded traffic from the VMs in the local virtual
      network will be allowed/disallowed in remote virtual network.
-    :vartype allow_forwarded_traffic: bool
-    :ivar allow_gateway_transit: If gateway links can be used in remote virtual networking to link
-     to this virtual network.
-    :vartype allow_gateway_transit: bool
-    :ivar use_remote_gateways: If remote gateways can be used on this virtual network. If the flag
-     is set to true, and allowGatewayTransit on remote peering is also true, virtual network will
-     use gateways of remote virtual network for transit. Only one peering can have this flag set to
+    :vartype allowForwardedTraffic: bool
+    :ivar allowGatewayTransit: If gateway links can be used in remote virtual networking to link to
+     this virtual network.
+    :vartype allowGatewayTransit: bool
+    :ivar useRemoteGateways: If remote gateways can be used on this virtual network. If the flag is
+     set to true, and allowGatewayTransit on remote peering is also true, virtual network will use
+     gateways of remote virtual network for transit. Only one peering can have this flag set to
      true. This flag cannot be set if virtual network already has a gateway.
-    :vartype use_remote_gateways: bool
-    :ivar databricks_virtual_network: The remote virtual network should be in the same region. See
+    :vartype useRemoteGateways: bool
+    :ivar databricksVirtualNetwork: The remote virtual network should be in the same region. See
      here to learn more
      (`https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering
      <https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering>`_).
-    :vartype databricks_virtual_network:
+    :vartype databricksVirtualNetwork:
      "VirtualNetworkPeeringPropertiesFormatDatabricksVirtualNetwork"
-    :ivar databricks_address_space: The reference to the databricks virtual network address space.
-    :vartype databricks_address_space: "AddressSpace"
-    :ivar remote_virtual_network: The remote virtual network should be in the same region. See here
+    :ivar databricksAddressSpace: The reference to the databricks virtual network address space.
+    :vartype databricksAddressSpace: "AddressSpace"
+    :ivar remoteVirtualNetwork: The remote virtual network should be in the same region. See here
      to learn more
      (`https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering
      <https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/vnet-peering>`_).
      Required.
-    :vartype remote_virtual_network: "VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork"
-    :ivar remote_address_space: The reference to the remote virtual network address space.
-    :vartype remote_address_space: "AddressSpace"
-    :ivar peering_state: The status of the virtual network peering. Known values are: "Initiated",
+    :vartype remoteVirtualNetwork: "VirtualNetworkPeeringPropertiesFormatRemoteVirtualNetwork"
+    :ivar remoteAddressSpace: The reference to the remote virtual network address space.
+    :vartype remoteAddressSpace: "AddressSpace"
+    :ivar peeringState: The status of the virtual network peering. Known values are: "Initiated",
      "Connected", and "Disconnected".
-    :vartype peering_state: Union[str, "PeeringState"]
-    :ivar provisioning_state: The provisioning state of the virtual network peering resource. Known
+    :vartype peeringState: Union[str, "PeeringState"]
+    :ivar provisioningState: The provisioning state of the virtual network peering resource. Known
      values are: "Succeeded", "Updating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PeeringProvisioningState"]
+    :vartype provisioningState: Union[str, "PeeringProvisioningState"]
     """
 
     allowVirtualNetworkAccess: bool
@@ -734,9 +734,9 @@ class Workspace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -788,56 +788,56 @@ class WorkspaceCustomObjectParameter(TypedDict, total=False):
 class WorkspaceCustomParameters(TypedDict, total=False):
     """Custom Parameters used for Workspace Creation. Not allowed in Serverless ComputeMode workspace.
 
-    :ivar aml_workspace_id: The ID of a Azure Machine Learning workspace to link with Databricks
+    :ivar amlWorkspaceId: The ID of a Azure Machine Learning workspace to link with Databricks
      workspace. Not allowed in Serverless ComputeMode workspace.
-    :vartype aml_workspace_id: "WorkspaceCustomStringParameter"
-    :ivar custom_virtual_network_id: The ID of a Virtual Network where this Databricks Cluster
-     should be created. Not allowed in Serverless ComputeMode workspace.
-    :vartype custom_virtual_network_id: "WorkspaceCustomStringParameter"
-    :ivar custom_public_subnet_name: The name of a Public Subnet within the Virtual Network. Not
+    :vartype amlWorkspaceId: "WorkspaceCustomStringParameter"
+    :ivar customVirtualNetworkId: The ID of a Virtual Network where this Databricks Cluster should
+     be created. Not allowed in Serverless ComputeMode workspace.
+    :vartype customVirtualNetworkId: "WorkspaceCustomStringParameter"
+    :ivar customPublicSubnetName: The name of a Public Subnet within the Virtual Network. Not
      allowed in Serverless ComputeMode workspace.
-    :vartype custom_public_subnet_name: "WorkspaceCustomStringParameter"
-    :ivar custom_private_subnet_name: The name of the Private Subnet within the Virtual Network.
-     Not allowed in Serverless ComputeMode workspace.
-    :vartype custom_private_subnet_name: "WorkspaceCustomStringParameter"
-    :ivar enable_no_public_ip: Boolean indicating whether the public IP should be disabled. Default
+    :vartype customPublicSubnetName: "WorkspaceCustomStringParameter"
+    :ivar customPrivateSubnetName: The name of the Private Subnet within the Virtual Network. Not
+     allowed in Serverless ComputeMode workspace.
+    :vartype customPrivateSubnetName: "WorkspaceCustomStringParameter"
+    :ivar enableNoPublicIp: Boolean indicating whether the public IP should be disabled. Default
      value is true. Not allowed in Serverless ComputeMode workspace.
-    :vartype enable_no_public_ip: "WorkspaceNoPublicIPBooleanParameter"
-    :ivar load_balancer_backend_pool_name: Name of the outbound Load Balancer Backend Pool for
-     Secure Cluster Connectivity (No Public IP). Not allowed in Serverless ComputeMode workspace.
-    :vartype load_balancer_backend_pool_name: "WorkspaceCustomStringParameter"
-    :ivar load_balancer_id: Resource URI of Outbound Load balancer for Secure Cluster Connectivity
+    :vartype enableNoPublicIp: "WorkspaceNoPublicIPBooleanParameter"
+    :ivar loadBalancerBackendPoolName: Name of the outbound Load Balancer Backend Pool for Secure
+     Cluster Connectivity (No Public IP). Not allowed in Serverless ComputeMode workspace.
+    :vartype loadBalancerBackendPoolName: "WorkspaceCustomStringParameter"
+    :ivar loadBalancerId: Resource URI of Outbound Load balancer for Secure Cluster Connectivity
      (No Public IP) workspace. Not allowed in Serverless ComputeMode workspace.
-    :vartype load_balancer_id: "WorkspaceCustomStringParameter"
-    :ivar nat_gateway_name: Name of the NAT gateway for Secure Cluster Connectivity (No Public IP)
+    :vartype loadBalancerId: "WorkspaceCustomStringParameter"
+    :ivar natGatewayName: Name of the NAT gateway for Secure Cluster Connectivity (No Public IP)
      workspace subnets. Not allowed in Serverless ComputeMode workspace.
-    :vartype nat_gateway_name: "WorkspaceCustomStringParameter"
-    :ivar public_ip_name: Name of the Public IP for No Public IP workspace with managed vNet. Not
+    :vartype natGatewayName: "WorkspaceCustomStringParameter"
+    :ivar publicIpName: Name of the Public IP for No Public IP workspace with managed vNet. Not
      allowed in Serverless ComputeMode workspace.
-    :vartype public_ip_name: "WorkspaceCustomStringParameter"
-    :ivar prepare_encryption: Prepare the workspace for encryption. Enables the Managed Identity
-     for managed storage account. Not allowed in Serverless ComputeMode workspace.
-    :vartype prepare_encryption: "WorkspaceCustomBooleanParameter"
+    :vartype publicIpName: "WorkspaceCustomStringParameter"
+    :ivar prepareEncryption: Prepare the workspace for encryption. Enables the Managed Identity for
+     managed storage account. Not allowed in Serverless ComputeMode workspace.
+    :vartype prepareEncryption: "WorkspaceCustomBooleanParameter"
     :ivar encryption: Contains the encryption details for Customer-Managed Key (CMK) enabled
      workspace.Not allowed in Serverless ComputeMode workspace.
     :vartype encryption: "WorkspaceEncryptionParameter"
-    :ivar require_infrastructure_encryption: A boolean indicating whether or not the DBFS root file
+    :ivar requireInfrastructureEncryption: A boolean indicating whether or not the DBFS root file
      system will be enabled with secondary layer of encryption with platform managed keys for data
      at rest. Not allowed in Serverless ComputeMode workspace.
-    :vartype require_infrastructure_encryption: "WorkspaceCustomBooleanParameter"
-    :ivar storage_account_name: Default DBFS storage account name. Not allowed in Serverless
+    :vartype requireInfrastructureEncryption: "WorkspaceCustomBooleanParameter"
+    :ivar storageAccountName: Default DBFS storage account name. Not allowed in Serverless
      ComputeMode workspace.
-    :vartype storage_account_name: "WorkspaceCustomStringParameter"
-    :ivar storage_account_sku_name: Storage account SKU name, ex: Standard_GRS, Standard_LRS. Refer
+    :vartype storageAccountName: "WorkspaceCustomStringParameter"
+    :ivar storageAccountSkuName: Storage account SKU name, ex: Standard_GRS, Standard_LRS. Refer
      `https://aka.ms/storageskus <https://aka.ms/storageskus>`_ for valid inputs. Not allowed in
      Serverless ComputeMode workspace.
-    :vartype storage_account_sku_name: "WorkspaceCustomStringParameter"
-    :ivar vnet_address_prefix: Address prefix for Managed virtual network. Default value for this
+    :vartype storageAccountSkuName: "WorkspaceCustomStringParameter"
+    :ivar vnetAddressPrefix: Address prefix for Managed virtual network. Default value for this
      input is 10.139. Not allowed in Serverless ComputeMode workspace.
-    :vartype vnet_address_prefix: "WorkspaceCustomStringParameter"
-    :ivar resource_tags: Tags applied to resources under Managed resource group. These can be
+    :vartype vnetAddressPrefix: "WorkspaceCustomStringParameter"
+    :ivar resourceTags: Tags applied to resources under Managed resource group. These can be
      updated by updating tags at workspace level. Not allowed in Serverless ComputeMode workspace.
-    :vartype resource_tags: "WorkspaceCustomObjectParameter"
+    :vartype resourceTags: "WorkspaceCustomObjectParameter"
     """
 
     amlWorkspaceId: "WorkspaceCustomStringParameter"
@@ -942,77 +942,76 @@ class WorkspaceNoPublicIPBooleanParameter(TypedDict, total=False):
 class WorkspaceProperties(TypedDict, total=False):
     """The workspace properties.
 
-    :ivar compute_mode: The workspace compute mode. Required on create, cannot be changed. Possible
+    :ivar computeMode: The workspace compute mode. Required on create, cannot be changed. Possible
      values include: 'Serverless', 'Hybrid'. Required. Known values are: "Serverless" and "Hybrid".
-    :vartype compute_mode: Union[str, "ComputeMode"]
-    :ivar managed_resource_group_id: The managed resource group Id. Required in Hybrid ComputeMode
+    :vartype computeMode: Union[str, "ComputeMode"]
+    :ivar managedResourceGroupId: The managed resource group Id. Required in Hybrid ComputeMode
      workspace. Not allowed in Serverless ComputeMode workspace.
-    :vartype managed_resource_group_id: str
+    :vartype managedResourceGroupId: str
     :ivar parameters: The workspace's custom parameters.
     :vartype parameters: "WorkspaceCustomParameters"
-    :ivar provisioning_state: The workspace provisioning state. Known values are: "Accepted",
+    :ivar provisioningState: The workspace provisioning state. Known values are: "Accepted",
      "Running", "Ready", "Creating", "Created", "Deleting", "Deleted", "Canceled", "Failed",
      "Succeeded", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar ui_definition_uri: The blob URI where the UI definition file is located.
-    :vartype ui_definition_uri: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar uiDefinitionUri: The blob URI where the UI definition file is located.
+    :vartype uiDefinitionUri: str
     :ivar authorizations: The workspace provider authorizations.
     :vartype authorizations: list["WorkspaceProviderAuthorization"]
-    :ivar created_by: Indicates the Object ID, PUID and Application ID of entity that created the
+    :ivar createdBy: Indicates the Object ID, PUID and Application ID of entity that created the
      workspace.
-    :vartype created_by: "CreatedBy"
-    :ivar updated_by: Indicates the Object ID, PUID and Application ID of entity that last updated
+    :vartype createdBy: "CreatedBy"
+    :ivar updatedBy: Indicates the Object ID, PUID and Application ID of entity that last updated
      the workspace.
-    :vartype updated_by: "CreatedBy"
-    :ivar created_date_time: Specifies the date and time when the workspace is created.
-    :vartype created_date_time: str
-    :ivar workspace_id: The unique identifier of the databricks workspace in databricks control
+    :vartype updatedBy: "CreatedBy"
+    :ivar createdDateTime: Specifies the date and time when the workspace is created.
+    :vartype createdDateTime: str
+    :ivar workspaceId: The unique identifier of the databricks workspace in databricks control
      plane.
-    :vartype workspace_id: str
-    :ivar workspace_url: The workspace URL which is of the format
+    :vartype workspaceId: str
+    :ivar workspaceUrl: The workspace URL which is of the format
      'adb-{workspaceId}.{random}.azuredatabricks.net'.
-    :vartype workspace_url: str
-    :ivar storage_account_identity: The details of Managed Identity of Storage Account. Only
-     returned in Hybrid ComputeMode workspace.
-    :vartype storage_account_identity: "ManagedIdentityConfiguration"
-    :ivar managed_disk_identity: The details of Managed Identity of Disk Encryption Set used for
+    :vartype workspaceUrl: str
+    :ivar storageAccountIdentity: The details of Managed Identity of Storage Account. Only returned
+     in Hybrid ComputeMode workspace.
+    :vartype storageAccountIdentity: "ManagedIdentityConfiguration"
+    :ivar managedDiskIdentity: The details of Managed Identity of Disk Encryption Set used for
      Managed Disk Encryption. Only returned in Hybrid ComputeMode workspace.
-    :vartype managed_disk_identity: "ManagedIdentityConfiguration"
-    :ivar disk_encryption_set_id: The resource Id of the managed disk encryption set. Not allowed
-     in Serverless ComputeMode workspace.
-    :vartype disk_encryption_set_id: str
+    :vartype managedDiskIdentity: "ManagedIdentityConfiguration"
+    :ivar diskEncryptionSetId: The resource Id of the managed disk encryption set. Not allowed in
+     Serverless ComputeMode workspace.
+    :vartype diskEncryptionSetId: str
     :ivar encryption: Encryption properties for databricks workspace. Supported in both Serverless
      and Hybrid ComputeMode workspace.
     :vartype encryption: "WorkspacePropertiesEncryption"
-    :ivar enhanced_security_compliance: Contains settings related to the Enhanced Security and
+    :ivar enhancedSecurityCompliance: Contains settings related to the Enhanced Security and
      Compliance Add-On. Supported in both Serverless and Hybrid ComputeMode workspace.
-    :vartype enhanced_security_compliance: "EnhancedSecurityComplianceDefinition"
-    :ivar private_endpoint_connections: Private endpoint connections created on the workspace.
+    :vartype enhancedSecurityCompliance: "EnhancedSecurityComplianceDefinition"
+    :ivar privateEndpointConnections: Private endpoint connections created on the workspace.
      Supported in both Serverless and Hybrid ComputeMode workspace.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar public_network_access: The network access type for accessing workspace. Set value to
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar publicNetworkAccess: The network access type for accessing workspace. Set value to
      disabled to access workspace only via private link. Used to configure front-end only private
      link for Serverless ComputeMode workspace. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar required_nsg_rules: Gets or sets a value indicating whether data plane (clusters) to
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar requiredNsgRules: Gets or sets a value indicating whether data plane (clusters) to
      control plane communication happen over private endpoint. Supported values are 'AllRules' and
      'NoAzureDatabricksRules'. 'NoAzureServiceRules' value is for internal use only. Not allowed in
      Serverless ComputeMode workspace. Known values are: "AllRules", "NoAzureDatabricksRules", and
      "NoAzureServiceRules".
-    :vartype required_nsg_rules: Union[str, "RequiredNsgRules"]
-    :ivar default_catalog: Properties for Default Catalog configuration during workspace creation.
+    :vartype requiredNsgRules: Union[str, "RequiredNsgRules"]
+    :ivar defaultCatalog: Properties for Default Catalog configuration during workspace creation.
      Not allowed in Serverless ComputeMode workspace.
-    :vartype default_catalog: "DefaultCatalogProperties"
-    :ivar is_uc_enabled: Indicates whether unity catalog enabled for the workspace or not. Set as
+    :vartype defaultCatalog: "DefaultCatalogProperties"
+    :ivar isUcEnabled: Indicates whether unity catalog enabled for the workspace or not. Set as
      true in Serverless ComputeMode workspace.
-    :vartype is_uc_enabled: bool
-    :ivar access_connector: Access Connector Resource that is going to be associated with
-     Databricks Workspace. Not allowed in Serverless ComputeMode workspace.
-    :vartype access_connector: "WorkspacePropertiesAccessConnector"
-    :ivar default_storage_firewall: Gets or Sets Default Storage Firewall configuration
-     information. Not allowed in Serverless ComputeMode workspace. Known values are: "Disabled" and
-     "Enabled".
-    :vartype default_storage_firewall: Union[str, "DefaultStorageFirewall"]
+    :vartype isUcEnabled: bool
+    :ivar accessConnector: Access Connector Resource that is going to be associated with Databricks
+     Workspace. Not allowed in Serverless ComputeMode workspace.
+    :vartype accessConnector: "WorkspacePropertiesAccessConnector"
+    :ivar defaultStorageFirewall: Gets or Sets Default Storage Firewall configuration information.
+     Not allowed in Serverless ComputeMode workspace. Known values are: "Disabled" and "Enabled".
+    :vartype defaultStorageFirewall: Union[str, "DefaultStorageFirewall"]
     """
 
     computeMode: Required[Union[str, "ComputeMode"]]
@@ -1089,13 +1088,13 @@ class WorkspacePropertiesAccessConnector(TypedDict, total=False):
 
     :ivar id: The resource ID of Azure Databricks Access Connector Resource. Required.
     :vartype id: str
-    :ivar identity_type: The identity type of the Access Connector Resource. Required. Known values
+    :ivar identityType: The identity type of the Access Connector Resource. Required. Known values
      are: "SystemAssigned" and "UserAssigned".
-    :vartype identity_type: Union[str, "IdentityType"]
-    :ivar user_assigned_identity_id: The resource ID of the User Assigned Identity associated with
-     the Access Connector Resource. This is required for type 'UserAssigned' and not valid for type
+    :vartype identityType: Union[str, "IdentityType"]
+    :ivar userAssignedIdentityId: The resource ID of the User Assigned Identity associated with the
+     Access Connector Resource. This is required for type 'UserAssigned' and not valid for type
      'SystemAssigned'.
-    :vartype user_assigned_identity_id: str
+    :vartype userAssignedIdentityId: str
     """
 
     id: Required[str]
@@ -1123,13 +1122,13 @@ class WorkspacePropertiesEncryption(TypedDict, total=False):
 class WorkspaceProviderAuthorization(TypedDict, total=False):
     """The workspace provider authorization.
 
-    :ivar principal_id: The provider's principal identifier. This is the identity that the provider
+    :ivar principalId: The provider's principal identifier. This is the identity that the provider
      will use to call ARM to manage the workspace resources. Required.
-    :vartype principal_id: str
-    :ivar role_definition_id: The provider's role definition identifier. This role will define all
+    :vartype principalId: str
+    :ivar roleDefinitionId: The provider's role definition identifier. This role will define all
      the permissions that the provider must have on the workspace's container resource group. This
      role definition cannot have permission to delete the resource group. Required.
-    :vartype role_definition_id: str
+    :vartype roleDefinitionId: str
     """
 
     principalId: Required[str]
