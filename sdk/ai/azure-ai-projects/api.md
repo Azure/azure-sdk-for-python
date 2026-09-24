@@ -2588,15 +2588,39 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyCallSummary]: ...
 
-        @distributed_trace_async
+        @overload
         async def replace_transfer_targets(
                 self, 
                 agent_name: str, 
-                body: Union[JSON, IO[bytes]] = _Unset, 
                 *, 
+                content_type: str = "application/json", 
                 etag: str, 
                 match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget] = _Unset, 
+                transfer_targets: List[TelephonyTransferTarget], 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        async def replace_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        async def replace_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 
@@ -18895,15 +18919,39 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> ItemPaged[TelephonyCallSummary]: ...
 
-        @distributed_trace
+        @overload
         def replace_transfer_targets(
                 self, 
                 agent_name: str, 
-                body: Union[JSON, IO[bytes]] = _Unset, 
                 *, 
+                content_type: str = "application/json", 
                 etag: str, 
                 match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget] = _Unset, 
+                transfer_targets: List[TelephonyTransferTarget], 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        def replace_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: JSON, 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
+                **kwargs: Any
+            ) -> TelephonyTransferTargets: ...
+
+        @overload
+        def replace_transfer_targets(
+                self, 
+                agent_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: str, 
+                match_condition: MatchConditions, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 

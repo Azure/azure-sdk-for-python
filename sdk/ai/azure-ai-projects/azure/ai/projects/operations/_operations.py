@@ -23943,6 +23943,103 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         return deserialized  # type: ignore
 
+    @overload
+    def replace_transfer_targets(
+        self,
+        agent_name: str,
+        *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def replace_transfer_targets(
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def replace_transfer_targets(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TelephonyTransferTargets:
+        """Replace agent telephony transfer targets.
+
+        Replaces all transfer targets configured for the voice agent named in the path.
+
+        :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def replace_transfer_targets(
         self,
