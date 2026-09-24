@@ -178,14 +178,14 @@ namespace azure.mgmt.storagediscovery.models
 
     class azure.mgmt.storagediscovery.models.AzureBlobStorageCapability(_Model):
         capacity_details: CapacityDetails
-        prefix_definitions: Optional[list[PrefixDefinition]]
+        prefix_configurations: Optional[list[PrefixConfiguration]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 capacity_details: CapacityDetails, 
-                prefix_definitions: Optional[list[PrefixDefinition]] = ...
+                prefix_configurations: Optional[list[PrefixConfiguration]] = ...
             ) -> None: ...
 
         @overload
@@ -194,14 +194,14 @@ namespace azure.mgmt.storagediscovery.models
 
     class azure.mgmt.storagediscovery.models.AzureBlobStorageCapabilityUpdate(_Model):
         capacity_details: Optional[CapacityDetailsUpdate]
-        prefix_definitions: Optional[list[PrefixDefinitionUpdate]]
+        prefix_configurations: Optional[list[PrefixConfigurationUpdate]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 capacity_details: Optional[CapacityDetailsUpdate] = ..., 
-                prefix_definitions: Optional[list[PrefixDefinitionUpdate]] = ...
+                prefix_configurations: Optional[list[PrefixConfigurationUpdate]] = ...
             ) -> None: ...
 
         @overload
@@ -306,7 +306,7 @@ namespace azure.mgmt.storagediscovery.models
         USER_SYSTEM = "user,system"
 
 
-    class azure.mgmt.storagediscovery.models.PrefixDefinition(_Model):
+    class azure.mgmt.storagediscovery.models.PrefixConfiguration(_Model):
         container_name: str
         prefix: Optional[str]
         storage_account_name: str
@@ -324,7 +324,7 @@ namespace azure.mgmt.storagediscovery.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.storagediscovery.models.PrefixDefinitionUpdate(_Model):
+    class azure.mgmt.storagediscovery.models.PrefixConfigurationUpdate(_Model):
         container_name: Optional[str]
         prefix: Optional[str]
         storage_account_name: Optional[str]
@@ -659,13 +659,13 @@ namespace azure.mgmt.storagediscovery.types
     class azure.mgmt.storagediscovery.types.AzureBlobStorageCapability(TypedDict, total=False):
         key "capacityDetails": Required[CapacityDetails]
         capacityDetails: CapacityDetails
-        prefixDefinitions: list[PrefixDefinition]
+        prefixConfigurations: list[PrefixConfiguration]
 
 
     class azure.mgmt.storagediscovery.types.AzureBlobStorageCapabilityUpdate(TypedDict, total=False):
         key "capacityDetails": ForwardRef('CapacityDetailsUpdate', module='types')
         capacityDetails: CapacityDetailsUpdate
-        prefixDefinitions: list[PrefixDefinitionUpdate]
+        prefixConfigurations: list[PrefixConfigurationUpdate]
 
 
     class azure.mgmt.storagediscovery.types.CapacityDetails(TypedDict, total=False):
@@ -678,7 +678,7 @@ namespace azure.mgmt.storagediscovery.types
         status: Union[str, CapabilityStatus]
 
 
-    class azure.mgmt.storagediscovery.types.PrefixDefinition(TypedDict, total=False):
+    class azure.mgmt.storagediscovery.types.PrefixConfiguration(TypedDict, total=False):
         key "containerName": Required[str]
         key "prefix": str
         key "storageAccountName": Required[str]
@@ -687,7 +687,7 @@ namespace azure.mgmt.storagediscovery.types
         storageAccountName: str
 
 
-    class azure.mgmt.storagediscovery.types.PrefixDefinitionUpdate(TypedDict, total=False):
+    class azure.mgmt.storagediscovery.types.PrefixConfigurationUpdate(TypedDict, total=False):
         key "containerName": str
         key "prefix": str
         key "storageAccountName": str

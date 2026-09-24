@@ -48,7 +48,7 @@ class TestStorageDiscoveryMgmtStorageDiscoveryWorkspacesOperationsAsync(AzureMgm
                     "capabilities": {
                         "azureBlobStorage": {
                             "capacityDetails": {"status": "str"},
-                            "prefixDefinitions": [
+                            "prefixConfigurations": [
                                 {"containerName": "str", "storageAccountName": "str", "prefix": "str"}
                             ],
                         }
@@ -84,7 +84,7 @@ class TestStorageDiscoveryMgmtStorageDiscoveryWorkspacesOperationsAsync(AzureMgm
                     "capabilities": {
                         "azureBlobStorage": {
                             "capacityDetails": {"status": "str"},
-                            "prefixDefinitions": [
+                            "prefixConfigurations": [
                                 {"containerName": "str", "prefix": "str", "storageAccountName": "str"}
                             ],
                         }

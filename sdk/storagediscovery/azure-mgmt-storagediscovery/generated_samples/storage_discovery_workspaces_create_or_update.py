@@ -40,7 +40,7 @@ def main():
                 "capabilities": {
                     "azureBlobStorage": {
                         "capacityDetails": {"status": "Enabled"},
-                        "prefixDefinitions": [
+                        "prefixConfigurations": [
                             {
                                 "containerName": "samplecontainer",
                                 "prefix": "sampleDir",

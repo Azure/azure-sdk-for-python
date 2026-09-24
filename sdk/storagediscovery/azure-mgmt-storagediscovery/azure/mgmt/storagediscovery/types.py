@@ -25,15 +25,15 @@ class AzureBlobStorageCapability(TypedDict, total=False):
 
     :ivar capacityDetails: The capacity details configuration for Azure Blob Storage. Required.
     :vartype capacityDetails: "CapacityDetails"
-    :ivar prefixDefinitions: The prefix definitions that scope the capacity details to specific
-     storage accounts, containers, and prefixes.
-    :vartype prefixDefinitions: list["PrefixDefinition"]
+    :ivar prefixConfigurations: The prefix configurations that scope the capacity details to
+     specific storage accounts, containers, and prefixes.
+    :vartype prefixConfigurations: list["PrefixConfiguration"]
     """
 
     capacityDetails: Required["CapacityDetails"]
     """The capacity details configuration for Azure Blob Storage. Required."""
-    prefixDefinitions: list["PrefixDefinition"]
-    """The prefix definitions that scope the capacity details to specific storage accounts,
+    prefixConfigurations: list["PrefixConfiguration"]
+    """The prefix configurations that scope the capacity details to specific storage accounts,
      containers, and prefixes."""
 
 
@@ -42,14 +42,14 @@ class AzureBlobStorageCapabilityUpdate(TypedDict, total=False):
 
     :ivar capacityDetails: The capacity details configuration to update for Azure Blob Storage.
     :vartype capacityDetails: "CapacityDetailsUpdate"
-    :ivar prefixDefinitions: The prefix definitions to update for Azure Blob Storage.
-    :vartype prefixDefinitions: list["PrefixDefinitionUpdate"]
+    :ivar prefixConfigurations: The prefix configurations to update for Azure Blob Storage.
+    :vartype prefixConfigurations: list["PrefixConfigurationUpdate"]
     """
 
     capacityDetails: "CapacityDetailsUpdate"
     """The capacity details configuration to update for Azure Blob Storage."""
-    prefixDefinitions: list["PrefixDefinitionUpdate"]
-    """The prefix definitions to update for Azure Blob Storage."""
+    prefixConfigurations: list["PrefixConfigurationUpdate"]
+    """The prefix configurations to update for Azure Blob Storage."""
 
 
 class CapacityDetails(TypedDict, total=False):
@@ -78,9 +78,9 @@ class CapacityDetailsUpdate(TypedDict, total=False):
      \"Enabled\" and \"Disabled\"."""
 
 
-class PrefixDefinition(TypedDict, total=False):
-    """A prefix definition that scopes capacity details to a specific storage account, container, and
-    prefix.
+class PrefixConfiguration(TypedDict, total=False):
+    """A prefix configuration that scopes capacity details to a specific storage account, container,
+    and prefix.
 
     :ivar storageAccountName: The name of the storage account. Required.
     :vartype storageAccountName: str
@@ -100,8 +100,8 @@ class PrefixDefinition(TypedDict, total=False):
      entire container. Must not start with a '/'."""
 
 
-class PrefixDefinitionUpdate(TypedDict, total=False):
-    """A prefix definition that can be updated.
+class PrefixConfigurationUpdate(TypedDict, total=False):
+    """A prefix configuration that can be updated.
 
     :ivar storageAccountName: The name of the storage account.
     :vartype storageAccountName: str

@@ -22,19 +22,19 @@ class AzureBlobStorageCapability(_Model):  # pylint: disable=docstring-keyword-s
 
     :ivar capacity_details: The capacity details configuration for Azure Blob Storage. Required.
     :vartype capacity_details: ~azure.mgmt.storagediscovery.models.CapacityDetails
-    :ivar prefix_definitions: The prefix definitions that scope the capacity details to specific
-     storage accounts, containers, and prefixes.
-    :vartype prefix_definitions: list[~azure.mgmt.storagediscovery.models.PrefixDefinition]
+    :ivar prefix_configurations: The prefix configurations that scope the capacity details to
+     specific storage accounts, containers, and prefixes.
+    :vartype prefix_configurations: list[~azure.mgmt.storagediscovery.models.PrefixConfiguration]
     """
 
     capacity_details: "_models.CapacityDetails" = rest_field(
         name="capacityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """The capacity details configuration for Azure Blob Storage. Required."""
-    prefix_definitions: Optional[list["_models.PrefixDefinition"]] = rest_field(
-        name="prefixDefinitions", visibility=["read", "create", "update", "delete", "query"]
+    prefix_configurations: Optional[list["_models.PrefixConfiguration"]] = rest_field(
+        name="prefixConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The prefix definitions that scope the capacity details to specific storage accounts,
+    """The prefix configurations that scope the capacity details to specific storage accounts,
      containers, and prefixes."""
 
     @overload
@@ -42,7 +42,7 @@ class AzureBlobStorageCapability(_Model):  # pylint: disable=docstring-keyword-s
         self,
         *,
         capacity_details: "_models.CapacityDetails",
-        prefix_definitions: Optional[list["_models.PrefixDefinition"]] = None,
+        prefix_configurations: Optional[list["_models.PrefixConfiguration"]] = None,
     ) -> None: ...
 
     @overload
@@ -61,25 +61,26 @@ class AzureBlobStorageCapabilityUpdate(_Model):  # pylint: disable=docstring-key
 
     :ivar capacity_details: The capacity details configuration to update for Azure Blob Storage.
     :vartype capacity_details: ~azure.mgmt.storagediscovery.models.CapacityDetailsUpdate
-    :ivar prefix_definitions: The prefix definitions to update for Azure Blob Storage.
-    :vartype prefix_definitions: list[~azure.mgmt.storagediscovery.models.PrefixDefinitionUpdate]
+    :ivar prefix_configurations: The prefix configurations to update for Azure Blob Storage.
+    :vartype prefix_configurations:
+     list[~azure.mgmt.storagediscovery.models.PrefixConfigurationUpdate]
     """
 
     capacity_details: Optional["_models.CapacityDetailsUpdate"] = rest_field(
         name="capacityDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """The capacity details configuration to update for Azure Blob Storage."""
-    prefix_definitions: Optional[list["_models.PrefixDefinitionUpdate"]] = rest_field(
-        name="prefixDefinitions", visibility=["read", "create", "update", "delete", "query"]
+    prefix_configurations: Optional[list["_models.PrefixConfigurationUpdate"]] = rest_field(
+        name="prefixConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The prefix definitions to update for Azure Blob Storage."""
+    """The prefix configurations to update for Azure Blob Storage."""
 
     @overload
     def __init__(
         self,
         *,
         capacity_details: Optional["_models.CapacityDetailsUpdate"] = None,
-        prefix_definitions: Optional[list["_models.PrefixDefinitionUpdate"]] = None,
+        prefix_configurations: Optional[list["_models.PrefixConfigurationUpdate"]] = None,
     ) -> None: ...
 
     @overload
@@ -317,9 +318,9 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrefixDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A prefix definition that scopes capacity details to a specific storage account, container, and
-    prefix.
+class PrefixConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prefix configuration that scopes capacity details to a specific storage account, container,
+    and prefix.
 
     :ivar storage_account_name: The name of the storage account. Required.
     :vartype storage_account_name: str
@@ -360,8 +361,8 @@ class PrefixDefinition(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class PrefixDefinitionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A prefix definition that can be updated.
+class PrefixConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A prefix configuration that can be updated.
 
     :ivar storage_account_name: The name of the storage account.
     :vartype storage_account_name: str

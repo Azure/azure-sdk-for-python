@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (2026-09-16)
+## 1.1.0b1 (2026-09-24)
 
 ### Features Added
 
@@ -11,8 +11,8 @@
   - Added enum `CapabilityStatus`
   - Added model `CapacityDetails`
   - Added model `CapacityDetailsUpdate`
-  - Added model `PrefixDefinition`
-  - Added model `PrefixDefinitionUpdate`
+  - Added model `PrefixConfiguration`
+  - Added model `PrefixConfigurationUpdate`
   - Added model `StorageDiscoveryCapabilities`
   - Added model `StorageDiscoveryCapabilitiesUpdate`
 
