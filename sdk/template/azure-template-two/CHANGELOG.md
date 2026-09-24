@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b2 (2026-09-24)
+
+### Other Changes
+
+- Updated the package version to exercise the signed-binary release pipeline.
+
 ## 1.0.0b1 (2026-09-21)
 
 ### Features Added
