@@ -1821,6 +1821,52 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    def test_span_events_to_envelopes_session_id(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        for span_session_id, event_session_id, expected_session_id in (
+            ("spanSessionId", None, "spanSessionId"),
+            (None, "eventSessionId", "eventSessionId"),
+            ("spanSessionId", "eventSessionId", "eventSessionId"),
+        ):
+            with self.subTest(span_session_id=span_session_id, event_session_id=event_session_id):
+                span_attributes = (
+                    {session_attributes.SESSION_ID: span_session_id} if span_session_id is not None else None
+                )
+                event_attributes = (
+                    {session_attributes.SESSION_ID: event_session_id} if event_session_id is not None else None
+                )
+                span = trace._Span(
+                    name="test",
+                    context=SpanContext(
+                        trace_id=36873507687745823477771305566750195431,
+                        span_id=12030755672171557337,
+                        is_remote=False,
+                    ),
+                    kind=SpanKind.CLIENT,
+                    attributes=span_attributes,
+                )
+                span.add_event(
+                    "test event",
+                    event_attributes,
+                    time,
+                )
+                span.start()
+                span.end()
+                envelopes = exporter._span_events_to_envelopes(span)
+
+                self.assertEqual(len(envelopes), 1)
+                envelope = envelopes[0]
+                self.assertEqual(
+                    envelope.tags.get(ContextTagKeys.AI_SESSION_ID),
+                    expected_session_id,
+                )
+                self.assertNotIn(
+                    session_attributes.SESSION_ID,
+                    envelope.data.base_data.properties,
+                )
+
     def test_span_events_to_envelopes_custom_measurements(self):
         exporter = self._exporter
         time = 1575494316027613500

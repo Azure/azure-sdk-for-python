@@ -564,7 +564,9 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
         envelope = _utils._create_telemetry_item(event.timestamp)
         envelope.tags.update(_utils._populate_part_a_fields(span.resource))
         envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
-        session_id = span.attributes.get(session_attributes.SESSION_ID) if span.attributes else None
+        session_id = event.attributes.get(session_attributes.SESSION_ID) if event.attributes else None
+        if not isinstance(session_id, str):
+            session_id = span.attributes.get(session_attributes.SESSION_ID) if span.attributes else None
         if isinstance(session_id, str):
             envelope.tags[ContextTagKeys.AI_SESSION_ID] = session_id
         if span.context and span.context.span_id:
