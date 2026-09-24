@@ -27,7 +27,9 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
         return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
     def _create_http_client(self, **kwargs: Any) -> Any:
-        from azure.core.pipeline.transport import RequestsTransport
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            RequestsTransport,
+        )
 
         transport = kwargs.get("transport")
         requests_transport = transport if isinstance(transport, RequestsTransport) else RequestsTransport(**kwargs)
