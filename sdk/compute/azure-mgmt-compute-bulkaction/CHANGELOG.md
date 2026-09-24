@@ -1,5 +1,30 @@
 # Release History
 
+## 1.0.0b5 (2026-09-24)
+
+### Features Added
+
+  - Model `ExecutionParameters` added property `additional_create_parameters`
+
+### Breaking Changes
+
+  - Model `BulkCreateCustomPriorityProfile` deleted or renamed its instance variable `allocation_strategy`
+  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `vm_sizes_profile`
+  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `zone_allocation_policy`
+  - Model `BulkCreateProperties` deleted or renamed its instance variable `vm_sizes_profile`
+  - Model `BulkCreateProperties` deleted or renamed its instance variable `zone_allocation_policy`
+  - Model `PriorityProfile` deleted or renamed its instance variable `allocation_strategy`
+  - Deleted or renamed model `AllocationStrategy`
+  - Deleted or renamed model `BulkCreateCustomAllocationStrategy`
+  - Deleted or renamed model `BulkCreateCustomDistributionStrategy`
+  - Deleted or renamed model `BulkCreateCustomOverrideBase`
+  - Deleted or renamed model `BulkCreateCustomVmSizeProfile`
+  - Deleted or renamed model `BulkCreateCustomZoneAllocationPolicy`
+  - Deleted or renamed model `BulkCreateVmSizeProfile`
+  - Deleted or renamed model `DistributionStrategy`
+  - Deleted or renamed model `ZoneAllocationPolicy`
+  - Deleted or renamed model `ZonePreference`
+
 ## 1.0.0b4 (2026-09-11)
 
 ### Features Added

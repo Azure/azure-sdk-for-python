@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_virtual_machine_bulk_operations_bulk_deallocate_operation_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_virtual_machine_bulk_operations_bulk_hibernate_operation_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +134,7 @@ def build_virtual_machine_bulk_operations_bulk_start_operation_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,7 +165,7 @@ def build_virtual_machine_bulk_operations_bulk_delete_operation_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,7 +196,7 @@ def build_virtual_machine_bulk_operations_bulk_get_operations_status_request(  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -227,7 +227,7 @@ def build_virtual_machine_bulk_operations_bulk_cancel_operations_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +258,7 @@ def build_virtual_machine_bulk_operations_bulk_reimage_operation_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,7 +288,7 @@ def build_bulk_create_custom_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -317,7 +317,7 @@ def build_bulk_create_custom_get_async_operation_status_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -346,7 +346,7 @@ def build_bulk_create_custom_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -382,7 +382,7 @@ def build_bulk_create_custom_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreateCustom/{name}"
     path_format_arguments = {
@@ -407,7 +407,7 @@ def build_bulk_create_custom_cancel_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreateCustom/{name}/cancel"
     path_format_arguments = {
@@ -431,7 +431,7 @@ def build_bulk_create_custom_virtual_machines_get_operation_status_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -460,7 +460,7 @@ def build_bulk_create_custom_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -488,7 +488,7 @@ def build_bulk_create_custom_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -515,7 +515,7 @@ def build_bulk_create_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -544,7 +544,7 @@ def build_bulk_create_get_async_operation_status_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -573,7 +573,7 @@ def build_bulk_create_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +609,7 @@ def build_bulk_create_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreate/{name}"
     path_format_arguments = {
@@ -634,7 +634,7 @@ def build_bulk_create_cancel_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/locations/{location}/bulkCreate/{name}/cancel"
     path_format_arguments = {
@@ -658,7 +658,7 @@ def build_bulk_create_virtual_machines_get_operation_status_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -687,7 +687,7 @@ def build_bulk_create_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -715,7 +715,7 @@ def build_bulk_create_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -742,7 +742,7 @@ def build_scheduled_actions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -771,7 +771,7 @@ def build_scheduled_actions_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -802,7 +802,7 @@ def build_scheduled_actions_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -831,7 +831,7 @@ def build_scheduled_actions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}"
     path_format_arguments = {
@@ -854,7 +854,7 @@ def build_scheduled_actions_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -881,7 +881,7 @@ def build_scheduled_actions_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -907,7 +907,7 @@ def build_scheduled_actions_list_resources_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -936,7 +936,7 @@ def build_scheduled_actions_attach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -967,7 +967,7 @@ def build_scheduled_actions_detach_resources_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -998,7 +998,7 @@ def build_scheduled_actions_patch_resources_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1027,7 +1027,7 @@ def build_scheduled_actions_disable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}/disable"
     path_format_arguments = {
@@ -1049,7 +1049,7 @@ def build_scheduled_actions_enable_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/scheduledActions/{scheduledActionName}/enable"
     path_format_arguments = {
@@ -1073,7 +1073,7 @@ def build_scheduled_actions_cancel_next_occurrence_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1103,7 +1103,7 @@ def build_scheduled_actions_trigger_manual_occurrence_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1131,7 +1131,7 @@ def build_scheduled_action_extension_list_by_vms_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1157,7 +1157,7 @@ def build_scheduled_action_operation_status_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1185,7 +1185,7 @@ def build_occurrences_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1214,7 +1214,7 @@ def build_occurrences_list_by_scheduled_action_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1242,7 +1242,7 @@ def build_occurrences_list_resources_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1272,7 +1272,7 @@ def build_occurrences_cancel_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1304,7 +1304,7 @@ def build_occurrences_delay_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1335,7 +1335,7 @@ def build_occurrence_extension_list_occurrence_by_vms_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-06-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1496,15 +1496,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1525,15 +1527,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1554,15 +1558,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1581,16 +1587,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteDeallocateContent, _types.ExecuteDeallocateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
-        """BulkDeallocate: Execute deallocate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Deallocate one or more virtual machines. Bulk Actions begins processing the request immediately
+        and returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeallocateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to deallocate and the execution settings for the bulk
+         action. Is either a ExecuteDeallocateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent or IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
@@ -1675,15 +1682,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1704,15 +1713,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1733,15 +1744,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1760,16 +1773,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteHibernateContent, _types.ExecuteHibernateContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
-        """BulkHibernate: Execute hibernate operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Hibernate one or more virtual machines that support hibernation. Bulk Actions begins processing
+        the request immediately and returns a Bulk Action Operation Id for each virtual machine. Use
+        the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteHibernateContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to hibernate and the execution settings for the bulk
+         action. Is either a ExecuteHibernateContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent or IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
@@ -1854,15 +1868,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1883,15 +1899,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1912,15 +1930,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1939,16 +1959,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteStartContent, _types.ExecuteStartContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
-        """BulkStart: Execute start operation for a batch of virtual machines, this operation is triggered
-        as soon as Computeschedule receives it.
+        """Start one or more virtual machines. Bulk Actions begins processing the request immediately and
+        returns a Bulk Action Operation Id for each virtual machine. Use the returned IDs to get
+        operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteStartContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to start and the execution settings for the bulk
+         action. Is either a ExecuteStartContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteStartContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteStartContent or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
@@ -2033,15 +2054,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2062,15 +2085,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2091,15 +2116,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2118,16 +2145,17 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteDeleteContent, _types.ExecuteDeleteContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """BulkDelete: Execute delete operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """Delete one or more virtual machines. This operation is destructive. Bulk Actions begins
+        processing the request immediately and returns a Bulk Action Operation Id for each virtual
+        machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteDeleteContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to delete and the execution settings for the bulk
+         action. Is either a ExecuteDeleteContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent or
          ~azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent or IO[bytes]
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
@@ -2212,15 +2240,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2241,15 +2269,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2270,15 +2298,15 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2297,16 +2325,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.GetOperationStatusContent, _types.GetOperationStatusContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
-        """BulkGetOperationsStatus: Polling endpoint to read status of operations performed on virtual
-        machines.
+        """Get the current status of one or more operations identified by their Bulk Action Operation Ids.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a GetOperationStatusContent type or a
-         IO[bytes] type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations for which
+         current status should be returned. Is either a GetOperationStatusContent type or a IO[bytes]
+         type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.GetOperationStatusContent or
          ~azure.mgmt.compute.bulkaction.types.GetOperationStatusContent or IO[bytes]
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
@@ -2391,14 +2419,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2419,14 +2449,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2447,14 +2479,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel.
+         Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2473,15 +2507,16 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.CancelOperationsContent, _types.CancelOperationsContent, IO[bytes]],
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
-        """BulkCancelOperations: Cancel a previously submitted (start/deallocate/hibernate) request.
+        """Cancel one or more Bulk Actions operations by Bulk Action Operation Ids. Cancellation is best
+        effort and work that has already completed is not reversed.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a CancelOperationsContent type or a IO[bytes]
-         type. Required.
+        :param request_body: The Bulk Action Operation Ids that identify the operations to cancel. Is
+         either a CancelOperationsContent type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.CancelOperationsContent or
          ~azure.mgmt.compute.bulkaction.types.CancelOperationsContent or IO[bytes]
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
@@ -2566,15 +2601,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2595,15 +2634,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2624,15 +2667,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Required.
         :type request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2656,7 +2703,7 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def bulk_reimage_operation(
         self,
@@ -2665,16 +2712,19 @@ class VirtualMachineBulkOperationsOperations:  # pylint: disable=docstring-missi
         request_body: Union[_models.ExecuteReimageRequest, _types.ExecuteReimageRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ReimageResourceOperationResponse:
-        """BulkReimage: Execute reimage operation for a batch of virtual machines, this operation is
-        triggered as soon as Computeschedule receives it.
+        """This feature is currently in preview.
+
+        Reimage one or more virtual machines. Reimaging is destructive and can replace operating system
+        disk contents. Bulk Actions begins processing the request immediately and returns a Bulk Action
+        Operation Id for each virtual machine. Use the returned IDs to get operation status updates.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param location: The location name. Required.
         :type location: str
-        :param request_body: The request body. Is either a ExecuteReimageRequest type or a IO[bytes]
-         type. Required.
+        :param request_body: The virtual machines to reimage and the execution settings for the bulk
+         action. Is either a ExecuteReimageRequest type or a IO[bytes] type. Required.
         :type request_body: ~azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest or
          ~azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest or IO[bytes]
         :return: ReimageResourceOperationResponse. The ReimageResourceOperationResponse is compatible
@@ -2782,7 +2832,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def get(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
@@ -2865,7 +2915,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def get_async_operation_status(
         self, location: str, async_operation_id: str, **kwargs: Any
@@ -2950,7 +3000,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -3141,7 +3191,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -3235,7 +3285,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _delete_initial(
         self,
@@ -3319,7 +3369,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_delete(
         self,
@@ -3397,7 +3447,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _cancel_initial(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3464,7 +3514,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_cancel(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels BulkCreateCustom instances that have not yet launched.
@@ -3538,7 +3588,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def virtual_machines_get_operation_status(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
@@ -3650,7 +3700,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
@@ -3758,7 +3808,7 @@ class BulkCreateCustomOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_subscription(self, location: str, **kwargs: Any) -> ItemPaged["_models.LocationBasedBulkCreateCustom"]:
         """List BulkCreateCustom resources by subscriptionId.
@@ -3889,7 +3939,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def get(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> _models.LocationBasedBulkCreate:
         """Gets an instance of BulkCreates.
@@ -3969,7 +4019,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-06-preview": ["api_version", "subscription_id", "location", "async_operation_id", "accept"]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def get_async_operation_status(
         self, location: str, async_operation_id: str, **kwargs: Any
@@ -4054,7 +4104,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -4245,7 +4295,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -4339,7 +4389,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def _delete_initial(
         self,
@@ -4423,7 +4473,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "delete_instances",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_delete(
         self,
@@ -4501,7 +4551,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def _cancel_initial(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4568,7 +4618,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "name"]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_cancel(self, resource_group_name: str, location: str, name: str, **kwargs: Any) -> LROPoller[None]:
         """Cancels BulkCreate instances that have not yet launched.
@@ -4642,7 +4692,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def virtual_machines_get_operation_status(
         self, resource_group_name: str, location: str, name: str, **kwargs: Any
@@ -4754,7 +4804,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-06-preview": ["api_version", "subscription_id", "resource_group_name", "location", "accept"]
         },
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
@@ -4862,7 +4912,7 @@ class BulkCreateOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-06-preview",
         params_added_on={"2026-09-06-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-09-06-preview"],
+        api_versions_list=["2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_subscription(self, location: str, **kwargs: Any) -> ItemPaged["_models.LocationBasedBulkCreate"]:
         """List BulkCreate resources by subscriptionId.
@@ -4992,7 +5042,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
         """Gets the specified scheduled action.
@@ -5076,7 +5126,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -5255,7 +5305,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_create_or_update(
         self,
@@ -5345,7 +5395,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _update_initial(
         self,
@@ -5525,7 +5575,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_update(
         self,
@@ -5602,7 +5652,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _delete_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5672,7 +5722,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_delete(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes the specified scheduled action.
@@ -5735,7 +5785,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """Lists scheduled actions in the specified resource group.
@@ -5837,7 +5887,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ScheduledAction"]:
         """Lists scheduled actions in the specified subscription.
@@ -5943,7 +5993,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -6060,7 +6110,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _attach_resources_initial(
         self,
@@ -6243,7 +6293,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_attach_resources(
         self,
@@ -6334,7 +6384,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _detach_resources_initial(
         self,
@@ -6517,7 +6567,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_detach_resources(
         self,
@@ -6696,7 +6746,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def patch_resources(
         self,
@@ -6794,7 +6844,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _disable_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6863,7 +6913,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_disable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Disables the specified scheduled action so future occurrences do not run.
@@ -6927,7 +6977,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _enable_initial(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6996,7 +7046,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_enable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Enables the specified scheduled action so new occurrences run.
@@ -7067,7 +7117,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _cancel_next_occurrence_initial(
         self,
@@ -7253,7 +7303,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_cancel_next_occurrence(
         self,
@@ -7344,7 +7394,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _trigger_manual_occurrence_initial(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -7422,7 +7472,7 @@ class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param,too
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_trigger_manual_occurrence(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -7513,7 +7563,7 @@ class ScheduledActionExtensionOperations:  # pylint: disable=docstring-missing-p
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_vms(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.ScheduledActionResources"]:
         """Lists scheduled actions associated with the specified VM.
@@ -7636,7 +7686,7 @@ class ScheduledActionOperationStatusOperations:  # pylint: disable=docstring-mis
         params_added_on={
             "2026-07-06-preview": ["api_version", "subscription_id", "location", "operation_id", "accept"]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
         """Gets the status of the specified scheduled action operation.
@@ -7739,7 +7789,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def get(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -7828,7 +7878,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_by_scheduled_action(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -7945,7 +7995,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -8065,7 +8115,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _cancel_initial(
         self,
@@ -8263,7 +8313,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_cancel(
         self,
@@ -8360,7 +8410,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def _delay_initial(
         self,
@@ -8558,7 +8608,7 @@ class OccurrencesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def begin_delay(
         self,
@@ -8666,7 +8716,7 @@ class OccurrenceExtensionOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-07-06-preview",
         params_added_on={"2026-07-06-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview"],
+        api_versions_list=["2026-07-06-preview", "2026-08-06-preview", "2026-09-06-preview", "2026-10-06-preview"],
     )
     def list_occurrence_by_vms(
         self, resource_uri: str, **kwargs: Any

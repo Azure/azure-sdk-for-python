@@ -26,6 +26,7 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
@@ -50,6 +51,7 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
@@ -74,6 +76,7 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
@@ -98,6 +101,7 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
@@ -147,6 +151,7 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperations(AzureMgmt
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
