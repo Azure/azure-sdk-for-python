@@ -31,6 +31,7 @@ stages:
           parameters:
             Artifact: ${{ artifact }}
             DependsOn: ${{ parameters.DependsOn }}
+            DevFeedName: ${{ parameters.DevFeedName }}
   # Release stages are compiled for:
   #   * internal manual runs (existing behavior), and
   #   * internal post-merge CI on 'main' (auto-release). For auto-release, only the packages changed by a

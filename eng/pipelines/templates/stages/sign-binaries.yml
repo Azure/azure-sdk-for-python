@@ -24,6 +24,9 @@ parameters:
   - name: DependsOn
     type: string
     default: Build
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
 
 stages:
   - stage: Sign_${{ parameters.Artifact.safeName }}
@@ -237,6 +240,12 @@ stages:
               artifactName: packages_${{ parameters.Artifact.safeName }}_mac_signed
               targetPath: $(Build.ArtifactStagingDirectory)/mac_signed
 
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+              EnableUvAuth: false
+
           - pwsh: python -m pip install packaging
             displayName: Install packaging (wheel tag matching)
 
@@ -269,6 +278,12 @@ stages:
             inputs:
               artifactName: packages_${{ parameters.Artifact.safeName }}_win_signed
               targetPath: $(Build.ArtifactStagingDirectory)/win_signed
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+              EnableUvAuth: false
 
           - pwsh: python -m pip install packaging
             displayName: Install packaging (wheel tag matching)
