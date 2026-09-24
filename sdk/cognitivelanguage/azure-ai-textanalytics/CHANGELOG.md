@@ -2,7 +2,16 @@
 
 ## 6.0.0b3 (2026-09-17)
 
-skip changelog generation for data-plane package and please add changelog manually.
+This version of the client library defaults to the service API version `2026-05-15-preview`.
+
+### Features Added
+
+- Added `cancel_after` to `begin_analyze_text_job` to cancel jobs that do not complete within the specified duration.
+- Added PII entity synonyms through `PiiActionContent.entity_synonyms`.
+- Added PII value exclusions through `PiiActionContent.value_exclusion_policy`.
+- Added PII category exclusions through `PiiActionContent.exclude_pii_categories`.
+- Added the `NoMask` redaction policy and PII entity mask metadata, including `mask`, `mask_offset`, and `mask_length`.
+- Added entity recognition inclusion and exclusion lists through `EntitiesActionContent.inclusions` and `EntitiesActionContent.exclusions`.
 
 ## 6.0.0b2 (2025-11-06)
 
