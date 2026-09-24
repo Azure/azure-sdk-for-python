@@ -2601,30 +2601,6 @@ namespace azure.ai.projects.aio.operations
             ) -> TelephonyTransferTargets: ...
 
         @overload
-        async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: List[TelephonyTransferTarget], 
-                match_condition: str, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: List[TelephonyTransferTarget], 
-                match_condition: str, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
         async def transfer_call(
                 self, 
                 agent_name: str, 
@@ -18928,30 +18904,6 @@ namespace azure.ai.projects.operations
                 etag: str, 
                 match_condition: MatchConditions, 
                 transfer_targets: List[TelephonyTransferTarget], 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: List[TelephonyTransferTarget], 
-                match_condition: str, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: List[TelephonyTransferTarget], 
-                match_condition: str, 
                 **kwargs: Any
             ) -> TelephonyTransferTargets: ...
 

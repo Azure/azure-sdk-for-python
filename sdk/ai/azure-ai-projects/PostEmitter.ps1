@@ -152,6 +152,35 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
+# Remove malformed overloads where the emitter assigns a body List type to the ETag parameter.
+$files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
+foreach ($f in $files) {
+    $lines = Get-Content $f
+    $out = @()
+    for ($i = 0; $i -lt $lines.Length;) {
+        if ($lines[$i] -notmatch '^(\s*)@overload\s*$') {
+            $out += $lines[$i]
+            $i++
+            continue
+        }
+
+        $indent = $Matches[1]
+        $end = $i + 1
+        while ($end -lt $lines.Length -and $lines[$end] -notmatch ('^' + [regex]::Escape($indent) + '@')) {
+            $end++
+        }
+        $overload = $lines[$i..($end - 1)]
+        if ($overload -match '^\s*etag:\s*List\[[^\]]+\]') {
+            $i = $end
+            continue
+        }
+
+        $out += $overload
+        $i = $end
+    }
+    Set-Content $f $out
+}
+
 # Remove duplicate top-level variable declarations from generated _unions.py.
 # Keep the first declaration for each name and remove any later declarations, including multiline aliases.
 $unionsFile = Resolve-Path 'azure\ai\projects\_unions.py'
