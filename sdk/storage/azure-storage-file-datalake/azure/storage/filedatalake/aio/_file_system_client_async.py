@@ -75,16 +75,16 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-    :keyword bool use_session: If True, enable session-based authentication for this container.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
         When enabled, eligible GET requests issued by this client will be authenticated using
         a short-lived session credential obtained from the service instead
-        of the provided TokenCredential. Only supported with a TokenCredential;
+        of the provided AsyncTokenCredential. Only supported with an AsyncTokenCredential;
         ValueError is raised otherwise. Defaults to False.
     :keyword session_provider: Creates, caches, and invalidates the session credentials used for
         session-based authentication. Supply a shared instance to reuse the session cache across
         multiple clients; when omitted, one is created and scoped to this client. Only has an
         effect when `use_session` is True.
-    :paramtype session_provider: ~azure.storage.blob.SessionProvider
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
     :keyword str session_account_name: The storage account name used to sign session-authenticated
         requests. If omitted, it is derived from the account URL. Required when using a custom
         endpoint, where the account name cannot be determined from the URL.

@@ -31,6 +31,7 @@ from .._models import (
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._path_client_async import PathClient
+from azure.storage.filedatalake._shared.session import SessionProvider
 
 class DataLakeDirectoryClient(PathClient):
     url: str
@@ -47,6 +48,9 @@ class DataLakeDirectoryClient(PathClient):
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
+        use_session: Optional[bool] = None,
+        session_provider: Optional[SessionProvider] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
