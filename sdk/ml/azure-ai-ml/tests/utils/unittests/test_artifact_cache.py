@@ -176,6 +176,35 @@ def test_cache_resolve_false_does_not_download(artifact_cache, download):
     download.assert_not_called()
 
 
+@pytest.mark.parametrize("resolve", [False, True])
+def test_cache_hit_does_not_retry(artifact_cache, download, mocker, resolve):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.spy(artifact_cache, "_check_artifacts")
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    assert artifact_cache.get(**_PARAMETERS, resolve=resolve) == path
+
+    check.assert_called_once_with(path)
+    sleep.assert_not_called()
+    assert download.call_count == 1
+
+
+def test_cache_resolve_false_preserves_incomplete_cache(artifact_cache, download, mocker):
+    path = _cache_path(artifact_cache, _PARAMETERS)
+    path.mkdir(parents=True)
+    payload = path / "payload.txt"
+    payload.write_text("package content", encoding="utf-8")
+    check = mocker.spy(artifact_cache, "_check_artifacts")
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    assert artifact_cache.get(**_PARAMETERS, resolve=False) is None
+
+    check.assert_called_once_with(path)
+    sleep.assert_not_called()
+    download.assert_not_called()
+    assert payload.read_text(encoding="utf-8") == "package content"
+
+
 def test_cache_defaults_are_resolved_before_download(artifact_cache, download):
     parameters = {key: value for key, value in _PARAMETERS.items() if key not in ("organization", "project")}
     path = artifact_cache.set(**parameters)
@@ -369,6 +398,73 @@ def test_get_waits_for_transient_checksum_sharing_violation(artifact_cache, down
     assert artifact_cache.get(**_PARAMETERS) == path
     assert check.call_count == 3
     sleep.assert_called_once_with(artifact_cache._CACHE_PUBLISH_RETRY_DELAY)
+    assert download.call_count == 1
+
+
+def test_get_retries_initial_checksum_sharing_violation(artifact_cache, download, mocker):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.patch.object(
+        artifact_cache,
+        "_check_artifacts",
+        side_effect=[PermissionError(errno.EACCES, "checksum being published"), True],
+    )
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    assert artifact_cache.get(**_PARAMETERS) == path
+
+    assert check.call_count == 2
+    sleep.assert_called_once_with(artifact_cache._CACHE_PUBLISH_RETRY_DELAY)
+    assert (path / "payload.txt").read_text(encoding="utf-8") == "package content"
+    assert download.call_count == 1
+
+
+def test_get_does_not_hide_persistent_initial_checksum_permission_errors(artifact_cache, download, mocker):
+    path = artifact_cache.set(**_PARAMETERS)
+    read_error = PermissionError(errno.EACCES, "checksum read denied")
+    check = mocker.patch.object(artifact_cache, "_check_artifacts", side_effect=read_error)
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    with pytest.raises(PermissionError, match="checksum read denied") as error:
+        artifact_cache.get(**_PARAMETERS)
+
+    assert error.value is read_error
+    assert check.call_count == artifact_cache._CACHE_PUBLISH_RETRIES
+    assert sleep.call_count == artifact_cache._CACHE_PUBLISH_RETRIES - 1
+    assert all(call.args == (artifact_cache._CACHE_PUBLISH_RETRY_DELAY,) for call in sleep.call_args_list)
+    assert (path / "payload.txt").read_text(encoding="utf-8") == "package content"
+    assert download.call_count == 1
+
+
+def test_cache_resolve_false_does_not_retry_checksum_permission_errors(artifact_cache, download, mocker):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.patch.object(
+        artifact_cache, "_check_artifacts", side_effect=PermissionError(errno.EACCES, "checksum read denied")
+    )
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    with pytest.raises(PermissionError, match="checksum read denied"):
+        artifact_cache.get(**_PARAMETERS, resolve=False)
+
+    check.assert_called_once_with(path)
+    sleep.assert_not_called()
+    assert (path / "payload.txt").read_text(encoding="utf-8") == "package content"
+    assert download.call_count == 1
+
+
+@pytest.mark.parametrize("resolve", [False, True])
+def test_get_does_not_retry_unrelated_checksum_errors(artifact_cache, download, mocker, resolve):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.patch.object(
+        artifact_cache, "_check_artifacts", side_effect=OSError(errno.EIO, "checksum read failed")
+    )
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    with pytest.raises(OSError, match="checksum read failed"):
+        artifact_cache.get(**_PARAMETERS, resolve=resolve)
+
+    check.assert_called_once_with(path)
+    sleep.assert_not_called()
+    assert (path / "payload.txt").read_text(encoding="utf-8") == "package content"
     assert download.call_count == 1
 
 
