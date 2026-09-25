@@ -3,4 +3,3 @@
 ../../identity/azure-identity
 ../azure-storage-blob
 aiohttp>=3.13.5
-cryptography>=50.0.0
