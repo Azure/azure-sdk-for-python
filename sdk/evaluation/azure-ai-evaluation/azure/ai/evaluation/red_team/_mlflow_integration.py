@@ -20,6 +20,7 @@ from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._utils import (
     _trace_destination_from_project_scope,
     _get_ai_studio_url,
+    _normalize_ai_studio_url,
 )
 from azure.ai.evaluation._evaluate._utils import (
     extract_workspace_triad_from_trace_provider,
@@ -132,7 +133,7 @@ class MLflowIntegration:
                 )
             )
 
-            self.ai_studio_url = response.properties.get("AiStudioEvaluationUri")
+            self.ai_studio_url = _normalize_ai_studio_url(response.properties.get("AiStudioEvaluationUri"))
             return response
 
         else:
