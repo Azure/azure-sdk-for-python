@@ -12,7 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import AuthenticationKind, DiscoveryRuleKind, SignalKind
+from ._enums import AuthenticationKind, DiscoveryRuleKind, SignalKind, SignalRecommendationKind
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -494,6 +494,105 @@ class AzureResourceHealthSignalStatus(_Model):  # pylint: disable=docstring-keyw
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SignalRecommendationConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Kind-specific signal recommendation configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureResourceMetricRecommendationConfiguration, LogAnalyticsQueryRecommendationConfiguration,
+    PrometheusMetricsRecommendationConfiguration
+
+    :ivar signal_kind: Kind of the recommended signal. Required. Known values are:
+     "AzureResourceMetric", "LogAnalyticsQuery", and "PrometheusMetricsQuery".
+    :vartype signal_kind: str or ~azure.mgmt.cloudhealth.models.SignalRecommendationKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    signal_kind: str = rest_discriminator(name="signalKind", visibility=["read", "create", "update", "delete", "query"])
+    """Kind of the recommended signal. Required. Known values are: \"AzureResourceMetric\",
+     \"LogAnalyticsQuery\", and \"PrometheusMetricsQuery\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        signal_kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureResourceMetricRecommendationConfiguration(
+    SignalRecommendationConfiguration, discriminator="AzureResourceMetric"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Azure Resource Metric recommendation configuration.
+
+    :ivar signal_kind: Kind of the recommended signal. Required. Azure Resource Metric
+     recommendation.
+    :vartype signal_kind: str or ~azure.mgmt.cloudhealth.models.AZURE_RESOURCE_METRIC
+    :ivar metric_namespace: Metric namespace. Required.
+    :vartype metric_namespace: str
+    :ivar metric_name: Name of the metric. Required.
+    :vartype metric_name: str
+    :ivar aggregation_type: Type of aggregation to apply to the metric. Required. Known values are:
+     "None", "Average", "Count", "Minimum", "Maximum", and "Total".
+    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.MetricAggregationType
+    :ivar time_grain: Time range of the metric in ISO 8601 duration format (e.g. 'PT5M'). Required.
+    :vartype time_grain: str
+    :ivar dimension_filter: Optional dimension filter to apply to the metric.
+    :vartype dimension_filter: str
+    """
+
+    signal_kind: Literal[SignalRecommendationKind.AZURE_RESOURCE_METRIC] = rest_discriminator(name="signalKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the recommended signal. Required. Azure Resource Metric recommendation."""
+    metric_namespace: str = rest_field(
+        name="metricNamespace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metric namespace. Required."""
+    metric_name: str = rest_field(name="metricName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the metric. Required."""
+    aggregation_type: Union[str, "_models.MetricAggregationType"] = rest_field(
+        name="aggregationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of aggregation to apply to the metric. Required. Known values are: \"None\", \"Average\",
+     \"Count\", \"Minimum\", \"Maximum\", and \"Total\"."""
+    time_grain: str = rest_field(name="timeGrain", visibility=["read", "create", "update", "delete", "query"])
+    """Time range of the metric in ISO 8601 duration format (e.g. 'PT5M'). Required."""
+    dimension_filter: Optional[str] = rest_field(
+        name="dimensionFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional dimension filter to apply to the metric."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metric_namespace: str,
+        metric_name: str,
+        aggregation_type: Union[str, "_models.MetricAggregationType"],
+        time_grain: str,
+        dimension_filter: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.signal_kind = SignalRecommendationKind.AZURE_RESOURCE_METRIC  # type: ignore
 
 
 class SignalInstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1967,6 +2066,74 @@ class IconDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class LogAnalyticsQueryRecommendationConfiguration(
+    SignalRecommendationConfiguration, discriminator="LogAnalyticsQuery"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Log Analytics Query recommendation configuration.
+
+    :ivar signal_kind: Kind of the recommended signal. This value indicates that a Log Analytics
+     workspace is required. Required. Log Analytics Query recommendation.
+    :vartype signal_kind: str or ~azure.mgmt.cloudhealth.models.LOG_ANALYTICS_QUERY
+    :ivar query_text: Query text in KQL syntax. Supported entity template variables, such as
+     ``{{entity.azureResourceId}}``, may appear in the query. Required.
+    :vartype query_text: str
+    :ivar time_grain: Time range of the signal in ISO 8601 duration format (e.g. 'PT5M'). If not
+     specified, the KQL query must define a time range.
+    :vartype time_grain: str
+    :ivar value_column_name: Name of the numeric result column to evaluate against the thresholds.
+    :vartype value_column_name: str
+    :ivar required_tables: Log Analytics tables required by the query.
+    :vartype required_tables: list[str]
+    :ivar required_diagnostic_setting_categories: Diagnostic setting categories required to
+     populate the query's tables.
+    :vartype required_diagnostic_setting_categories: list[str]
+    """
+
+    signal_kind: Literal[SignalRecommendationKind.LOG_ANALYTICS_QUERY] = rest_discriminator(name="signalKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the recommended signal. This value indicates that a Log Analytics workspace is
+     required. Required. Log Analytics Query recommendation."""
+    query_text: str = rest_field(name="queryText", visibility=["read", "create", "update", "delete", "query"])
+    """Query text in KQL syntax. Supported entity template variables, such as
+     ``{{entity.azureResourceId}}``, may appear in the query. Required."""
+    time_grain: Optional[str] = rest_field(name="timeGrain", visibility=["read", "create", "update", "delete", "query"])
+    """Time range of the signal in ISO 8601 duration format (e.g. 'PT5M'). If not specified, the KQL
+     query must define a time range."""
+    value_column_name: Optional[str] = rest_field(
+        name="valueColumnName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the numeric result column to evaluate against the thresholds."""
+    required_tables: Optional[list[str]] = rest_field(
+        name="requiredTables", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Log Analytics tables required by the query."""
+    required_diagnostic_setting_categories: Optional[list[str]] = rest_field(
+        name="requiredDiagnosticSettingCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Diagnostic setting categories required to populate the query's tables."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        query_text: str,
+        time_grain: Optional[str] = None,
+        value_column_name: Optional[str] = None,
+        required_tables: Optional[list[str]] = None,
+        required_diagnostic_setting_categories: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.signal_kind = SignalRecommendationKind.LOG_ANALYTICS_QUERY  # type: ignore
+
+
 class SignalDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SignalDefinition properties.
 
@@ -2432,6 +2599,65 @@ class OperationDisplay(_Model):
     description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
+
+
+class PrometheusMetricsRecommendationConfiguration(
+    SignalRecommendationConfiguration, discriminator="PrometheusMetricsQuery"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Prometheus Metrics Query recommendation configuration.
+
+    :ivar signal_kind: Kind of the recommended signal. This value indicates that an Azure Monitor
+     workspace is required. Required. Prometheus Metrics Query recommendation.
+    :vartype signal_kind: str or ~azure.mgmt.cloudhealth.models.PROMETHEUS_METRICS_QUERY
+    :ivar query_text: Query text in PromQL syntax. Supported entity template variables, such as
+     ``{{entity.name}}``, may appear in the query. Required.
+    :vartype query_text: str
+    :ivar time_grain: Time range of the signal in ISO 8601 duration format (e.g. 'PT5M').
+    :vartype time_grain: str
+    :ivar required_metrics: Prometheus metrics required by the query.
+    :vartype required_metrics: list[str]
+    :ivar required_scrape_targets: Prometheus scrape targets required to populate the query's
+     metrics.
+    :vartype required_scrape_targets: list[str]
+    """
+
+    signal_kind: Literal[SignalRecommendationKind.PROMETHEUS_METRICS_QUERY] = rest_discriminator(name="signalKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the recommended signal. This value indicates that an Azure Monitor workspace is
+     required. Required. Prometheus Metrics Query recommendation."""
+    query_text: str = rest_field(name="queryText", visibility=["read", "create", "update", "delete", "query"])
+    """Query text in PromQL syntax. Supported entity template variables, such as ``{{entity.name}}``,
+     may appear in the query. Required."""
+    time_grain: Optional[str] = rest_field(name="timeGrain", visibility=["read", "create", "update", "delete", "query"])
+    """Time range of the signal in ISO 8601 duration format (e.g. 'PT5M')."""
+    required_metrics: Optional[list[str]] = rest_field(
+        name="requiredMetrics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Prometheus metrics required by the query."""
+    required_scrape_targets: Optional[list[str]] = rest_field(
+        name="requiredScrapeTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Prometheus scrape targets required to populate the query's metrics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        query_text: str,
+        time_grain: Optional[str] = None,
+        required_metrics: Optional[list[str]] = None,
+        required_scrape_targets: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.signal_kind = SignalRecommendationKind.PROMETHEUS_METRICS_QUERY  # type: ignore
 
 
 class PrometheusMetricsSignal(
@@ -2925,46 +3151,48 @@ class SignalConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar signal_id: Unique identifier of the recommended signal configuration. Required.
     :vartype signal_id: str
-    :ivar metric_namespace: Metric namespace (e.g. 'microsoft.compute/virtualmachines').
-    :vartype metric_namespace: str
-    :ivar metric_name: Name of the metric (e.g. 'Percentage CPU').
-    :vartype metric_name: str
-    :ivar aggregation_type: Type of aggregation to apply to the metric. Known values are: "None",
-     "Average", "Count", "Minimum", "Maximum", and "Total".
-    :vartype aggregation_type: str or ~azure.mgmt.cloudhealth.models.MetricAggregationType
-    :ivar unit: Unit of the metric (e.g. Percent, Bytes, Count).
-    :vartype unit: str
-    :ivar time_grain: Time range of the metric. ISO 8601 duration format (e.g. 'PT5M').
-    :vartype time_grain: str
-    :ivar dimension_filter: Optional dimension filter to apply to the metric.
-    :vartype dimension_filter: str
+    :ivar display_name: Display name of the recommended signal configuration.
+    :vartype display_name: str
+    :ivar description: Description of the recommended signal configuration.
+    :vartype description: str
+    :ivar applicable_resource_types: Azure resource types to which the recommended signal
+     configuration applies.
+    :vartype applicable_resource_types: list[str]
+    :ivar refresh_interval: Interval in which the recommended signal is evaluated. Known values
+     are: "PT1M", "PT5M", "PT10M", "PT15M", "PT30M", "PT1H", and "PT2H".
+    :vartype refresh_interval: str or ~azure.mgmt.cloudhealth.models.RefreshInterval
+    :ivar data_unit: Unit of the recommended signal result (e.g. Bytes, MilliSeconds, Percent,
+     Count).
+    :vartype data_unit: str
+    :ivar configuration: Kind-specific settings for the recommended signal. Required.
+    :vartype configuration: ~azure.mgmt.cloudhealth.models.SignalRecommendationConfiguration
     :ivar evaluation_rules: Evaluation rules with recommended thresholds.
     :vartype evaluation_rules: ~azure.mgmt.cloudhealth.models.EvaluationRule
     """
 
     signal_id: str = rest_field(name="signalId", visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier of the recommended signal configuration. Required."""
-    metric_namespace: Optional[str] = rest_field(
-        name="metricNamespace", visibility=["read", "create", "update", "delete", "query"]
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Metric namespace (e.g. 'microsoft.compute/virtualmachines')."""
-    metric_name: Optional[str] = rest_field(
-        name="metricName", visibility=["read", "create", "update", "delete", "query"]
+    """Display name of the recommended signal configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the recommended signal configuration."""
+    applicable_resource_types: Optional[list[str]] = rest_field(
+        name="applicableResourceTypes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of the metric (e.g. 'Percentage CPU')."""
-    aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = rest_field(
-        name="aggregationType", visibility=["read", "create", "update", "delete", "query"]
+    """Azure resource types to which the recommended signal configuration applies."""
+    refresh_interval: Optional[Union[str, "_models.RefreshInterval"]] = rest_field(
+        name="refreshInterval", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of aggregation to apply to the metric. Known values are: \"None\", \"Average\", \"Count\",
-     \"Minimum\", \"Maximum\", and \"Total\"."""
-    unit: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unit of the metric (e.g. Percent, Bytes, Count)."""
-    time_grain: Optional[str] = rest_field(name="timeGrain", visibility=["read", "create", "update", "delete", "query"])
-    """Time range of the metric. ISO 8601 duration format (e.g. 'PT5M')."""
-    dimension_filter: Optional[str] = rest_field(
-        name="dimensionFilter", visibility=["read", "create", "update", "delete", "query"]
+    """Interval in which the recommended signal is evaluated. Known values are: \"PT1M\", \"PT5M\",
+     \"PT10M\", \"PT15M\", \"PT30M\", \"PT1H\", and \"PT2H\"."""
+    data_unit: Optional[str] = rest_field(name="dataUnit", visibility=["read", "create", "update", "delete", "query"])
+    """Unit of the recommended signal result (e.g. Bytes, MilliSeconds, Percent, Count)."""
+    configuration: "_models.SignalRecommendationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional dimension filter to apply to the metric."""
+    """Kind-specific settings for the recommended signal. Required."""
     evaluation_rules: Optional["_models.EvaluationRule"] = rest_field(
         name="evaluationRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2975,12 +3203,12 @@ class SignalConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
         self,
         *,
         signal_id: str,
-        metric_namespace: Optional[str] = None,
-        metric_name: Optional[str] = None,
-        aggregation_type: Optional[Union[str, "_models.MetricAggregationType"]] = None,
-        unit: Optional[str] = None,
-        time_grain: Optional[str] = None,
-        dimension_filter: Optional[str] = None,
+        configuration: "_models.SignalRecommendationConfiguration",
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        applicable_resource_types: Optional[list[str]] = None,
+        refresh_interval: Optional[Union[str, "_models.RefreshInterval"]] = None,
+        data_unit: Optional[str] = None,
         evaluation_rules: Optional["_models.EvaluationRule"] = None,
     ) -> None: ...
 

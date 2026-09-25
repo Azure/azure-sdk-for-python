@@ -12,6 +12,8 @@
         "azure.mgmt.cloudhealth.models.AzureMonitorWorkspaceSignals": "Microsoft.CloudHealth.AzureMonitorWorkspaceSignals",
         "azure.mgmt.cloudhealth.models.AzureResourceHealthSignal": "Microsoft.CloudHealth.AzureResourceHealthSignal",
         "azure.mgmt.cloudhealth.models.AzureResourceHealthSignalStatus": "Microsoft.CloudHealth.AzureResourceHealthSignalStatus",
+        "azure.mgmt.cloudhealth.models.SignalRecommendationConfiguration": "Microsoft.CloudHealth.SignalRecommendationConfiguration",
+        "azure.mgmt.cloudhealth.models.AzureResourceMetricRecommendationConfiguration": "Microsoft.CloudHealth.AzureResourceMetricRecommendationConfiguration",
         "azure.mgmt.cloudhealth.models.SignalInstanceProperties": "Microsoft.CloudHealth.SignalInstanceProperties",
         "azure.mgmt.cloudhealth.models.AzureResourceSignal": "Microsoft.CloudHealth.AzureResourceSignal",
         "azure.mgmt.cloudhealth.models.AzureResourceSignals": "Microsoft.CloudHealth.AzureResourceSignals",
@@ -43,6 +45,7 @@
         "azure.mgmt.cloudhealth.models.HealthReportRequest": "Microsoft.CloudHealth.HealthReportRequest",
         "azure.mgmt.cloudhealth.models.HealthStateTransition": "Microsoft.CloudHealth.HealthStateTransition",
         "azure.mgmt.cloudhealth.models.IconDefinition": "Microsoft.CloudHealth.IconDefinition",
+        "azure.mgmt.cloudhealth.models.LogAnalyticsQueryRecommendationConfiguration": "Microsoft.CloudHealth.LogAnalyticsQueryRecommendationConfiguration",
         "azure.mgmt.cloudhealth.models.SignalDefinitionProperties": "Microsoft.CloudHealth.SignalDefinitionProperties",
         "azure.mgmt.cloudhealth.models.LogAnalyticsQuerySignalDefinitionProperties": "Microsoft.CloudHealth.LogAnalyticsQuerySignalDefinitionProperties",
         "azure.mgmt.cloudhealth.models.LogAnalyticsSignal": "Microsoft.CloudHealth.LogAnalyticsSignal",
@@ -51,6 +54,7 @@
         "azure.mgmt.cloudhealth.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.cloudhealth.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.cloudhealth.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.cloudhealth.models.PrometheusMetricsRecommendationConfiguration": "Microsoft.CloudHealth.PrometheusMetricsRecommendationConfiguration",
         "azure.mgmt.cloudhealth.models.PrometheusMetricsSignal": "Microsoft.CloudHealth.PrometheusMetricsSignal",
         "azure.mgmt.cloudhealth.models.PrometheusMetricsSignalDefinitionProperties": "Microsoft.CloudHealth.PrometheusMetricsSignalDefinitionProperties",
         "azure.mgmt.cloudhealth.models.Relationship": "Microsoft.CloudHealth.Relationship",
@@ -89,6 +93,7 @@
         "azure.mgmt.cloudhealth.models.AggregationType": "Microsoft.CloudHealth.AggregationType",
         "azure.mgmt.cloudhealth.models.AggregationUnit": "Microsoft.CloudHealth.AggregationUnit",
         "azure.mgmt.cloudhealth.models.AlertSeverity": "Microsoft.CloudHealth.AlertSeverity",
+        "azure.mgmt.cloudhealth.models.SignalRecommendationKind": "Microsoft.CloudHealth.SignalRecommendationKind",
         "azure.mgmt.cloudhealth.models.DiscoveryRuleRelationshipDiscoveryBehavior": "Microsoft.CloudHealth.DiscoveryRuleRelationshipDiscoveryBehavior",
         "azure.mgmt.cloudhealth.models.DiscoveryRuleRecommendedSignalsBehavior": "Microsoft.CloudHealth.DiscoveryRuleRecommendedSignalsBehavior",
         "azure.mgmt.cloudhealth.models.DiscoveryRuleKind": "Microsoft.CloudHealth.DiscoveryRuleKind",
@@ -159,5 +164,5 @@
         "azure.mgmt.cloudhealth.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel",
         "azure.mgmt.cloudhealth.aio.operations.DiscoveryRulesOperations.list_by_health_model": "Microsoft.CloudHealth.DiscoveryRules.listByHealthModel"
     },
-    "CrossLanguageVersion": "834d27cf6ff8"
+    "CrossLanguageVersion": "8abc309e1be4"
 }
