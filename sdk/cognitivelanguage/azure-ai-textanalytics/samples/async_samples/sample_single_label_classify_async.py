@@ -64,9 +64,7 @@ async def sample_single_label_classify_async():
         )
 
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en")
-            ]
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
         action = CustomSingleLabelClassificationOperationAction(
@@ -92,9 +90,7 @@ async def sample_single_label_classify_async():
 
         if job_state.actions:
             for op_result in job_state.actions.items_property or []:
-                if isinstance(
-                    op_result, CustomSingleLabelClassificationOperationResult
-                ):
+                if isinstance(op_result, CustomSingleLabelClassificationOperationResult):
                     print(f"\nAction Name: {op_result.task_name}")
                     print(f"Action Status: {op_result.status}")
                     print(f"Kind: {op_result.kind}")

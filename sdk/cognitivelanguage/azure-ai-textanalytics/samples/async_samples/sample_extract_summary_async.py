@@ -85,9 +85,7 @@ async def sample_extract_summary_async():
         )
 
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en")
-            ]
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
         action = ExtractiveSummarizationOperationAction(name="Extractive Summarization")

@@ -84,9 +84,7 @@ def sample_text_abstractive_summarization():
         "the quality of life in the communities.”"
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action = AbstractiveSummarizationOperationAction(name="Abstractive Summarization")
 

@@ -59,9 +59,7 @@ async def sample_multi_label_classify_async():
         )
 
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en")
-            ]
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
         action = CustomMultiLabelClassificationOperationAction(

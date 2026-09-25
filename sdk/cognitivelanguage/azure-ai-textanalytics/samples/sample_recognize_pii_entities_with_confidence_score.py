@@ -57,17 +57,13 @@ def sample_pii_with_confidence_score():
     threshold = ConfidenceScoreThreshold(
         default=0.3,
         overrides=[
-            ConfidenceScoreThresholdOverride(
-                value=0.9, entity="USSocialSecurityNumber", language="en"
-            ),
+            ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber", language="en"),
             ConfidenceScoreThresholdOverride(value=0.9, entity="Email", language="en"),
         ],
     )
 
     body = TextPiiEntitiesRecognitionInput(
-        text_input=MultiLanguageTextInput(
-            multi_language_inputs=[MultiLanguageInput(id="1", text=text, language="en")]
-        ),
+        text_input=MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="1", text=text, language="en")]),
         action_content=PiiActionContent(
             pii_categories=["All"],
             disable_entity_validation=True,
@@ -79,11 +75,7 @@ def sample_pii_with_confidence_score():
     result = client.analyze_text(body=body)
 
     # Print results
-    if (
-        isinstance(result, AnalyzeTextPiiResult)
-        and result.results
-        and result.results.documents
-    ):
+    if isinstance(result, AnalyzeTextPiiResult) and result.results and result.results.documents:
         for doc in result.results.documents:
             print(f"\nDocument ID: {doc.id}")
             print(f"Redacted Text:\n  {doc.redacted_text}\n")

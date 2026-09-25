@@ -56,9 +56,7 @@ def sample_text_custom_entities():
         "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
         "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was amazing."
     )
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action_content = CustomEntitiesActionContent(
         project_name=project_name,

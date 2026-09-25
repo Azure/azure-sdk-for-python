@@ -84,9 +84,7 @@ async def sample_analyze_actions_async():
         ]
 
         # Submit multi-action job (LRO)
-        poller = await client.begin_analyze_text_job(
-            text_input=text_input, actions=actions
-        )
+        poller = await client.begin_analyze_text_job(text_input=text_input, actions=actions)
         job_state = await poller.result()
 
         # Iterate each action result

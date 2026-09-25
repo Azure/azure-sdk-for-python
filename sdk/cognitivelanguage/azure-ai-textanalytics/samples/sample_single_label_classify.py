@@ -62,9 +62,7 @@ def sample_single_label_classify():
         "Play music and add it to my playlist."
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action = CustomSingleLabelClassificationOperationAction(
         name="Custom Single-Label Classification",

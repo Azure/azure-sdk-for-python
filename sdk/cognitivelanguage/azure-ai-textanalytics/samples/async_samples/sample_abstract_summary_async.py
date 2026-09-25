@@ -85,14 +85,10 @@ async def sample_abstract_summary_async():
         )
 
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en")
-            ]
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
-        action = AbstractiveSummarizationOperationAction(
-            name="Abstractive Summarization"
-        )
+        action = AbstractiveSummarizationOperationAction(name="Abstractive Summarization")
 
         # Start long-running operation (async)
         poller = await client.begin_analyze_text_job(

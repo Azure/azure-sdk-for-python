@@ -58,9 +58,7 @@ async def sample_text_custom_entities_async():
             "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was amazing."
         )
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[
-                MultiLanguageInput(id="A", text=text_a, language="en")
-            ]
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
         )
 
         action_content = CustomEntitiesActionContent(
@@ -72,9 +70,7 @@ async def sample_text_custom_entities_async():
         ]
 
         # LRO (async)
-        poller = await client.begin_analyze_text_job(
-            text_input=text_input, actions=actions
-        )
+        poller = await client.begin_analyze_text_job(text_input=text_input, actions=actions)
 
         job_state = await poller.result()
         print(f"Job ID: {job_state.job_id}")
