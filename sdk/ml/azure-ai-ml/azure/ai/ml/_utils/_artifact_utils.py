@@ -53,15 +53,18 @@ class ArtifactCache:
         if cls._instance is None:
             with cls._instance_lock:
                 if cls._instance is None:
-                    cls._instance = object.__new__(cls)
                     cls.check_artifact_extension()
+                    cls._instance = object.__new__(cls)
         return cls._instance
 
     @staticmethod
     def check_artifact_extension():
         # check az extension azure-devops installed. Install it if not installed.
+        az_executable = shutil.which("az")
+        if az_executable is None:
+            raise RuntimeError("Azure CLI is required to download Azure DevOps artifacts.")
         result = subprocess.run(
-            [shutil.which("az"), "artifacts", "--help", "--yes"],
+            [az_executable, "artifacts", "--help", "--yes"],
             capture_output=True,
             check=False,
         )
@@ -170,12 +173,14 @@ class ArtifactCache:
         if (
             re.search(r'[\x00-\x1f\x7f<>:"/\\|?]', value)
             or value.endswith((".", " "))
-            or PureWindowsPath(value).is_reserved()
             or ("*" in value and field != "version")
         ):
             raise ValueError(error_message)
         # Version selectors are valid CLI arguments, but not Windows filenames.
-        return value.replace("%", "%25").replace("*", "%2A")
+        cache_component = value.replace("%", "%25").replace("*", "%2A")
+        if PureWindowsPath(cache_component).is_reserved():
+            raise ValueError(error_message)
+        return cache_component
 
     def _get_cache_path(self, organization: str, project: str, feed: str, name: str, version: str) -> Path:
         if not isinstance(organization, str) or not organization:
@@ -386,24 +391,42 @@ class ArtifactCache:
             if self._check_artifacts(artifact_package_path):
                 # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
                 return artifact_package_path.absolute().resolve()
-            if resolve:
+            if not resolve:
+                return None
+            if artifact_package_path.exists():
+                # Another process may have published the payload but not its checksum yet.
+                for attempt in range(self._CACHE_PUBLISH_RETRIES):
+                    try:
+                        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                        checksum_exists = self._get_checksum_path(artifact_package_path).exists()
+                        if self._check_artifacts(artifact_package_path):
+                            return artifact_package_path.absolute().resolve()
+                        if checksum_exists:
+                            break
+                    except PermissionError:
+                        if attempt + 1 == self._CACHE_PUBLISH_RETRIES:
+                            raise
+                    time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
+
+                artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                if self._check_artifacts(artifact_package_path):
+                    return artifact_package_path.absolute().resolve()
                 check_sum_path = self._get_checksum_path(artifact_package_path)
-                if Path(check_sum_path).exists():
+                if check_sum_path.exists():
                     os.unlink(check_sum_path)
                 if artifact_package_path.exists():
                     # Remove invalid artifact package to avoid affecting download artifact.
                     with tempfile.TemporaryDirectory(dir=self.cache_directory) as temp_folder:
                         os.rename(artifact_package_path, Path(temp_folder) / "invalid-artifact")
-                # Download artifact
-                return self.set(
-                    feed=feed,
-                    name=name,
-                    version=version,
-                    organization=organization,
-                    project=project,
-                    scope=scope,
-                )
-        return None
+            # Download artifact
+            return self.set(
+                feed=feed,
+                name=name,
+                version=version,
+                organization=organization,
+                project=project,
+                scope=scope,
+            )
 
     def set(
         self,
@@ -498,7 +521,7 @@ class ArtifactCache:
                     f.write(artifact_hash)
                 os.replace(temp_checksum_file, self._get_checksum_path(artifact_package_path))
             except OSError as error:
-                if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):
+                if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):  # cspell:ignore EEXIST ENOTEMPTY
                     raise
                 # A winning writer may still be publishing its separate checksum.
                 for attempt in range(self._CACHE_PUBLISH_RETRIES):

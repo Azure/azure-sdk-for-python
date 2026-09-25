@@ -6,10 +6,12 @@ import errno
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import PureWindowsPath
 from threading import Event
 
 import pytest
 
+from azure.ai.ml._utils._artifact_utils import ArtifactCache
 from azure.ai.ml.entities._component._additional_includes import AdditionalIncludes
 from test_utilities.artifact_fixtures import (
     _MODULE,
@@ -66,6 +68,8 @@ def _directory_link(link, target, run=subprocess.run):
         "name ",
         "NUL",
         "CON.txt",
+        "NUL.*",
+        "CON.*",
         "name\x00",
         "name\n",
         "name\t",
@@ -203,6 +207,16 @@ def test_version_selectors_have_safe_distinct_cache_keys(artifact_cache, downloa
         assert literal_path != path
 
 
+@pytest.mark.parametrize(
+    "version, cache_name", [("*", "%2A"), ("1.*", "1.%2A"), ("1.2.*", "1.2.%2A"), ("%2A", "%252A")]
+)
+def test_reserved_filename_check_uses_encoded_cache_component(mocker, version, cache_name):
+    windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
+
+    assert ArtifactCache._cache_path_component(version, "version") == cache_name
+    windows_path.assert_called_once_with(cache_name)
+
+
 def test_cache_preserves_project_spaces_and_unicode(artifact_cache, download):
     parameters = dict(_PARAMETERS, project="Research \u03b1")
     path = artifact_cache.get(**parameters)
@@ -225,6 +239,39 @@ def test_download_reports_missing_azure_cli(artifact_cache, download, mocker):
     assert not list(artifact_cache.cache_directory.iterdir())
 
 
+def test_constructor_reports_missing_azure_cli(tmp_path, monkeypatch, mocker):
+    cache_directory = tmp_path / "cache"
+    monkeypatch.setattr(ArtifactCache, "_instance", None)
+    monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", cache_directory)
+    mocker.patch(f"{_MODULE}.shutil.which", return_value=None)
+    run = mocker.patch(f"{_MODULE}.subprocess.run", side_effect=AssertionError("Unexpected process"))
+
+    for _ in range(2):
+        with pytest.raises(RuntimeError, match="Azure CLI is required"):
+            ArtifactCache()
+        assert ArtifactCache._instance is None
+
+    run.assert_not_called()
+    assert not cache_directory.exists()
+
+
+def test_constructor_retries_extension_check_after_failure(tmp_path, monkeypatch, mocker):
+    monkeypatch.setattr(ArtifactCache, "_instance", None)
+    monkeypatch.setattr(ArtifactCache, "DEFAULT_DISK_CACHE_DIRECTORY", tmp_path / "cache")
+    mocker.patch(f"{_MODULE}.shutil.which", return_value="az")
+    run = mocker.patch(f"{_MODULE}.subprocess.run", side_effect=[mocker.Mock(returncode=1), mocker.Mock(returncode=0)])
+
+    with pytest.raises(RuntimeError, match="Auto-installation failed"):
+        ArtifactCache()
+    assert ArtifactCache._instance is None
+
+    cache = ArtifactCache()
+    assert ArtifactCache._instance is cache
+    assert cache.cache_directory.is_dir()
+    assert run.call_count == 2
+    run.assert_called_with(["az", "artifacts", "--help", "--yes"], capture_output=True, check=False)
+
+
 def test_direct_set_preserves_an_existing_valid_cache(artifact_cache, download):
     path = artifact_cache.set(**_PARAMETERS)
     assert artifact_cache.set(**_PARAMETERS) == path
@@ -232,12 +279,15 @@ def test_direct_set_preserves_an_existing_valid_cache(artifact_cache, download):
     assert not list(artifact_cache.cache_directory.glob("tmp*"))
 
 
-def test_concurrent_cache_writer_waits_for_checksum(artifact_cache, download, mocker):
+@pytest.mark.parametrize("method", ["get", "set"])
+def test_concurrent_cache_writer_waits_for_checksum(artifact_cache, download, mocker, method):
+    contender_cache = object.__new__(ArtifactCache)
+    contender_cache.__init__(cache_directory=artifact_cache.cache_directory)
     checksum_pending = Event()
     collision_checked = Event()
     publish_checksum = Event()
     replace = os.replace
-    check_artifacts = artifact_cache._check_artifacts
+    check_artifacts = contender_cache._check_artifacts
 
     def paused_replace(source, destination):
         checksum_pending.set()
@@ -251,12 +301,12 @@ def test_concurrent_cache_writer_waits_for_checksum(artifact_cache, download, mo
         return valid
 
     mocker.patch(f"{_MODULE}.os.replace", side_effect=paused_replace)
-    mocker.patch.object(artifact_cache, "_check_artifacts", side_effect=checked_collision)
+    mocker.patch.object(contender_cache, "_check_artifacts", side_effect=checked_collision)
     with ThreadPoolExecutor(max_workers=2) as executor:
         winner = executor.submit(artifact_cache.set, **_PARAMETERS)
         try:
             assert checksum_pending.wait(timeout=5)
-            contender = executor.submit(artifact_cache.set, **_PARAMETERS)
+            contender = executor.submit(getattr(contender_cache, method), **_PARAMETERS)
             assert collision_checked.wait(timeout=5)
         finally:
             publish_checksum.set()
@@ -264,7 +314,106 @@ def test_concurrent_cache_writer_waits_for_checksum(artifact_cache, download, mo
         assert contender.result(timeout=5) == path
 
     assert artifact_cache._check_artifacts(path)
+    assert download.call_count == (1 if method == "get" else 2)
     assert not list(artifact_cache.cache_directory.glob("tmp*"))
+
+
+def test_get_retries_incomplete_cache_before_replacing(artifact_cache, download, mocker):
+    path = _cache_path(artifact_cache, _PARAMETERS)
+    path.mkdir(parents=True)
+    (path / "incomplete.txt").write_text("incomplete", encoding="utf-8")
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    assert artifact_cache.get(**_PARAMETERS) == path.resolve()
+
+    assert sleep.call_count == artifact_cache._CACHE_PUBLISH_RETRIES
+    assert all(call.args == (artifact_cache._CACHE_PUBLISH_RETRY_DELAY,) for call in sleep.call_args_list)
+    assert artifact_cache._check_artifacts(path)
+    assert not (path / "incomplete.txt").exists()
+    assert download.call_count == 1
+    assert not list(artifact_cache.cache_directory.glob("tmp*"))
+
+
+def test_get_rechecks_publication_after_final_retry(artifact_cache, download, mocker):
+    path = _cache_path(artifact_cache, _PARAMETERS)
+    path.mkdir(parents=True)
+    payload = path / "payload.txt"
+    payload.write_text("package content", encoding="utf-8")
+    sleeps = 0
+
+    def publish_after_last_sleep(_delay):
+        nonlocal sleeps
+        sleeps += 1
+        if sleeps == artifact_cache._CACHE_PUBLISH_RETRIES:
+            artifact_cache._get_checksum_path(path).write_text(
+                artifact_cache.hash_files_content([payload]), encoding="utf-8"
+            )
+
+    mocker.patch(f"{_MODULE}.time.sleep", side_effect=publish_after_last_sleep)
+
+    assert artifact_cache.get(**_PARAMETERS) == path.resolve()
+    assert sleeps == artifact_cache._CACHE_PUBLISH_RETRIES
+    assert artifact_cache._check_artifacts(path)
+    download.assert_not_called()
+
+
+def test_get_waits_for_transient_checksum_sharing_violation(artifact_cache, download, mocker):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.patch.object(
+        artifact_cache,
+        "_check_artifacts",
+        side_effect=[False, PermissionError(errno.EACCES, "checksum being published"), True],
+    )
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    assert artifact_cache.get(**_PARAMETERS) == path
+    assert check.call_count == 3
+    sleep.assert_called_once_with(artifact_cache._CACHE_PUBLISH_RETRY_DELAY)
+    assert download.call_count == 1
+
+
+def test_get_does_not_hide_persistent_checksum_permission_errors(artifact_cache, download, mocker):
+    path = artifact_cache.set(**_PARAMETERS)
+    check = mocker.patch.object(
+        artifact_cache,
+        "_check_artifacts",
+        side_effect=[False]
+        + [PermissionError(errno.EACCES, "checksum read denied")] * artifact_cache._CACHE_PUBLISH_RETRIES,
+    )
+    sleep = mocker.patch(f"{_MODULE}.time.sleep")
+
+    with pytest.raises(PermissionError, match="checksum read denied"):
+        artifact_cache.get(**_PARAMETERS)
+
+    assert check.call_count == artifact_cache._CACHE_PUBLISH_RETRIES + 1
+    assert sleep.call_count == artifact_cache._CACHE_PUBLISH_RETRIES - 1
+    assert (path / "payload.txt").read_text(encoding="utf-8") == "package content"
+    assert download.call_count == 1
+
+
+def test_get_revalidates_destination_while_waiting(artifact_cache, download, tmp_path, mocker):
+    path = _cache_path(artifact_cache, _PARAMETERS)
+    path.mkdir(parents=True)
+    organization_path = artifact_cache.cache_directory / artifact_cache._format_organization_name(
+        _PARAMETERS["organization"]
+    )
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    canary = outside / "canary.txt"
+    canary.write_text("unchanged", encoding="utf-8")
+
+    def replace_parent(_delay):
+        organization_path.rename(tmp_path / "original")
+        _directory_link(organization_path, outside)
+
+    mocker.patch(f"{_MODULE}.time.sleep", side_effect=replace_parent)
+
+    with pytest.raises(ValueError, match="cache"):
+        artifact_cache.get(**_PARAMETERS)
+
+    assert list(outside.iterdir()) == [canary]
+    assert canary.read_text(encoding="utf-8") == "unchanged"
+    download.assert_not_called()
 
 
 def test_incomplete_cache_publication_has_bounded_retries(artifact_cache, download, mocker):
