@@ -84,7 +84,14 @@ class _RuntimeState:
             return True
 
     async def release_reservation(self, response_id: str, user_id_key: str | None) -> None:
-        """Release an unused caller-scoped response-ID reservation."""
+        """Release an unused caller-scoped response-ID reservation.
+
+        :param response_id: The reserved response identifier.
+        :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
+        :rtype: None
+        """
         async with self._lock:
             self._reservations.discard(_runtime_key(response_id, user_id_key))
 
@@ -136,6 +143,8 @@ class _RuntimeState:
 
         :param response_id: The pending execution's response ID.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: None
         :rtype: None
         """
@@ -147,6 +156,8 @@ class _RuntimeState:
 
         :param response_id: The response ID to look up.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: The matching execution record, or ``None`` if not found.
         :rtype: ResponseExecution | None
         """
@@ -154,7 +165,13 @@ class _RuntimeState:
             return self._records.get(_runtime_key(response_id, user_id_key))
 
     async def contains_live_response_id(self, response_id: str) -> bool:
-        """Return whether any user partition currently owns this live response ID."""
+        """Return whether any user partition currently owns this live response ID.
+
+        :param response_id: The response identifier to look up.
+        :type response_id: str
+        :return: Whether a published or pending execution owns the ID.
+        :rtype: bool
+        """
         async with self._lock:
             return any(key[1] == response_id for key in self._records) or any(
                 key[1] == response_id for key in self._pending_records
@@ -165,6 +182,8 @@ class _RuntimeState:
 
         :param response_id: The response ID to check.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: ``True`` if the response was previously deleted.
         :rtype: bool
         """
@@ -176,6 +195,8 @@ class _RuntimeState:
 
         :param response_id: The response ID to delete.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: ``True`` if the record was found and deleted, ``False`` otherwise.
         :rtype: bool
         """
@@ -201,6 +222,8 @@ class _RuntimeState:
 
         :param response_id: The response ID to evict.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: ``True`` if the record was evicted, ``False`` otherwise.
         :rtype: bool
         """
@@ -222,6 +245,8 @@ class _RuntimeState:
 
         :param response_id: The response ID to mark as deleted.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: None
         :rtype: None
         """
@@ -254,6 +279,8 @@ class _RuntimeState:
 
         :param response_id: The response ID whose input items to retrieve.
         :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
         :return: Ordered list of deep-copied output items.
         :rtype: list[OutputItem]
         :raises ValueError: If the response has been deleted.
