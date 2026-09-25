@@ -104,8 +104,9 @@ def build_read_item_request(
     partition_key_value: Any,
     container_rid: Optional[str],
     request_options: Mapping[str, Any],
+    item_self_link: Optional[str] = None,
 ) -> PreparedRequest:
-    """Build a read, preserving conditions and cache staleness."""
+    """Build a read, preserving resource addressing, conditions and cache staleness."""
     headers, settings = _build_item_headers_and_settings(request_options, container_rid)
     return PreparedRequest(
         op=OP_READ_ITEM,
@@ -115,6 +116,7 @@ def build_read_item_request(
         headers=headers,
         settings=settings,
         item_id=item_id,
+        item_self_link=item_self_link,
     )
 
 

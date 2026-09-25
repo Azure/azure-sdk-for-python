@@ -257,6 +257,61 @@ def test_falsey_hook_gets_independent_body_and_headers(point_create, no_response
     assert len(calls) == 1
 
 
+@pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
+def test_invalid_hook_is_rejected_before_metadata(point_create, hook):
+    with pytest.raises(TypeError, match="response_hook must be callable"):
+        point_create.call({"id": "order-42"}, response_hook=hook)
+    assert point_create.events == []
+
+
+@pytest.mark.parametrize("option_name", ["feed_options", "request_options"])
+def test_nested_options_reach_create_without_mutation(point_create, option_name):
+    options = MappingProxyType({
+        "timeout": 2,
+        "responsePayloadOnWriteDisabled": True,
+        "initialHeaders": {"x-ms-test": "orders"},
+    })
+    result = point_create.call({"id": "order-42"}, **{option_name: options})
+    assert result == {}
+    assert point_create.events == [("metadata", 2), ("write", 2)]
+    headers = wire_headers(point_create.prepared) if point_create.rust else point_create.options["initialHeaders"]
+    assert headers["x-ms-test"] == "orders"
+    assert dict(options) == {
+        "timeout": 2,
+        "responsePayloadOnWriteDisabled": True,
+        "initialHeaders": {"x-ms-test": "orders"},
+    }
+
+
+@pytest.mark.parametrize("request_options,timeout", [(None, None), ({}, None), ({"timeout": 3}, 3)])
+def test_request_options_take_precedence_over_feed_options(point_create, request_options, timeout):
+    result = point_create.call(
+        {"id": "order-42"},
+        feed_options={"timeout": 2, "responsePayloadOnWriteDisabled": True},
+        request_options=request_options,
+    )
+    assert result["id"] == "order-42"
+    assert point_create.events == [("metadata", timeout), ("write", timeout)]
+
+
+@pytest.mark.parametrize("timeout", [None, 3])
+def test_explicit_options_override_feed_options(point_create, timeout):
+    result = point_create.call(
+        {"id": "order-42"},
+        feed_options={"timeout": 2, "responsePayloadOnWriteDisabled": True},
+        timeout=timeout,
+        no_response=False,
+    )
+    assert result["id"] == "order-42"
+    assert point_create.events == [("metadata", timeout), ("write", timeout)]
+
+
+def test_invalid_feed_timeout_is_rejected_before_metadata(point_create):
+    with pytest.raises(ValueError, match="create_item timeout"):
+        point_create.call({"id": "order-42"}, feed_options={"timeout": 0})
+    assert point_create.events == []
+
+
 def test_explicit_body_response_overrides_client_default(point_create):
     """``no_response=False`` on the call beats a client configured to suppress bodies.
 

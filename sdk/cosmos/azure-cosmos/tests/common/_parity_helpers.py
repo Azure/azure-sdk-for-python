@@ -861,6 +861,9 @@ def run_on_both_backends(
     failure) the raised exception. The two outcomes are then run
     through :func:`diff_outcomes`. The optional ``description`` is
     just a label for the printed report — usually the test name.
+
+    AssertionError propagates as a failed test check, never as a comparable
+    operation error. Matching failed assertions must not establish parity.
     """
     outcomes: Dict[str, CallOutcome] = {}
     for backend_name in ("core-python", "rust"):
@@ -872,6 +875,8 @@ def run_on_both_backends(
             outcome.response_headers = dict(
                 client.client_connection.last_response_headers or {}
             )
+        except AssertionError:
+            raise
         except Exception as exc:  # pylint: disable=broad-except
             outcome.raised = exc
             outcome.response_headers = dict(
@@ -916,6 +921,8 @@ async def run_on_both_backends_async(
             _assert_expected_backend(client, backend_name)
             try:
                 outcome.return_value = await call_fn(client)
+            except AssertionError:
+                raise
             except Exception as exc:  # pylint: disable=broad-except
                 outcome.raised = exc
             try:

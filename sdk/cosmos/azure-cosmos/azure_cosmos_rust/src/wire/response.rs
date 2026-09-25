@@ -15,6 +15,36 @@ use super::diagnostics::record_diagnostics;
 use super::errors::{_DriverTransportError, _UnsupportedQueryFeatureError};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
 
+/// Opt-in POC envelope: (unchanged response tuple, success attempt payload).
+pub(super) fn tuple_from_result_with_attempts<'py>(
+    py: Python<'py>,
+    response_result: Result<CosmosResponse, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = response_result
+        .as_ref()
+        .ok()
+        .map(CosmosResponse::diagnostics);
+    let response = tuple_from_result(py, response_result)?;
+    let payload = match diagnostics {
+        Some(diagnostics) => {
+            attempt_payload_or_error(py, super::diagnostics::attempt_payload(py, &diagnostics))
+        }
+        None => py.None(),
+    };
+    Ok(PyTuple::new_bound(
+        py,
+        [response.into_any().unbind(), payload],
+    ))
+}
+
+fn attempt_payload_or_error(py: Python<'_>, payload: PyResult<Bound<'_, PyDict>>) -> PyObject {
+    match payload {
+        Ok(payload) => payload.into_any().unbind(),
+        // Python reports rejected detail without exposing the conversion error.
+        Err(_) => "attempt payload conversion failed".into_py(py),
+    }
+}
+
 /// Turn the Rust driver's `Result<CosmosResponse, CosmosError>` into a
 /// binding response tuple. A CosmosError carrying a response (404 / 409
 /// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
@@ -705,11 +735,12 @@ fn response_headers_dict<'py>(
 #[cfg(test)]
 mod tests {
     use super::{
+        _DriverTransportError, _UnsupportedQueryFeatureError, attempt_payload_or_error,
         backend_response_tuple_from_feed_error_parts, feed_range_to_response_body,
         named_feed_response_body_to_vec, record_diagnostics_for_responseless, response_body_to_vec,
         response_headers_dict, tuple_from_database_feed_result, tuple_from_feed_result,
-        tuple_from_partition_key_ranges_result, tuple_from_result, _DriverTransportError,
-        FeedRangeFromPartitionKeyPayload, _UnsupportedQueryFeatureError,
+        tuple_from_partition_key_ranges_result, tuple_from_result, tuple_from_result_with_attempts,
+        FeedRangeFromPartitionKeyPayload,
     };
     use azure_core::Bytes;
     use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
@@ -721,6 +752,178 @@ mod tests {
 
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
     use std::sync::atomic::Ordering;
+
+    #[tokio::test]
+    async fn attempt_envelope_preserves_success_and_real_driver_records() {
+        use azure_data_cosmos_driver::{
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{
+                AccountReference, CosmosOperation, ItemReference, PartitionKey,
+                PartitionKeyDefinition,
+            },
+            options::{
+                BinaryEncodingOptions, ContentResponseOnWrite, DriverOptions,
+                OperationOptionsBuilder,
+            },
+        };
+        use std::sync::Arc;
+
+        pyo3::prepare_freethreaded_python();
+        let url = azure_core::http::Url::parse("https://telemetry.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        emulator.store().create_database("sales");
+        emulator.store().create_container(
+            "sales",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_operation_options(
+                        OperationOptionsBuilder::new()
+                            .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))
+                            .with_content_response_on_write(ContentResponseOnWrite::Enabled)
+                            .build(),
+                    )
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("sales", "orders", Default::default())
+            .await
+            .unwrap();
+        let item =
+            ItemReference::from_name(&container, PartitionKey::from("customer-17"), "order-42");
+        let response = driver
+            .execute_singleton_operation(
+                CosmosOperation::create_item(item)
+                    .with_body(br#"{"id":"order-42","customerId":"customer-17"}"#.to_vec()),
+                Default::default(),
+            )
+            .await
+            .unwrap();
+        let diagnostics = response.diagnostics();
+        assert!(diagnostics.request_count() > 0);
+
+        Python::with_gil(|py| {
+            let envelope = tuple_from_result_with_attempts(py, Ok(response)).unwrap();
+            assert_eq!(envelope.len(), 2);
+            let response = envelope.get_item(0).unwrap();
+            let response = response.downcast::<pyo3::types::PyTuple>().unwrap();
+            assert_eq!(response.len(), 5);
+            assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 201);
+            assert!(!response
+                .get_item(4)
+                .unwrap()
+                .extract::<String>()
+                .unwrap()
+                .is_empty());
+            let body = response.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
+            let body: serde_json::Value = serde_json::from_slice(&body).unwrap();
+            assert_eq!(body["id"], "order-42");
+            let payload = envelope.get_item(1).unwrap();
+            assert_eq!(
+                payload
+                    .get_item("schema_version")
+                    .unwrap()
+                    .extract::<u32>()
+                    .unwrap(),
+                1
+            );
+            assert_eq!(
+                payload
+                    .get_item("request_count")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap(),
+                diagnostics.request_count()
+            );
+            assert_eq!(
+                payload
+                    .get_item("retained_request_count")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap(),
+                diagnostics.retained_request_count()
+            );
+            assert!(payload.get_item("error").unwrap().is_none());
+            let rows = payload.get_item("attempts").unwrap();
+            assert_eq!(rows.len().unwrap(), diagnostics.requests().len());
+            for (index, request) in diagnostics.requests().iter().enumerate() {
+                let row = rows.get_item(index).unwrap();
+                assert_eq!(
+                    row.get_item("driver_status_code")
+                        .unwrap()
+                        .extract::<u16>()
+                        .unwrap(),
+                    u16::from(request.status().status_code())
+                );
+                assert_eq!(
+                    row.get_item("execution_context")
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    request.execution_context().as_str()
+                );
+                let start = row.get_item("start_ns").unwrap().extract::<u64>().unwrap();
+                let end = row.get_item("end_ns").unwrap().extract::<u64>().unwrap();
+                assert_eq!(
+                    u128::from(end - start),
+                    request
+                        .completed_at()
+                        .unwrap()
+                        .duration_since(request.started_at())
+                        .as_nanos()
+                );
+            }
+        });
+    }
+
+    #[test]
+    fn attempt_conversion_error_is_reportable_data_not_a_database_error() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let payload = attempt_payload_or_error(
+                py,
+                Err(pyo3::exceptions::PyValueError::new_err(
+                    "private conversion details",
+                )),
+            );
+            assert_eq!(
+                payload.extract::<String>(py).unwrap(),
+                "attempt payload conversion failed"
+            );
+        });
+    }
+
+    #[test]
+    fn attempt_envelope_preserves_error_response_without_success_diagnostics() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let error = CosmosError::builder()
+                .with_status(CosmosStatus::new(azure_core::http::StatusCode::BadRequest))
+                .with_message("invalid request")
+                .build();
+            let envelope = tuple_from_result_with_attempts(py, Err(error)).unwrap();
+            assert_eq!(envelope.len(), 2);
+            assert!(envelope.get_item(1).unwrap().is_none());
+            assert_eq!(
+                envelope
+                    .get_item(0)
+                    .unwrap()
+                    .get_item(0)
+                    .unwrap()
+                    .extract::<u16>()
+                    .unwrap(),
+                400
+            );
+        });
+    }
 
     #[test]
     fn database_feed_items_use_databases_envelope() {

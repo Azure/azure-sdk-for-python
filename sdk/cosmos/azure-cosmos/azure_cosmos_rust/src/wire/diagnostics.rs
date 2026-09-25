@@ -3,9 +3,82 @@
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use azure_data_cosmos_driver::diagnostics::DiagnosticsContext;
 use pyo3::prelude::*;
+use pyo3::types::{PyDict, PyList};
+
+fn epoch_nanos(
+    instant: Instant,
+    reference_instant: Instant,
+    reference_system: SystemTime,
+) -> Result<u64, &'static str> {
+    let elapsed = reference_instant
+        .checked_duration_since(instant)
+        .ok_or("attempt timestamp is after the clock reference")?;
+    let absolute = reference_system
+        .checked_sub(elapsed)
+        .ok_or("attempt timestamp subtraction overflowed")?;
+    let nanos = absolute
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| "attempt timestamp precedes the Unix epoch")?
+        .as_nanos();
+    u64::try_from(nanos).map_err(|_| "attempt timestamp exceeds u64 nanoseconds")
+}
+
+/// Private success-only POC contract. Never export bodies, keys, or endpoints.
+/// Timing failures are reported as data so telemetry cannot turn a completed
+/// write into a retryable operation failure.
+pub(super) fn attempt_payload<'py>(
+    py: Python<'py>,
+    diagnostics: &DiagnosticsContext,
+) -> PyResult<Bound<'py, PyDict>> {
+    let reference_instant = Instant::now();
+    let reference_system = SystemTime::now();
+    let payload = PyDict::new_bound(py);
+    payload.set_item("schema_version", 1)?;
+    payload.set_item("request_count", diagnostics.request_count())?;
+    payload.set_item(
+        "retained_request_count",
+        diagnostics.retained_request_count(),
+    )?;
+    payload.set_item("error", py.None())?;
+    let attempts = PyList::empty_bound(py);
+    for request in diagnostics.requests().iter() {
+        let times = (|| {
+            let start = epoch_nanos(request.started_at(), reference_instant, reference_system)?;
+            let end = request
+                .completed_at()
+                .map(|instant| epoch_nanos(instant, reference_instant, reference_system))
+                .transpose()?;
+            if end.is_some_and(|end| end < start) {
+                return Err("attempt completion precedes its start");
+            }
+            Ok((start, end))
+        })();
+        let (start, end) = match times {
+            Ok(times) => times,
+            Err(message) => {
+                payload.set_item("error", message)?;
+                payload.set_item("attempts", PyList::empty_bound(py))?;
+                return Ok(payload);
+            }
+        };
+        let row = PyDict::new_bound(py);
+        row.set_item("start_ns", start)?;
+        row.set_item("end_ns", end)?;
+        // This is a driver status, not proof of a received HTTP response.
+        row.set_item(
+            "driver_status_code",
+            u16::from(request.status().status_code()),
+        )?;
+        row.set_item("execution_context", request.execution_context().as_str())?;
+        attempts.append(row)?;
+    }
+    payload.set_item("attempts", attempts)?;
+    Ok(payload)
+}
 
 // ---------------------------------------------------------------------------
 // Binding-invocation counter (a check for the perf drill, not part of serving
@@ -97,7 +170,21 @@ fn append_transport_summary<'a>(
 
 #[cfg(test)]
 mod tests {
-    use super::append_transport_summary;
+    use super::{append_transport_summary, epoch_nanos};
+    use std::time::{Duration, Instant, UNIX_EPOCH};
+
+    #[test]
+    fn attempt_times_use_checked_clock_translation() {
+        let reference = Instant::now();
+        let system = UNIX_EPOCH + Duration::from_secs(10);
+        assert_eq!(
+            epoch_nanos(reference - Duration::from_millis(25), reference, system),
+            Ok(9_975_000_000)
+        );
+        // Windows Instant resolution can round a one-nanosecond increment away.
+        assert!(epoch_nanos(reference + Duration::from_millis(1), reference, system).is_err());
+        assert!(epoch_nanos(reference - Duration::from_secs(11), reference, system).is_err());
+    }
 
     #[test]
     fn transport_summary_preserves_attempt_order_and_pipeline() {

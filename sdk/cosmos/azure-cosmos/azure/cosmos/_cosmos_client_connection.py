@@ -24,7 +24,7 @@
 """Document client class for the Azure Cosmos database service.
 """
 import logging
-from ._client_lifecycle import unwind_connection_construction
+from ._client_lifecycle import initialize_legacy_connection, unwind_connection_construction
 import os
 import threading
 import urllib.parse
@@ -65,6 +65,7 @@ from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._availability_strategy_config import validate_client_hedging_strategy, CrossRegionHedgingStrategy
 from ._backend.cosmos_backend import CosmosBackend
+from ._backend.constants import is_rust_backend
 from ._helpers._item_context import ClientLastResponseHeaders
 from ._backend.operations import (
     OP_LIST_CONTAINERS,
@@ -221,7 +222,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
-        self._backend: CosmosBackend = LEGACY_BACKEND
+        self._backend: CosmosBackend = kwargs.pop("_backend", LEGACY_BACKEND)
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -323,12 +324,25 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
-
-        # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None
-        self._set_client_consistency_level(database_account, consistency_level)
-        self._global_endpoint_manager.force_refresh_on_startup(database_account)
+        self._setup_kwargs = kwargs
+        self._consistency_level = consistency_level
+        self._setup_complete = False
+        self._setup_lock = threading.Lock()
+        if not is_rust_backend(self._backend):
+            self._setup()
+
+    def _setup(self) -> None:
+        """Initialize legacy account state only before legacy execution."""
+        if self._setup_complete:
+            return
+        with self._setup_lock:
+            if self._setup_complete:
+                return
+            database_account = self._global_endpoint_manager._GetDatabaseAccount(**self._setup_kwargs)
+            self._set_client_consistency_level(database_account, self._consistency_level)
+            self._global_endpoint_manager.force_refresh_on_startup(database_account)
+            self._setup_complete = True
 
     @property
     def _container_properties_cache(self) -> dict[str, dict[str, Any]]:
@@ -2202,6 +2216,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             options,
                             **kwargs)
 
+    @initialize_legacy_connection
     def PatchItem(
         self,
         document_link: str,
@@ -2315,6 +2330,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, final_responses)
         return CosmosList(final_responses, response_headers=last_response_headers)
 
+    @initialize_legacy_connection
     def _Batch(
         self,
         batch_operations: list[dict[str, Any]],
@@ -2367,6 +2383,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         self.DeleteResource(path, http_constants.ResourceType.Document, document_id, None, options, **kwargs)
 
+    @initialize_legacy_connection
     def DeleteAllItemsByPartitionKey(
         self,
         collection_link: str,
@@ -2531,6 +2548,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
         self.DeleteResource(path, http_constants.ResourceType.UserDefinedFunction, udf_id, None, options, **kwargs)
 
+    @initialize_legacy_connection
     def ExecuteStoredProcedure(
         self,
         sproc_link: str,
@@ -2822,6 +2840,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        endpoint_override=url_connection)
         self.__Get("", request_params, headers, **kwargs)
 
+    @initialize_legacy_connection
     def Create(
         self,
         body: dict[str, Any],
@@ -2852,7 +2871,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
                                     documents._OperationType.Create, options)
         # Create will use WriteEndpoint since it uses POST operation
@@ -2874,6 +2893,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
 
+    @initialize_legacy_connection
     def Upsert(
         self,
         body: dict[str, Any],
@@ -2904,7 +2924,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
                                     documents._OperationType.Upsert, options)
         headers[http_constants.HttpHeaders.IsUpsert] = True
@@ -2926,6 +2946,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
 
+    @initialize_legacy_connection
     def Replace(
         self,
         resource: dict[str, Any],
@@ -2956,7 +2977,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "put", path, id, resource_type,
                                     documents._OperationType.Replace, options)
         # Replace will use WriteEndpoint since it uses PUT operation
@@ -2978,6 +2999,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
 
+    @initialize_legacy_connection
     def Read(
         self,
         path: str,
@@ -3006,7 +3028,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "get", path, id, resource_type,
                                     documents._OperationType.Read, options)
         # Read will use ReadEndpoint since it uses GET operation
@@ -3027,6 +3049,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
 
+    @initialize_legacy_connection
     def DeleteResource(
         self,
         path: str,
@@ -3053,7 +3076,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, resource_type,
                                     documents._OperationType.Delete, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
@@ -3339,6 +3362,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             def _run_legacy_read_feed() -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
+                self._setup()
+                initial_headers = (
+                    base.resolve_initial_headers(self.default_headers, options)
+                    or self.default_headers.copy()
+                )
                 op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
                 headers = base.GetHeaders(
                     self,
@@ -3475,6 +3503,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             nonlocal req_headers, legacy_request_params
             if legacy_request_params is not None:
                 return legacy_request_params
+            self._setup()
+            initial_headers.update({
+                key: value for key, value in self.default_headers.items()
+                if key not in initial_headers
+            })
             req_headers = base.GetHeaders(
                 self, initial_headers, "post", path, resource_id, resource_type,
                 documents._OperationType.SqlQuery, options, partition_key_range_id,

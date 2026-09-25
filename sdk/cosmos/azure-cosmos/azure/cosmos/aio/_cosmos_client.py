@@ -36,6 +36,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.offer import ThroughputProperties
 
 from .._backend.errors import raise_account_read_unsupported
+from .._backend.constants import is_rust_backend
+from .._backend.client_config import _resolve_hedging
 from .._backend.transport_settings import resolve_client_transport_timeouts
 from .._base import build_options as _build_options
 from .._helpers._request_database import prepare_create_database_options
@@ -299,6 +301,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             chosen, ItemClientDefaults(
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
+                hedging_threshold_ms=_resolve_hedging(availability_strategy),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
                     kwargs.get("enable_compact_utf8_item_writes", False)
@@ -334,7 +337,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     async def __aenter__(self) -> "CosmosClient":
         try:
             await self.client_connection.pipeline_client.__aenter__()
-            await self.client_connection._setup()
+            if not is_rust_backend(self._backend):
+                await self.client_connection._setup()
         except BaseException:
             try:
                 await self.close()

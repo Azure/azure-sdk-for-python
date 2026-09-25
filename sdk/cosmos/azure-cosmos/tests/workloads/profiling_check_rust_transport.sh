@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# RESPONSIBILITY: prove, from one real completed point read, that the read
-# entered the compiled Rust binding AND which transport carried it.
+# RESPONSIBILITY: check one completed Rust-backed point read and report the
+# transport observed in its retained request diagnostics.
 #
-# COSMOS_BACKEND=rust states an intention. A failed extension load leaves a
-# working Python path that still looks Rust-configured, so the label alone is
-# not evidence. This script issues one read of a known seeded item and checks
+# COSMOS_BACKEND=rust states an intention, not runtime evidence.
+# This script requires the Rust path, reads one known seeded item and checks
 # two independent things about it:
 #
 #   1  the binding counters moved   -> the operation really entered Rust
-#   2  the driver's own diagnostic  -> which transport that operation used
+#   2  the driver's own diagnostics -> which transport was recorded for the read
 #
 # WHY BOTH: the counters prove Rust but say nothing about transport; the
 # diagnostic string names the transport but is only meaningful if the read it
@@ -21,28 +20,25 @@
 # x-ms- name, so it will not appear in a network capture. It is produced by the
 # code under test, which is exactly why the counter check above it matters.
 #
-# WHY THE DURATION HERE IS NOT LATENCY: this is a single first read on a fresh
-# client, so it includes connection and TLS setup. It is a path proof, not a
-# measurement. The latency baseline comes from the 250-read/s run.
+# This is a first read on a fresh client, not a latency baseline. The Rust driver
+# handles endpoint discovery internally; this script neither discovers endpoints
+# through the legacy path nor inventories the account's advertised endpoints.
+# Diagnostic compaction can omit request records. Retain that coverage limit.
 #
 # VERDICT: prints exactly one line beginning "TRANSPORT VERDICT:" and exits
-#   0  gateway_v2      -- Rust proved, Gateway V2 proved
-#   1  gateway         -- Rust proved, standard Gateway (a valid but different
-#                         claim; the baseline must be attributed accordingly)
+#   0  gateway_v2      -- Rust binding entry and Gateway V2 diagnostics observed
+#   1  gateway         -- Rust binding entry and Gateway diagnostics observed
 #   2  invalid sample  -- the read did not complete, did not enter Rust,
 #                         produced no transport evidence, or named more than
 #                         one data-plane transport. Prove nothing from it.
 #
-# THIS SCRIPT IS STILL WORTH RUNNING AFTER A TOPOLOGY FAILURE. If the account
-# advertises no ThinClient URLs, Gateway V2 is ruled out -- but which transport
-# DID carry the read is still unproven, and verdict 1 is what proves it.
-#
 # Usage:
-#   ./profiling_prove_transport.sh              # reads test-1 by default
-#   PROFILING_PROOF_ITEM=test-7 ./profiling_prove_transport.sh
+#   bash ./profiling_check_rust_transport.sh              # reads test-1 by default
+#   PROFILING_PROOF_ITEM=test-42 bash ./profiling_check_rust_transport.sh
 # After a baseline, the script automatically reads that run's saved target.
 # Override it explicitly with PROFILING_PROOF_DATABASE,
 # PROFILING_PROOF_CONTAINER, and PROFILING_PROOF_PARTITION_KEY.
+# Existing PROFILING_PROOF_* inputs and the saved evidence format are retained.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -51,13 +47,12 @@ source ./profiling_common.sh
 profiling_load_env || exit 2
 
 if [[ -z "${ARTIFACTS:-}" || ! -d "${ARTIFACTS}" ]]; then
-  echo "ERROR: no profiling session is loaded, so this proof has nowhere to be filed." >&2
+  echo "ERROR: no profiling session is loaded, so this check has nowhere to save evidence." >&2
   echo "       Run:  source ./profiling_activate.sh" >&2
   exit 2
 fi
 
-# The extension that answers this proof must be the one the session recorded,
-# or the proof describes a different build from the one being measured.
+# The loaded extension must match the recorded profiling session build.
 profiling_load_session "${ARTIFACTS}" || exit 2
 
 RECORDED_DATABASE=""
@@ -76,28 +71,28 @@ if [[ -f "${BASELINE_TARGET_FILE}" ]]; then
   RECORDED_PARTITION_KEY="${BASELINE_PARTITION_KEY:-}"
 fi
 
-PROOF_DATABASE="${PROFILING_PROOF_DATABASE:-${RECORDED_DATABASE:-${COSMOS_DATABASE}}}"
-PROOF_CONTAINER="${PROFILING_PROOF_CONTAINER:-${RECORDED_CONTAINER:-${COSMOS_CONTAINER}}}"
-PROOF_PARTITION_KEY="${PROFILING_PROOF_PARTITION_KEY:-${RECORDED_PARTITION_KEY:-${COSMOS_PARTITION_KEY:-id}}}"
-export COSMOS_DATABASE="${PROOF_DATABASE}"
-export COSMOS_CONTAINER="${PROOF_CONTAINER}"
-export COSMOS_PARTITION_KEY="${PROOF_PARTITION_KEY}"
+READ_DATABASE="${PROFILING_PROOF_DATABASE:-${RECORDED_DATABASE:-${COSMOS_DATABASE}}}"
+READ_CONTAINER="${PROFILING_PROOF_CONTAINER:-${RECORDED_CONTAINER:-${COSMOS_CONTAINER}}}"
+READ_PARTITION_KEY="${PROFILING_PROOF_PARTITION_KEY:-${RECORDED_PARTITION_KEY:-${COSMOS_PARTITION_KEY:-id}}}"
+export COSMOS_DATABASE="${READ_DATABASE}"
+export COSMOS_CONTAINER="${READ_CONTAINER}"
+export COSMOS_PARTITION_KEY="${READ_PARTITION_KEY}"
 
-PROOF_ITEM="${PROFILING_PROOF_ITEM:-test-1}"
-OUT="${ARTIFACTS}/rust-diagnostics-sample.txt"
-if [[ -e "${OUT}" ]]; then
-  echo "ERROR: transport proof already exists; start a new session to preserve prior evidence." >&2
+READ_ITEM="${PROFILING_PROOF_ITEM:-test-1}"
+DIAGNOSTICS_FILE="${ARTIFACTS}/rust-diagnostics-sample.txt"
+if [[ -e "${DIAGNOSTICS_FILE}" ]]; then
+  echo "ERROR: transport evidence already exists; start a new profiling session to preserve it." >&2
   exit 2
 fi
 
-echo "=== Path proof: did one real read enter Rust, and over which transport? ==="
+echo "=== Rust transport check: what did one completed read's diagnostics record? ==="
 echo "    container : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
-echo "    item      : ${PROOF_ITEM}"
-echo "    output    : ${OUT}"
+echo "    item      : ${READ_ITEM}"
+echo "    output    : ${DIAGNOSTICS_FILE}"
 echo
 
-COSMOS_BACKEND=rust PROFILING_PROOF_ITEM="${PROOF_ITEM}" \
-python3 - <<'PY' 2>&1 | tee "${OUT}"
+COSMOS_BACKEND=rust PROFILING_PROOF_ITEM="${READ_ITEM}" \
+python3 - <<'PY' 2>&1 | tee "${DIAGNOSTICS_FILE}"
 import asyncio
 import os
 import re
@@ -137,11 +132,12 @@ async def main() -> int:
     ]
 
     async with CosmosClient(
-        os.environ["COSMOS_URI"], os.environ["COSMOS_KEY"], preferred_locations=regions
+        os.environ["COSMOS_URI"], os.environ["COSMOS_KEY"],
+        preferred_locations=regions, _backend="rust",
     ) as client:
         backend = type(client._backend).__name__
         print("runtime backend:", backend)
-        if backend != "AsyncRustBinding":
+        if backend != "AsyncRustBackend":
             # Everything below would describe the core-Python path instead.
             print("TRANSPORT VERDICT: invalid sample -- the client is not Rust-backed")
             return 2
@@ -178,8 +174,8 @@ async def main() -> int:
 
     print("item id:", item.get("id"))
     print("binding operation delta:", ops)
-    print("wire attempt delta:", attempts)
-    print("retry delta:", retries)
+    print("recorded request-count delta:", attempts)
+    print("retained non-initial request-count delta:", retries)
     print("diagnostics:", seen["diagnostics"] or "(diagnostics header missing)")
 
     # 1. Did this read enter Rust? One operation, at least one attempt. Retries
@@ -192,12 +188,12 @@ async def main() -> int:
         print("TRANSPORT VERDICT: invalid sample -- the driver recorded no attempt")
         return 2
     if retries:
-        print(f"note: {retries} retry/failover/hedge attempt(s) on this read")
+        print(f"note: {retries} retained non-initial request record(s) on this read")
 
     # 2. Which transport carried it?
     #
-    #    The diagnostics list every transport the driver touched, metadata
-    #    lookups included, as transports=[metadata/gateway,data_plane/gateway_v2].
+    #    Retained records can include metadata lookups, for example:
+    #    transports=[metadata/gateway,data_plane/gateway_v2].
     #    Only the data-plane entries answer this question. A substring test for
     #    "gateway_v2" anywhere in that text is not safe: a retried read can have
     #    attempted standard Gateway and Gateway V2 in the same sample, and the
@@ -222,10 +218,10 @@ async def main() -> int:
         )
         return 2
     if data_plane[0] == "data_plane/gateway_v2":
-        print("TRANSPORT VERDICT: gateway_v2 -- Rust proved, Gateway V2 proved")
+        print("TRANSPORT VERDICT: gateway_v2 -- Rust binding entered, Gateway V2 observed")
         return 0
     if data_plane[0] == "data_plane/gateway":
-        print("TRANSPORT VERDICT: gateway -- Rust proved, standard Gateway carried the read")
+        print("TRANSPORT VERDICT: gateway -- Rust binding entered, Gateway observed")
         return 1
     print(
         "TRANSPORT VERDICT: invalid sample -- unrecognised data-plane transport "
@@ -242,26 +238,26 @@ except Exception as exc:
     # Anything unhandled still has to leave a verdict behind, or the caller
     # would be left with an exit code and no statement of what was proved.
     print(f"unexpected failure: {type(exc).__name__}: {exc}")
-    print("TRANSPORT VERDICT: invalid sample -- the proof did not run to completion")
+    print("TRANSPORT VERDICT: invalid sample -- the check did not run to completion")
     sys.exit(2)
 PY
-proof_status=("${PIPESTATUS[@]}")
-rc=${proof_status[0]}
-if [[ "${proof_status[1]}" -ne 0 ]]; then exit 2; fi
+pipeline_status=("${PIPESTATUS[@]}")
+rc=${pipeline_status[0]}
+if [[ "${pipeline_status[1]}" -ne 0 ]]; then exit 2; fi
 
 # rc is cross-checked against the printed verdict for the same reason the
 # import is guarded: a process that dies before deciding anything can still
 # exit 0 or 1, and either would be read here as a proved path.
-if ! grep -q '^TRANSPORT VERDICT:' "${OUT}"; then
+if ! grep -q '^TRANSPORT VERDICT:' "${DIAGNOSTICS_FILE}"; then
   echo >&2
   echo "!! No TRANSPORT VERDICT line was produced, so nothing was proved." >&2
-  echo "   Treating this as an invalid sample. See ${OUT} for what happened." >&2
+  echo "   Treating this as an invalid sample. See ${DIAGNOSTICS_FILE} for what happened." >&2
   rc=2
 else
   # A printed verdict is the decision; the exit code is only how it was
   # reported. Anything running after the decision could change the code while
   # the text stands, so disagreement resolves in favour of the text.
-  verdict_word="$(sed -n 's/^TRANSPORT VERDICT: \([a-z_ ]*[a-z_0-9]\).*/\1/p' "${OUT}" | tail -n 1)"
+  verdict_word="$(sed -n 's/^TRANSPORT VERDICT: \([a-z_ ]*[a-z_0-9]\).*/\1/p' "${DIAGNOSTICS_FILE}" | tail -n 1)"
   case "${verdict_word}" in
     gateway_v2)      expected_rc=0 ;;
     gateway)         expected_rc=1 ;;
@@ -280,15 +276,14 @@ fi
 echo
 case ${rc} in
   0)
-    echo "    Recorded in ${OUT}."
-    echo "    A completed read entered the Rust binding and used Gateway V2. The"
-    echo "    transport evidence applies to this read, not every baseline read."
+    echo "    Recorded in ${DIAGNOSTICS_FILE}."
+    echo "    A completed read entered the Rust binding; its retained request"
+    echo "    diagnostics recorded Gateway V2."
     ;;
   1)
-    echo "    Recorded in ${OUT}."
-    echo "    A completed read entered the Rust binding, but standard Gateway"
-    echo "    carried it. This is a valid result with a different claim: report"
-    echo "    the baseline as standard Gateway, not Gateway V2."
+    echo "    Recorded in ${DIAGNOSTICS_FILE}."
+    echo "    A completed read entered the Rust binding; its retained request"
+    echo "    diagnostics recorded Gateway, not Gateway V2."
     ;;
   *)
     echo "!! This sample proves nothing -- see the reason above." >&2
@@ -296,4 +291,8 @@ case ${rc} in
     echo "   and re-run before measuring." >&2
     ;;
 esac
+if [[ "${rc}" == 0 || "${rc}" == 1 ]]; then
+  echo "    This is not an inventory of advertised endpoints or proof of every"
+  echo "    attempt's transport. It does not establish every baseline read's path."
+fi
 exit ${rc}

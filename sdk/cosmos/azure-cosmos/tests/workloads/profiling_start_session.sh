@@ -117,10 +117,10 @@ if build.get("rust_extension_driver_commit") != build.get("rust_driver_commit"):
 
 # The path proof in the next document depends on this counter existing.
 if build.get("rust_extension_has_operation_counter") != "True":
-    problems.append("the loaded _rust extension has no operation_count()")
+    problems.append("the loaded _rust extension has no _debug_operation_count()")
 
 if not problems:
-    print("    build record complete: commits recorded, both checkouts clean")
+    print("    build record complete: source labels recorded and no dirty-source flags")
     sys.exit(0)
 
 for problem in problems:

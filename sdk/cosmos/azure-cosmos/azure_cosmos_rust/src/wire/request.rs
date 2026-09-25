@@ -10,7 +10,7 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyBytesMethods};
 
@@ -23,7 +23,11 @@ use azure_data_cosmos_driver::{
     },
 };
 
-use serde::Deserialize;
+use serde::{
+    de::{DeserializeSeed, MapAccess, Visitor},
+    Deserialize, Deserializer,
+};
+use serde_json::value::RawValue;
 
 #[cfg(test)]
 use super::feed_range::FeedRangePartitionKeySource;
@@ -65,6 +69,28 @@ pub(crate) struct RequestHeadersAndOptions {
     // not set it and the driver keeps its default.
     pub(crate) availability_strategy: Option<AvailabilityStrategy>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
+}
+
+impl RequestHeadersAndOptions {
+    pub(crate) fn read_consistency(
+        &self,
+    ) -> PyResult<Option<azure_data_cosmos_driver::options::ReadConsistencyStrategy>> {
+        let Some(value) = self
+            .custom_headers
+            .get(&HeaderName::from_static("x-ms-consistency-level"))
+        else {
+            return Ok(None);
+        };
+        crate::runtime::read_consistency_from_str(value.as_str())
+            .map(Some)
+            .ok_or_else(|| {
+                PyNotImplementedError::new_err(format!(
+                    "The Rust read_item binding cannot represent per-call consistency {:?}; \
+                     supported levels are Eventual, Session, and Strong.",
+                    value.as_str(),
+                ))
+            })
+    }
 }
 
 /// Read container-scoped fields and request settings from a prepared request.
@@ -246,7 +272,8 @@ pub(super) fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<P
         serde_json::Value::Null => Ok(PartitionKeyValue::NULL),
         serde_json::Value::Bool(b) => Ok(PartitionKeyValue::from(b)),
         serde_json::Value::Number(n) => match n.as_f64() {
-            Some(f) => Ok(PartitionKeyValue::from(f)),
+            Some(f) => PartitionKeyValue::try_from(f)
+                .map_err(|error| PyValueError::new_err(error.to_string())),
             None => Err(PyValueError::new_err(format!(
                 "non-finite number in partition key header: {n}"
             ))),
@@ -263,6 +290,89 @@ pub(super) fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<P
     }
 }
 
+pub(super) fn partition_key_from_components(
+    components: Vec<PartitionKeyValue>,
+) -> PyResult<PartitionKey> {
+    PartitionKey::try_from(components)
+        .map_err(|error| PyValueError::new_err(error.to_string()))
+}
+
+struct PropertyNameMatches<'a>(&'a str);
+
+impl<'de> DeserializeSeed<'de> for PropertyNameMatches<'_> {
+    type Value = bool;
+
+    fn deserialize<D: Deserializer<'de>>(self, deserializer: D) -> Result<bool, D::Error> {
+        // Byte decoding preserves unmatched surrogate-containing property names.
+        deserializer.deserialize_bytes(self)
+    }
+}
+
+impl<'de> Visitor<'de> for PropertyNameMatches<'_> {
+    type Value = bool;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("a JSON property name")
+    }
+
+    fn visit_bytes<E: serde::de::Error>(self, value: &[u8]) -> Result<bool, E> {
+        Ok(value == self.0.as_bytes())
+    }
+}
+
+struct RawProperty<'a> {
+    name: &'a str,
+    reject_duplicates: bool,
+}
+
+impl<'de> DeserializeSeed<'de> for RawProperty<'_> {
+    type Value = Option<&'de RawValue>;
+
+    fn deserialize<D: Deserializer<'de>>(self, deserializer: D) -> Result<Self::Value, D::Error> {
+        deserializer.deserialize_map(self)
+    }
+}
+
+impl<'de> Visitor<'de> for RawProperty<'_> {
+    type Value = Option<&'de RawValue>;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("an item JSON object")
+    }
+
+    fn visit_map<M: MapAccess<'de>>(self, mut map: M) -> Result<Self::Value, M::Error> {
+        let mut selected = None;
+        while let Some(matches) = map.next_key_seed(PropertyNameMatches(self.name))? {
+            let value: &RawValue = map.next_value()?;
+            if matches {
+                if self.reject_duplicates && selected.is_some() {
+                    return Err(serde::de::Error::custom(format!(
+                        "duplicate field `{}`",
+                        self.name,
+                    )));
+                }
+                selected = Some(value);
+            }
+        }
+        Ok(selected)
+    }
+}
+
+fn raw_property<'de>(
+    object: &'de RawValue,
+    name: &str,
+    reject_duplicates: bool,
+) -> serde_json::Result<Option<&'de RawValue>> {
+    let mut deserializer = serde_json::Deserializer::from_str(object.get());
+    let selected = RawProperty {
+        name,
+        reject_duplicates,
+    }
+    .deserialize(&mut deserializer)?;
+    deserializer.end()?;
+    Ok(selected)
+}
+
 /// Mirror Python's extraction rules against the exact bytes sent to the driver.
 pub(super) fn extract_partition_key_from_body(
     definition: &azure_data_cosmos_driver::models::PartitionKeyDefinition,
@@ -271,9 +381,10 @@ pub(super) fn extract_partition_key_from_body(
     use azure_data_cosmos_driver::models::PartitionKeyKind;
     use serde_json::Value;
 
-    let document: Value = serde_json::from_slice(body)
+    // Validate the complete JSON without decoding unrelated string values.
+    let document: &RawValue = serde_json::from_slice(body)
         .map_err(|error| PyValueError::new_err(format!("Invalid item JSON: {error}")))?;
-    if !document.is_object() {
+    if !document.get().starts_with('{') {
         return Err(PyValueError::new_err("An item body must be a JSON object"));
     }
     if definition.paths().is_empty() {
@@ -281,29 +392,41 @@ pub(super) fn extract_partition_key_from_body(
             "Container metadata requires partition-key paths",
         ));
     }
-    let retrieve = |tokens: Vec<&str>| -> Option<Value> {
-        let mut value = &document;
+    let retrieve = |tokens: Vec<&str>| -> PyResult<Option<Value>> {
+        let mut value = document;
         for token in tokens {
-            value = value.as_object()?.get(token)?;
+            if !value.get().starts_with('{') {
+                return Ok(None);
+            }
+            value = match raw_property(value, token, false)
+                .map_err(|error| PyValueError::new_err(format!("Invalid item JSON: {error}")))?
+            {
+                Some(value) => value,
+                None => return Ok(None),
+            };
         }
-        if value.is_object() {
-            None
+        if value.get().starts_with('{') {
+            Ok(None)
         } else {
-            Some(value.clone())
+            serde_json::from_str(value.get())
+                .map(Some)
+                .map_err(|error| {
+                    PyValueError::new_err(format!("Invalid partition-key value: {error}"))
+                })
         }
     };
     let values = match definition.kind() {
         PartitionKeyKind::MultiHash => definition
             .paths()
             .iter()
-            .map(|path| Ok(retrieve(partition_key_path_tokens(path)?).unwrap_or(Value::Null)))
+            .map(|path| Ok(retrieve(partition_key_path_tokens(path)?)?.unwrap_or(Value::Null)))
             .collect::<PyResult<Vec<Value>>>()?,
         PartitionKeyKind::Hash | PartitionKeyKind::Range => {
             let mut tokens = Vec::new();
             for path in definition.paths() {
                 tokens.extend(partition_key_path_tokens(path)?);
             }
-            match retrieve(tokens) {
+            match retrieve(tokens)? {
                 // Python treats a nonempty sequence leaf as multiple components.
                 Some(Value::Array(values)) if !values.is_empty() => values,
                 Some(value) => vec![value],
@@ -323,7 +446,7 @@ pub(super) fn extract_partition_key_from_body(
         .into_iter()
         .map(json_value_to_pk_component)
         .collect::<PyResult<Vec<_>>>()
-        .map(PartitionKey::from)
+        .and_then(partition_key_from_components)
 }
 
 fn partition_key_path_tokens(path: &str) -> PyResult<Vec<&str>> {
@@ -374,25 +497,21 @@ fn partition_key_path_tokens(path: &str) -> PyResult<Vec<&str>> {
     Ok(tokens)
 }
 
-/// A partial view of an item body that deserializes only the `id` field.
-///
-/// Other fields are not retained, but the deserializer still scans the JSON.
-/// The `id` is kept as a `Value` so a
-/// present-but-non-string value still gives the "no string id" error rather
-/// than a deserialization failure.
-#[derive(Deserialize)]
-struct BodyId {
-    id: Option<serde_json::Value>,
-}
-
 /// Read the item `id` out of a JSON body.
 ///
-/// Reject invalid JSON or a missing/non-string id rather than inventing one.
+/// Validate unrelated fields without decoding their strings. Reject invalid
+/// JSON, duplicate IDs or a missing/non-string id rather than inventing one.
 pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
-    let parsed: BodyId = serde_json::from_slice(body)
+    let document: &RawValue = serde_json::from_slice(body)
+        .map_err(|e| PyValueError::new_err(format!("body is not valid JSON: {e}")))?;
+    let parsed: Option<serde_json::Value> = raw_property(document, "id", true)
+        .and_then(|value| {
+            value
+                .map(|value| serde_json::from_str(value.get()))
+                .transpose()
+        })
         .map_err(|e| PyValueError::new_err(format!("body is not valid JSON: {e}")))?;
     parsed
-        .id
         .as_ref()
         .and_then(|v| v.as_str())
         .map(|s| s.to_string())
@@ -511,6 +630,12 @@ mod tests {
             extract_item_id(br#"{"name":"Ada","id":"C-42","tags":["x"]}"#).unwrap(),
             "C-42"
         );
+        for body in [
+            br#"{"id":"C-42","note":"\ud800"}"#.as_slice(),
+            br#"{"\udfff":"ignored","id":"C-42","nested":{"\ud800":"\udfff"}}"#,
+        ] {
+            assert_eq!(extract_item_id(body).unwrap(), "C-42");
+        }
     }
 
     #[test]
@@ -518,6 +643,9 @@ mod tests {
         assert!(extract_item_id(br#"{"name":"Ada"}"#).is_err()); // no id
         assert!(extract_item_id(br#"{"id":42}"#).is_err()); // non-string id
         assert!(extract_item_id(b"not json").is_err()); // invalid JSON
+        assert!(extract_item_id(br#"{"id":"first","id":"last"}"#).is_err());
+        assert!(extract_item_id(br#"{"id":"first","i\u0064":"last"}"#).is_err());
+        assert!(extract_item_id(br#"{"id":"\ud800"}"#).is_err());
     }
 
     #[test]
@@ -607,20 +735,168 @@ mod tests {
     }
 
     #[test]
-    fn body_key_extraction_reports_unsupported_unpaired_surrogates() {
+    fn body_key_extraction_ignores_unrelated_surrogates_without_changing_bytes() {
         pyo3::prepare_freethreaded_python();
-        let definition = serde_json::from_value(serde_json::json!({
-            "paths": ["/pk"], "kind": "Hash", "version": 2,
-        }))
-        .unwrap();
-        // Python can encode these JSON escapes, but serde_json::Value
-        // cannot represent them, even in a property unrelated to the key.
+        for (kind, paths, body, header) in [
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"p","note":"\ud800"}"#,
+                r#"["p"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"note":"\udfff","pk":"p"}"#,
+                r#"["p"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"p","\ud800":"ignored"}"#,
+                r#"["p"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"p","nested":[{"\udfff":"\ud800"}]}"#,
+                r#"["p"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/a/pk"],
+                r#"{"a":{"pk":"p","note":"\ud800"}}"#,
+                r#"["p"]"#,
+            ),
+            ("Hash", vec!["/a/pk"], r#"{"a":"\ud800"}"#, "[{}]"),
+            ("Hash", vec!["/pk"], r#"{"note":"\ud800"}"#, "[{}]"),
+            ("Hash", vec!["/pk"], r#"{"pk":{"note":"\ud800"}}"#, "[{}]"),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"\ud800","pk":"last"}"#,
+                r#"["last"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"\ud800","p\u006b":"last"}"#,
+                r#"["last"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/a/pk"],
+                r#"{"a":{"pk":"\ud800"},"a":{"pk":"last"}}"#,
+                r#"["last"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"\\ud800","note":"\udfff"}"#,
+                r#"["\\ud800"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":"\ud83d\ude00","note":"\udfff"}"#,
+                r#"["\ud83d\ude00"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/\u{fffd}"],
+                r#"{"\ud800":"bad","\ufffd":"good"}"#,
+                r#"["good"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/\u{1f600}"],
+                r#"{"\ud83d\ude00":"good","\udfff":"ignored"}"#,
+                r#"["good"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                r#"{"pk":[true,null,2.5],"note":"\ud800"}"#,
+                "[true,null,2.5]",
+            ),
+            (
+                "Range",
+                vec!["/pk"],
+                r#"{"pk":2.5,"note":"\ud800"}"#,
+                "[2.5]",
+            ),
+            (
+                "MultiHash",
+                vec!["/tenant", "/id"],
+                r#"{"tenant":"t","id":"order","note":"\ud800"}"#,
+                r#"["t","order"]"#,
+            ),
+            (
+                "MultiHash",
+                vec!["/tenant", "/id"],
+                r#"{"tenant":{"note":"\ud800"},"id":"order"}"#,
+                r#"[null,"order"]"#,
+            ),
+            (
+                "Hash",
+                vec!["/pk"],
+                " { \"pk\": \"p\", \"note\": \"\\ud800\" } \n",
+                r#"["p"]"#,
+            ),
+        ] {
+            let definition = serde_json::from_value(serde_json::json!({
+                "paths": paths, "kind": kind, "version": 2,
+            }))
+            .unwrap();
+            let bytes = body.as_bytes().to_vec();
+            let saved = bytes.clone();
+            assert_eq!(
+                super::extract_partition_key_from_body(&definition, &bytes).unwrap(),
+                legacy_partition_key_header(header).unwrap(),
+                "{kind}: {body}",
+            );
+            assert_eq!(bytes, saved);
+        }
+    }
+
+    #[test]
+    fn body_key_extraction_still_rejects_malformed_ignored_fields() {
+        pyo3::prepare_freethreaded_python();
+        let definition = azure_data_cosmos_driver::models::PartitionKeyDefinition::from("/pk");
         for body in [
-            br#"{"pk":"p","value":"\ud800"}"#.as_slice(),
-            br#"{"pk":"p","value":"\udfff"}"#.as_slice(),
+            br#"{"pk":"p","note":"\ud80"}"#.as_slice(),
+            br#"{"pk":"p","note":"\uZZZZ"}"#,
+            br#"{"pk":"p","note":"\x80"}"#,
+            br#"{"pk":"p","note":"unterminated}"#,
+            br#"{"pk":"p","note":["\ud800",]}"#,
+            br#"{"pk":"p","note":"\ud800"} trailing"#,
+            b"{\"pk\":\"p\",\"note\":\"\xff\"}",
         ] {
             let error = super::extract_partition_key_from_body(&definition, body).unwrap_err();
             assert!(error.to_string().contains("Invalid item JSON"), "{error}");
+            let error = extract_item_id(body).unwrap_err();
+            assert!(
+                error.to_string().contains("body is not valid JSON"),
+                "{error}"
+            );
+        }
+    }
+
+    #[test]
+    fn body_key_extraction_rejects_surrogates_in_selected_driver_strings() {
+        pyo3::prepare_freethreaded_python();
+        let definition = azure_data_cosmos_driver::models::PartitionKeyDefinition::from("/pk");
+        for body in [
+            br#"{"pk":"\ud800"}"#.as_slice(),
+            br#"{"pk":"\udfff"}"#,
+            br#"{"pk":"valid","pk":"\ud800"}"#,
+            br#"{"pk":["\ud800"]}"#,
+        ] {
+            let error = super::extract_partition_key_from_body(&definition, body).unwrap_err();
+            assert!(
+                error.to_string().contains("Invalid partition-key value"),
+                "{error}"
+            );
         }
     }
 

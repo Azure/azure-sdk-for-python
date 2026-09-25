@@ -43,6 +43,7 @@ use azure_data_cosmos_driver::{
     options::{
         AvailabilityStrategy, ConnectionPoolOptions, DriverOptions, ExcludedRegions,
         HedgeThreshold, HedgingStrategy, OperationOptions, OperationOptionsBuilder,
+        PartitionFailoverOptions, PartitionFailoverOptionsBuilder, PartitionTopologyCacheMode,
         ReadConsistencyStrategy, Region, ThrottlingRetryOptionsBuilder, UserAgentSuffix,
     },
 };
@@ -484,7 +485,9 @@ pub(crate) fn acquire_driver_handle(
     // DriverOptions combines the account, prepared client configuration, and
     // driver operation defaults. It is not Python's ItemClientDefaults record.
     let driver_options = {
-        let mut builder = DriverOptions::builder(account).with_operation_options(operation_options);
+        let mut builder = DriverOptions::builder(account)
+            .with_operation_options(operation_options)
+            .with_partition_failover_options(partition_failover_options()?);
         if !preferred_regions.is_empty() {
             builder = builder.with_preferred_regions(preferred_regions);
         }
@@ -543,6 +546,14 @@ pub(crate) fn acquire_driver_handle(
     drop(surplus_driver);
 
     Ok(driver_handle)
+}
+
+pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions> {
+    // Preserve container resolution without eagerly fetching the physical map.
+    PartitionFailoverOptionsBuilder::new()
+        .with_partition_topology_cache_mode(PartitionTopologyCacheMode::Lazy)
+        .build()
+        .map_err(|error| PyValueError::new_err(format!("invalid partition failover settings: {error}")))
 }
 
 /// Read CosmosDriverRuntime connection settings from PreparedClientConfig.
@@ -789,7 +800,7 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
 ///
 /// This binding maps `"Eventual"` and `"Session"` directly, and `"Strong"` to
 /// `GlobalStrong`. Any other string returns `None` for the caller to reject.
-fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
+pub(crate) fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     match level {
         "Eventual" => Some(ReadConsistencyStrategy::Eventual),
         "Session" => Some(ReadConsistencyStrategy::Session),

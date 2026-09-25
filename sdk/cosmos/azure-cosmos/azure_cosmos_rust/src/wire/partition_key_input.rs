@@ -17,6 +17,7 @@ use pyo3::{
 
 use super::feed_range::{FeedRangePartitionKeyInput, FeedRangePartitionKeySource};
 use super::query::QueryTarget;
+use super::request::partition_key_from_components;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum BindingPartitionKey {
@@ -53,11 +54,11 @@ impl BindingPartitionKey {
         let (partition_key, source) = match self {
             Self::Components(key) => (key, FeedRangePartitionKeySource::Standard),
             Self::EmptySentinel => (
-                PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+                partition_key_from_components(Vec::new())?,
                 FeedRangePartitionKeySource::EmptySentinel,
             ),
             Self::EmptySequence => (
-                PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+                partition_key_from_components(Vec::new())?,
                 FeedRangePartitionKeySource::ExplicitEmptySequence,
             ),
             _ => {
@@ -117,7 +118,8 @@ pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<Bin
                     "Partition-key numbers must be finite",
                 ));
             }
-            PartitionKeyValue::from(number)
+            PartitionKeyValue::try_from(number)
+                .map_err(|error| PyValueError::new_err(error.to_string()))?
         } else {
             return Err(PyTypeError::new_err(
                 "Unsupported partition-key component type",
@@ -125,9 +127,9 @@ pub(crate) fn extract_partition_key(prepared: &Bound<'_, PyAny>) -> PyResult<Bin
         };
         components.push(component);
     }
-    Ok(BindingPartitionKey::Components(PartitionKey::from(
+    Ok(BindingPartitionKey::Components(partition_key_from_components(
         components,
-    )))
+    )?))
 }
 
 #[cfg(test)]

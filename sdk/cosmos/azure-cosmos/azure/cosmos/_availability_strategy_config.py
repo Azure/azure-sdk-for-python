@@ -60,7 +60,7 @@ def _validate_request_hedging_strategy(
     
     :param config: Configuration for availability strategy. Can be:
         - None: Returns None (no strategy, uses client default if available)
-        - True: Returns strategy with default values (threshold_ms=500, threshold_steps_ms=100)
+        - True: Retained for request preparation to select client settings, or defaults if no client strategy exists
         - False: Returns False (explicitly disabled, overrides client configs)
         - dict: Returns strategy with values from dict, using defaults for missing keys
     :type config: Optional[Union[bool, Dict[str, Any]]]

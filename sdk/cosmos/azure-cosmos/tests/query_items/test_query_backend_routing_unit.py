@@ -1094,6 +1094,7 @@ async def test_all_rust_feed_operations_expose_diagnostics(
 def _new_sync_connection() -> SyncConnection:
     """Create a synchronous connection for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
+    conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
@@ -1118,6 +1119,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Create an asynchronous connection for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
+    conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = ASYNC_LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query

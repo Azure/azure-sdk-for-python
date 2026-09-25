@@ -251,10 +251,9 @@ def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Build the request-options dict the legacy ``ReadItem`` consumes.
 
     Thin wrapper around ``build_options`` -- read has no
-    ``disableAutomaticIdGeneration`` / ``indexingDirective`` knobs, and
-    ``populate_query_metrics`` is dropped (with a deprecation warning)
-    by the sync public method before reaching here. The async sibling
-    does not expose ``populate_query_metrics`` at all.
+    ``disableAutomaticIdGeneration`` / ``indexingDirective`` knobs.
+    Both public clients reject ``populate_query_metrics`` by presence
+    before reaching this helper.
     """
     from .._base import build_options
     return build_options(kwargs)

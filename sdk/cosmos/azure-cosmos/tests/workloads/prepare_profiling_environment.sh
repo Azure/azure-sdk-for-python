@@ -5,7 +5,7 @@
 # It runs the five setup steps in the order their dependencies require, and
 # stops at the first failure, so a later step cannot hide an earlier one:
 #
-#   1  profiling_update_source.sh      fetch both repos, refuse a dirty tree
+#   1  profiling_update_source.sh      update the selected Python checkout
 #   2  profiling_build_extension.sh    build _rust, prove which file is imported
 #   3  profiling_check_target.sh       confirm account, item range, load, tools
 #   4  profiling_seed_probe_data.sh    create the probe items if any are missing
@@ -17,9 +17,9 @@
 # container. Opening the session last means the manifest records the build that
 # was actually just produced, rather than the one that happened to be there.
 #
-# Steps 1 and 2 are skippable for the common case of profiling the same build
-# again, which is the slowest part and often unchanged. They must be skipped
-# TOGETHER: pulling new commits while reusing an old extension would produce a
+# Steps 1 and 2 are skippable when profiling the same build again.
+# Skipping the build requires skipping the source update too: pulling new
+# commits while reusing an old extension would produce a
 # manifest whose recorded commits do not describe the code that actually ran,
 # which is exactly what the manifest's commit fields exist to record.
 #

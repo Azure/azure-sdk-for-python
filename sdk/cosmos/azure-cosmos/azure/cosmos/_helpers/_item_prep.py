@@ -28,11 +28,17 @@ def prepare_item_deadline(
     return started + float(timeout)
 
 
-def prepare_create_item_kwargs(kwargs: dict[str, Any]) -> Optional[float]:
+def prepare_create_item_kwargs(
+    kwargs: dict[str, Any], *, response_hook: Any = None
+) -> Optional[float]:
     """Reject retired arguments by presence and establish the create budget."""
     for name in ("populate_query_metrics", "etag", "match_condition"):
         if name in kwargs:
             raise TypeError(f"create_item() does not accept '{name}'.")
+    if response_hook is not None and not callable(response_hook):
+        raise TypeError("create_item response_hook must be callable.")
+    if "request_options" not in kwargs:
+        kwargs["request_options"] = kwargs.get("feed_options")
     return prepare_item_deadline(kwargs, "create_item", time.monotonic())
 
 
@@ -55,11 +61,15 @@ def prepare_item_target(kwargs: dict[str, Any], item: Any) -> None:
 
 
 def prepare_read_item_kwargs(
-    kwargs: dict[str, Any], partition_key: Any
+    kwargs: dict[str, Any], partition_key: Any, *, response_hook: Any = None
 ) -> Optional[float]:
     """Validate before metadata I/O and isolate the caller's option mapping."""
     if "populate_query_metrics" in kwargs:
         raise TypeError("read_item() does not accept 'populate_query_metrics'.")
+    if response_hook is not None and not callable(response_hook):
+        raise TypeError("read_item response_hook must be callable.")
+    if "request_options" not in kwargs:
+        kwargs["request_options"] = kwargs.get("feed_options")
     options = dict(kwargs.get("request_options") or {})
     if_match, if_none_match = get_match_headers(kwargs)
     # Wildcard conditions ignore an accompanying ETag; never leak it to transport.

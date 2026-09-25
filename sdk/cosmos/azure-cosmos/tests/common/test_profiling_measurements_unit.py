@@ -125,6 +125,20 @@ def test_ru_average_uses_header_sample_counts_not_success_counts(modules):
     assert cells[("read", "rust")]["ru_count"] == 3
 
 
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+def test_latency_labels_explain_counter_and_charge_coverage(modules, backend):
+    row = measurement(modules, workload_id=f"baseline-read-{backend}-{STAMP}",
+                      config_backend=backend, ru_sum=2, ru_count=1)
+    report = modules["latency_report"]
+    cells, _ = report._aggregate(Rows([row]), "baseline-", STAMP)
+    text = report._fmt_cell("read", backend, cells[("read", backend)])
+    assert "RU/sample=" in text and "ru_samples=1" in text
+    assert "terminal_429=" in text and "recorded_non_initial=" in text
+    assert "RU/op=" not in text and "retries=" not in text
+    if backend == "core-python":
+        assert "recorded_non_initial= n/a" in text
+
+
 def test_mixed_throughput_counts_shared_window_once(modules):
     read = measurement(modules, workload_id=f"mixed-blend-rust-{STAMP}")
     create = {**read, "operation": "CreateItem"}
@@ -407,26 +421,288 @@ def bash_executable():
     return bash
 
 
-@pytest.mark.parametrize("script,verdict", [
-    ("profiling_prove_transport.sh", "TRANSPORT VERDICT: gateway_v2 -- stubbed evidence"),
-    ("profiling_prove_topology.sh", "TOPOLOGY VERDICT: advertised -- stubbed evidence"),
+def embedded_python(script, index=0):
+    heredoc = (WORKLOADS / script).read_text(encoding="utf-8").split("<<'PY'")[index + 1]
+    return heredoc.split("\n", 1)[1].split("\nPY", 1)[0]
+
+
+def test_build_check_accepts_current_counter_exports(monkeypatch):
+    import types
+    import azure.cosmos as sdk
+
+    extension = types.SimpleNamespace(
+        __file__="synthetic-extension",
+        _debug_operation_count=lambda: 0,
+        _debug_attempt_count=lambda: 0,
+        _debug_retry_count=lambda: 0,
+    )
+    monkeypatch.setattr(sdk, "_rust", extension, raising=False)
+    exec(compile(embedded_python("profiling_build_extension.sh"), "build-check", "exec"), {})
+
+
+@pytest.mark.parametrize("paths", [["/partition_key"], ["/id"], [], ["/partition_key", "/id"], None])
+def test_target_checks_results_container_schema(monkeypatch, paths):
+    import azure.cosmos as sdk
+    from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+    closed = []
+
+    class Client:
+        def __init__(self, uri, key, **kwargs):
+            assert (uri, key, kwargs) == (
+                "https://results.invalid", "synthetic-key", {"_backend": "core-python"})
+
+        def get_database_client(self, database):
+            assert database == "results-db"
+            return self
+
+        def get_container_client(self, container):
+            assert container == "results"
+            return self
+
+        def read(self):
+            if paths is None:
+                raise CosmosResourceNotFoundError(status_code=404, message="missing results container")
+            return {"partitionKey": {"paths": paths}}
+
+        def close(self):
+            closed.append(True)
+
+    monkeypatch.setattr(sdk, "CosmosClient", Client)
+    for name, value in {"URI": "https://results.invalid", "KEY": "synthetic-key",
+                        "DATABASE": "results-db", "CONTAINER": "results"}.items():
+        monkeypatch.setenv("RESULTS_COSMOS_" + name, value)
+    code = compile(embedded_python("profiling_check_target.sh", 1), "results-check", "exec")
+    if paths == ["/partition_key"]:
+        exec(code, {})
+    elif paths is None:
+        with pytest.raises(CosmosResourceNotFoundError):
+            exec(code, {})
+    else:
+        with pytest.raises(SystemExit, match="partition-key mismatch"):
+            exec(code, {})
+    assert closed == [True]
+
+
+@pytest.mark.parametrize("override", [False, True])
+def test_baseline_keeps_validated_target_and_range(tmp_path, override):
+    script = "run_light_load_baseline.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\n"
+        "profiling_load_session() { :; }\n"
+        "perf_require_positive() { :; }\n"
+        "perf_single_operation_shape() { :; }\n"
+        "perf_create_log_dir() { mkdir \"$1\"; }\n"
+        "write_run_manifest() { :; }\n"
+        "perf_check_run() { :; }\n"
+        "python3() { :; }\n"
+        "timeout() { printf '%s\\n' \"$COSMOS_DATABASE/$COSMOS_CONTAINER/"
+        "$COSMOS_MAX_ITEM_INDEX/$WORKLOAD_ARRIVAL_RATE\" >> launched.txt; }\n",
+        encoding="utf-8",
+    )
+    env = {**os.environ, "RUN_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
+           "COSMOS_DATABASE": "verified-db", "COSMOS_CONTAINER": "verified-container",
+           "COSMOS_MAX_ITEM_INDEX": "42", "WORKLOAD_ARRIVAL_RATE": "100",
+           "BASELINE_BACKENDS": "rust"}
+    for name in ("BASELINE_DATABASE", "BASELINE_CONTAINER", "BASELINE_READ_RPS"):
+        env.pop(name, None)
+    if override:
+        env["BASELINE_DATABASE"] = "not-verified"
+    result = subprocess.run([bash_executable(), script, "1"], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    if override:
+        assert result.returncode != 0
+        assert not (tmp_path / "launched.txt").exists()
+    else:
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert (tmp_path / "launched.txt").read_text().strip() == "verified-db/verified-container/42/100"
+
+
+@pytest.mark.parametrize("force_seed", [False, True])
+@pytest.mark.parametrize("readback_rc", [0, 1, 3, 4])
+def test_seed_requires_full_readback(tmp_path, force_seed, readback_rc):
+    script = "profiling_seed_probe_data.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\n"
+        "checks=0\n"
+        "python3() {\n"
+        "  if [[ \"$1\" == initial-setup.py ]]; then echo seeded >> calls.txt; return 0; fi\n"
+        "  checks=$((checks+1)); echo checked >> calls.txt; cat >/dev/null\n"
+        "  if [[ \"$checks\" == 1 && \"$PROFILING_FORCE_SEED\" != 1 ]]; then return 4; fi\n"
+        "  return \"$READBACK_RC\"\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    env = {**os.environ, "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+           "COSMOS_MAX_ITEM_INDEX": "2", "READBACK_RC": str(readback_rc),
+           "PROFILING_FORCE_SEED": "1" if force_seed else "0"}
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == (readback_rc == 0), result.stdout + result.stderr
+    assert (tmp_path / "calls.txt").read_text().splitlines() == (
+        ["seeded", "checked"] if force_seed else ["checked", "seeded", "checked"])
+
+
+@pytest.mark.parametrize("check_rc", [0, 1, 3])
+def test_seed_does_not_write_when_probe_passes_or_crashes(tmp_path, check_rc):
+    script = "profiling_seed_probe_data.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\n"
+        "python3() {\n"
+        "  if [[ \"$1\" == initial-setup.py ]]; then echo seeded >> calls.txt; return 0; fi\n"
+        "  echo checked >> calls.txt; cat >/dev/null; return \"$CHECK_RC\"\n"
+        "}\n",
+        encoding="utf-8",
+    )
+    env = {**os.environ, "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+           "COSMOS_MAX_ITEM_INDEX": "2", "CHECK_RC": str(check_rc), "PROFILING_FORCE_SEED": "0"}
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == (check_rc == 0), result.stdout + result.stderr
+    assert (tmp_path / "calls.txt").read_text().splitlines() == ["checked"]
+
+
+@pytest.mark.parametrize("outcome,expected_rc", [("present", 0), ("missing", 4), ("permission", 3)])
+def test_data_probe_distinguishes_missing_items_from_failure(monkeypatch, outcome, expected_rc):
+    import azure.cosmos as sdk
+    from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
+
+    calls = []
+    closed = []
+
+    class Client:
+        def __init__(self, uri, key, **kwargs):
+            assert kwargs == {"_backend": "core-python"}
+
+        def get_database_client(self, database):
+            return self
+
+        def get_container_client(self, container):
+            return self
+
+        def read_item(self, item_id, partition_key):
+            assert partition_key == item_id
+            calls.append(item_id)
+            if item_id == "test-1":
+                if outcome == "missing":
+                    raise CosmosResourceNotFoundError(status_code=404, message="missing item")
+                if outcome == "permission":
+                    raise CosmosHttpResponseError(status_code=403, message="forbidden")
+
+        def close(self):
+            closed.append(True)
+
+    monkeypatch.setattr(sdk, "CosmosClient", Client)
+    for name, value in {"URI": "https://test.invalid", "KEY": "synthetic-key",
+                        "DATABASE": "db", "CONTAINER": "items", "PARTITION_KEY": "id",
+                        "MAX_ITEM_INDEX": "2"}.items():
+        monkeypatch.setenv("COSMOS_" + name, value)
+    with pytest.raises(SystemExit) as exc:
+        exec(compile(embedded_python("profiling_seed_probe_data.sh"), "data-probe", "exec"), {})
+    assert exc.value.code == expected_rc
+    assert calls == (["test-0", "test-1"] if outcome == "permission" else
+                     ["test-0", "test-1", "test-2"])
+    assert closed == [True]
+
+
+@pytest.mark.parametrize("verdict,python_rc,tee_rc,expected", [
+    ("TRANSPORT VERDICT: gateway_v2 -- stubbed evidence", 0, 0, 0),
+    ("TRANSPORT VERDICT: gateway -- stubbed evidence", 1, 0, 1),
+    ("TRANSPORT VERDICT: invalid sample -- stubbed failure", 2, 0, 2),
+    ("TRANSPORT VERDICT: gateway_v2 -- stubbed evidence", 1, 0, 2),
+    ("TRANSPORT VERDICT: gateway_v2 -- stubbed evidence", 0, 3, 2),
+    ("interpreter crashed before a verdict", 1, 0, 2),
 ])
-@pytest.mark.parametrize("python_rc,tee_rc,expected", [(0, 0, 0), (1, 0, 2), (0, 3, 2)])
-def test_proof_scripts_fail_on_crash_or_log_loss(tmp_path, script, verdict, python_rc, tee_rc, expected):
+def test_rust_transport_check_validates_exit_and_evidence(tmp_path, verdict, python_rc, tee_rc, expected):
+    script = "profiling_check_rust_transport.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { return 0; }\n"
         "profiling_load_session() { return 0; }\n"
-        "python3() { printf '%s\\n' \"$PROOF_TEXT\"; return \"$PYTHON_RC\"; }\n"
+        "python3() { [[ \"$COSMOS_BACKEND\" == rust ]] || return 2; "
+        "printf '%s\\n' \"$TRANSPORT_TEXT\"; return \"$PYTHON_RC\"; }\n"
         "tee() { cat > \"$1\"; return \"$TEE_RC\"; }\n",
         encoding="utf-8",
     )
     env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "RUN_ID": STAMP,
            "COSMOS_URI": "https://example.invalid", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "container",
-           "COSMOS_PARTITION_KEY": "id", "PROOF_TEXT": verdict, "PYTHON_RC": str(python_rc), "TEE_RC": str(tee_rc)}
+           "COSMOS_PARTITION_KEY": "id", "TRANSPORT_TEXT": verdict,
+           "PYTHON_RC": str(python_rc), "TEE_RC": str(tee_rc)}
     result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
                             capture_output=True, text=True, timeout=15)
     assert result.returncode == expected, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("scenario,expected_rc", [
+    ("gateway_v2", 0), ("gateway", 1), ("mixed", 2), ("missing", 2),
+    ("legacy", 2), ("read_failure", 2), ("no_binding_entry", 2), ("no_requests", 2),
+])
+def test_rust_transport_check_requires_rust_read_evidence(monkeypatch, capsys, scenario, expected_rc):
+    from types import SimpleNamespace
+    import azure.cosmos as sdk
+    import azure.cosmos.aio as async_sdk
+    from azure.cosmos.aio._backend.rust_backend import AsyncRustBackend
+
+    calls = []
+    counters = [0, 0, 0]
+    diagnostics = {
+        "gateway": "transports=[metadata/gateway,data_plane/gateway]",
+        "mixed": "transports=[data_plane/gateway,data_plane/gateway_v2]",
+        "missing": "transports=[metadata/gateway]",
+    }.get(scenario, "transports=[metadata/gateway,data_plane/gateway_v2]")
+    runtime_class = "AsyncLegacyBackend" if scenario == "legacy" else AsyncRustBackend.__name__
+
+    class Client:
+        def __init__(self, uri, key, **kwargs):
+            assert (uri, key) == ("https://test.invalid", "synthetic-key")
+            assert kwargs == {"preferred_locations": ["West US 2"], "_backend": "rust"}
+            self._backend = type(runtime_class, (), {})()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            calls.append("closed")
+
+        def get_database_client(self, name):
+            assert name == "db"
+            return self
+
+        def get_container_client(self, name):
+            assert name == "items"
+            return self
+
+        async def read_item(self, *, item, partition_key, response_hook):
+            assert (item, partition_key) == ("test-42", "test-42")
+            calls.append("read")
+            if scenario == "read_failure":
+                raise RuntimeError("synthetic read failure")
+            counters[0] += 0 if scenario == "no_binding_entry" else 1
+            counters[1] += 0 if scenario == "no_requests" else 1
+            body = {"id": item}
+            response_hook({"x-ms-cosmos-sdk-diagnostics": diagnostics}, body)
+            return body
+
+    monkeypatch.setattr(async_sdk, "CosmosClient", Client)
+    monkeypatch.setattr(sdk, "_rust", SimpleNamespace(
+        _debug_operation_count=lambda: counters[0],
+        _debug_attempt_count=lambda: counters[1],
+        _debug_retry_count=lambda: counters[2],
+    ), raising=False)
+    for name, value in {"COSMOS_URI": "https://test.invalid", "COSMOS_KEY": "synthetic-key",
+                        "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+                        "COSMOS_PARTITION_KEY": "id", "COSMOS_PREFERRED_LOCATIONS": "West US 2",
+                        "PROFILING_PROOF_ITEM": "test-42"}.items():
+        monkeypatch.setenv(name, value)
+    with pytest.raises(SystemExit) as exc:
+        exec(compile(embedded_python("profiling_check_rust_transport.sh"), "rust-transport-check", "exec"), {})
+    assert exc.value.code == expected_rc
+    assert calls == (["closed"] if scenario == "legacy" else ["read", "closed"])
+    expected_verdict = scenario if scenario in {"gateway", "gateway_v2"} else "invalid sample"
+    assert f"TRANSPORT VERDICT: {expected_verdict} --" in capsys.readouterr().out
 
 
 def test_throughput_launcher_keeps_earlier_child_failure(tmp_path):

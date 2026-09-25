@@ -1718,6 +1718,7 @@ class _CapturingAsyncPagedBackend(AsyncCosmosBackend):
 def _new_sync_connection() -> SyncConnection:
     """Build a minimal ``SyncConnection`` with no live transport, for routing tests."""
     conn = SyncConnection.__new__(SyncConnection)
+    conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = LEGACY_BACKEND
     conn._query_compatibility_mode = SyncConnection._QueryCompatibilityMode.Query
@@ -1742,6 +1743,7 @@ def _new_sync_connection() -> SyncConnection:
 def _new_async_connection() -> AsyncConnection:
     """Build a minimal ``AsyncConnection`` with no live transport, for routing tests."""
     conn = AsyncConnection.__new__(AsyncConnection)
+    conn._setup_complete = True
     conn._response_state = ClientLastResponseHeaders()
     conn._backend = ASYNC_LEGACY_BACKEND
     conn._query_compatibility_mode = AsyncConnection._QueryCompatibilityMode.Query

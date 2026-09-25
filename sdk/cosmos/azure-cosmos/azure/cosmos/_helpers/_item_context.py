@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from azure.core.utils import CaseInsensitiveDict
 
+from .._availability_strategy_config import CrossRegionHedgingStrategy
+
 if TYPE_CHECKING:
     from .._backend.cosmos_backend import CosmosBackend
     from ..aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -26,9 +28,14 @@ class ItemClientDefaults:
     enable_compact_utf8_item_writes: bool = False
     priority: Optional[str] = None
     throughput_bucket: Optional[int] = None
+    hedging_threshold_ms: Optional[int] = None
 
     def apply_to_options(self, options: dict[str, Any]) -> None:
         """Fill request defaults without overriding per-call options or headers."""
+        if options.get("availabilityStrategy") is True and self.hedging_threshold_ms is not None:
+            options["availabilityStrategy"] = CrossRegionHedgingStrategy(
+                {"threshold_ms": self.hedging_threshold_ms}
+            )
         initial = options.get("initialHeaders") or {}
         headers = {name.lower() for name in initial}
         for key, header, value in (

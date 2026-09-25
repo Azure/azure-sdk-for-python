@@ -160,7 +160,21 @@ def test_baseline_read_by_id(container_for):
     was just written. Response-header-surface differences are tolerated
     here per the shared ``assert_functional_parity`` policy.
     """
-    _run_read(container_for, summary="baseline read by id").assert_functional_parity()
+    def read_expected_item(client):
+        cont = client.get_database_client("parity_db").get_container_client(container_for.id)
+        expected = {"id": uuid.uuid4().hex, "pk": "customerA", "value": 1}
+        cont.create_item(dict(expected))
+        actual = cont.read_item(expected["id"], partition_key=expected["pk"])
+        for field, value in expected.items():
+            assert actual[field] == value, f"read_item returned an unexpected {field}"
+        return actual
+
+    comparison = run_on_both_backends(
+        read_expected_item, description="baseline read by id"
+    )
+    for outcome in (comparison.core_python, comparison.rust):
+        assert outcome.succeeded, f"{outcome.backend} baseline read failed: {outcome.raised!r}"
+    comparison.assert_functional_parity()
 
 
 # ---------------------------------------------------------------------------

@@ -34,6 +34,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import CaseInsensitiveDict
 
 from ._backend.cosmos_backend import CosmosBackend
+from ._backend.client_config import _resolve_hedging
 from ._helpers._item_context import ItemClientContext, ItemClientDefaults
 from ._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.errors import raise_account_read_unsupported
@@ -307,6 +308,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             chosen, ItemClientDefaults(
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
+                hedging_threshold_ms=_resolve_hedging(kwargs.get("availability_strategy")),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
                     kwargs.get("enable_compact_utf8_item_writes", False)
@@ -322,6 +324,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
+            _backend=chosen,
             _response_state=self._item_context.response_state,
             url_connection=url,
             auth=auth,

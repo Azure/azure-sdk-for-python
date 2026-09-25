@@ -144,6 +144,7 @@ def point_read(request, monkeypatch):
 
     def legacy_read(**kwargs):
         context.options = kwargs["options"]
+        context.document_link = kwargs["document_link"]
         assert "response_hook" not in kwargs
         assert not {"etag", "match_condition", "_item_operation_deadline"}.intersection(kwargs)
         advance("read", kwargs.get("timeout"))
@@ -301,6 +302,80 @@ def test_hook_exception_is_not_replayed(point_read):
     assert raised.value is error
     hook.assert_called_once()
     assert [phase for phase, _ in point_read.events] == ["metadata", "read"]
+
+
+@pytest.mark.parametrize("hook", [False, 0, 1, "not-callable", {}])
+def test_invalid_hook_fails_before_metadata(point_read, hook):
+    with pytest.raises(TypeError, match="response_hook"):
+        point_read.call("item", "pk", response_hook=hook)
+    assert point_read.events == []
+
+
+def test_feed_options_reaches_read_without_mutating_customer_settings(point_read):
+    supplied = {
+        "timeout": 2,
+        "partitionKey": "ignored",
+        "sessionToken": "0:-1#42",
+        "maxIntegratedCacheStaleness": 500,
+        "initialHeaders": {"x-customer": "kept"},
+    }
+    expected = {**supplied, "initialHeaders": dict(supplied["initialHeaders"])}
+    point_read.call("item", "pk", feed_options=supplied)
+    assert supplied == expected
+    assert point_read.events == [("metadata", 2), ("read", 2)]
+    if point_read.rust:
+        headers = CaseInsensitiveDict(wire_headers(point_read.prepared))
+        assert headers["x-ms-session-token"] == "0:-1#42"
+        assert headers["x-ms-dedicatedgateway-max-age"] == "500"
+        assert headers["x-customer"] == "kept"
+        assert legacy_partition_key_from_request(point_read.prepared) == '["pk"]'
+    else:
+        assert point_read.options["sessionToken"] == "0:-1#42"
+        assert point_read.options["maxIntegratedCacheStaleness"] == 500
+        assert point_read.options["partitionKey"] == "pk"
+
+
+@pytest.mark.parametrize("request_options", [None, {}, {"timeout": 3}])
+def test_request_options_presence_wins_over_feed_options(point_read, request_options):
+    point_read.call(
+        "item", "pk", request_options=request_options, feed_options={"timeout": 2},
+    )
+    timeout = request_options.get("timeout") if request_options else None
+    assert point_read.events == [("metadata", timeout), ("read", timeout)]
+
+
+@pytest.mark.parametrize("timeout", [None, 4])
+def test_explicit_timeout_overrides_feed_options(point_read, timeout):
+    point_read.call("item", "pk", feed_options={"timeout": 2}, timeout=timeout)
+    assert point_read.events == [("metadata", timeout), ("read", timeout)]
+
+
+def test_invalid_feed_timeout_fails_before_metadata(point_read):
+    with pytest.raises(ValueError, match="timeout"):
+        point_read.call("item", "pk", feed_options={"timeout": 0.5})
+    assert point_read.events == []
+
+
+def test_dictionary_target_keeps_original_resource_address(point_read):
+    item = {
+        "id": "item",
+        "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+    }
+    point_read.call(item, "pk")
+    if point_read.rust:
+        assert point_read.prepared.item_id == "item"
+        assert point_read.prepared.item_self_link == item["_self"]
+    else:
+        assert point_read.document_link == item["_self"]
+
+
+@pytest.mark.parametrize("self_link", [None, 42])
+def test_invalid_rust_dictionary_address_does_not_fall_back_to_name(point_read, self_link):
+    if not point_read.rust:
+        pytest.skip("Legacy validates the address in its transport preparation.")
+    with pytest.raises(TypeError, match="_self"):
+        point_read.call({"id": "item", "_self": self_link}, "pk")
+    assert point_read.events == []
 
 
 def test_service_412_is_preserved_and_does_not_invoke_success_hook(point_read):
@@ -495,3 +570,39 @@ def test_partition_key_sentinels_preserve_native_unknown_system_key_fallback(poi
         expected = "[{}]" if key == NonePartitionKeyValue else "[null]"
         assert legacy_partition_key_from_request(point_read.prepared) == expected
         assert point_read.native_calls == 1
+
+
+@pytest.mark.parametrize("source", ["request_options", "feed_options", "initial_headers"])
+def test_read_consistency_reaches_binding_settings(point_read, source):
+    kwargs = {
+        source: {
+            "x-ms-consistency-level" if source == "initial_headers" else "consistencyLevel": "Eventual",
+        },
+    }
+    point_read.call("item", "pk", **kwargs)
+    if point_read.rust:
+        assert wire_headers(point_read.prepared)["x-ms-consistency-level"] == "Eventual"
+    else:
+        options = point_read.options
+        if source == "initial_headers":
+            assert options["initialHeaders"]["x-ms-consistency-level"] == "Eventual"
+        else:
+            assert options["consistencyLevel"] == "Eventual"
+
+
+@pytest.mark.parametrize("method", ["read_item", "read_item_async"])
+@pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix", "Unknown"])
+@pytest.mark.parametrize("raw_header", [False, True])
+def test_native_unsupported_read_consistency_fails_before_driver_lookup(method, level, raw_header):
+    from azure.cosmos._backend.contracts import PreparedRequest
+    from azure.cosmos._backend.request_settings import RequestSettings
+
+    binding = pytest.importorskip("azure.cosmos._rust")
+    prepared = PreparedRequest(
+        "read_item", "dbs/db/colls/c", b"",
+        key_from_legacy_header('["pk"]'), item_id="item",
+        headers={"x-ms-consistency-level": level} if raw_header else {},
+        settings=RequestSettings(consistency_level=None if raw_header else level),
+    )
+    with pytest.raises(NotImplementedError, match="per-call consistency"):
+        getattr(binding, method)(driver_handle="invalid-driver-handle", prepared=prepared)

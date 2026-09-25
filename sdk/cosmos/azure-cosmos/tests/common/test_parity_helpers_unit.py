@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import ast
+import asyncio
 import pathlib
 import re
 
@@ -158,6 +159,59 @@ class _Client:
 class _RustBackend:
     """Identify a fake request implementation as Rust."""
     name = "rust"
+
+
+@pytest.mark.parametrize("surface", ["sync", "aio"])
+@pytest.mark.parametrize("failing_backend", ["core-python", "rust", "both"])
+@pytest.mark.parametrize("error_type", [AssertionError, ValueError])
+def test_runner_distinguishes_assertions_from_operation_errors(
+    surface, failing_backend, error_type, monkeypatch
+):
+    """A test assertion is not an SDK error that can satisfy parity."""
+    failure = error_type("returned the wrong order")
+
+    def call(client):
+        if failing_backend == "both" or client.client_connection._backend.name == failing_backend:
+            raise failure
+        return {"value": 1}
+
+    class AsyncClient(_Client):
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *_args):
+            return False
+
+    def factory(requested):
+        return AsyncClient(LEGACY_BACKEND if requested == "core-python" else _RustBackend())
+
+    async def async_call(client):
+        return call(client)
+
+    monkeypatch.setenv(_parity_helpers.ENV_ENDPOINT, "https://unused.invalid")
+    monkeypatch.setenv(_parity_helpers.ENV_KEY, "unused-test-key")
+    monkeypatch.setattr(
+        _parity_helpers, "AioCosmosClient",
+        lambda _endpoint, _key, *, _backend: factory(_backend),
+    )
+    def run():
+        if surface == "sync":
+            return _parity_helpers.run_on_both_backends(call, client_factory=factory)
+        return asyncio.run(_parity_helpers.run_on_both_backends_async(async_call))
+
+    if error_type is AssertionError:
+        with pytest.raises(AssertionError, match="returned the wrong order") as caught:
+            run()
+        assert caught.value is failure
+    else:
+        comparison = run()
+        for outcome in (comparison.core_python, comparison.rust):
+            if failing_backend in ("both", outcome.backend):
+                assert outcome.raised is failure
+            else:
+                assert outcome.succeeded
+                assert outcome.return_value == {"value": 1}
+        assert comparison.is_parity == (failing_backend == "both")
 
 
 def test_runner_rejects_factory_that_returns_core_python_for_rust():

@@ -13,7 +13,7 @@ use azure_core::http::headers::HeaderName;
 use azure_data_cosmos_driver::models::{ItemReference, Precondition};
 use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 
-fn replacement_target(prepared: &Bound<'_, PyAny>, item_id: String) -> PyResult<ItemTarget> {
+fn item_target(prepared: &Bound<'_, PyAny>, item_id: String) -> PyResult<ItemTarget> {
     match prepared
         .getattr("item_self_link")?
         .extract::<Option<String>>()?
@@ -152,7 +152,7 @@ pub(crate) fn replace_item<'py>(
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = replacement_target(prepared, item_id)?;
+    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_sync(
         py,
@@ -199,7 +199,7 @@ pub(crate) fn delete_item<'py>(
     )
 }
 
-/// Read the item named by PreparedRequest.item_id with an explicit partition key.
+/// Read the prepared name or resource address with an explicit partition key.
 /// Send no body; return the Rust driver's response through the binding tuple.
 ///
 /// On success returns HTTP 200 with the item JSON. Conditional reads
@@ -224,7 +224,9 @@ pub(crate) fn read_item<'py>(
         READ_ITEM_ID_REQUIRED,
         READ_ITEM_PARTITION_KEY_REQUIRED,
     )?;
+    modifiers.read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_sync(
         py,
@@ -232,7 +234,7 @@ pub(crate) fn read_item<'py>(
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         Vec::new(),
         "read_item",
         false,
@@ -286,12 +288,13 @@ pub(crate) fn patch_item<'py>(
 /// Async twin of `create_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -308,6 +311,7 @@ pub(crate) fn create_item_async<'py>(
         body_bytes,
         "create_item",
         true,
+        include_attempts,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
@@ -334,6 +338,7 @@ pub(crate) fn upsert_item_async<'py>(
         body_bytes,
         "upsert_item",
         true,
+        false,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -352,7 +357,7 @@ pub(crate) fn replace_item_async<'py>(
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
-    let target = replacement_target(prepared, item_id)?;
+    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_async(
         py,
@@ -364,6 +369,7 @@ pub(crate) fn replace_item_async<'py>(
         body_bytes,
         "replace_item",
         true,
+        false,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
 }
@@ -393,6 +399,7 @@ pub(crate) fn delete_item_async<'py>(
         Vec::new(),
         "delete_item",
         false,
+        false,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
@@ -413,7 +420,9 @@ pub(crate) fn read_item_async<'py>(
         READ_ITEM_ID_REQUIRED,
         READ_ITEM_PARTITION_KEY_REQUIRED,
     )?;
+    modifiers.read_consistency()?;
     modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    let target = item_target(prepared, item_id)?;
 
     execute_item_operation_async(
         py,
@@ -421,9 +430,10 @@ pub(crate) fn read_item_async<'py>(
         &container_link,
         partition_key,
         modifiers,
-        item_id.into(),
+        target,
         Vec::new(),
         "read_item",
+        false,
         false,
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
@@ -461,6 +471,7 @@ pub(crate) fn patch_item_async<'py>(
         body_bytes,
         "patch_item",
         true,
+        false,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
 }
@@ -502,6 +513,64 @@ mod tests {
             .setattr("settings", crate::wire::settings::test_settings(py))
             .unwrap();
         extract_common_prepared_inputs(&prepared).unwrap().2
+    }
+
+    #[test]
+    fn read_targets_preserve_addresses_and_reject_invalid_links_before_driver_lookup() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            prepared.setattr("container_link", "dbs/db/colls/c").unwrap();
+            prepared.setattr("item_id", "item").unwrap();
+            prepared.setattr("op", "read_item").unwrap();
+            prepared.setattr("protocol_version", 3).unwrap();
+            prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
+            prepared
+                .setattr("settings", crate::wire::settings::test_settings(py))
+                .unwrap();
+            prepared
+                .setattr(
+                    "partition_key",
+                    crate::wire::partition_key_input::test_partition_key(py, Some("[\"pk\"]")),
+                )
+                .unwrap();
+            prepared.setattr("item_self_link", py.None()).unwrap();
+            assert!(matches!(
+                item_target(&prepared, "item".into()).unwrap(),
+                ItemTarget::Name(id) if id == "item"
+            ));
+            prepared
+                .setattr(
+                    "item_self_link",
+                    "dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
+                )
+                .unwrap();
+            assert!(matches!(
+                item_target(&prepared, "item".into()).unwrap(),
+                ItemTarget::SelfLink { item, by_rid: true, .. }
+                    if item == "AQAAAIABAAABAAAAAAAAAA=="
+            ));
+            for link in ["", "dbs/db/colls/c", "dbs/db/colls/c/docs/"] {
+                prepared.setattr("item_self_link", link).unwrap();
+                for asynchronous in [false, true] {
+                    let error = if asynchronous {
+                        read_item_async(py, "invalid-driver-handle", &prepared, None)
+                            .map(|_| ())
+                    } else {
+                        read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                    }
+                    .unwrap_err();
+                    assert!(error.is_instance_of::<PyValueError>(py));
+                    assert!(error.to_string().contains("target _self"));
+                }
+            }
+        });
     }
 
     #[test]

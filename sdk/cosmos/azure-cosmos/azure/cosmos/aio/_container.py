@@ -360,13 +360,13 @@ class ContainerProxy:
             or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
-        :raises TypeError: A retired keyword, invalid body type, or non-string ID was supplied.
+        :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable response hook was supplied.
         :raises ValueError: The ID, JSON body, or timeout is invalid.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        deadline = prepare_create_item_kwargs(kwargs)
+        deadline = prepare_create_item_kwargs(kwargs, response_hook=response_hook)
         # Fold the named keyword arguments back into kwargs so the helper
         # receives a single dict.
         merge_create_item_explicit_kwargs(
@@ -412,7 +412,8 @@ class ContainerProxy:
     ) -> CosmosDict:
         """Get the item identified by `item`.
 
-        :param item: The ID (name) or dict representing item to retrieve.
+        :param item: The ID (name) or returned item mapping to retrieve.
+            For a mapping, the SDK preserves its ``_self`` resource address.
         :type item: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
@@ -430,6 +431,7 @@ class ContainerProxy:
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: Called once on success with independent header and CosmosDict body
             snapshots, including an empty CosmosDict for HTTP 304. Hook exceptions propagate.
+            A non-callable value is rejected before metadata lookup or reading.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -480,7 +482,7 @@ class ContainerProxy:
             throughput_bucket=throughput_bucket,
             availability_strategy=availability_strategy,
         )
-        deadline = prepare_read_item_kwargs(kwargs, partition_key)
+        deadline = prepare_read_item_kwargs(kwargs, partition_key, response_hook=response_hook)
         item_id = item if isinstance(item, str) else item["id"]
 
         result = await self._get_item_helper().read_item(

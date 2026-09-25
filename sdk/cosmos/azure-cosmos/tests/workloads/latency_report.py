@@ -273,6 +273,7 @@ def _mean_ms(a):
 def _fmt_cell(op, backend, a):
     rps = a["count"] / a["window_s"] if a["window_s"] else 0.0
     ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else float("nan")
+    non_initial = str(a["retry_calls"]) if "rust" in backend.lower() else "n/a"
     exact = a["no_hist_windows"] == 0
     note = "" if exact else f"  [!] {a['no_hist_windows']} window(s) lacked hist_b64; pooled latency unavailable"
     if a["latency_overflow_unknown"]:
@@ -281,11 +282,12 @@ def _fmt_cell(op, backend, a):
         note += f" [!] {a['latency_overflow_count']} durations exceeded histogram range; pooled latency unavailable"
     return (
         f"  {op:8s} {backend:11s} count={a['count']:>9d} err={a['errors']:>4d} "
-        f"429={str(a['throttled_429']):>4s} retries={str(a['retry_calls']):>4s} rps={rps:>8.1f} "
+        f"terminal_429={str(a['throttled_429']):>4s} recorded_non_initial={non_initial:>4s} rps={rps:>8.1f} "
         f"mean={_mean_ms(a):>6.2f} p50={_pctile_ms(a,50):>6.2f} "
         f"p90={_pctile_ms(a,90):>6.2f} "
         f"p99={_pctile_ms(a,99):>6.2f} p99.9={_pctile_ms(a,99.9):>7.2f} "
-        f"RU/op={ru:>6.2f} duration={next(iter(a['duration_kinds'])).replace('_', '-')}{note}"
+        f"RU/sample={ru:>6.2f} ru_samples={a['ru_count']} "
+        f"duration={next(iter(a['duration_kinds'])).replace('_', '-')}{note}"
     )
 
 
@@ -350,7 +352,7 @@ def main():
     )
     _driver_gate.add_cli_flag(ap)
     ap.add_argument("--workload-health", action="store_true",
-                    help="require successful, error-free samples and known zero Rust retry counts")
+                    help="require successful, error-free samples and known zero recorded Rust non-initial request counts")
     args = ap.parse_args()
     args.gate_backends = [b.strip() for b in args.gate_backends.split(",") if b.strip()]
     if not args.gate_backends or not set(args.gate_backends) <= {"core-python", "rust"}:
@@ -507,8 +509,12 @@ def main():
                 checks.append(
                     (
                         row["retry_calls"] == 0,
-                        f"{backend}: driver retries = 0 ({row['retry_calls']})",
+                        f"{backend}: recorded non-initial requests = 0 ({row['retry_calls']})",
                     )
+                )
+                notes.append(
+                    f"  [note] {backend}: retry_calls counts retained non-initial records only; "
+                    "zero does not prove that no retry occurred"
                 )
             else:
                 notes.append(

@@ -150,7 +150,7 @@ dependencies = [
 [[package]]
 name = "azure_data_cosmos_driver"
 version = "0.8.0"
-source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=075917d6cb987055dfa93e31296b261574456b66#075917d6cb987055dfa93e31296b261574456b66"
+source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=f4ef12e4e716ebbc164c591df089d0f6921dd162#f4ef12e4e716ebbc164c591df089d0f6921dd162"
 dependencies = [
  "arc-swap",
  "async-lock",
@@ -1519,7 +1519,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -1700,7 +1700,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52d1cfed4120b4d927bf7c0f86d2087a4a7d6027c906d9f9d525a80573b9be51"
 dependencies = [
  "libc",
- "windows-sys 0.60.2",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -2211,7 +2211,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

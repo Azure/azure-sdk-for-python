@@ -10,9 +10,8 @@
 # Importing checks which extension is loaded. It does not prove a read used it,
 # and embedded commit labels alone are not source-to-binary attestation.
 #
-# The counter check matters for the same reason: operation_count(),
-# attempt_count() and retry_count() are what the next document uses to prove a
-# real read entered Rust. An extension without them cannot support that proof.
+# The private counters supply binding-entry and recorded diagnostic evidence.
+# They do not by themselves prove that a read reached the service backend.
 #
 # Usage:
 #   ./profiling_build_extension.sh
@@ -76,10 +75,10 @@ if os.path.exists(path):
     print(f"    built (UTC)    : {built:%Y-%m-%dT%H:%M:%SZ}")
 
 # These three back the path proof in 03-path-proof-and-baseline.md.
-counters = ("operation_count", "attempt_count", "retry_count")
-missing = [name for name in counters if not hasattr(_rust, name)]
+counters = ("_debug_operation_count", "_debug_attempt_count", "_debug_retry_count")
+missing = [name for name in counters if not callable(getattr(_rust, name, None))]
 for name in counters:
-    print(f"    {name:<16}: {'present' if hasattr(_rust, name) else 'MISSING'}")
+    print(f"    {name:<24}: {'MISSING' if name in missing else 'present'}")
 
 if missing:
     print(f"FAIL: extension lacks {', '.join(missing)}; the path proof cannot run.")

@@ -5,7 +5,7 @@
 use super::{
     feed_range::{FeedRangePartitionKeyInput, FeedRangePartitionKeySource},
     query::QueryTarget,
-    request::json_value_to_pk_component,
+    request::{json_value_to_pk_component, partition_key_from_components},
 };
 use azure_data_cosmos_driver::models::{PartitionKey, PartitionKeyValue};
 use pyo3::{exceptions::PyValueError, prelude::*};
@@ -36,7 +36,7 @@ pub(super) fn legacy_partition_key_header(header: &str) -> PyResult<PartitionKey
     for value in parsed {
         components.push(json_value_to_pk_component(value)?);
     }
-    Ok(PartitionKey::from(components))
+    partition_key_from_components(components)
 }
 
 pub(super) fn legacy_feed_range_partition_key_header(
@@ -54,7 +54,7 @@ pub(super) fn legacy_feed_range_partition_key_header(
     }
     if parsed.is_empty() {
         return Ok(FeedRangePartitionKeyInput {
-            partition_key: PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+            partition_key: partition_key_from_components(Vec::new())?,
             source: FeedRangePartitionKeySource::EmptySentinel,
         });
     }
@@ -62,7 +62,7 @@ pub(super) fn legacy_feed_range_partition_key_header(
         if let serde_json::Value::Array(inner) = &parsed[0] {
             if inner.is_empty() {
                 return Ok(FeedRangePartitionKeyInput {
-                    partition_key: PartitionKey::from(Vec::<PartitionKeyValue>::new()),
+                    partition_key: partition_key_from_components(Vec::new())?,
                     source: FeedRangePartitionKeySource::ExplicitEmptySequence,
                 });
             }
@@ -74,7 +74,7 @@ pub(super) fn legacy_feed_range_partition_key_header(
         components.push(json_value_to_pk_component(value)?);
     }
     Ok(FeedRangePartitionKeyInput {
-        partition_key: PartitionKey::from(components),
+        partition_key: partition_key_from_components(components)?,
         source: FeedRangePartitionKeySource::Standard,
     })
 }
@@ -98,5 +98,5 @@ pub(super) fn legacy_query_target_header(header: &str) -> PyResult<QueryTarget> 
     for value in parsed {
         components.push(json_value_to_pk_component(value)?);
     }
-    Ok(QueryTarget::Partition(PartitionKey::from(components)))
+    Ok(QueryTarget::Partition(partition_key_from_components(components)?))
 }

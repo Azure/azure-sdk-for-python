@@ -3,7 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Release resources created before a Python client constructor fails.
+"""Initialize retained legacy requests and clean up failed construction.
+
+Legacy-only request builders initialize account state before preparing headers.
+Rust operations do not use those builders.
 
 For example, a client can retain an async credential bridge before a later
 startup check raises. unwind_client_construction asks the Python backend to
@@ -16,11 +19,34 @@ resources just to clean them up.
 """
 import logging
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Awaitable, Callable, TypeVar
 from typing_extensions import Concatenate, ParamSpec
 
 _LOGGER = logging.getLogger(__name__)
 _P = ParamSpec("_P")
+_T = TypeVar("_T")
+
+
+def initialize_legacy_connection(
+    operation: Callable[Concatenate[Any, _P], _T],
+) -> Callable[Concatenate[Any, _P], _T]:
+    """Prepare legacy state before a legacy-only request builder runs."""
+    @wraps(operation)
+    def invoke(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> _T:
+        self._setup()
+        return operation(self, *args, **kwargs)
+    return invoke
+
+
+def initialize_async_legacy_connection(
+    operation: Callable[Concatenate[Any, _P], Awaitable[_T]],
+) -> Callable[Concatenate[Any, _P], Awaitable[_T]]:
+    """Await legacy setup before preparing a legacy-only request."""
+    @wraps(operation)
+    async def invoke(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> _T:
+        await self._setup()
+        return await operation(self, *args, **kwargs)
+    return invoke
 
 
 def _cleanup(action: Callable[[], Any]) -> None:

@@ -135,6 +135,58 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
         return Backend.execute(self, prepared, deadline=deadline)
 
 
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("client_options, expected_threshold", [
+    ({}, 500),
+    ({"availability_strategy": False}, 500),
+    ({"availability_strategy": True}, 500),
+    ({"availability_strategy": {}}, 500),
+    ({"availability_strategy": {"threshold_ms": 20}}, 20),
+])
+def test_read_hedging_true_retains_client_threshold(
+    monkeypatch, async_mode, client_options, expected_threshold,
+):
+    backend = AsyncBackend() if async_mode else Backend()
+    module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"
+    factory = ".make_async_backend" if async_mode else ".make_backend"
+    monkeypatch.setattr(module + factory, lambda *args, **kwargs: backend)
+    connection_type = __import__(
+        "azure.cosmos.aio._cosmos_client_connection_async" if async_mode else
+        "azure.cosmos._cosmos_client_connection", fromlist=["CosmosClientConnection"]
+    ).CosmosClientConnection
+
+    def initialize(connection, **kwargs):
+        connection._response_state = kwargs["_response_state"]
+
+    monkeypatch.setattr(connection_type, "__init__", initialize)
+    client_options = deepcopy(client_options)
+    client = (AsyncCosmosClient if async_mode else CosmosClient)(
+        "https://example.documents.azure.com", "key", **client_options,
+    )
+    strategy = client_options.get("availability_strategy")
+    if isinstance(strategy, dict):
+        strategy["threshold_ms"] = 900
+    orders = client.get_database_client("sales").get_container_client("orders")
+    for requested, enabled, threshold in [
+        (True, True, expected_threshold),
+        (False, False, None),
+        ({"threshold_ms": 40}, True, 40),
+        (None, None, None),
+    ]:
+        result = orders.read_item("order-42", "customer-17", availability_strategy=requested)
+        if async_mode:
+            asyncio.run(result)
+        hedging = backend.events[-1].settings.hedging
+        if enabled is None:
+            assert hedging is None
+        else:
+            assert (hedging.enabled, hedging.threshold_ms) == (enabled, threshold)
+    result = orders.read_item("order-42", "customer-17")
+    if async_mode:
+        asyncio.run(result)
+    assert backend.events[-1].settings.hedging is None
+
+
 def invoke(helper, op, **kwargs):
     """Call any item operation with the minimum arguments that operation requires.
 
@@ -251,7 +303,7 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request(monkeypatc
         expected["item_id"] = "order-42"
     if op == "create_item":
         expected.update(indexing_directive=None)
-    if op == "replace_item":
+    if op in ("read_item", "replace_item"):
         expected["item_self_link"] = None
     if op == "patch_item":
         expected.update(body_bytes=args["body_bytes"])

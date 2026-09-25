@@ -346,13 +346,13 @@ def test_failed_constructor_does_not_release_another_clients_credential_hold(mod
 
 
 @pytest.mark.parametrize("cancelled", [False, True])
-def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
+@pytest.mark.parametrize("backend_name", ["core-python", "rust"])
+def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backend_name):
     """If entering the async client fails, everything opened on the way in is closed
     again.
 
-    The async client does its account setup when it is entered rather than when
-    it is constructed, so this is a second place a half-built client can appear.
-    The setup fails, and the transport, the endpoint manager, and the routing
+    Legacy entry can fail during account setup; Rust entry can fail while opening
+    the retained transport. The transport, the endpoint manager, and the routing
     information are each closed or released exactly once, with the backend
     marked closed and no reservation left on the account.
 
@@ -369,10 +369,14 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
         _global_endpoint_manager=SimpleNamespace(close=AsyncMock()),
         _routing_map_provider=SimpleNamespace(release=MagicMock()),
     )
+    if backend_name == "rust":
+        connection.pipeline_client.__aenter__.side_effect = error
     monkeypatch.setattr(async_client, "CosmosClientConnection", MagicMock(return_value=connection))
     client = async_client.CosmosClient(
-        "https://account.invalid", "ZmFrZQ==", _backend="rust", proxy_allowed=False
+        "https://account.invalid", "ZmFrZQ==", _backend=backend_name, proxy_allowed=False
     )
+    backend_close = AsyncMock(wraps=client._backend.close)
+    monkeypatch.setattr(client._backend, "close", backend_close)
 
     async def run():
         with pytest.raises(type(error)):
@@ -382,7 +386,10 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled):
     connection.pipeline_client.__aexit__.assert_awaited_once()
     connection._global_endpoint_manager.close.assert_awaited_once()
     connection._routing_map_provider.release.assert_called_once()
-    assert client._backend._closing
+    backend_close.assert_awaited_once()
+    if backend_name == "rust":
+        assert client._backend._closing
+        connection._setup.assert_not_awaited()
 
 
 def test_client_priority_defaults_are_captured(module):
@@ -461,7 +468,7 @@ def test_real_sync_connection_releases_partial_startup_resources(monkeypatch, st
     )
     with pytest.raises(RuntimeError) as failure:
         sync_client.CosmosClient(
-            "https://account.invalid", "ZmFrZQ==", _backend="rust", proxy_allowed=False
+            "https://account.invalid", "ZmFrZQ==", _backend="core-python"
         )
     assert failure.value is error
     routing.release.assert_called_once()

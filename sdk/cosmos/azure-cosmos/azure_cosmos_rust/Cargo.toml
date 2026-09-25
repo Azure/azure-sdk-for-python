@@ -67,7 +67,7 @@ url = { workspace = true }
 # JSON request/response conversion. The body-id helper retains only `id`, but
 # still scans the JSON body rather than stopping at that field.
 serde = { workspace = true }
-serde_json = { workspace = true }
+serde_json = { workspace = true, features = ["raw_value"] }
 
 # Surfaced at the binding boundary when forwarding driver errors. Inherit the
 # workspace's driver-aligned crates.io version so the Rust types unify.

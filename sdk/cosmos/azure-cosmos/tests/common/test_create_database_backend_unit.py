@@ -1972,6 +1972,18 @@ def _call_create_database(client, *args, method_name="create_database", **kwargs
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
 
+def test_create_database_hedging_true_retains_client_threshold(create_database_client):
+    from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+
+    client = create_database_client
+    client._item_context = ItemClientContext(
+        client._backend, ItemClientDefaults(hedging_threshold_ms=20),
+    )
+    _call_create_database(client, "db1", availability_strategy=True)
+    hedging = client._backend.prepared_requests[-1].settings.hedging
+    assert (hedging.enabled, hedging.threshold_ms) == (True, 20)
+
+
 @pytest.mark.parametrize("options", [
     {"connection_timeout": 1}, {"raw_request_hook": lambda request: None},
     {"raw_response_hook": lambda response: None}, {"misspelled_setting": None},

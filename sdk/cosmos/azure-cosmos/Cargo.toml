@@ -42,9 +42,8 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emu
 # --- azure-sdk-for-rust crates ---
 # azure_core aligned with the driver's published version so the two unify.
 azure_core     = "1.1.0"
-# Preserve the driver revision used by this checkout rather than downgrading
-# to the older EngSys prototype. Normal and test dependencies share this source.
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "075917d6cb987055dfa93e31296b261574456b66" }
+# Pin the reviewed main revision; normal and test dependencies share this source.
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "f4ef12e4e716ebbc164c591df089d0f6921dd162" }
 
 # --- crates.io deps the binding uses ---
 async-lock   = "3"

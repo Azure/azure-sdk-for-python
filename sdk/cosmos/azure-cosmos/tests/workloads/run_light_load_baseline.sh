@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Rate-limited point-read latency baseline. One client, 250 reads/s by default,
-# no proxy. The fixed arrival rate keeps this 1-RU read workload below the
-# dedicated probe container's 400-RU/s budget. An unpaced send-and-wait is not a
-# low-load test: it sends the next read immediately and can saturate the account.
+# no proxy. Check measured request charges against the test container's service
+# capacity; 250 reads/s is not automatically below a 400-RU/s budget. Unpaced
+# send-and-wait sends the next read immediately and can saturate the account.
 #
 # Purpose: validate the test environment before any A/B claim. A point-op baseline
-# should land near p99 10 ms in-region; if it does not, throughput/latency numbers
-# from the loaded phases are not meaningful as an SLA reference.
+# uses experiment-specific acceptance criteria, not a service SLA.
 #
 # Backend is selectable so the same probe runs both engines. The script loads
 # the newest complete profiling session when the current shell has no active one:
@@ -14,12 +13,9 @@
 #   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust only
 # Override the verified default only when intentionally testing a different rate:
 #   BASELINE_READ_RPS=100 ./run_light_load_baseline.sh 480
-# The baseline measures a dedicated low-load probe container, lat_probe_db/
-# lat_probe_cont, not the session target; override with BASELINE_DATABASE and
-# BASELINE_CONTAINER, and re-check BASELINE_READ_RPS against that container's
-# throughput if you do.
-# Results use the active profiling session's RUN_ID and land in
-# perfdb/perfresults-v2 tagged
+# The baseline retains the validated profiling session's test target and item
+# range. Prepare a new profiling session to change the database or container.
+# Results use the active profiling session's RUN_ID and configured results container, tagged
 # PERF_WORKLOAD_ID=baseline-<op>-<backend>-<run-id>; read them with latency_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -41,7 +37,7 @@ perf_require_positive "${DURATION}" || exit 2
 perf_single_operation_shape
 OPERATIONS=(${BASELINE_OPERATIONS:-read})
 BACKENDS=(${BASELINE_BACKENDS:-core-python rust})
-BASELINE_READ_RPS="${BASELINE_READ_RPS:-250}"
+BASELINE_READ_RPS="${BASELINE_READ_RPS:-${WORKLOAD_ARRIVAL_RATE}}"
 
 if [[ "${OPERATIONS[*]}" != "read" ]]; then
   echo "ERROR: the low-load p99 gate supports BASELINE_OPERATIONS=read only." >&2
@@ -59,42 +55,25 @@ RUN_LOG="${LOG_DIR}/baseline-run.log"
 REPORT_FILE="${LOG_DIR}/latency-report.txt"
 exec > >(tee "${RUN_LOG}") 2>&1
 
-# The isolated probe container keeps this off the loaded phases' data, and its
-# 400-RU/s budget is what the default 250 reads/s is sized against. Seed it once
-# with initial-setup.py (same BASELINE_DATABASE/BASELINE_CONTAINER overrides) so
-# read/replace/delete/patch have existing items to touch.
-#
-# profiling_load_session has just verified the session manifest against the
-# ACTIVE target, so silently pointing the run somewhere else would mean the
-# validated target and the measured one are different containers. The probe
-# target is therefore overridable, and any divergence from the session target is
-# announced rather than assumed.
-BASELINE_DATABASE="${BASELINE_DATABASE:-lat_probe_db}"
-BASELINE_CONTAINER="${BASELINE_CONTAINER:-lat_probe_cont}"
+BASELINE_DATABASE="${BASELINE_DATABASE:-${COSMOS_DATABASE}}"
+BASELINE_CONTAINER="${BASELINE_CONTAINER:-${COSMOS_CONTAINER}}"
 if [[ "${BASELINE_DATABASE}" != "${COSMOS_DATABASE:-}" ||
       "${BASELINE_CONTAINER}" != "${COSMOS_CONTAINER:-}" ]]; then
-  echo "NOTE: the baseline measures ${BASELINE_DATABASE}/${BASELINE_CONTAINER}," >&2
-  echo "      not the session target ${COSMOS_DATABASE:-unset}/${COSMOS_CONTAINER:-unset}." >&2
-  echo "      That is the dedicated low-load probe container; ${BASELINE_READ_RPS}" >&2
-  echo "      reads/s is sized against its 400-RU/s budget. Set BASELINE_DATABASE" >&2
-  echo "      and BASELINE_CONTAINER to measure the session target instead, and" >&2
-  echo "      re-check the arrival rate against that container's throughput." >&2
+  echo "ERROR: baseline target differs from the validated profiling session." >&2
+  echo "       Prepare and validate a new profiling session for the intended target." >&2
+  exit 2
 fi
 export COSMOS_DATABASE="${BASELINE_DATABASE}"
 export COSMOS_CONTAINER="${BASELINE_CONTAINER}"
 export COSMOS_CONCURRENT_REQUESTS=1
 export WORKLOAD_NUM_CLIENTS=1
 # The pacing this baseline depends on lives only in the async fixed-rate path
-# (workload.py). The sync client ignores WORKLOAD_ARRIVAL_RATE and runs a closed
-# loop, yet the reporter still stamps config_arrival_rate from the environment --
-# so an inherited WORKLOAD_USE_SYNC=true would publish an unpaced run labelled as
-# a scheduled one. Pin it rather than inherit it.
+# (workload.py). The sync client rejects a positive arrival rate. Pin async mode
+# rather than inheriting a setting from a different experiment.
 export WORKLOAD_USE_SYNC=false
 export WORKLOAD_ARRIVAL_RATE="${BASELINE_READ_RPS}"
 export WORKLOAD_USE_PROXY=false
-export COSMOS_MAX_ITEM_INDEX=1000
-export COSMOS_REQUEST_TIMEOUT=30
-export PERF_REPORT_INTERVAL=60
+# Keep the prepared item range, timeout and reporting interval.
 
 # Persist the exact data target used by this child process. The parent shell
 # does not inherit exports from `bash ./run_light_load_baseline.sh`, so the
@@ -112,7 +91,7 @@ done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Rate-limited point-read latency baseline ==="
 echo "    run_id=${RUN_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
-echo "    container=${BASELINE_DATABASE}/${BASELINE_CONTAINER}  results -> perfdb/perfresults-v2 (workload_id LIKE baseline-%)"
+echo "    container=${BASELINE_DATABASE}/${BASELINE_CONTAINER}  results -> ${RESULTS_COSMOS_DATABASE:-perfdb}/${RESULTS_COSMOS_CONTAINER:-perfresults-v2} (workload_id LIKE baseline-%)"
 echo
 overall_rc=0
 

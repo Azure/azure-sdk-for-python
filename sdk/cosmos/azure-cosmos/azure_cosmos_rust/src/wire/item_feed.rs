@@ -284,6 +284,8 @@ async fn next_page(
         continuation,
         modifiers,
         FeedRequest::ReadAll,
+        PlanOptions::default()
+            .with_query_plan_mode(azure_data_cosmos_driver::options::QueryPlanMode::GatewayOnly),
     )
     .await
 }
@@ -295,6 +297,7 @@ async fn next_plan_page(
     continuation: Option<String>,
     mut modifiers: RequestHeadersAndOptions,
     request: FeedRequest,
+    plan_options: PlanOptions,
 ) -> PyResult<PageResult> {
     let mut state = state
         .try_lock()
@@ -359,7 +362,7 @@ async fn next_plan_page(
         }
         let token = continuation.map(ContinuationToken::from_string);
         let plan = match driver
-            .plan_operation(operation, &options, token.as_ref(), &PlanOptions::default())
+            .plan_operation(operation, &options, token.as_ref(), &plan_options)
             .await
         {
             Ok(plan) => plan,
@@ -528,7 +531,7 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     let runtime = require_runtime_context("fetch_page_with_cursor")?;
     let future = page_timeout(
         timeout,
-        next_plan_page(driver, state, identity, token, modifiers, request),
+        next_plan_page(driver, state, identity, token, modifiers, request, PlanOptions::default()),
     );
     let result = py.allow_threads(|| runtime.tokio_rt.block_on(future))??;
     finish_page(py, result)
@@ -553,7 +556,7 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
     let runtime = require_runtime_context("fetch_page_with_cursor_async")?;
     let future = page_timeout(
         timeout,
-        next_plan_page(driver, state, identity, token, modifiers, request),
+        next_plan_page(driver, state, identity, token, modifiers, request, PlanOptions::default()),
     );
     let join = runtime.tokio_rt.spawn(future);
     let abort = AbortOnDrop(join.abort_handle());
@@ -584,7 +587,7 @@ mod tests {
         models::{AccountReference, ItemReference, PartitionKey, PartitionKeyDefinition},
         options::{
             ContentResponseOnWrite, DriverOptions, EndToEndOperationLatencyPolicy,
-            OperationOptionsBuilder, QueryPlanMode,
+            QueryPlanMode,
         },
     };
     use std::{
@@ -635,11 +638,7 @@ mod tests {
         let driver = runtime
             .create_driver(
                 DriverOptions::builder(account)
-                    .with_operation_options(
-                        OperationOptionsBuilder::new()
-                            .with_query_plan_mode(QueryPlanMode::GatewayOnly)
-                            .build(),
-                    )
+                    .with_partition_failover_options(crate::runtime::partition_failover_options().unwrap())
                     .with_fault_injection_rules(rules)
                     .unwrap()
                     .build(),
@@ -980,6 +979,7 @@ mod tests {
                 token.clone(),
                 modifiers(),
                 changed,
+                PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
             )
             .await
             .err()
@@ -996,6 +996,7 @@ mod tests {
                 token,
                 modifiers(),
                 original.clone(),
+                PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
             )
             .await
             .err()
@@ -1020,6 +1021,7 @@ mod tests {
             token,
             modifiers(),
             request.clone(),
+            PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
         )
         .await
         .unwrap();
@@ -1154,22 +1156,53 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn unordered_distinct_enumerates_without_a_resumable_token() {
+    async fn bounded_unordered_distinct_enumerates_without_a_resumable_token() {
         let (_emulator, driver) = setup(12).await;
-        let request = query_request("SELECT DISTINCT VALUE c.id FROM c");
-        let state = Arc::new(Mutex::new(CursorState::default()));
-        let mut all = Vec::new();
-        let mut token = None;
-        for _ in 0..100 {
-            let (page, next) = query_page(&driver, &state, &request, token).await;
-            token = next;
-            let Some(page) = page else { break };
-            all.extend(page);
+        for limit in [12, 1000] {
+            let request = query_request(&format!("SELECT DISTINCT TOP {limit} VALUE c.id FROM c"));
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let mut all = Vec::new();
+            let mut token = None;
+            for _ in 0..100 {
+                let (page, next) = query_page(&driver, &state, &request, token).await;
+                token = next;
+                let Some(page) = page else { break };
+                all.extend(page);
+            }
+            assert_eq!(all.len(), 12);
+            let state = state.lock().await;
+            assert!(state.continuation_unsupported);
+            assert!(!state.has_more);
         }
-        assert_eq!(all.len(), 12);
-        let state = state.lock().await;
-        assert!(state.continuation_unsupported);
-        assert!(!state.has_more);
+    }
+
+    #[tokio::test]
+    async fn unbounded_unordered_distinct_preserves_driver_planning_error() {
+        let (_emulator, driver) = setup(12).await;
+        for query in [
+            "SELECT DISTINCT VALUE c.id FROM c",
+            "SELECT DISTINCT TOP 1001 VALUE c.id FROM c",
+            "SELECT DISTINCT VALUE c.id FROM c OFFSET 1000 LIMIT 1",
+        ] {
+            let cursor = ItemFeedCursor::default();
+            let (result, token) = next_plan_page(
+                driver.clone(),
+                cursor.state.clone(),
+                ("test".into(), "dbs/db/colls/c".into()),
+                None,
+                modifiers(),
+                query_request(query),
+                PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
+            )
+            .await
+            .unwrap();
+            assert_eq!(
+                result.unwrap_err().status(),
+                CosmosStatus::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
+            );
+            assert!(token.is_none());
+            assert!(cursor.can_retry_setup());
+        }
     }
 
     #[tokio::test]
@@ -1216,6 +1249,7 @@ mod tests {
                 None,
                 modifiers(),
                 FeedRequest::ChangeFeed(request),
+                PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
             )
             .await;
             assert!(

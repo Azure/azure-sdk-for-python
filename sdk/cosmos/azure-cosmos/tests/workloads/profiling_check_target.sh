@@ -145,6 +145,13 @@ if [[ ${failures} -ne 0 ]]; then
   exit 1
 fi
 
+if [[ "${COSMOS_URI%/}" == "${RESULTS_COSMOS_URI%/}" &&
+      "${COSMOS_DATABASE}" == "${RESULTS_COSMOS_DATABASE}" &&
+      "${COSMOS_CONTAINER}" == "${RESULTS_COSMOS_CONTAINER}" ]]; then
+  echo "ERROR: the test container and results container must be different." >&2
+  exit 1
+fi
+
 echo
 echo "=== Live container configuration ==="
 python3 - "${EXPECT_PARTITION_KEY}" "${EXPECT_THROUGHPUT}" <<'PY'
@@ -172,6 +179,36 @@ try:
             f"live container mismatch: expected partition key {wanted_path} "
             f"and {expected_throughput} RU/s"
         )
+finally:
+    client.close()
+PY
+if [[ $? -ne 0 ]]; then
+  failures=$((failures + 1))
+fi
+
+echo
+echo "=== Results container configuration ==="
+python3 - <<'PY'
+import os
+
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(
+    os.environ["RESULTS_COSMOS_URI"], os.environ["RESULTS_COSMOS_KEY"],
+    _backend="core-python",
+)
+try:
+    container = (
+        client.get_database_client(os.environ["RESULTS_COSMOS_DATABASE"])
+        .get_container_client(os.environ["RESULTS_COSMOS_CONTAINER"])
+    )
+    properties = container.read()
+    paths = (properties.get("partitionKey") or {}).get("paths") or []
+    if paths != ["/partition_key"]:
+        raise SystemExit(
+            f"results container partition-key mismatch: expected /partition_key, got {paths!r}"
+        )
+    print("    results container exists and uses /partition_key")
 finally:
     client.close()
 PY

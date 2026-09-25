@@ -5,7 +5,7 @@
 # The point-read workload does not create what it reads. It picks an id with
 # random.randint(0, COSMOS_MAX_ITEM_INDEX) and reads it. Any id in that range
 # that was never seeded comes back 404, and a 404 takes a different code path:
-# it is an error row, not a latency sample. A partially seeded container
+# it contributes to failed-call measurements, not successful-call P99. A partially seeded container
 # therefore quietly contaminates the very numbers the session exists to
 # produce.
 #
@@ -35,11 +35,7 @@ echo "=== Probe data ==="
 echo "    target : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    range  : test-0 .. test-${COSMOS_MAX_ITEM_INDEX} ($(( COSMOS_MAX_ITEM_INDEX + 1 )) items)"
 
-needs_seed=0
-if [[ "${PROFILING_FORCE_SEED:-0}" == "1" ]]; then
-  echo "    PROFILING_FORCE_SEED=1, reseeding without checking."
-  needs_seed=1
-else
+verify_probe_data() {
   python3 - <<'PY'
 import os
 import sys
@@ -98,13 +94,22 @@ if missing:
     shown = ", ".join(missing[:10])
     more = f" (and {len(missing) - 10} more)" if len(missing) > 10 else ""
     print(f"    missing {len(missing)} of {total}: {shown}{more}")
-    sys.exit(1)
+    # Keep missing data distinct from interpreter/import failures (exit 1).
+    sys.exit(4)
 print(f"    verified all {total} items (partition key /{pk_field})")
 sys.exit(0)
 PY
+}
+
+needs_seed=0
+if [[ "${PROFILING_FORCE_SEED:-0}" == "1" ]]; then
+  echo "    PROFILING_FORCE_SEED=1, reseeding before readback."
+  needs_seed=1
+else
+  verify_probe_data
   case $? in
     0) needs_seed=0 ;;
-    1) needs_seed=1 ;;
+    4) needs_seed=1 ;;
     *)
       echo "!! Could not verify the probe data, so it will not be seeded blindly." >&2
       echo "   Fix the connectivity or permission problem above and re-run." >&2
@@ -122,8 +127,13 @@ echo "    Seeding $(( COSMOS_MAX_ITEM_INDEX + 1 )) items with initial-setup.py .
 # initial-setup.py upserts, so re-running it repairs a partial range without
 # needing to work out which ids are absent.
 if ! python3 initial-setup.py; then
-  echo "ERROR: seeding failed; reads would return 404 instead of latency samples." >&2
+  echo "ERROR: seeding failed; the item range is not verified for measurement." >&2
   exit 1
 fi
-echo "=== Probe data seeded ==="
+echo "    Verifying the full item range after seeding ..."
+if ! verify_probe_data; then
+  echo "ERROR: seeded data did not pass readback; do not start the measured workload." >&2
+  exit 1
+fi
+echo "=== Probe data seeded and verified ==="
 exit 0
