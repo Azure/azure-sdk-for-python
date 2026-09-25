@@ -59,7 +59,7 @@ mkdir -p "$PWD/artifacts" || exit 1
 mkdir "$ARTIFACTS" || { echo "ERROR: cannot create a fresh ${ARTIFACTS}" >&2; exit 1; }
 
 # One JSON record of the build/host/account/load behind everything in this
-# directory. Defined in perf_env.sh; required, never writes keys.
+# directory. Defined in perf_common.sh; required, never writes keys.
 # The generic manifest stamp equals the profiling session identifier here.
 write_run_manifest "$ARTIFACTS" "$PROFILING_SESSION_ID" "$PHASE" || exit 1
 

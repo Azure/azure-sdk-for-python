@@ -56,7 +56,13 @@ import pytest
 from azure.core import MatchConditions
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+from common._parity_helpers import (
+    BackendComparison,
+    run_on_both_backends_async,
+    run_target_operation_async,
+    skip_unless_emulator,
+    skip_unless_rust_binding,
+)
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -141,14 +147,17 @@ async def test_baseline_read_by_id(container_for):
     """Baseline: async read by bare id + ``partition_key``, no optional kwargs.
 
     Both backends must succeed and the body's id/pk must match what was just
-    written. Response-header-surface differences are tolerated here, per the
+    written. Check Rust binding entry around the read, not setup.
+    Response-header-surface differences are tolerated here, per the
     shared ``assert_functional_parity`` policy.
     """
     async def read_expected_item(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected = {"id": uuid.uuid4().hex, "pk": "customerA", "value": 1}
         await cont.create_item(dict(expected))
-        actual = await cont.read_item(expected["id"], partition_key=expected["pk"])
+        actual = await run_target_operation_async(
+            client, lambda: cont.read_item(expected["id"], partition_key=expected["pk"])
+        )
         for field, value in expected.items():
             assert actual[field] == value, f"read_item returned an unexpected {field}"
         return actual

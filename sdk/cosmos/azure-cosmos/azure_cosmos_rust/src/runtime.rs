@@ -354,11 +354,21 @@ fn validate_runtime_context(
     }
 }
 
-/// Check requested CosmosDriverRuntime settings without initializing it.
+/// Check a new Python client's connection settings without initializing
+/// CosmosDriverRuntime.
 ///
-/// No completed initialization result means this check passes without reserving
-/// settings. A recorded failure is raised; a recorded success must not conflict.
-/// Driver acquisition repeats the check because another caller may initialize first.
+/// The Python wrapper calls this during client construction. For example,
+/// a requested five-second connection timeout raises ValueError if the
+/// binding has already initialized CosmosDriverRuntime with two seconds.
+/// A matching two-second request passes this compatibility check.
+///
+/// If initialization has no completed result, return without initializing
+/// CosmosDriverRuntime or reserving settings. If an earlier initialization
+/// failed, raise RuntimeError with the retained failure.
+///
+/// Passing this check does not guarantee that later acquisition will pass:
+/// another client may initialize CosmosDriverRuntime in between. Driver
+/// acquisition therefore checks the settings again.
 #[pyfunction(name = "_validate_runtime_configuration")]
 #[pyo3(signature = (config=None))]
 pub(crate) fn validate_runtime_configuration(config: Option<&Bound<'_, PyAny>>) -> PyResult<()> {

@@ -63,7 +63,13 @@ import pytest
 
 from azure.core import MatchConditions
 
-from common._parity_helpers import BackendComparison, run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
+from common._parity_helpers import (
+    BackendComparison,
+    run_on_both_backends,
+    run_target_operation,
+    skip_unless_emulator,
+    skip_unless_rust_binding,
+)
 
 
 pytestmark = [
@@ -157,14 +163,17 @@ def test_baseline_read_by_id(container_for):
     """Baseline: read by bare id + ``partition_key``. No optional kwargs.
 
     Both backends must succeed; the body's id/pk fields must match what
-    was just written. Response-header-surface differences are tolerated
+    was just written. Check Rust binding entry around the read, not setup.
+    Response-header-surface differences are tolerated
     here per the shared ``assert_functional_parity`` policy.
     """
     def read_expected_item(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected = {"id": uuid.uuid4().hex, "pk": "customerA", "value": 1}
         cont.create_item(dict(expected))
-        actual = cont.read_item(expected["id"], partition_key=expected["pk"])
+        actual = run_target_operation(
+            client, lambda: cont.read_item(expected["id"], partition_key=expected["pk"])
+        )
         for field, value in expected.items():
             assert actual[field] == value, f"read_item returned an unexpected {field}"
         return actual

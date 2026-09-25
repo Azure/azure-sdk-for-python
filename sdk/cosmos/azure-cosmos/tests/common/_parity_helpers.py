@@ -864,24 +864,32 @@ def run_on_both_backends(
 
     AssertionError propagates as a failed test check, never as a comparable
     operation error. Matching failed assertions must not establish parity.
+
+    The runner owns each client returned by client_factory and closes it before
+    creating the next client, including on validation or assertion failure.
+    Custom factories must return an owned client with close(). Consume any
+    client-dependent result inside call_fn, before the client is closed.
     """
     outcomes: Dict[str, CallOutcome] = {}
     for backend_name in ("core-python", "rust"):
         outcome = CallOutcome(backend=backend_name)
         client = client_factory(backend_name)
-        _assert_expected_backend(client, backend_name)
         try:
-            outcome.return_value = call_fn(client)
-            outcome.response_headers = dict(
-                client.client_connection.last_response_headers or {}
-            )
-        except AssertionError:
-            raise
-        except Exception as exc:  # pylint: disable=broad-except
-            outcome.raised = exc
-            outcome.response_headers = dict(
-                client.client_connection.last_response_headers or {}
-            )
+            _assert_expected_backend(client, backend_name)
+            try:
+                outcome.return_value = call_fn(client)
+                outcome.response_headers = dict(
+                    client.client_connection.last_response_headers or {}
+                )
+            except AssertionError:
+                raise
+            except Exception as exc:  # pylint: disable=broad-except
+                outcome.raised = exc
+                outcome.response_headers = dict(
+                    client.client_connection.last_response_headers or {}
+                )
+        finally:
+            client.close()
         outcomes[backend_name] = outcome
 
     comparison = BackendComparison(

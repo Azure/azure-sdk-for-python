@@ -398,6 +398,8 @@ def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, 
     monkeypatch.setenv("COSMOS_DATABASE", 'db"quoted')
     monkeypatch.setenv("COSMOS_KEY", "synthetic-key-must-not-be-written")
     monkeypatch.setenv("RESULTS_COSMOS_KEY", "synthetic-results-key-must-not-be-written")
+    monkeypatch.setenv("PROFILING_CONFIG_PATH", "/home/test/profiling_config.env")
+    monkeypatch.setenv("PROFILING_CONFIG_SHA256", "d" * 64)
     monkeypatch.delenv("PROFILING_SESSION_ID", raising=False)
     if profiling_session_id:
         monkeypatch.setenv("PROFILING_SESSION_ID", profiling_session_id)
@@ -408,6 +410,9 @@ def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, 
     assert record["stamp"] == STAMP
     assert record.get("profiling_session_id") == profiling_session_id
     assert ("profiling_session_id" in record) == (profiling_session_id is not None)
+    assert record["configuration"] == {
+        "path": "/home/test/profiling_config.env", "sha256": "d" * 64,
+    }
     assert "synthetic-key" not in text and "synthetic-results-key" not in text
 
 
@@ -436,7 +441,8 @@ def embedded_python(script, index=0):
 
 @pytest.mark.parametrize("saved_name", ["PROFILING_SESSION_ID", "RUN_ID", "both", "missing", "conflicting"])
 @pytest.mark.parametrize("manifest_id", [None, STAMP, "20260918-120000000"])
-def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id):
+@pytest.mark.parametrize("configuration_hash", [None, "same", "changed"])
+def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id, configuration_hash):
     shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
     folder = tmp_path / "session"
     folder.mkdir()
@@ -459,6 +465,8 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id)
     }
     if manifest_id is not None:
         manifest["profiling_session_id"] = manifest_id
+    if configuration_hash is not None:
+        manifest["configuration"] = {"sha256": configuration_hash}
     (folder / f"manifest-{STAMP}.json").write_text(json.dumps(manifest), encoding="utf-8")
     (tmp_path / "perf_build_details.py").write_text(
         f"def source_digest(): return {'d' * 64!r}\n"
@@ -467,7 +475,8 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id)
     before = {path.name: path.read_bytes() for path in folder.iterdir()}
     env = {**os.environ, "PROFILING_TEST_PYTHON": Path(sys.executable).as_posix(),
            "COSMOS_URI": "https://example.invalid", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
-           "RUN_ID": "stale-parent-id", "PROFILING_SESSION_ID": STAMP}
+           "RUN_ID": "stale-parent-id", "PROFILING_SESSION_ID": STAMP,
+           "PROFILING_CONFIG_SHA256": "same"}
     command = (
         'source ./profiling_common.sh\n'
         'python3() { "$PROFILING_TEST_PYTHON" "$@"; }\n'
@@ -478,7 +487,8 @@ def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id)
     )
     result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path, env=env,
                             capture_output=True, text=True, timeout=15)
-    valid = saved_name not in ("missing", "conflicting") and manifest_id in (None, STAMP)
+    valid = (saved_name not in ("missing", "conflicting") and manifest_id in (None, STAMP)
+             and configuration_hash in (None, "same"))
     if valid:
         assert result.returncode == 0, result.stdout + result.stderr
         assert f"loaded={STAMP}" in result.stdout and f"exported={STAMP}" in result.stdout
@@ -622,17 +632,17 @@ def test_target_checks_results_container_schema(monkeypatch, paths):
 
 @pytest.mark.parametrize("override", [False, True])
 def test_baseline_keeps_validated_target_and_range(tmp_path, override):
-    script = "run_light_load_baseline.sh"
+    script = "profiling_run_read_baseline.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { :; }\n"
         "profiling_load_session() { :; }\n"
         "perf_require_positive() { :; }\n"
-        "perf_single_operation_shape() { :; }\n"
+        "profiling_require_read_workload() { :; }\n"
         "perf_create_log_dir() { mkdir \"$1\"; }\n"
-        "write_run_manifest() { :; }\n"
+        "write_run_manifest() { echo \"$WORKLOAD_ARRIVAL_RATE\" > manifest-rate.txt; }\n"
         "perf_check_run() { :; }\n"
-        "python3() { :; }\n"
+        "python3() { printf '%s\\n' \"$*\" > report-arguments.txt; }\n"
         "timeout() { printf '%s\\n' \"$COSMOS_DATABASE/$COSMOS_CONTAINER/"
         "$COSMOS_MAX_ITEM_INDEX/$WORKLOAD_ARRIVAL_RATE\" >> launched.txt; }\n",
         encoding="utf-8",
@@ -640,7 +650,8 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
     env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
            "COSMOS_DATABASE": "verified-db", "COSMOS_CONTAINER": "verified-container",
            "COSMOS_MAX_ITEM_INDEX": "42", "WORKLOAD_ARRIVAL_RATE": "100",
-           "BASELINE_BACKENDS": "rust"}
+           "RESULTS_COSMOS_DATABASE": "results-db", "RESULTS_COSMOS_CONTAINER": "results",
+           "BASELINE_BACKENDS": "core-python rust"}
     for name in ("BASELINE_DATABASE", "BASELINE_CONTAINER", "BASELINE_READ_RPS"):
         env.pop(name, None)
     if override:
@@ -652,16 +663,322 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
         assert not (tmp_path / "launched.txt").exists()
     else:
         assert result.returncode == 0, result.stdout + result.stderr
-        assert (tmp_path / "launched.txt").read_text().strip() == "verified-db/verified-container/42/100"
+        assert (tmp_path / "launched.txt").read_text().splitlines() == [
+            "verified-db/verified-container/42/100", "verified-db/verified-container/42/100",
+        ]
+        assert (tmp_path / "manifest-rate.txt").read_text().strip() == "100"
+        assert "--expected-rps 100" in (tmp_path / "report-arguments.txt").read_text()
+
+
+def profiling_config_test_setup(tmp_path):
+    template = (WORKLOADS / "profiling_config.env.example").read_text()
+    values = {
+        "COSMOS_URI": "https://test.invalid/", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+        "RESULTS_COSMOS_URI": "https://results.invalid/",
+        "RESULTS_COSMOS_DATABASE": "db", "RESULTS_COSMOS_CONTAINER": "results",
+    }
+    for name, value in values.items():
+        template = template.replace(f'export {name}=""', f'export {name}="{value}"')
+    config = tmp_path / "profiling_config.env"
+    config.write_text(template, encoding="utf-8")
+    env = {name: value for name, value in os.environ.items() if not name.startswith(
+        ("COSMOS_", "RESULTS_", "WORKLOAD_", "PERF_", "PROFILING_", "BASELINE_", "EXPECT_", "MEMRAY_"))}
+    env["PROFILING_TEST_PYTHON"] = Path(sys.executable).as_posix()
+    prefix = (
+        'set -u\nexport HOME="$PWD"\n'
+        f'source "{(WORKLOADS / "profiling_common.sh").as_posix()}"\n'
+        'python3() { "$PROFILING_TEST_PYTHON" "$@"; }\n'
+    )
+    return config, env, prefix
+
+
+@pytest.mark.parametrize("inherited", [None, "250", "350", ""])
+def test_profiling_config_is_authoritative(tmp_path, inherited):
+    import hashlib
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    if inherited is not None:
+        env["WORKLOAD_ARRIVAL_RATE"] = inherited
+    result = subprocess.run(
+        [bash_executable(), "-c", prefix + 'profiling_load_config || exit $?\n'
+         'printf "%s/%s/%s" "$WORKLOAD_ARRIVAL_RATE" "$WORKLOAD_MAX_INFLIGHT" "$PROFILING_CONFIG_SHA256"'],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    if inherited in (None, "250"):
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert result.stdout == f"250/10000/{hashlib.sha256(config.read_bytes()).hexdigest()}"
+    else:
+        assert result.returncode == 2
+        assert "inherited WORKLOAD_ARRIVAL_RATE conflicts" in result.stderr
+
+
+@pytest.mark.parametrize("invalid", [
+    "missing-file", "missing-value", "empty-target", "zero-limit", "negative-rate", "wrong-boolean",
+    "BASELINE_READ_RPS", "BASELINE_DATABASE", "BASELINE_CONTAINER", "BASELINE_OPERATIONS",
+    "PROFILING_PROOF_DATABASE", "PROFILING_PROOF_CONTAINER", "PROFILING_PROOF_PARTITION_KEY",
+    "MEMRAY_ARRIVAL_RATE", "EXPECT_DATABASE",
+])
+def test_profiling_config_rejects_missing_invalid_and_removed_settings(tmp_path, invalid):
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    text = config.read_text()
+    if invalid == "missing-file":
+        config.rename(tmp_path / "perf_target.env")
+    elif invalid == "missing-value":
+        config.write_text(text.replace("export WORKLOAD_MAX_INFLIGHT=10000\n", ""))
+        env["WORKLOAD_MAX_INFLIGHT"] = "10000"
+    elif invalid == "empty-target":
+        config.write_text(text.replace('export COSMOS_DATABASE="db"', 'export COSMOS_DATABASE=""'))
+    elif invalid == "zero-limit":
+        config.write_text(text.replace("WORKLOAD_MAX_INFLIGHT=10000", "WORKLOAD_MAX_INFLIGHT=0"))
+    elif invalid == "negative-rate":
+        config.write_text(text.replace("WORKLOAD_ARRIVAL_RATE=250", "WORKLOAD_ARRIVAL_RATE=-1"))
+    elif invalid == "wrong-boolean":
+        config.write_text(text.replace("WORKLOAD_USE_SYNC=false", "WORKLOAD_USE_SYNC=maybe"))
+    else:
+        env[invalid] = "obsolete"
+    result = subprocess.run([bash_executable(), "-c", prefix + "profiling_load_config"],
+                            cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert "ERROR:" in result.stderr
+
+
+@pytest.mark.parametrize("arguments,valid", [
+    ("", False),
+    ("--confirm-target https://wrong.invalid/ db items", False),
+    ("--confirm-target https://test.invalid/ other items", False),
+    ("--confirm-target https://test.invalid/ db other", False),
+    ("--confirm-target https://test.invalid db items", True),
+])
+def test_target_confirmation_precedes_service_access(tmp_path, arguments, valid):
+    _, env, prefix = profiling_config_test_setup(tmp_path)
+    result = subprocess.run(
+        [bash_executable(), "-c", prefix + 'profiling_load_config || exit $?\n'
+         f'profiling_confirm_target {arguments} || exit $?\necho CONTACT_ALLOWED'],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == valid, result.stdout + result.stderr
+    assert ("CONTACT_ALLOWED" in result.stdout) == valid
+
+
+@pytest.mark.parametrize("setting,value", [
+    ("WORKLOAD_OPERATIONS", "patch"), ("WORKLOAD_USE_SYNC", "true"),
+    ("WORKLOAD_NUM_CLIENTS", "2"), ("WORKLOAD_ARRIVAL_RATE", "0"),
+    ("WORKLOAD_USE_PROXY", "true"), ("WORKLOAD_SKIP_CLOSE", "true"), ("PERF_ENABLED", "false"),
+])
+def test_read_workload_does_not_silently_replace_configuration(tmp_path, setting, value):
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    config.write_text(config.read_text() + f"\nexport {setting}={value}\n")
+    result = subprocess.run(
+        [bash_executable(), "-c", prefix + 'profiling_load_config || exit $?\n'
+         'profiling_require_read_workload || exit $?\necho LAUNCH_ALLOWED'],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2
+    assert "LAUNCH_ALLOWED" not in result.stdout
+
+
+@pytest.mark.parametrize("script", ["profiling_check_target.sh", "profiling_prepare_test_items.sh"])
+def test_target_scripts_refuse_unconfirmed_destination_before_python(tmp_path, script):
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\n"
+        "profiling_confirm_target() { echo 'ERROR: target not confirmed' >&2; return 2; }\n"
+        "python3() { echo live >> live.txt; }\n", encoding="utf-8")
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2
+    assert not (tmp_path / "live.txt").exists()
+
+
+def test_source_update_requires_explicit_commit_before_git(tmp_path):
+    script = "profiling_update_source.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "git() { echo contacted >> git.txt; }\n", encoding="utf-8")
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2
+    assert not (tmp_path / "git.txt").exists()
+
+
+@pytest.mark.parametrize("status_rc", [0, 1, 2])
+def test_source_update_selects_exact_commit_without_building(tmp_path, status_rc):
+    script = "profiling_update_source.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    commit = "a" * 40
+    (tmp_path / "profiling_common.sh").write_text(
+        'profiling_python_repo() { printf "%s" "$PWD"; }\n'
+        f"profiling_repo_is_dirty() {{ return {status_rc}; }}\n"
+        'git() { printf "%s\\n" "${*:3}" >> git.txt; '
+        f'if [[ "$3" == rev-parse ]]; then echo {commit}; fi; }}\n',
+        encoding="utf-8",
+    )
+    env = {key: value for key, value in os.environ.items() if key != "PROFILING_PYTHON_REF"}
+    result = subprocess.run([bash_executable(), script, commit], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    if status_rc != 1:
+        assert result.returncode == 2
+        assert not (tmp_path / "git.txt").exists()
+    else:
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert (tmp_path / "git.txt").read_text().splitlines() == [
+            f"fetch origin {commit}", f"checkout --detach {commit}", "rev-parse HEAD",
+        ]
+
+
+@pytest.mark.parametrize("preparation_rc", [0, 7])
+def test_experiment_preparation_records_session_before_items(tmp_path, preparation_rc):
+    script = "profiling_prepare_experiment.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\n"
+        "profiling_confirm_target() { echo confirmed >> order.txt; }\n"
+        "profiling_load_session() { echo restored >> order.txt; }\n", encoding="utf-8")
+    (tmp_path / "profiling_start_session.sh").write_text(
+        'echo created >> order.txt\nmkdir evidence\nprintf "artifacts=%s/evidence\\n" "$PWD"\n',
+        encoding="utf-8")
+    (tmp_path / "profiling_prepare_test_items.sh").write_text(
+        'echo prepared >> order.txt\nprintf "%s\\n" "$*" > confirmation.txt\n'
+        f"echo preparation-output\nexit {preparation_rc}\n", encoding="utf-8")
+    arguments = ["--confirm-target", "https://test.invalid/", "db", "items"]
+    env = {key: value for key, value in os.environ.items()
+           if key not in ("PROFILING_SKIP_BUILD", "PROFILING_SKIP_SOURCE_UPDATE")}
+    result = subprocess.run([bash_executable(), script, *arguments], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == (preparation_rc == 0), result.stdout + result.stderr
+    assert (tmp_path / "order.txt").read_text().splitlines() == (
+        ["confirmed", "created", "restored", "prepared"] + (["restored"] if preparation_rc == 0 else []))
+    assert (tmp_path / "confirmation.txt").read_text().strip() == " ".join(arguments)
+    assert (tmp_path / "evidence" / "test-item-preparation.log").read_text().strip() == "preparation-output"
+    assert (tmp_path / "evidence" / "session-creation.log").is_file()
+    assert (tmp_path / "evidence" / "preparation-completion.txt").exists() == (preparation_rc == 0)
+
+
+@pytest.mark.parametrize("arguments", ["", "first second", "../other"])
+def test_activation_requires_explicit_session_before_loading_environment(tmp_path, arguments):
+    shutil.copyfile(WORKLOADS / "profiling_activate.sh", tmp_path / "profiling_activate.sh")
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { echo loaded >> loaded.txt; }\n", encoding="utf-8")
+    result = subprocess.run([bash_executable(), "-c", f"source ./profiling_activate.sh {arguments}"],
+                            cwd=tmp_path, capture_output=True, text=True, timeout=15)
+    assert result.returncode != 0
+    assert "ERROR:" in result.stderr
+    assert not (tmp_path / "loaded.txt").exists()
+
+
+@pytest.mark.parametrize("script", [
+    "profiling_run_read_baseline.sh", "profiling_capture_py_spy.sh", "profiling_capture_memray.sh",
+])
+def test_measurement_scripts_do_not_select_newest_session(tmp_path, script):
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text("", encoding="utf-8")
+    (tmp_path / "profiling_activate.sh").write_text("echo selected >> selected.txt\n", encoding="utf-8")
+    env = {key: value for key, value in os.environ.items()
+           if key != "ARTIFACTS" and not key.startswith("BASELINE_")}
+    result = subprocess.run([bash_executable(), "-c", f"source ./{script}"], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert "intended profiling session" in result.stderr
+    assert not (tmp_path / "selected.txt").exists()
+
+
+@pytest.mark.parametrize("script", ["profiling_capture_py_spy.sh", "profiling_capture_memray.sh"])
+def test_captures_preserve_configuration_before_launch(tmp_path, script):
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\nprofiling_load_session() { :; }\n"
+        "profiling_require_read_workload() { :; }\nperf_require_positive() { :; }\n"
+        "py-spy() { :; }\n"
+        "python3() { if [[ \"$1\" != -c ]]; then echo launched >> launched.txt; fi; }\n"
+        "write_run_manifest() {\n"
+        ' printf "%s/%s/%s/%s/%s\\n" "$WORKLOAD_ARRIVAL_RATE" "$WORKLOAD_MAX_INFLIGHT" '
+        '"$PERF_REPORT_INTERVAL" "$WORKLOAD_LOOP_LAG_MONITOR" "$WORKLOAD_GC_FREEZE" > settings.txt\n'
+        " return 1\n}\n", encoding="utf-8")
+    env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "WORKLOAD_ARRIVAL_RATE": "123",
+           "WORKLOAD_MAX_INFLIGHT": "7", "PERF_REPORT_INTERVAL": "17",
+           "WORKLOAD_LOOP_LAG_MONITOR": "true", "WORKLOAD_GC_FREEZE": "true"}
+    env.pop("WORKLOAD_PID", None)
+    result = subprocess.run([bash_executable(), "-c", f"source ./{script}"], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert (tmp_path / "settings.txt").read_text().strip() == "123/7/17/true/true"
+    assert not (tmp_path / "launched.txt").exists()
+
+
+def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):
+    script = "profiling_check_rust_transport.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_load_env() { :; }\nprofiling_load_session() { :; }\n"
+        "python3() { echo contacted >> contacted.txt; }\n", encoding="utf-8")
+    baseline = tmp_path / f"light-load-baseline-{STAMP}"
+    baseline.mkdir()
+    (baseline / "baseline-target.env").write_text(
+        "BASELINE_DATABASE=wrong-db\nBASELINE_CONTAINER=items\nBASELINE_PARTITION_KEY=id\n",
+        encoding="utf-8")
+    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
+           "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items", "COSMOS_PARTITION_KEY": "id"}
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 2, result.stdout + result.stderr
+    assert "saved baseline target differs" in result.stderr
+    assert not (tmp_path / "contacted.txt").exists()
+
+
+def test_build_needs_python_activation_but_not_cosmos_configuration(tmp_path):
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    config.unlink()
+    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
+    activate.parent.mkdir(parents=True)
+    activate.write_text('export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n', encoding="utf-8")
+    script = "profiling_build_extension.sh"
+    shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_common.sh").write_text(
+        prefix + '\nprofiling_python_repo() { echo "$PWD"; }\n'
+        "git() { printf '%040d\\n' 1; }\n"
+        'cargo() { echo "cargo $*" >> "$HOME/build.txt"; }\n'
+        'maturin() { echo "maturin $*" >> "$HOME/build.txt"; }\n'
+        'python3() { if [[ "$1" == - ]]; then cat >/dev/null; else printf "%040d\\n" 2; fi; }\n',
+        encoding="utf-8")
+    result = subprocess.run([bash_executable(), script], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Extension ready" in result.stdout
+    commands = (tmp_path / "build.txt").read_text().splitlines()
+    assert commands[0].startswith("cargo fetch --locked --manifest-path ")
+    assert commands[1] == "maturin develop --release --locked"
+
+
+def test_profiling_config_accepts_fractional_timeout(tmp_path):
+    config, env, prefix = profiling_config_test_setup(tmp_path)
+    config.write_text(config.read_text().replace("COSMOS_REQUEST_TIMEOUT=30", "COSMOS_REQUEST_TIMEOUT=1.5"))
+    result = subprocess.run([bash_executable(), "-c", prefix + "profiling_load_config"],
+                            cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("rate", ["250", "333"])
+def test_credentials_file_cannot_replace_experiment_configuration(tmp_path, rate):
+    _, env, prefix = profiling_config_test_setup(tmp_path)
+    activate = tmp_path / "venvs" / "perfdrill" / "bin" / "activate"
+    activate.parent.mkdir(parents=True)
+    activate.write_text('export VIRTUAL_ENV="$HOME/venvs/perfdrill"\n', encoding="utf-8")
+    (tmp_path / "perf_secrets.env").write_text(
+        "export COSMOS_KEY=synthetic-test-key\nexport RESULTS_COSMOS_KEY=synthetic-results-key\n"
+        f"export WORKLOAD_ARRIVAL_RATE={rate}\n", encoding="utf-8")
+    result = subprocess.run(
+        [bash_executable(), "-c", prefix + 'stat() { echo 600; }\nprofiling_load_env'],
+        cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == (rate == "250"), result.stdout + result.stderr
+    if rate != "250":
+        assert "inherited WORKLOAD_ARRIVAL_RATE conflicts" in result.stderr
 
 
 @pytest.mark.parametrize("force_seed", [False, True])
 @pytest.mark.parametrize("readback_rc", [0, 1, 3, 4])
 def test_seed_requires_full_readback(tmp_path, force_seed, readback_rc):
-    script = "profiling_seed_probe_data.sh"
+    script = "profiling_prepare_test_items.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_check_target.sh").write_text("exit 0\n", encoding="utf-8")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { :; }\n"
+        "profiling_confirm_target() { :; }\n"
         "checks=0\n"
         "python3() {\n"
         "  if [[ \"$1\" == initial-setup.py ]]; then echo seeded >> calls.txt; return 0; fi\n"
@@ -683,10 +1000,12 @@ def test_seed_requires_full_readback(tmp_path, force_seed, readback_rc):
 
 @pytest.mark.parametrize("check_rc", [0, 1, 3])
 def test_seed_does_not_write_when_probe_passes_or_crashes(tmp_path, check_rc):
-    script = "profiling_seed_probe_data.sh"
+    script = "profiling_prepare_test_items.sh"
     shutil.copyfile(WORKLOADS / script, tmp_path / script)
+    (tmp_path / "profiling_check_target.sh").write_text("exit 0\n", encoding="utf-8")
     (tmp_path / "profiling_common.sh").write_text(
         "profiling_load_env() { :; }\n"
+        "profiling_confirm_target() { :; }\n"
         "python3() {\n"
         "  if [[ \"$1\" == initial-setup.py ]]; then echo seeded >> calls.txt; return 0; fi\n"
         "  echo checked >> calls.txt; cat >/dev/null; return \"$CHECK_RC\"\n"
@@ -737,7 +1056,7 @@ def test_data_probe_distinguishes_missing_items_from_failure(monkeypatch, outcom
                         "MAX_ITEM_INDEX": "2"}.items():
         monkeypatch.setenv("COSMOS_" + name, value)
     with pytest.raises(SystemExit) as exc:
-        exec(compile(embedded_python("profiling_seed_probe_data.sh"), "data-probe", "exec"), {})
+        exec(compile(embedded_python("profiling_prepare_test_items.sh"), "data-probe", "exec"), {})
     assert exc.value.code == expected_rc
     assert calls == (["test-0", "test-1"] if outcome == "permission" else
                      ["test-0", "test-1", "test-2"])

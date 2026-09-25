@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rate-limited point-read latency baseline. One client, 250 reads/s by default,
+# Rate-limited point-read latency baseline. Rate comes from ~/profiling_config.env,
 # no proxy. Check measured request charges against the test container's service
 # capacity; 250 reads/s is not automatically below a 400-RU/s budget. Unpaced
 # send-and-wait sends the next read immediately and can saturate the account.
@@ -7,47 +7,49 @@
 # Purpose: validate the test environment before any A/B claim. A point-op baseline
 # uses experiment-specific acceptance criteria, not a service SLA.
 #
-# Backend is selectable so the same probe runs both engines. The script loads
-# the newest complete profiling session when the current shell has no active one:
-#   ./run_light_load_baseline.sh 480                         # core-python + rust
-#   BASELINE_BACKENDS=rust ./run_light_load_baseline.sh 480  # rust only
-# Override the verified default only when intentionally testing a different rate:
-#   BASELINE_READ_RPS=100 ./run_light_load_baseline.sh 480
+# Backend is selectable so the same workload runs both paths. Explicitly load
+# the intended profiling session before starting:
+#   bash ./profiling_run_read_baseline.sh 480
+#   BASELINE_BACKENDS=rust bash ./profiling_run_read_baseline.sh 480
+# Change workload settings in ~/profiling_config.env and create a fresh session.
 # The baseline retains the validated profiling session's test target and item
 # range. Prepare a new profiling session to change the database or container.
 # Results use the active PROFILING_SESSION_ID and configured results container, tagged
 # PERF_WORKLOAD_ID=baseline-<op>-<backend>-<profiling-session-id>.
 set -uo pipefail
 cd "$(dirname "$0")"
+for removed in BASELINE_READ_RPS BASELINE_DATABASE BASELINE_CONTAINER BASELINE_OPERATIONS; do
+  if [[ -v "$removed" ]]; then
+    echo "ERROR: $removed is removed. Edit ~/profiling_config.env and unset $removed." >&2
+    exit 2
+  fi
+done
 source ./profiling_common.sh
 if [[ -n "${ARTIFACTS:-}" ]]; then
   profiling_load_env || exit 2
   profiling_load_session "${ARTIFACTS}" || exit 2
 else
-  # Load the same environment and newest complete session that an operator would
-  # get by sourcing profiling_activate.sh, but keep it local to this command.
-  # shellcheck disable=SC1091
-  source ./profiling_activate.sh || exit 2
+  echo "ERROR: load the intended profiling session with profiling_activate.sh <directory-name> first." >&2
+  exit 2
 fi
 : "${PROFILING_SESSION_ID:?no complete profiling session found; run profiling_start_session.sh first}"
 : "${ARTIFACTS:?no complete profiling session found; run profiling_start_session.sh first}"
 
 DURATION="${1:-480}"
+[[ $# -le 1 ]] || { echo "ERROR: expected only an optional duration in seconds." >&2; exit 2; }
 perf_require_positive "${DURATION}" || exit 2
-perf_single_operation_shape
-OPERATIONS=(${BASELINE_OPERATIONS:-read})
-BACKENDS=(${BASELINE_BACKENDS:-core-python rust})
-BASELINE_READ_RPS="${BASELINE_READ_RPS:-${WORKLOAD_ARRIVAL_RATE}}"
-
-if [[ "${OPERATIONS[*]}" != "read" ]]; then
-  echo "ERROR: the low-load p99 gate supports BASELINE_OPERATIONS=read only." >&2
-  exit 2
-fi
-if ! [[ "${BASELINE_READ_RPS}" =~ ^[0-9]+([.][0-9]+)?$ ]] ||
-   ! awk -v rate="${BASELINE_READ_RPS}" 'BEGIN { exit !(rate > 0) }'; then
-  echo "ERROR: BASELINE_READ_RPS must be a positive number; got '${BASELINE_READ_RPS}'." >&2
-  exit 2
-fi
+profiling_require_read_workload || exit 2
+OPERATIONS=(read)
+read -r -a BACKENDS <<< "${BASELINE_BACKENDS-core-python rust}"
+[[ ${#BACKENDS[@]} -gt 0 ]] || { echo "ERROR: BASELINE_BACKENDS is empty." >&2; exit 2; }
+seen_backends=" "
+for backend in "${BACKENDS[@]}"; do
+  if [[ "$backend" != core-python && "$backend" != rust ]] || [[ "$seen_backends" == *" $backend "* ]]; then
+    echo "ERROR: BASELINE_BACKENDS must select core-python and/or rust without duplicates." >&2
+    exit 2
+  fi
+  seen_backends+="$backend "
+done
 
 LOG_DIR="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}"
 perf_create_log_dir "$LOG_DIR" || exit 2
@@ -55,33 +57,13 @@ RUN_LOG="${LOG_DIR}/baseline-run.log"
 REPORT_FILE="${LOG_DIR}/latency-report.txt"
 exec > >(tee "${RUN_LOG}") 2>&1
 
-BASELINE_DATABASE="${BASELINE_DATABASE:-${COSMOS_DATABASE}}"
-BASELINE_CONTAINER="${BASELINE_CONTAINER:-${COSMOS_CONTAINER}}"
-if [[ "${BASELINE_DATABASE}" != "${COSMOS_DATABASE:-}" ||
-      "${BASELINE_CONTAINER}" != "${COSMOS_CONTAINER:-}" ]]; then
-  echo "ERROR: baseline target differs from the validated profiling session." >&2
-  echo "       Prepare and validate a new profiling session for the intended target." >&2
-  exit 2
-fi
-export COSMOS_DATABASE="${BASELINE_DATABASE}"
-export COSMOS_CONTAINER="${BASELINE_CONTAINER}"
-export COSMOS_CONCURRENT_REQUESTS=1
-export WORKLOAD_NUM_CLIENTS=1
-# The pacing this baseline depends on lives only in the async fixed-rate path
-# (workload.py). The sync client rejects a positive arrival rate. Pin async mode
-# rather than inheriting a setting from a different experiment.
-export WORKLOAD_USE_SYNC=false
-export WORKLOAD_ARRIVAL_RATE="${BASELINE_READ_RPS}"
-export WORKLOAD_USE_PROXY=false
-# Keep the prepared item range, timeout and reporting interval.
-
 # Persist the exact data target used by this child process. The parent shell
-# does not inherit exports from `bash ./run_light_load_baseline.sh`, so the
-# later transport proof reads this file to avoid proving a different container.
+# does not inherit exports from this script, so the later transport check
+# compares this record with its validated configuration.
 BASELINE_TARGET_FILE="${LOG_DIR}/baseline-target.env"
 {
-  printf 'BASELINE_DATABASE=%q\n' "${BASELINE_DATABASE}"
-  printf 'BASELINE_CONTAINER=%q\n' "${BASELINE_CONTAINER}"
+  printf 'BASELINE_DATABASE=%q\n' "${COSMOS_DATABASE}"
+  printf 'BASELINE_CONTAINER=%q\n' "${COSMOS_CONTAINER}"
   printf 'BASELINE_PARTITION_KEY=%q\n' "${COSMOS_PARTITION_KEY:-id}"
 } >"${BASELINE_TARGET_FILE}"
 write_run_manifest "${LOG_DIR}" "${PROFILING_SESSION_ID}" "light-load-baseline" || exit 2
@@ -90,8 +72,8 @@ for bk in "${BACKENDS[@]}"; do
 done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Rate-limited point-read latency baseline ==="
-echo "    profiling_session_id=${PROFILING_SESSION_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
-echo "    container=${BASELINE_DATABASE}/${BASELINE_CONTAINER}  results -> ${RESULTS_COSMOS_DATABASE:-perfdb}/${RESULTS_COSMOS_CONTAINER:-perfresults-v2} (workload_id LIKE baseline-%)"
+echo "    profiling_session_id=${PROFILING_SESSION_ID} dur=${DURATION}s rate=${WORKLOAD_ARRIVAL_RATE} reads/s backends=${BACKENDS[*]}"
+echo "    container=${COSMOS_DATABASE}/${COSMOS_CONTAINER}  results -> ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER} (workload_id LIKE baseline-%)"
 echo
 overall_rc=0
 
@@ -130,7 +112,7 @@ else
 fi
 echo "=== Checking the point-read p99 gate ==="
 if python3 latency_report.py --prefix "baseline-" --profiling-session-id "${PROFILING_SESSION_ID}" \
-  --point-read-gate --expected-rps "${BASELINE_READ_RPS}" --max-p99-ms 10 \
+  --point-read-gate --expected-rps "${WORKLOAD_ARRIVAL_RATE}" --max-p99-ms 10 \
   --gate-backends "${BACKEND_CSV}" \
   | tee "${REPORT_FILE}"; then
   echo "=== point-read p99 gate PASSED ==="

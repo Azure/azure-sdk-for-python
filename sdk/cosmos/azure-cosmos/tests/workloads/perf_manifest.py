@@ -62,6 +62,10 @@ def write_manifest(directory, stamp, phase):
     # Capture stamps can differ from their parent profiling session identifier.
     if os.environ.get("PROFILING_SESSION_ID"):
         record["profiling_session_id"] = os.environ["PROFILING_SESSION_ID"]
+    if os.environ.get("PROFILING_CONFIG_SHA256"):
+        record["configuration"] = fields({
+            "path": "PROFILING_CONFIG_PATH", "sha256": "PROFILING_CONFIG_SHA256",
+        })
     path = Path(directory) / f"manifest-{stamp}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(record, indent=2, allow_nan=False) + "\n", encoding="utf-8")

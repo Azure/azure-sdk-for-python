@@ -22,20 +22,22 @@
 # that is not a 404 stops this script instead.
 #
 # Usage:
-#   ./profiling_seed_probe_data.sh          # verify, seed only if items missing
-#   PROFILING_FORCE_SEED=1 ./profiling_seed_probe_data.sh   # always reseed
+#   bash profiling_prepare_test_items.sh --confirm-target <endpoint> <database> <container>
+#   PROFILING_FORCE_SEED=1 forces upserts even when all items exist.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 cd "$(dirname "$0")"
 
 source ./profiling_common.sh
 profiling_load_env || exit 2
+profiling_confirm_target "$@" || exit 2
+bash ./profiling_check_target.sh "$@" || exit 1
 
-echo "=== Probe data ==="
+echo "=== Test items ==="
 echo "    target : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    range  : test-0 .. test-${COSMOS_MAX_ITEM_INDEX} ($(( COSMOS_MAX_ITEM_INDEX + 1 )) items)"
 
-verify_probe_data() {
+verify_test_items() {
   python3 - <<'PY'
 import os
 import sys
@@ -106,12 +108,12 @@ if [[ "${PROFILING_FORCE_SEED:-0}" == "1" ]]; then
   echo "    PROFILING_FORCE_SEED=1, reseeding before readback."
   needs_seed=1
 else
-  verify_probe_data
+  verify_test_items
   case $? in
     0) needs_seed=0 ;;
     4) needs_seed=1 ;;
     *)
-      echo "!! Could not verify the probe data, so it will not be seeded blindly." >&2
+      echo "!! Could not verify the test items, so they will not be replaced blindly." >&2
       echo "   Fix the connectivity or permission problem above and re-run." >&2
       exit 1
       ;;
@@ -119,7 +121,7 @@ else
 fi
 
 if [[ ${needs_seed} -eq 0 ]]; then
-  echo "=== Probe data complete; nothing to do ==="
+  echo "=== Test items complete; nothing to do ==="
   exit 0
 fi
 
@@ -131,9 +133,9 @@ if ! python3 initial-setup.py; then
   exit 1
 fi
 echo "    Verifying the full item range after seeding ..."
-if ! verify_probe_data; then
+if ! verify_test_items; then
   echo "ERROR: seeded data did not pass readback; do not start the measured workload." >&2
   exit 1
 fi
-echo "=== Probe data seeded and verified ==="
+echo "=== Test items prepared and verified ==="
 exit 0

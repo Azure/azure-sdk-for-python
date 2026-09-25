@@ -17,8 +17,8 @@ if [[ -n "${ARTIFACTS:-}" ]]; then
   profiling_load_env || return 2
   profiling_load_session "${ARTIFACTS}" || return 2
 else
-  # shellcheck disable=SC1091
-  source ./profiling_activate.sh || return 2
+  echo "ERROR: load the intended profiling session with profiling_activate.sh <directory-name> first." >&2
+  return 2
 fi
 
 _memray_failed=0
@@ -36,8 +36,7 @@ fi
 
 MEMRAY_DURATION="${MEMRAY_DURATION:-120}"
 MEMRAY_KILL_AFTER="${MEMRAY_KILL_AFTER:-30}"
-MEMRAY_ARRIVAL_RATE="${MEMRAY_ARRIVAL_RATE:-250}"
-for _memray_value_name in MEMRAY_DURATION MEMRAY_KILL_AFTER MEMRAY_ARRIVAL_RATE; do
+for _memray_value_name in MEMRAY_DURATION MEMRAY_KILL_AFTER; do
   _memray_value="${!_memray_value_name}"
   if [[ ! "${_memray_value}" =~ ^[1-9][0-9]*$ ]]; then
     echo "ERROR: ${_memray_value_name} must be a positive whole number." >&2
@@ -56,25 +55,16 @@ if [[ "${_memray_failed}" -ne 0 ]]; then
 fi
 
 export COSMOS_BACKEND=rust
-perf_single_operation_shape
-export WORKLOAD_OPERATIONS=read
-export COSMOS_CONCURRENT_REQUESTS=1
-export WORKLOAD_NUM_CLIENTS=1
-export WORKLOAD_ARRIVAL_RATE="${MEMRAY_ARRIVAL_RATE}"
-export WORKLOAD_USE_PROXY=false
-export WORKLOAD_USE_SYNC=false
-export WORKLOAD_LOOP_LAG_MONITOR=false
-export WORKLOAD_GC_FREEZE=false
-export PERF_REPORT_INTERVAL=$((MEMRAY_DURATION + MEMRAY_KILL_AFTER + 60))
+profiling_require_read_workload || return 2
 
 MEMRAY_STAMP="$(date -u +%Y%m%d-%H%M%S%3N)"
 export PERF_WORKLOAD_ID="memray-read-rust-${MEMRAY_STAMP}"
-MEMRAY_FILE="${ARTIFACTS}/memray-read-r${MEMRAY_ARRIVAL_RATE}.bin"
+MEMRAY_FILE="${ARTIFACTS}/memray-read-r${WORKLOAD_ARRIVAL_RATE}.bin"
 MEMRAY_LOG="${ARTIFACTS}/memray-workload.log"
 MEMRAY_HEALTH="${ARTIFACTS}/memray-health.txt"
 MEMRAY_INTEGRITY="${ARTIFACTS}/memray-integrity.txt"
 export MEMRAY_STAMP MEMRAY_FILE MEMRAY_LOG MEMRAY_DURATION MEMRAY_KILL_AFTER \
-  MEMRAY_ARRIVAL_RATE MEMRAY_HEALTH MEMRAY_INTEGRITY
+  MEMRAY_HEALTH MEMRAY_INTEGRITY
 
 if [[ -e "${MEMRAY_FILE}" || -e "${MEMRAY_LOG}" ]]; then
   echo "ERROR: Memray artifacts already exist in ${ARTIFACTS}." >&2
@@ -84,10 +74,11 @@ if [[ -e "${MEMRAY_FILE}" || -e "${MEMRAY_LOG}" ]]; then
 fi
 
 printf 'memray_stamp=%s\nmemray_workload_id=%s\nmemray_arrival_rate=%s\nmemray_duration=%s\nmemray_file=%s\n' \
-  "${MEMRAY_STAMP}" "${PERF_WORKLOAD_ID}" "${MEMRAY_ARRIVAL_RATE}" \
+  "${MEMRAY_STAMP}" "${PERF_WORKLOAD_ID}" "${WORKLOAD_ARRIVAL_RATE}" \
   "${MEMRAY_DURATION}" "${MEMRAY_FILE}" | tee -a "${ARTIFACTS}/run.txt"
 
 echo "=== Recording the Rust point-read workload with Memray for ${MEMRAY_DURATION}s ==="
+write_run_manifest "${ARTIFACTS}" "${MEMRAY_STAMP}" "memory-capture" || return 2
 MEMRAY_RC=0
 timeout \
   --signal=INT \

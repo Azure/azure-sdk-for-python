@@ -20,7 +20,7 @@ set -uo pipefail
 cd "$(dirname "$0")"
 
 source ./profiling_common.sh
-profiling_load_env || exit 2
+profiling_activate_python || exit 2
 
 PKG_ROOT="$(cd ../.. && pwd)"          # .../sdk/cosmos/azure-cosmos
 PY_REPO="$(profiling_python_repo)" || exit 2

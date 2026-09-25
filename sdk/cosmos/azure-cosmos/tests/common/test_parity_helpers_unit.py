@@ -154,11 +154,98 @@ class _Client:
     """Provide a minimal client with a selected request implementation."""
     def __init__(self, backend):
         self.client_connection = _Connection(backend)
+        self.close_count = 0
+
+    def close(self):
+        self.close_count += 1
 
 
 class _RustBackend:
     """Identify a fake request implementation as Rust."""
     name = "rust"
+
+
+@pytest.mark.parametrize("surface", ["sync", "aio"])
+@pytest.mark.parametrize(
+    "scenario", [
+        "success", "operation_error", "assertion", "interrupt",
+        "wrong_backend", "close_error", "assertion_and_close_error",
+    ]
+)
+def test_runner_closes_owned_clients(surface, scenario, monkeypatch):
+    clients = []
+    calls = []
+    failure = {
+        "operation_error": ValueError("operation failed"),
+        "assertion": AssertionError("test failed"),
+        "interrupt": KeyboardInterrupt(),
+        "close_error": RuntimeError("cleanup failed"),
+        "assertion_and_close_error": RuntimeError("cleanup failed"),
+    }.get(scenario)
+    assertion_failure = AssertionError("test failed before cleanup")
+
+    class Client(_Client):
+        def close(self):
+            super().close()
+            if scenario in ("close_error", "assertion_and_close_error"):
+                raise failure
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *_args):
+            self.close()
+            return False
+
+    def factory(requested):
+        assert all(client.close_count == 1 for client in clients)
+        backend = LEGACY_BACKEND if requested == "core-python" else _RustBackend()
+        if scenario == "wrong_backend":
+            backend = _RustBackend() if requested == "core-python" else LEGACY_BACKEND
+        client = Client(backend)
+        clients.append(client)
+        return client
+
+    def call(client):
+        assert client.close_count == 0
+        calls.append(client)
+        if scenario in ("operation_error", "assertion", "interrupt"):
+            raise failure
+        if scenario == "assertion_and_close_error":
+            raise assertion_failure
+        return {"value": 1}
+
+    async def async_call(client):
+        return call(client)
+
+    monkeypatch.setenv(_parity_helpers.ENV_ENDPOINT, "https://unused.invalid")
+    monkeypatch.setenv(_parity_helpers.ENV_KEY, "unused-test-key")
+    monkeypatch.setattr(
+        _parity_helpers, "AioCosmosClient",
+        lambda _endpoint, _key, *, _backend: factory(_backend),
+    )
+
+    def run():
+        if surface == "sync":
+            return _parity_helpers.run_on_both_backends(call, client_factory=factory)
+        return asyncio.run(_parity_helpers.run_on_both_backends_async(async_call))
+
+    if scenario in ("success", "operation_error"):
+        comparison = run()
+        assert len(clients) == 2
+        for outcome in (comparison.core_python, comparison.rust):
+            assert outcome.raised is failure
+    else:
+        error_type = AssertionError if scenario == "wrong_backend" else type(failure)
+        with pytest.raises(error_type) as caught:
+            run()
+        if failure is not None:
+            assert caught.value is failure
+        if scenario == "assertion_and_close_error":
+            assert caught.value.__context__ is assertion_failure
+        assert len(clients) == 1
+    assert all(client.close_count == 1 for client in clients)
+    assert len(calls) == (0 if scenario == "wrong_backend" else len(clients))
 
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])

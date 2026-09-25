@@ -11,17 +11,12 @@
 # _rust extension and without py-spy or Memray -- and the checks they perform
 # describe an environment that no measured run will ever use.
 #
-# Every helper therefore calls profiling_load_env at startup, and a missing
-# piece is fatal rather than a warning: a step that "passes" against the wrong
-# interpreter is worse than one that stops.
+# Each Python-dependent step activates the selected environment. A missing
+# interpreter is fatal rather than a warning.
 #
-# Load order is fixed, and changing it breaks the settings:
-#   1  ~/perf_secrets.env      account keys (not checked in)
-#   2  ./profiling_target.env  account, data and load  (~/perf_target.env wins)
-#   3  ./perf_env.sh           shared fallbacks; its "${VAR:-default}" forms
-#                              must run LAST so profiling_target.env's values
-#                              survive
-#   4  ~/venvs/perfdrill       the interpreter holding the built extension
+# Build scripts activate Python only. Live profiling commands also load the
+# complete ~/profiling_config.env, credentials from ~/perf_secrets.env, and
+# functions from perf_common.sh. They never inherit sweep defaults.
 # ---------------------------------------------------------------------------
 
 # A phase label reaches the filesystem as a directory name and the manifest as
@@ -54,7 +49,10 @@ profiling_validate_phase() {
 # manifest would not describe what was built.
 profiling_repo_is_dirty() {
   local dir="$1" status
-  status="$(git -C "${dir}" status --porcelain --untracked-files=normal 2>/dev/null)"
+  status="$(git -C "${dir}" status --porcelain --untracked-files=normal)" || {
+    echo "ERROR: cannot inspect local changes in ${dir}." >&2
+    return 2
+  }
   [[ -n "${status}" ]]
 }
 
@@ -141,6 +139,7 @@ profiling_load_session() {
   python3 - "${manifest}" "${PROFILING_SESSION_ID}" "${PERF_PHASE}" \
     "${COSMOS_URI}" "${COSMOS_DATABASE}" "${COSMOS_CONTAINER}" <<'PY'
 import json
+import os
 import sys
 from perf_build_details import extension_details, source_digest
 
@@ -164,6 +163,9 @@ if "profiling_session_id" in manifest:
     expected["profiling_session_id"] = (manifest["profiling_session_id"], profiling_session_id)
 bad = [f"{name}: manifest={actual!r}, expected={wanted!r}"
        for name, (actual, wanted) in expected.items() if actual != wanted]
+configuration = manifest.get("configuration")
+if configuration is not None and configuration.get("sha256") != os.environ.get("PROFILING_CONFIG_SHA256"):
+    bad.append("~/profiling_config.env changed since profiling session creation; create a fresh profiling session")
 build = manifest.get("build") or {}
 if build.get("source_sha256") != source_digest():
     bad.append("SDK/binding/workload sources changed since session creation")
@@ -182,11 +184,136 @@ PY
   export PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
 }
 
+profiling_activate_python() {
+  if [[ ! -f ~/venvs/perfdrill/bin/activate ]]; then
+    echo "ERROR: ~/venvs/perfdrill/bin/activate is missing." >&2
+    return 2
+  fi
+  source ~/venvs/perfdrill/bin/activate || return 2
+  if [[ -z "${VIRTUAL_ENV:-}" ]]; then
+    echo "ERROR: perfdrill activation did not set VIRTUAL_ENV." >&2
+    return 2
+  fi
+}
+
+profiling_load_config() {
+  local config="$HOME/profiling_config.env" name
+  local -a names=(
+    COSMOS_URI COSMOS_DATABASE COSMOS_CONTAINER COSMOS_PARTITION_KEY
+    COSMOS_MAX_ITEM_INDEX COSMOS_THROUGHPUT COSMOS_PREFERRED_LOCATIONS
+    COSMOS_CLIENT_EXCLUDED_LOCATIONS COSMOS_REQUEST_EXCLUDED_LOCATIONS
+    COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS
+    RESULTS_COSMOS_URI RESULTS_COSMOS_DATABASE RESULTS_COSMOS_CONTAINER
+    WORKLOAD_NUM_CLIENTS COSMOS_CONCURRENT_REQUESTS WORKLOAD_ARRIVAL_RATE
+    WORKLOAD_MAX_INFLIGHT WORKLOAD_OPERATIONS COSMOS_REQUEST_TIMEOUT
+    WORKLOAD_USE_SYNC WORKLOAD_USE_PROXY WORKLOAD_GC_FREEZE WORKLOAD_LOOP_LAG_MONITOR
+    WORKLOAD_SKIP_CLOSE WORKLOAD_MIX WORKLOAD_DOC_PROFILE COSMOS_LOG_LEVEL
+    COSMOS_ENABLE_DIAGNOSTICS_LOGGING PERF_ENABLED PERF_REPORT_INTERVAL
+  )
+  local -A inherited=()
+  if [[ ! -f "$config" ]]; then
+    echo "ERROR: ~/profiling_config.env is required. Copy profiling_config.env.example and fill in the target." >&2
+    echo "       ~/perf_target.env and profiling_target.env are no longer loaded." >&2
+    return 2
+  fi
+  for name in "${names[@]}"; do
+    if [[ -v "$name" ]]; then inherited["$name"]="${!name}"; fi
+    unset "$name"
+  done
+  source "$config" || { echo "ERROR: cannot load $config." >&2; return 2; }
+  for name in "${names[@]}"; do
+    if [[ ! -v "$name" ]]; then
+      echo "ERROR: $config must explicitly set $name; profiling has no fallback defaults." >&2
+      return 2
+    fi
+    if [[ -v "inherited[$name]" && "${inherited[$name]}" != "${!name}" ]]; then
+      echo "ERROR: inherited $name conflicts with $config. Edit that file, then unset $name or use a fresh terminal." >&2
+      return 2
+    fi
+    case "$name" in
+      COSMOS_CLIENT_EXCLUDED_LOCATIONS|COSMOS_REQUEST_EXCLUDED_LOCATIONS|WORKLOAD_MIX) ;;
+      *) [[ -n "${!name}" ]] || { echo "ERROR: $config has an empty $name." >&2; return 2; } ;;
+    esac
+    export "$name"
+  done
+  for name in WORKLOAD_NUM_CLIENTS COSMOS_CONCURRENT_REQUESTS COSMOS_THROUGHPUT \
+      WORKLOAD_MAX_INFLIGHT PERF_REPORT_INTERVAL; do
+    if [[ ! "${!name}" =~ ^[1-9][0-9]*$ ]]; then
+      echo "ERROR: $name must be a positive integer in $config." >&2
+      return 2
+    fi
+  done
+  for name in COSMOS_MAX_ITEM_INDEX; do
+    if [[ ! "${!name}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+      echo "ERROR: $name must be a nonnegative integer in $config." >&2
+      return 2
+    fi
+  done
+  for name in WORKLOAD_ARRIVAL_RATE COSMOS_REQUEST_TIMEOUT; do
+    if [[ ! "${!name}" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+      echo "ERROR: $name must be a nonnegative number in $config." >&2
+      return 2
+    fi
+  done
+  if [[ "$COSMOS_PARTITION_KEY" != id && "$COSMOS_PARTITION_KEY" != pk ]]; then
+    echo "ERROR: configure COSMOS_PARTITION_KEY=id or pk." >&2
+    return 2
+  fi
+  for name in WORKLOAD_USE_SYNC WORKLOAD_USE_PROXY WORKLOAD_GC_FREEZE WORKLOAD_LOOP_LAG_MONITOR \
+      WORKLOAD_SKIP_CLOSE COSMOS_ENABLE_DIAGNOSTICS_LOGGING COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS PERF_ENABLED; do
+    if [[ "${!name}" != true && "${!name}" != false ]]; then
+      echo "ERROR: $name must be true or false in $config." >&2
+      return 2
+    fi
+  done
+  for name in BASELINE_READ_RPS BASELINE_DATABASE BASELINE_CONTAINER BASELINE_OPERATIONS \
+      PROFILING_PROOF_DATABASE PROFILING_PROOF_CONTAINER PROFILING_PROOF_PARTITION_KEY MEMRAY_ARRIVAL_RATE; do
+    if [[ -v "$name" ]]; then
+      echo "ERROR: $name is removed. Use ~/profiling_config.env and unset $name." >&2
+      return 2
+    fi
+  done
+  while IFS= read -r name; do
+    echo "ERROR: $name is removed. Confirm the target with --confirm-target, not EXPECT_* settings." >&2
+    return 2
+  done < <(compgen -A variable EXPECT_)
+  export PROFILING_CONFIG_PATH="$config"
+  PROFILING_CONFIG_SHA256="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest())' "$config")" || return 2
+  export PROFILING_CONFIG_SHA256
+}
+
+profiling_confirm_target() {
+  if [[ $# -ne 4 || "$1" != --confirm-target ]]; then
+    echo "ERROR: pass --confirm-target <account-endpoint> <database> <container> before contacting Cosmos." >&2
+    return 2
+  fi
+  if [[ "${2%/}" != "${COSMOS_URI%/}" || "$3" != "$COSMOS_DATABASE" || "$4" != "$COSMOS_CONTAINER" ]]; then
+    echo "ERROR: confirmed target differs from ~/profiling_config.env; no live target will be contacted." >&2
+    return 2
+  fi
+}
+
+profiling_require_read_workload() {
+  if [[ "$WORKLOAD_OPERATIONS" != read || "$WORKLOAD_NUM_CLIENTS" != 1 ||
+        "$COSMOS_CONCURRENT_REQUESTS" != 1 || "$WORKLOAD_USE_SYNC" != false ||
+        "$WORKLOAD_USE_PROXY" != false || "$WORKLOAD_SKIP_CLOSE" != false ||
+        "$PERF_ENABLED" != true || -n "$WORKLOAD_MIX" ]]; then
+    echo "ERROR: configure one asynchronous read client, concurrency 1, reporting enabled, no proxy/mix/skipped close in ~/profiling_config.env." >&2
+    return 2
+  fi
+  if ! [[ "$WORKLOAD_ARRIVAL_RATE" =~ ^[0-9]+([.][0-9]+)?$ ]] ||
+     ! awk -v rate="$WORKLOAD_ARRIVAL_RATE" 'BEGIN { exit !(rate > 0) }'; then
+    echo "ERROR: WORKLOAD_ARRIVAL_RATE must be positive for fixed-rate reads; edit ~/profiling_config.env." >&2
+    return 2
+  fi
+}
+
 profiling_load_env() {
   local here secrets_perm
   here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  profiling_activate_python || return 2
 
-  # 1. Credentials.
+  # Load credentials first so they cannot replace validated experiment settings.
   if [[ ! -f ~/perf_secrets.env ]]; then
     echo "ERROR: ~/perf_secrets.env not found." >&2
     echo "       It holds COSMOS_KEY and is the one file deliberately not" >&2
@@ -210,47 +337,11 @@ profiling_load_env() {
   # shellcheck disable=SC1090
   source ~/perf_secrets.env || { echo "ERROR: ~/perf_secrets.env failed to load." >&2; return 2; }
 
-  # 2. Target. The checked-in file defines the profiling account and data; an
-  # operator copy in the home directory overrides it for a different account.
-  if [[ -f ~/perf_target.env ]]; then
-    # shellcheck disable=SC1090
-    source ~/perf_target.env || { echo "ERROR: ~/perf_target.env failed to load." >&2; return 2; }
-  elif [[ -f "${here}/profiling_target.env" ]]; then
-    # shellcheck disable=SC1091
-    source "${here}/profiling_target.env" || {
-      echo "ERROR: ${here}/profiling_target.env failed to load." >&2
-      return 2
-    }
-  else
-    echo "ERROR: no profiling target found. Expected ${here}/profiling_target.env" >&2
-    echo "       (checked in) or ~/perf_target.env (operator override)." >&2
+  if [[ -z "${COSMOS_KEY:-}" || -z "${RESULTS_COSMOS_KEY:-}" ]]; then
+    echo "ERROR: ~/perf_secrets.env must supply COSMOS_KEY and RESULTS_COSMOS_KEY." >&2
     return 2
   fi
-
-  # 3. Shared fallbacks and helper functions, last so profiling_target.env wins.
-  # shellcheck disable=SC1091
-  source "${here}/perf_env.sh" >/dev/null 2>&1 || {
-    echo "ERROR: ${here}/perf_env.sh failed (usually a missing account key)." >&2
-    return 2
-  }
-
-  # 4. The interpreter that holds the built extension and the capture tools.
-  if [[ ! -f ~/venvs/perfdrill/bin/activate ]]; then
-    echo "ERROR: the perfdrill Python environment is missing." >&2
-    echo "       Expected ~/venvs/perfdrill/bin/activate" >&2
-    echo "       Without it, later steps would silently use the system python3," >&2
-    echo "       which does not have the built _rust extension or the profilers." >&2
-    return 2
-  fi
-  # shellcheck disable=SC1090
-  source ~/venvs/perfdrill/bin/activate || {
-    echo "ERROR: could not activate the perfdrill environment." >&2
-    return 2
-  }
-  if [[ -z "${VIRTUAL_ENV:-}" ]]; then
-    echo "ERROR: perfdrill activation did not take effect (VIRTUAL_ENV unset)." >&2
-    return 2
-  fi
-
-  return 0
+  export COSMOS_KEY RESULTS_COSMOS_KEY
+  profiling_load_config || return 2
+  source "${here}/perf_common.sh" || return 2
 }

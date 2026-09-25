@@ -18,8 +18,8 @@ if [[ -n "${ARTIFACTS:-}" ]]; then
   profiling_load_env || return 2
   profiling_load_session "${ARTIFACTS}" || return 2
 else
-  # shellcheck disable=SC1091
-  source ./profiling_activate.sh || return 2
+  echo "ERROR: load the intended profiling session with profiling_activate.sh <directory-name> first." >&2
+  return 2
 fi
 
 if [[ -n "${WORKLOAD_PID:-}" ]] && kill -0 "${WORKLOAD_PID}" 2>/dev/null; then
@@ -36,16 +36,7 @@ for _py_spy_command in python3 py-spy ps grep tee seq; do
 done
 
 export COSMOS_BACKEND=rust
-perf_single_operation_shape
-export WORKLOAD_GC_FREEZE=false
-export WORKLOAD_OPERATIONS=read
-export COSMOS_CONCURRENT_REQUESTS=1
-export WORKLOAD_NUM_CLIENTS=1
-export WORKLOAD_ARRIVAL_RATE=250
-export WORKLOAD_USE_PROXY=false
-export WORKLOAD_USE_SYNC=false
-export WORKLOAD_LOOP_LAG_MONITOR=false
-export PERF_REPORT_INTERVAL=3600
+profiling_require_read_workload || return 2
 PROFILE_STAMP="$(date -u +%Y%m%d-%H%M%S%3N)"
 export PERF_WORKLOAD_ID="profile-read-rust-${PROFILE_STAMP}"
 
@@ -61,6 +52,7 @@ if [[ -e "${ARTIFACTS}/profile-workload.log" || -e "${PY_SPY_SVG}" ]]; then
   echo "ERROR: CPU capture artifacts already exist; start a new profiling session." >&2
   return 2
 fi
+write_run_manifest "${ARTIFACTS}" "${PROFILE_STAMP}" "cpu-capture" || return 2
 
 python3 workload.py >"${ARTIFACTS}/profile-workload.log" 2>&1 &
 WORKLOAD_PID=$!

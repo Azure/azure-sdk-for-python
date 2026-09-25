@@ -3,7 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Client-owned item defaults and response headers, independent of transport."""
+"""Keep the Python backend, operation defaults, and response headers available
+to database, container, and operation helpers.
+
+The customer app configures CosmosClient once. Its database and container
+objects then retain the same ItemClientContext, which groups references
+to the existing Python backend, ItemClientDefaults, and
+ClientLastResponseHeaders.
+
+Helpers use these references directly rather than retrieve them through
+CosmosClientConnection. Creating the objects defined here does not send
+requests. Synchronous and asynchronous clients use the same classes.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -61,10 +72,35 @@ class ClientLastResponseHeaders:
 
 @dataclass(frozen=True)
 class ItemClientContext(Generic[_BackendT]):
-    """Carry the Python backend, client defaults, and header state through proxies.
+    """Group references to one client's Python backend, defaults, and header state.
 
-    Client -> database proxy -> container proxy keeps the same context.
-    Dependencies are passed directly, not recovered through a legacy connection.
+    Client state means the information retained for a client, not the
+    CosmosClient object itself. For a synchronous Rust-backed client with
+    priority="High", the Python wrapper retains these references::
+
+        CosmosClient object
+            |
+            +-- _backend -----------------------> RustBackend object
+            |                                         ^
+            +-- _item_context -> ItemClientContext    |
+                                     |                |
+                                     +-- backend -----+
+                                     |
+                                     +-- defaults -> ItemClientDefaults
+                                     |                   priority = "High"
+                                     |
+                                     +-- response_state -> ClientLastResponseHeaders
+                                                               latest headers
+
+    There is one RustBackend object in this illustration, reached through
+    two references. ItemClientContext is a separate object, not another
+    CosmosClient. DatabaseProxy for "sales" and ContainerProxy for "orders"
+    retain this same context rather than copy the backend or prepare client
+    settings again.
+
+    The defaults hold values used when operations omit their own, and the
+    response_state holds the latest published headers. For an asynchronous
+    Rust-backed client, backend refers to AsyncRustBackend instead.
     """
 
     backend: _BackendT

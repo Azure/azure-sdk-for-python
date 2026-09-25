@@ -36,9 +36,8 @@
 #   bash ./profiling_check_rust_transport.sh              # reads test-1 by default
 #   PROFILING_PROOF_ITEM=test-42 bash ./profiling_check_rust_transport.sh
 # After a baseline, the script automatically reads that run's saved target.
-# Override it explicitly with PROFILING_PROOF_DATABASE,
-# PROFILING_PROOF_CONTAINER, and PROFILING_PROOF_PARTITION_KEY.
-# Existing PROFILING_PROOF_* inputs and the saved evidence format are retained.
+# The target comes only from the validated profiling configuration.
+# PROFILING_PROOF_ITEM and PROFILING_PROOF_PK select the item, not another target.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -48,7 +47,7 @@ profiling_load_env || exit 2
 
 if [[ -z "${ARTIFACTS:-}" || ! -d "${ARTIFACTS}" ]]; then
   echo "ERROR: no profiling session is loaded, so this check has nowhere to save evidence." >&2
-  echo "       Run:  source ./profiling_activate.sh" >&2
+  echo "       Run: source ./profiling_activate.sh <directory-name>" >&2
   exit 2
 fi
 
@@ -60,7 +59,7 @@ RECORDED_CONTAINER=""
 RECORDED_PARTITION_KEY=""
 BASELINE_TARGET_FILE="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}/baseline-target.env"
 if [[ -f "${BASELINE_TARGET_FILE}" ]]; then
-  # Written with printf %q by run_light_load_baseline.sh.
+  # Written with printf %q by the baseline script. Historical field names are retained.
   # shellcheck disable=SC1090
   source "${BASELINE_TARGET_FILE}" || {
     echo "ERROR: could not load baseline target ${BASELINE_TARGET_FILE}." >&2
@@ -71,12 +70,13 @@ if [[ -f "${BASELINE_TARGET_FILE}" ]]; then
   RECORDED_PARTITION_KEY="${BASELINE_PARTITION_KEY:-}"
 fi
 
-READ_DATABASE="${PROFILING_PROOF_DATABASE:-${RECORDED_DATABASE:-${COSMOS_DATABASE}}}"
-READ_CONTAINER="${PROFILING_PROOF_CONTAINER:-${RECORDED_CONTAINER:-${COSMOS_CONTAINER}}}"
-READ_PARTITION_KEY="${PROFILING_PROOF_PARTITION_KEY:-${RECORDED_PARTITION_KEY:-${COSMOS_PARTITION_KEY:-id}}}"
-export COSMOS_DATABASE="${READ_DATABASE}"
-export COSMOS_CONTAINER="${READ_CONTAINER}"
-export COSMOS_PARTITION_KEY="${READ_PARTITION_KEY}"
+if [[ -f "$BASELINE_TARGET_FILE" ]] &&
+   [[ "$RECORDED_DATABASE" != "$COSMOS_DATABASE" || "$RECORDED_CONTAINER" != "$COSMOS_CONTAINER" ||
+      "$RECORDED_PARTITION_KEY" != "$COSMOS_PARTITION_KEY" ]]; then
+  echo "ERROR: saved baseline target differs from the validated profiling configuration." >&2
+  exit 2
+fi
+unset BASELINE_DATABASE BASELINE_CONTAINER BASELINE_PARTITION_KEY
 
 READ_ITEM="${PROFILING_PROOF_ITEM:-test-1}"
 DIAGNOSTICS_FILE="${ARTIFACTS}/rust-diagnostics-sample.txt"

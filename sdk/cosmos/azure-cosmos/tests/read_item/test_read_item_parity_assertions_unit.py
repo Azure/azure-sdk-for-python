@@ -18,7 +18,10 @@ from common import _parity_helpers
 @pytest.mark.parametrize("surface", ["sync", "aio"])
 @pytest.mark.parametrize(
     "result",
-    ["correct", "wrong_id", "wrong_pk", "wrong_value", "missing_id", "read_error", "create_error"],
+    [
+        "correct", "wrong_id", "wrong_pk", "wrong_value", "missing_id",
+        "read_error", "create_error", "setup_only_binding", "read_fallback",
+    ],
 )
 def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch):
     module_name = (
@@ -28,11 +31,16 @@ def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch)
     )
     baseline = importlib.import_module(module_name)
     stored_items = []
+    counters = {"binding": 0, "fallback": 0}
+    monkeypatch.setattr(_parity_helpers, "_binding_operation_count", lambda: counters["binding"])
+    monkeypatch.setattr(_parity_helpers, "_rust_fallback_count", lambda: counters["fallback"])
 
     def factory(backend):
         stored = {}
 
         def create_item(body):
+            if backend == "rust":
+                counters["binding"] += 1
             if result == "create_error":
                 raise ValueError("controlled create failure")
             stored.update(body)
@@ -42,6 +50,11 @@ def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch)
         def read_item(item, *, partition_key):
             assert item == stored["id"]
             assert partition_key == stored["pk"]
+            if backend == "rust":
+                if result != "setup_only_binding":
+                    counters["binding"] += 1
+                if result == "read_fallback":
+                    counters["fallback"] += 1
             if result == "read_error":
                 raise ValueError("controlled read failure")
             actual = dict(stored)
@@ -91,5 +104,13 @@ def test_read_baseline_requires_each_expected_item(surface, result, monkeypatch)
         assert len(stored_items) == 2
         assert stored_items[0]["id"] != stored_items[1]["id"]
     else:
-        with pytest.raises(AssertionError):
+        message = {
+            "setup_only_binding": "target operation did not enter the Rust binding",
+            "read_fallback": "target operation fell back to core-python",
+        }.get(result)
+        with pytest.raises(AssertionError, match=message):
             run()
+        if result in ("setup_only_binding", "read_fallback"):
+            assert len(stored_items) == 2
+            assert counters["binding"] == (1 if result == "setup_only_binding" else 2)
+            assert counters["fallback"] == (1 if result == "read_fallback" else 0)
