@@ -652,6 +652,7 @@ class _TextAnalysisClientOperationsMixin(
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        raw_result: Optional[Iterator[bytes]] = None
         if cont_token is None:
             raw_result = self._analyze_text_job_initial(
                 body=body,
@@ -694,13 +695,14 @@ class _TextAnalysisClientOperationsMixin(
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
-        if cont_token:
+        if cont_token is not None:
             return LROPoller[_models.AnalyzeTextOperationState].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
+        assert raw_result is not None
         return LROPoller[_models.AnalyzeTextOperationState](
             self._client, raw_result, get_long_running_output, polling_method
         )  # type: ignore
