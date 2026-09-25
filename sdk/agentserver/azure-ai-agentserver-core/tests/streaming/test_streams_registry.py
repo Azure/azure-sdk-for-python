@@ -292,6 +292,56 @@ class TestGetOrCreateAtomicity:
 
 
 class TestPersistedLookup:
+    @pytest.mark.parametrize("expired", [False, True])
+    async def test_unlink_failure_preserves_slot_until_cleanup_retry(self, tmp_path: Path, monkeypatch, expired):
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry, _TOMBSTONE
+
+        monkeypatch.setattr(_concrete.time, "time", lambda: 1000.0)
+        streams.use_file_backed_replay(storage_dir=tmp_path, ttl_seconds=60)
+        original = await streams.get_or_create("retry-delete")
+        await original.emit({"n": 1})
+        await original.close()
+        original._cleanup_locks()
+        streams._slots.clear()
+        if expired:
+            monkeypatch.setattr(_concrete.time, "time", lambda: 1061.0)
+
+        unlink = Path.unlink
+        log_path = tmp_path / "retry-delete.jsonl"
+
+        def denied(path, *args, **kwargs):
+            if path == log_path:
+                raise PermissionError("replay removal denied")
+            return unlink(path, *args, **kwargs)
+
+        with monkeypatch.context() as patch:
+            patch.setattr(Path, "unlink", denied)
+            with pytest.raises(PermissionError, match="replay removal denied"):
+                if expired:
+                    await streams.get("retry-delete")
+                else:
+                    await streams.delete("retry-delete")
+            assert log_path.exists()
+            assert streams._slots["retry-delete"] is not _TOMBSTONE
+            existing = await streams.get_or_create("retry-delete")
+            with pytest.raises(EventStreamNotFoundError):
+                await existing.emit({"n": 2})
+            with pytest.raises(PermissionError, match="replay removal denied"):
+                await streams.get("retry-delete")
+
+        await streams.delete("retry-delete")
+        assert not log_path.exists()
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        with pytest.raises(EventStreamNotFoundError):
+            await restarted.get("retry-delete")
+        fresh = await streams.get_or_create("retry-delete")
+        await fresh.emit({"n": 2})
+        await fresh.close()
+        assert [event async for event in fresh.subscribe()] == [{"n": 2}]
+        await streams.delete("retry-delete")
+
     async def test_missing_lookup_and_delete_do_not_create_files(self, tmp_path: Path) -> None:
         streams.use_file_backed_replay(storage_dir=tmp_path)
         with pytest.raises(EventStreamNotFoundError):

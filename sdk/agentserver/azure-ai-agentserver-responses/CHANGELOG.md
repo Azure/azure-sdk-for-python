@@ -35,6 +35,8 @@
   events; storage errors no longer fall through to cached replay.
 - Require Core 2.2.1 so retained file replay is discovered after restart for
   duplicate admission, authorized replay, and deletion.
+- Return an error when replay cleanup fails during DELETE and retain ownership
+  state so the owner can retry cleanup.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a

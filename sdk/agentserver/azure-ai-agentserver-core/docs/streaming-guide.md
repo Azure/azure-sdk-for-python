@@ -280,7 +280,10 @@ streams.delete(id)         -> None             # idempotent
   created.
 - `delete(id)` removes the stream and any backing resources (including
   a retained file-backed log not yet loaded after restart). Idempotent — safe to call
-  on an unknown or already-deleted id.
+  on an unknown or already-deleted id. If file removal fails, the error
+  propagates and no deletion tombstone is installed; retry `delete(id)`
+  after correcting the backing-storage problem. Expiry cleanup follows
+  the same rule.
 
 All three lifecycle operations use the same per-id lock within the registry,
 so concurrent lookup, restoration, creation, and deletion are serialized.
