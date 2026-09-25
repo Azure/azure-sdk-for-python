@@ -42,7 +42,7 @@ async def test_user_scoped_file_replay_survives_restart_without_legacy_fallback(
     restarted = _StreamsRegistry()
     restarted.use_file_backed_replay(storage_dir=tmp_path, cursor_fn=lambda event: event["sequence_number"])
     for user in [None, "user-A", "user-B"]:
-        stream = await restarted.get_or_create(derive_lifecycle_id(response_id, user))
+        stream = await restarted.get(derive_lifecycle_id(response_id, user))
         events = [event async for event in stream.subscribe()]
         assert events == [{"sequence_number": 0, "owner": user}]
     await restarted.delete(derive_lifecycle_id(response_id, "user-A"))

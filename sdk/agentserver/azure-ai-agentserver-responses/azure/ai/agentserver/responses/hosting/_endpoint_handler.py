@@ -1457,13 +1457,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if isinstance(parsed_cursor, Response):
             return parsed_cursor
 
-        # Look up an existing stream — do NOT mint one. If the id was
-        # never registered (e.g. ``store=false`` responses never produce
-        # a replay log) ``get`` raises NotFound and we return ``None``
-        # so the caller falls through to its 404 path. Auto-evicted
-        # streams (TTL expiry on a closed file-backed log that was
-        # never re-opened) also surface as NotFound here because the
-        # tombstone was never installed for them.
+        # Restore retained replay after restart without creating an absent log.
+        # Missing or expired logs fall through to the caller's no-stream path.
         try:
             stream = await streams.get(derive_lifecycle_id(response_id, context.user_id_key if context else None))
         except EventStreamNotFoundError:

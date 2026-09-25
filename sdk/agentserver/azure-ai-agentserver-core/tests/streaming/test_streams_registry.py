@@ -48,6 +48,7 @@ def _reset_registry():
     saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
     saved_locks = dict(streams._id_locks)  # type: ignore[attr-defined]
     saved_factory = streams._factory  # type: ignore[attr-defined]
+    saved_restore = streams._restore
     streams._slots.clear()  # type: ignore[attr-defined]
     streams._id_locks.clear()  # type: ignore[attr-defined]
     streams.use_in_memory_live()  # default backing
@@ -57,6 +58,7 @@ def _reset_registry():
     streams._id_locks.clear()  # type: ignore[attr-defined]
     streams._id_locks.update(saved_locks)  # type: ignore[attr-defined]
     streams._factory = saved_factory  # type: ignore[attr-defined]
+    streams._restore = saved_restore
 
 
 # ----------------------------------------------------------------
@@ -287,6 +289,106 @@ class TestGetOrCreateAtomicity:
         first = results[0]
         for r in results[1:]:
             assert r is first, "concurrent get_or_create MUST be atomic"
+
+
+class TestPersistedLookup:
+    async def test_missing_lookup_and_delete_do_not_create_files(self, tmp_path: Path) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("missing")
+        await streams.delete("missing")
+        assert list(tmp_path.iterdir()) == []
+
+    async def test_concurrent_lookup_restores_one_instance(self, tmp_path: Path) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path, cursor_fn=lambda event: event["n"])
+        original = await streams.get_or_create("retained")
+        await original.emit({"n": 1})
+        await original.close()
+        original._cleanup_locks()
+        streams._slots.clear()
+
+        restored = await asyncio.gather(
+            *(streams.get("retained") for _ in range(10)),
+            streams.get_or_create("retained"),
+        )
+        assert all(stream is restored[0] for stream in restored)
+        assert [event async for event in restored[0].subscribe()] == [{"n": 1}]
+        await streams.delete("retained")
+
+    async def test_cold_delete_removes_persisted_log(self, tmp_path: Path) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        original = await streams.get_or_create("retained")
+        await original.emit({"n": 1})
+        await original.close()
+        original._cleanup_locks()
+        streams._slots.clear()
+
+        await streams.delete("retained")
+        assert list(tmp_path.iterdir()) == []
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("retained")
+
+    async def test_expired_cold_lookup_cleans_up_and_allows_fresh_creation(self, tmp_path: Path, monkeypatch) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        monkeypatch.setattr(_concrete.time, "time", lambda: 1000.0)
+        streams.use_file_backed_replay(storage_dir=tmp_path, ttl_seconds=60)
+        original = await streams.get_or_create("expired")
+        await original.emit({"n": 1})
+        await original.close()
+        original._cleanup_locks()
+        streams._slots.clear()
+        monkeypatch.setattr(_concrete.time, "time", lambda: 1061.0)
+
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("expired")
+        assert list(tmp_path.iterdir()) == []
+        fresh = await streams.get_or_create("expired")
+        assert fresh is not original
+        await fresh.emit({"n": 2})
+        await fresh.close()
+        assert [event async for event in fresh.subscribe()] == [{"n": 2}]
+        await streams.delete("expired")
+
+    async def test_locked_persisted_log_is_not_reported_missing(self, tmp_path: Path) -> None:
+        from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
+
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        original = await streams.get_or_create("locked")
+        await original.emit({"n": 1})
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        try:
+            with pytest.raises(RuntimeError, match="another process holds"):
+                await restarted.get("locked")
+        finally:
+            await streams.delete("locked")
+
+    async def test_lookup_permission_failure_is_not_reported_missing(self, tmp_path: Path, monkeypatch) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+
+        def denied(path, *args, **kwargs):
+            raise PermissionError("replay access denied")
+
+        with monkeypatch.context() as patch:
+            patch.setattr(Path, "stat", denied)
+            with pytest.raises(PermissionError, match="replay access denied"):
+                await streams.get("restricted")
+        assert list(tmp_path.iterdir()) == []
+
+    @pytest.mark.parametrize("backing", ["use_in_memory_live", "use_in_memory_replay"])
+    async def test_switching_to_memory_disables_disk_lookup(self, tmp_path: Path, backing: str) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        original = await streams.get_or_create("retained")
+        await original.emit({"n": 1})
+        await original.close()
+        original._cleanup_locks()
+        streams._slots.clear()
+        getattr(streams, backing)()
+        with pytest.raises(EventStreamNotFoundError):
+            await streams.get("retained")
+        streams.use_file_backed_replay(storage_dir=tmp_path)
+        await streams.delete("retained")
 
 
 # ----------------------------------------------------------------

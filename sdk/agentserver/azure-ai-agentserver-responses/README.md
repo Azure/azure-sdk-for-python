@@ -60,6 +60,9 @@ A duplicate `POST /responses` within the same user partition returns
 `409 response_id_conflict` while execution or replay is retained. This does not
 prevent the owner from retrieving, reconnecting to, or cancelling the existing
 response; it is not an idempotent retry of POST.
+With file-backed replay, Core 2.2.1 or later also discovers retained logs after
+restart for admission, authorized replay, and deletion. Missing logs are not
+created by lookups, and expired logs no longer reserve the response ID.
 
 Storage providers must also enforce the supplied `PlatformContext` for response,
 item, and history operations. Runtime partitioning does not make a shared custom
