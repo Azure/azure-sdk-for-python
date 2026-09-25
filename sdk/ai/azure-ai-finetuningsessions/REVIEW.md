@@ -1,6 +1,6 @@
 # PR 47495 review assessment
 
-## Current review status (2026-09-24)
+## Current review status
 
 Source pins and fingerprints are authoritative in [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml)
 and [eng/generation/provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/provenance.json), not historical
@@ -19,7 +19,8 @@ Non-object error bodies, finite/non-negative retry hints, and positional image
 mappings also have focused regression coverage. **Opt-in-only heartbeat startup
 remains unimplemented**; convenience creation still starts background heartbeats.
 
-Recorded local results: **1,637 SDK tests passed on Python 3.13.14**; 20 paired
+Historical local results (2026-09-24), before the input-chunk/shared-enum work:
+**1,637 SDK tests passed on Python 3.13.14**; 20 paired
 cases with 134 requests/2,246 checks per SDK; 47 public type names and all 336
 original raw cases retained, with 28 extra candidate polling GETs; 328 additional
 service/security probes and a 38-case review-contract guard suite passed. The
@@ -27,10 +28,51 @@ immutable 48-file oracle at `485774df502642879fdf3a53777be4a0d95155dc` is unchan
 The main verifier still requires exact finalized inventory/provenance records;
 independent comparison results do not waive those checks.
 
-These results were not rerun for this documentation update. No new final-wheel,
-Python 3.10 run of the new tests, live-service, remote CI, or approval claim is made.
+The combined discriminator/enum changes have separate validation on 2026-09-25:
+**1,850 public source and installed-wheel tests passed**, plus **1,849 passed
+and one expected skip on Python 3.10**. The synchronized Loom SDK passed
+**1,869 source and installed-wheel tests** with its master regressions retained.
+Exact source/generated/runtime provenance checks pass. The strict comparison
+retains all 336 original raw cases and passes 20 paired cases, 328 additional
+probes, and 97 mutation guards; all 162 offline API compatibility checks pass.
+No live-service, remote CI, publication, or review-approval claim is made.
 Custom pipelines/policies remain caller-owned, and no service deduplication
 guarantee is implied.
+
+## TypeSpec follow-up decisions
+
+Both comments below are **code-addressed in current source**, not publicly
+replied to or resolved. They are separate from the historical SDK review
+inventory below.
+
+| Comment | Current decision |
+|---|---|
+| [4099598821: why an SDK model file?](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099598821) | Reuse canonical models where compatible, now including `ModelInput`. The Python-only file has 18 aliases, 22 compatibility models, and three compatibility unions. Retain only intentional constructor/default, optionality/nullability/read-only, inheritance, error, and legacy-result projections; moving these into REST would misstate the service contract. |
+| [4099604743: duplicate opt-in union](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099604743) | Remove the local `FoundryFeaturesOptInKeys` union and alternate mapping; use Python name/usage customizations on the canonical closed shared union. Preserve the six old names/values and add seven canonical names, without changing the underlying REST union or fine-tuning header. |
+
+The SDK-first input-chunk contract uses canonical `@discriminator("type")`
+models, exposed as `InputChunk`, `InputChunkType`, `ModelInputChunk`, and
+`ImageChunk`. Existing text keyword/mapping calls remain valid and now emit
+`type="text"`. The maintained image subclass retains bytes/base64, size,
+signature/format, token-count, and 64-image validation. Canonical `ModelInput`
+reuse retains the hook that tags only legacy token mappings without an explicit
+`type`; unknown tags stay extensible. The [current contract tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md#current-sdk-first-decisions)
+list exact names and remaining projection reasons, including keeping optional
+LoRA service defaults off the client and retaining SDK `ejectable`/`FromCheckpoint`.
+
+Local offline evidence uses the actual checked-out `loom_api.schemas`, comparing
+tagged/untagged text model dumps and domain conversion, plus direct handlers
+with an in-memory provider. Internal text remains `encoded_text`. No production
+parser, API/authentication, routes, engine, APIM, or resource-provider change is
+part of this SDK-first work, and no live-deployment/GPU result is claimed.
+Strict discriminator enforcement and the compatibility policy for older clients
+are deferred to public preview (PuPr).
+
+Genuine shared-emitter `0.63.8`/backend `0.37.3` generation of the enum follow-up
+changes only the enum, API source metadata, and sync/async operation docstrings;
+non-docstring operation executable ASTs are identical and the complete 28-file
+runtime matches emitted output. This is separate from the earlier discriminator
+generation and is not a final combined test or CI result.
 
 ## Historical review inventory
 

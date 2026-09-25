@@ -17,11 +17,13 @@
         "azure.ai.finetuningsessions.models.ForwardInput": "Azure.AI.FineTuning.Sessions.Loom.ForwardInput",
         "azure.ai.finetuningsessions.models.ForwardRequest": "Azure.AI.Projects.SessionFineTuning.ForwardRequest",
         "azure.ai.finetuningsessions.models.HeartbeatResponse": "Azure.AI.FineTuning.Sessions.Loom.HeartbeatResponse",
+        "azure.ai.finetuningsessions.models.InputChunk": "Azure.AI.Projects.SessionFineTuning.FineTuningInputChunk",
+        "azure.ai.finetuningsessions.models.ImageChunk": "Azure.AI.Projects.SessionFineTuning.FineTuningInputChunkImage",
         "azure.ai.finetuningsessions.models.LoRAConfig": "Azure.AI.FineTuning.Sessions.Loom.LoRAConfig",
         "azure.ai.finetuningsessions.models.LossFnConfig": "Azure.AI.Projects.SessionFineTuning.LossFnConfig",
         "azure.ai.finetuningsessions.models.LossFnInputs": "Azure.AI.FineTuning.Sessions.Loom.LossFnInputs",
-        "azure.ai.finetuningsessions.models.ModelInput": "Azure.AI.FineTuning.Sessions.Loom.ModelInput",
-        "azure.ai.finetuningsessions.models.ModelInputChunk": "Azure.AI.Projects.SessionFineTuning.FineTuningModelInputChunk",
+        "azure.ai.finetuningsessions.models.ModelInput": "Azure.AI.Projects.SessionFineTuning.FineTuningModelInput",
+        "azure.ai.finetuningsessions.models.ModelInputChunk": "Azure.AI.Projects.SessionFineTuning.FineTuningInputChunkText",
         "azure.ai.finetuningsessions.models.OptimStepOperationResult": "Azure.AI.FineTuning.Sessions.Loom.OptimStepOperationResult",
         "azure.ai.finetuningsessions.models.OptimStepRequest": "Azure.AI.Projects.SessionFineTuning.OptimStepRequest",
         "azure.ai.finetuningsessions.models.SampledSequence": "Azure.AI.FineTuning.Sessions.Loom.SampledSequence",
@@ -39,10 +41,11 @@
         "azure.ai.finetuningsessions.models.TensorData": "Azure.AI.Projects.SessionFineTuning.TensorData",
         "azure.ai.finetuningsessions.models.OperationType": "Azure.AI.FineTuning.Sessions.Loom.OperationType",
         "azure.ai.finetuningsessions.models.OperationStatus": "Azure.AI.FineTuning.Sessions.Loom.OperationStatus",
-        "azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys": "Azure.AI.FineTuning.Sessions.Loom.FoundryFeaturesOptInKeys",
+        "azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
         "azure.ai.finetuningsessions.models.SessionType": "Azure.AI.Projects.SessionFineTuning.FineTuningSessionType",
         "azure.ai.finetuningsessions.models.TrainingType": "Azure.AI.Projects.SessionFineTuning.FineTuningTrainingType",
         "azure.ai.finetuningsessions.models.SessionStatus": "Azure.AI.FineTuning.Sessions.Loom.SessionStatus",
+        "azure.ai.finetuningsessions.models.InputChunkType": "Azure.AI.Projects.SessionFineTuning.FineTuningInputChunkType",
         "azure.ai.finetuningsessions.models.LossFn": "Azure.AI.Projects.SessionFineTuning.FineTuningLossFn",
         "azure.ai.finetuningsessions.models.CheckpointType": "Azure.AI.Projects.SessionFineTuning.FineTuningCheckpointType",
         "azure.ai.finetuningsessions.operations.SessionsOperations.begin_create": "Azure.AI.Projects.SessionFineTuning.FineTuningSessions.create",
@@ -72,5 +75,5 @@
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get"
     },
-    "CrossLanguageVersion": "7a8fd8be7350"
+    "CrossLanguageVersion": "f2066a0f70d1"
 }

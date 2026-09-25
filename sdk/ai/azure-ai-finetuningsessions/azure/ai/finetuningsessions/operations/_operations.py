@@ -557,7 +557,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -589,7 +590,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -621,7 +623,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session: Configuration of the fine-tuning session to create. Required.
         :type session: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -653,7 +656,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
          types: CreateSessionRequest, JSON, IO[bytes] Required.
         :type session: ~azure.ai.finetuningsessions.models.CreateSessionRequest or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -730,7 +734,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         List fine-tuning sessions in this project using offset-based pagination.
 
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -819,7 +824,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session_id: Identifier of the fine-tuning session to retrieve. Required.
         :type session_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -963,7 +969,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session_id: Identifier of the fine-tuning session to unload. Required.
         :type session_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1039,7 +1046,8 @@ class SessionsOperations:  # pylint: disable=docstring-missing-param
         :param session_id: Identifier of the fine-tuning session to keep active. Required.
         :type session_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1216,7 +1224,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1251,7 +1260,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1286,7 +1296,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Training batch and loss configuration for the forward-backward pass. Required.
         :type request: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1321,7 +1332,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          the following types: ForwardBackwardRequest, JSON, IO[bytes] Required.
         :type request: ~azure.ai.finetuningsessions.models.ForwardBackwardRequest or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1478,7 +1490,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1514,7 +1527,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1550,7 +1564,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
         :param request: Adam optimizer configuration for applying accumulated gradients. Required.
         :type request: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1586,7 +1601,8 @@ class TrainingOperations:  # pylint: disable=docstring-missing-param
          following types: OptimStepRequest, JSON, IO[bytes] Required.
         :type request: ~azure.ai.finetuningsessions.models.OptimStepRequest or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1760,7 +1776,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1795,7 +1812,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1830,7 +1848,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint: Identifier and optional training metadata for the checkpoint. Required.
         :type checkpoint: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -1866,7 +1885,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveCheckpointRequest or JSON or
          IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2024,7 +2044,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          weights. Required.
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2061,7 +2082,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          weights. Required.
         :type checkpoint: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2098,7 +2120,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          weights. Required.
         :type checkpoint: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2135,7 +2158,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :type checkpoint: ~azure.ai.finetuningsessions.models.SaveSamplerWeightsRequest or JSON or
          IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2215,7 +2239,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
          Required.
         :type session_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2300,7 +2325,8 @@ class CheckpointsOperations:  # pylint: disable=docstring-missing-param
         :param checkpoint_id: Identifier of the checkpoint to retrieve. Required.
         :type checkpoint_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.
@@ -2483,7 +2509,8 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: ~azure.ai.finetuningsessions.models.SampleRequest
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
@@ -2524,7 +2551,8 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
@@ -2565,7 +2593,8 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
         :param sample: Prompt and generation parameters for the requested completions. Required.
         :type sample: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
@@ -2606,7 +2635,8 @@ class SamplingOperations:  # pylint: disable=docstring-missing-param
          following types: SampleRequest, JSON, IO[bytes] Required.
         :type sample: ~azure.ai.finetuningsessions.models.SampleRequest or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword checkpoint_id: Identifier of the completed sampler checkpoint to use for generation.
@@ -2712,7 +2742,8 @@ class Operations:  # pylint: disable=docstring-missing-param
         :param request_id_parameter: Request identifier returned when the work was submitted. Required.
         :type request_id_parameter: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. FINETUNING_SESSIONS_V1_PREVIEW. Required.
+         modifying persisted preview resources. Opts in to the V1 preview of session-based model
+         fine-tuning. Required.
         :paramtype foundry_features: str or
          ~azure.ai.finetuningsessions.models.FINETUNING_SESSIONS_V1_PREVIEW
         :keyword api_version: The API version to use for this operation. Required.

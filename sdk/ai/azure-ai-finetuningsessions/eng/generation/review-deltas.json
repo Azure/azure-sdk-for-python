@@ -3,7 +3,40 @@
   "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
   "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
   "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
-  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling"],
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling", "input-chunk-discriminator", "canonical-foundry-features"],
+  "foundry_features_contract": {
+    "version": 1,
+    "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
+    "type": "FoundryFeaturesOptInKeys",
+    "members": {
+      "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+      "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+      "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+      "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+      "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
+      "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+      "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
+      "SKILLS_V1_PREVIEW": "Skills=V1Preview",
+      "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
+      "MODELS_V1_PREVIEW": "Models=V1Preview",
+      "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
+      "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
+      "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview"
+    },
+    "header": "FineTuningSessions=V1Preview",
+    "behavior": "Preserve six existing members, signatures and wire headers; add only seven canonical members"
+  },
+  "input_chunk_contract": {
+    "version": 1,
+    "exports": ["InputChunk", "InputChunkType"],
+    "base": {"name": "InputChunk", "field": "type", "type": "str", "discriminator": true},
+    "variants": {"ModelInputChunk": "text", "ImageChunk": "image"},
+    "enum": {"TEXT": "text", "IMAGE": "image"},
+    "chunks": "list[InputChunk]",
+    "legacy_text": "Only input chunk mappings with tokens and no type acquire type=text",
+    "image": "Generated public subclass; existing validation and base64 bytes preserved",
+    "wire_scope": ["model_input.chunks", "prompt.chunks"]
+  },
   "service_contracts": {
     "version": 1,
     "required_lora": {
@@ -39,17 +72,20 @@
     "tests/test_forward_backward_waves.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
     "tests/test_forward_result.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
     "tests/test_image_chunks.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
-    "tests/test_review_regressions.py": "Inspect shipped overload definitions using AST instead of Python 3.11-only typing.get_overloads; assertion retained on Python 3.10."
+    "tests/test_review_regressions.py": "Inspect shipped overload definitions using AST instead of Python 3.11-only typing.get_overloads; retain exact discriminator-base annotation assertions, resolving the known generated forward reference on Python 3.10.",
+    "tests/test_service_contracts.py": "Resolve the generated model namespace while checking inherited annotations; include the reviewed text discriminator in expected input chunks, without changing tensor or returned-token expectations."
   },
   "added_tests": {
     "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
-    "tests/test_review_regressions.py": "4773bb9ae863a21e23ca6050dcadb641fea7f9126d78d0505b5bf9a5d6738ab6",
+    "tests/test_review_regressions.py": "1670f3e7f3dddbcf77b5d6751251ca6d5e70e06ee39e2d8c80fecfababda3206",
+    "tests/test_input_chunk_discriminator.py": "0897165999bdee26a0599213498039e5e0fc07daac137d613841678d66675efe",
+    "tests/test_foundry_features.py": "77ee757a56ae2d48c7b962702012d69936f33af6a1f60fdce56e553b86082a36",
     "tests/test_training_type.py": "673e82d5cbdca67eff404c922b696dad7113e9a8436ba49dfd9194cd16a840f7",
     "tests/test_error_image_regressions.py": "aaed6c38c42c431406a2c5d3572087b9468a73d43fa33c06d35cb9198d1443d9",
     "tests/test_mutation_transport_retry.py": "491cfe662195e52558d15f8ebe32e0181c47207ebca88fa76def3759b7d81cf2",
     "tests/test_raw_request_polling.py": "b040f1260e6616451af6c5685e3462cea35413085a41e4a2e136550672f0659d",
     "tests/test_sampling_response_format.py": "ec6c2dec34d8520c1ff6e70e3d8ac3331a10d78951587c7741455ee81cfe6b8c",
-    "tests/test_service_contracts.py": "e7295cf1524bbb5009c0af0a50471a760517a4251d50c85eae0116ff292d10c9",
+    "tests/test_service_contracts.py": "1a4069ad056ef79da054370782febe821bfbdeb4f0351344b3a988816eb7cda9",
     "tests/test_transport_security.py": "f234e7402ca256a7e2df4dccf4eec44f4a36edda00034cc468886f7864513936"
   },
   "training_type_contract": {
@@ -60,6 +96,8 @@
     "behavior": "String inputs remain accepted without coercion; omission stays omitted; no client-side default or service validation change. Only this export, exact members, and four annotation sites are allowed by the comparison."
   },
   "changes": [
+    {"comments": [4099598821, 4099604743], "change": "Reuse canonical ModelInput and the sole shared FoundryFeaturesOptInKeys declaration; retain 18 aliases, 22 justified Python-only model projections, and three compatibility unions. Add exactly seven canonical feature enum members; preserve the six existing names, values, operation signatures and FineTuningSessions header. The shared closed service union is unchanged."},
+    {"comments": [], "change": "Generate an open InputChunk discriminator hierarchy while preserving ModelInputChunk and ImageChunk constructors and image validation. Add type=text only in input text chunks. Actual unmodified Loom API schemas and offline handlers accept tagged and legacy forms with identical internal encoded_text payloads; strict service discriminator enforcement is deferred to PuPr. No production API, engine, APIM, RP, route or authentication changes."},
     {"comments": [], "change": "Explicitly approved service contracts supersede the earlier deferred decisions: require LoRAConfig.rank and CreateSessionRequest.lora_config plus four convenience arguments, without inferred defaults; add optional SamplingParams.response_format and an identical SamplingOperationResult alias. Guard the original immutable reference before each exact projection."},
     {"comments": [4049473726, 4066580692], "change": "Explicitly approved API-key HTTPS/origin protection, cleanup of prepopulated SDK-default direct headers outside scope, and no automatic POST retries in the default policy; distinct caller-owned overrides remain unchanged."},
     {"comments": [4071314957], "change": "Explicitly approved raw begin service protocol: real HTTP 200 acceptance plus request_id and session_id, pending/completed GET polling, no POST replay, and caller-owned custom polling/continuation retained. Execute all original 336 reference fixtures unchanged and transform only fixed contract observations for the candidate; do not waive or remove begin cases."},

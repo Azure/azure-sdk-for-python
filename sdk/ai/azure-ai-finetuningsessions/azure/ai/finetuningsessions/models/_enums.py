@@ -20,20 +20,43 @@ class CheckpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryFeaturesOptInKeys."""
+    """Feature opt-in values for the Foundry-Features header used to access preview capabilities."""
 
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
-    """EVALUATIONS_V1_PREVIEW."""
+    """Opts in to the V1 preview of evaluation operations."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
-    """SCHEDULES_V1_PREVIEW."""
+    """Opts in to the V1 preview of scheduled operations."""
     RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
-    """RED_TEAMS_V1_PREVIEW."""
+    """Opts in to the V1 preview of red-team assessments."""
     INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
-    """INSIGHTS_V1_PREVIEW."""
+    """Opts in to the V1 preview of insight generation."""
+    AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
+    """Opts in to the V1 preview of agent insights."""
     MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
-    """MEMORY_STORES_V1_PREVIEW."""
+    """Opts in to the V1 preview of persistent memory stores."""
+    ROUTINES_V2_PREVIEW = "Routines=V2Preview"
+    """Opts in to the V2 preview of routines."""
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """Opts in to the V1 preview of reusable skills."""
+    DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
+    """Opts in to the V1 preview of data generation jobs."""
+    MODELS_V1_PREVIEW = "Models=V1Preview"
+    """Opts in to the V1 preview of model operations."""
+    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
+    """Opts in to the V2 preview of agent optimization."""
+    MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
+    """Opts in to the V1 preview of model-router configuration controls."""
     FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
-    """FINETUNING_SESSIONS_V1_PREVIEW."""
+    """Opts in to the V1 preview of session-based model fine-tuning."""
+
+
+class InputChunkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies the content carried by a model input chunk."""
+
+    TEXT = "text"
+    """A contiguous sequence of text tokens."""
+    IMAGE = "image"
+    """An encoded image."""
 
 
 class LossFn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,8 +129,8 @@ class TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Training tiers available for fine-tuning sessions."""
 
     GLOBAL_STANDARD = "GlobalStandard"
-    """Standard training using globally available capacity."""
+    """Training using globally available capacity."""
     DATAZONE_STANDARD = "DatazoneStandard"
-    """Standard training constrained to the applicable data zone."""
+    """Training constrained to Foundry account's datazone. Current datazones: US, EU, AsiaPacific."""
     DEVELOPER_TIER = "DeveloperTier"
     """Developer-tier training, subject to service eligibility."""

@@ -128,6 +128,30 @@ remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; future strings
 are passed through without client-side validation. Set the property explicitly
 to select a tier. If omitted, the SDK leaves selection to the service.
 
+### Text and image input chunks
+
+`ModelInput` reuses the canonical service model with an ordered list of
+`InputChunk` objects. The generated hierarchy uses `type` as its discriminator;
+`InputChunkType` names the known `text` and `image` values, while the wire type
+remains open to future strings.
+
+| Input | Serialization and compatibility |
+|---|---|
+| `ModelInputChunk(tokens=...)` and mapping constructors | Existing calls remain valid; text chunks now serialize with `type="text"`. |
+| Legacy token-only mappings inside `ModelInput` | Gain `type="text"` only when no explicit `type` is present. Unknown explicit tags are preserved, not reclassified as text. |
+| `ImageChunk` | Existing keyword and mapping calls remain valid. The maintained class extends the generated image variant and retains bytes/base64 handling and validation. |
+
+Image checks still cover the 10,000,000-byte limit, matching JPEG/PNG/WebP
+signatures and formats, positive `expected_tokens`, and at most 64 images per
+example. Unknown chunk tags remaining extensible in the SDK does not guarantee
+that a service accepts every future variant.
+
+This is an **SDK-first** change, not a production parser rollout. Local checks
+against the checked-out service schemas accept both tagged and untagged text;
+strict service discriminator enforcement and the compatibility policy are
+deferred to public preview (PuPr). See the [generation guide][generation-guide]
+for the offline evidence and its limits.
+
 ### Sampling options and results
 
 `SamplingParams.response_format` has type `Optional[Dict[str, Any]]` and requests
@@ -218,6 +242,11 @@ Async lifecycle methods now await heartbeat shutdown before sending close/delete
 and closing the async client drains its heartbeat tasks. Empty batches and sampler
 requests missing both a path and sampling-session ordinal are rejected locally
 rather than producing an invalid request or a false successful no-op.
+
+`FoundryFeaturesOptInKeys` now reuses the canonical shared Foundry definition.
+The six existing member names and values are preserved, with seven canonical
+members added. This does not activate other preview features or change the
+fine-tuning header `Foundry-Features: FineTuningSessions=V1Preview`.
 
 ## Troubleshooting
 

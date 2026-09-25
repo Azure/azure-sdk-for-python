@@ -1039,12 +1039,19 @@ namespace azure.ai.finetuningsessions.models
 
 
     class azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
+        AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
+        DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
         EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
         FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
         INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
         MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+        MODELS_V1_PREVIEW = "Models=V1Preview"
+        MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
         RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+        ROUTINES_V2_PREVIEW = "Routines=V2Preview"
         SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+        SKILLS_V1_PREVIEW = "Skills=V1Preview"
 
 
     class azure.ai.finetuningsessions.models.FromCheckpoint(_Model):
@@ -1077,12 +1084,11 @@ namespace azure.ai.finetuningsessions.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.finetuningsessions.models.ImageChunk(_Model):
+    class azure.ai.finetuningsessions.models.ImageChunk(ImageChunk, discriminator='image'):
         property length: int    # Read-only
         data: bytes
         expected_tokens: int
         format: str
-        type: Literal["image"]
 
         @overload
         def __init__(
@@ -1096,6 +1102,25 @@ namespace azure.ai.finetuningsessions.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.InputChunk(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.InputChunkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IMAGE = "image"
+        TEXT = "text"
 
 
     class azure.ai.finetuningsessions.models.LoRAConfig(LoRAConfig):
@@ -1165,21 +1190,21 @@ namespace azure.ai.finetuningsessions.models
 
 
     class azure.ai.finetuningsessions.models.ModelInput(ModelInput):
-        chunks: list[Union[ModelInputChunk, ImageChunk]]
 
         @overload
         def __init__(
                 self,
                 *,
-                chunks: list[Union[ModelInputChunk, ImageChunk]]
+                chunks: list[InputChunk]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.finetuningsessions.models.ModelInputChunk(_Model):
+    class azure.ai.finetuningsessions.models.ModelInputChunk(InputChunk, discriminator='text'):
         tokens: list[int]
+        type: Literal[InputChunkType.TEXT]
 
         @overload
         def __init__(

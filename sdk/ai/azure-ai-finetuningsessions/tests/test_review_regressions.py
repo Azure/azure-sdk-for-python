@@ -211,7 +211,10 @@ async def test_create_404_grace_does_not_resubmit(clock, asynchronous):
     if asynchronous:
         assert await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16)) == "session_test"
     else:
-        assert FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16)).session_id == "session_test"
+        assert (
+            FineTuningSession.create(client, base_model="m", lora_config=LoRAConfig(rank=16)).session_id
+            == "session_test"
+        )
     assert calls == ["POST", "GET", "GET"]
     assert clock.waits
 
@@ -399,14 +402,24 @@ def test_image_mapping_uses_image_validation(value):
 def test_multimodal_constructor_and_annotation():
     import ast
     import inspect
-    from typing import get_args
-    from azure.ai.finetuningsessions.models import ImageChunk, ModelInput, ModelInputChunk
+    from typing import get_args, get_origin, get_type_hints
+    from azure.ai.finetuningsessions import models
+    from azure.ai.finetuningsessions.models import ImageChunk, InputChunk, ModelInput, ModelInputChunk
 
     image = ImageChunk(data=b"\xff\xd8\xffvalid", format="jpeg", expected_tokens=1)
     value = ModelInput(chunks=[ModelInputChunk(tokens=[1]), image])
     assert value.as_dict()["chunks"][1]["type"] == "image"
-    annotation = ModelInput.__annotations__["chunks"]
-    assert ImageChunk in get_args(get_args(annotation)[0])
+    annotation = get_type_hints(ModelInput, localns={"_models": models})["chunks"]
+    assert get_origin(annotation) is list
+    (element,) = get_args(annotation)
+    # Python 3.10 retains forward strings in some built-in generics.
+    if isinstance(element, str):
+        assert element == "_models.InputChunk"
+        element = models.InputChunk
+    assert element is InputChunk
+    assert issubclass(ImageChunk, InputChunk)
+    assert issubclass(ModelInputChunk, InputChunk)
+    assert value.as_dict()["chunks"][0] == {"type": "text", "tokens": [1]}
     # Python 3.9/3.10 do not retain typing.overload definitions at runtime.
     # Inspect the shipped source on every supported version, rather than
     # skipping the overload contract or requiring Python 3.11's get_overloads.

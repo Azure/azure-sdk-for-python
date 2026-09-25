@@ -73,6 +73,49 @@ SERVICE_CONTRACTS = [
     "required-lora-config", "sampling-response-format", "sampling-operation-result-alias",
     "credential-transport-security", "no-post-retries", "raw-request-id-polling",
 ]
+INPUT_CHUNK_CONTRACT = "input-chunk-discriminator"
+INPUT_CHUNK_DEFINITION = {
+    "version": 1,
+    "exports": ["InputChunk", "InputChunkType"],
+    "base": {"name": "InputChunk", "field": "type", "type": "str", "discriminator": True},
+    "variants": {"ModelInputChunk": "text", "ImageChunk": "image"},
+    "enum": {"TEXT": "text", "IMAGE": "image"},
+    "chunks": "list[InputChunk]",
+    "legacy_text": "Only input chunk mappings with tokens and no type acquire type=text",
+    "image": "Generated public subclass; existing validation and base64 bytes preserved",
+    "wire_scope": ["model_input.chunks", "prompt.chunks"],
+}
+FOUNDRY_FEATURES_CONTRACT = "canonical-foundry-features"
+LEGACY_FOUNDRY_FEATURES = {
+    "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+    "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+    "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+    "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+    "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+    "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
+}
+FOUNDRY_FEATURES_DEFINITION = {
+    "version": 1,
+    "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
+    "type": "FoundryFeaturesOptInKeys",
+    "members": {
+        "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+        "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+        "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+        "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+        "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
+        "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+        "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
+        "SKILLS_V1_PREVIEW": "Skills=V1Preview",
+        "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
+        "MODELS_V1_PREVIEW": "Models=V1Preview",
+        "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
+        "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
+        "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
+    },
+    "header": "FineTuningSessions=V1Preview",
+    "behavior": "Preserve six existing members, signatures and wire headers; add only seven canonical members",
+}
 # This is a fixed specification, not an allowlist of diff paths or candidate values.
 SERVICE_CONTRACT_DEFINITIONS = {
     "version": 1,
@@ -235,6 +278,27 @@ def _plain(value: Any) -> Any:
     if isinstance(value, dict) and all(isinstance(key, str) for key in value):
         return {key: _plain(item) for key, item in value.items()}
     raise TypeError(f"Unexpected non-JSON snapshot value: {type(value).__name__}")
+
+
+def _input_chunk_wire(model_input: dict) -> dict:
+    """Project a known ModelInput fixture, never arbitrary mappings with tokens."""
+    result = deepcopy(model_input)
+    for chunk in result["chunks"]:
+        if "tokens" in chunk and "type" not in chunk:
+            chunk["type"] = "text"
+    return result
+
+
+def _input_chunk_body(body: Any) -> Any:
+    result = deepcopy(body)
+    if isinstance(result, dict):
+        for field in ("forward_input", "forward_backward_input"):
+            if field in result:
+                for datum in result[field]["data"]:
+                    datum["model_input"] = _input_chunk_wire(datum["model_input"])
+        if "prompt" in result:
+            result["prompt"] = _input_chunk_wire(result["prompt"])
+    return result
 
 
 def _signature(target: Any) -> list[dict[str, Any]]:
@@ -600,7 +664,8 @@ def _transport_types() -> tuple[type, type]:
 
 
 class _Context:
-    def __init__(self, legacy_routes: bool, service_contracts: bool = False) -> None:
+    def __init__(self, legacy_routes: bool, service_contracts: bool = False,
+                 input_chunk_discriminator: bool = False) -> None:
         self.sdk = importlib.import_module(NAMESPACE)
         self.aio = importlib.import_module(NAMESPACE + ".aio")
         self.models = importlib.import_module(NAMESPACE + ".models")
@@ -608,6 +673,7 @@ class _Context:
         self.async_patch = importlib.import_module(NAMESPACE + ".aio._patch")
         self.legacy_routes = legacy_routes
         self.service_contracts = service_contracts
+        self.input_chunk_discriminator = input_chunk_discriminator
         # Preserve the upstream Loom moniker; do not change the SDK merely to
         # satisfy the earlier regenerated public SDK's user-agent convention.
         self.moniker = f"azsdk-python-finetuning-sessions/{self.sdk.__version__}"
@@ -660,6 +726,12 @@ class _Context:
         attributes = {field: self.value(getattr(value, field)) for field in fields}
         case.equal(attributes, {field: expected.get(field) for field in fields}, "Typed attribute values")
         return {"class": name, "json": wire, "attributes": attributes}
+
+    def input_wire(self, value: dict) -> dict:
+        return _input_chunk_wire(value) if self.input_chunk_discriminator else value
+
+    def batch_wire(self) -> list:
+        return [{**datum, "model_input": self.input_wire(datum["model_input"])} for datum in BATCH]
 
     def batch(self) -> list:
         m = self.models
@@ -747,6 +819,7 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
             "SessionType",
         )
         + (("TrainingType",) if hasattr(ctx.models, "TrainingType") else ())
+        + (("InputChunkType",) if hasattr(ctx.models, "InputChunkType") else ())
     }
     groups = sorted(name for name in vars(client) if not name.startswith("_"))
     case.equal(
@@ -781,14 +854,14 @@ def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
             {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
             ("source_session_id", "checkpoint_id"),
         ),
-        ("ModelInput", ctx.mixed_input(), MIXED_INPUT, ("chunks",)),
+        ("ModelInput", ctx.mixed_input(), ctx.input_wire(MIXED_INPUT), ("chunks",)),
     ):
         output[name] = ctx.model(case, value, name, expected, fields)
     image = m.ImageChunk(data=IMAGE, format="jpeg", expected_tokens=2)
     case.equal(ctx.value(image), IMAGE_WIRE, "Image bytes are base64 on the wire")
     restored = m.ImageChunk(IMAGE_WIRE)
     case.check(restored.data == IMAGE and restored.length == 2, "Image bytes and token length round-trip")
-    case.equal(ctx.value(ctx.batch()), BATCH, "Mixed-image Datum/LossFnInputs/TensorData construction")
+    case.equal(ctx.value(ctx.batch()), ctx.batch_wire(), "Mixed-image Datum/LossFnInputs/TensorData construction")
     expected_request = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA}
     if ctx.service_contracts:
         expected_request["lora_config"] = LORA
@@ -931,7 +1004,7 @@ def _training_plan(case: _Case, action: str, request_id: str, configured: bool =
         expected = {**payload, "grad_norm": 0.75, "step_count": 3}
         model, fields, discriminator = "OptimStepOperationResult", ("grad_norm", "step_count", "metrics"), "optim_step"
     else:
-        inputs = {"data": BATCH, "loss_fn": "importance_sampling" if configured else "cross_entropy"}
+        inputs = {"data": case.context.batch_wire(), "loss_fn": "importance_sampling" if configured else "cross_entropy"}
         if configured:
             inputs["loss_fn_config"] = LOSS_CONFIG
         body = {"forward_input" if action == "forward" else "forward_backward_input": inputs}
@@ -1009,7 +1082,7 @@ def _sync_checkpoints(ctx: _Context, case: _Case, client: Any) -> list:
 
 def _sample_plan(ctx: _Context, case: _Case, index: int) -> tuple[Any, dict, dict]:
     prompt = [1, 2] if index == 0 else ctx.mixed_input()
-    prompt_wire = {"chunks": [{"tokens": [1, 2]}]} if index == 0 else MIXED_INPUT
+    prompt_wire = ctx.input_wire({"chunks": [{"tokens": [1, 2]}]} if index == 0 else MIXED_INPUT)
     options = {
         "checkpoint_id": "sampler_explicit",
         "num_samples": 2,
@@ -1251,7 +1324,7 @@ def _poll_errors() -> tuple:
 
 
 def _error_plan(case: _Case, index: int, specification: tuple, polling: bool) -> tuple[str, dict]:
-    body = {"forward_backward_input": {"data": BATCH, "loss_fn": "cross_entropy"}}
+    body = {"forward_backward_input": {"data": case.context.batch_wire(), "loss_fn": "cross_entropy"}}
     if polling:
         payload, name, fields = specification
         case.operation("forward_backward", body, payload, f"failed_{index}", failed=True)
@@ -1538,7 +1611,8 @@ async def _run_async_cases(ctx: _Context, results: dict) -> None:
         results[name] = case.finish(output, error)
 
 
-def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = False) -> dict:
+def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = False,
+              input_chunk_discriminator: bool = False) -> dict:
     sys.dont_write_bytecode = True
     _offline_environment()
     if any(name == NAMESPACE or name.startswith(NAMESPACE + ".") for name in sys.modules):
@@ -1558,7 +1632,7 @@ def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = Fals
         from azure.core.settings import settings
 
         settings.tracing_enabled = False
-        ctx = _Context(legacy_routes, service_contracts)
+        ctx = _Context(legacy_routes, service_contracts, input_chunk_discriminator)
         expected_origin = (package / MODULE / "__init__.py").resolve()
         if Path(ctx.sdk.__file__).resolve() != expected_origin:
             raise RuntimeError(f"Imported the wrong SDK: {ctx.sdk.__file__}; expected {expected_origin}")
@@ -1594,6 +1668,7 @@ def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = Fals
             "runtime": {
                 "legacy_routes": legacy_routes,
                 "service_contracts": service_contracts,
+                **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
                 "network_guard": True,
                 "write_guard": True,
                 "heartbeat_start_disabled": True,
@@ -1661,12 +1736,15 @@ def _apply_review_header_contract(cases: dict, *, raw: bool) -> dict:
     return result
 
 
-def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool = False) -> dict:
+def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool = False,
+                input_chunk_discriminator: bool = False) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
         command.append("--legacy-routes")
     if service_contracts:
         command.append("--service-contracts")
+    if input_chunk_discriminator:
+        command.append("--input-chunk-discriminator")
     completed = subprocess.run(
         command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False
     )
@@ -1681,6 +1759,7 @@ def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool =
     expected_runtime = {
         "legacy_routes": legacy_routes,
         "service_contracts": service_contracts,
+        **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
         "network_guard": True,
         "write_guard": True,
         "heartbeat_start_disabled": True,
@@ -1706,13 +1785,26 @@ def _review_contracts(deltas: dict) -> list[str]:
     """Reject unknown, partial or modified specifications, including extra fields."""
     contracts = deltas.get("fixture_contracts")
     previous = ORIGINAL_CONTRACTS + ["training-type-enum"]
-    if contracts not in (ORIGINAL_CONTRACTS, previous, previous + SERVICE_CONTRACTS):
+    service = previous + SERVICE_CONTRACTS
+    chunks = service + [INPUT_CHUNK_CONTRACT]
+    current = chunks + [FOUNDRY_FEATURES_CONTRACT]
+    if contracts not in (ORIGINAL_CONTRACTS, previous, service, chunks, current):
         raise ValueError("Unsupported review comparison contract")
-    if contracts == previous + SERVICE_CONTRACTS:
+    if contracts in (service, chunks, current):
         if _dump(deltas.get("service_contracts")) != _dump(SERVICE_CONTRACT_DEFINITIONS):
             raise ValueError("The fixed service contract definitions changed")
     elif "service_contracts" in deltas:
         raise ValueError("Service definitions require the complete explicit service contract set")
+    if contracts in (chunks, current):
+        if _dump(deltas.get("input_chunk_contract")) != _dump(INPUT_CHUNK_DEFINITION):
+            raise ValueError("The fixed input-chunk contract definition changed")
+    elif "input_chunk_contract" in deltas:
+        raise ValueError("Input-chunk definitions require the complete explicit contract set")
+    if contracts == current:
+        if _dump(deltas.get("foundry_features_contract")) != _dump(FOUNDRY_FEATURES_DEFINITION):
+            raise ValueError("The fixed Foundry feature contract definition changed")
+    elif "foundry_features_contract" in deltas:
+        raise ValueError("Foundry feature definitions require the complete explicit contract set")
     return contracts
 
 
@@ -1754,8 +1846,42 @@ def _apply_service_contracts(cases: dict) -> dict:
     return result
 
 
+def _apply_input_chunk_contract(cases: dict) -> dict:
+    """Extend the exact prior service contract, not a candidate-derived baseline."""
+    _require_baseline(cases, "c7aa534f1383ce7c32984ebd9282bd60f721a86bb52606ee2567313897420ea5", "prior reviewed 20-case")
+    result = deepcopy(cases)
+    api = result["surface_and_signatures"]["output"]
+    api["exports"]["models"] = sorted([*api["exports"]["models"], "InputChunk", "InputChunkType"])
+    api["enums"]["InputChunkType"] = {"TEXT": "text", "IMAGE": "image"}
+    model = result["serialization_and_error_contracts"]["output"]["ModelInput"]
+    for kind in ("json", "attributes"):
+        model[kind] = _input_chunk_wire(model[kind])
+    for side in ("sync", "async"):
+        for name in ("training", "sampling", "http_errors", "poll_errors"):
+            for request in result[f"{side}_{name}"]["requests"]:
+                body = request["body"]
+                projected = _input_chunk_body(body)
+                if projected != body:
+                    if request["headers"]["content-length"] != str(len(json.dumps(body).encode("utf-8"))):
+                        raise ValueError("Unexpected baseline input-body encoding")
+                    request["body"] = projected
+                    request["headers"]["content-length"] = str(len(json.dumps(projected).encode("utf-8")))
+    return result
+
+
+def _apply_foundry_features_contract(cases: dict) -> dict:
+    """Replace only the fixed six-member enum, never headers or other observations."""
+    result = deepcopy(cases)
+    enums = result["surface_and_signatures"]["output"]["enums"]
+    if _dump(enums["FoundryFeaturesOptInKeys"]) != _dump(LEGACY_FOUNDRY_FEATURES):
+        raise ValueError("The immutable Foundry feature enum changed")
+    enums["FoundryFeaturesOptInKeys"] = deepcopy(FOUNDRY_FEATURES_DEFINITION["members"])
+    return result
+
+
 def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_enum: bool = False,
-             service_contracts: bool = False) -> int:
+             service_contracts: bool = False, input_chunk_discriminator: bool = False,
+             canonical_foundry_features: bool = False) -> int:
     if service_contracts:
         loom = {**loom, "cases": _apply_service_contracts(loom["cases"])}
     if reviewed:
@@ -1772,6 +1898,10 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
             "DATAZONE_STANDARD": "DatazoneStandard",
             "DEVELOPER_TIER": "DeveloperTier",
         }
+    if input_chunk_discriminator:
+        loom = {**loom, "cases": _apply_input_chunk_contract(loom["cases"])}
+    if canonical_foundry_features:
+        loom = {**loom, "cases": _apply_foundry_features_contract(loom["cases"])}
     failed = []
     for name in CASE_NAMES:
         left, right = loom["cases"][name], public["cases"][name]
@@ -1797,6 +1927,10 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
         print("  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences.")
     if service_contracts:
         print("  Also fixed required-LoRA inputs/four signatures and the identical sampling alias; original reference fixtures remain unchanged.")
+    if input_chunk_discriminator:
+        print("  Also the two fixed input-chunk exports and type=text only in model-input chunks; tensors, returned tokens and extensions stay exact.")
+    if canonical_foundry_features:
+        print("  Also seven exact canonical Foundry feature members; six existing members and every wire header remain exact.")
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1816,6 +1950,7 @@ def main() -> int:
     parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--legacy-routes", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--input-chunk-discriminator", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--artifacts", type=Path, help="Save original and candidate worker JSON without altering the source oracle")
     args = parser.parse_args()
     if args.snapshot is not None:
@@ -1823,13 +1958,13 @@ def main() -> int:
             parser.error("--snapshot and --loom-repo are mutually exclusive")
         try:
             with redirect_stdout(sys.stderr):
-                report = _snapshot(args.snapshot, args.legacy_routes, args.service_contracts)
+                report = _snapshot(args.snapshot, args.legacy_routes, args.service_contracts, args.input_chunk_discriminator)
             print(_dump(report))
             return 0 if all(case["ok"] for case in report["cases"].values()) else 1
         except Exception as exc:
             print(_dump({"fatal": {"type": type(exc).__name__, "message": str(exc)}}))
             return 2
-    if args.loom_repo is None or args.legacy_routes or args.service_contracts:
+    if args.loom_repo is None or args.legacy_routes or args.service_contracts or args.input_chunk_discriminator:
         parser.error("--loom-repo is required; --legacy-routes is for internal --snapshot mode only")
     try:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -1865,8 +2000,10 @@ def main() -> int:
         print(f"Immutable Loom reference verified: {manifest['source_commit']}\nPublic source: {public_package}")
         with reference_package(args.loom_repo, public_package) as reference:
             service_contracts = deltas is not None and "raw-request-id-polling" in _review_contracts(deltas)
+            input_chunk_discriminator = deltas is not None and INPUT_CHUNK_CONTRACT in _review_contracts(deltas)
             loom = _run_worker(_check_package(reference), legacy_routes=False)
-            public = _run_worker(public_package, legacy_routes=False, service_contracts=service_contracts)
+            public = _run_worker(public_package, legacy_routes=False, service_contracts=service_contracts,
+                                 input_chunk_discriminator=input_chunk_discriminator)
             if args.artifacts:
                 args.artifacts.mkdir(parents=True, exist_ok=True)
                 for name, report in (("reference-convenience", loom), ("candidate-convenience", public)):
@@ -1875,6 +2012,8 @@ def main() -> int:
                 loom, public, reviewed=deltas is not None,
                 training_type_enum=deltas is not None and "training-type-enum" in _review_contracts(deltas),
                 service_contracts=service_contracts,
+                input_chunk_discriminator=input_chunk_discriminator,
+                canonical_foundry_features=deltas is not None and FOUNDRY_FEATURES_CONTRACT in _review_contracts(deltas),
             ):
                 return 1
             command = [

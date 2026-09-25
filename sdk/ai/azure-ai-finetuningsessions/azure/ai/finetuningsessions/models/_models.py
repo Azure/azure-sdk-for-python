@@ -12,7 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import OperationType
+from ._enums import InputChunkType, OperationType
 
 if TYPE_CHECKING:
     from .. import _unions, models as _models
@@ -653,6 +653,84 @@ class HeartbeatResponse(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class InputChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A text-token or image chunk within a model input, identified by its type.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageChunk, ModelInputChunk
+
+    :ivar type: Identifies which model input chunk variant is supplied. Required. Known values are:
+     "text" and "image".
+    :vartype type: str or ~azure.ai.finetuningsessions.models.InputChunkType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Identifies which model input chunk variant is supplied. Required. Known values are: \"text\"
+     and \"image\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImageChunk(InputChunk, discriminator="image"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An image supplied as part of a multimodal input. Each decoded image must not exceed 10 MB. The
+    service validates the image content and token count at runtime.
+
+    :ivar type: Identifies this chunk as an encoded image. Required. An encoded image.
+    :vartype type: str or ~azure.ai.finetuningsessions.models.IMAGE
+    :ivar data: Image bytes, serialized as a base64-encoded string. Required.
+    :vartype data: bytes
+    :ivar format: Encoding of the supplied image bytes. Required.
+    :vartype format: str
+    :ivar expected_tokens: Number of model tokens expected to represent this image. Required.
+    :vartype expected_tokens: int
+    """
+
+    type: Literal[InputChunkType.IMAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Identifies this chunk as an encoded image. Required. An encoded image."""
+    data: bytes = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
+    """Image bytes, serialized as a base64-encoded string. Required."""
+    format: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Encoding of the supplied image bytes. Required."""
+    expected_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of model tokens expected to represent this image. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: bytes,
+        format: str,
+        expected_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = InputChunkType.IMAGE  # type: ignore
+
+
 class LoRAConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LoRA adapter configuration with an explicit rank, as required by the service. Optional fields
     remain omitted rather than injecting client-side defaults.
@@ -806,21 +884,22 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
 
 
 class ModelInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Full model input as one or more token-ID chunks.
+    """Full model input as an ordered sequence of token-ID and image chunks.
 
-    :ivar chunks: Ordered list of token-ID chunks that together form the complete model input.
-     Required.
-    :vartype chunks: list[~azure.ai.finetuningsessions.models.ModelInputChunk]
+    :ivar chunks: Chunks forming the complete model input. At most 64 image chunks are allowed per
+     example; the service enforces this limit at runtime. Required.
+    :vartype chunks: list[~azure.ai.finetuningsessions.models.InputChunk]
     """
 
-    chunks: list["_models.ModelInputChunk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Ordered list of token-ID chunks that together form the complete model input. Required."""
+    chunks: list["_models.InputChunk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Chunks forming the complete model input. At most 64 image chunks are allowed per example; the
+     service enforces this limit at runtime. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        chunks: list["_models.ModelInputChunk"],
+        chunks: list["_models.InputChunk"],
     ) -> None: ...
 
     @overload
@@ -834,13 +913,18 @@ class ModelInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class ModelInputChunk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ModelInputChunk(InputChunk, discriminator="text"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A contiguous block of token IDs forming part of a model input.
 
+    :ivar type: Identifies this chunk as text tokens. Required. A contiguous sequence of text
+     tokens.
+    :vartype type: str or ~azure.ai.finetuningsessions.models.TEXT
     :ivar tokens: Sequence of token IDs in this chunk. Required.
     :vartype tokens: list[int]
     """
 
+    type: Literal[InputChunkType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Identifies this chunk as text tokens. Required. A contiguous sequence of text tokens."""
     tokens: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sequence of token IDs in this chunk. Required."""
 
@@ -860,6 +944,7 @@ class ModelInputChunk(_Model):  # pylint: disable=docstring-keyword-should-match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type = InputChunkType.TEXT  # type: ignore
 
 
 class OptimStepOperationResult(

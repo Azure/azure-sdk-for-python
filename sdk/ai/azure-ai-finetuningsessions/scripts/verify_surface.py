@@ -114,7 +114,7 @@ def signature(function, models):
     }
 
 
-def surface():
+def surface(input_chunk_discriminator=False):
     sdk = importlib.import_module(NAMESPACE)
     models = importlib.import_module(NAMESPACE + ".models")
     base = importlib.import_module(NAMESPACE + "._utils.model_base")
@@ -150,6 +150,8 @@ def surface():
             "fields": metadata,
             "properties": sorted(n for n in dir(cls) if not n.startswith("_") and isinstance(inspect.getattr_static(cls, n), property)),
         }
+        if input_chunk_discriminator and name in ("InputChunk", "ModelInputChunk", "ImageChunk"):
+            report["models"][name]["bases"] = [c.__name__ for c in cls.__mro__[1:cls.__mro__.index(base.Model) + 1]]
     for suffix in ("", ".aio", ".operations", ".aio.operations"):
         module = importlib.import_module(NAMESPACE + suffix)
         for name in module.__all__:
@@ -214,6 +216,12 @@ def surface():
                 actual = evaluate(annotation, parent, models)
                 if cls.__name__ == "ApiError" and field == "details":
                     values[field] = []
+                elif input_chunk_discriminator and cls.__name__ == "ModelInput" and field == "chunks":
+                    # Keep the ORIGINAL text probe; sampling InputChunk would
+                    # replace it with an unknown variant and lose coverage.
+                    values[field] = [{"tokens": [2]}]
+                elif input_chunk_discriminator and cls.__name__ == "ModelInputChunk" and field == "type":
+                    continue  # Exercise the automatic text marker, not an explicit fixture tag.
                 else:
                     values[field] = sample(actual, depth)
         if cls.__name__ == "ImageChunk":
@@ -240,7 +248,32 @@ def surface():
                 observations.append({"error": type(exc).__name__, "message": str(exc)})
         serialization[name] = observations
     report["serialization"] = serialization
+    if input_chunk_discriminator:
+        data = _input_chunk_probe()
+        probes = {}
+        for name, obj in (("mapping", models.ModelInput(deepcopy(data))),
+                          ("keyword", models.ModelInput(chunks=deepcopy(data["chunks"])))):
+            probes[name] = {"wire": record(obj), "classes": [type(c).__name__ for c in obj.chunks],
+                            "public_image": type(obj.chunks[1]) is models.ImageChunk,
+                            "image_bytes": obj.chunks[1].data == b"\xff\xd8\xfftest"}
+        invalid = {**data["chunks"][1], "type": "text"}
+        probes["incorrect_image_type"] = []
+        for constructor in (lambda: models.ImageChunk(invalid), lambda: models.ImageChunk(**invalid)):
+            try:
+                constructor()
+            except Exception as exc:
+                probes["incorrect_image_type"].append([type(exc).__name__, str(exc)])
+            else:
+                probes["incorrect_image_type"].append({"accepted": True})
+        report["input_chunks"] = probes
     return report
+
+
+def _input_chunk_probe():
+    return {"chunks": [{"tokens": [2]},
+                       {"type": "image", "data": "/9j/dGVzdA==", "format": "jpeg", "expected_tokens": 2},
+                       {"type": "future", "tokens": [7], "extension": {"tokens": [8]}}],
+            "extension": {"tokens": [9], "chunks": [{"tokens": [10]}]}}
 
 
 async def raw_operations(harness, service_contracts=False):
@@ -389,7 +422,7 @@ async def raw_operations(harness, service_contracts=False):
     return outcomes
 
 
-async def service_operations(harness):
+async def service_operations(harness, input_chunk_discriminator=False):
     """Independent fixed service fixtures; never import tests or learn outputs.
 
     These supplement, not replace, every original raw fixture. Real clients,
@@ -398,7 +431,7 @@ async def service_operations(harness):
     from azure.core.credentials import AzureKeyCredential
     from azure.core.polling import NoPolling, AsyncNoPolling
 
-    ctx = harness._Context(False)
+    ctx = harness._Context(False, input_chunk_discriminator=input_chunk_discriminator)
     outcomes = {}
     common = {"foundry_features": harness.PREVIEW, "api_version": "v1", "polling_interval": 0,
               "headers": {"x-contract-probe": "preserved"}, "params": {"api-version": "v1", "custom": "value"},
@@ -407,11 +440,11 @@ async def service_operations(harness):
     bodies = {
         "sessions.begin_create": {"type": "training", "base_model": harness.BASE_MODEL, "lora_config": harness.LORA},
         "sessions.begin_unload": None,
-        "training.begin_forward_backward": {"forward_backward_input": {"data": harness.BATCH, "loss_fn": "cross_entropy"}},
+        "training.begin_forward_backward": {"forward_backward_input": {"data": ctx.batch_wire(), "loss_fn": "cross_entropy"}},
         "training.begin_optim_step": {"adam_params": harness.ADAM},
         "checkpoints.begin_save": {"path": "contract", "step_number": 1, "metrics": {"value": 1.0}},
         "checkpoints.begin_save_sampler_weights": {"path": "contract", "seq_id": 0},
-        "sampling.begin_sample": {"prompt": {"chunks": [{"tokens": [1, 2]}]},
+        "sampling.begin_sample": {"prompt": ctx.input_wire({"chunks": [{"tokens": [1, 2]}]}),
                                   "sampling_params": {**harness.SAMPLING, "response_format": {"type": "json_object"}},
                                   "num_samples": 1},
     }
@@ -787,7 +820,7 @@ def _validate_service_report(report):
         raise ValueError("Independent service-contract cases failed")
 
 
-def worker(package, harness_path, service_contracts=False):
+def worker(package, harness_path, service_contracts=False, input_chunk_discriminator=False):
     # Do not add the reference source root to sys.path: its legacy azure parent
     # initializers would override the installed wheel's PEP 420 namespace.
     spec = importlib.util.spec_from_file_location("_loom_offline_harness", harness_path)
@@ -814,12 +847,12 @@ def worker(package, harness_path, service_contracts=False):
         origin = Path(importlib.import_module(NAMESPACE).__file__).resolve()
         if origin != (package / MODULE / "__init__.py").resolve():
             raise RuntimeError(f"Wrong SDK imported: {origin}")
-        public = surface()
+        public = surface(input_chunk_discriminator)
         raw = loop.run_until_complete(raw_operations(harness, service_contracts))
         report = {"surface": public, "raw": raw}
         if service_contracts:
             report["service"] = {
-                **loop.run_until_complete(service_operations(harness)),
+                **loop.run_until_complete(service_operations(harness, input_chunk_discriminator)),
                 **loop.run_until_complete(security_operations(harness)),
                 **model_contracts(harness),
             }
@@ -941,6 +974,79 @@ def _apply_service_contracts(report, harness):
     return result
 
 
+def _apply_input_chunk_contract(report, harness):
+    """Project ONLY from the fixed prior service-contract surface and raw cases."""
+    harness._require_baseline(report["surface"],
+        "1834b78806e53c6cac72fe112454cc06edf922da8d0d60a6f6272a0d079ec112", "prior reviewed surface")
+    harness._require_baseline(report["raw"],
+        "641f397095f9b9fa0bcf435a167c9cfcd3eb7bb630878c2b69214b8a4958e4c6", "prior reviewed 336 raw cases")
+    result = deepcopy(report)
+    api = result["surface"]
+    exports = api["modules"][".models"]
+    exports.remove("ImageChunk")  # Now generated, rather than a patch-only appended export.
+    exports[15:15] = ["ImageChunk", "InputChunk"]
+    exports.insert(exports.index("FoundryFeaturesOptInKeys") + 1, "InputChunkType")
+    api["models"]["InputChunkType"] = {"enum": [["TEXT", "text"], ["IMAGE", "image"]]}
+    visibility = ["read", "create", "update", "delete", "query"]
+    field = {"type": "str", "wire_name": "type", "visibility": visibility, "discriminator": True, "format": None}
+    base = deepcopy(api["models"]["ModelInputChunk"])
+    base["fields"] = {"type": deepcopy(field)}
+    base["bases"] = ["Model"]
+    base["overloads"][0]["parameters"] = [
+        {"name": "type", "kind": "KEYWORD_ONLY", "type": "str", "default": {"empty": True}}]
+    api["models"]["InputChunk"] = base
+    text = api["models"]["ModelInputChunk"]
+    text["fields"]["type"] = {**deepcopy(field), "type": {"origin": "Literal", "args": ["text"]}}
+    text["bases"] = ["InputChunk", "Model"]
+    image = api["models"]["ImageChunk"]
+    image["bases"] = ["ImageChunk", "InputChunk", "Model"]
+    for metadata in image["fields"].values():
+        metadata["visibility"] = deepcopy(visibility)
+    image["fields"]["type"]["discriminator"] = True
+    image["fields"]["data"]["format"] = "base64"
+    chunks = {"origin": "list", "args": ["InputChunk"]}
+    api["models"]["ModelInput"]["fields"]["chunks"]["type"] = deepcopy(chunks)
+    api["models"]["ModelInput"]["overloads"][0]["parameters"][0]["type"] = deepcopy(chunks)
+    # Explicit schema paths only: no recursive token-shaped mapping rewrite.
+    paths = {"ModelInput": (), "Datum": ("model_input",),
+             "ForwardInput": ("data", 0, "model_input"), "ForwardBackwardInput": ("data", 0, "model_input"),
+             "ForwardRequest": ("forward_input", "data", 0, "model_input"),
+             "ForwardBackwardRequest": ("forward_backward_input", "data", 0, "model_input"),
+             "SampleRequest": ("prompt",)}
+    for name, path in paths.items():
+        for observation in api["serialization"][name]:
+            for kind in ("all", "writable", "attributes"):
+                target = observation[kind]
+                for key in path:
+                    target = target[key]
+                target["chunks"] = harness._input_chunk_wire(target)["chunks"]
+    for observation in api["serialization"]["ModelInputChunk"]:
+        for kind in ("all", "writable", "attributes"):
+            observation[kind]["type"] = "text"
+    api["serialization"]["InputChunk"] = [
+        {"class": "InputChunk", **{kind: {"type": "example"} for kind in ("all", "writable", "attributes")}}
+        for _ in range(2)]
+    mixed = {"wire": harness._input_chunk_wire(_input_chunk_probe()),
+             "classes": ["ModelInputChunk", "ImageChunk", "InputChunk"], "public_image": True, "image_bytes": True}
+    api["input_chunks"] = {"mapping": deepcopy(mixed), "keyword": deepcopy(mixed),
+                           "incorrect_image_type": [["ValueError", "image type must be 'image'"] for _ in range(2)]}
+    del api["input_chunks"]["keyword"]["wire"]["extension"]  # Arbitrary fields use the mapping constructor.
+    return result
+
+
+def _apply_foundry_features_contract(report, harness):
+    """Permit the exact canonical enum inventory, not arbitrary additive members."""
+    result = deepcopy(report)
+    models = result["surface"]["models"]
+    original = {"enum": [[name, value] for name, value in harness.LEGACY_FOUNDRY_FEATURES.items()]}
+    if harness._dump(models["FoundryFeaturesOptInKeys"]) != harness._dump(original):
+        raise ValueError("The immutable Foundry feature enum surface changed")
+    models["FoundryFeaturesOptInKeys"] = {
+        "enum": [[name, value] for name, value in harness.FOUNDRY_FEATURES_DEFINITION["members"].items()]
+    }
+    return result
+
+
 def _apply_review_contracts(report, harness, contracts):
     result = deepcopy(report)
     if "training-type-enum" in contracts:
@@ -965,6 +1071,10 @@ def _apply_review_contracts(report, harness, contracts):
         {"parameters": [{"name": "mapping", "kind": "POSITIONAL_OR_KEYWORD", "type": {"origin": "Mapping", "args": ["str", "Any"]}, "default": {"empty": True}}],
          "returns": "None", "async": False},
     ]
+    if harness.INPUT_CHUNK_CONTRACT in contracts:
+        result = _apply_input_chunk_contract(result, harness)
+    if harness.FOUNDRY_FEATURES_CONTRACT in contracts:
+        result = _apply_foundry_features_contract(result, harness)
     return result
 
 
@@ -978,11 +1088,12 @@ def main():
     parser.add_argument("--review-deltas", type=Path, help="Explicit, versioned post-baseline bug-fix contracts")
     parser.add_argument("--training-type-enum", action="store_true", help="Apply only the reviewed additive TrainingType contract")
     parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--input-chunk-discriminator", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--artifacts", type=Path, help="Directory for unmodified reference and candidate worker JSON")
     args = parser.parse_args()
     if args.worker:
         with redirect_stdout(sys.stderr):
-            report = worker(args.worker.resolve(), args.harness.resolve(), args.service_contracts)
+            report = worker(args.worker.resolve(), args.harness.resolve(), args.service_contracts, args.input_chunk_discriminator)
         print(json.dumps(report, sort_keys=True, ensure_ascii=True))
         return 0
     if args.reference is None or args.candidate is None:
@@ -996,6 +1107,8 @@ def main():
                    "--worker", str(package.resolve()), "--harness", str(args.harness.resolve())]
         if side == "candidate" and "raw-request-id-polling" in contracts:
             command.append("--service-contracts")
+        if side == "candidate" and harness.INPUT_CHUNK_CONTRACT in contracts:
+            command.append("--input-chunk-discriminator")
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf8", timeout=120)
         if result.returncode:
             raise RuntimeError(result.stderr + result.stdout)

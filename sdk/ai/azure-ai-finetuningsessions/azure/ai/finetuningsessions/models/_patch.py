@@ -65,7 +65,7 @@ class FromCheckpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageChunk(_Model):
+class ImageChunk(_models.ImageChunk, discriminator="image"):
     """Raw image bytes embedded in a model input.
 
     :ivar data: Encoded image bytes. Required.
@@ -75,11 +75,6 @@ class ImageChunk(_Model):
     :ivar expected_tokens: Number of image placeholder tokens. Required.
     :vartype expected_tokens: int
     """
-
-    type: Literal["image"] = rest_field()
-    data: bytes = rest_field()
-    format: str = rest_field()
-    expected_tokens: int = rest_field()
 
     @overload
     def __init__(
@@ -96,12 +91,11 @@ class ImageChunk(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Positional mappings ignore keyword defaults. Check the original
-        # marker before fixing the discriminator on the model's own copy.
+        # The generated variant supplies the discriminator for both forms.
+        # Preserve validation of an explicitly incorrect original marker.
         values = args[0] if args else kwargs
         if values.get("type", "image") != "image":
             raise ValueError("image type must be 'image'")
-        self.type = "image"
         if not isinstance(self.data, bytes):
             raise TypeError("image data must be bytes")
         if len(self.data) > MAX_IMAGE_BYTES:
@@ -271,32 +265,27 @@ class SaveCheckpointRequest(_models.SaveCheckpointRequest):
 class ModelInput(_models.ModelInput):
     """Ordered text and image chunks for one model input."""
 
-    # The preview's supported image input is broader than the token-only
-    # generated base. Keep the published field and constructor consistent.
-    chunks: list[Union[_models.ModelInputChunk, ImageChunk]] = rest_field(  # type: ignore[assignment]  # pyright: ignore[reportIncompatibleVariableOverride]
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
     @overload
-    def __init__(self, *, chunks: list[Union[_models.ModelInputChunk, ImageChunk]]) -> None: ...
+    def __init__(self, *, chunks: list[_models.InputChunk]) -> None: ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # ModelInputChunk preserves unknown wire fields as a Mapping. Validate
-        # image mappings through the same handwritten constructor as direct
-        # ImageChunk inputs, before retaining the existing wire representation.
-        for chunk in self.chunks:
+        chunks = []
+        for chunk in tuple(self.chunks):
             if not isinstance(chunk, ImageChunk) and isinstance(chunk, Mapping) and chunk.get("type") == "image":
-                ImageChunk(
-                    data=chunk.get("data"), format=chunk.get("format"), expected_tokens=chunk.get("expected_tokens")
-                )
-        image_count = sum(
-            isinstance(chunk, ImageChunk) or (isinstance(chunk, Mapping) and chunk.get("type") == "image")
-            for chunk in self.chunks
-        )
+                # Generated deserialization can retain a mapping on failure;
+                # do not let that fallback bypass existing image validation.
+                chunk = ImageChunk(chunk)
+            elif isinstance(chunk, Mapping) and "type" not in chunk and "tokens" in chunk:
+                # Keep existing token-only Python mappings usable. Explicit
+                # unknown discriminators remain untouched for extensibility.
+                chunk = _models.ModelInputChunk(chunk)
+            chunks.append(chunk)
+        self.chunks = chunks
+        image_count = sum(isinstance(chunk, ImageChunk) for chunk in self.chunks)
         if image_count > MAX_IMAGES_PER_EXAMPLE:
             raise ValueError(f"model input supports at most {MAX_IMAGES_PER_EXAMPLE} images")
 

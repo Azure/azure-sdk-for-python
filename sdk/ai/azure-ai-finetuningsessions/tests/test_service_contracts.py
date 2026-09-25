@@ -377,9 +377,11 @@ def test_nested_sampling_mapping_preserves_null_versus_omitted_response_format(m
     assert request.sampling_params.response_format is None
     assert ("response_format" in request.sampling_params) is explicit_none
     payload = _wire(request)
-    assert payload == original
+    expected = deepcopy(original)
+    expected["prompt"]["chunks"][0]["type"] = "text"
+    assert payload == expected
     restored = SampleRequest(payload)
     assert isinstance(restored.sampling_params, SamplingParams)
     assert ("response_format" in restored.sampling_params) is explicit_none
-    assert _wire(restored) == original
+    assert _wire(restored) == expected
     assert data == original

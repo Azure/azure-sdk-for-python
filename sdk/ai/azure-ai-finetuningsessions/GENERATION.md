@@ -8,14 +8,108 @@ additional source directories, and exact commit. Use
 toolchain, generated-output, and complete-runtime fingerprints. Historical SHAs
 below are decision records, **not the current source pin**.
 
-The current source commit is pushed and both source-pin and provenance checks
-pass. For subsequent changes, update those records together and rerun the strict
-generation check; record an uncommitted-input requirement until the exact inputs
-are committed. A documentation-only assertion is not proof of reproducibility.
+The combined SDK-first changes are pinned to committed TypeSpec source
+`ace87c52c336cad1f6b777a0c23095d292982aa8`. Source, shared-toolchain,
+generated-output, and complete-runtime fingerprints pass their checks. Two
+independent emissions match the checked-in SDK. For subsequent source changes,
+update these records together and repeat the strict generation check; do not
+reuse earlier results when their inputs differ.
 
-### Recorded local validation (2026-09-24)
+## Current SDK-first decisions
 
-These results were obtained before this documentation-only update, not rerun here.
+### Input-chunk contract
+
+The canonical REST model owns the discriminator hierarchy; Python-scoped naming
+and usage retain the established text/image names rather than copying models.
+
+| Canonical REST definition | Python name | Current contract |
+|---|---|---|
+| `FineTuningInputChunk` | `InputChunk` | Base model with `@discriminator("type")`. |
+| `FineTuningInputChunkType` | `InputChunkType` | Open union of `text`, `image`, and `string`; unknown explicit chunk tags remain extensible. |
+| `FineTuningInputChunkText` | `ModelInputChunk` | Extends the base. Existing `ModelInputChunk(tokens=...)` and mapping calls remain valid; text now emits `type="text"`. |
+| `FineTuningInputChunkImage` | `ImageChunk` | Extends the base. The maintained Python `ImageChunk` extends the generated image class and preserves the existing public calls and validation. |
+| `FineTuningModelInput` | `ModelInput` | Reused directly, with `chunks: FineTuningInputChunk[]`, not an SDK-local model copy. The maintained hook adds the text tag to legacy token-only mappings only when `type` is absent; unknown explicit tags are left unchanged. |
+
+Image bytes/base64 handling, the 10,000,000-byte limit, matching JPEG/PNG/WebP
+signatures and formats, positive `expected_tokens`, and the 64-image limit per
+example are preserved. Mapping inputs do not bypass these checks.
+
+This is **SDK-first**, not a service parser migration. Tests use the actual
+checked-out `loom_api.schemas`, compare tagged/untagged text model dumps and
+domain conversion, and exercise direct handlers with an in-memory provider.
+Both text forms are accepted; internal text remains `encoded_text`. These are
+local offline checks, not live-deployment or GPU validation. Production parser,
+API/authentication, routes, engine, APIM, and resource-provider behavior are
+untouched. Strict discriminator enforcement is deferred to public preview
+(PuPr); the compatibility policy for older clients must be decided then. SDK
+extensibility is not a promise that the service accepts arbitrary future tags.
+
+### Canonical reuse and intentional Python projections
+
+The Python-only compatibility file now contains **18 aliases, 22 compatibility
+models, and three compatibility unions**, compared with the earlier 17/23/4
+snapshot. Canonical `ModelInput` reuse removes one local model. The duplicate
+`FoundryFeaturesOptInKeys` union and its alternate mapping are removed; Python
+name/usage customizations reuse the canonical closed union from the shared
+Foundry service patterns. That underlying REST union is unchanged.
+
+`FoundryFeaturesOptInKeys` retains all six existing names and values:
+`EVALUATIONS_V1_PREVIEW`, `SCHEDULES_V1_PREVIEW`, `RED_TEAMS_V1_PREVIEW`,
+`INSIGHTS_V1_PREVIEW`, `MEMORY_STORES_V1_PREVIEW`, and
+`FINETUNING_SESSIONS_V1_PREVIEW`. It adds the seven canonical members
+`AGENT_INSIGHTS_V1_PREVIEW`, `ROUTINES_V2_PREVIEW`, `SKILLS_V1_PREVIEW`,
+`DATA_GENERATION_JOBS_V1_PREVIEW`, `MODELS_V1_PREVIEW`,
+`AGENTS_OPTIMIZATION_V2_PREVIEW`, and `MODEL_ROUTER_CONTROLS_V1_PREVIEW`.
+The fine-tuning preview header is unchanged; exposing these names does not opt
+requests into other features.
+
+The remaining definitions are intentional Python-only projections:
+
+| Retained group | Why it is not replaced by the REST shape |
+|---|---|
+| `AdamParams`, `SamplingParams`, `SampleRequest`, `LossFnInputs` | Required Python constructor arguments differ from optional service defaults or derived inputs. |
+| `LoRAConfig`, `CreateSessionRequest` | Configuration/rank remain required, but optional LoRA service defaults must not materialize client-side. Preserve SDK `ejectable` and maintained `FromCheckpoint` integration. |
+| Response models, including checkpoints, session summaries, sampling, and heartbeat | Preserve field inventories, optionality, nullability, read-only metadata, and constructor requirements; these are not all wire-equivalent to REST. |
+| `ForwardInput` | Preserve public inheritance from `ForwardBackwardInput`, while REST uses composition. |
+| `OperationResult`, its derived results, `OperationStatus`, `OperationType` | Preserve legacy Python result classes and poller return types, not a claim that the service returns them instead of its request-status envelope. |
+| `ApiError`, `ApiErrorResponse`, `SessionStatus` | Preserve existing error representation and exported status members; the open status union can represent `created` without adding a named member. |
+
+These projections belong only in the Python entry point, not in REST. Source
+reuse, Python API compatibility, and service wire conformance remain separate
+checks. The two TypeSpec review comments are code-addressed, but no replies are
+posted or threads resolved by this follow-up; see [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/REVIEW.md#typespec-follow-up-decisions).
+
+### Generation evidence and limits
+
+Discriminator generation preceded the shared-enum follow-up. Genuine generation
+uses the SDK repository's shared emitter **0.63.8** and backend **0.37.3**.
+The enum follow-up changes only the generated enum, API source metadata, and
+sync/async operation docstrings. Operation executable ASTs are identical after
+excluding docstrings, and all **28 runtime files** equal the genuine emitted
+output. This does not claim that the earlier discriminator generation changed
+only those files.
+
+The combined discriminator and canonical-feature changes have the following
+local validation results (2026-09-25), obtained before this documentation-only
+record update:
+
+| Check | Result |
+|---|---|
+| Public SDK source and installed wheel | **1,850 passed** on Python 3.13.14; all 28 wheel runtime files match source bytes. |
+| Public SDK minimum Python | **1,849 passed, one expected eager-task test skipped** on Python 3.10.21. |
+| Downstream Loom SDK | **1,869 source and 1,869 installed-wheel tests passed**; its extra master regressions are retained and all 28 runtime files match the public SDK. |
+| Strict compatibility | **20 paired cases**, 134 requests and 2,246 checks per SDK; **49 public types**, all **336 original raw cases**, **328 additional probes**, and **97 mutation guards** pass. |
+| SDK-to-service compatibility | **162 offline checks passed**, including 20 real SDK pipeline cases against unchanged checked-out API schemas and handlers. |
+| Generation and quality | Two independent emissions match all 21 generated entries and 28 runtime files; Pylint, Mypy, Pyright, formatting, and strict Sphinx checks passed. |
+| Spelling | **94 files checked, zero issues** before this final documentation update. |
+
+These results do not certify a live deployment, GPU execution, remote CI, or
+release approval. Remote CI for the delivery commits is a separate follow-up.
+
+### Historical local validation (2026-09-24)
+
+These results predate the current input-chunk and shared-enum changes and were
+not rerun for this documentation update.
 
 | Check | Recorded result |
 |---|---|
@@ -29,8 +123,9 @@ These results were obtained before this documentation-only update, not rerun her
 | Code quality | CI-pinned Pylint and Mypy passed; repository-configured Pyright passed. Strict Sphinx passed using sdist runtime/pages and the final README, with only external inventory downloads disabled locally. |
 
 These are local offline results, not live GPU/service validation, remote SDK CI
-success, other-language certification, or release approval. The main verifier's
-exact test-inventory and provenance gates also pass against the finalized records.
+success, other-language certification, or release approval. At that snapshot,
+the main verifier's exact test-inventory and provenance gates also passed
+against the then-finalized records, not the later combined changes above.
 
 ## Pinned generation tools
 
@@ -189,7 +284,10 @@ historical only; current guidance and limitations are above.
 ## Model reuse and training-tier review (2026-09-24)
 
 Historical source snapshot: `22a790dd840b0898c800bd8a6014d1814ea52938`.
-The three decisions were separately committed:
+The three decisions were separately committed. The 17-alias/23-model/four-union
+counts and decisions to retain `ModelInput` and `FoundryFeaturesOptInKeys` below
+describe that snapshot; they are **superseded for current source** by the
+SDK-first decisions above, not retroactively changed historical results.
 
 | Review concern | Resolution | TypeSpec commit |
 |---|---|---|
@@ -212,7 +310,7 @@ select the independent distribution. The existing public compatibility
 namespace is retained for source compatibility, not used as customer branding.
 Renaming it would be a separate source migration, not a prerequisite for reuse.
 
-The following 17 SDK definitions now reuse canonical types directly:
+At that snapshot, the following 17 SDK definitions reused canonical types directly:
 `CheckpointType`, `LossFn`, `SessionType`, `StopCriteria`, `TensorData`,
 `ModelInputChunk`, `Cursor`, `LossFnConfig`, `Datum`, `ForwardBackwardInput`,
 `ForwardBackwardRequest`, `ForwardRequest`, `OptimStepRequest`, `Session`,
@@ -221,23 +319,23 @@ types still use a compatibility mapping where that nested type differs.
 `TrainingType` additionally reuses the existing service union rather than
 introducing another list of training-tier values.
 
-The compatibility file is retained, reduced from 36 to 23 model declarations
-and from eight to four union declarations (the original count includes
-`StopCriteria`). These remaining groups have concrete reasons:
+At that snapshot, the compatibility file was retained, reduced from 36 to 23
+model declarations and from eight to four union declarations (the original
+count includes `StopCriteria`). The retained groups had these reasons:
 
 | Retained definitions | Compatibility requirement / service distinction |
 |---|---|
 | `AdamParams`, `SamplingParams`, `SampleRequest`, `LossFnInputs` | Existing Python constructors require fields the service can default or derive. Preserve constructor signatures and emitted values rather than silently changing defaults. |
 | `LoRAConfig`, `CreateSessionRequest` | Retain preview fields such as `ejectable` and the maintained `FromCheckpoint` integration. The later required-LoRA contract now requires configuration/rank with no default; the original omission behavior is historical, not current guidance. |
 | `Checkpoint`, `CheckpointInfo`, `SessionModelData`, `SessionSummary`, `SampledSequence`, `HeartbeatResponse` | Preserve existing field inventories, optional/nullable Python representations, and required heartbeat constructor arguments. REST exposes additional checkpoint metadata and may omit the heartbeat identifier; these differences are not erased or asserted to be wire-equivalent. |
-| `ModelInput` | Preserve the generated token-only base expected by the existing multimodal `ModelInput`/`ImageChunk` hook. The public SDK supports images; the base alone is not its complete public model. |
+| `ModelInput` | Then retained the generated token-only base used by the multimodal hook. **Superseded:** current source reuses canonical `ModelInput` and its generated chunk hierarchy, with maintained compatibility/validation hooks. |
 | `ForwardInput` | Preserve its public inheritance from `ForwardBackwardInput`; the REST model uses composition. |
 | `OperationResult` and its five derived results, `OperationStatus`, `OperationType` | Preserve public result classes, enums, and poller return types. The later raw-polling fix uses HTTP 200 request-ID envelopes without deleting these classes or caller-owned polling behavior. |
 | `ApiError`, `ApiErrorResponse` | Preserve existing Python error names, recursive detail representation, optionality, and encoded additional/debug information. |
 | `SessionStatus` | Preserve the previously exported named members. REST also names `created`; the Python union remains open and can represent that string without adding an unrelated enum member in this review. |
-| `FoundryFeaturesOptInKeys` | Preserve the older public enum inventory and open-string behavior, rather than changing the shared service's closed opt-in contract or adding unrelated public members. |
+| `FoundryFeaturesOptInKeys` | Then retained the older enum inventory and open-string projection. **Superseded:** current source reuses the shared closed union, retaining the six old names/values and adding seven canonical members without changing REST. |
 
-Deleting all remaining definitions would change constructor signatures,
+Deleting all remaining Python-only projections would change constructor signatures,
 inheritance, public exports, or legacy results. That is a separate migration,
 not a safe response to the duplication comment. Future reuse must preserve
 existing calls or identify an explicit reviewed API change. Source reuse is
@@ -371,14 +469,15 @@ Historical commit `b3d1b8bcfaddba25fc07188672a4a4d5c80cc501` removed the bare
 `string` from `FoundryFeaturesOptInKeys`, retaining all 13 named keys. Its
 declaration-scoped `no-closed-literal-union` suppression follows a specific
 review decision, not a general exemption for input-only unions. The Python
-compatibility projection remained unchanged. Four REST outputs were
+compatibility projection remained unchanged **at that snapshot**; retaining it
+is superseded by the current canonical reuse described above. Four REST outputs were
 byte-identical; two emissions and 501 tests passed. Other shared client entry
 points compiled, but their language packages were not regenerated or certified.
 
 The separate earlier agent-definition review removed unrestricted `string`
 from `AgentDefinitionOptInKeys` only, preserving names/version annotations and
 changing only that schema's extensibility in four REST documents. Neither
-opt-in review changed this SDK's runtime.
+historical opt-in review changed this SDK's runtime at those snapshots.
 
 References: [TypeSpec suppression directives](https://typespec.io/docs/language-basics/directives/)
 and [the extensible-union rule](https://azure.github.io/typespec-azure/docs/libraries/azure-core/rules/no-closed-literal-union/).

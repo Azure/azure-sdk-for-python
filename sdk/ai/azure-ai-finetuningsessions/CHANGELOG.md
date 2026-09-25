@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add the generated `InputChunk` hierarchy and `InputChunkType`. Existing `ModelInputChunk` keyword/mapping calls remain valid and now emit `type="text"`; image inputs retain their existing serialization and validation.
+- Reuse the canonical shared `FoundryFeaturesOptInKeys`, preserving six existing member names/values and adding seven canonical members. The shared REST union and fine-tuning preview header are unchanged.
 - Add optional `SamplingParams.response_format` for compatible sampling providers and the friendly `SamplingOperationResult` alias for `SampleOperationResult`.
 - Add the string-backed `TrainingType` enum, reusing the REST training-tier definition. Existing string inputs and omission behavior remain supported.
 - Initial preview of interactive fine-tuning sessions with synchronous and asynchronous clients.
@@ -36,7 +38,8 @@
 
 ### Other Changes
 
-- Reuse 17 canonical TypeSpec definitions instead of maintaining duplicate SDK models, retain explicitly documented compatibility exceptions, and correct LoRA, sampling, and training-tier documentation without changing service behavior.
+- Reuse 18 canonical TypeSpec aliases, including `ModelInput`, while retaining 22 compatibility models and three compatibility unions for intentional Python-only contracts. Correct LoRA, sampling, and training-tier documentation without changing service behavior.
+- Keep the input-chunk migration SDK-first: normalize legacy token-only `ModelInput` mappings only when `type` is absent and preserve unknown explicit tags. Production service behavior is unchanged; strict discriminator enforcement and compatibility policy are deferred to public preview (PuPr).
 - Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths; training-tier wire values are unchanged.
 - Use the Foundry required-preview operation contract and documented schema defaults with supported Python customization hooks for request query ordering and established convenience behavior.
 - Use the repository's shared Python emitter `0.63.8`, backend `0.37.3`, compiler `1.16.0`, and client generator core `0.72.1`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
@@ -46,7 +49,8 @@
 - Use AST overload inspection on all supported Python versions rather than importing Python 3.11-only `typing.get_overloads`; retain the assertions on Python 3.10.
 - Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
 
-Recorded local validation: **1,637 SDK tests passed on Python 3.13.14**. The
+Historical local validation, before the input-chunk and shared-enum changes:
+**1,637 SDK tests passed on Python 3.13.14**. The
 comparison and negative-guard counts, generation method, and limitations are in
-[GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md). These results do not claim a new final-wheel run,
+[GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md). These results do not validate the final combined changes or claim a new final-wheel run,
 validation of the new tests on Python 3.10, remote CI success, or release approval.
