@@ -278,8 +278,12 @@ class StructuredReviewTests(unittest.TestCase):
 
     def test_version_metadata_is_allowed_only_for_required_version_checks(self):
         source = reference("azure/mgmt/example/_version.py")
-        self.package["checks"][0]["sources"] = [source]
-        self.render()
+        for name in ("Version consistency", "Preview version", "Stability flags"):
+            with self.subTest(name=name):
+                check = next(check for check in self.package["checks"] if check["name"] == name)
+                check["sources"] = [source]
+                self.assertIn(source["url"], self.render())
+                check["sources"] = [reference()]
         self.package["checks"][-1]["sources"] = [source]
         self.reject("excluded")
 
