@@ -1,5 +1,39 @@
 # Release History
 
+## 5.0.0b5 (2026-09-14)
+
+### Features Added
+
+  - Model `CertificateProperties` added property `certificate_authority_resource_id`
+  - Model `CertificatePropertiesWithNonce` added property `certificate_authority_resource_id`
+  - Model `DeviceRegistry` added property `data_plane_host_name`
+  - Model `DeviceRegistry` added property `identity`
+  - Model `DeviceRegistry` added property `linking_properties`
+  - Model `DeviceRegistry` added property `namespace_uuid`
+  - Model `IotHubProperties` added property `connection_profile`
+  - Model `IotHubProperties` added property `mqtt_v5_settings`
+  - Model `RouteProperties` added property `data_schema`
+  - Model `RoutingCosmosDBSqlApiProperties` added property `message_payload_format`
+  - Model `RoutingEventHubProperties` added property `message_payload_format`
+  - Model `RoutingEventStreamProperties` added property `message_payload_format`
+  - Model `RoutingServiceBusQueueEndpointProperties` added property `message_payload_format`
+  - Model `RoutingServiceBusTopicEndpointProperties` added property `message_payload_format`
+  - Model `RoutingStorageContainerProperties` added property `message_payload_format`
+  - Added enum `ConnectionProfile`
+  - Added model `DeviceRegistryIdentity`
+  - Added enum `DeviceRegistryIdentityType`
+  - Added model `DeviceRegistryLinkingProperties`
+  - Added enum `DeviceRegistryLinkingState`
+  - Added enum `MessagePayloadFormat`
+  - Added model `MqttV5Settings`
+  - Added model `TopicGroup`
+
+### Breaking Changes
+
+  - Model `CertificateProperties` deleted or renamed its instance variable `policy_resource_id`
+  - Model `CertificatePropertiesWithNonce` deleted or renamed its instance variable `policy_resource_id`
+  - Model `DeviceRegistry` deleted or renamed its instance variable `identity_resource_id`
+
 ## 5.0.0b4 (2026-07-21)
 
 ### Features Added
