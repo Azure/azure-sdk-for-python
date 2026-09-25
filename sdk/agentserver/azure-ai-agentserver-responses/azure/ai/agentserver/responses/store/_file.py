@@ -618,6 +618,8 @@ class FileResponseStore(ResponseProviderProtocol):
     def _store_items_unlocked(self, paths: _PartitionPaths, items: Iterable[Any]) -> list[str]:
         """Persist items to this partition's ``items/`` store.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param items: Iterable of items (each must expose an ``id``).
         :type items: Iterable[Any]
         :returns: Ordered list of stored item ids.
@@ -639,6 +641,8 @@ class FileResponseStore(ResponseProviderProtocol):
 
         Mirrors :meth:`InMemoryResponseProvider._store_output_items_unlocked`.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param response: The response envelope.
         :type response: ResponseObject
         :returns: Ordered list of stored output item ids.
@@ -681,6 +685,8 @@ class FileResponseStore(ResponseProviderProtocol):
         items, or legacy fully-inline items) are kept as-is, preserving
         order and position.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param envelope: The persisted response envelope dict.
         :type envelope: dict[str, Any]
         :returns: A shallow copy of *envelope* with ``output`` rehydrated.
@@ -726,6 +732,8 @@ class FileResponseStore(ResponseProviderProtocol):
     ) -> None:
         """Merge the supplied id lists into the persisted indexes file.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param response_id: The response identifier.
         :type response_id: str
         :keyword input_item_ids: New input ids to overwrite.
@@ -750,6 +758,8 @@ class FileResponseStore(ResponseProviderProtocol):
 
         Idempotent: appending the same id twice is a no-op.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param conversation_id: The conversation identifier.
         :type conversation_id: str
         :param response_id: The response identifier to register.

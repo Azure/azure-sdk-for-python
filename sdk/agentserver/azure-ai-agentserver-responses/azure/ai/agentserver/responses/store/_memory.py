@@ -26,7 +26,15 @@ _StoreKey = tuple[str | None, str]
 
 
 def _store_key(identifier: str, context: PlatformContext | None) -> _StoreKey:
-    """Keep absent identity anonymous; preserve present keys exactly, including empty strings."""
+    """Keep absent identity anonymous; preserve present keys exactly, including empty strings.
+
+    :param identifier: The identifier within the user partition.
+    :type identifier: str
+    :param context: Platform context carrying the user key, or ``None``.
+    :type context: PlatformContext | None
+    :return: The user key and identifier.
+    :rtype: tuple[str | None, str]
+    """
     return (context.user_id_key if context is not None else None, identifier)
 
 
