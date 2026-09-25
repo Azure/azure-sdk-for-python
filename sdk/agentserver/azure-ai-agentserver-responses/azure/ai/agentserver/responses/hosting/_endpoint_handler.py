@@ -873,7 +873,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         disconnect_task: asyncio.Task[None] | None = None
         stream_owns_flush = False
+        stream_owns_reservation = False
+        reservation_acquired = False
         try:
+            if not await self._runtime_state.reserve(ctx.response_id, ctx.user_id):
+                span.end(None)
+                return JSONResponse(
+                    {
+                        "error": {
+                            "message": "A live response with this ID already exists.",
+                            "type": "conflict",
+                            "code": "response_id_conflict",
+                            "param": "response_id",
+                        }
+                    },
+                    status_code=409,
+                    headers=self._session_headers(agent_session_id),
+                )
+            reservation_acquired = True
+
             if ctx.stream:
                 raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
 
@@ -916,6 +934,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     finally:
                         reset_request_context(stream_ctx_token)
                         await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
+                        await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
 
                 sse_response = _CreateStreamingResponse(
                     _iter_with_context(),
@@ -925,6 +944,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
                 stream_owns_flush = True
+                stream_owns_reservation = True
                 return sse_response
 
             if not ctx.background:
@@ -1065,6 +1085,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
             raise
         finally:
+            if reservation_acquired and not stream_owns_reservation:
+                await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
             _response_id_var.reset(rid_token)
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
@@ -1118,7 +1140,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 _context.user_id_key is not None,
                 _context.call_id is not None,
             )
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
             return await self._handle_get_fallback(
                 request,
@@ -1216,7 +1238,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :return: Response.
         :rtype: Response
         """
-        if await self._runtime_state.is_deleted(response_id):
+        if await self._runtime_state.is_deleted(response_id, _context.user_id_key):
             return _deleted_response(response_id, _hdrs)
 
         if not stream_replay:
@@ -1503,11 +1525,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _context.user_id_key is not None,
             _context.call_id is not None,
         )
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
             # Provider fallback: response may have been evicted from memory after
             # reaching terminal state, or the server restarted since creation.
-            if await self._runtime_state.is_deleted(response_id):
+            if await self._runtime_state.is_deleted(response_id, _context.user_id_key):
                 return _not_found(response_id, _hdrs)
 
             result = await self._provider_delete_response(response_id, _context, _hdrs)
@@ -1562,7 +1584,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
                     )
 
-        deleted = await self._runtime_state.delete(response_id)
+        deleted = await self._runtime_state.delete(response_id, _context.user_id_key)
         if not deleted:
             # Race: the background task's eager eviction (try_evict) removed
             # the record between our get() and delete() calls. Eviction for
@@ -1639,7 +1661,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     exc_info=True,
                 )
             # Mark as deleted in runtime state so subsequent requests get 404
-            await self._runtime_state.mark_deleted(response_id)
+            await self._runtime_state.mark_deleted(response_id, context.user_id_key)
             logger.info("Deleted response %s via provider", response_id)
             return JSONResponse(
                 {"id": response_id, "object": "response", "deleted": True},
@@ -1682,7 +1704,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _context.user_id_key is not None,
             _context.call_id is not None,
         )
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
             return await self._handle_cancel_fallback(response_id, _context, _hdrs)
 
@@ -1760,7 +1782,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         snapshot = _RuntimeState.to_snapshot(record)
 
         # Eager eviction: free memory now that the terminal state is persisted
-        await self._runtime_state.try_evict(record.response_id)
+        await self._runtime_state.try_evict(record.response_id, record.user_id_key)
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
         return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
@@ -1857,7 +1879,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # User isolation enforcement for in-flight responses.  After eviction,
         # the provider (Foundry storage) enforces partitioning server-side.
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is not None:
             if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
                 return _not_found(response_id, _hdrs)
@@ -1893,7 +1915,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # Fall back to runtime_state for in-flight responses not yet persisted to provider.
             # User isolation was already checked above when the record is in-flight.
             try:
-                items = await self._runtime_state.get_input_items(response_id)
+                items = await self._runtime_state.get_input_items(response_id, _context.user_id_key)
             except ValueError:
                 return _deleted_response(response_id, _hdrs)
             except KeyError:
