@@ -645,7 +645,11 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
 
 
 async def _flush_spans_once_async(timeout_millis: int) -> None:
-    """Run one synchronous provider flush in the default executor."""
+    """Run one synchronous provider flush in the default executor.
+
+    :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
+    :type timeout_millis: int
+    """
     loop = asyncio.get_running_loop()
     await loop.run_in_executor(None, flush_spans, timeout_millis)
 
@@ -674,7 +678,11 @@ async def _coalesced_flush(timeout_millis: int) -> None:
 
 
 def _schedule_coalesced_flush(timeout_millis: int) -> "asyncio.Task[None]":
-    """Start or join the shared asynchronous flush task."""
+    """Start or join the shared asynchronous flush task.
+
+    :param timeout_millis: Maximum time to wait for the flush, in milliseconds.
+    :type timeout_millis: int
+    """
     global _bg_flush_task, _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     loop = asyncio.get_running_loop()
     if _bg_flush_task is not None and not _bg_flush_task.done() and _bg_flush_task.get_loop() is loop:
