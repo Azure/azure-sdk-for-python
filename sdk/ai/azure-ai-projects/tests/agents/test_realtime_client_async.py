@@ -442,7 +442,7 @@ async def test_realtime_logging_emits_metadata_without_sensitive_content(caplog)
     )
     connection_url = "wss://my-account.services.ai.azure.com/custom?sig=secret-query"
 
-    caplog.set_level(logging.DEBUG, logger="azure.ai.projects.aio._realtime")
+    caplog.set_level(logging.DEBUG, logger="azure.ai.projects.realtime")
     patcher, _ = _patch_client_session(fake_ws)
     with patcher:
         manager = _make_manager(

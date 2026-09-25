@@ -9884,7 +9884,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     async def _create_generation_job_initial(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        body: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -9905,10 +9905,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_evaluators_create_generation_job_request(
             operation_id=operation_id,
@@ -9957,7 +9957,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @overload
     async def begin_create_generation_job(
         self,
-        job: _models.EvaluatorGenerationJob,
+        body: _models.EvaluatorGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -9968,8 +9968,8 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :param body: The job to create. Required.
+        :type body: ~azure.ai.projects.models.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -9984,15 +9984,15 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     async def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.EvaluatorVersion]:
         """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: JSON
+        :param body: The job to create. Required.
+        :type body: JSON
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -10008,7 +10008,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @overload
     async def begin_create_generation_job(
         self,
-        job: IO[bytes],
+        body: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -10019,8 +10019,8 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
+        :param body: The job to create. Required.
+        :type body: IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -10036,7 +10036,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        body: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -10046,9 +10046,9 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
+        :param body: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
          IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -10067,7 +10067,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_generation_job_initial(
-                job=job,
+                body=body,
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

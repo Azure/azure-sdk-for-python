@@ -8758,16 +8758,37 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.MisalignmentErrorDetailsResource(_Model):
         detailed_explanation: Optional[str]
-        error_type: Optional[Union[str, _MisalignmentErrorType]]
-        steer: Optional[_MisalignmentSteer]
+        error_type: Optional[Union[str, MisalignmentErrorType]]
+        steer: Optional[MisalignmentSteer]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 detailed_explanation: Optional[str] = ..., 
-                error_type: Optional[Union[str, _MisalignmentErrorType]] = ..., 
-                steer: Optional[_MisalignmentSteer] = ...
+                error_type: Optional[Union[str, MisalignmentErrorType]] = ..., 
+                steer: Optional[MisalignmentSteer] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OTHER = "other"
+        POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+        POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+        POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+
+
+    class azure.ai.projects.models.MisalignmentSteer(_Model):
+        message: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                message: str
             ) -> None: ...
 
         @overload

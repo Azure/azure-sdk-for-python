@@ -164,34 +164,6 @@ class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
-class _MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """_MisalignmentSteer.
-
-    :ivar message: The public continuation instruction. Required.
-    :vartype message: str
-    """
-
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The public continuation instruction. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        message: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A tool that can be used to generate a response.
 
@@ -13188,14 +13160,14 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
     :ivar error_type: An optional classification; clients must accept additional values. Known
      values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
      "potentially_unintended_destructive_activity", and "other".
-    :vartype error_type: str or ~azure.ai.projects.models._MisalignmentErrorType
+    :vartype error_type: str or ~azure.ai.projects.models.MisalignmentErrorType
     :ivar detailed_explanation: The public explanation for this block.
     :vartype detailed_explanation: str
     :ivar steer: An optional public continuation instruction.
-    :vartype steer: ~azure.ai.projects.models._MisalignmentSteer
+    :vartype steer: ~azure.ai.projects.models.MisalignmentSteer
     """
 
-    error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = rest_field(
+    error_type: Optional[Union[str, "_models.MisalignmentErrorType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An optional classification; clients must accept additional values. Known values are:
@@ -13203,7 +13175,7 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
      \"potentially_unintended_destructive_activity\", and \"other\"."""
     detailed_explanation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The public explanation for this block."""
-    steer: Optional["_models._MisalignmentSteer"] = rest_field(
+    steer: Optional["_models.MisalignmentSteer"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An optional public continuation instruction."""
@@ -13212,9 +13184,37 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
     def __init__(
         self,
         *,
-        error_type: Optional[Union[str, "_models._MisalignmentErrorType"]] = None,
+        error_type: Optional[Union[str, "_models.MisalignmentErrorType"]] = None,
         detailed_explanation: Optional[str] = None,
-        steer: Optional["_models._MisalignmentSteer"] = None,
+        steer: Optional["_models.MisalignmentSteer"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MisalignmentSteer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MisalignmentSteer.
+
+    :ivar message: The public continuation instruction. Required.
+    :vartype message: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The public continuation instruction. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
     ) -> None: ...
 
     @overload

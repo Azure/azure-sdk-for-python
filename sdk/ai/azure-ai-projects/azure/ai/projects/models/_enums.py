@@ -59,19 +59,6 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
 
 
-class _MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of _MisalignmentErrorType."""
-
-    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
-    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
-    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
-    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
-    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
-    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
-    OTHER = "other"
-    """OTHER."""
-
-
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported A2A protocol versions."""
 
@@ -990,6 +977,19 @@ class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Publish the app to a shared scope within the organization."""
     TENANT = "Tenant"
     """Publish the app tenant-wide."""
+
+
+class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MisalignmentErrorType."""
+
+    POTENTIALLY_UNINTENDED_DATA_TRANSFER = "potentially_unintended_data_transfer"
+    """POTENTIALLY_UNINTENDED_DATA_TRANSFER."""
+    POTENTIALLY_UNINTENDED_DATA_ACCESS = "potentially_unintended_data_access"
+    """POTENTIALLY_UNINTENDED_DATA_ACCESS."""
+    POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY = "potentially_unintended_destructive_activity"
+    """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
+    OTHER = "other"
+    """OTHER."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
