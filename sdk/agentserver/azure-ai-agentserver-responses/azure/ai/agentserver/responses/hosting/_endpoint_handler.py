@@ -892,6 +892,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 )
             reservation_acquired = True
 
+            try:
+                await streams.get(ctx.response_id)
+            except EventStreamNotFoundError:
+                pass
+            else:
+                span.end(None)
+                return JSONResponse(
+                    {
+                        "error": {
+                            "message": "A live response with this ID already exists.",
+                            "type": "conflict",
+                            "code": "response_id_conflict",
+                            "param": "response_id",
+                        }
+                    },
+                    status_code=409,
+                    headers=self._session_headers(agent_session_id),
+                )
+
             if ctx.stream:
                 raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
 

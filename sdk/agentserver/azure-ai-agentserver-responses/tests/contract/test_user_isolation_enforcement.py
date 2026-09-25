@@ -250,6 +250,51 @@ async def test_duplicate_live_response_id_is_rejected_without_replacing_owner() 
             owner_task.cancel()
             with pytest.raises((asyncio.CancelledError, Exception)):
                 await owner_task
+
+
+def test_response_id_with_retained_stream_cannot_be_reused_by_another_user() -> None:
+    response_id = IdGenerator.new_response_id()
+
+    async def completed_streaming_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        return _events()
+
+    client = _make_client(completed_streaming_handler)
+    with client.stream(
+        "POST",
+        "/responses",
+        json={
+            "response_id": response_id,
+            "model": "test",
+            "background": False,
+            "stream": True,
+            "store": True,
+        },
+        headers={"x-agent-user-id": "key_A"},
+    ) as owner:
+        assert owner.status_code == 200
+        list(owner.iter_lines())
+
+    collision = client.post(
+        "/responses",
+        json={
+            "response_id": response_id,
+            "model": "test",
+            "background": False,
+            "stream": False,
+            "store": True,
+        },
+        headers={"x-agent-user-id": "key_B"},
+    )
+
+    assert collision.status_code == 409
+    assert collision.json()["error"]["code"] == "response_id_conflict"
+
+
 # ── GET with isolation ────────────────────────────────────
 
 
