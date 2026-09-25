@@ -163,5 +163,5 @@
         "azure.mgmt.elastic.operations.ElasticVersionsOperations.list": "Microsoft.Elastic.ElasticVersionsOperationGroup.list",
         "azure.mgmt.elastic.aio.operations.ElasticVersionsOperations.list": "Microsoft.Elastic.ElasticVersionsOperationGroup.list"
     },
-    "CrossLanguageVersion": "c06faa36fc65"
+    "CrossLanguageVersion": "97686653e869"
 }

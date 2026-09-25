@@ -555,10 +555,13 @@ namespace azure.mgmt.elastic.aio.operations
             ) -> AsyncLROPoller[ElasticMonitorResource]: ...
 
         @distributed_trace_async
+        @api_version_validation(params_added_on={'2026-03-15-preview': ['soft_delete']}, api_versions_list=['2025-06-01', '2026-03-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
                 monitor_name: str, 
+                *, 
+                soft_delete: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
@@ -2505,10 +2508,13 @@ namespace azure.mgmt.elastic.operations
             ) -> LROPoller[ElasticMonitorResource]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-03-15-preview': ['soft_delete']}, api_versions_list=['2025-06-01', '2026-03-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
                 monitor_name: str, 
+                *, 
+                soft_delete: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
@@ -2922,7 +2928,7 @@ namespace azure.mgmt.elastic.types
         business: str
         country: str
         domain: str
-        employees_number: str
+        employeesNumber: str
         state: str
 
 
@@ -2934,12 +2940,12 @@ namespace azure.mgmt.elastic.types
         key "kibanaServiceUrl": str
         key "kibanaSsoUrl": str
         key "name": str
-        azure_subscription_id: str
-        deployment_id: str
-        elasticsearch_region: str
-        elasticsearch_service_url: str
-        kibana_service_url: str
-        kibana_sso_url: str
+        azureSubscriptionId: str
+        deploymentId: str
+        elasticsearchRegion: str
+        elasticsearchServiceUrl: str
+        kibanaServiceUrl: str
+        kibanaSsoUrl: str
         name: str
 
 
@@ -2947,8 +2953,8 @@ namespace azure.mgmt.elastic.types
         key "elasticCloudSsoDefaultUrl": str
         key "emailAddress": str
         key "id": str
-        elastic_cloud_sso_default_url: str
-        email_address: str
+        elasticCloudSsoDefaultUrl: str
+        emailAddress: str
         id: str
 
 
@@ -2969,7 +2975,7 @@ namespace azure.mgmt.elastic.types
         name: str
         properties: MonitorProperties
         sku: ResourceSku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2986,8 +2992,8 @@ namespace azure.mgmt.elastic.types
     class azure.mgmt.elastic.types.ElasticProperties(TypedDict, total=False):
         key "elasticCloudDeployment": ForwardRef('ElasticCloudDeployment', module='types')
         key "elasticCloudUser": ForwardRef('ElasticCloudUser', module='types')
-        elastic_cloud_deployment: ElasticCloudDeployment
-        elastic_cloud_user: ElasticCloudUser
+        elasticCloudDeployment: ElasticCloudDeployment
+        elasticCloudUser: ElasticCloudUser
 
 
     class azure.mgmt.elastic.types.ExternalUserInfo(TypedDict, total=False):
@@ -2995,11 +3001,11 @@ namespace azure.mgmt.elastic.types
         key "fullName": str
         key "password": str
         key "userName": str
-        email_id: str
-        full_name: str
+        emailId: str
+        fullName: str
         password: str
         roles: list[str]
-        user_name: str
+        userName: str
 
 
     class azure.mgmt.elastic.types.FilteringTag(TypedDict, total=False):
@@ -3015,8 +3021,8 @@ namespace azure.mgmt.elastic.types
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ManagedIdentityTypes]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedIdentityTypes]
 
 
@@ -3025,10 +3031,9 @@ namespace azure.mgmt.elastic.types
         key "sendActivityLogs": bool
         key "sendSubscriptionLogs": bool
         filteringTags: list[FilteringTag]
-        filtering_tags: list[FilteringTag]
-        send_aad_logs: bool
-        send_activity_logs: bool
-        send_subscription_logs: bool
+        sendAadLogs: bool
+        sendActivityLogs: bool
+        sendSubscriptionLogs: bool
 
 
     class azure.mgmt.elastic.types.MonitorProperties(TypedDict, total=False):
@@ -3047,20 +3052,20 @@ namespace azure.mgmt.elastic.types
         key "subscriptionState": str
         key "userInfo": ForwardRef('UserInfo', module='types')
         key "version": str
-        elastic_properties: ElasticProperties
-        generate_api_key: bool
-        hosting_type: Union[str, HostingType]
-        liftr_resource_category: Union[str, LiftrResourceCategories]
-        liftr_resource_preference: int
-        monitoring_status: Union[str, MonitoringStatus]
-        plan_details: PlanDetails
-        project_details: ProjectDetails
-        provisioning_state: Union[str, ProvisioningState]
-        saa_s_azure_subscription_status: str
-        source_campaign_id: str
-        source_campaign_name: str
-        subscription_state: str
-        user_info: UserInfo
+        elasticProperties: ElasticProperties
+        generateApiKey: bool
+        hostingType: Union[str, HostingType]
+        liftrResourceCategory: Union[str, LiftrResourceCategories]
+        liftrResourcePreference: int
+        monitoringStatus: Union[str, MonitoringStatus]
+        planDetails: PlanDetails
+        projectDetails: ProjectDetails
+        provisioningState: Union[str, ProvisioningState]
+        saaSAzureSubscriptionStatus: str
+        sourceCampaignId: str
+        sourceCampaignName: str
+        subscriptionState: str
+        userInfo: UserInfo
         version: str
 
 
@@ -3071,8 +3076,8 @@ namespace azure.mgmt.elastic.types
         key "tagRules": ForwardRef('MonitoringTagRulesProperties', module='types')
         error: str
         status: Union[str, Status]
-        subscription_id: str
-        tag_rules: MonitoringTagRulesProperties
+        subscriptionId: str
+        tagRules: MonitoringTagRulesProperties
 
 
     class azure.mgmt.elastic.types.MonitoredSubscriptionProperties(ProxyResource):
@@ -3084,7 +3089,7 @@ namespace azure.mgmt.elastic.types
         id: str
         name: str
         properties: SubscriptionList
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3097,15 +3102,15 @@ namespace azure.mgmt.elastic.types
         id: str
         name: str
         properties: MonitoringTagRulesProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.elastic.types.MonitoringTagRulesProperties(TypedDict, total=False):
         key "logRules": ForwardRef('LogRules', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        log_rules: LogRules
-        provisioning_state: Union[str, ProvisioningState]
+        logRules: LogRules
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.elastic.types.OpenAIIntegrationProperties(TypedDict, total=False):
@@ -3115,10 +3120,10 @@ namespace azure.mgmt.elastic.types
         key "openAIResourceEndpoint": str
         key "openAIResourceId": str
         key: str
-        last_refresh_at: str
-        open_ai_connector_id: str
-        open_ai_resource_endpoint: str
-        open_ai_resource_id: str
+        lastRefreshAt: str
+        openAIConnectorId: str
+        openAIResourceEndpoint: str
+        openAIResourceId: str
 
 
     class azure.mgmt.elastic.types.OpenAIIntegrationRPModel(ProxyResource):
@@ -3130,7 +3135,7 @@ namespace azure.mgmt.elastic.types
         id: str
         name: str
         properties: OpenAIIntegrationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3140,18 +3145,18 @@ namespace azure.mgmt.elastic.types
         key "planName": str
         key "publisherID": str
         key "termID": str
-        offer_id: str
-        plan_id: str
-        plan_name: str
-        publisher_id: str
-        term_id: str
+        offerID: str
+        planID: str
+        planName: str
+        publisherID: str
+        termID: str
 
 
     class azure.mgmt.elastic.types.ProjectDetails(TypedDict, total=False):
         key "configurationType": Union[str, ConfigurationType]
         key "projectType": Union[str, ProjectType]
-        configuration_type: Union[str, ConfigurationType]
-        project_type: Union[str, ProjectType]
+        configurationType: Union[str, ConfigurationType]
+        projectType: Union[str, ProjectType]
 
 
     class azure.mgmt.elastic.types.ProxyResource(Resource):
@@ -3161,7 +3166,7 @@ namespace azure.mgmt.elastic.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3172,7 +3177,7 @@ namespace azure.mgmt.elastic.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3187,10 +3192,10 @@ namespace azure.mgmt.elastic.types
         key "resourceGroup": str
         key "subscriptionId": str
         key "term": str
-        organization_id: str
-        plan_id: str
-        resource_group: str
-        subscription_id: str
+        organizationId: str
+        planId: str
+        resourceGroup: str
+        subscriptionId: str
         term: str
 
 
@@ -3198,9 +3203,8 @@ namespace azure.mgmt.elastic.types
         key "operation": Union[str, Operation]
         key "provisioningState": Union[str, ProvisioningState]
         monitoredSubscriptionList: list[MonitoredSubscription]
-        monitored_subscription_list: list[MonitoredSubscription]
         operation: Union[str, Operation]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.elastic.types.SystemData(TypedDict, total=False):
@@ -3210,12 +3214,12 @@ namespace azure.mgmt.elastic.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.elastic.types.TrackedResource(Resource):
@@ -3227,14 +3231,14 @@ namespace azure.mgmt.elastic.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.elastic.types.UserEmailId(TypedDict, total=False):
         key "emailId": str
-        email_id: str
+        emailId: str
 
 
     class azure.mgmt.elastic.types.UserInfo(TypedDict, total=False):
@@ -3243,18 +3247,18 @@ namespace azure.mgmt.elastic.types
         key "emailAddress": str
         key "firstName": str
         key "lastName": str
-        company_info: CompanyInfo
-        company_name: str
-        email_address: str
-        first_name: str
-        last_name: str
+        companyInfo: CompanyInfo
+        companyName: str
+        emailAddress: str
+        firstName: str
+        lastName: str
 
 
     class azure.mgmt.elastic.types.VMCollectionUpdate(TypedDict, total=False):
         key "operationName": Union[str, OperationName]
         key "vmResourceId": str
-        operation_name: Union[str, OperationName]
-        vm_resource_id: str
+        operationName: Union[str, OperationName]
+        vmResourceId: str
 
 
 ```
