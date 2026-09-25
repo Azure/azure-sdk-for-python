@@ -153,6 +153,13 @@ class _RuntimeState:
         async with self._lock:
             return self._records.get(_runtime_key(response_id, user_id_key))
 
+    async def contains_live_response_id(self, response_id: str) -> bool:
+        """Return whether any user partition currently owns this live response ID."""
+        async with self._lock:
+            return any(key[1] == response_id for key in self._records) or any(
+                key[1] == response_id for key in self._pending_records
+            )
+
     async def is_deleted(self, response_id: str, user_id_key: str | None = None) -> bool:
         """Check whether a response ID has been deleted.
 
