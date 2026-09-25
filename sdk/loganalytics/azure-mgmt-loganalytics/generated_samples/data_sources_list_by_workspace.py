@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-01/DataSourcesListByWorkspace.json
+# x-ms-original-file: 2026-03-01/DataSourcesListByWorkspace.json
 if __name__ == "__main__":
     main()
