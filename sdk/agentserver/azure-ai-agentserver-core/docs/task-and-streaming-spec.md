@@ -3790,6 +3790,8 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   so a subsequent `get(id)` raises `EventStreamNotFoundError`.
   With file-backed replay configured, it MUST also remove an existing
   retained log that has not been loaded in the current process.
+  Backing deletion failures MUST propagate before installing the tombstone,
+  leaving cleanup retryable. This also applies to close-clock expiry cleanup.
 - **C-STR-REG-5.** Tombstone MUST be cleared on the next
   `get_or_create(id)` for the same id.
 - **C-STR-REG-6.** `get(id)` MUST raise `EventStreamNotFoundError`
