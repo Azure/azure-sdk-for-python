@@ -9,7 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Python 3.8 is no longer supported. Please use Python version 3.9 or later
+- Corrected the package metadata to require Python 3.10 or later, matching the existing support policy
+  ([#49200](https://github.com/Azure/azure-sdk-for-python/pull/49200))
 
 ## 1.8.10 (2026-09-09)
 
