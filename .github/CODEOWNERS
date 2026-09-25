@@ -821,7 +821,7 @@
 # Eng Sys and other
 ###########
 /eng/                                                                @JennyPng @l0lawrence @danieljurek
-/eng/common/                                                         @JennyPng @l0lawrence @Azure/azure-sdk-eng @Azure/azure-sdk-eng-common-maintainers
+/eng/common/                                                         @JennyPng @l0lawrence @Azure/azure-sdk-eng @Azure/azure-sdk-sync-approvers
 /eng/tools/                                                          @JennyPng @l0lawrence @danieljurek @laiapat
 /.github/workflows/                                                  @JennyPng @l0lawrence @Azure/azure-sdk-eng
 /.github/workflows/typespec-python-regenerate.yml                    @JennyPng @l0lawrence @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
