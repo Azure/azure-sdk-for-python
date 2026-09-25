@@ -41,8 +41,7 @@ processes will race on the underlying filesystem.
 Storage layout under ``storage_dir``::
 
     partitions-v1/
-        anonymous/                       # missing context / user_id_key=None
-        user-{sha256(user_id_key)}/      # named user partition
+        {anonymous|user-{sha256(user_id_key)}}/
             responses/
                 {response_id}.json
                 {response_id}.indexes.json
@@ -51,6 +50,10 @@ Storage layout under ``storage_dir``::
                 {item_id}.json
             conversations/
                 {conversation_id}.json
+
+The partition directory is ``anonymous`` when context or ``user_id_key`` is
+missing; otherwise it is ``user-{sha256(user_id_key)}``. Both use the same
+``responses/``, ``items/``, and ``conversations/`` subtree.
 
 Each item is persisted exactly once under ``items/``; the response
 envelope and conversations hold only pointers (spec 028). ``get_items``
