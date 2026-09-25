@@ -1,12 +1,20 @@
 {
     "CrossLanguagePackageId": "Microsoft.StorageDiscovery",
     "CrossLanguageDefinitionId": {
+        "azure.mgmt.storagediscovery.models.AzureBlobStorageCapability": "Microsoft.StorageDiscovery.AzureBlobStorageCapability",
+        "azure.mgmt.storagediscovery.models.AzureBlobStorageCapabilityUpdate": "Microsoft.StorageDiscovery.AzureBlobStorageCapabilityUpdate",
+        "azure.mgmt.storagediscovery.models.CapacityDetails": "Microsoft.StorageDiscovery.CapacityDetails",
+        "azure.mgmt.storagediscovery.models.CapacityDetailsUpdate": "Microsoft.StorageDiscovery.CapacityDetailsUpdate",
         "azure.mgmt.storagediscovery.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.storagediscovery.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.storagediscovery.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.storagediscovery.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.storagediscovery.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.storagediscovery.models.PrefixConfiguration": "Microsoft.StorageDiscovery.PrefixConfiguration",
+        "azure.mgmt.storagediscovery.models.PrefixConfigurationUpdate": "Microsoft.StorageDiscovery.PrefixConfigurationUpdate",
         "azure.mgmt.storagediscovery.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.storagediscovery.models.StorageDiscoveryCapabilities": "Microsoft.StorageDiscovery.StorageDiscoveryCapabilities",
+        "azure.mgmt.storagediscovery.models.StorageDiscoveryCapabilitiesUpdate": "Microsoft.StorageDiscovery.StorageDiscoveryCapabilitiesUpdate",
         "azure.mgmt.storagediscovery.models.StorageDiscoveryScope": "Microsoft.StorageDiscovery.StorageDiscoveryScope",
         "azure.mgmt.storagediscovery.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspace": "Microsoft.StorageDiscovery.StorageDiscoveryWorkspace",
@@ -16,6 +24,7 @@
         "azure.mgmt.storagediscovery.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.storagediscovery.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.storagediscovery.models.StorageDiscoverySku": "Microsoft.StorageDiscovery.StorageDiscoverySku",
+        "azure.mgmt.storagediscovery.models.CapabilityStatus": "Microsoft.StorageDiscovery.CapabilityStatus",
         "azure.mgmt.storagediscovery.models.StorageDiscoveryResourceType": "Microsoft.StorageDiscovery.StorageDiscoveryResourceType",
         "azure.mgmt.storagediscovery.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
         "azure.mgmt.storagediscovery.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
@@ -34,5 +43,6 @@
         "azure.mgmt.storagediscovery.aio.operations.StorageDiscoveryWorkspacesOperations.list_by_subscription": "Microsoft.StorageDiscovery.StorageDiscoveryWorkspaces.listBySubscription",
         "azure.mgmt.storagediscovery.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.storagediscovery.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
-    }
+    },
+    "CrossLanguageVersion": "5f2dee4da2d7"
 }

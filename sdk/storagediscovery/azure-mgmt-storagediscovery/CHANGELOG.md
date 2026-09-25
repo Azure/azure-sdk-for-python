@@ -1,5 +1,21 @@
 # Release History
 
+## 1.1.0b1 (2026-09-25)
+
+### Features Added
+
+  - Model `StorageDiscoveryWorkspaceProperties` added property `capabilities`
+  - Model `StorageDiscoveryWorkspacePropertiesUpdate` added property `capabilities`
+  - Added model `AzureBlobStorageCapability`
+  - Added model `AzureBlobStorageCapabilityUpdate`
+  - Added enum `CapabilityStatus`
+  - Added model `CapacityDetails`
+  - Added model `CapacityDetailsUpdate`
+  - Added model `PrefixConfiguration`
+  - Added model `PrefixConfigurationUpdate`
+  - Added model `StorageDiscoveryCapabilities`
+  - Added model `StorageDiscoveryCapabilitiesUpdate`
+
 ## 1.0.1 (2025-10-09)
 
 ### Bugs Fixed
