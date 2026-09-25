@@ -60,7 +60,7 @@
 
 - `FileResponseStore` now persists data under user-scoped
   `partitions-v1/{anonymous|user-hash}` directories. Existing files in the
-  previous unpartitioned layout remain unchanged but are not read or migrated
+  previous shared layout remain unchanged but are not read or migrated
   automatically, because their user ownership cannot be established safely.
   Back up and explicitly migrate any required local data into the correct
   partition only after independently verifying its ownership.
