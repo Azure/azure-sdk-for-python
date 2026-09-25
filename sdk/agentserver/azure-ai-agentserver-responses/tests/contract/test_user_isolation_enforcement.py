@@ -275,6 +275,9 @@ async def test_duplicate_live_response_id_is_rejected_without_replacing_owner() 
         )
         assert collision.status_code == 409
         assert collision.json()["error"]["code"] == "response_id_conflict"
+        assert collision.json()["error"]["message"] == (
+            "An active execution or retained replay stream with this response ID already exists."
+        )
 
         owner = await client.get(f"/responses/{response_id}", headers=owner_headers)
         assert owner.status_code == 200
@@ -331,6 +334,9 @@ def test_response_id_with_retained_stream_cannot_be_reused_by_same_user() -> Non
 
     assert collision.status_code == 409
     assert collision.json()["error"]["code"] == "response_id_conflict"
+    assert collision.json()["error"]["message"] == (
+        "An active execution or retained replay stream with this response ID already exists."
+    )
 
 
 # ── GET with isolation ────────────────────────────────────
