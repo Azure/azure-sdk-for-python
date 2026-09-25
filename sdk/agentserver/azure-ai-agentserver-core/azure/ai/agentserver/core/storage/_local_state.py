@@ -2,6 +2,8 @@
 # Licensed under the MIT license.
 """Local filesystem backend for ``FoundryStateStore``."""
 
+# cspell:ignore NBLCK EDEADLK UNLCK
+
 from __future__ import annotations
 
 import errno
@@ -14,7 +16,7 @@ import uuid
 from collections.abc import Mapping
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, BinaryIO, Iterator
+from typing import Any, BinaryIO, Callable, Iterator
 
 from ._errors import (
     FoundryStorageConflictError,
@@ -36,6 +38,7 @@ from ._state_serializer import (
 _LOCKS: dict[Path, threading.RLock] = {}
 _LOCKS_GUARD = threading.Lock()
 _WINDOWS_LOCK_RETRY_SECONDS = 0.05
+_WINDOWS_FILE_BUSY_TIMEOUT_SECONDS = 5.0
 
 
 def _now() -> int:
@@ -87,6 +90,23 @@ def _release_file_lock(lock_file: BinaryIO) -> None:
         import fcntl  # pylint: disable=import-error,import-outside-toplevel
 
         fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
+def _retry_windows_file_busy(operation: Callable[[], None]) -> None:
+    # Windows readers can temporarily prevent replacing or deleting the document.
+    deadline = time.monotonic() + _WINDOWS_FILE_BUSY_TIMEOUT_SECONDS
+    while True:
+        try:
+            operation()
+            return
+        except PermissionError as exc:
+            if (
+                os.name != "nt"
+                or getattr(exc, "winerror", None) not in {5, 32}
+                or time.monotonic() >= deadline
+            ):
+                raise
+            time.sleep(_WINDOWS_LOCK_RETRY_SECONDS)
 
 
 @contextmanager
@@ -193,7 +213,7 @@ class LocalStateStoreBackend:
             document = self._read()
             store_id = document["store"]["id"] if document is not None else None
             try:
-                self._path.unlink()
+                _retry_windows_file_busy(self._path.unlink)
             except FileNotFoundError:
                 pass
             return DeletedStateStore(
@@ -363,7 +383,7 @@ class LocalStateStoreBackend:
             temporary.write_text(
                 json.dumps(document, indent=2, sort_keys=True), encoding="utf-8"
             )
-            os.replace(temporary, self._path)
+            _retry_windows_file_busy(lambda: os.replace(temporary, self._path))
         finally:
             if temporary.exists():
                 temporary.unlink()

@@ -2,12 +2,15 @@
 # Licensed under the MIT license.
 """Process-safety tests for the local FoundryStateStore backend."""
 
+# cspell:ignore geteuid
+
 from __future__ import annotations
 
 import asyncio
 import json
 import multiprocessing
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Any
@@ -19,6 +22,7 @@ from azure.ai.agentserver.core.storage import (
     FoundryStorageNotFoundError,
     FoundryStoragePreconditionError,
 )
+from azure.ai.agentserver.core.storage import _local_state
 
 _PROCESS_DEADLINE_SECONDS = 20
 
@@ -155,10 +159,6 @@ def _waiting_operation_process(
     attempting: Any,
     outcomes: Any | None,
 ) -> None:
-    from azure.ai.agentserver.core.storage import (
-        _local_state,
-    )  # pylint: disable=import-outside-toplevel
-
     _configure_local_mode(root)
     original_acquire = (
         _local_state._acquire_file_lock
@@ -273,6 +273,13 @@ def _collect_process_outcomes(processes: list[Any], outcomes: Any) -> list[str]:
     assert not stuck
     assert [process.exitcode for process in processes] == [0] * len(processes)
     return [outcomes.get(timeout=5) for _ in processes]
+
+
+async def _wait_for_file_busy_or_writer(
+    writer: asyncio.Future[Any], busy: threading.Event
+) -> None:
+    while not busy.is_set() and not writer.done():
+        await asyncio.sleep(0.01)
 
 
 def _run_local_operations(
@@ -529,6 +536,7 @@ async def test_local_backend_get_during_delete_maps_to_not_found(
 @pytest.mark.asyncio
 async def test_local_backend_reader_with_open_file_allows_replacement(
     local_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     store_name = "local-process-open-read-replace"
     store = await FoundryStateStore.get_or_create(store_name, item_ttl_seconds=-1)
@@ -541,10 +549,37 @@ async def test_local_backend_reader_with_open_file_allows_replacement(
         args=(str(local_root), store_name, ready, release, outcomes),
     )
     reader.start()
+    busy = threading.Event()
+    original_replace = os.replace
+
+    def report_busy_replace(source: Any, target: Any) -> None:
+        try:
+            original_replace(source, target)
+        except PermissionError as exc:
+            if getattr(exc, "winerror", None) in {5, 32}:
+                busy.set()
+            raise
+
     try:
         assert ready.wait(_PROCESS_DEADLINE_SECONDS)
-        await store.set_item("replacement", {"value": 1})
-        release.set()
+        with monkeypatch.context() as patch:
+            patch.setattr(os, "replace", report_busy_replace)
+            writer = asyncio.create_task(
+                asyncio.to_thread(
+                    lambda: asyncio.run(store.set_item("replacement", {"value": 1}))
+                )
+            )
+            try:
+                if os.name == "nt":
+                    await asyncio.wait_for(
+                        _wait_for_file_busy_or_writer(writer, busy),
+                        _PROCESS_DEADLINE_SECONDS,
+                    )
+                else:
+                    await writer
+            finally:
+                release.set()
+                await writer
         results = _collect_process_outcomes([reader], outcomes)
     finally:
         release.set()
@@ -559,6 +594,7 @@ async def test_local_backend_reader_with_open_file_allows_replacement(
 @pytest.mark.asyncio
 async def test_local_backend_reader_with_open_file_allows_delete(
     local_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     store_name = "local-process-open-read-delete"
     store = await FoundryStateStore.get_or_create(store_name, item_ttl_seconds=-1)
@@ -571,10 +607,38 @@ async def test_local_backend_reader_with_open_file_allows_delete(
         args=(str(local_root), store_name, ready, release, outcomes),
     )
     reader.start()
+    busy = threading.Event()
+    original_unlink = Path.unlink
+    backend = store._local_backend  # pylint: disable=protected-access
+    assert backend is not None
+    store_path = backend._path  # pylint: disable=protected-access
+
+    def report_busy_unlink(path: Path, *args: Any, **kwargs: Any) -> None:
+        try:
+            original_unlink(path, *args, **kwargs)
+        except PermissionError as exc:
+            if path == store_path and getattr(exc, "winerror", None) in {5, 32}:
+                busy.set()
+            raise
+
     try:
         assert ready.wait(_PROCESS_DEADLINE_SECONDS)
-        await store.delete()
-        release.set()
+        with monkeypatch.context() as patch:
+            patch.setattr(Path, "unlink", report_busy_unlink)
+            writer = asyncio.create_task(
+                asyncio.to_thread(lambda: asyncio.run(store.delete()))
+            )
+            try:
+                if os.name == "nt":
+                    await asyncio.wait_for(
+                        _wait_for_file_busy_or_writer(writer, busy),
+                        _PROCESS_DEADLINE_SECONDS,
+                    )
+                else:
+                    await writer
+            finally:
+                release.set()
+                await writer
         results = _collect_process_outcomes([reader], outcomes)
     finally:
         release.set()
@@ -585,6 +649,46 @@ async def test_local_backend_reader_with_open_file_allows_delete(
     assert results == ["success"]
     with pytest.raises(FoundryStorageNotFoundError):
         await store.get()
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(os.name != "nt", reason="Windows sharing errors only")
+async def test_local_backend_permanent_windows_permission_errors_propagate(
+    local_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    store = await FoundryStateStore.get_or_create("local-process-permission")
+    await store.create_item("retained", {"value": 1})
+    backend = store._local_backend  # pylint: disable=protected-access
+    assert backend is not None
+    store_path = backend._path  # pylint: disable=protected-access
+
+    def deny_replace(source: Any, target: Any) -> None:
+        raise PermissionError(13, "Access is denied", str(target), 5)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(_local_state, "_WINDOWS_FILE_BUSY_TIMEOUT_SECONDS", 0)
+        patch.setattr(os, "replace", deny_replace)
+        with pytest.raises(PermissionError) as error:
+            await store.set_item("new", {"value": 2})
+        assert error.value.winerror == 5
+
+    original_unlink = Path.unlink
+
+    def deny_unlink(path: Path, *args: Any, **kwargs: Any) -> None:
+        if path == store_path:
+            raise PermissionError(13, "Access is denied", str(path), 5)
+        original_unlink(path, *args, **kwargs)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(_local_state, "_WINDOWS_FILE_BUSY_TIMEOUT_SECONDS", 0)
+        patch.setattr(Path, "unlink", deny_unlink)
+        with pytest.raises(PermissionError) as error:
+            await store.delete()
+        assert error.value.winerror == 5
+
+    assert (await store.get_item("retained")) is not None
+    assert (await store.get_item("new")) is None
 
 
 @pytest.mark.asyncio
