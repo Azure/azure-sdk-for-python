@@ -22,7 +22,6 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccessConnectorsOperations,
     Operations,
-    OutboundNetworkDependenciesEndpointsOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     VNetPeeringOperations,
@@ -39,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureDatabricksManagementClient:  # pylint: disable=too-many-instance-attributes
+class AzureDatabricksManagementClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM Databricks.
 
     :ivar operations: Operations operations
@@ -51,10 +50,6 @@ class AzureDatabricksManagementClient:  # pylint: disable=too-many-instance-attr
      azure.mgmt.databricks.operations.PrivateEndpointConnectionsOperations
     :ivar access_connectors: AccessConnectorsOperations operations
     :vartype access_connectors: azure.mgmt.databricks.operations.AccessConnectorsOperations
-    :ivar outbound_network_dependencies_endpoints: OutboundNetworkDependenciesEndpointsOperations
-     operations
-    :vartype outbound_network_dependencies_endpoints:
-     azure.mgmt.databricks.operations.OutboundNetworkDependenciesEndpointsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.databricks.operations.PrivateLinkResourcesOperations
@@ -130,9 +125,6 @@ class AzureDatabricksManagementClient:  # pylint: disable=too-many-instance-attr
             self._client, self._config, self._serialize, self._deserialize
         )
         self.access_connectors = AccessConnectorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.outbound_network_dependencies_endpoints = OutboundNetworkDependenciesEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(

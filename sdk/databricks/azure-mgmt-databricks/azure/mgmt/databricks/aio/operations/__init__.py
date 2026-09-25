@@ -16,7 +16,6 @@ from ._operations import Operations  # type: ignore
 from ._operations import WorkspacesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import AccessConnectorsOperations  # type: ignore
-from ._operations import OutboundNetworkDependenciesEndpointsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import VNetPeeringOperations  # type: ignore
 
@@ -29,7 +28,6 @@ __all__ = [
     "WorkspacesOperations",
     "PrivateEndpointConnectionsOperations",
     "AccessConnectorsOperations",
-    "OutboundNetworkDependenciesEndpointsOperations",
     "PrivateLinkResourcesOperations",
     "VNetPeeringOperations",
 ]

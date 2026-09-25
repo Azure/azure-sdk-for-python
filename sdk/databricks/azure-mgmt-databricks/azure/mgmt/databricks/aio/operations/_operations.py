@@ -44,7 +44,6 @@ from ...operations._operations import (
     build_access_connectors_list_by_subscription_request,
     build_access_connectors_update_request,
     build_operations_list_request,
-    build_outbound_network_dependencies_endpoints_list_request,
     build_private_endpoint_connections_create_request,
     build_private_endpoint_connections_delete_request,
     build_private_endpoint_connections_get_request,
@@ -69,7 +68,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -181,7 +180,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1056,7 +1055,7 @@ class WorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1654,7 +1653,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccessConnectorsOperations:
+class AccessConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2527,105 +2526,7 @@ class AccessConnectorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OutboundNetworkDependenciesEndpointsOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.databricks.aio.AzureDatabricksManagementClient`'s
-        :attr:`outbound_network_dependencies_endpoints` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDatabricksManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def list(
-        self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> List[_models.OutboundEnvironmentEndpoint]:
-        """Gets a list of egress endpoints (network endpoints of all outbound dependencies) in the
-        specified Workspace.
-
-        Gets the list of endpoints that VNET Injected Workspace calls Azure Databricks Control Plane.
-        You must configure outbound access with these endpoints. For more information, see
-        `https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/udr
-        <https://docs.microsoft.com/en-us/azure/databricks/administration-guide/cloud-configurations/azure/udr>`_.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace. Required.
-        :type workspace_name: str
-        :return: list of OutboundEnvironmentEndpoint
-        :rtype: list[~azure.mgmt.databricks.models.OutboundEnvironmentEndpoint]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.OutboundEnvironmentEndpoint]] = kwargs.pop("cls", None)
-
-        _request = build_outbound_network_dependencies_endpoints_list_request(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(List[_models.OutboundEnvironmentEndpoint], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2827,7 +2728,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VNetPeeringOperations:
+class VNetPeeringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

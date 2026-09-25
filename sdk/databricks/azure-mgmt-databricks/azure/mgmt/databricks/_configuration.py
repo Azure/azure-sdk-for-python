@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureDatabricksManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureDatabricksManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for AzureDatabricksManagementClient.
 
     Note that all parameters used to create this instance are saved as instance

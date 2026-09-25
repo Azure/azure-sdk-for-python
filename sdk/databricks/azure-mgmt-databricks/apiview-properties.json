@@ -15,8 +15,6 @@
         "azure.mgmt.databricks.models.EncryptionEntitiesDefinition": "Microsoft.Databricks.EncryptionEntitiesDefinition",
         "azure.mgmt.databricks.models.EncryptionV2": "Microsoft.Databricks.EncryptionV2",
         "azure.mgmt.databricks.models.EncryptionV2KeyVaultProperties": "Microsoft.Databricks.EncryptionV2KeyVaultProperties",
-        "azure.mgmt.databricks.models.EndpointDependency": "Microsoft.Databricks.EndpointDependency",
-        "azure.mgmt.databricks.models.EndpointDetail": "Microsoft.Databricks.EndpointDetail",
         "azure.mgmt.databricks.models.EnhancedSecurityComplianceDefinition": "Microsoft.Databricks.EnhancedSecurityComplianceDefinition",
         "azure.mgmt.databricks.models.EnhancedSecurityMonitoringDefinition": "Microsoft.Databricks.EnhancedSecurityMonitoringDefinition",
         "azure.mgmt.databricks.models.ErrorDetail": "Microsoft.Databricks.ErrorDetail",
@@ -31,7 +29,6 @@
         "azure.mgmt.databricks.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.databricks.models.Operation": "Microsoft.Databricks.Operation",
         "azure.mgmt.databricks.models.OperationDisplay": "Microsoft.Databricks.OperationDisplay",
-        "azure.mgmt.databricks.models.OutboundEnvironmentEndpoint": "Microsoft.Databricks.OutboundEnvironmentEndpoint",
         "azure.mgmt.databricks.models.PrivateEndpoint": "Microsoft.Databricks.PrivateEndpoint",
         "azure.mgmt.databricks.models.PrivateEndpointConnection": "Microsoft.Databricks.PrivateEndpointConnection",
         "azure.mgmt.databricks.models.PrivateEndpointConnectionProperties": "Microsoft.Databricks.PrivateEndpointConnectionProperties",
@@ -108,8 +105,6 @@
         "azure.mgmt.databricks.aio.operations.AccessConnectorsOperations.list_by_resource_group": "Microsoft.Databricks.AccessConnectors.listByResourceGroup",
         "azure.mgmt.databricks.operations.AccessConnectorsOperations.list_by_subscription": "Microsoft.Databricks.AccessConnectors.listBySubscription",
         "azure.mgmt.databricks.aio.operations.AccessConnectorsOperations.list_by_subscription": "Microsoft.Databricks.AccessConnectors.listBySubscription",
-        "azure.mgmt.databricks.operations.OutboundNetworkDependenciesEndpointsOperations.list": "Microsoft.Databricks.Workspaces.list",
-        "azure.mgmt.databricks.aio.operations.OutboundNetworkDependenciesEndpointsOperations.list": "Microsoft.Databricks.Workspaces.list",
         "azure.mgmt.databricks.operations.PrivateLinkResourcesOperations.get": "Microsoft.Databricks.GroupIdInformations.get",
         "azure.mgmt.databricks.aio.operations.PrivateLinkResourcesOperations.get": "Microsoft.Databricks.GroupIdInformations.get",
         "azure.mgmt.databricks.operations.PrivateLinkResourcesOperations.list": "Microsoft.Databricks.GroupIdInformations.list",
@@ -123,5 +118,5 @@
         "azure.mgmt.databricks.operations.VNetPeeringOperations.list_by_workspace": "Microsoft.Databricks.VirtualNetworkPeerings.listByWorkspace",
         "azure.mgmt.databricks.aio.operations.VNetPeeringOperations.list_by_workspace": "Microsoft.Databricks.VirtualNetworkPeerings.listByWorkspace"
     },
-    "CrossLanguageVersion": "9e0db5091748"
+    "CrossLanguageVersion": "1ae28a37a453"
 }
