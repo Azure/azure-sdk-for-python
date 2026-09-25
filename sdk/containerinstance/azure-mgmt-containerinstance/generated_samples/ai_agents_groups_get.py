@@ -15,7 +15,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python sandbox_groups_list_by_resource_group.py
+    python ai_agents_groups_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.sandbox_groups.list_by_resource_group(
+    response = client.ai_agents_groups.get(
         resource_group_name="myResourceGroup",
+        ai_agents_group_name="myAiAgentsGroup",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/SandboxGroupsListByResourceGroup.json
+# x-ms-original-file: 2026-08-01-preview/AiAgentsGroupsGet.json
 if __name__ == "__main__":
     main()
