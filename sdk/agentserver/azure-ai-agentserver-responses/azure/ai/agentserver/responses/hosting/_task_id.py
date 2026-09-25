@@ -10,6 +10,8 @@ the handler-facing ``conversation_chain_id``.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 
 from ._chain_id import derive_conversation_chain_id
@@ -22,6 +24,25 @@ from ._chain_id import derive_conversation_chain_id
 #: contract here.
 _TASK_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,128}$")
 _TASK_SESSION_SCOPE_SEPARATOR = "\x1f"
+
+
+def derive_lifecycle_id(identifier: str, user_id_key: str | None) -> str:
+    """Derive a private user-scoped key without changing public identifiers.
+
+    Anonymous keys retain their previous values for recovery compatibility.
+    Identified users never fall back to those shared legacy keys.
+
+    :param identifier: The public response or derived task identifier.
+    :type identifier: str
+    :param user_id_key: The user partition, or ``None`` for anonymous.
+    :type user_id_key: str | None
+    :returns: A stable key for streams, tasks, and process-local references.
+    :rtype: str
+    """
+    if user_id_key is None:
+        return identifier
+    encoded = json.dumps([user_id_key, identifier], ensure_ascii=True, separators=(",", ":")).encode("utf-8")
+    return "lifecycle-" + hashlib.sha256(encoded).hexdigest()
 
 
 def derive_task_session_scope(*, session_id: str, session_guid: str | None) -> str:
