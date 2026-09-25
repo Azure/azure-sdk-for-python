@@ -50,8 +50,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self

@@ -315,6 +315,7 @@ jobs:
         EnvVars: ${{ parameters.EnvVars }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}

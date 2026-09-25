@@ -5,6 +5,9 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
+  - name: Artifacts
+    type: object
+    default: []
   - name: TestMarkArgument
     type: string
     default: ''
@@ -133,6 +136,7 @@ jobs:
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
         BeforeTestSteps:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
