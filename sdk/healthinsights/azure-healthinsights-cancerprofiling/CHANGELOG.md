@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.7 and 3.8 are no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0b1.post1 (2023-04-04)
 
 - Update in PyPI front page
