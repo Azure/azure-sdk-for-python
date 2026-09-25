@@ -46,6 +46,7 @@ from opentelemetry import baggage as _otel_baggage, context as _otel_context, tr
 
 from . import _config
 from ._constants import Constants
+from ._experimental import experimental
 from ._types import StreamContent
 
 # GenAI semantic convention attribute keys
@@ -603,6 +604,7 @@ _bg_flush_pending: bool = False
 _bg_flush_pending_timeout_millis: int = 0
 
 
+@experimental
 async def flush_spans_async(timeout_millis: int = 5000) -> None:
     """Non-blocking variant of :func:`flush_spans`.
 
@@ -663,6 +665,7 @@ async def _coalesced_flush(timeout_millis: int) -> None:
         await flush_spans_async(pending_timeout_millis)
 
 
+@experimental
 def schedule_flush_spans(timeout_millis: int = 5000) -> None:
     """Schedule a coalesced background span flush and return immediately.
 

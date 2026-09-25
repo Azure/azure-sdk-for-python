@@ -32,7 +32,6 @@ class MockOutputItemsList:
 def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
     """AOAI output_items can arrive unordered; results should align to row ids (0..N-1)."""
     mock_client = Mock()
-    mock_client.with_options.return_value = mock_client
     expected_rows = 5
     run_info = OAIEvalRunCreationInfo(
         client=mock_client,
