@@ -11,8 +11,8 @@ token requests on a background event loop and lets the binding wait for results.
 
 Both client types use this resolver. Unsupported credential forms, including
 resource tokens that grant access to particular resources, fail during
-construction. Resolving a credential does not fetch a token, validate the key,
-or check permissions with the service backend.
+construction. Resolving a credential does not fetch an access token or contact
+the service backend to check whether the supplied credential grants access.
 """
 from __future__ import annotations
 
@@ -74,8 +74,12 @@ def _is_resource_token_credential(credential: Any) -> bool:
 def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     """Return (master_key, token_credential) with exactly one entry set.
 
-    A nonempty string, or a dictionary with a nonempty masterKey string, selects
-    key authentication. An object with a synchronous get_token is passed through.
+    For key authentication, accept a non-empty string or a dictionary whose
+    masterKey value is a non-empty string. An empty string raises ValueError
+    during client construction. For example, "" is rejected here, but accepting
+    a non-empty string does not establish that it belongs to the account.
+
+    An object with a synchronous get_token is passed through.
     Async credentials use the async credential bridge, AsyncTokenCredentialBridge.
 
     Resource-token authentication is intentionally excluded, not pending Rust

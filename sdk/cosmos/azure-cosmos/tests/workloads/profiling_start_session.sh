@@ -3,23 +3,23 @@
 # RESPONSIBILITY: open one profiling session.
 #
 # It:
-#   - mints RUN_ID, a UTC timestamp in the YYYYMMDD-HHMMSSmmm shape the
-#     reporting tools expect (latency_report.py --run-id). Milliseconds keep
+#   - creates PROFILING_SESSION_ID, a UTC timestamp in YYYYMMDD-HHMMSSmmm form.
+#     Reports select baseline rows with --profiling-session-id. Milliseconds keep
 #     two sessions started in the same second apart.
-#   - creates artifacts/<phase>-<RUN_ID>/ for captures, logs and reports.
-#   - writes manifest-<RUN_ID>.json recording the build, host, account, load
-#     and results sink. No secrets are written to it.
-#   - writes session.env, which the operator sources to get RUN_ID and
+#   - creates artifacts/<phase>-<PROFILING_SESSION_ID>/ for evidence.
+#   - writes manifest-<PROFILING_SESSION_ID>.json recording the build, host,
+#     test target, load and results container. No secrets are written to it.
+#   - writes session.env, which the operator sources to get PROFILING_SESSION_ID and
 #     ARTIFACTS into their terminal. A child process cannot export variables
 #     back to the shell that started it, hence the printed 'source' line.
 #
-# RUN_ID names the session and baseline. CPU/memory captures mint separate stamps
+# PROFILING_SESSION_ID groups the experiment's evidence. CPU/memory captures use separate stamps
 # and append them to run.txt so their rows can be matched to the session:
 #
-#   RUN_ID     20260810-180432717
+#   PROFILING_SESSION_ID  20260810-180432717
 #   directory  artifacts/point-read-profile-20260810-180432717/
 #   row tag    workload_id = baseline-read-rust-20260810-180432717
-#                            ^prefix  ^op ^backend ^RUN_ID
+#                            ^prefix  ^op ^backend ^profiling session identifier
 #
 # The tag shape is required, not cosmetic: reports select rows with
 # STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id).
@@ -53,18 +53,17 @@ profiling_verify_extension_build || exit 1
 # not portable, so fall back to zeros rather than mint a malformed id.
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
 [[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
-RUN_ID="$(date -u +%Y%m%d-%H%M%S)${_ns:0:3}"
-ARTIFACTS="$PWD/artifacts/${PHASE}-${RUN_ID}"
+export PROFILING_SESSION_ID="$(date -u +%Y%m%d-%H%M%S)${_ns:0:3}"
+ARTIFACTS="$PWD/artifacts/${PHASE}-${PROFILING_SESSION_ID}"
 mkdir -p "$PWD/artifacts" || exit 1
 mkdir "$ARTIFACTS" || { echo "ERROR: cannot create a fresh ${ARTIFACTS}" >&2; exit 1; }
 
 # One JSON record of the build/host/account/load behind everything in this
 # directory. Defined in perf_env.sh; required, never writes keys.
-# RUN_ID is passed as its "stamp" argument, so the manifest's "stamp" field and
-# RUN_ID are the same value under the two names the suite already uses.
-write_run_manifest "$ARTIFACTS" "$RUN_ID" "$PHASE" || exit 1
+# The generic manifest stamp equals the profiling session identifier here.
+write_run_manifest "$ARTIFACTS" "$PROFILING_SESSION_ID" "$PHASE" || exit 1
 
-MANIFEST="${ARTIFACTS}/manifest-${RUN_ID}.json"
+MANIFEST="${ARTIFACTS}/manifest-${PROFILING_SESSION_ID}.json"
 
 if [[ ! -f "${MANIFEST}" ]]; then
   echo "ERROR: no manifest was written at ${MANIFEST}." >&2
@@ -143,7 +142,7 @@ fi
 # The operator's shell needs these; a child process cannot export into it.
 SESSION_ENV="${ARTIFACTS}/session.env"
 cat > "${SESSION_ENV}" <<EOF
-export RUN_ID="${RUN_ID}"
+export PROFILING_SESSION_ID="${PROFILING_SESSION_ID}"
 export ARTIFACTS="${ARTIFACTS}"
 export PERF_PHASE="${PHASE}"
 EOF
@@ -152,16 +151,16 @@ profiling_load_session "${ARTIFACTS}" || {
   exit 1
 }
 
-printf 'artifacts=%s\ntarget=%s/%s\nrun_id=%s\n' \
-  "$ARTIFACTS" "$COSMOS_DATABASE" "$COSMOS_CONTAINER" "$RUN_ID" \
+printf 'artifacts=%s\ntarget=%s/%s\nprofiling_session_id=%s\n' \
+  "$ARTIFACTS" "$COSMOS_DATABASE" "$COSMOS_CONTAINER" "$PROFILING_SESSION_ID" \
   | tee "$ARTIFACTS/run.txt"
 
 echo
-echo "=== Session ${RUN_ID} open ==="
+echo "=== Profiling session ${PROFILING_SESSION_ID} open ==="
 echo "    Tag every workload with a matching id, for example:"
-echo "        PERF_WORKLOAD_ID=baseline-read-rust-${RUN_ID}"
+echo "        PERF_WORKLOAD_ID=baseline-read-rust-${PROFILING_SESSION_ID}"
 echo "    and read its rows back with:"
-echo "        python3 latency_report.py --prefix baseline- --run-id ${RUN_ID}"
+echo "        python3 latency_report.py --prefix baseline- --profiling-session-id ${PROFILING_SESSION_ID}"
 echo
 echo "    Load this session into the current terminal:"
 echo "        source ${SESSION_ENV}"

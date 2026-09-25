@@ -59,6 +59,9 @@ def write_manifest(directory, stamp, phase):
             "container": "RESULTS_COSMOS_CONTAINER",
         }),
     }
+    # Capture stamps can differ from their parent profiling session identifier.
+    if os.environ.get("PROFILING_SESSION_ID"):
+        record["profiling_session_id"] = os.environ["PROFILING_SESSION_ID"]
     path = Path(directory) / f"manifest-{stamp}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(record, indent=2, allow_nan=False) + "\n", encoding="utf-8")

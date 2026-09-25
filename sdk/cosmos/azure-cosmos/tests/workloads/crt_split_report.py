@@ -163,8 +163,11 @@ def _s(a, q):
 
 def main():
     ap = argparse.ArgumentParser(description="Client-vs-server latency split report.")
-    ap.add_argument("--run-id", default=None, help="run id (default: latest)")
-    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
+    selection = ap.add_mutually_exclusive_group()
+    selection.add_argument("--profiling-session-id", dest="run_id",
+                           help="profiling session identifier used as the baseline workload ID suffix")
+    selection.add_argument("--run-id", help="workload ID suffix, including separate capture identifiers (default: latest)")
+    selection.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="crepro-", help="workload_id prefix (default crepro-)")
     _driver_gate.add_cli_flag(ap)
     args = ap.parse_args()

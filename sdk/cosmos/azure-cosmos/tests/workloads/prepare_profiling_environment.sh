@@ -9,7 +9,7 @@
 #   2  profiling_build_extension.sh    build _rust, prove which file is imported
 #   3  profiling_check_target.sh       confirm account, item range, load, tools
 #   4  profiling_seed_probe_data.sh    create the probe items if any are missing
-#   5  profiling_start_session.sh      mint RUN_ID, artifacts dir, manifest
+#   5  profiling_start_session.sh      create PROFILING_SESSION_ID, evidence directory, manifest
 #
 # WHY THIS ORDER: each step would invalidate the ones before it if moved later.
 # Pulling new commits after building would leave the built extension stale.

@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Share setup, binding checks, and cleanup between the two Rust backends.
+"""Share setup, binding checks, and cleanup between the two Python wrappers.
 
 RustBackend and AsyncRustBackend reuse this Python code, but retain separate
-per-client fields. The compiled Python/Rust binding creates CosmosDriver objects
-through one CosmosDriverRuntime with shared connection settings.
+per-client fields. The binding creates CosmosDriver objects through one
+CosmosDriverRuntime with shared connection settings.
 
 Construction checks any completed CosmosDriverRuntime initialization without
 creating that object or reserving its settings. Driver acquisition checks again,
@@ -114,10 +114,31 @@ def page_binding_call_errors(
     unsupported_query_error: _BindingErrorMatcher,
     transport_error: _BindingErrorMatcher,
 ) -> Iterator[None]:
-    """Convert page binding call failures without catching cancellation.
+    """Give both Python wrappers the same error conversions for a page fetch.
 
-    This runs around execution, not preflight. None of the converted errors
-    authorizes repeating the operation through the legacy path.
+    When the customer app reads a page of orders, the Python wrapper first
+    checks that the required binding function exists. That check is preflight:
+    it happens before driver acquisition and outside this helper.
+
+    After acquiring a driver handle and preparing the request, both wrappers
+    use this helper around a ``with`` block that:
+
+        builds the binding-call arguments, including the remaining time budget
+            -> calls the binding (and awaits its result on the async path)
+            -> converts the returned response
+
+    The time budget can expire while building the arguments. Entering this
+    block therefore does not prove a request reached the service backend.
+
+    Convert TimeoutError to CosmosClientTimeoutError only when a deadline was
+    supplied; otherwise let it propagate unchanged. Convert the binding's
+    unsupported-query error to UnsupportedQueryError and its transport error
+    to ServiceResponseError, preserving the original exception as the cause.
+
+    Cancellation propagates unchanged, rather than becoming a timeout or
+    transport error. This does not guarantee that the service backend stopped
+    work already received. No converted error permits repeating the operation
+    through the legacy path.
     """
     try:
         yield
@@ -138,10 +159,21 @@ def validate_page_request(
     backend_name: str,
     suffix: str = "",
 ) -> None:
-    """Perform page preflight by checking the operation's binding function.
+    """Check binding support before acquiring a driver or fetching a page.
 
-    The prepared page request and its cursor mode select the function name.
-    This check neither acquires a driver handle nor fetches a page.
+    This check is preflight, not execution. For an orders query:
+
+        no feed cursor -> require the query_items binding function
+        feed cursor    -> require the fetch_page_with_cursor binding function
+
+    The asynchronous Python wrapper looks up the corresponding async function.
+    This helper neither acquires a driver handle nor fetches results.
+
+    An absent binding or unsupported page operation raises PagePreflightError.
+    A known feed-cursor operation whose required function is missing instead
+    raises RuntimeError: the binding must be rebuilt, not treated as an
+    optional unsupported operation. Any permitted choice of the legacy path
+    belongs to the caller's migration policy, not this check.
     """
     if binding is None:
         raise PagePreflightError(
@@ -179,10 +211,16 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
 
 
 def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
-    """Normally release an unreachable Python backend's resources on another thread.
+    """Attempt last-resort cleanup of an abandoned Python wrapper's resources.
 
-    Pass only the credential and driver handle to that thread, not the Python
-    object being deleted. If a thread cannot start, clean up on the calling thread.
+    Explicit close is the normal path. If a wrapper object is discarded with
+    resources still attached, its finalizer passes the detached credential
+    and driver handle here, without retaining the wrapper object itself.
+
+    A background thread releases this client's async credential bridge and
+    then attempts to release its driver handle. The customer's credential is
+    not closed. If thread startup raises RuntimeError, attempt the same
+    cleanup on the calling thread; finalization is not always nonblocking.
     """
     if credential is None and driver_handle is None:
         return
@@ -207,10 +245,22 @@ def finalize_backend_resources(credential: Optional[Any], driver_handle: Optiona
 
 
 class RustBackendShared:
-    """Store client settings for both sync and async Python wrappers.
+    """Provide common setup and cleanup for RustBackend and AsyncRustBackend.
 
-    Each Python wrapper object uses _init_shared during construction. The sync and async
-    classes separately decide how to wait for driver creation and operations.
+    Both classes inherit these methods so a setup or cleanup correction can
+    be made in one place. Each constructor calls _init_shared::
+
+        RustBackend construction
+            -> _init_shared stores fields on that RustBackend object
+
+        AsyncRustBackend construction
+            -> _init_shared stores fields on that AsyncRustBackend object
+
+    There is no additional RustBackendShared object holding the settings.
+    The classes share this implementation, not one set of client fields.
+
+    The two classes separately decide how to wait for driver acquisition
+    and operations. Acquisition may reuse an existing CosmosDriver object.
     """
 
     def _init_shared(
@@ -220,11 +270,28 @@ class RustBackendShared:
         client_config: Optional[PreparedClientConfig],
         token_credential: Optional[Any],
     ) -> None:
-        """Store client state and check initialized CosmosDriverRuntime settings.
+        """Retain this client's inputs and check initialized CosmosDriverRuntime settings.
 
-        This check does not create CosmosDriverRuntime or reserve its
-        settings. Driver creation checks again in case another client got there
-        first.
+        The customer app supplies these values once during client construction.
+        Later driver acquisition uses the saved values.
+
+        The Python wrapper retains them like this::
+
+            CosmosClient
+                -> _backend: RustBackend object
+                    -> _endpoint: supplied account address
+                    -> _master_key: supplied account key
+                    -> _client_config: PreparedClientConfig
+                        -> preferred_locations: ("West US",)
+
+        This example uses account-key authentication. The asynchronous
+        CosmosClient retains an AsyncRustBackend with the same fields.
+        Both backend classes are Python wrapper code, not the Rust driver.
+
+        These assignments store Python client state; they do not acquire a
+        driver handle. The runtime check does not create CosmosDriverRuntime
+        or reserve its settings. Driver acquisition checks again in case
+        another client initialized it after this check.
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -279,6 +346,15 @@ class RustBackendShared:
         close_credential_bridge_quietly(self._take_token_credential_for_close())
 
     def _take_token_credential_for_close(self) -> Optional[Any]:
+        """Detach this client's stored credential for cleanup outside the lock.
+
+        Read and clear the reference under the same lock so concurrent cleanup
+        callers cannot both take it. Return None if no credential is stored,
+        including when another caller has already taken it.
+
+        This only transfers the reference. It does not release the async
+        credential bridge or close the customer's credential.
+        """
         with self._driver_handle_lock:
             credential = self._token_credential
             self._token_credential = None

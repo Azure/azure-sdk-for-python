@@ -10,8 +10,8 @@ Results retain histogram quantization and the workload's range clamping.
 Missing histograms make pooled percentiles unavailable; omitted failures are
 not reconstructed from scalar percentiles.
 
-Run latency_report.py with --run-id and --prefix after configuring the
-results account.
+Select baseline results with --profiling-session-id and --prefix after
+configuring the results container. --run-id also accepts separate capture identifiers.
 """
 
 import argparse
@@ -323,8 +323,11 @@ def main():
     ap = argparse.ArgumentParser(
         description="Low-load latency report (pooled percentiles)."
     )
-    ap.add_argument("--run-id", default=None, help="run id YYYYMMDD-HHMMSSmmm (default: latest)")
-    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
+    selection = ap.add_mutually_exclusive_group()
+    selection.add_argument("--profiling-session-id", dest="run_id",
+                           help="profiling session identifier used as the baseline workload ID suffix")
+    selection.add_argument("--run-id", help="workload ID suffix, including separate capture identifiers (default: latest)")
+    selection.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--prefix", default="baseline-", help="workload_id prefix (default baseline-)")
     ap.add_argument(
         "--point-read-gate",

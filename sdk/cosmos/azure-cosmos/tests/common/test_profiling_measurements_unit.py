@@ -388,7 +388,8 @@ def test_source_fingerprint_catches_uncommitted_edits(modules, monkeypatch, tmp_
     assert build_details.source_digest() != before
 
 
-def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, tmp_path):
+@pytest.mark.parametrize("profiling_session_id", [None, STAMP, "20260918-120000000"])
+def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, tmp_path, profiling_session_id):
     manifest = importlib.import_module("perf_manifest")
     monkeypatch.setattr(manifest, "driver_commit", lambda: "a" * 40)
     monkeypatch.setattr(manifest, "source_digest", lambda: "b" * 64)
@@ -397,9 +398,16 @@ def test_manifest_escapes_values_and_excludes_credentials(modules, monkeypatch, 
     monkeypatch.setenv("COSMOS_DATABASE", 'db"quoted')
     monkeypatch.setenv("COSMOS_KEY", "synthetic-key-must-not-be-written")
     monkeypatch.setenv("RESULTS_COSMOS_KEY", "synthetic-results-key-must-not-be-written")
+    monkeypatch.delenv("PROFILING_SESSION_ID", raising=False)
+    if profiling_session_id:
+        monkeypatch.setenv("PROFILING_SESSION_ID", profiling_session_id)
     manifest.write_manifest(tmp_path, STAMP, "test")
     text = (tmp_path / f"manifest-{STAMP}.json").read_text()
     assert json.loads(text)["account"]["database"] == 'db"quoted'
+    record = json.loads(text)
+    assert record["stamp"] == STAMP
+    assert record.get("profiling_session_id") == profiling_session_id
+    assert ("profiling_session_id" in record) == (profiling_session_id is not None)
     assert "synthetic-key" not in text and "synthetic-results-key" not in text
 
 
@@ -424,6 +432,134 @@ def bash_executable():
 def embedded_python(script, index=0):
     heredoc = (WORKLOADS / script).read_text(encoding="utf-8").split("<<'PY'")[index + 1]
     return heredoc.split("\n", 1)[1].split("\nPY", 1)[0]
+
+
+@pytest.mark.parametrize("saved_name", ["PROFILING_SESSION_ID", "RUN_ID", "both", "missing", "conflicting"])
+@pytest.mark.parametrize("manifest_id", [None, STAMP, "20260918-120000000"])
+def test_profiling_session_identifier_restore(tmp_path, saved_name, manifest_id):
+    shutil.copyfile(WORKLOADS / "profiling_common.sh", tmp_path / "profiling_common.sh")
+    folder = tmp_path / "session"
+    folder.mkdir()
+    settings = ['export ARTIFACTS="$PWD/session"', 'export PERF_PHASE="point-read-profile"']
+    if saved_name in ("PROFILING_SESSION_ID", "both", "conflicting"):
+        settings.append(f'export PROFILING_SESSION_ID="{STAMP}"')
+    if saved_name in ("RUN_ID", "both", "conflicting"):
+        old_id = "20260918-120000000" if saved_name == "conflicting" else STAMP
+        settings.append(f'export RUN_ID="{old_id}"')
+    (folder / "session.env").write_text("\n".join(settings) + "\n", encoding="utf-8")
+    extension = {
+        "rust_extension_sha256": "a" * 64,
+        "rust_extension_python_commit": "b" * 40,
+        "rust_extension_driver_commit": "c" * 40,
+    }
+    manifest = {
+        "stamp": STAMP, "phase": "point-read-profile",
+        "account": {"uri": "https://example.invalid", "database": "db", "container": "items"},
+        "build": {"source_sha256": "d" * 64, **extension},
+    }
+    if manifest_id is not None:
+        manifest["profiling_session_id"] = manifest_id
+    (folder / f"manifest-{STAMP}.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (tmp_path / "perf_build_details.py").write_text(
+        f"def source_digest(): return {'d' * 64!r}\n"
+        f"def extension_details(): return {extension!r}\n", encoding="utf-8",
+    )
+    before = {path.name: path.read_bytes() for path in folder.iterdir()}
+    env = {**os.environ, "PROFILING_TEST_PYTHON": Path(sys.executable).as_posix(),
+           "COSMOS_URI": "https://example.invalid", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items",
+           "RUN_ID": "stale-parent-id", "PROFILING_SESSION_ID": STAMP}
+    command = (
+        'source ./profiling_common.sh\n'
+        'python3() { "$PROFILING_TEST_PYTHON" "$@"; }\n'
+        'profiling_verify_extension_build() { return 0; }\n'
+        'profiling_load_session "$PWD/session" || exit $?\n'
+        'printf "loaded=%s\\n" "$PROFILING_SESSION_ID"\n'
+        'python3 -c \'import os; print("exported=" + os.environ["PROFILING_SESSION_ID"])\'\n'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path, env=env,
+                            capture_output=True, text=True, timeout=15)
+    valid = saved_name not in ("missing", "conflicting") and manifest_id in (None, STAMP)
+    if valid:
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert f"loaded={STAMP}" in result.stdout and f"exported={STAMP}" in result.stdout
+    else:
+        assert result.returncode != 0, result.stdout + result.stderr
+        assert "ERROR:" in result.stderr
+    assert before == {path.name: path.read_bytes() for path in folder.iterdir()}
+
+
+def test_profiling_session_creation_uses_explicit_identifier(tmp_path):
+    shutil.copyfile(WORKLOADS / "profiling_start_session.sh", tmp_path / "profiling_start_session.sh")
+    (tmp_path / "profiling_common.sh").write_text(
+        "profiling_validate_phase() { return 0; }\n"
+        "profiling_load_env() { return 0; }\n"
+        "profiling_verify_extension_build() { return 0; }\n"
+        "profiling_load_session() { source \"$1/session.env\"; }\n"
+        'python3() { "$PROFILING_TEST_PYTHON" "$@"; }\n'
+        'write_run_manifest() { python3 write-manifest.py "$@"; }\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "write-manifest.py").write_text(
+        "import json, os, pathlib, sys\n"
+        "folder, stamp, phase = sys.argv[1:]\n"
+        "record = {'stamp': stamp, 'phase': phase, "
+        "'profiling_session_id': os.environ['PROFILING_SESSION_ID'], 'build': {"
+        "'git_commit': 'a'*40, 'rust_driver_commit': 'b'*40, "
+        "'rust_extension_path': 'test.so', 'rust_extension_python_commit': 'a'*40, "
+        "'rust_extension_driver_commit': 'b'*40, 'rust_extension_has_operation_counter': 'True'}}\n"
+        "(pathlib.Path(folder) / f'manifest-{stamp}.json').write_text(json.dumps(record))\n",
+        encoding="utf-8",
+    )
+    env = {**os.environ, "PROFILING_TEST_PYTHON": Path(sys.executable).as_posix(),
+           "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "items", "RUN_ID": "old-parent"}
+    result = subprocess.run([bash_executable(), "profiling_start_session.sh", "test"], cwd=tmp_path,
+                            env=env, capture_output=True, text=True, timeout=15)
+    assert result.returncode == 0, result.stdout + result.stderr
+    folder, = (tmp_path / "artifacts").iterdir()
+    manifest_path, = folder.glob("manifest-*.json")
+    manifest = json.loads(manifest_path.read_text())
+    identifier = manifest["profiling_session_id"]
+    assert manifest["stamp"] == identifier and folder.name == f"test-{identifier}"
+    settings = (folder / "session.env").read_text()
+    assert f'export PROFILING_SESSION_ID="{identifier}"' in settings
+    assert "RUN_ID" not in settings
+    assert f"profiling_session_id={identifier}" in (folder / "run.txt").read_text()
+    assert f"--profiling-session-id {identifier}" in result.stdout
+
+
+@pytest.mark.parametrize("name", ["latency_report", "crt_split_report", "perf_validate"])
+@pytest.mark.parametrize("flag", ["--profiling-session-id", "--run-id", "--stamp"])
+def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch, name, flag):
+    module = modules[name]
+    selections = []
+
+    class SelectedRows(Rows):
+        def query_items(self, query, **kwargs):
+            assert "ENDSWITH" in query
+            assert kwargs["parameters"][-1]["value"] == STAMP
+            selections.append(kwargs["parameters"][-1]["value"])
+            return []
+
+    monkeypatch.setattr(module, "_connect", lambda: SelectedRows())
+    monkeypatch.setattr(sys, "argv", [name, flag, STAMP])
+    with pytest.raises(SystemExit) as exc:
+        module.main()
+    assert exc.value.code != 0  # No measurements, rather than an argument or selector failure.
+    assert selections
+
+
+@pytest.mark.parametrize("name", ["latency_report", "crt_split_report", "perf_validate"])
+def test_profiling_report_rejects_conflicting_identifier_flags(modules, monkeypatch, name):
+    def unexpected_connection():
+        pytest.fail("Conflicting identifiers must fail before contacting the results container")
+
+    module = modules[name]
+    monkeypatch.setattr(module, "_connect", unexpected_connection)
+    monkeypatch.setattr(sys, "argv", [
+        name, "--profiling-session-id", STAMP, "--run-id", "20260918-120000000"])
+    with pytest.raises(SystemExit) as exc:
+        module.main()
+    assert exc.value.code == 2
 
 
 def test_build_check_accepts_current_counter_exports(monkeypatch):
@@ -501,7 +637,7 @@ def test_baseline_keeps_validated_target_and_range(tmp_path, override):
         "$COSMOS_MAX_ITEM_INDEX/$WORKLOAD_ARRIVAL_RATE\" >> launched.txt; }\n",
         encoding="utf-8",
     )
-    env = {**os.environ, "RUN_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
+    env = {**os.environ, "PROFILING_SESSION_ID": STAMP, "ARTIFACTS": tmp_path.as_posix(),
            "COSMOS_DATABASE": "verified-db", "COSMOS_CONTAINER": "verified-container",
            "COSMOS_MAX_ITEM_INDEX": "42", "WORKLOAD_ARRIVAL_RATE": "100",
            "BASELINE_BACKENDS": "rust"}
@@ -627,7 +763,7 @@ def test_rust_transport_check_validates_exit_and_evidence(tmp_path, verdict, pyt
         "tee() { cat > \"$1\"; return \"$TEE_RC\"; }\n",
         encoding="utf-8",
     )
-    env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "RUN_ID": STAMP,
+    env = {**os.environ, "ARTIFACTS": tmp_path.as_posix(), "PROFILING_SESSION_ID": STAMP,
            "COSMOS_URI": "https://example.invalid", "COSMOS_DATABASE": "db", "COSMOS_CONTAINER": "container",
            "COSMOS_PARTITION_KEY": "id", "TRANSPORT_TEXT": verdict,
            "PYTHON_RC": str(python_rc), "TEE_RC": str(tee_rc)}

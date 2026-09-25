@@ -9,10 +9,10 @@ the exit status nonzero. Overrides can permit weaker log/counter evidence.
 
 Expected-workload lists catch absent cells; process completion records reconcile
 persisted summary totals. Continuity and warning checks alone cannot establish
-completeness. Backend counters do not attribute each service operation to an engine.
+completeness. Backend counters do not attribute each service operation to an SDK path.
 
-Run perf_validate.py with --run-id, --prefix, and --log-dir to select the
-result rows and cell logs. Results-account configuration is required.
+Select baseline results with --profiling-session-id, --prefix, and --log-dir.
+Use --run-id for a separate capture identifier. Results-container configuration is required.
 """
 
 import argparse
@@ -472,8 +472,11 @@ def check_completion(container, prefix, run_id, expected_workloads=None):
 
 def main():
     ap = argparse.ArgumentParser(description="Post-run integrity gate for the perf drill.")
-    ap.add_argument("--run-id", default=None, help="run id YYYYMMDD-HHMMSSmmm (default: latest)")
-    ap.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
+    selection = ap.add_mutually_exclusive_group()
+    selection.add_argument("--profiling-session-id", dest="run_id",
+                           help="profiling session identifier used as the baseline workload ID suffix")
+    selection.add_argument("--run-id", help="workload ID suffix, including separate capture identifiers (default: latest)")
+    selection.add_argument("--stamp", dest="run_id", help=argparse.SUPPRESS)
     ap.add_argument("--log-dir", default=None, help="per-cell log dir to scan for reporter warnings")
     ap.add_argument(
         "--allow-missing-logs",

@@ -3,16 +3,35 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Collect Python wrapper client options for the Python/Rust binding.
+"""Prepare client configuration for the binding, without executing requests.
 
-For example, a customer app may prefer West US and limit retries after the
-service asks it to slow down. build_client_config checks those options and
-returns a per-client PreparedClientConfig used by either sync or async setup.
-It returns None when no settings need to be passed.
+A customer app wants its orders client to prefer West US and allow two seconds
+to establish a connection. Synchronous and asynchronous clients must interpret
+those choices consistently. This module gives both Python wrappers one place to
+check selected client-construction options and prepare settings they can retain.
 
-The Python wrapper validates the fields below; the binding performs further
-checks when acquiring a driver. Those checks include the User-Agent label
-and agreement with the connection settings recorded for CosmosDriverRuntime.
+The configuration follows this path::
+
+    Customer app supplies preferred_locations=["West US"], connection_timeout=2
+        -> Python wrapper factory passes the relevant options to build_client_config
+        -> builder returns checked PreparedClientConfig settings
+        -> Python wrapper retains those settings
+        -> binding later uses them when acquiring a driver handle
+
+PreparedClientConfig is a read-only record, not a running client or a driver
+handle. Its region sequences become tuples so later customer app edits to the
+original lists cannot change the prepared settings. The builder returns None
+when no configuration record is needed.
+
+This module does not prepare the endpoint or credential, acquire a driver
+handle, initialize CosmosDriverRuntime, or send requests to the service backend.
+It prepares client-level settings, not the options for an individual order read.
+
+Validation continues beyond this builder. During Python wrapper construction,
+the binding checks agreement with any initialized CosmosDriverRuntime connection
+settings without creating that object or reserving its settings. Driver
+acquisition checks again because another client may have initialized it.
+Additional binding checks, including User-Agent label restrictions, still apply.
 """
 from __future__ import annotations
 
@@ -70,6 +89,10 @@ def _normalize_locations(
     Require ["West US"], not "West US": converting the latter directly to a
     tuple would treat each character as a region. None or an empty sequence
     supplies no preferred or excluded regions.
+
+    Preserve order and spelling, including surrounding whitespace on nonblank
+    names. This checks the input shape, not whether a region exists in the
+    account. Invalid sequences or blank/non-string entries raise ValueError.
     """
     if value is None:
         return ()
@@ -102,20 +125,26 @@ def build_client_config(
     read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
 ) -> Optional[PreparedClientConfig]:
-    """Validate and collect client settings, or return None if none are needed.
+    """Build the prepared client settings retained by either Python wrapper.
 
     Preserve the difference between an explicit value and None. For example,
     proxy_allowed=False requires a direct connection; None requests no override.
-    Region names become tuples, and an empty User-Agent suffix becomes None.
+    Region names become tuples, internal test rules become read-only records,
+    and an empty User-Agent suffix becomes None.
 
-    Connection settings apply to CosmosDriverRuntime. In particular,
-    read_timeout limits a whole HTTP attempt, not just pauses while
-    reading a response. This builder does not create CosmosDriverRuntime or reserve
-    its settings.
+    Preferred regions and retry settings configure a CosmosDriver object.
+    Proxy and connection/read timeout settings instead apply to the shared
+    CosmosDriverRuntime, including for clients using different CosmosDriver
+    objects. Python's read_timeout becomes a limit on a whole HTTP attempt,
+    not just pauses while reading a response. This builder only prepares those
+    values; it neither creates CosmosDriverRuntime nor reserves its settings.
 
-    Without an availability_strategy threshold, the binding disables sending
-    additional requests to other regions while a request is still pending.
-    Other unspecified options keep their driver or account defaults.
+    Return None when all options leave nothing to carry in a configuration
+    record. This does not mean every setting uses an unmodified driver default:
+    an absent hedging threshold makes the binding select a disabled client
+    strategy for sending additional requests while one is pending. Driver
+    environment overrides still apply. Other unspecified options retain their
+    applicable driver, account, or shared connection settings.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
         raise ValueError(
@@ -185,7 +214,20 @@ def build_client_config(
 def _prepare_fault_injection_rules(
     rules: Optional[Sequence[Mapping[str, Any]]],
 ) -> tuple[PreparedFaultInjectionRule, ...]:
-    """Check internal test rules that make selected requests fail or wait."""
+    """Prepare internal test instructions for simulated request failures or delays.
+
+    For example, a rule can select an order read and specify a failure status
+    and a delay in milliseconds. This helper checks and copies that instruction;
+    it does not send the read or inject the failure itself.
+
+    Reject unknown fields, duplicate rule IDs, unsupported operation types,
+    and invalid field values. Operation types use Rust driver test-rule names
+    such as "ReadItem", not Python wrapper operation names such as "read_item".
+
+    Return a tuple of read-only PreparedFaultInjectionRule records with omitted
+    optional fields filled in. None or an empty sequence produces no rules.
+    The supplied mappings are not modified or retained as mutable rule data.
+    """
     if rules is None:
         return ()
     if isinstance(rules, (str, bytes, bytearray)) or not isinstance(rules, Sequence):
@@ -332,7 +374,16 @@ def _normalize_transport_timeout(
     *,
     maximum: Optional[float] = None,
 ) -> Optional[float]:
-    """Check that a timeout is finite and within the allowed range of seconds."""
+    """Prepare a timeout in seconds, without starting a timer.
+
+    None requests no override. Otherwise require a real number other than bool,
+    convert it to float, and require a finite value of at least 0.1 seconds.
+    A supplied maximum is inclusive; the client builder uses 6 seconds for
+    connection establishment and supplies no maximum for read_timeout.
+
+    Type and range checks report ValueError using the supplied option name.
+    Applying the timeout to requests belongs to the binding and Rust driver.
+    """
     if value is None:
         return None
     if isinstance(value, bool) or not isinstance(value, Real):
@@ -386,14 +437,21 @@ def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str
 
 
 def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
-    """Return the delay before another region may receive a pending request.
+    """Prepare the initial cross-region hedging delay in milliseconds.
 
     Sending another request while the first is still pending is called hedging.
+    For an eligible order read, a threshold of 20 means another region may be
+    tried after 20 milliseconds; it is not a promised completion time.
+    This helper returns the threshold, not a running request or a timer.
+
     True uses DEFAULT_THRESHOLD_MS. A dictionary is checked by the existing
     CrossRegionHedgingStrategy validator and supplies threshold_ms.
 
-    Other values return None, which the binding uses to disable hedging.
-    threshold_steps_ms is not passed: the driver uses only one threshold.
+    Other values, including None, False and unrecognized inputs, return None.
+    When preparing client settings, the binding uses that absence to select a
+    disabled client strategy, subject to driver environment overrides.
+    threshold_steps_ms is checked by the validator but is not passed to the
+    binding: the Rust driver does not support progressively adding more regions.
     """
     if availability_strategy is True:
         return DEFAULT_THRESHOLD_MS

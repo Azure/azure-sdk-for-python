@@ -15,12 +15,12 @@
 #   BASELINE_READ_RPS=100 ./run_light_load_baseline.sh 480
 # The baseline retains the validated profiling session's test target and item
 # range. Prepare a new profiling session to change the database or container.
-# Results use the active profiling session's RUN_ID and configured results container, tagged
-# PERF_WORKLOAD_ID=baseline-<op>-<backend>-<run-id>; read them with latency_report.py.
+# Results use the active PROFILING_SESSION_ID and configured results container, tagged
+# PERF_WORKLOAD_ID=baseline-<op>-<backend>-<profiling-session-id>.
 set -uo pipefail
 cd "$(dirname "$0")"
 source ./profiling_common.sh
-if [[ -n "${RUN_ID:-}" && -n "${ARTIFACTS:-}" ]]; then
+if [[ -n "${ARTIFACTS:-}" ]]; then
   profiling_load_env || exit 2
   profiling_load_session "${ARTIFACTS}" || exit 2
 else
@@ -29,7 +29,7 @@ else
   # shellcheck disable=SC1091
   source ./profiling_activate.sh || exit 2
 fi
-: "${RUN_ID:?no complete profiling session found; run profiling_start_session.sh first}"
+: "${PROFILING_SESSION_ID:?no complete profiling session found; run profiling_start_session.sh first}"
 : "${ARTIFACTS:?no complete profiling session found; run profiling_start_session.sh first}"
 
 DURATION="${1:-480}"
@@ -49,7 +49,7 @@ if ! [[ "${BASELINE_READ_RPS}" =~ ^[0-9]+([.][0-9]+)?$ ]] ||
   exit 2
 fi
 
-LOG_DIR="${ARTIFACTS}/light-load-baseline-${RUN_ID}"
+LOG_DIR="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}"
 perf_create_log_dir "$LOG_DIR" || exit 2
 RUN_LOG="${LOG_DIR}/baseline-run.log"
 REPORT_FILE="${LOG_DIR}/latency-report.txt"
@@ -84,20 +84,20 @@ BASELINE_TARGET_FILE="${LOG_DIR}/baseline-target.env"
   printf 'BASELINE_CONTAINER=%q\n' "${BASELINE_CONTAINER}"
   printf 'BASELINE_PARTITION_KEY=%q\n' "${COSMOS_PARTITION_KEY:-id}"
 } >"${BASELINE_TARGET_FILE}"
-write_run_manifest "${LOG_DIR}" "${RUN_ID}" "light-load-baseline" || exit 2
+write_run_manifest "${LOG_DIR}" "${PROFILING_SESSION_ID}" "light-load-baseline" || exit 2
 for bk in "${BACKENDS[@]}"; do
-  printf 'baseline-read-%s-%s\n' "${bk}" "${RUN_ID}"
+  printf 'baseline-read-%s-%s\n' "${bk}" "${PROFILING_SESSION_ID}"
 done >"${LOG_DIR}/expected-workloads.txt"
 
 echo "=== Rate-limited point-read latency baseline ==="
-echo "    run_id=${RUN_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
+echo "    profiling_session_id=${PROFILING_SESSION_ID} dur=${DURATION}s rate=${BASELINE_READ_RPS} reads/s backends=${BACKENDS[*]}"
 echo "    container=${BASELINE_DATABASE}/${BASELINE_CONTAINER}  results -> ${RESULTS_COSMOS_DATABASE:-perfdb}/${RESULTS_COSMOS_CONTAINER:-perfresults-v2} (workload_id LIKE baseline-%)"
 echo
 overall_rc=0
 
 for op in "${OPERATIONS[@]}"; do
   for bk in "${BACKENDS[@]}"; do
-    wid="baseline-${op}-${bk}-${RUN_ID}"
+    wid="baseline-${op}-${bk}-${PROFILING_SESSION_ID}"
     log="${LOG_DIR}/${wid}.log"
     echo ">>> op=${op} backend=${bk} -> ${wid}"
     # timeout sends SIGINT so the workload stops the same way a Ctrl-C would,
@@ -119,17 +119,17 @@ for op in "${OPERATIONS[@]}"; do
     esac
   done
 done
-echo "=== Light-load baseline complete. run_id=${RUN_ID} ==="
+echo "=== Light-load baseline complete. profiling_session_id=${PROFILING_SESSION_ID} ==="
 echo "=== Checking the light-load baseline results ==="
 BACKEND_CSV="$(IFS=,; echo "${BACKENDS[*]}")"
-if perf_check_run "${LOG_DIR}" "${RUN_ID}" "baseline-" "${BACKEND_CSV}"; then
+if perf_check_run "${LOG_DIR}" "${PROFILING_SESSION_ID}" "baseline-" "${BACKEND_CSV}"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect rows/logs before trusting the baseline." >&2
   overall_rc=1
 fi
 echo "=== Checking the point-read p99 gate ==="
-if python3 latency_report.py --prefix "baseline-" --run-id "${RUN_ID}" \
+if python3 latency_report.py --prefix "baseline-" --profiling-session-id "${PROFILING_SESSION_ID}" \
   --point-read-gate --expected-rps "${BASELINE_READ_RPS}" --max-p99-ms 10 \
   --gate-backends "${BACKEND_CSV}" \
   | tee "${REPORT_FILE}"; then

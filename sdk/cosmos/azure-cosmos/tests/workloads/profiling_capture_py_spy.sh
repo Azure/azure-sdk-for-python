@@ -14,7 +14,7 @@ cd "${_py_spy_here}" || return 1
 
 # shellcheck disable=SC1091
 source ./profiling_common.sh
-if [[ -n "${RUN_ID:-}" && -n "${ARTIFACTS:-}" ]]; then
+if [[ -n "${ARTIFACTS:-}" ]]; then
   profiling_load_env || return 2
   profiling_load_session "${ARTIFACTS}" || return 2
 else

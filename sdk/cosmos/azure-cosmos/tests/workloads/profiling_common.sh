@@ -106,14 +106,24 @@ PY
 # manifest, target, and currently imported extension all describe one run.
 profiling_load_session() {
   local session_dir="$1" session_env manifest canonical_dir
+  # Old session.env files exported RUN_ID; never inherit it from another experiment.
+  local RUN_ID=""
+  unset PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
   session_dir="${session_dir%/}"
   session_env="${session_dir}/session.env"
   [[ -f "${session_env}" ]] || return 1
 
   # shellcheck disable=SC1090
   source "${session_env}" || return 1
-  [[ "${RUN_ID:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]] || {
-    echo "ERROR: ${session_env} has an invalid RUN_ID." >&2
+  if [[ -n "${RUN_ID}" ]]; then
+    if [[ -n "${PROFILING_SESSION_ID:-}" && "${PROFILING_SESSION_ID}" != "${RUN_ID}" ]]; then
+      echo "ERROR: ${session_env} has conflicting PROFILING_SESSION_ID and historical RUN_ID." >&2
+      return 1
+    fi
+    PROFILING_SESSION_ID="${RUN_ID}"
+  fi
+  [[ "${PROFILING_SESSION_ID:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]] || {
+    echo "ERROR: ${session_env} has an invalid PROFILING_SESSION_ID." >&2
     return 1
   }
   profiling_validate_phase "${PERF_PHASE:-}" || return 1
@@ -123,18 +133,18 @@ profiling_load_session() {
     return 1
   }
 
-  manifest="${ARTIFACTS}/manifest-${RUN_ID}.json"
+  manifest="${ARTIFACTS}/manifest-${PROFILING_SESSION_ID}.json"
   [[ -f "${manifest}" ]] || {
     echo "ERROR: session ${session_dir} has no manifest." >&2
     return 1
   }
-  python3 - "${manifest}" "${RUN_ID}" "${PERF_PHASE}" \
+  python3 - "${manifest}" "${PROFILING_SESSION_ID}" "${PERF_PHASE}" \
     "${COSMOS_URI}" "${COSMOS_DATABASE}" "${COSMOS_CONTAINER}" <<'PY'
 import json
 import sys
 from perf_build_details import extension_details, source_digest
 
-path, run_id, phase, uri, database, container = sys.argv[1:]
+path, profiling_session_id, phase, uri, database, container = sys.argv[1:]
 try:
     with open(path, encoding="utf-8") as handle:
         manifest = json.load(handle)
@@ -144,12 +154,14 @@ except Exception as exc:
 
 account = manifest.get("account") or {}
 expected = {
-    "stamp": (manifest.get("stamp"), run_id),
+    "stamp": (manifest.get("stamp"), profiling_session_id),
     "phase": (manifest.get("phase"), phase),
     "account.uri": (account.get("uri"), uri),
     "account.database": (account.get("database"), database),
     "account.container": (account.get("container"), container),
 }
+if "profiling_session_id" in manifest:
+    expected["profiling_session_id"] = (manifest["profiling_session_id"], profiling_session_id)
 bad = [f"{name}: manifest={actual!r}, expected={wanted!r}"
        for name, (actual, wanted) in expected.items() if actual != wanted]
 build = manifest.get("build") or {}
@@ -166,7 +178,8 @@ if bad:
     raise SystemExit(1)
 PY
   [[ $? -eq 0 ]] || return 1
-  profiling_verify_extension_build
+  profiling_verify_extension_build || return 1
+  export PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
 }
 
 profiling_load_env() {

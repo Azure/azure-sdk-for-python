@@ -14,10 +14,10 @@
 #   ~/perf_secrets.env   account keys (not checked in)
 #   ./profiling_target.env  which account/container/range/load to profile
 #                           (checked in; ~/perf_target.env overrides it)
-#   ./perf_env.sh        shared fallbacks, results sink, helper functions
+#   ./perf_env.sh        shared fallbacks, results container, helper functions
 #   ~/venvs/perfdrill    the Python environment holding the built extension
 # and then the most recent session opened by profiling_start_session.sh, so
-# RUN_ID and ARTIFACTS point at somewhere real.
+# PROFILING_SESSION_ID and ARTIFACTS identify saved evidence.
 #
 # Use it when opening a second terminal, or coming back to a session later.
 # It does NOT update source, build, seed, or start a workload. To prepare the
@@ -70,7 +70,7 @@ _profiling_activate() {
         session_dir="${candidate%/}"
         break
       fi
-      unset RUN_ID ARTIFACTS PERF_PHASE
+      unset PROFILING_SESSION_ID ARTIFACTS PERF_PHASE
       echo "WARNING: skipping incomplete session ${candidate%/}" >&2
     done < <(ls -1dt "${here}"/artifacts/*/ 2>/dev/null || true)
   fi
@@ -79,7 +79,7 @@ _profiling_activate() {
     echo "profiling terminal ready"
     echo "    target   : ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
     echo "    python   : ${VIRTUAL_ENV}"
-    echo "    run_id   : ${RUN_ID}"
+    echo "    profiling_session_id: ${PROFILING_SESSION_ID}"
     echo "    artifacts: ${ARTIFACTS}"
   else
     echo "profiling terminal ready (no session loaded)"

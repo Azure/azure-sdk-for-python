@@ -19,7 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, and delete databases in the Azure Cosmos DB SQL API service.
+"""Provide the synchronous CosmosClient used by the customer app.
+
+The customer app supplies an account address, credential, and optional
+settings. This module defines the Python wrapper's account client, which
+prepares and retains client state for later operations.
+
+For example, client.get_database_client("sales") returns a DatabaseProxy
+representing that database without reading or creating it. Operations such
+as database.read() then use the configured Python backend.
+
+This module is Python wrapper code, not the binding or the Rust driver.
 """
 
 import warnings
@@ -165,9 +175,10 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
 class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
-    """A client-side logical representation of an Azure Cosmos DB account.
+    """The synchronous Python client for one Azure Cosmos DB account.
 
-    Use this client to configure and execute requests to the Azure Cosmos DB service.
+    Use this client to obtain database objects and perform account-level
+    database operations.
 
     It's recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
         efficient connection management and performance.
@@ -258,7 +269,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         consistency_level: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Instantiate a new CosmosClient.
+        """Prepare this client from the supplied account address and credential.
+
+        Resolve client settings, select the Python backend, and retain the state
+        used by later operations. Create and store CosmosClientConnection for
+        the operation helpers and client-lifecycle methods that still require it.
+
+        If construction fails, the customer app does not receive a usable client.
         """
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument

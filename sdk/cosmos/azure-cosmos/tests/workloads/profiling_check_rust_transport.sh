@@ -58,7 +58,7 @@ profiling_load_session "${ARTIFACTS}" || exit 2
 RECORDED_DATABASE=""
 RECORDED_CONTAINER=""
 RECORDED_PARTITION_KEY=""
-BASELINE_TARGET_FILE="${ARTIFACTS}/light-load-baseline-${RUN_ID}/baseline-target.env"
+BASELINE_TARGET_FILE="${ARTIFACTS}/light-load-baseline-${PROFILING_SESSION_ID}/baseline-target.env"
 if [[ -f "${BASELINE_TARGET_FILE}" ]]; then
   # Written with printf %q by run_light_load_baseline.sh.
   # shellcheck disable=SC1090

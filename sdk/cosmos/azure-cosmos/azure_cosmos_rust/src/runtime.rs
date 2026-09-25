@@ -15,10 +15,24 @@
 //! The Tokio runtime runs asynchronous Rust work. They are not Python's event
 //! loop, and neither is a CosmosDriver object.
 //!
-//! Acquisition initializes RuntimeContext when needed and records the requested
-//! CosmosDriverRuntime connection settings. A later explicit conflicting value
-//! is rejected. The construction-time check does not initialize or reserve
-//! these settings. Initialization failures are retained too.
+//! A client's first operation requiring the Rust driver acquires a driver
+//! handle. Acquisition initializes RuntimeContext when needed. Within this
+//! Python process, it retains one CosmosDriverRuntime and records the requested
+//! connection settings.
+//!
+//! For example, client A requests connection_timeout=2 and client B requests
+//! connection_timeout=5. If A's acquisition initializes CosmosDriverRuntime
+//! first, its two-second setting is recorded. B's explicit five-second request
+//! is rejected rather than silently using two seconds. The same compatibility
+//! rule applies to read_timeout and proxy_allowed.
+//!
+//! Constructing a Python client does not initialize CosmosDriverRuntime or
+//! reserve these settings. Construction rejects a conflict if initialization
+//! has already completed; acquisition checks again otherwise. Initialization
+//! failures are retained too. This sharing boundary is the current binding
+//! design, not proof that the Rust driver requires process-wide settings.
+//! See docs/V5/use-cases/design_issues.md for the unresolved client-isolation
+//! and read-timeout compatibility questions.
 //!
 //! Preferred regions and driver operation defaults are prepared separately for
 //! DriverOptions. See docs/V5/VOCABULARY.md for the object names and

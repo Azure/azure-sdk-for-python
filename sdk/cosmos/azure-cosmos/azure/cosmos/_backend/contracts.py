@@ -138,10 +138,15 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
 class PreparedClientConfig(_ValidatedSettings):
     """Client settings passed to the binding when acquiring a driver handle.
 
-    build_client_config checks the options and converts them to these fields.
-    The binding uses them with the endpoint and credential to choose a shared
-    CosmosDriver or create one. Proxy and connection/read timeout settings apply
-    to CosmosDriverRuntime, even when clients use different CosmosDriver objects.
+    build_client_config checks the supplied options and prepares this read-only
+    record. For example, the customer app's preferred_locations=["West US"]
+    becomes preferred_locations=("West US",). Appending "East US" to the
+    original list afterward does not change this record's saved preference.
+
+    The binding uses these settings with the endpoint and credential to choose
+    a shared CosmosDriver or create one. Proxy and connection/read timeout
+    settings apply to CosmosDriverRuntime, even when clients use different
+    CosmosDriver objects.
     """
 
     #: Regions in the customer's preferred order, such as ("West US", "East US").
