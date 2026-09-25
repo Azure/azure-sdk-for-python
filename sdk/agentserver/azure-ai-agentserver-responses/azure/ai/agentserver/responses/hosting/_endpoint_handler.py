@@ -240,7 +240,7 @@ _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming"
 
 
 _FLUSH_MODE_ENV = "AGENTSERVER_FLUSH_MODE"
-_DEFAULT_FLUSH_MODE = "async"
+_DEFAULT_FLUSH_MODE = "background"
 _FLUSH_MODES = frozenset({"async", "background", "sync"})
 _invalid_flush_modes_warned: set[str] = set()
 _flush_mode_lock = threading.Lock()
@@ -278,15 +278,15 @@ async def _flush_spans_for_mode(mode: str) -> None:
     that inline on this ``async`` handler blocks the event loop and serialises
     concurrent requests behind one export.  The mode selects the strategy:
 
-    * ``"async"`` (default) -> :func:`flush_spans_async`: off the event loop;
+    * ``"async"`` -> :func:`flush_spans_async`: off the event loop;
       same durability, no head-of-line blocking under concurrency.
-    * ``"background"`` -> :func:`schedule_flush_spans`: return the response
-      first and flush in the background (lowest latency, but needs the platform
-      to grant a brief drain window before freezing).
+    * ``"background"`` (default) -> :func:`schedule_flush_spans`: schedule
+      flushing without awaiting export (lowest latency, but needs the platform
+      to grant a drain window before freezing).
     * ``"sync"`` -> :func:`flush_spans`: legacy blocking behaviour.
 
-    Any unrecognised value falls back to the ``"async"`` default (fail safe:
-    never silently drop telemetry).
+    Empty or unrecognised values fall back to the ``"background"`` default.
+    Background export requires a platform drain window to preserve telemetry.
 
     :param mode: The flush mode; matched case-insensitively.
     :type mode: str
