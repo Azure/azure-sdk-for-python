@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0 (2024-06-13)
 
 This release targets Azure Dev Center 2023-04-01 General Available API, which is the same version as the previous 1.0.0-beta.3 release. The main improvement was the addition of models as Convenience API was enabled for the SDK. 
