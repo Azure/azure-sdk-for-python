@@ -8,7 +8,7 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import random
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline.policies import (
@@ -19,12 +19,16 @@ from azure.core.pipeline.policies import (
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import (
+    _apply_session_auth,
     _prepare_content_validation,
     _validate_content_response,
     encode_base64,
     is_retry,
+    SESSION_BEARER_AUTH_KEY,
     StorageRetryPolicy,
 )
+from .session import Session
+from .session_async import AsyncSessionProvider
 from .streams_async import AsyncStructuredMessageDecoder
 from .validation import (
     calculate_content_md5,
@@ -37,7 +41,6 @@ if TYPE_CHECKING:
         PipelineRequest,
         PipelineResponse,
     )
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -222,7 +225,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for
@@ -282,7 +285,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         retry_total: int = 3,
         retry_to_secondary: bool = False,
         random_jitter_range: int = 3,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Constructs a Linear retry object.
@@ -338,3 +341,91 @@ class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
+
+
+class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
+    """
+    A pipeline policy that selects between session token and bearer token authentication.
+
+    Eligible requests are authenticated with a session token obtained from the
+    session provider. Everything else is left to the bearer token policy that
+    sits earlier in the pipeline.
+    """
+
+    def __init__(
+        self,
+        *,
+        account_name: Optional[str],
+        session_provider: AsyncSessionProvider,
+    ) -> None:
+        """Constructs an AsyncStorageSessionPolicy.
+
+        :keyword str account_name: Storage account name; used as the signer
+            identity when signing session-authenticated requests.
+        :keyword session_provider: Creates, caches, and invalidates per-container sessions.
+        :paramtype session_provider: ~azure.storage.filedatalake._shared.session_async.AsyncSessionProvider
+        :raises ValueError: if `account_name` is `None`.
+        """
+        if account_name is None:
+            raise ValueError(
+                "Unable to determine the account name from the service URL. "
+                "Supply session_account_name when using a custom endpoint."
+            )
+        super().__init__()
+        self._account_name = account_name
+        self._session_provider = session_provider
+
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        """Orchestrate session auth.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The outgoing request.
+        :return: The pipeline response.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        session = await self.on_request(request)
+        response = await self.next.send(request)
+        return await self.on_response(request, response, session)
+
+    async def on_request(self, request: "PipelineRequest") -> Optional[Session]:
+        """Stamp session auth if eligible, otherwise leave the bearer header intact.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
+        :return: The session that was applied, else None.
+        :rtype: ~azure.storage.filedatalake._shared.session.Session or None
+        """
+        session = await self._session_provider.get_session(request)
+        if session is None or not session.session_token or not session.session_key:
+            return None
+
+        # Kept so a 401 can serve this request with bearer instead of re-signing.
+        request.context[SESSION_BEARER_AUTH_KEY] = request.http_request.headers.get("Authorization")
+        _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
+        return session
+
+    async def on_response(
+        self,
+        request: "PipelineRequest",
+        response: "PipelineResponse",
+        session: Optional[Session],
+    ) -> "PipelineResponse":
+        """On 401, invalidate the cached session and serve the request with bearer.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The original request.
+        :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
+        :param session: The session that signed the request, or `None` if bearer was used.
+        :type session: ~azure.storage.filedatalake._shared.session.Session or None
+        :return: The final response.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if session is None:
+            return response  # bearer was used; nothing session-related to react to
+
+        if response.http_response.status_code == 401:
+            _LOGGER.info("Session authentication: HTTP 401; invalidating session and retrying with bearer.")
+            await self._session_provider.invalidate_session(request, session)
+            bearer = request.context.get(SESSION_BEARER_AUTH_KEY)
+            if bearer:
+                request.http_request.headers["Authorization"] = bearer
+                return await self.next.send(request)
+
+        return response
