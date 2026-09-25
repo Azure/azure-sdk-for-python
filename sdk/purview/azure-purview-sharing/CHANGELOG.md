@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.7 and 3.8 are no longer supported. Please use Python version 3.9 or later.
+
 ## 1.0.0b3 (2023-07-18)
 
 ### Features Added
@@ -19,6 +31,7 @@
 
 ### Other Changes
 
+- Python 3.7 is no longer supported. Please use Python version 3.9 or later.
 - Updated and fixed README according to feedback
 - Migrated test recordings to the azure-sdk-assets repo
 - Added more sanitizers to conftest.py
