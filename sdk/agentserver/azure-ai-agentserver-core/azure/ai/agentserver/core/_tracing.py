@@ -165,17 +165,12 @@ def configure_observability(
     # prevent duplicate output on stderr.
     _has_console = any(
         getattr(h, _CONSOLE_HANDLER_ATTR, False)
-        or (
-            isinstance(h, logging.StreamHandler)
-            and not isinstance(h, logging.FileHandler)
-        )
+        or (isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler))
         for h in root.handlers
     )
     if not _has_console:
         _console = logging.StreamHandler()
-        _console.setFormatter(
-            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
-        )
+        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
@@ -215,9 +210,7 @@ def _configure_tracing(
     """
     resource = _create_resource()
     if resource is None:
-        logger.warning(
-            "Failed to create OTel resource — tracing will not be configured."
-        )
+        logger.warning("Failed to create OTel resource — tracing will not be configured.")
         return
 
     # Build custom processors
@@ -253,11 +246,7 @@ def _configure_tracing(
     )
 
     try:
-        context = (
-            _suppress_distro_otlp_components()
-            if suppress_distro_otlp
-            else nullcontext()
-        )
+        context = _suppress_distro_otlp_components() if suppress_distro_otlp else nullcontext()
         with context:
             _setup_distro_export(
                 resource=resource,
@@ -268,13 +257,9 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
-        logger.info(
-            "Tracing configured successfully via microsoft-opentelemetry distro."
-        )
+        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
-        logger.warning(
-            "microsoft-opentelemetry is not installed — tracing export disabled."
-        )
+        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
         # Still set up TracerProvider with enrichment processor so spans are created
         _ensure_trace_provider(resource, resolved_span_processors)
 
@@ -311,9 +296,7 @@ def _setup_distro_export(
         "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
-        "instrumentation_options": _resolve_instrumentation_options(
-            instrumentation_options
-        ),
+        "instrumentation_options": _resolve_instrumentation_options(instrumentation_options),
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -341,9 +324,7 @@ def _setup_distro_export(
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
-        kwargs["a365_observability_scope_override"] = (
-            "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
-        )
+        kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
 
@@ -477,10 +458,7 @@ def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
     protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
     normalized = protocol.strip().lower()
     if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
-        raise ValueError(
-            f"Unsupported OTLP protocol {protocol!r}. Use "
-            f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}."
-        )
+        raise ValueError(f"Unsupported OTLP protocol {protocol!r}. Use " f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}.")
     return normalized
 
 
@@ -497,9 +475,7 @@ def _suppress_distro_otlp_components() -> Any:
                 return None
             return original_append_otlp_components(_otel_kwargs)
 
-        previous_suppression_state = getattr(
-            _DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False
-        )
+        previous_suppression_state = getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False)
         _DISTRO_OTLP_SUPPRESSION_STATE.enabled = True
         distro_globals["_append_otlp_components"] = _skip_otlp_components
         try:
@@ -543,9 +519,7 @@ class TraceContextMiddleware:
         headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
-        from opentelemetry.propagate import (
-            extract,
-        )  # pylint: disable=import-outside-toplevel
+        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
 
         ctx = extract(carrier=headers)
 
@@ -703,15 +677,9 @@ def _schedule_coalesced_flush(timeout_millis: int) -> "asyncio.Task[None]":
     """Start or join the shared asynchronous flush task."""
     global _bg_flush_task, _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     loop = asyncio.get_running_loop()
-    if (
-        _bg_flush_task is not None
-        and not _bg_flush_task.done()
-        and _bg_flush_task.get_loop() is loop
-    ):
+    if _bg_flush_task is not None and not _bg_flush_task.done() and _bg_flush_task.get_loop() is loop:
         _bg_flush_pending = True
-        _bg_flush_pending_timeout_millis = max(
-            _bg_flush_pending_timeout_millis, timeout_millis
-        )
+        _bg_flush_pending_timeout_millis = max(_bg_flush_pending_timeout_millis, timeout_millis)
         return _bg_flush_task
     _bg_flush_pending = False
     _bg_flush_pending_timeout_millis = 0
@@ -807,9 +775,7 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(
-    iterator: AsyncIterable[StreamContent], span: Any
-) -> AsyncIterator[StreamContent]:
+async def trace_stream(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
@@ -869,9 +835,7 @@ class _FoundryEnrichmentSpanProcessor:
         session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
         if session_id:
             span.set_attribute(_ATTR_SESSION_ID, session_id)
-        conversation_id = _otel_baggage.get_baggage(
-            _BAGGAGE_CONVERSATION_ID, context=ctx
-        )
+        conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
         invocation_id = _otel_baggage.get_baggage(_BAGGAGE_INVOCATION_ID, context=ctx)
@@ -908,9 +872,7 @@ class _FoundryEnrichmentSpanProcessor:
             if self.agent_tenant_id:
                 target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug(
-                "Failed to enrich span attributes in _on_ending", exc_info=True
-            )
+            logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
     def on_end(self, span: Any) -> None:
         self._on_ending(span)
@@ -918,9 +880,7 @@ class _FoundryEnrichmentSpanProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(
-        self, timeout_millis: int = 30000
-    ) -> bool:  # pylint: disable=unused-argument
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -976,9 +936,7 @@ class _BaggageLogRecordProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(
-        self, timeout_millis: int = 30000
-    ) -> bool:  # pylint: disable=unused-argument
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -994,16 +952,12 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = os.environ.get(
-        _config._ENV_FOUNDRY_AGENT_NAME, ""
-    )  # pylint: disable=protected-access
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
-def _ensure_trace_provider(
-    resource: Any, span_processors: Optional[list[Any]] = None
-) -> Any:
+def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
     """Get or create a TracerProvider, optionally adding span processors.
 
     Used as a fallback when the microsoft-opentelemetry distro is not installed.
@@ -1025,9 +979,7 @@ def _ensure_trace_provider(
     else:
         provider = SdkTracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
-    if span_processors and not getattr(
-        provider, "_agentserver_processors_added", False
-    ):
+    if span_processors and not getattr(provider, "_agentserver_processors_added", False):
         for proc in span_processors:
             provider.add_span_processor(proc)
         provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access
