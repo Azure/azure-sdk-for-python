@@ -23,9 +23,11 @@ except ImportError:
 try:
     from opentelemetry.semconv._incubating.attributes import (
         enduser_attributes as _enduser_attributes,
+        session_attributes as _session_attributes,
     )
 except ImportError:
     _enduser_attributes = None  # type: ignore
+    _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -77,6 +79,7 @@ _ENDUSER_PSEUDO_ID_ATTRIBUTE = (
     or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
     or "enduser.pseudo.id"
 )
+_SESSION_ID_ATTRIBUTE = getattr(_session_attributes, "SESSION_ID", None) or "session.id"
 
 _logger = logging.getLogger(__name__)
 
@@ -181,6 +184,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
+    session_id = log_record.attributes.get(_SESSION_ID_ATTRIBUTE) if log_record.attributes else None
+    if isinstance(session_id, str):
+        tags[ContextTagKeys.AI_SESSION_ID] = session_id
     if _utils._is_any_synthetic_source(log_record.attributes):
         tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
@@ -360,6 +366,7 @@ _IGNORED_ATTRS = frozenset(
         _MICROSOFT_AVAILABILITY_MESSAGE,
         _ENDUSER_ID_ATTRIBUTE,
         _ENDUSER_PSEUDO_ID_ATTRIBUTE,
+        _SESSION_ID_ATTRIBUTE,
     )
 )
 
