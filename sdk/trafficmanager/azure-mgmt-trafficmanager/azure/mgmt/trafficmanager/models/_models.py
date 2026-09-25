@@ -17,7 +17,9 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(_Model):  # pylint: disable=name-too-long
+class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters supplied to check Traffic Manager name operation.
 
     :ivar name: The name of the resource.
@@ -50,7 +52,7 @@ class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error returned by the Azure Resource Manager.
 
     :ivar error: The content of the error.
@@ -78,7 +80,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The content of an error returned by the Azure Resource Manager.
 
     :ivar code: Error code.
@@ -134,7 +136,7 @@ class DeleteOperationResult(_Model):
     """The result of the operation or request."""
 
 
-class DnsConfig(_Model):
+class DnsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class containing DNS settings in a Traffic Manager profile.
 
     :ivar relative_name: The relative DNS name provided by this Traffic Manager profile. This value
@@ -182,7 +184,7 @@ class DnsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
+class Resource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The core properties of ARM resources.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -222,7 +224,7 @@ class Resource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(Resource):
+class ProxyResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition for a ARM proxy resource. It will have everything other than
     required location and tags.
 
@@ -255,7 +257,7 @@ class ProxyResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Endpoint(ProxyResource):
+class Endpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager endpoint.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -330,7 +332,7 @@ class Endpoint(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EndpointProperties(_Model):
+class EndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager endpoint properties.
 
     :ivar target_resource_id: The Azure Resource URI of the of the endpoint. Not applicable to
@@ -489,7 +491,7 @@ class EndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointPropertiesCustomHeadersItem(_Model):
+class EndpointPropertiesCustomHeadersItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom header name and value.
 
     :ivar name: Header name.
@@ -522,7 +524,7 @@ class EndpointPropertiesCustomHeadersItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointPropertiesSubnetsItem(_Model):
+class EndpointPropertiesSubnetsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subnet first address, scope, and/or last address.
 
     :ivar first: First address in the subnet.
@@ -560,7 +562,7 @@ class EndpointPropertiesSubnetsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeographicHierarchyProperties(_Model):
+class GeographicHierarchyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing the properties of the Geographic hierarchy used with the Geographic traffic
     routing method.
 
@@ -592,7 +594,7 @@ class GeographicHierarchyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeatMapEndpoint(_Model):
+class HeatMapEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class which is a sparse representation of a Traffic Manager endpoint.
 
     :ivar resource_id: The ARM Resource ID of this Traffic Manager endpoint.
@@ -629,7 +631,7 @@ class HeatMapEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeatMapModel(ProxyResource):
+class HeatMapModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager HeatMap.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -689,7 +691,7 @@ class HeatMapModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HeatMapProperties(_Model):
+class HeatMapProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager HeatMap properties.
 
     :ivar start_time: The beginning of the time window for this HeatMap, inclusive.
@@ -740,7 +742,7 @@ class HeatMapProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorConfig(_Model):
+class MonitorConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class containing endpoint monitoring settings in a Traffic Manager profile.
 
     :ivar profile_monitor_status: The profile-level monitoring status of the Traffic Manager
@@ -835,7 +837,7 @@ class MonitorConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorConfigCustomHeadersItem(_Model):
+class MonitorConfigCustomHeadersItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom header name and value.
 
     :ivar name: Header name.
@@ -868,7 +870,9 @@ class MonitorConfigCustomHeadersItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorConfigExpectedStatusCodeRangesItem(_Model):  # pylint: disable=name-too-long
+class MonitorConfigExpectedStatusCodeRangesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Min and max value of a status code range.
 
     :ivar min: Min status code.
@@ -901,7 +905,7 @@ class MonitorConfigExpectedStatusCodeRangesItem(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition for a ARM tracked top level resource.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -944,7 +948,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Profile(TrackedResource):
+class Profile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager profile.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -1020,7 +1024,7 @@ class Profile(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ProfileProperties(_Model):
+class ProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing the Traffic Manager profile properties.
 
     :ivar profile_status: The status of the Traffic Manager profile. Known values are: "Enabled"
@@ -1046,7 +1050,9 @@ class ProfileProperties(_Model):
     :ivar max_return: Maximum number of endpoints to be returned for MultiValue routing type.
     :vartype max_return: int
     :ivar record_type: When record type is set, a traffic manager profile will allow only endpoints
-     that match this type. Known values are: "A", "AAAA", and "CNAME".
+     that match this type. If it is not set, traffic manager profile will allow adding all types of
+     endpoints. It is returned as null when this is not set. Known values are: "A", "AAAA", and
+     "CNAME".
     :vartype record_type: str or ~azure.mgmt.trafficmanager.models.RecordType
     """
 
@@ -1087,7 +1093,8 @@ class ProfileProperties(_Model):
         name="recordType", visibility=["read", "create", "update", "delete", "query"]
     )
     """When record type is set, a traffic manager profile will allow only endpoints that match this
-     type. Known values are: \"A\", \"AAAA\", and \"CNAME\"."""
+     type. If it is not set, traffic manager profile will allow adding all types of endpoints. It is
+     returned as null when this is not set. Known values are: \"A\", \"AAAA\", and \"CNAME\"."""
 
     @overload
     def __init__(
@@ -1115,7 +1122,7 @@ class ProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryExperience(_Model):
+class QueryExperience(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager HeatMap query experience properties.
 
     :ivar endpoint_id: The id of the endpoint from the 'endpoints' array which these queries were
@@ -1154,7 +1161,7 @@ class QueryExperience(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Region(_Model):
+class Region(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a region in the Geographic hierarchy used with the Geographic traffic
     routing method.
 
@@ -1193,7 +1200,7 @@ class Region(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficFlow(_Model):
+class TrafficFlow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager HeatMap traffic flow properties.
 
     :ivar source_ip: The IP address that this query experience originated from.
@@ -1238,7 +1245,7 @@ class TrafficFlow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrafficManagerGeographicHierarchy(ProxyResource):
+class TrafficManagerGeographicHierarchy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing the Geographic hierarchy used with the Geographic traffic routing method.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -1298,7 +1305,7 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TrafficManagerNameAvailability(_Model):
+class TrafficManagerNameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager Name Availability response.
 
     :ivar name: The relative name.
@@ -1349,7 +1356,7 @@ class TrafficManagerNameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserMetricsModel(ProxyResource):
+class UserMetricsModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing Traffic Manager User Metrics.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -1409,7 +1416,7 @@ class UserMetricsModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class UserMetricsProperties(_Model):
+class UserMetricsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Class representing a Traffic Manager Real User Metrics key response.
 
     :ivar key: The key returned by the User Metrics operation.

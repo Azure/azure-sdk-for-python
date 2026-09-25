@@ -15,7 +15,7 @@ from azure.mgmt.trafficmanager import TrafficManagerManagementClient
     pip install azure-identity
     pip install azure-mgmt-trafficmanager
 # USAGE
-    python profile_get_with_endpoints.py
+    python profile_get_without_record_type.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01/Profile-GET-WithEndpoints.json
+# x-ms-original-file: 2026-09-01/Profile-GET-WithoutRecordType.json
 if __name__ == "__main__":
     main()

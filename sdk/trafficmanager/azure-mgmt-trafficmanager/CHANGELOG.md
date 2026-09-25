@@ -1,5 +1,43 @@
 # Release History
 
+## 2.0.0 (2026-09-16)
+
+### Features Added
+
+  - Client `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `TrafficManagerManagementClient` added method `send_request`
+  - Model `Endpoint` added property `properties`
+  - Model `HeatMapModel` added property `properties`
+  - Model `Profile` added property `properties`
+  - Model `TrafficManagerGeographicHierarchy` added property `properties`
+  - Model `UserMetricsModel` added property `properties`
+  - Added model `CloudError`
+  - Added model `EndpointProperties`
+  - Added model `GeographicHierarchyProperties`
+  - Added model `HeatMapProperties`
+  - Added enum `HeatMapType`
+  - Added model `ProfileProperties`
+  - Added enum `RecordType`
+  - Added model `UserMetricsProperties`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Endpoint` moved instance variable `always_serve`, `custom_headers`, `endpoint_location`, `endpoint_monitor_status`, `endpoint_status`, `geo_mapping`, `min_child_endpoints`, `min_child_endpoints_i_pv4`, `min_child_endpoints_i_pv6`, `priority`, `subnets`, `target`, `target_resource_id` and `weight` under property `properties` whose type is `EndpointProperties`
+  - Model `HeatMapModel` moved instance variable `end_time`, `endpoints`, `start_time` and `traffic_flows` under property `properties` whose type is `HeatMapProperties`
+  - Model `Profile` moved instance variable `allowed_endpoint_record_types`, `dns_config`, `endpoints`, `max_return`, `monitor_config`, `profile_status`, `traffic_routing_method` and `traffic_view_enrollment_status` under property `properties` whose type is `ProfileProperties`
+  - Model `TrafficManagerGeographicHierarchy` moved instance variable `geographic_hierarchy` under property `properties` whose type is `GeographicHierarchyProperties`
+  - Model `UserMetricsModel` moved instance variable `key` under property `properties` whose type is `UserMetricsProperties`
+  - Deleted or renamed model `ProfileListResult`
+  - Parameter `heat_map_type` of method `HeatMapOperations.get` is now required
+  - Method `HeatMapOperations.get` changed type of its parameter `bot_right` from `List[float]` to `list[float]`
+  - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
+  - Method `HeatMapOperations.get` changed type of its parameter `heat_map_type` from `str` to `Union[str, HeatMapType]`
+  - Method `HeatMapOperations.get` changed its parameter `heat_map_type` from `keyword_only` to `positional_or_keyword`
+  - Method `HeatMapOperations.get` changed type of its parameter `top_left` from `List[float]` to `list[float]`
+  - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0b1 (2026-05-08)
 
 ### Features Added
