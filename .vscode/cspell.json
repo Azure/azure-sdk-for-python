@@ -549,6 +549,14 @@
   ],
   "overrides": [
     {
+      "filename": "sdk/template/azure-template-two/**",
+      "words": [
+        "istrue",
+        "istruemodule",
+        "SSIZE"
+      ]
+    },
+    {
       "filename": "sdk/ai/**",
       "words": [
         "azureml",
