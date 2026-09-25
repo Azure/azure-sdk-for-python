@@ -306,3 +306,14 @@ class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dynamic threshold — uses deviation from a ML-computed baseline to determine health state
     transitions. Only valid for the unhealthy threshold rule. Requires ``sensitivity`` and
     ``lookBackWindow`` on the rule; ``threshold`` is ignored."""
+
+
+class SignalRecommendationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported signal recommendation kinds."""
+
+    AZURE_RESOURCE_METRIC = "AzureResourceMetric"
+    """Azure Resource Metric recommendation."""
+    LOG_ANALYTICS_QUERY = "LogAnalyticsQuery"
+    """Log Analytics Query recommendation."""
+    PROMETHEUS_METRICS_QUERY = "PrometheusMetricsQuery"
+    """Prometheus Metrics Query recommendation."""
