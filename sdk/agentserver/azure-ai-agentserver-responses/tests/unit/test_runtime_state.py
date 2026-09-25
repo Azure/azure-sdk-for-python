@@ -76,6 +76,7 @@ async def test_same_id_records_are_partitioned_by_user() -> None:
     assert await state.get(response_id, "user-A") is user_a
     assert await state.get(response_id, "user-B") is user_b
     assert await state.get(response_id) is None
+    assert await state.contains_live_response_id(response_id) is True
 
 
 @pytest.mark.asyncio

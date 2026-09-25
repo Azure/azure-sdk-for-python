@@ -1142,6 +1142,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
         record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
+            if await self._runtime_state.contains_live_response_id(response_id):
+                return _not_found(response_id, _hdrs)
             return await self._handle_get_fallback(
                 request,
                 response_id,
@@ -1527,6 +1529,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
         record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
+            if await self._runtime_state.contains_live_response_id(response_id):
+                return _not_found(response_id, _hdrs)
             # Provider fallback: response may have been evicted from memory after
             # reaching terminal state, or the server restarted since creation.
             if await self._runtime_state.is_deleted(response_id, _context.user_id_key):
@@ -1706,6 +1710,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
         record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
+            if await self._runtime_state.contains_live_response_id(response_id):
+                return _not_found(response_id, _hdrs)
             return await self._handle_cancel_fallback(response_id, _context, _hdrs)
 
         # User isolation enforcement on in-flight response
@@ -1880,7 +1886,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # User isolation enforcement for in-flight responses.  After eviction,
         # the provider (Foundry storage) enforces partitioning server-side.
         record = await self._runtime_state.get(response_id, _context.user_id_key)
-        if record is not None:
+        if record is None:
+            if await self._runtime_state.contains_live_response_id(response_id):
+                return _not_found(response_id, _hdrs)
+        else:
             if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
                 return _not_found(response_id, _hdrs)
 
