@@ -20,6 +20,8 @@
   before propagating request cancellation. Both helpers are marked
   `@experimental`.
 
+- Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
 ### Other Changes
 
 - `azure-ai-agentserver-responses` 2.2.0b2 requires this release for the
