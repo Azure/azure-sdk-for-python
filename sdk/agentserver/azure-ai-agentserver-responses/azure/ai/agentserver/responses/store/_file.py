@@ -270,15 +270,12 @@ class FileResponseStore(ResponseProviderProtocol):
             digest = hashlib.sha256(user_id_key.encode("utf-8")).hexdigest()
             partition_name = f"user-{digest}"
         root = self._partitions_dir / partition_name
-        paths = _PartitionPaths(
+        return _PartitionPaths(
             root=root,
             responses=root / "responses",
             items=root / "items",
             conversations=root / "conversations",
         )
-        for directory in (paths.responses, paths.items, paths.conversations):
-            directory.mkdir(parents=True, exist_ok=True)
-        return paths
 
     @staticmethod
     def _response_path(paths: _PartitionPaths, response_id: str) -> Path:

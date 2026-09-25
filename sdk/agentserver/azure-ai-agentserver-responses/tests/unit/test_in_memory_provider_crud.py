@@ -115,7 +115,7 @@ async def test_partitions__colliding_response_item_and_conversation_ids() -> Non
         items = await provider.get_items(["input", "output", "missing"], context=later)
         assert items == [_input_item("input", str(index)), _output_message("output", str(index)), None]
         history = await provider.get_history_item_ids(None, "same", 100, context=later)
-        assert history == ["input", "output", "input", "output", f"next_input_{index}"]
+        assert history == ["input", "output", f"next_input_{index}"]
         assert await provider.get_history_item_ids(f"next_{index}", None, 100, context=later) == [
             "input",
             "output",
