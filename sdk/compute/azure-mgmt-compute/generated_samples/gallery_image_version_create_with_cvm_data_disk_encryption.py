@@ -16,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python gallery_image_version_create_with_vhd.py
+    python gallery_image_version_create_with_cvm_data_disk_encryption.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,53 +37,39 @@ def main():
         gallery_image_name="myGalleryImageName",
         gallery_image_version_name="1.0.0",
         gallery_image_version={
-            "location": "West US",
+            "location": "eastus",
             "properties": {
                 "publishingProfile": {
+                    "excludeFromLatest": False,
+                    "replicaCount": 1,
+                    "replicationMode": "Full",
                     "targetRegions": [
                         {
                             "encryption": {
                                 "dataDiskImages": [
                                     {
-                                        "diskEncryptionSetId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskEncryptionSet/myOtherDiskEncryptionSet",
-                                        "lun": 1,
+                                        "lun": 0,
+                                        "securityProfile": {
+                                            "confidentialVMEncryptionType": "DataDiskEncryptedWithCmk",
+                                            "secureVMDiskEncryptionSetId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskEncryptionSets/myDiskEncryptionSet",
+                                        },
                                     }
                                 ],
                                 "osDiskImage": {
-                                    "diskEncryptionSetId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/diskEncryptionSet/myDiskEncryptionSet"
+                                    "securityProfile": {"confidentialVMEncryptionType": "EncryptedWithPmk"}
                                 },
                             },
                             "excludeFromLatest": False,
-                            "name": "West US",
+                            "name": "eastus",
                             "regionalReplicaCount": 1,
-                        },
-                        {
-                            "excludeFromLatest": False,
-                            "name": "East US",
-                            "regionalReplicaCount": 2,
                             "storageAccountType": "Standard_ZRS",
-                        },
-                    ]
-                },
-                "safetyProfile": {"allowDeletionOfReplicatedLocations": False, "blockDeletionBeforeEndOfLife": False},
-                "storageProfile": {
-                    "dataDiskImages": [
-                        {
-                            "hostCaching": "None",
-                            "lun": 1,
-                            "source": {
-                                "storageAccountId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/{storageAccount}",
-                                "uri": "https://gallerysourcencus.blob.core.windows.net/myvhds/Windows-Server-2012-R2-20171216-en.us-128GB.vhd",
-                            },
                         }
                     ],
-                    "osDiskImage": {
-                        "hostCaching": "ReadOnly",
-                        "source": {
-                            "storageAccountId": "/subscriptions/{subscriptionId}/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/{storageAccount}",
-                            "uri": "https://gallerysourcencus.blob.core.windows.net/myvhds/Windows-Server-2012-R2-20171216-en.us-128GB.vhd",
-                        },
-                    },
+                },
+                "storageProfile": {
+                    "source": {
+                        "virtualMachineId": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
+                    }
                 },
             },
         },
@@ -91,6 +77,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImageVersion_Create_WithVHD.json
+# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImageVersion_Create_WithCVMDataDiskEncryption.json
 if __name__ == "__main__":
     main()

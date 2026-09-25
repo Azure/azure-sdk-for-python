@@ -15,7 +15,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python gallery_image_update.py
+    python gallery_image_version_get_with_image_metadata_profiles.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,22 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.gallery_images.begin_update(
+    response = client.gallery_image_versions.get(
         resource_group_name="myResourceGroup",
         gallery_name="myGalleryName",
         gallery_image_name="myGalleryImageName",
-        gallery_image={
-            "properties": {
-                "hyperVGeneration": "V1",
-                "identifier": {"offer": "myOfferName", "publisher": "myPublisherName", "sku": "mySkuName"},
-                "osState": "Generalized",
-                "osType": "Windows",
-            }
-        },
-    ).result()
+        gallery_image_version_name="1.0.0",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImage_Update.json
+# x-ms-original-file: 2026-03-03/galleryExamples/GalleryImageVersion_Get_WithImageMetadataProfiles.json
 if __name__ == "__main__":
     main()
