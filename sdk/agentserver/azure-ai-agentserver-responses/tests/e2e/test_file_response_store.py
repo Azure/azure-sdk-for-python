@@ -59,6 +59,20 @@ async def test_get_response_round_trips(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio
+async def test_missing_read_does_not_create_partition_directories(tmp_path: Path) -> None:
+    """Read-only misses do not create empty user partition directories."""
+    store = FileResponseStore(storage_dir=tmp_path)
+
+    with pytest.raises(KeyError):
+        await store.get_response(
+            "resp_missing",
+            context=PlatformContext(user_id_key="unknown-user"),
+        )
+
+    assert list((tmp_path / "partitions-v1").iterdir()) == []
+
+
+@pytest.mark.asyncio
 async def test_create_response_raises_on_duplicate(tmp_path: Path) -> None:
     """A second create for the same response_id raises ResponseAlreadyExistsError."""
     store = FileResponseStore(storage_dir=tmp_path)
