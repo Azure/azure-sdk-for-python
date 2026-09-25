@@ -67,7 +67,7 @@ against the `EventStream` Protocol.
 |---|---|---|---|---|
 | `use_in_memory_live()` (default) | Single subscriber that attaches before the producer; lowest memory; you don't need late subscribers to catch up. | No — late subscribers miss earlier events. | No. | Constant memory: only the subscriber list, no event buffer. |
 | `use_in_memory_replay(...)` | Multiple subscribers that may attach at different times; client may reconnect within `ttl_seconds`. | Yes (within the per-event TTL window). | No. | Each event is retained until its TTL elapses (or `delete` runs). |
-| `use_file_backed_replay(...)` | Long-running turns where you need to survive a process crash and a fresh worker resuming the same turn. | Yes. | Yes — events are persisted to `storage_dir / f"{id}.jsonl"` and rehydrated on the next `get_or_create(id)`. | Single-writer-per-file enforced. |
+| `use_file_backed_replay(...)` | Long-running turns where you need to survive a process crash and a fresh worker resuming the same turn. | Yes. | Yes — events are persisted to `storage_dir / f"{id}.jsonl"` and rehydrated by `get(id)` or `get_or_create(id)`. | Single-writer-per-file enforced. `get(id)` never creates an absent log. |
 
 **Call a configurator before you create any streams** (typically
 once at app startup). Later calls only affect streams created
@@ -239,7 +239,7 @@ be destroyed; once destroyed, every operation against it raises
 
 Three independent paths into destroyed:
 
-- the id was **never registered** (no `get_or_create(id)` for it ever ran);
+- the id has **no registered stream or retained file-backed replay log**;
 - the id was **explicitly `streams.delete(id)`**d;
 - the id's stream was **Closed** and its close-clock TTL
   (`close_time + ttl_seconds`) **elapsed** — only applies to replay
@@ -262,13 +262,16 @@ A few practical implications:
 ## The registry
 
 ```python
-streams.get(id)            -> EventStream      # raises NotFound for any id that is not currently live
+streams.get(id)            -> EventStream      # registered or retained file replay; never creates absent logs
 streams.get_or_create(id)  -> EventStream      # idempotent
 streams.delete(id)         -> None             # idempotent
 ```
 
-- `get(id)` returns the registered stream, or raises
-  `EventStreamNotFoundError`. Treat any `NotFound` uniformly:
+- `get(id)` returns the registered stream or, with file-backed replay
+  configured, restores an existing log after restart. It never creates
+  an absent log. Missing, deleted, or expired streams raise
+  `EventStreamNotFoundError`. File access and lock failures propagate
+  rather than being treated as missing. Treat any `NotFound` uniformly:
   "this id is not a live stream; subscribe to a new id or treat as
   missing".
 - `get_or_create(id)` is idempotent — every caller using the same
@@ -276,8 +279,12 @@ streams.delete(id)         -> None             # idempotent
   coroutines. If the id was previously destroyed, a fresh stream is
   created.
 - `delete(id)` removes the stream and any backing resources (including
-  the on-disk log for file-backed replay). Idempotent — safe to call
+  a retained file-backed log not yet loaded after restart). Idempotent — safe to call
   on an unknown or already-deleted id.
+
+All three lifecycle operations use the same per-id lock within the registry,
+so concurrent lookup, restoration, creation, and deletion are serialized.
+This is in-process atomicity, not cross-process coordination.
 
 You typically do not need to call `delete(id)` for replay backings
 with `ttl_seconds` configured — the close-clock auto-destroy
