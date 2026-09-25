@@ -1,5 +1,16 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Bugs Fixed
+
+- Coalesced concurrent asynchronous span flushes into one in-flight export plus
+  one pending pass, and moved the `trace_stream` final flush off the asyncio
+  event loop.
+- Prevented per-request `user_agent` options from leaking through
+  `FoundryStorageProvider` to the HTTP transport when a server-version callback
+  is configured.
+
 ## 2.2.0b2 (2026-09-24)
 
 ### Features Added
@@ -16,9 +27,6 @@
   automatic truncation of conversation history. Positive limits remain supported.
 - Restored compatibility with usage payloads that omit
   `ResponseUsageInputTokensDetails.cache_write_tokens`.
-- Prevented per-request `user_agent` options from leaking through
-  `FoundryStorageProvider` to the HTTP transport when a server-version callback
-  is configured.
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the
@@ -29,8 +37,7 @@
   loop), `background` (return the response first, flush in the background --
   requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
-  cleanup, without an additional pre-stream flush. Concurrent asynchronous
-  flushes are coalesced into one in-flight export plus one pending pass.
+  cleanup, without an additional pre-stream flush.
 
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task

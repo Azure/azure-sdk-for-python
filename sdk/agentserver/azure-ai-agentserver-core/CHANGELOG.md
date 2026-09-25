@@ -1,12 +1,14 @@
 # Release History
 
-## 2.2.0 (2026-09-23)
+## 2.2.1 (Unreleased)
 
 ### Bugs Fixed
 
 - Coalesced concurrent asynchronous span flushes into one in-flight export plus
   one pending pass, and moved the `trace_stream` final flush off the asyncio
   event loop.
+
+## 2.2.0 (2026-09-23)
 
 ### Other Changes
 
