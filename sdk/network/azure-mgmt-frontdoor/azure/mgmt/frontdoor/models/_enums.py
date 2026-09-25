@@ -142,6 +142,43 @@ class EnforceCertificateNameCheckEnabledState(str, Enum, metaclass=CaseInsensiti
     """Disabled."""
 
 
+class ExceptionMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable to be evaluated for excluding the request."""
+
+    REQUEST_URI = "RequestUri"
+    """Request Uri Exception Match Variable."""
+    SOCKET_ADDR = "SocketAddr"
+    """Socket Address Exception Match Variable."""
+    REQUEST_HEADER_NAMES = "RequestHeaderNames"
+    """Request Header Names Exception Match Variable."""
+
+
+class ExceptionSelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Comparison operator to apply to the selector when specifying which elements in the collection
+    this exception applies to..
+    """
+
+    EQUALS = "Equals"
+    """Equals Selector Match Operator."""
+
+
+class ExceptionValueMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Comparison operator to apply to the value to be matched.."""
+
+    EQUALS = "Equals"
+    """Equals Exception Value Match Operator."""
+    CONTAINS = "Contains"
+    """Contains Exception Value Match Operator."""
+    STARTS_WITH = "StartsWith"
+    """StartsWith Exception Value Match Operator."""
+    ENDS_WITH = "EndsWith"
+    """EndsWith Exception Value Match Operator."""
+    EQUALS_ANY = "EqualsAny"
+    """EqualsAny Exception Value Match Operator."""
+    IP_MATCH = "IPMatch"
+    """IPMatch Exception Value Match Operator."""
+
+
 class FrontDoorCertificateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the source of the SSL certificate."""
 
@@ -351,6 +388,19 @@ class ManagedRuleSetActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Redirect."""
 
 
+class ManagedRuleSetStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of a managed rule set."""
+
+    PREVIEW = "Preview"
+    """The managed rule set is in preview."""
+    GA = "GA"
+    """The managed rule set is generally available."""
+    DEPRECATED = "Deprecated"
+    """The managed rule set is deprecated."""
+    SUPPORTED = "Supported"
+    """The managed rule set is supported."""
+
+
 class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If this rule is a match should the rules engine continue running the remaining rules or stop.
     If not present, defaults to Continue.
@@ -383,6 +433,8 @@ class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cookies."""
     SOCKET_ADDR = "SocketAddr"
     """SocketAddr."""
+    JA4 = "JA4"
+    """JA4 Match Variable."""
 
 
 class MinimumTLSVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -442,6 +494,23 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RegEx."""
     SERVICE_TAG_MATCH = "ServiceTagMatch"
     """ServiceTagMatch."""
+    ASN_MATCH = "AsnMatch"
+    """Autonomous System Number Match Operator."""
+    CLIENT_FINGERPRINT = "ClientFingerprint"
+    """Client Finger print Operator."""
+
+
+class ParanoiaLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OWASP CRS paranoia level of a managed rule. Applicable only for DRS rules."""
+
+    PL1 = "PL1"
+    """Paranoia level 1."""
+    PL2 = "PL2"
+    """Paranoia level 2."""
+    PL3 = "PL3"
+    """Paranoia level 3."""
+    PL4 = "PL4"
+    """Paranoia level 4."""
 
 
 class PolicyEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -730,6 +799,10 @@ class VariableName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GeoLocation."""
     NONE = "None"
     """None."""
+    ASN = "Asn"
+    """Autonomous System Number."""
+    JA4 = "Ja4"
+    """JA4 TLS fingerprint."""
 
 
 class WebApplicationFirewallScrubbingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
