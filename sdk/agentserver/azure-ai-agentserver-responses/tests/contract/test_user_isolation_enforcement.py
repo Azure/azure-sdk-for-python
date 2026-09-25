@@ -566,6 +566,68 @@ async def test_reservation_only_create_cannot_access_another_users_stored_respon
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["create", "replay", "delete"])
+async def test_cold_file_replay_is_discovered_without_creating_absent_streams(tmp_path, monkeypatch, operation):
+    from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
+    from azure.ai.agentserver.responses.hosting import _endpoint_handler
+    from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
+
+    provider = _PartitionedProvider()
+    host = ResponsesAgentServerHost(store=provider)
+    host.response_handler(_noop_handler)
+    client = _AsyncAsgiClient(host)
+    response_id = IdGenerator.new_response_id()
+    stream_id = derive_lifecycle_id(response_id, "owner")
+    storage_dir = tmp_path / "replay"
+    owner_headers = {"x-agent-user-id": "owner"}
+    await provider.create_response(
+        {"id": response_id, "status": "completed", "model": "test", "background": True, "output": []},
+        input_items=[],
+        history_item_ids=[],
+        context=PlatformContext(user_id_key="owner"),
+    )
+    first = _StreamsRegistry()
+    first.use_file_backed_replay(storage_dir=storage_dir, cursor_fn=lambda event: event["sequence_number"])
+    original = await first.get_or_create(stream_id)
+    await original.emit({"type": "response.output_text.delta", "sequence_number": 0, "delta": "owner-private"})
+    await original.close()
+    original._cleanup_locks()
+    restarted = _StreamsRegistry()
+    restarted.use_file_backed_replay(storage_dir=storage_dir, cursor_fn=lambda event: event["sequence_number"])
+    monkeypatch.setattr(_endpoint_handler, "streams", restarted)
+    try:
+        before = set(storage_dir.iterdir())
+        denied = await client.get(f"/responses/{response_id}?stream=true", headers={"x-agent-user-id": "other"})
+        assert denied.status_code == 404
+        assert set(storage_dir.iterdir()) == before
+        assert not restarted._slots
+
+        if operation == "create":
+            collision = await client.post(
+                "/responses", json_body={"response_id": response_id, "model": "test"}, headers=owner_headers
+            )
+            assert collision.status_code == 409
+            assert collision.json()["error"]["code"] == "response_id_conflict"
+            other = await client.post(
+                "/responses",
+                json_body={"response_id": response_id, "model": "test", "store": False},
+                headers={"x-agent-user-id": "other"},
+            )
+            assert other.status_code == 200
+            assert set(storage_dir.glob("*.jsonl")) == before
+        elif operation == "replay":
+            replay = await client.get(f"/responses/{response_id}?stream=true", headers=owner_headers)
+            assert replay.status_code == 200, replay.body
+            assert b"owner-private" in replay.body
+        else:
+            deleted = await client.request("DELETE", f"/responses/{response_id}", headers=owner_headers)
+            assert deleted.status_code == 200, deleted.body
+            assert list(storage_dir.iterdir()) == []
+    finally:
+        await restarted.delete(stream_id)
+
+
+@pytest.mark.asyncio
 async def test_recovered_streaming_tasks_use_their_durable_user_partition(monkeypatch):
     from types import SimpleNamespace
     from azure.ai.agentserver.responses.hosting import _resilient_orchestrator

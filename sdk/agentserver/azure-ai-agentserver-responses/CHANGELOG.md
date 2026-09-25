@@ -33,6 +33,8 @@
   partition returns HTTP 409 while execution or replay is retained.
 - Require a successful user-scoped provider lookup before replaying stored SSE
   events; storage errors no longer fall through to cached replay.
+- Require Core 2.2.1 so retained file replay is discovered after restart for
+  duplicate admission, authorized replay, and deletion.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
