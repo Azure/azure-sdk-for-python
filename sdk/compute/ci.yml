@@ -39,3 +39,5 @@ extends:
       safeName: azuremgmtavs
     - name: azure-mgmt-compute-bulkaction
       safeName: azuremgmtcomputebulkaction
+    - name: azure-mgmt-computeworkloadmanager
+      safeName: azuremgmtcomputeworkloadmanager
