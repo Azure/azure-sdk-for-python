@@ -273,6 +273,7 @@ class _StreamsRegistry:
                 logger.warning(
                     "EventStream %s: _on_delete cleanup hook failed during auto-tombstone", id, exc_info=True
                 )
+                raise
         self._slots[id] = _TOMBSTONE
         logger.debug("EventStream %s auto-tombstoned (close-clock TTL elapsed)", id)
         return True

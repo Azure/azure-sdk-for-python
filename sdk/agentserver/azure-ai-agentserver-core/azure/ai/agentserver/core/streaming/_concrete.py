@@ -836,8 +836,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             self._cleanup_locks()
             try:
                 self._path.unlink(missing_ok=True)
-            except Exception:  # pylint: disable=broad-except
-                pass
+            except OSError:
+                logger.error("FileBackedReplayEventStream: failed to delete %s", self._path, exc_info=True)
+                raise
 
 
 __all__ = [

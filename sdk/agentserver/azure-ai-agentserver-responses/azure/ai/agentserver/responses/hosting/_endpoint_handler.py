@@ -1578,6 +1578,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
                     )
 
+        # Keep ownership state available for retry if backing cleanup fails.
+        try:
+            await streams.delete(derive_lifecycle_id(response_id, _context.user_id_key))
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Stream delete failed for response_id=%s", response_id, exc_info=True)
+            return _error_response(exc, _hdrs)
+
         deleted = await self._runtime_state.delete(response_id, _context.user_id_key)
         if not deleted:
             # Race: the background task's eager eviction (try_evict) removed
@@ -1596,19 +1603,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 await self._provider.delete_response(response_id, context=_extract_platform_context(request))
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
-            # Tear down the per-response stream — frees the registry slot,
-            # installs the deletion tombstone (so subsequent GET ?stream=true
-            # raises Gone, mapped to 404 below), and removes the on-disk log
-            # for the file-backed backing.
-            try:
-                await streams.delete(derive_lifecycle_id(response_id, _context.user_id_key))
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Best-effort stream delete failed for response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
-
         logger.info("Deleted response %s", response_id)
         return JSONResponse(
             {"id": response_id, "object": "response", "deleted": True},
@@ -1630,8 +1624,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         Returns a :class:`Response` on success or on a deterministic error
         (bad request, API error).  Returns ``None`` when the provider
-        reports the response as not found **or** when an unexpected error
-        occurs (logged at DEBUG), so the caller can fall through to 404.
+        reports the response as not found. Unexpected errors are logged and
+        returned as errors, preserving ownership for a cleanup retry.
 
         :param response_id: The response ID to delete.
         :type response_id: str
@@ -1643,17 +1637,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response | None
         """
         try:
+            # Authorize before touching replay, and retain provider ownership
+            # until backing cleanup succeeds so a failed DELETE can be retried.
+            await self._provider.get_response(response_id, context=context)
+            await streams.delete(derive_lifecycle_id(response_id, context.user_id_key))
             await self._provider.delete_response(response_id, context=context)
-            # Tear down the per-response stream — same as the in-memory
-            # delete path above.
-            try:
-                await streams.delete(derive_lifecycle_id(response_id, context.user_id_key))
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Best-effort stream delete failed for response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
             # Mark as deleted in runtime state so subsequent requests get 404
             await self._runtime_state.mark_deleted(response_id, context.user_id_key)
             logger.info("Deleted response %s via provider", response_id)
@@ -1669,13 +1657,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except FoundryApiError as exc:
             logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
             return _error_response(exc, headers)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug(
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
                 "Provider fallback failed for DELETE response_id=%s",
                 response_id,
                 exc_info=True,
             )
-            return None
+            return _error_response(exc, headers)
 
     async def handle_cancel(self, request: Request) -> Response:
         """Route handler for ``POST /responses/{response_id}/cancel``.
