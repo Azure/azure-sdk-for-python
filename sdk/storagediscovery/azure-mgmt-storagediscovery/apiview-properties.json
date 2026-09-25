@@ -44,5 +44,5 @@
         "azure.mgmt.storagediscovery.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.storagediscovery.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
     },
-    "CrossLanguageVersion": "017e1be50596"
+    "CrossLanguageVersion": "5f2dee4da2d7"
 }

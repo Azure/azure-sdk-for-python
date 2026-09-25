@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.StorageDiscovery": "2026-10-01-preview"
   },
-  "commit": "f438548671e7f80bec48182a8428f4339d088337",
+  "commit": "6d8c4205a2065b9e0d463820a53a5e12e10e7db7",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/storagediscovery/resource-manager/Microsoft.StorageDiscovery/StorageDiscovery",
   "emitterVersion": "0.63.7",
