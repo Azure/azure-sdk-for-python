@@ -71,6 +71,7 @@ from ..streaming._state_machine import EventStreamValidator
 from ._execution_context import _ExecutionContext
 from ._dispatch import decide_disposition
 from ._runtime_state import _RuntimeState
+from ._task_id import derive_lifecycle_id
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -1995,7 +1996,7 @@ class _ResponseOrchestrator:
             # ctx.store`` because only Row 1 used the wire_stream pattern;
             # unified Row 2/3 stream now also subscribe to wire_stream and need
             # the terminal emit.
-            _term_stream = await streams.get_or_create(ctx.response_id)
+            _term_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_term_stream, state.pending_terminal)
 
     async def _resolve_emit_and_defer_terminal_persist(
@@ -2162,7 +2163,7 @@ class _ResponseOrchestrator:
         # guarantees the same instance for the same id, so any other caller
         # that does ``streams.get_or_create(response_id)`` for this id sees
         # the same fan-out target.
-        execution.subject = await streams.get_or_create(ctx.response_id)
+        execution.subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         state.bg_record = execution
         assert state.bg_record.subject is not None
         # Attach the draining task (set by the in-process store=True fallback)
@@ -2359,7 +2360,7 @@ class _ResponseOrchestrator:
             }
         )
         if ctx.store and ctx.stream:
-            _err_stream = await streams.get_or_create(ctx.response_id)
+            _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_err_stream, event)
         return event
 
@@ -2415,7 +2416,7 @@ class _ResponseOrchestrator:
                 # yet — bind the per-response stream so the wire iterator sees the
                 # fallback events. Skip terminal (the caller emits the resolved one).
                 if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
-                    _fallback_stream = await streams.get_or_create(ctx.response_id)
+                    _fallback_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                     await self._safe_emit(_fallback_stream, event)
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
                     state.pending_terminal = event
@@ -2639,7 +2640,7 @@ class _ResponseOrchestrator:
                 error_code="storage_error",
                 error_message=_STORAGE_ERROR_MESSAGE,
             )
-            _wire_stream = await streams.get_or_create(ctx.response_id)
+            _wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_wire_stream, first_normalized)
             evs.append(first_normalized)
             # Build, validate, and APPEND the terminal BEFORE emitting it so a
@@ -2668,7 +2669,7 @@ class _ResponseOrchestrator:
                 "sequence_number": 0,
             }
         )
-        _err_stream = await streams.get_or_create(ctx.response_id)
+        _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         await self._safe_emit(_err_stream, error_event)
         evs.append(error_event)
         return True, evs
@@ -2919,7 +2920,7 @@ class _ResponseOrchestrator:
             # ``GET ?stream=true`` correctly reports "no stream available".
             if record.status == "cancelled":
                 try:
-                    await streams.delete(ctx.response_id)
+                    await streams.delete(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
                         "Cancelled stream cleanup failed (response_id=%s)",
@@ -3030,7 +3031,7 @@ class _ResponseOrchestrator:
         # for them, so no stream is needed.
         replay_subject: EventStream | None = None
         if ctx.store and ctx.background:
-            replay_subject = await streams.get_or_create(ctx.response_id)
+            replay_subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_close(replay_subject)
 
         execution = ResponseExecution(
@@ -3208,7 +3209,7 @@ class _ResponseOrchestrator:
             # same instance for the same id, so the resilient body's
             # ``_register_bg_execution`` gets back this exact stream — every
             # emit fans out to the wire iterator below.
-            wire_stream = await streams.get_or_create(ctx.response_id)
+            wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
 
             async def _resilient_stream_fallback() -> None:
                 # In-process fallback if ``_start_resilient_background`` cannot
@@ -4150,7 +4151,7 @@ class _ResponseOrchestrator:
         # the registry returns the SAME instance — every emit fans out to
         # the wire iterator. Bind it on ``record`` so the helpers that read
         # ``record.subject`` (publish, close) target this stream.
-        wire_stream = await streams.get_or_create(response_id)
+        wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
         record.subject = wire_stream
         # Seed the per-attempt sequence counter from the prior persisted
         # event count. On fresh entry the persisted log is empty →
@@ -4166,8 +4167,8 @@ class _ResponseOrchestrator:
         except EventStreamNotFoundError:
             # The previous run completed AND every persisted event has
             # since expired. Start fresh.
-            await streams.delete(response_id)
-            wire_stream = await streams.get_or_create(response_id)
+            await streams.delete(derive_lifecycle_id(response_id, ctx.user_id))
+            wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
             record.subject = wire_stream
             state.next_seq = 0
         except Exception:  # pylint: disable=broad-exception-caught
