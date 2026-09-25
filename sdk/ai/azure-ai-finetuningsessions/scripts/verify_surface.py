@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import asyncio
 import base64
 from contextlib import redirect_stdout
 from copy import deepcopy
 from enum import Enum
+from functools import lru_cache, reduce
 import importlib
 import importlib.util
 import inspect
 import json
 import logging
+import operator
 from pathlib import Path
 import platform
 import subprocess
@@ -75,6 +78,33 @@ def typename(value):
     return str(value).replace("typing.", "")
 
 
+def _resolve_annotation(value, namespace):
+    """Use public typing APIs, including forward arguments in Python 3.10 aliases."""
+    if isinstance(value, list):  # Callable argument lists are not annotations themselves.
+        return [_resolve_annotation(item, namespace) for item in value]
+    holder = types.SimpleNamespace(__annotations__={"value": value})
+    result = typing.get_type_hints(
+        holder, globalns=namespace, localns=namespace, include_extras=True
+    )["value"]
+    origin, args = typing.get_origin(result), typing.get_args(result)
+    if origin is typing.Literal or origin is None:
+        return result
+    if origin is typing.Annotated:
+        return typing.Annotated[(_resolve_annotation(args[0], namespace), *args[1:])]
+    resolved = tuple(_resolve_annotation(arg, namespace) for arg in args)
+    if origin is typing.Union:
+        return typing.Union[resolved]
+    if origin is types.UnionType:
+        return reduce(operator.or_, resolved)
+    if isinstance(result, types.GenericAlias):
+        return types.GenericAlias(origin, resolved)
+    # typing's own aliases already resolve their direct ForwardRefs. Rebuild
+    # only when a nested built-in generic retained a string on Python 3.10.
+    if resolved != args:
+        return origin[resolved[0] if len(resolved) == 1 else resolved]
+    return result
+
+
 def evaluate(value, owner, models):
     """Resolve names only; retain unions, requiredness and all nested types."""
     namespace = dict(vars(typing))
@@ -91,9 +121,64 @@ def evaluate(value, owner, models):
     namespace["_unions"] = unions
     namespace["TokenCredential"] = importlib.import_module("azure.core.credentials").TokenCredential
     namespace["AsyncTokenCredential"] = importlib.import_module("azure.core.credentials_async").AsyncTokenCredential
-    if isinstance(value, str):
-        value = typing.ForwardRef(value)
-    return typing._eval_type(value, namespace, namespace, type_params=())
+    return _resolve_annotation(value, namespace)
+
+
+@lru_cache(maxsize=None)
+def _source_tree(filename):
+    return ast.parse(Path(filename).read_text(encoding="utf-8-sig"), filename=filename)
+
+
+def _source_overloads(function):
+    """Recover declared signatures when Python 3.10 does not retain overloads.
+
+    Only signature definitions are compiled. Original decorators and bodies are
+    never executed, and missing source for a Python function is an error rather
+    than silently losing overload coverage.
+    """
+    function = inspect.unwrap(function)
+    if not inspect.isfunction(function):
+        return []
+    filename = inspect.getsourcefile(function)
+    if filename is None:
+        raise ValueError(f"Cannot inspect overload source for {function.__qualname__}")
+    body = _source_tree(filename).body
+    parts = [part for part in function.__qualname__.split(".") if part != "<locals>"]
+    definitions = (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+    for part in parts[:-1]:
+        scopes = [node for node in body if isinstance(node, definitions) and node.name == part]
+        if not scopes:
+            raise ValueError(f"Cannot locate overload scope for {function.__qualname__}")
+        body = scopes[-1].body
+    result = []
+    for node in body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) or node.name != parts[-1]:
+            continue
+        if not any(
+            (isinstance(decorator, ast.Name) and decorator.id == "overload")
+            or (isinstance(decorator, ast.Attribute) and decorator.attr == "overload")
+            for decorator in node.decorator_list
+        ):
+            continue
+        definition = deepcopy(node)
+        definition.decorator_list = []
+        definition.body = [ast.Pass()]
+        module = ast.Module(
+            body=[ast.ImportFrom(module="__future__", names=[ast.alias(name="annotations")], level=0), definition],
+            type_ignores=[],
+        )
+        namespace = dict(vars(sys.modules[function.__module__]))
+        exec(compile(ast.fix_missing_locations(module), filename, "exec"), namespace)
+        overload = namespace[definition.name]
+        overload.__qualname__ = function.__qualname__
+        result.append(overload)
+    return result
+
+
+def declared_overloads(function):
+    function = inspect.unwrap(function)
+    get_overloads = getattr(typing, "get_overloads", None)
+    return get_overloads(function) if get_overloads is not None else _source_overloads(function)
 
 
 def signature(function, models):
@@ -146,7 +231,7 @@ def surface(input_chunk_discriminator=False):
             }
         report["models"][name] = {
             "signature": signature(cls.__init__, models),
-            "overloads": [signature(fn, models) for fn in typing.get_overloads(cls.__init__)],
+            "overloads": [signature(fn, models) for fn in declared_overloads(cls.__init__)],
             "fields": metadata,
             "properties": sorted(n for n in dir(cls) if not n.startswith("_") and isinstance(inspect.getattr_static(cls, n), property)),
         }
@@ -170,7 +255,7 @@ def surface(input_chunk_discriminator=False):
                 if callable(function):
                     methods[method] = {
                         "signature": signature(function, models),
-                        "overloads": [signature(fn, models) for fn in typing.get_overloads(inspect.unwrap(function))],
+                        "overloads": [signature(fn, models) for fn in declared_overloads(function)],
                     }
             report["clients"][suffix + "." + name] = methods
     # Every public model gets mapping/keyword construction and serialization.

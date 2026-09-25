@@ -9,7 +9,7 @@
   "package_name": "azure-ai-finetuningsessions",
   "purpose": "immutable-source-oracle; file hashes describe the reference, not the regenerated runtime",
   "generation_parity": "validated-public-api-and-offline-behavior",
-  "generation_provenance": "generation-provenance.json",
+  "generation_provenance": "eng/generation/provenance.json",
   "normalizations": [
     {
       "from": "azure.ai.finetuning_sessions",

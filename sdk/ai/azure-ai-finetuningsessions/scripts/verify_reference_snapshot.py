@@ -53,7 +53,34 @@ def load_manifest(package: Path = PACKAGE) -> dict:
         path = PurePosixPath(name)
         if path.is_absolute() or ".." in path.parts or path.parts[0] not in {"azure", "tests"}:
             raise ValueError(f"Invalid snapshot path: {name}")
+    _validate_generation_provenance(package, manifest)
     return manifest
+
+
+def _validate_generation_provenance(package: Path, manifest: dict) -> None:
+    """Require a real, package-local record that points back to this oracle."""
+    link = manifest.get("generation_provenance")
+    if not isinstance(link, str) or not link or "\\" in link or ":" in link:
+        raise ValueError("Invalid generation provenance path")
+    relative = PurePosixPath(link)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValueError("Generation provenance must stay within the package")
+    target = (package / link).resolve()
+    if not target.is_relative_to(package.resolve()) or not target.is_file():
+        raise ValueError(f"Generation provenance target is missing or outside the package: {link}")
+    provenance = json.loads(target.read_text(encoding="utf-8"))
+    if not isinstance(provenance, dict) or provenance.get("schema_version") != 1:
+        raise ValueError("Unsupported generation provenance record")
+    reference = provenance.get("reference")
+    if (
+        provenance.get("namespace") != manifest["namespace"]
+        or provenance.get("distribution") != manifest["package_name"]
+        or not isinstance(reference, dict)
+        or reference.get("repository") != manifest["source_repository"]
+        or reference.get("commit") != manifest["source_commit"]
+        or reference.get("manifest") != "eng/generation/reference.json"
+    ):
+        raise ValueError("Generation provenance does not identify this package and immutable reference")
 
 
 def snapshot_files(package: Path) -> dict[str, bytes]:
