@@ -4,12 +4,54 @@
 
 from __future__ import annotations
 
+import pytest
+
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting._chain_id import derive_conversation_chain_id
 from azure.ai.agentserver.responses.hosting._task_id import (
+    derive_lifecycle_id,
     derive_task_id,
     derive_task_session_scope,
 )
+
+
+def test_lifecycle_id_keeps_anonymous_compatibility_and_separates_user_keys():
+    response_id = "caresp_shared"
+    assert derive_lifecycle_id(response_id, None) == response_id
+    keys = [derive_lifecycle_id(response_id, user) for user in [None, "", "anonymous", "user-A", "user-B", "\u00e9"]]
+    assert len(set(keys)) == len(keys)
+    assert derive_lifecycle_id("bc", "a") != derive_lifecycle_id("c", "ab")
+    assert derive_lifecycle_id(response_id, "user-A") == derive_lifecycle_id(response_id, "user-A")
+
+
+@pytest.mark.asyncio
+async def test_user_scoped_file_replay_survives_restart_without_legacy_fallback(tmp_path):
+    from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
+    from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
+
+    response_id = "caresp_shared"
+    first = _StreamsRegistry()
+    first.use_file_backed_replay(storage_dir=tmp_path, cursor_fn=lambda event: event["sequence_number"])
+    for user in [None, "user-A", "user-B"]:
+        stream = await first.get_or_create(derive_lifecycle_id(response_id, user))
+        await stream.emit({"sequence_number": 0, "owner": user})
+        await stream.close()
+        # Release process-owned handles without deleting the persisted replay.
+        stream._cleanup_locks()
+
+    restarted = _StreamsRegistry()
+    restarted.use_file_backed_replay(storage_dir=tmp_path, cursor_fn=lambda event: event["sequence_number"])
+    for user in [None, "user-A", "user-B"]:
+        stream = await restarted.get_or_create(derive_lifecycle_id(response_id, user))
+        events = [event async for event in stream.subscribe()]
+        assert events == [{"sequence_number": 0, "owner": user}]
+    await restarted.delete(derive_lifecycle_id(response_id, "user-A"))
+    with pytest.raises(EventStreamNotFoundError):
+        await restarted.get(derive_lifecycle_id(response_id, "user-A"))
+    other = await restarted.get(derive_lifecycle_id(response_id, "user-B"))
+    assert [event async for event in other.subscribe()] == [{"sequence_number": 0, "owner": "user-B"}]
+    await restarted.delete(derive_lifecycle_id(response_id, "user-B"))
+    await restarted.delete(response_id)
 
 
 class TestTaskIdDerivation:
@@ -198,10 +240,7 @@ class TestTaskIdDerivation:
         assert first != second
 
     def test_task_session_scope_without_guid_is_legacy_session(self) -> None:
-        assert (
-            derive_task_session_scope(session_id="public-session", session_guid=None)
-            == "public-session"
-        )
+        assert derive_task_session_scope(session_id="public-session", session_guid=None) == "public-session"
 
     def test_parallel_forks_get_distinct_ids(self) -> None:
         """Two requests with same previous_response_id but steerable=False

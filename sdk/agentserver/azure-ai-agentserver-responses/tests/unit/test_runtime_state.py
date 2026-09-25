@@ -76,24 +76,40 @@ async def test_same_id_records_are_partitioned_by_user() -> None:
     assert await state.get(response_id, "user-A") is user_a
     assert await state.get(response_id, "user-B") is user_b
     assert await state.get(response_id) is None
-    assert await state.contains_live_response_id(response_id) is True
 
 
 @pytest.mark.asyncio
-async def test_reserve_rejects_duplicate_live_id_across_users() -> None:
+async def test_reserve_rejects_duplicate_live_id_only_within_user() -> None:
     state = _RuntimeState()
     response_id = "caresp_reserved0000000000000000000000"
 
     assert await state.reserve(response_id, "user-A") is True
-    assert await state.reserve(response_id, "user-B") is False
+    assert await state.reserve(response_id, "user-A") is False
+    assert await state.reserve(response_id, "user-B") is True
 
     await state.release_reservation(response_id, "user-A")
-    assert await state.reserve(response_id, "user-B") is True
+    assert await state.reserve(response_id, "user-A") is True
+    assert await state.reserve(response_id, "user-B") is False
 
 
 def test_anonymous_user_isolation_is_not_a_wildcard() -> None:
     assert _RuntimeState.check_user_isolation(None, None) is True
     assert _RuntimeState.check_user_isolation(None, "user-A") is False
+
+
+@pytest.mark.asyncio
+async def test_reservation_survives_publication_and_eviction_until_request_cleanup():
+    state = _RuntimeState()
+    record = _make_execution("shared", user_id_key="user-A", status="completed")
+    assert await state.reserve("shared", "user-A")
+    assert await state.add_pending(record)
+    await state.add(record)
+    assert await state.try_evict("shared", "user-A")
+    assert not await state.reserve("shared", "user-A")
+    assert await state.reserve("shared", "user-B")
+    await state.release_reservation("shared", "user-A")
+    assert await state.reserve("shared", "user-A")
+    assert not await state.reserve("shared", "user-B")
 
 
 # ---------------------------------------------------------------------------

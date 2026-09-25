@@ -74,11 +74,7 @@ class _RuntimeState:
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
-            if any(existing_key[1] == response_id for existing_key in self._records):
-                return False
-            if any(existing_key[1] == response_id for existing_key in self._pending_records):
-                return False
-            if any(existing_key[1] == response_id for existing_key in self._reservations):
+            if key in self._records or key in self._pending_records or key in self._reservations:
                 return False
             self._reservations.add(key)
             return True
@@ -105,7 +101,6 @@ class _RuntimeState:
         """
         key = _runtime_key(record.response_id, record.user_id_key)
         async with self._lock:
-            self._reservations.discard(key)
             self._pending_records.pop(key, None)
             self._records[key] = record
             self._deleted_response_ids.discard(key)
@@ -124,7 +119,6 @@ class _RuntimeState:
                 return False
             if key in self._records or key in self._pending_records:
                 return False
-            self._reservations.discard(key)
             self._pending_records[key] = record
             return True
 
@@ -163,19 +157,6 @@ class _RuntimeState:
         """
         async with self._lock:
             return self._records.get(_runtime_key(response_id, user_id_key))
-
-    async def contains_live_response_id(self, response_id: str) -> bool:
-        """Return whether any user partition currently owns this live response ID.
-
-        :param response_id: The response identifier to look up.
-        :type response_id: str
-        :return: Whether a published or pending execution owns the ID.
-        :rtype: bool
-        """
-        async with self._lock:
-            return any(key[1] == response_id for key in self._records) or any(
-                key[1] == response_id for key in self._pending_records
-            )
 
     async def is_deleted(self, response_id: str, user_id_key: str | None = None) -> bool:
         """Check whether a response ID has been deleted.
