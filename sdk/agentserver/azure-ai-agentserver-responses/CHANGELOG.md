@@ -16,6 +16,9 @@
   automatic truncation of conversation history. Positive limits remain supported.
 - Restored compatibility with usage payloads that omit
   `ResponseUsageInputTokensDetails.cache_write_tokens`.
+- Prevented per-request `user_agent` options from leaking through
+  `FoundryStorageProvider` to the HTTP transport when a server-version callback
+  is configured.
 - The per-request span flush in the Responses endpoint no longer blocks the
   asyncio event loop. The synchronous `flush_spans()` call in the request
   `finally` block ran `TracerProvider.force_flush` inline, which blocks the

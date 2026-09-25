@@ -88,7 +88,15 @@ class _ServerVersionUserAgentPolicy(SansIOHTTPPolicy):  # type: ignore[type-arg]
         :param request: The pipeline request.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        request.http_request.headers["User-Agent"] = self._get_server_version()
+        options = request.context.options
+        if "user_agent" in options:
+            user_agent = options.pop("user_agent")
+            if options.pop("user_agent_overwrite", False):
+                request.http_request.headers["User-Agent"] = user_agent
+            else:
+                request.http_request.headers["User-Agent"] = f"{user_agent} {self._get_server_version()}"
+        else:
+            request.http_request.headers["User-Agent"] = self._get_server_version()
 
 
 def _encode(value: str) -> str:

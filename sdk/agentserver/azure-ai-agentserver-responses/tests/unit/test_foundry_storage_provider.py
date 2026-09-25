@@ -14,6 +14,8 @@ from azure.ai.agentserver.core._platform_headers import (
     FOUNDRY_CALL_ID as _CALL_ID_HEADER,
     USER_ID as _USER_ID_HEADER,
 )
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.rest import HttpRequest
 
 from azure.ai.agentserver.responses._response_context import PlatformContext
 from azure.ai.agentserver.responses import ResponseEventStream
@@ -24,9 +26,23 @@ from azure.ai.agentserver.responses.store._foundry_errors import (
 )
 from azure.ai.agentserver.responses.store._foundry_provider import (
     FoundryStorageProvider,
+    _ServerVersionUserAgentPolicy,
 )
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
 from azure.ai.agentserver.responses.models import ResponseObject
+
+def test_server_version_user_agent_policy_consumes_per_request_options() -> None:
+    request = PipelineRequest(
+        HttpRequest("GET", "https://foundry.example.com"),
+        PipelineContext(None, user_agent="caller/1.0", user_agent_overwrite=False),
+    )
+
+    _ServerVersionUserAgentPolicy(lambda: "server/2.0").on_request(request)
+
+    assert request.http_request.headers["User-Agent"] == "caller/1.0 server/2.0"
+    assert "user_agent" not in request.context.options
+    assert "user_agent_overwrite" not in request.context.options
+
 
 # ---------------------------------------------------------------------------
 # Helpers
