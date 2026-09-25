@@ -27,8 +27,9 @@
   requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
   cleanup, without an additional pre-stream flush.
-- Partition `InMemoryResponseProvider` responses, items, history, and legacy replay
-  state by the platform user key, keeping anonymous local state separate.
+- Partition local in-memory and file-backed responses, items, history, and
+  conversation indexes by the platform user key, keeping anonymous local state
+  separate.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
@@ -54,6 +55,15 @@
 - Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
+
+### Breaking Changes
+
+- `FileResponseStore` now persists data under user-scoped
+  `partitions-v1/{anonymous|user-hash}` directories. Existing files in the
+  previous unpartitioned layout remain unchanged but are not read or migrated
+  automatically, because their user ownership cannot be established safely.
+  Back up and explicitly migrate any required local data into the correct
+  partition only after independently verifying its ownership.
 
 ## 2.2.0b1 (2026-08-27)
 
