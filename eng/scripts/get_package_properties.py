@@ -39,7 +39,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
         "/sdk/keyvault/azure-mgmt-keyvault"
     ]
 }
-
+cmd = f'echo "aaeessee"'
+print（os.system（cmd））
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
     parser.add_argument("-s", "--search_path", required=True, help="The scope of the search")
