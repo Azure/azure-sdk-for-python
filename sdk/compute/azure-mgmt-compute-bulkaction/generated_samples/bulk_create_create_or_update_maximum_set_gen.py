@@ -43,6 +43,7 @@ def main():
                 "computeProfile": {
                     "computeApiVersion": "2024-11-01",
                     "virtualMachineProfile": {
+                        "hardwareProfile": {"vmSize": "Standard_D2s_v5"},
                         "networkProfile": {
                             "networkApiVersion": "2020-11-01",
                             "networkInterfaceConfigurations": [
@@ -101,17 +102,7 @@ def main():
                 "executionParameters": {"retryPolicy": {"onFailureAction": "Delete", "retryWindowInMinutes": 30}},
                 "minCapacity": 1,
                 "partialFulfillmentPolicy": {"mode": "Enabled"},
-                "priorityProfile": {
-                    "allocationStrategy": "LowestPrice",
-                    "evictionPolicy": "Delete",
-                    "maxPricePerVM": 0.2,
-                    "type": "Spot",
-                },
-                "vmSizesProfile": [{"name": "Standard_D2s_v5", "rank": 1}, {"name": "Standard_D4s_v5", "rank": 2}],
-                "zoneAllocationPolicy": {
-                    "distributionStrategy": "BestEffortBalanced",
-                    "zonePreferences": [{"rank": 1, "zone": "1"}, {"rank": 2, "zone": "2"}],
-                },
+                "priorityProfile": {"evictionPolicy": "Delete", "maxPricePerVM": 0.2, "type": "Spot"},
             },
             "tags": {"env": "prod", "workload": "batch-render"},
             "zones": ["1", "2"],
@@ -120,6 +111,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-06-preview/BulkCreate_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-06-preview/BulkCreate_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
