@@ -388,26 +388,30 @@ class ArtifactCache:
         artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
         # Use lock to avoid downloading the same package at the same time.
         with self._download_locks[artifact_package_path]:
-            if self._check_artifacts(artifact_package_path):
-                # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
-                return artifact_package_path.absolute().resolve()
-            if not resolve:
-                return None
-            if artifact_package_path.exists():
-                # Another process may have published the payload but not its checksum yet.
-                for attempt in range(self._CACHE_PUBLISH_RETRIES):
-                    try:
-                        artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
-                        checksum_exists = self._get_checksum_path(artifact_package_path).exists()
+            cache_exists = False
+            for attempt in range(self._CACHE_PUBLISH_RETRIES):
+                try:
+                    if attempt == 0:
                         if self._check_artifacts(artifact_package_path):
                             return artifact_package_path.absolute().resolve()
-                        if checksum_exists:
-                            break
-                    except PermissionError:
-                        if attempt + 1 == self._CACHE_PUBLISH_RETRIES:
-                            raise
-                    time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
+                        if not resolve:
+                            return None
+                    artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
+                    cache_exists = artifact_package_path.exists()
+                    if not cache_exists:
+                        break
+                    # Another process may have published the payload but not its checksum yet.
+                    checksum_exists = self._get_checksum_path(artifact_package_path).exists()
+                    if self._check_artifacts(artifact_package_path):
+                        return artifact_package_path.absolute().resolve()
+                    if checksum_exists:
+                        break
+                except PermissionError:
+                    if not resolve or attempt + 1 == self._CACHE_PUBLISH_RETRIES:
+                        raise
+                time.sleep(self._CACHE_PUBLISH_RETRY_DELAY)
 
+            if cache_exists:
                 artifact_package_path = self._get_cache_path(organization, project, feed, name, version)
                 if self._check_artifacts(artifact_package_path):
                     return artifact_package_path.absolute().resolve()
