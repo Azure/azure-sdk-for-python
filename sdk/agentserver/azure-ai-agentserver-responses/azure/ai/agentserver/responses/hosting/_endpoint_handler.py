@@ -1009,7 +1009,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
                 exc.actual_last_input_id,
             )
-            err_body = {
+            err_body: dict[str, dict[str, str | None]] = {
                 "error": {
                     "message": (
                         "This agent does not support conversation forking. "
