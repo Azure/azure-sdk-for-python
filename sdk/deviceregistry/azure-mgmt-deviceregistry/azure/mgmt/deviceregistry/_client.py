@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -22,8 +23,10 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AssetEndpointProfilesOperations,
     AssetsOperations,
+    AsyncOperationStatusOperations,
     BillingContainersOperations,
-    CredentialsOperations,
+    CertificateAuthoritiesOperations,
+    CertificatePoliciesOperations,
     NamespaceAssetsOperations,
     NamespaceDevicesOperations,
     NamespaceDiscoveredAssetsOperations,
@@ -31,24 +34,32 @@ from .operations import (
     NamespacesOperations,
     OperationStatusOperations,
     Operations,
-    PoliciesOperations,
+    RegistryDevicesOperations,
     SchemaRegistriesOperations,
     SchemaVersionsOperations,
     SchemasOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
+class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Microsoft.DeviceRegistry Resource Provider management API.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.deviceregistry.operations.Operations
     :ivar operation_status: OperationStatusOperations operations
     :vartype operation_status: azure.mgmt.deviceregistry.operations.OperationStatusOperations
+    :ivar async_operation_status: AsyncOperationStatusOperations operations
+    :vartype async_operation_status:
+     azure.mgmt.deviceregistry.operations.AsyncOperationStatusOperations
     :ivar assets: AssetsOperations operations
     :vartype assets: azure.mgmt.deviceregistry.operations.AssetsOperations
     :ivar asset_endpoint_profiles: AssetEndpointProfilesOperations operations
@@ -58,10 +69,6 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     :vartype billing_containers: azure.mgmt.deviceregistry.operations.BillingContainersOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.deviceregistry.operations.NamespacesOperations
-    :ivar credentials: CredentialsOperations operations
-    :vartype credentials: azure.mgmt.deviceregistry.operations.CredentialsOperations
-    :ivar policies: PoliciesOperations operations
-    :vartype policies: azure.mgmt.deviceregistry.operations.PoliciesOperations
     :ivar namespace_assets: NamespaceAssetsOperations operations
     :vartype namespace_assets: azure.mgmt.deviceregistry.operations.NamespaceAssetsOperations
     :ivar namespace_devices: NamespaceDevicesOperations operations
@@ -78,6 +85,14 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     :vartype schemas: azure.mgmt.deviceregistry.operations.SchemasOperations
     :ivar schema_versions: SchemaVersionsOperations operations
     :vartype schema_versions: azure.mgmt.deviceregistry.operations.SchemaVersionsOperations
+    :ivar certificate_authorities: CertificateAuthoritiesOperations operations
+    :vartype certificate_authorities:
+     azure.mgmt.deviceregistry.operations.CertificateAuthoritiesOperations
+    :ivar certificate_policies: CertificatePoliciesOperations operations
+    :vartype certificate_policies:
+     azure.mgmt.deviceregistry.operations.CertificatePoliciesOperations
+    :ivar registry_devices: RegistryDevicesOperations operations
+    :vartype registry_devices: azure.mgmt.deviceregistry.operations.RegistryDevicesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -87,9 +102,9 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-03-01-preview". Default value is "2026-03-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -146,6 +161,9 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
         self.operation_status = OperationStatusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.async_operation_status = AsyncOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.assets = AssetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.asset_endpoint_profiles = AssetEndpointProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -154,8 +172,6 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.credentials = CredentialsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespace_assets = NamespaceAssetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -173,6 +189,15 @@ class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
         )
         self.schemas = SchemasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schema_versions = SchemaVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.certificate_authorities = CertificateAuthoritiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.certificate_policies = CertificatePoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_devices = RegistryDevicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

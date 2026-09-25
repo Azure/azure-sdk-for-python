@@ -38,13 +38,19 @@ class TestDeviceRegistryMgmtSchemaRegistriesOperations(AzureMgmtRecordedTestCase
             resource={
                 "location": "str",
                 "id": "str",
-                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "namespace": "str",
                     "storageAccountContainerUrl": "str",
                     "description": "str",
                     "displayName": "str",
+                    "outboundIdentity": {"type": "str", "userAssignedIdentity": "str"},
                     "provisioningState": "str",
                     "uuid": "str",
                 },
@@ -71,8 +77,17 @@ class TestDeviceRegistryMgmtSchemaRegistriesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             schema_registry_name="str",
             properties={
-                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
-                "properties": {"description": "str", "displayName": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "properties": {
+                    "description": "str",
+                    "displayName": "str",
+                    "outboundIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                },
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
