@@ -84,7 +84,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = self._create_generation_job_initial(
-                job=job,
+                body=job,
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
