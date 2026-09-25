@@ -73,18 +73,19 @@ async def test_envelope_stores_pointers_and_single_item_copy(tmp_path: Path) -> 
     await provider.create_response(_response("r1", output=items), None, None)
 
     # Envelope output entries are pointer stubs — NOT full content.
-    envelope = json.loads((root / "responses" / "r1.json").read_text())
+    partition = root / "partitions-v1" / "anonymous"
+    envelope = json.loads((partition / "responses" / "r1.json").read_text())
     out = envelope["output"]
     assert out == [{_ITEM_REF_KEY: "o1"}, {_ITEM_REF_KEY: "o2"}], out
 
     # The single copy of each item lives under items/.
     for iid, text in (("o1", "alpha"), ("o2", "beta")):
-        disk = json.loads((root / "items" / f"{iid}.json").read_text())
+        disk = json.loads((partition / "items" / f"{iid}.json").read_text())
         assert disk["id"] == iid
         assert disk["content"][0]["text"] == text
 
     # The write-only per-response items dir is gone.
-    assert not (root / "responses" / "r1.items").exists()
+    assert not (partition / "responses" / "r1.items").exists()
 
 
 # ---------------------------------------------------------------------------
@@ -131,7 +132,9 @@ async def test_mixed_idd_and_idless_output_positions(tmp_path: Path) -> None:
     assert fil_out == mem_out == mixed
 
     # On disk: A and C are stubs, B is inline.
-    envelope = json.loads((tmp_path / "store" / "responses" / "r1.json").read_text())
+    envelope = json.loads(
+        (tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text()
+    )
     assert envelope["output"][0] == {_ITEM_REF_KEY: "oA"}
     assert envelope["output"][1]["type"] == "reasoning"
     assert envelope["output"][2] == {_ITEM_REF_KEY: "oC"}
@@ -152,7 +155,9 @@ async def test_update_response_rehydrates(tmp_path: Path) -> None:
     assert [it["id"] for it in out] == ["o1", "o2"]
     assert out[1]["content"][0]["text"] == "second"
 
-    envelope = json.loads((tmp_path / "store" / "responses" / "r1.json").read_text())
+    envelope = json.loads(
+        (tmp_path / "store" / "partitions-v1" / "anonymous" / "responses" / "r1.json").read_text()
+    )
     assert envelope["output"] == [{_ITEM_REF_KEY: "o1"}, {_ITEM_REF_KEY: "o2"}]
 
 
@@ -169,7 +174,7 @@ async def test_missing_item_raises_non_notfound(tmp_path: Path) -> None:
     fil = FileResponseStore(storage_dir=root)
     await fil.create_response(_response("r1", output=[_output_item("o1", "x")]), None, None)
     # Corrupt the store: delete the item the envelope points at.
-    (root / "items" / "o1.json").unlink()
+    (root / "partitions-v1" / "anonymous" / "items" / "o1.json").unlink()
 
     with pytest.raises(Exception) as ei:  # noqa: PT011
         await fil.get_response("r1")
@@ -195,7 +200,7 @@ async def test_legacy_inline_envelope_still_reads(tmp_path: Path) -> None:
         "status": "completed",
         "output": [_output_item("o1", "x")],
     }
-    (root / "responses" / "r1.json").write_text(json.dumps(legacy, indent=2))
+    (root / "partitions-v1" / "anonymous" / "responses" / "r1.json").write_text(json.dumps(legacy, indent=2))
     out = _norm_output(await fil.get_response("r1"))
     assert out == [_output_item("o1", "x")]
 
@@ -231,9 +236,10 @@ async def test_no_history_json_history_in_indexes(tmp_path: Path) -> None:
         ["hist_a", "hist_b"],
     )
     # The redundant per-response history file is NOT written.
-    assert not (root / "responses" / "r1.history.json").exists()
+    partition = root / "partitions-v1" / "anonymous"
+    assert not (partition / "responses" / "r1.history.json").exists()
     # history_item_ids are persisted in indexes.json (the single source).
-    indexes = json.loads((root / "responses" / "r1.indexes.json").read_text())
+    indexes = json.loads((partition / "responses" / "r1.indexes.json").read_text())
     assert indexes["history_item_ids"] == ["hist_a", "hist_b"]
     # And history walking still resolves them.
     resolved = await fil.get_history_item_ids("r1", None, 100)
@@ -243,9 +249,10 @@ async def test_no_history_json_history_in_indexes(tmp_path: Path) -> None:
 @pytest.mark.asyncio
 async def test_legacy_history_json_cleaned_on_create(tmp_path: Path) -> None:
     root = tmp_path / "store"
-    (root / "responses").mkdir(parents=True)
+    responses = root / "partitions-v1" / "anonymous" / "responses"
+    responses.mkdir(parents=True)
     # Simulate a pre-normalization stray history file.
-    stray = root / "responses" / "r1.history.json"
+    stray = responses / "r1.history.json"
     stray.write_text(json.dumps({"history_item_ids": ["stale"]}))
     fil = FileResponseStore(storage_dir=root)
     await fil.create_response(_response("r1", output=[_output_item("o1")]), None, ["fresh"])
