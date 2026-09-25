@@ -740,6 +740,28 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             span.end(exc)
             return _error_response(exc, _hdrs)
 
+    async def _reserve_response_id(self, response_id: str, user_id_key: str | None) -> bool:
+        """Reserve an ID only when neither execution nor replay state retains it.
+
+        :param response_id: The response identifier to reserve.
+        :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
+        :return: Whether the caller acquired the reservation.
+        :rtype: bool
+        """
+        if not await self._runtime_state.reserve(response_id, user_id_key):
+            return False
+        available = False
+        try:
+            await streams.get(response_id)
+        except EventStreamNotFoundError:
+            available = True
+        finally:
+            if not available:
+                await self._runtime_state.release_reservation(response_id, user_id_key)
+        return available
+
     # ------------------------------------------------------------------
     # Route handlers
     # ------------------------------------------------------------------
@@ -876,7 +898,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         stream_owns_reservation = False
         reservation_acquired = False
         try:
-            if not await self._runtime_state.reserve(ctx.response_id, ctx.user_id):
+            if not await self._reserve_response_id(ctx.response_id, ctx.user_id):
                 span.end(None)
                 return JSONResponse(
                     {
@@ -891,25 +913,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     headers=self._session_headers(agent_session_id),
                 )
             reservation_acquired = True
-
-            try:
-                await streams.get(ctx.response_id)
-            except EventStreamNotFoundError:
-                pass
-            else:
-                span.end(None)
-                return JSONResponse(
-                    {
-                        "error": {
-                            "message": "A live response with this ID already exists.",
-                            "type": "conflict",
-                            "code": "response_id_conflict",
-                            "param": "response_id",
-                        }
-                    },
-                    status_code=409,
-                    headers=self._session_headers(agent_session_id),
-                )
 
             if ctx.stream:
                 raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
@@ -982,28 +985,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         strip_internal_metadata(snapshot),
                         status_code=200,
                         headers=self._session_headers(agent_session_id),
-                    )
-                except _HandlerError as exc:
-                    logger.error(
-                        "Handler error in sync create (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=exc.original,
-                    )
-                    # Handler errors are server-side faults, not client errors
-                    err_body = {
-                        "error": {
-                            "message": "internal server error",
-                            "type": "server_error",
-                            "code": "server_error",
-                            "param": None,
-                        }
-                    }
-                    return JSONResponse(
-                        err_body,
-                        status_code=500,
-                        headers=_apply_error_source_headers(
-                            self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                        ),
                     )
                 finally:
                     await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
