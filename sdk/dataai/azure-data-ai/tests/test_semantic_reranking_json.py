@@ -10,7 +10,7 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
-from azure.data.ai import AzureDataAIClient
+from azure.data.ai import InferenceClient
 from azure.data.ai.models import SemanticRerankingInferenceRequest, SemanticRerankingResult
 
 

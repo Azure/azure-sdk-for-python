@@ -5,7 +5,7 @@
 ### Features Added
 
 - Initial preview of the Azure Data AI semantic reranking client.
-- Synchronous and asynchronous `AzureDataAIClient.semantic_rerank` APIs
+- Synchronous and asynchronous `InferenceClient.semantic_rerank` APIs
   accepting generated request models or dictionaries and returning generated
   response models with dictionary-style access.
 - API-key authentication with `AzureKeyCredential`, and Microsoft Entra

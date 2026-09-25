@@ -28,17 +28,17 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models, types as _types
-from ..._operations._operations import build_azure_data_ai_semantic_rerank_request
+from ..._operations._operations import build_inference_semantic_rerank_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from .._configuration import AzureDataAIClientConfiguration
+from .._configuration import InferenceClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _AzureDataAIClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AzureDataAIClientConfiguration]
+class _InferenceClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], InferenceClientConfiguration]
 ):
 
     @overload
@@ -134,7 +134,7 @@ class _AzureDataAIClientOperationsMixin(
         else:
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_azure_data_ai_semantic_rerank_request(
+        _request = build_inference_semantic_rerank_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

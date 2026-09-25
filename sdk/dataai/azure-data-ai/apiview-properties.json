@@ -13,8 +13,8 @@
         "azure.data.ai.models.TokenUsageResult": "Azure.Data.AI.TokenUsageResult",
         "azure.data.ai.models.TooManyRequestsResponse": "Azure.Data.AI.TooManyRequestsResponse",
         "azure.data.ai.models.SemanticRerankingDocumentType": "Azure.Data.AI.DocumentType",
-        "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
-        "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
+        "azure.data.ai.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.aio.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
     },
-    "CrossLanguageVersion": "cad9573addf7"
+    "CrossLanguageVersion": "1f37ccade538"
 }

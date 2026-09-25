@@ -17,8 +17,8 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
 from azure.core.rest import AsyncHttpResponse, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
-from azure.data.ai import AzureDataAIClient
-from azure.data.ai.aio import AzureDataAIClient as AsyncAzureDataAIClient
+from azure.data.ai import InferenceClient
+from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
@@ -81,10 +81,10 @@ def open_client(transport, asynchronous):
         kwargs.setdefault("retry_total", 0)
         endpoint = kwargs.pop("endpoint", "https://example.inference.azure.com")
         if asynchronous:
-            async with AsyncAzureDataAIClient(endpoint, credential, transport=transport, **kwargs) as client:
+            async with AsyncInferenceClient(endpoint, credential, transport=transport, **kwargs) as client:
                 yield client
         else:
-            with AzureDataAIClient(endpoint, credential, transport=transport, **kwargs) as client:
+            with InferenceClient(endpoint, credential, transport=transport, **kwargs) as client:
                 yield client
 
     return create

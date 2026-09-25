@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureDataAIClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for AzureDataAIClient.
+class InferenceClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Configuration for InferenceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

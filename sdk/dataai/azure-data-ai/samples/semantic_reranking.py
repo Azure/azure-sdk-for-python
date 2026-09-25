@@ -6,7 +6,7 @@
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai import AzureDataAIClient
+from azure.data.ai import InferenceClient
 from azure.data.ai.types import SemanticRerankingInferenceRequest
 
 
@@ -32,7 +32,7 @@ def get_sample_inputs() -> tuple[str, AzureKeyCredential, SemanticRerankingInfer
 def main() -> None:
     """Run the configured reranking example."""
     endpoint, credential, request = get_sample_inputs()
-    with AzureDataAIClient(endpoint, credential) as client:
+    with InferenceClient(endpoint, credential) as client:
         result = client.semantic_rerank(request)
 
     for score in result.get("scores", []):

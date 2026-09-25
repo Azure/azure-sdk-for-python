@@ -23,24 +23,24 @@ from azure.core.exceptions import (
 )
 
 import azure.data.ai
-from azure.data.ai import AzureDataAIClient
-from azure.data.ai.aio import AzureDataAIClient as AsyncAzureDataAIClient
+from azure.data.ai import InferenceClient
+from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
 from azure.data.ai.models import SemanticRerankingResult, SemanticRerankingScore, SentenceScore, TokenUsageResult
 
 
 def test_public_api_exposes_generated_models_without_embeddings():
     assert azure.data.ai.__version__ == version("azure-data-ai")
-    assert azure.data.ai.__all__ == ["AzureDataAIClient"]
+    assert azure.data.ai.__all__ == ["InferenceClient"]
     assert find_spec("azure.data.ai.models") is not None
     assert find_spec("azure.data.ai.types") is not None
-    for client_type in (AzureDataAIClient, AsyncAzureDataAIClient):
+    for client_type in (InferenceClient, AsyncInferenceClient):
         assert hasattr(client_type, "semantic_rerank")
         assert not hasattr(client_type, "generate_embeddings")
         assert hasattr(client_type, "send_request")
-    assert not inspect.iscoroutinefunction(AzureDataAIClient.semantic_rerank)
-    assert inspect.iscoroutinefunction(AsyncAzureDataAIClient.semantic_rerank)
-    assert AzureDataAIClient.__module__ == "azure.data.ai._client"
-    assert AsyncAzureDataAIClient.__module__ == "azure.data.ai.aio._client"
+    assert not inspect.iscoroutinefunction(InferenceClient.semantic_rerank)
+    assert inspect.iscoroutinefunction(AsyncInferenceClient.semantic_rerank)
+    assert InferenceClient.__module__ == "azure.data.ai._client"
+    assert AsyncInferenceClient.__module__ == "azure.data.ai.aio._client"
 
 
 def test_contract_metadata_uses_azure_data_ai_namespace():
@@ -50,8 +50,8 @@ def test_contract_metadata_uses_azure_data_ai_namespace():
     assert metadata["apiVersions"] == {"Azure.Data.AI": metadata["apiVersion"]}
     assert properties["CrossLanguagePackageId"] == "Azure.Data.AI"
     expected = {
-        "azure.data.ai.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
-        "azure.data.ai.aio.AzureDataAIClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
+        "azure.data.ai.aio.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
     }
     for name, definition in expected.items():
         assert properties["CrossLanguageDefinitionId"][name] == definition
@@ -380,7 +380,7 @@ async def test_context_manager_closes_transport(open_client, invoke, respond, tr
         transport.__exit__.assert_called_once()
 
 
-@pytest.mark.parametrize("client_type", [AzureDataAIClient, AsyncAzureDataAIClient])
+@pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
 def test_missing_or_unsupported_credentials_fail(client_type):
     with pytest.raises(ValueError, match="credential"):
         client_type("https://example.inference.azure.com", None)
@@ -388,7 +388,7 @@ def test_missing_or_unsupported_credentials_fail(client_type):
         client_type("https://example.inference.azure.com", object())
 
 
-@pytest.mark.parametrize("client_type", [AzureDataAIClient, AsyncAzureDataAIClient])
+@pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
 def test_none_endpoint_fails(client_type):
     with pytest.raises(ValueError, match="endpoint"):
         client_type(None, AzureKeyCredential("test-key"))

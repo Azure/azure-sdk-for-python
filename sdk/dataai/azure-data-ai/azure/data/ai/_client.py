@@ -15,8 +15,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AzureDataAIClientConfiguration
-from ._operations import _AzureDataAIClientOperationsMixin
+from ._configuration import InferenceClientConfiguration
+from ._operations import _InferenceClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if sys.version_info >= (3, 11):
@@ -28,9 +28,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureDataAIClient(
-    _AzureDataAIClientOperationsMixin
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class InferenceClient(_InferenceClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Data AI provides semantic reranking operations.
 
     :param endpoint: The Azure Data AI endpoint. Required.
@@ -48,7 +46,7 @@ class AzureDataAIClient(
 
     def __init__(self, endpoint: str, credential: Union["TokenCredential", AzureKeyCredential], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureDataAIClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = InferenceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

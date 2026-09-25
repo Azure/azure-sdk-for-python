@@ -7,14 +7,14 @@ import asyncio
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai.aio import AzureDataAIClient
+from azure.data.ai.aio import InferenceClient
 from azure.data.ai.types import SemanticRerankingInferenceRequest
 
 
 async def main() -> None:
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
     credential = AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"])
-    async with AzureDataAIClient(endpoint, credential) as client:
+    async with InferenceClient(endpoint, credential) as client:
         request: SemanticRerankingInferenceRequest = {
             "query": "What is the capital of France?",
             "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],

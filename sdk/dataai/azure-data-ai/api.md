@@ -1,7 +1,7 @@
 ```py
 namespace azure.data.ai
 
-    class azure.data.ai.AzureDataAIClient(_AzureDataAIClientOperationsMixin): implements ContextManager 
+    class azure.data.ai.InferenceClient(_InferenceClientOperationsMixin): implements ContextManager 
 
         def __init__(
                 self, 
@@ -52,7 +52,7 @@ namespace azure.data.ai
 
 namespace azure.data.ai.aio
 
-    class azure.data.ai.aio.AzureDataAIClient(_AzureDataAIClientOperationsMixin): implements AsyncContextManager 
+    class azure.data.ai.aio.InferenceClient(_InferenceClientOperationsMixin): implements AsyncContextManager 
 
         def __init__(
                 self, 
@@ -151,18 +151,8 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.ProblemDetails(_Model):
-        code: str
-        detail: Optional[str]
+    class azure.data.ai.models.ProblemDetails(_GeneratedProblemDetails):
         details: Optional[list[ODataV4Format]]
-        extensions: Optional[dict[str, Any]]
-        innererror: Optional[InnerError]
-        instance: Optional[str]
-        message: str
-        status: Optional[int]
-        target: Optional[str]
-        title: Optional[str]
-        type: Optional[str]
 
         @overload
         def __init__(
@@ -183,6 +173,12 @@ namespace azure.data.ai.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def as_dict(
+                self, 
+                *, 
+                exclude_readonly: bool = False
+            ) -> dict[str, Any]: ...
 
 
     class azure.data.ai.models.SemanticRerankingDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

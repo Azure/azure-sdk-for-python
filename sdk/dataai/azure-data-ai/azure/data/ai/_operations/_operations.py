@@ -27,7 +27,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models, types as _types
-from .._configuration import AzureDataAIClientConfiguration
+from .._configuration import InferenceClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
@@ -39,7 +39,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_azure_data_ai_semantic_rerank_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_inference_semantic_rerank_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -61,8 +61,8 @@ def build_azure_data_ai_semantic_rerank_request(**kwargs: Any) -> HttpRequest:  
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _AzureDataAIClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureDataAIClientConfiguration]
+class _InferenceClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], InferenceClientConfiguration]
 ):
 
     @overload
@@ -158,7 +158,7 @@ class _AzureDataAIClientOperationsMixin(
         else:
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_azure_data_ai_semantic_rerank_request(
+        _request = build_inference_semantic_rerank_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

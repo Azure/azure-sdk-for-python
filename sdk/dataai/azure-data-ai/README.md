@@ -47,9 +47,9 @@ Use `AzureKeyCredential` for API-key authentication:
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai import AzureDataAIClient
+from azure.data.ai import InferenceClient
 
-with AzureDataAIClient(
+with InferenceClient(
     endpoint=os.environ["AZURE_DATA_AI_ENDPOINT"],
     credential=AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"]),
 ) as client:
@@ -74,7 +74,7 @@ The key is sent in the `Ocp-Apim-Subscription-Key` header using Azure Core's
 synchronous and asynchronous clients:
 
 ```python
-client = AzureDataAIClient(endpoint, credential=AzureKeyCredential(key))
+client = InferenceClient(endpoint, credential=AzureKeyCredential(key))
 ```
 
 Use `AzureKeyCredential` when you need to rotate a key with `credential.update(new_key)`
@@ -91,11 +91,11 @@ token credential:
 ```python
 import os
 
-from azure.data.ai import AzureDataAIClient
+from azure.data.ai import InferenceClient
 from azure.identity import DefaultAzureCredential
 
 with DefaultAzureCredential() as credential:
-    with AzureDataAIClient(
+    with InferenceClient(
         os.environ["AZURE_DATA_AI_ENDPOINT"], credential
     ) as client:
         result = client.semantic_rerank(
@@ -107,7 +107,7 @@ The client requests tokens for `https://dbinference.azure.com/.default`.
 
 ## Key concepts
 
-`AzureDataAIClient` is the entry point. Call `client.semantic_rerank(request)`
+`InferenceClient` is the entry point. Call `client.semantic_rerank(request)`
 directly; there is no intermediate inference subclient.
 
 Dictionary keys use the service's JSON names, such as `"topK"`. Generated model
@@ -229,10 +229,10 @@ token credential from `azure.identity.aio` if authenticating with Microsoft Entr
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.data.ai.aio import AzureDataAIClient
+from azure.data.ai.aio import InferenceClient
 
 async def rerank():
-    async with AzureDataAIClient(
+    async with InferenceClient(
         os.environ["AZURE_DATA_AI_ENDPOINT"],
         AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"]),
     ) as client:
@@ -264,7 +264,7 @@ These are not necessarily identical to the .NET SDK's defaults. Configure the
 desired values when constructing the client:
 
 ```python
-client = AzureDataAIClient(
+client = InferenceClient(
     endpoint,
     credential,
     retry_total=3,          # Use 0 to disable automatic retries.
@@ -310,19 +310,19 @@ scoring options to your application's documents and endpoint.
 ## Development
 
 `tsp-location.yaml` records the generation source and pins the TypeSpec contract to
-`30d0780f8eb3b8c94e98fd681993ae8d6069317d`. Its service title is **Azure Data AI**
+`7c220f70eb0d62ce37bd27679df5a71da53d3f9c`. Its service title is **Azure Data AI**
 and its namespace is `Azure.Data.AI`; the route, authentication header/token
 audience, request fields, and API version remain unchanged.
 This package adopts the default output of `@azure-tools/typespec-python` 0.63.8,
 generated from that contract. The emitter dependency and lock files under `eng/`
 pin the generation toolchain. Request/response model generation is enabled.
 
-The generated Python API uses `AzureDataAIClient` in both `azure.data.ai` and
+The generated Python API uses `InferenceClient` in both `azure.data.ai` and
 `azure.data.ai.aio`. The TypeSpec explicitly selects this client name for Python
 and C#. The package lives at
 `sdk/dataai/azure-data-ai`, matching the spec's `sdk/dataai` service directory.
 
-The public surface includes `AzureDataAIClient.semantic_rerank(request)`,
+The public surface includes `InferenceClient.semantic_rerank(request)`,
 request/response models, TypedDict definitions, raw `send_request`, and client
 lifecycle methods. Reranking accepts model, dictionary, and binary request forms
 and treats HTTP 200 as the successful response.
@@ -332,11 +332,13 @@ package directory:
 
 ```bash
 npm exec --prefix ../../../eng/common/tsp-client --no -- tsp-client update \
-  --emitter-options "package-version=0.1.0b1"
+  --emitter-options "package-version=0.1.0b1;generate-packaging-files=false"
 ```
 
 Do not edit files marked as generated. Keep handwritten customizations in the
 supported `_patch.py` hooks, and retain tests and samples across regeneration.
+Package metadata is maintained separately: keep `generate-packaging-files=false`
+to preserve the Python-version-specific dependency requirements in `pyproject.toml`.
 
 To run the offline tests:
 

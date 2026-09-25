@@ -6,7 +6,7 @@
 import json
 import os
 
-from azure.data.ai import AzureDataAIClient
+from azure.data.ai import InferenceClient
 from azure.data.ai.types import SemanticRerankingInferenceRequest
 from azure.identity import DefaultAzureCredential
 
@@ -47,7 +47,7 @@ def main() -> None:
         "model": "aisearch-reranker",
     }
     with DefaultAzureCredential() as credential:
-        with AzureDataAIClient(endpoint=endpoint, credential=credential) as client:
+        with InferenceClient(endpoint=endpoint, credential=credential) as client:
             result = client.semantic_rerank(request)
 
     for score in result.get("scores", []):
