@@ -33,7 +33,7 @@ from azure.ai.agentserver.core.tasks import (
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
-from ._task_id import derive_task_id, derive_task_session_scope
+from ._task_id import derive_lifecycle_id, derive_task_id, derive_task_session_scope
 
 from ..models import _generated as _generated_models
 
@@ -792,6 +792,7 @@ class ResilientResponseOrchestrator:
         cancel_bridge: "asyncio.Task[None] | None",
         parsed_ref: Any,
         response_id: str,
+        user_id_key: str | None,
         stream: bool,
         agent_reference: Any,
         model: str | None,
@@ -823,6 +824,8 @@ class ResilientResponseOrchestrator:
         :paramtype parsed_ref: Any
         :keyword response_id: The response id.
         :paramtype response_id: str
+        :keyword user_id_key: The user partition from the durable task input.
+        :paramtype user_id_key: str | None
         :keyword stream: Whether the request is streaming.
         :paramtype stream: bool
         :keyword agent_reference: The normalized agent reference.
@@ -916,7 +919,7 @@ class ResilientResponseOrchestrator:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()
             # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
-            _RUNTIME_REFS.pop(response_id, None)
+            _RUNTIME_REFS.pop(derive_lifecycle_id(response_id, user_id_key), None)
 
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
         """Execute the response pipeline inside the task body.
@@ -990,7 +993,7 @@ class ResilientResponseOrchestrator:
         # cache, never in the serialized input. Build a small key→ref map so the
         # existing ``_ref("_..._ref")`` call sites stay unchanged. Test-injected
         # refs passed via ``ctx.input`` are honored as a fallback.
-        _runtime_refs = _RUNTIME_REFS.get(response_id)
+        _runtime_refs = _RUNTIME_REFS.get(derive_lifecycle_id(response_id, resilient.user_id_key))
         _ref_map: dict[str, Any] = {}
         if _runtime_refs is not None:
             _ref_map = {
@@ -1097,6 +1100,7 @@ class ResilientResponseOrchestrator:
             cancel_bridge=cancel_bridge,
             parsed_ref=_ref("_parsed_ref") or request,
             response_id=response_id,
+            user_id_key=resilient.user_id_key,
             stream=_stream,
             agent_reference=_agent_reference,
             model=_model,
@@ -1266,7 +1270,8 @@ class ResilientResponseOrchestrator:
             response_id=response_id,
             steerable=self._options.steerable_conversations,
         )
-        if is_multi_turn and task_id != legacy_task_id:
+        # Never adopt a shared legacy task for an identified caller.
+        if is_multi_turn and task_id != legacy_task_id and resilient_input.user_id_key is None:
             task_id = await self._select_compatible_task_id(
                 picked_primitive,
                 task_id=task_id,
@@ -1280,9 +1285,11 @@ class ResilientResponseOrchestrator:
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
         # (Spec 033 §3.1) The process-local refs are cached out-of-band keyed by
-        # response_id; the resilient task input is EXACTLY the typed boundary's
+        # user-scoped lifecycle ID; the resilient task input is EXACTLY the typed boundary's
         # serialization — the single producer (FR-001).
-        _RUNTIME_REFS[response_id] = refs
+        task_id = derive_lifecycle_id(task_id, resilient_input.user_id_key)
+        lifecycle_id = derive_lifecycle_id(response_id, resilient_input.user_id_key)
+        _RUNTIME_REFS[lifecycle_id] = refs
 
         start_kwargs: dict[str, Any] = {
             "task_id": task_id,
@@ -1297,9 +1304,11 @@ class ResilientResponseOrchestrator:
         # task_id per request.
         if is_multi_turn:
             if response_id is not None:
-                start_kwargs["input_id"] = response_id
+                start_kwargs["input_id"] = lifecycle_id
             if previous_response_id is not None:
-                start_kwargs["if_last_input_id"] = previous_response_id
+                start_kwargs["if_last_input_id"] = derive_lifecycle_id(
+                    previous_response_id, resilient_input.user_id_key
+                )
 
         # ``TaskConflictError`` from the underlying primitive ALWAYS signals
         # a real conflict (concurrent overlap on a multi-turn-non-steerable
@@ -1319,7 +1328,7 @@ class ResilientResponseOrchestrator:
             # out-of-band refs — never runs. Drop the cache entry here so we do
             # not permanently retain the record/context/parsed-request/cancel
             # event for a response that fell back to in-process execution.
-            _RUNTIME_REFS.pop(response_id, None)
+            _RUNTIME_REFS.pop(lifecycle_id, None)
             raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
