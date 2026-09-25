@@ -195,6 +195,10 @@
 # PRLabel: %Cosmos
 /sdk/cosmos/    @Azure/azure-cosmos-python-sdk
 
+# ServiceLabel: %Azure.Data.AI
+# PRLabel: %Azure.Data.AI
+/sdk/dataai/    @Azure/azure-data-ai-python-sdk
+
 # ServiceLabel: %Data Factory
 # PRLabel: %Data Factory
 /sdk/datafactory/    @hvermis
