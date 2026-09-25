@@ -165,12 +165,17 @@ def configure_observability(
     # prevent duplicate output on stderr.
     _has_console = any(
         getattr(h, _CONSOLE_HANDLER_ATTR, False)
-        or (isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler))
+        or (
+            isinstance(h, logging.StreamHandler)
+            and not isinstance(h, logging.FileHandler)
+        )
         for h in root.handlers
     )
     if not _has_console:
         _console = logging.StreamHandler()
-        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        _console.setFormatter(
+            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+        )
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
@@ -210,7 +215,9 @@ def _configure_tracing(
     """
     resource = _create_resource()
     if resource is None:
-        logger.warning("Failed to create OTel resource — tracing will not be configured.")
+        logger.warning(
+            "Failed to create OTel resource — tracing will not be configured."
+        )
         return
 
     # Build custom processors
@@ -246,7 +253,11 @@ def _configure_tracing(
     )
 
     try:
-        context = _suppress_distro_otlp_components() if suppress_distro_otlp else nullcontext()
+        context = (
+            _suppress_distro_otlp_components()
+            if suppress_distro_otlp
+            else nullcontext()
+        )
         with context:
             _setup_distro_export(
                 resource=resource,
@@ -257,9 +268,13 @@ def _configure_tracing(
                 enable_sensitive_data=enable_sensitive_data,
                 instrumentation_options=instrumentation_options,
             )
-        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
+        logger.info(
+            "Tracing configured successfully via microsoft-opentelemetry distro."
+        )
     except ImportError:
-        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
+        logger.warning(
+            "microsoft-opentelemetry is not installed — tracing export disabled."
+        )
         # Still set up TracerProvider with enrichment processor so spans are created
         _ensure_trace_provider(resource, resolved_span_processors)
 
@@ -296,7 +311,9 @@ def _setup_distro_export(
         "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
-        "instrumentation_options": _resolve_instrumentation_options(instrumentation_options),
+        "instrumentation_options": _resolve_instrumentation_options(
+            instrumentation_options
+        ),
     }
 
     # Azure Monitor export is off by default in the distro — enable it
@@ -324,7 +341,9 @@ def _setup_distro_export(
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
-        kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
+        kwargs["a365_observability_scope_override"] = (
+            "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
+        )
 
     use_microsoft_opentelemetry(**kwargs)
 
@@ -458,7 +477,10 @@ def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
     protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
     normalized = protocol.strip().lower()
     if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
-        raise ValueError(f"Unsupported OTLP protocol {protocol!r}. Use " f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}.")
+        raise ValueError(
+            f"Unsupported OTLP protocol {protocol!r}. Use "
+            f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}."
+        )
     return normalized
 
 
@@ -475,7 +497,9 @@ def _suppress_distro_otlp_components() -> Any:
                 return None
             return original_append_otlp_components(_otel_kwargs)
 
-        previous_suppression_state = getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False)
+        previous_suppression_state = getattr(
+            _DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False
+        )
         _DISTRO_OTLP_SUPPRESSION_STATE.enabled = True
         distro_globals["_append_otlp_components"] = _skip_otlp_components
         try:
@@ -519,7 +543,9 @@ class TraceContextMiddleware:
         headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
-        from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+        from opentelemetry.propagate import (
+            extract,
+        )  # pylint: disable=import-outside-toplevel
 
         ctx = extract(carrier=headers)
 
@@ -586,16 +612,17 @@ def flush_spans(timeout_millis: int = 5000) -> None:
             logger.debug("TracerProvider.force_flush() failed", exc_info=True)
 
 
-# A single coalesced background flush runs at a time.  ``force_flush`` drains
+# A single coalesced asynchronous flush runs at a time. ``force_flush`` drains
 # the provider *globally*, so concurrent per-request flushes would be redundant
-# work.  Instead of spawning one task per request (which lets ``_bg_flush_task``
-# / the executor queue grow without bound under load), requests that arrive
-# while a flush is in flight set ``_bg_flush_pending``; the running task then
-# performs exactly one follow-up flush afterwards to capture spans produced
-# during the active flush.  This bounds in-flight background work to a single
-# task regardless of request rate.  The module-level reference also keeps the
-# task alive (asyncio only holds weak references to tasks).  Access is confined
-# to the event-loop thread, so no lock is required.
+# work. Instead of submitting one worker per request (which lets the executor
+# queue grow without bound under load), requests that arrive while a flush is
+# in flight set ``_bg_flush_pending``; the running task then performs exactly
+# one follow-up flush afterwards to capture spans produced during the active
+# flush. This bounds asynchronous flush work to one worker plus one pending
+# pass, regardless of whether callers await the flush or schedule it in the
+# background. The module-level reference also keeps the task alive (asyncio
+# only holds weak references to tasks). Access is confined to the event-loop
+# thread, so no lock is required.
 _bg_flush_task: "Optional[asyncio.Task[None]]" = None
 _bg_flush_pending: bool = False
 # Aggregate timeout (ms) for the coalesced follow-up pass: the maximum
@@ -613,7 +640,9 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
     handler -- that blocks the asyncio event loop, serialising every concurrent
     request behind a single export (head-of-line blocking).  Offload the
     blocking call to the default thread pool so the event loop stays free to
-    send the response and service other requests concurrently.
+    send the response and service other requests concurrently. Concurrent
+    callers share one in-flight flush and coalesce into at most one follow-up
+    flush, bounding worker-thread and exporter pressure under load.
 
     Cancellation is deferred until the flush completes, including when the
     worker is still queued. Exporter failures are handled by :func:`flush_spans`.
@@ -625,21 +654,26 @@ async def flush_spans_async(timeout_millis: int = 5000) -> None:
         Defaults to 5000 (5 seconds).
     :type timeout_millis: int
     """
+    flush_task = _schedule_coalesced_flush(timeout_millis)
     cancellation: Optional[asyncio.CancelledError] = None
     try:
         with CancelScope(shield=True):
-            loop = asyncio.get_running_loop()
-            flush_future = loop.run_in_executor(None, flush_spans, timeout_millis)
-            while not flush_future.done():
+            while not flush_task.done():
                 try:
-                    await asyncio.shield(flush_future)
+                    await asyncio.shield(flush_task)
                 except asyncio.CancelledError as exc:
                     cancellation = exc
-            flush_future.result()
+            flush_task.result()
     except Exception:  # pylint: disable=broad-exception-caught
         logger.debug("TracerProvider.force_flush() (async) failed", exc_info=True)
     if cancellation is not None:
         raise cancellation
+
+
+async def _flush_spans_once_async(timeout_millis: int) -> None:
+    """Run one synchronous provider flush in the default executor."""
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, flush_spans, timeout_millis)
 
 
 async def _coalesced_flush(timeout_millis: int) -> None:
@@ -657,12 +691,32 @@ async def _coalesced_flush(timeout_millis: int) -> None:
     :type timeout_millis: int
     """
     global _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
-    await flush_spans_async(timeout_millis)
+    await _flush_spans_once_async(timeout_millis)
     while _bg_flush_pending:
         _bg_flush_pending = False
         pending_timeout_millis = _bg_flush_pending_timeout_millis
         _bg_flush_pending_timeout_millis = 0
-        await flush_spans_async(pending_timeout_millis)
+        await _flush_spans_once_async(pending_timeout_millis)
+
+
+def _schedule_coalesced_flush(timeout_millis: int) -> "asyncio.Task[None]":
+    """Start or join the shared asynchronous flush task."""
+    global _bg_flush_task, _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
+    loop = asyncio.get_running_loop()
+    if (
+        _bg_flush_task is not None
+        and not _bg_flush_task.done()
+        and _bg_flush_task.get_loop() is loop
+    ):
+        _bg_flush_pending = True
+        _bg_flush_pending_timeout_millis = max(
+            _bg_flush_pending_timeout_millis, timeout_millis
+        )
+        return _bg_flush_task
+    _bg_flush_pending = False
+    _bg_flush_pending_timeout_millis = 0
+    _bg_flush_task = loop.create_task(_coalesced_flush(timeout_millis))
+    return _bg_flush_task
 
 
 @experimental
@@ -686,20 +740,12 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
         Defaults to 5000 (5 seconds).
     :type timeout_millis: int
     """
-    global _bg_flush_task, _bg_flush_pending, _bg_flush_pending_timeout_millis  # pylint: disable=global-statement
     try:
-        loop = asyncio.get_running_loop()
+        asyncio.get_running_loop()
     except RuntimeError:
         flush_spans(timeout_millis)
         return
-    if _bg_flush_task is not None and not _bg_flush_task.done():
-        # A flush is already draining the provider globally; record that more
-        # spans arrived so the running task performs one more pass afterwards.
-        # Keep the largest requested timeout so this caller's bound is honoured.
-        _bg_flush_pending = True
-        _bg_flush_pending_timeout_millis = max(_bg_flush_pending_timeout_millis, timeout_millis)
-        return
-    _bg_flush_task = loop.create_task(_coalesced_flush(timeout_millis))
+    _schedule_coalesced_flush(timeout_millis)
 
 
 def record_error(span: Any, exc: BaseException) -> None:
@@ -761,7 +807,9 @@ def detach_context(token: Any) -> None:
             )
 
 
-async def trace_stream(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]:
+async def trace_stream(
+    iterator: AsyncIterable[StreamContent], span: Any
+) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
@@ -783,7 +831,7 @@ async def trace_stream(iterator: AsyncIterable[StreamContent], span: Any) -> Asy
         raise
     finally:
         end_span(span, exc=error)
-        flush_spans()
+        await flush_spans_async()
 
 
 # ======================================================================
@@ -821,7 +869,9 @@ class _FoundryEnrichmentSpanProcessor:
         session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
         if session_id:
             span.set_attribute(_ATTR_SESSION_ID, session_id)
-        conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
+        conversation_id = _otel_baggage.get_baggage(
+            _BAGGAGE_CONVERSATION_ID, context=ctx
+        )
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
         invocation_id = _otel_baggage.get_baggage(_BAGGAGE_INVOCATION_ID, context=ctx)
@@ -858,7 +908,9 @@ class _FoundryEnrichmentSpanProcessor:
             if self.agent_tenant_id:
                 target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
+            logger.debug(
+                "Failed to enrich span attributes in _on_ending", exc_info=True
+            )
 
     def on_end(self, span: Any) -> None:
         self._on_ending(span)
@@ -866,7 +918,9 @@ class _FoundryEnrichmentSpanProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+    def force_flush(
+        self, timeout_millis: int = 30000
+    ) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -922,7 +976,9 @@ class _BaggageLogRecordProcessor:
     def shutdown(self) -> None:
         pass
 
-    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+    def force_flush(
+        self, timeout_millis: int = 30000
+    ) -> bool:  # pylint: disable=unused-argument
         return True
 
 
@@ -938,12 +994,16 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
+    agent_name = os.environ.get(
+        _config._ENV_FOUNDRY_AGENT_NAME, ""
+    )  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
-def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
+def _ensure_trace_provider(
+    resource: Any, span_processors: Optional[list[Any]] = None
+) -> Any:
     """Get or create a TracerProvider, optionally adding span processors.
 
     Used as a fallback when the microsoft-opentelemetry distro is not installed.
@@ -965,7 +1025,9 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     else:
         provider = SdkTracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
-    if span_processors and not getattr(provider, "_agentserver_processors_added", False):
+    if span_processors and not getattr(
+        provider, "_agentserver_processors_added", False
+    ):
         for proc in span_processors:
             provider.add_span_processor(proc)
         provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access

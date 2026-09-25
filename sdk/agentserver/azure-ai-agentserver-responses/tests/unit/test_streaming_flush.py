@@ -14,7 +14,10 @@ import pytest
 from starlette.requests import ClientDisconnect
 
 from azure.ai.agentserver.core import _tracing
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
+from azure.ai.agentserver.responses import (
+    ResponsesAgentServerHost,
+    ResponsesServerOptions,
+)
 from azure.ai.agentserver.responses.hosting import _endpoint_handler as endpoint
 from azure.ai.agentserver.responses.hosting import _orchestrator as orchestration
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
@@ -62,7 +65,9 @@ async def test_real_body_and_ended_span_precede_flush_and_final_send(
         def on_span_start(self, name: str, tags: dict[str, Any]) -> None:
             pass
 
-        def on_span_end(self, name: str, tags: dict[str, Any], error: BaseException | None) -> None:
+        def on_span_end(
+            self, name: str, tags: dict[str, Any], error: BaseException | None
+        ) -> None:
             events.append("span-ended")
 
     class DelayedExporter:
@@ -70,10 +75,16 @@ async def test_real_body_and_ended_span_precede_flush_and_final_send(
             assert timeout_millis == 5000
             events.append("flush-start")
             loop.call_soon_threadsafe(flush_started.set)
-            assert release.wait(timeout_millis / 1000), "event loop could not release blocking exporter"
+            assert release.wait(
+                timeout_millis / 1000
+            ), "event loop could not release blocking exporter"
             events.append("flush-end")
 
-    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: DelayedExporter().force_flush(timeout_millis))
+    monkeypatch.setattr(
+        _tracing,
+        "flush_spans",
+        lambda timeout_millis: DelayedExporter().force_flush(timeout_millis),
+    )
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         stream = ResponseEventStream(response_id=context.response_id, model="m")
@@ -90,11 +101,15 @@ async def test_real_body_and_ended_span_precede_flush_and_final_send(
 
     monkeypatch.setattr(provider, "create_response", create)
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False, create_span_hook=Hook()),
+        options=ResponsesServerOptions(
+            resilient_background=False, create_span_hook=Hook()
+        ),
         store=provider,
     )
     app.response_handler(handler)
-    payload = json.dumps({"model": "m", "input": "hi", "stream": True, "store": store}).encode()
+    payload = json.dumps(
+        {"model": "m", "input": "hi", "stream": True, "store": store}
+    ).encode()
     request_sent = False
 
     async def receive() -> dict[str, Any]:
@@ -138,7 +153,9 @@ async def test_sync_success_and_handler_error_still_flush_before_sending(
     monkeypatch: pytest.MonkeyPatch, failure: bool
 ) -> None:
     events: list[str] = []
-    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
+    monkeypatch.setattr(
+        _tracing, "flush_spans", lambda timeout_millis: events.append("flush")
+    )
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         if failure:
@@ -148,13 +165,16 @@ async def test_sync_success_and_handler_error_still_flush_before_sending(
         yield stream.emit_completed()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False), store=InMemoryResponseProvider()
+        options=ResponsesServerOptions(resilient_background=False),
+        store=InMemoryResponseProvider(),
     )
     app.response_handler(handler)
     receive = AsyncMock(
         return_value={
             "type": "http.request",
-            "body": json.dumps({"model": "m", "input": "hi", "stream": False, "store": False}).encode(),
+            "body": json.dumps(
+                {"model": "m", "input": "hi", "stream": False, "store": False}
+            ).encode(),
             "more_body": False,
         }
     )
@@ -168,14 +188,69 @@ async def test_sync_success_and_handler_error_still_flush_before_sending(
     assert events == ["flush", "http-start"]
 
 
+async def test_non_streaming_flush_does_not_block_event_loop(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    events: list[str] = []
+    flush_started = asyncio.Event()
+    release = threading.Event()
+    loop = asyncio.get_running_loop()
+
+    def flush(timeout_millis: int) -> None:
+        assert timeout_millis == 5000
+        loop.call_soon_threadsafe(flush_started.set)
+        assert release.wait(timeout_millis / 1000)
+        events.append("flush")
+
+    monkeypatch.setattr(_tracing, "flush_spans", flush)
+
+    async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+        stream = ResponseEventStream(response_id=context.response_id, model="m")
+        yield stream.emit_created()
+        yield stream.emit_completed()
+
+    app = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(resilient_background=False),
+        store=InMemoryResponseProvider(),
+    )
+    app.response_handler(handler)
+    receive = AsyncMock(
+        return_value={
+            "type": "http.request",
+            "body": json.dumps(
+                {"model": "m", "input": "hi", "stream": False, "store": False}
+            ).encode(),
+            "more_body": False,
+        }
+    )
+
+    async def send(message: dict[str, Any]) -> None:
+        if message["type"] == "http.response.start":
+            events.append("http-start")
+
+    request = asyncio.create_task(app(_scope(), receive, send))
+    try:
+        await asyncio.wait_for(flush_started.wait(), 5)
+        assert not request.done()
+        events.append("event-loop-responsive")
+    finally:
+        release.set()
+        await asyncio.wait_for(request, 5)
+    assert events == ["event-loop-responsive", "flush", "http-start"]
+
+
 @pytest.mark.parametrize("interval", [None, 60])
-@pytest.mark.parametrize("ending", ["empty", "eof", "error", "send-error", "disconnect", "cancel"])
+@pytest.mark.parametrize(
+    "ending", ["empty", "eof", "error", "send-error", "disconnect", "cancel"]
+)
 async def test_stream_cleanup_flushes_once_before_return(
     monkeypatch: pytest.MonkeyPatch, interval: float | None, ending: str
 ) -> None:
     events: list[str] = []
     disconnected = asyncio.Event()
-    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
+    monkeypatch.setattr(
+        _tracing, "flush_spans", lambda timeout_millis: events.append("flush")
+    )
 
     async def source() -> Any:
         try:
@@ -198,7 +273,9 @@ async def test_stream_cleanup_flushes_once_before_return(
                 disconnected.set()
             if ending == "cancel":
                 asyncio.current_task().cancel()
-        if message["type"] == "http.response.body" and not message.get("more_body", False):
+        if message["type"] == "http.response.body" and not message.get(
+            "more_body", False
+        ):
             events.append("http-complete")
 
     async def receive() -> dict[str, Any]:
@@ -206,7 +283,11 @@ async def test_stream_cleanup_flushes_once_before_return(
         return {"type": "http.disconnect"}
 
     response = endpoint._CreateStreamingResponse(source(), interval, headers={})
-    expected = {"error": ValueError, "send-error": ClientDisconnect, "cancel": asyncio.CancelledError}
+    expected = {
+        "error": ValueError,
+        "send-error": ClientDisconnect,
+        "cancel": asyncio.CancelledError,
+    }
     call = response(_scope("2.3" if ending == "disconnect" else "2.4"), receive, send)
     if ending in expected:
         with pytest.raises(expected[ending]):
@@ -221,7 +302,9 @@ async def test_stream_cleanup_flushes_once_before_return(
         assert "http-complete" not in events
 
 
-async def test_cancellation_during_flush_drains_exporter(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_cancellation_during_flush_drains_exporter(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     started = asyncio.Event()
     release = threading.Event()
     ended = threading.Event()
@@ -251,7 +334,9 @@ async def test_cancellation_during_flush_drains_exporter(monkeypatch: pytest.Mon
 
 
 @pytest.mark.parametrize("interval", [None, 60])
-@pytest.mark.parametrize("handler_shape", ["async-generator", "coroutine", "async-iterable"])
+@pytest.mark.parametrize(
+    "handler_shape", ["async-generator", "coroutine", "async-iterable"]
+)
 @pytest.mark.parametrize(
     "ending",
     [
@@ -266,7 +351,10 @@ async def test_cancellation_during_flush_drains_exporter(monkeypatch: pytest.Mon
     ],
 )
 async def test_real_pipeline_awaits_handler_cleanup_before_flush(
-    monkeypatch: pytest.MonkeyPatch, interval: float | None, ending: str, handler_shape: str
+    monkeypatch: pytest.MonkeyPatch,
+    interval: float | None,
+    ending: str,
+    handler_shape: str,
 ) -> None:
     events: list[str] = []
     cleanup_started = asyncio.Event()
@@ -276,7 +364,9 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
     disconnected = asyncio.Event()
     final_states: list[Any] = []
     frames: list[str] = []
-    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
+    monkeypatch.setattr(
+        _tracing, "flush_spans", lambda timeout_millis: events.append("flush")
+    )
     original_finalize = orchestration._ResponseOrchestrator._finalize_stream
 
     async def finalize(self: Any, ctx: Any, state: Any) -> None:
@@ -284,7 +374,9 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
         final_states.append(state)
         events.append("orchestrator-finalized")
 
-    monkeypatch.setattr(orchestration._ResponseOrchestrator, "_finalize_stream", finalize)
+    monkeypatch.setattr(
+        orchestration._ResponseOrchestrator, "_finalize_stream", finalize
+    )
 
     async def handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         try:
@@ -309,11 +401,15 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
             cleanup_complete.set()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False, sse_keep_alive_interval_seconds=interval),
+        options=ResponsesServerOptions(
+            resilient_background=False, sse_keep_alive_interval_seconds=interval
+        ),
         store=InMemoryResponseProvider(),
     )
 
-    async def returning_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+    async def returning_handler(
+        request: Any, context: Any, cancellation_signal: Any
+    ) -> Any:
         class HandlerEvents:
             def __aiter__(self) -> Any:
                 return handler(request, context, cancellation_signal)
@@ -322,8 +418,12 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
             return HandlerEvents()
         return handler(request, context, cancellation_signal)
 
-    app.response_handler(handler if handler_shape == "async-generator" else returning_handler)
-    payload = json.dumps({"model": "m", "input": "hi", "stream": True, "store": False}).encode()
+    app.response_handler(
+        handler if handler_shape == "async-generator" else returning_handler
+    )
+    payload = json.dumps(
+        {"model": "m", "input": "hi", "stream": True, "store": False}
+    ).encode()
     request_sent = False
 
     async def receive() -> dict[str, Any]:
@@ -343,7 +443,9 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
         if message["type"] != "http.response.body":
             return
         body = message.get("body", b"").decode()
-        frames.extend(line[7:] for line in body.splitlines() if line.startswith("event: "))
+        frames.extend(
+            line[7:] for line in body.splitlines() if line.startswith("event: ")
+        )
         if "response.created" in body:
             if ending == "send-error":
                 raise OSError("connection closed")
@@ -357,7 +459,11 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
 
     async def run_request() -> None:
         try:
-            await app(_scope("2.3" if ending.startswith("disconnect") else "2.4"), receive, send)
+            await app(
+                _scope("2.3" if ending.startswith("disconnect") else "2.4"),
+                receive,
+                send,
+            )
         finally:
             events.append("request-returned")
 
@@ -380,7 +486,9 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
         else:
             await asyncio.wait_for(task, 5)
         assert cleanup_complete.is_set()
-        assert events.index("handler-cleanup-complete") < events.index("orchestrator-finalized")
+        assert events.index("handler-cleanup-complete") < events.index(
+            "orchestrator-finalized"
+        )
         assert events.index("orchestrator-finalized") < events.index("flush")
         assert events.index("flush") < events.index("request-returned")
         assert events.count("flush") == 1
@@ -388,7 +496,11 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
         if ending in ("empty", "eof", "handler-error", "invalid-first"):
             assert events.index("flush") < events.index("http-complete")
             expected = {
-                "empty": ["response.created", "response.in_progress", "response.completed"],
+                "empty": [
+                    "response.created",
+                    "response.in_progress",
+                    "response.completed",
+                ],
                 "eof": ["response.created", "response.completed"],
                 "handler-error": ["response.created", "response.failed"],
                 "invalid-first": ["error"],
@@ -408,7 +520,10 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
 @pytest.mark.parametrize("background", [False, True])
 @pytest.mark.parametrize("ending", ["send-error", "disconnect"])
 async def test_stored_producer_remains_independent_of_request_cleanup(
-    monkeypatch: pytest.MonkeyPatch, interval: float | None, background: bool, ending: str
+    monkeypatch: pytest.MonkeyPatch,
+    interval: float | None,
+    background: bool,
+    ending: str,
 ) -> None:
     events: list[str] = []
     release_producer = asyncio.Event()
@@ -418,14 +533,20 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
     disconnected = asyncio.Event()
     initial_persisted = asyncio.Event()
     records: list[Any] = []
-    monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
+    monkeypatch.setattr(
+        _tracing, "flush_spans", lambda timeout_millis: events.append("flush")
+    )
     original_start = orchestration._ResponseOrchestrator._start_resilient_background
 
-    async def start(self: Any, ctx: Any, record: Any, fallback: Any, **kwargs: Any) -> None:
+    async def start(
+        self: Any, ctx: Any, record: Any, fallback: Any, **kwargs: Any
+    ) -> None:
         await original_start(self, ctx, record, fallback, **kwargs)
         records.append(record)
 
-    monkeypatch.setattr(orchestration._ResponseOrchestrator, "_start_resilient_background", start)
+    monkeypatch.setattr(
+        orchestration._ResponseOrchestrator, "_start_resilient_background", start
+    )
     provider = InMemoryResponseProvider()
     original_create = provider.create_response
 
@@ -447,12 +568,20 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
             cleanup_complete.set()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=False, sse_keep_alive_interval_seconds=interval),
+        options=ResponsesServerOptions(
+            resilient_background=False, sse_keep_alive_interval_seconds=interval
+        ),
         store=provider,
     )
     app.response_handler(handler)
     payload = json.dumps(
-        {"model": "m", "input": "hi", "stream": True, "store": True, "background": background}
+        {
+            "model": "m",
+            "input": "hi",
+            "stream": True,
+            "store": True,
+            "background": background,
+        }
     ).encode()
     request_sent = False
 
@@ -467,14 +596,18 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
     async def send(message: dict[str, Any]) -> None:
         if message["type"] == "http.response.start":
             assert message["status"] == 200
-        if message["type"] == "http.response.body" and b"response.created" in message.get("body", b""):
+        if message[
+            "type"
+        ] == "http.response.body" and b"response.created" in message.get("body", b""):
             assert initial_persisted.is_set()
             if ending == "send-error":
                 raise OSError("connection closed")
             disconnected.set()
             await asyncio.Event().wait()
 
-    task = asyncio.create_task(app(_scope("2.3" if ending == "disconnect" else "2.4"), receive, send))
+    task = asyncio.create_task(
+        app(_scope("2.3" if ending == "disconnect" else "2.4"), receive, send)
+    )
     try:
         if ending == "send-error":
             with pytest.raises(ClientDisconnect):
@@ -495,7 +628,9 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
         stored = await provider.get_response(records[0].response_id)
         # Foreground disconnect already signals cancellation; it does not cancel
         # the independent task or close the handler before its own work finishes.
-        assert stored is not None and stored["status"] == ("completed" if background else "cancelled")
+        assert stored is not None and stored["status"] == (
+            "completed" if background else "cancelled"
+        )
     finally:
         release_producer.set()
         release_cleanup.set()
@@ -504,7 +639,9 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
         await asyncio.gather(task, return_exceptions=True)
         for record in records:
             if record.execution_task is not None:
-                await asyncio.wait_for(asyncio.gather(record.execution_task, return_exceptions=True), 5)
+                await asyncio.wait_for(
+                    asyncio.gather(record.execution_task, return_exceptions=True), 5
+                )
 
 
 async def test_normalized_sync_generator_closes_its_owned_source() -> None:

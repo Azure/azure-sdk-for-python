@@ -14,7 +14,11 @@ from unittest import mock
 import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
+from opentelemetry.sdk.trace.export import (
+    SimpleSpanProcessor,
+    SpanExporter,
+    SpanExportResult,
+)
 from opentelemetry.sdk.resources import Resource
 
 from azure.ai.agentserver.core import AgentServerHost
@@ -69,7 +73,9 @@ class TestTracingToggle:
     def test_observability_receives_appinsights_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
-            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
+            {
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            },
         ):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
@@ -80,7 +86,9 @@ class TestTracingToggle:
             )
 
     def test_observability_receives_otlp_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
+        with mock.patch.dict(
+            os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}
+        ):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
             mock_configure.assert_called_once()
@@ -117,7 +125,9 @@ class TestTracingToggle:
         """Passing configure_observability=None disables all SDK-managed observability."""
         with mock.patch.dict(
             os.environ,
-            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
+            {
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            },
         ):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
@@ -132,14 +142,19 @@ class TestAppInsightsConnectionString:
     """Tests for resolve_appinsights_connection_string()."""
 
     def test_explicit_wins(self) -> None:
-        assert resolve_appinsights_connection_string("InstrumentationKey=abc") == "InstrumentationKey=abc"
+        assert (
+            resolve_appinsights_connection_string("InstrumentationKey=abc")
+            == "InstrumentationKey=abc"
+        )
 
     def test_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
             {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
-            assert resolve_appinsights_connection_string(None) == "InstrumentationKey=env"
+            assert (
+                resolve_appinsights_connection_string(None) == "InstrumentationKey=env"
+            )
 
     def test_none_when_unset(self) -> None:
         env = os.environ.copy()
@@ -152,7 +167,9 @@ class TestAppInsightsConnectionString:
             os.environ,
             {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
-            result = resolve_appinsights_connection_string("InstrumentationKey=explicit")
+            result = resolve_appinsights_connection_string(
+                "InstrumentationKey=explicit"
+            )
             assert result == "InstrumentationKey=explicit"
 
 
@@ -165,18 +182,27 @@ class TestSetupDistroExport:
     """Verify _configure_tracing calls the distro with the right args."""
 
     def test_distro_called_when_conn_str_provided(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+        with mock.patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export"
+        ) as mock_distro:
             from azure.ai.agentserver.core import _tracing
 
-            _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
+            _tracing._configure_tracing(
+                connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            )
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
-            assert kwargs["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            assert (
+                kwargs["connection_string"]
+                == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            )
             assert len(kwargs["span_processors"]) >= 1
             assert len(kwargs["log_record_processors"]) >= 1
 
     def test_distro_called_without_conn_str(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+        with mock.patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export"
+        ) as mock_distro:
             from azure.ai.agentserver.core import _tracing
 
             _tracing._configure_tracing(connection_string=None)
@@ -220,8 +246,14 @@ class TestSetupDistroExport:
                 "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "grpc",
             },
         ):
-            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_TRACES_PROTOCOL") == "grpc"
-            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_METRICS_PROTOCOL") == "http/protobuf"
+            assert (
+                _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_TRACES_PROTOCOL")
+                == "grpc"
+            )
+            assert (
+                _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_METRICS_PROTOCOL")
+                == "http/protobuf"
+            )
 
     def test_managed_otlp_handles_mixed_signal_protocols(self) -> None:
         from azure.ai.agentserver.core import _tracing
@@ -248,9 +280,15 @@ class TestSetupDistroExport:
             assert len(span_processors) == 1
             assert len(metric_readers) == 1
             assert len(log_record_processors) == 1
-            assert span_processors[0].span_exporter.__module__.startswith("opentelemetry.exporter.otlp.proto.grpc")
-            assert metric_readers[0]._exporter.__module__.startswith("opentelemetry.exporter.otlp.proto.http")
-            assert log_record_processors[0]._batch_processor._exporter.__module__.startswith(
+            assert span_processors[0].span_exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.grpc"
+            )
+            assert metric_readers[0]._exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.http"
+            )
+            assert log_record_processors[
+                0
+            ]._batch_processor._exporter.__module__.startswith(
                 "opentelemetry.exporter.otlp.proto.http"
             )
         finally:
@@ -272,11 +310,15 @@ class TestSetupDistroExport:
             with _tracing._suppress_distro_otlp_components():
                 import microsoft.opentelemetry as microsoft_opentelemetry
 
-                distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+                distro_globals = (
+                    microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+                )
                 assert distro_globals["is_otlp_enabled"]()
                 assert os.environ["OTEL_EXPORTER_OTLP_PROTOCOL"] == "grpc"
 
-    def test_suppressing_distro_otlp_prevents_duplicate_http_and_console_exporters(self) -> None:
+    def test_suppressing_distro_otlp_prevents_duplicate_http_and_console_exporters(
+        self,
+    ) -> None:
         from azure.ai.agentserver.core import _tracing
         from microsoft.opentelemetry import use_microsoft_opentelemetry
 
@@ -316,7 +358,8 @@ class TestSetupDistroExport:
                 for processor in otel_kwargs.get("span_processors") or []
             )
             exporter_modules.extend(
-                getattr(reader._exporter, "__module__", "") for reader in otel_kwargs.get("metric_readers") or []
+                getattr(reader._exporter, "__module__", "")
+                for reader in otel_kwargs.get("metric_readers") or []
             )
             exporter_modules.extend(
                 getattr(processor._batch_processor._exporter, "__module__", "")
@@ -324,10 +367,22 @@ class TestSetupDistroExport:
             )
 
         assert len(configured_kwargs) == 3
-        assert not any(module.startswith("opentelemetry.exporter.otlp.proto.http") for module in exporter_modules)
-        assert not any(module.startswith("opentelemetry.sdk.trace.export") for module in exporter_modules)
-        assert not any(module.startswith("opentelemetry.sdk.metrics.export") for module in exporter_modules)
-        assert not any(module.startswith("opentelemetry.sdk._logs.export") for module in exporter_modules)
+        assert not any(
+            module.startswith("opentelemetry.exporter.otlp.proto.http")
+            for module in exporter_modules
+        )
+        assert not any(
+            module.startswith("opentelemetry.sdk.trace.export")
+            for module in exporter_modules
+        )
+        assert not any(
+            module.startswith("opentelemetry.sdk.metrics.export")
+            for module in exporter_modules
+        )
+        assert not any(
+            module.startswith("opentelemetry.sdk._logs.export")
+            for module in exporter_modules
+        )
 
     def test_suppressing_distro_otlp_serializes_overlapping_contexts(self) -> None:
         from azure.ai.agentserver.core import _tracing
@@ -364,7 +419,10 @@ class TestSetupDistroExport:
 
         try:
             assert not second_context_entered.wait(timeout=0.1)
-            assert distro_globals["_append_otlp_components"] is not original_append_otlp_components
+            assert (
+                distro_globals["_append_otlp_components"]
+                is not original_append_otlp_components
+            )
         finally:
             release_first_context.set()
             first_thread.join(timeout=5)
@@ -373,7 +431,9 @@ class TestSetupDistroExport:
         assert not first_thread.is_alive()
         assert not second_thread.is_alive()
         assert second_context_entered.is_set()
-        assert distro_globals["_append_otlp_components"] is original_append_otlp_components
+        assert (
+            distro_globals["_append_otlp_components"] is original_append_otlp_components
+        )
         assert errors == []
 
     def test_suppressing_distro_otlp_only_applies_to_current_thread(self) -> None:
@@ -393,13 +453,17 @@ class TestSetupDistroExport:
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 errors.append(exc)
 
-        with mock.patch.dict(distro_globals, {"_append_otlp_components": fake_append_otlp_components}):
+        with mock.patch.dict(
+            distro_globals, {"_append_otlp_components": fake_append_otlp_components}
+        ):
             with _tracing._suppress_distro_otlp_components():
                 active_helper = distro_globals["_append_otlp_components"]
                 current_thread_kwargs = {}
                 active_helper(current_thread_kwargs)
 
-                other_thread = Thread(target=call_helper_in_other_thread, args=(active_helper,))
+                other_thread = Thread(
+                    target=call_helper_in_other_thread, args=(active_helper,)
+                )
                 other_thread.start()
                 other_thread.join(timeout=5)
 
@@ -424,9 +488,9 @@ class TestAzureMonitorDistroExport:
     ) -> dict:
         from azure.ai.agentserver.core import _tracing
 
-        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, mock.patch.dict(
-            os.environ, env, clear=False
-        ):
+        with mock.patch(
+            "microsoft.opentelemetry.use_microsoft_opentelemetry"
+        ) as mock_use, mock.patch.dict(os.environ, env, clear=False):
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
@@ -497,7 +561,9 @@ class TestAzureMonitorDistroExport:
             _setup_azure_instrumentations(
                 {
                     "disable_tracing": False,
-                    "instrumentation_options": _tracing._resolve_instrumentation_options(None),
+                    "instrumentation_options": _tracing._resolve_instrumentation_options(
+                        None
+                    ),
                 }
             )
             request = PipelineRequest(
@@ -525,7 +591,9 @@ class TestAzureMonitorDistroExport:
     def test_no_sampling_ratio_without_azure_monitor(self) -> None:
         from azure.ai.agentserver.core import _tracing
 
-        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use:
+        with mock.patch(
+            "microsoft.opentelemetry.use_microsoft_opentelemetry"
+        ) as mock_use:
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
@@ -834,8 +902,14 @@ class TestFoundryEnrichmentSpanProcessor:
             _otel_context.detach(token)
 
         spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
-        assert spans_by_name["child"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
-        assert spans_by_name["parent"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
+        assert (
+            spans_by_name["child"]["azure.ai.agentserver.invocations.invocation_id"]
+            == "inv-xyz-789"
+        )
+        assert (
+            spans_by_name["parent"]["azure.ai.agentserver.invocations.invocation_id"]
+            == "inv-xyz-789"
+        )
 
 
 # ------------------------------------------------------------------ #
@@ -986,7 +1060,9 @@ class TestFlushSpansAsync:
     @pytest.mark.asyncio
     async def test_does_not_block_event_loop_and_passes_timeout(self) -> None:
         provider = _BlockingFlushProvider(block_first=True)
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=provider
+        ):
             flush_task = asyncio.create_task(_tracing.flush_spans_async(1234))
             # If force_flush ran inline it would block here; instead this
             # coroutine keeps running while the export blocks in a worker thread.
@@ -999,7 +1075,9 @@ class TestFlushSpansAsync:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("queued", [False, True])
     @pytest.mark.parametrize("exporter_fails", [False, True])
-    async def test_cancellation_drains_queued_or_running_flush(self, queued: bool, exporter_fails: bool) -> None:
+    async def test_cancellation_drains_queued_or_running_flush(
+        self, queued: bool, exporter_fails: bool
+    ) -> None:
         provider = _BlockingFlushProvider(block_first=True)
         worker_started = Event()
         release_worker = Event()
@@ -1018,7 +1096,9 @@ class TestFlushSpansAsync:
             loop.set_default_executor(executor)
             blocker = loop.run_in_executor(None, occupy_worker) if queued else None
             with mock.patch.object(
-                _tracing.trace, "get_tracer_provider", return_value=mock.Mock(force_flush=force_flush)
+                _tracing.trace,
+                "get_tracer_provider",
+                return_value=mock.Mock(force_flush=force_flush),
             ):
                 flush_task = asyncio.create_task(_tracing.flush_spans_async(1234))
                 try:
@@ -1041,7 +1121,9 @@ class TestFlushSpansAsync:
                     provider.release.set()
                     if blocker is not None:
                         await blocker
-                    result = (await asyncio.gather(flush_task, return_exceptions=True))[0]
+                    result = (await asyncio.gather(flush_task, return_exceptions=True))[
+                        0
+                    ]
                 assert isinstance(result, asyncio.CancelledError)
                 assert provider.calls == [1234]
 
@@ -1051,7 +1133,9 @@ class TestFlushSpansAsync:
             def force_flush(self, timeout_millis: int = 30000) -> bool:
                 raise RuntimeError("boom")
 
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=_BoomProvider()):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=_BoomProvider()
+        ):
             await _tracing.flush_spans_async()  # must not raise
 
     @pytest.mark.asyncio
@@ -1059,8 +1143,53 @@ class TestFlushSpansAsync:
         class _NoFlushProvider:
             pass
 
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=_NoFlushProvider()):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=_NoFlushProvider()
+        ):
             await _tracing.flush_spans_async()  # must not raise
+
+    @pytest.mark.asyncio
+    async def test_coalesces_concurrent_awaited_flushes(self) -> None:
+        provider = _BlockingFlushProvider(block_first=True)
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=provider
+        ):
+            first = asyncio.create_task(_tracing.flush_spans_async(10))
+            await _wait_for(provider.started)
+            followers = [
+                asyncio.create_task(_tracing.flush_spans_async(5000)) for _ in range(50)
+            ]
+            await asyncio.sleep(0)
+            assert _tracing._bg_flush_pending is True
+            provider.release.set()
+            await asyncio.gather(first, *followers)
+        assert provider.calls == [10, 5000]
+        assert _tracing._bg_flush_pending is False
+
+
+@pytest.mark.asyncio
+async def test_trace_stream_flushes_after_final_chunk_without_blocking_event_loop() -> (
+    None
+):
+    provider = _BlockingFlushProvider(block_first=True)
+    span = mock.Mock()
+
+    async def source():
+        yield "chunk"
+
+    with mock.patch.object(
+        _tracing.trace, "get_tracer_provider", return_value=provider
+    ):
+        stream = _tracing.trace_stream(source(), span)
+        assert await anext(stream) == "chunk"
+        finish = asyncio.create_task(anext(stream))
+        await _wait_for(provider.started)
+        span.end.assert_called_once_with()
+        assert not finish.done()
+        provider.release.set()
+        with pytest.raises(StopAsyncIteration):
+            await finish
+    assert provider.calls == [5000]
 
 
 class TestScheduleFlushSpans:
@@ -1085,7 +1214,9 @@ class TestScheduleFlushSpans:
     @pytest.mark.asyncio
     async def test_coalesces_concurrent_requests_into_one_followup(self) -> None:
         provider = _BlockingFlushProvider(block_first=True)
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=provider
+        ):
             # First call spawns exactly one background flush task.
             _tracing.schedule_flush_spans()
             task = _tracing._bg_flush_task
@@ -1106,7 +1237,9 @@ class TestScheduleFlushSpans:
     @pytest.mark.asyncio
     async def test_coalesced_followup_uses_max_requested_timeout(self) -> None:
         provider = _BlockingFlushProvider(block_first=True)
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=provider
+        ):
             # First caller starts the in-flight flush with its own timeout.
             _tracing.schedule_flush_spans(10)
             task = _tracing._bg_flush_task
@@ -1127,7 +1260,9 @@ class TestScheduleFlushSpans:
     @pytest.mark.asyncio
     async def test_single_request_flushes_once(self) -> None:
         provider = _BlockingFlushProvider(block_first=False)
-        with mock.patch.object(_tracing.trace, "get_tracer_provider", return_value=provider):
+        with mock.patch.object(
+            _tracing.trace, "get_tracer_provider", return_value=provider
+        ):
             _tracing.schedule_flush_spans()
             await _tracing._bg_flush_task
         assert len(provider.calls) == 1

@@ -26,7 +26,8 @@
   loop), `background` (return the response first, flush in the background --
   requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
-  cleanup, without an additional pre-stream flush.
+  cleanup, without an additional pre-stream flush. Concurrent asynchronous
+  flushes are coalesced into one in-flight export plus one pending pass.
 
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
