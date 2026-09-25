@@ -1446,7 +1446,6 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         content = await (await file_client.download_file()).readall()
         assert content == data
 
-
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_create_session(self, **kwargs):
@@ -1473,9 +1472,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
             data1 = b"abc123"
             file1 = fs1.get_file_client("file1")
-            await file1.upload_data(
-                data1, overwrite=True, raw_response_hook=capture_auth_header.hook("f1_upload")
-            )
+            await file1.upload_data(data1, overwrite=True, raw_response_hook=capture_auth_header.hook("f1_upload"))
             assert capture_auth_header["f1_upload"].startswith("Bearer ")
 
             actual1 = await (
@@ -1508,16 +1505,12 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
             assert session1 is not session2
             file1 = fs1.get_file_client("file1")
-            await (
-                await file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download2"))
-            ).readall()
+            await (await file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download2"))).readall()
             assert capture_auth_header["f1_download2"].startswith("Session ")
             assert cache[fs1_name] is session1
 
             session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
-            await (
-                await file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download3"))
-            ).readall()
+            await (await file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download3"))).readall()
             assert capture_auth_header["f1_download3"].startswith("Session ")
             assert cache[fs1_name] is not session1
             assert cache[fs1_name] is not session2
@@ -1565,12 +1558,18 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         async with (
             AsyncContainerSessionProvider(blob_url, credential, api_version="2026-10-06") as session_provider,
             DataLakeServiceClient(
-                dfs_url, credential=credential, use_session=True,
-                session_provider=session_provider, api_version="2026-10-06",
+                dfs_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
             ) as service1,
             DataLakeServiceClient(
-                dfs_url, credential=credential, use_session=True,
-                session_provider=session_provider, api_version="2026-10-06",
+                dfs_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
             ) as service2,
         ):
             cache = session_provider._cache._entry
@@ -1605,9 +1604,9 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
             session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
 
             actual = await (
-                await service2.get_file_system_client(fs_name).get_file_client("file1").download_file(
-                    raw_response_hook=capture_auth_header.hook("f2_download")
-                )
+                await service2.get_file_system_client(fs_name)
+                .get_file_client("file1")
+                .download_file(raw_response_hook=capture_auth_header.hook("f2_download"))
             ).readall()
             assert data == actual
             assert capture_auth_header["f2_download"].startswith("Session ")

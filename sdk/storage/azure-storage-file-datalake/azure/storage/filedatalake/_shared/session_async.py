@@ -12,7 +12,7 @@ from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
 from typing_extensions import Protocol
 
 from azure.core.exceptions import AzureError, HttpResponseError
-
+from azure.storage.blob._generated.models import CreateSessionConfiguration, CreateSessionResponse
 from .session import (
     Session,
     _extract_container,
@@ -20,7 +20,6 @@ from .session import (
     _is_cooldown_error,
     _to_service_url,
 )
-from azure.storage.blob._generated.models import CreateSessionConfiguration, CreateSessionResponse
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -133,7 +132,8 @@ class AsyncContainerSessionProvider:
     """
 
     def __init__(self, service_url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        from azure.storage.blob.aio._blob_service_client_async import BlobServiceClient  # module-level import would cycle
+        # module-level import would cycle
+        from azure.storage.blob.aio._blob_service_client_async import BlobServiceClient
 
         if not hasattr(credential, "get_token"):
             raise TypeError(

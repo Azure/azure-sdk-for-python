@@ -1314,7 +1314,6 @@ class TestFileSystem(StorageRecordedTestCase):
         content = file_client.download_file().readall()
         assert content == data
 
-
     @DataLakePreparer()
     @recorded_by_proxy
     def test_create_session(self, **kwargs):
@@ -1423,12 +1422,18 @@ class TestFileSystem(StorageRecordedTestCase):
 
         with (
             DataLakeServiceClient(
-                dfs_url, credential=credential, use_session=True,
-                session_provider=session_provider, api_version="2026-10-06",
+                dfs_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
             ) as service1,
             DataLakeServiceClient(
-                dfs_url, credential=credential, use_session=True,
-                session_provider=session_provider, api_version="2026-10-06",
+                dfs_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
             ) as service2,
         ):
             assert _find_session_policy(service1._pipeline)._session_provider is session_provider
@@ -1444,20 +1449,26 @@ class TestFileSystem(StorageRecordedTestCase):
             data = b"abc123"
             fs1.get_file_client("file1").upload_data(data, overwrite=True)
 
-            actual = fs1.get_file_client("file1").download_file(
-                raw_response_hook=capture_auth_header.hook("f1_download")
-            ).readall()
+            actual = (
+                fs1.get_file_client("file1")
+                .download_file(raw_response_hook=capture_auth_header.hook("f1_download"))
+                .readall()
+            )
             assert data == actual
             assert capture_auth_header["f1_download"].startswith("Session ")
             session = cache[fs_name]
             session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
 
-            actual = service2.get_file_system_client(fs_name).get_file_client("file1").download_file(
-                raw_response_hook=capture_auth_header.hook("f2_download")
-            ).readall()
+            actual = (
+                service2.get_file_system_client(fs_name)
+                .get_file_client("file1")
+                .download_file(raw_response_hook=capture_auth_header.hook("f2_download"))
+                .readall()
+            )
             assert data == actual
             assert capture_auth_header["f2_download"].startswith("Session ")
             assert cache[fs_name] is session
+
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":

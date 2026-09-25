@@ -17,7 +17,7 @@ from devtools_testutils import (
     test_proxy,
     remove_batch_sanitizers,
     set_custom_default_matcher,
-    add_remove_header_sanitizer
+    add_remove_header_sanitizer,
 )
 
 # Ignore async tests for PyPy
@@ -38,6 +38,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
         regex=r"<SessionToken>[^<]*</SessionToken>", value="<SessionToken>Sanitized</SessionToken>"
     )
+    # cspell:disable-next-line
     add_general_regex_sanitizer(regex=r"<SessionKey>[^<]*</SessionKey>", value="<SessionKey>U2FuaXRpemVk</SessionKey>")
     add_oauth_response_sanitizer()
 
@@ -51,4 +52,3 @@ def add_sanitizers(test_proxy):
     remove_batch_sanitizers(["AZSDK3493"])
     set_custom_default_matcher(ignore_query_ordering=True)
     add_remove_header_sanitizer(headers="Accept")
-

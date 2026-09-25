@@ -14,8 +14,8 @@ from typing_extensions import Protocol
 
 from azure.core.exceptions import AzureError, HttpResponseError
 
-from .models import StorageErrorCode
 from azure.storage.blob._generated.models import CreateSessionConfiguration, CreateSessionResponse
+from .models import StorageErrorCode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
