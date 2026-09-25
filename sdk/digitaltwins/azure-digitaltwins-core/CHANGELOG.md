@@ -1,8 +1,21 @@
 # Release History
 
+## 1.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.7 and 3.8 is no longer supported. Please use Python version 3.9 or later.
+
 ## 1.3.0 (2025-07-16)
 
 ### Other Changes
+
 - Migrated from AutoRest v2 to AutoRest v3 for code generation, improving code quality and maintainability.
 - Updated service API version to use API version 2023-10-31 by default.
 - Updated internal implementation while maintaining API compatibility.
