@@ -31,7 +31,6 @@
 
 ### Other Changes
 
-- Python 3.7 is no longer supported. Please use Python version 3.9 or later.
 - Updated and fixed README according to feedback
 - Migrated test recordings to the azure-sdk-assets repo
 - Added more sanitizers to conftest.py
