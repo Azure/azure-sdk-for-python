@@ -37,18 +37,26 @@ from .._utils.utils import ClientMixinABC
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+def build_text_analysis_analyze_text_request(
+    *, show_stats: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2026-05-15-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,10 +69,14 @@ def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = Non
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
@@ -73,12 +85,14 @@ def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
     show_stats: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2026-05-15-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,15 +115,23 @@ def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_text_analysis_analyze_text_job_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2026-05-15-preview")
+    )
     # Construct URL
     _url = "/analyze-text/jobs"
 
@@ -118,15 +140,21 @@ def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest: 
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-15-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2026-05-15-preview")
+    )
     # Construct URL
     _url = "/analyze-text/jobs/{jobId}:cancel"
     path_format_arguments = {
@@ -142,7 +170,9 @@ def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRe
 
 
 class _TextAnalysisClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextAnalysisClientConfiguration]
+    ClientMixinABC[
+        PipelineClient[HttpRequest, HttpResponse], TextAnalysisClientConfiguration
+    ]
 ):
 
     @overload
@@ -152,7 +182,7 @@ class _TextAnalysisClientOperationsMixin(
         *,
         show_stats: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
@@ -176,7 +206,7 @@ class _TextAnalysisClientOperationsMixin(
         *,
         show_stats: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
@@ -200,7 +230,7 @@ class _TextAnalysisClientOperationsMixin(
         *,
         show_stats: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
@@ -223,7 +253,7 @@ class _TextAnalysisClientOperationsMixin(
         body: Union[_models.AnalyzeTextInput, _types.AnalyzeTextInput, IO[bytes]],
         *,
         show_stats: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AnalyzeTextResult:
         """Request text analysis over a collection of documents.
 
@@ -249,7 +279,9 @@ class _TextAnalysisClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.AnalyzeTextResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -268,14 +300,18 @@ class _TextAnalysisClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -286,7 +322,9 @@ class _TextAnalysisClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
                 response,
@@ -311,7 +349,7 @@ class _TextAnalysisClientOperationsMixin(
         show_stats: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AnalyzeTextOperationState:
         """Get analysis status and results.
 
@@ -357,14 +395,18 @@ class _TextAnalysisClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -375,7 +417,9 @@ class _TextAnalysisClientOperationsMixin(
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
                 response,
@@ -385,7 +429,9 @@ class _TextAnalysisClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AnalyzeTextOperationState, response.json())
+            deserialized = _deserialize(
+                _models.AnalyzeTextOperationState, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -401,7 +447,7 @@ class _TextAnalysisClientOperationsMixin(
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -414,7 +460,9 @@ class _TextAnalysisClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -445,14 +493,18 @@ class _TextAnalysisClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -462,7 +514,9 @@ class _TextAnalysisClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
                 response,
@@ -470,7 +524,9 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Location"] = self._deserialize(
+            "str", response.headers.get("Operation-Location")
+        )
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -489,8 +545,8 @@ class _TextAnalysisClientOperationsMixin(
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeTextOperationState]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
@@ -509,15 +565,19 @@ class _TextAnalysisClientOperationsMixin(
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is None.
         :paramtype cancel_after: float
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns AnalyzeTextOperationState
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.textanalytics.models.AnalyzeTextOperationState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_analyze_text_job(
-        self, body: _types.AnalyzeTextSubmitJobRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+        self,
+        body: _types.AnalyzeTextSubmitJobRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeTextOperationState]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
@@ -526,15 +586,15 @@ class _TextAnalysisClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns AnalyzeTextOperationState
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.textanalytics.models.AnalyzeTextOperationState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_analyze_text_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.AnalyzeTextOperationState]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
@@ -543,8 +603,8 @@ class _TextAnalysisClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns AnalyzeTextOperationState
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.textanalytics.models.AnalyzeTextOperationState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -558,8 +618,8 @@ class _TextAnalysisClientOperationsMixin(
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+        **kwargs: Any,
+    ) -> LROPoller[_models.AnalyzeTextOperationState]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
@@ -578,15 +638,17 @@ class _TextAnalysisClientOperationsMixin(
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is None.
         :paramtype cancel_after: float
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns AnalyzeTextOperationState
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.textanalytics.models.AnalyzeTextOperationState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
+        cls: ClsType[_models.AnalyzeTextOperationState] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -602,35 +664,46 @@ class _TextAnalysisClientOperationsMixin(
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = _models.AnalyzeTextOperationState(
+                pipeline_response.http_response.json()
+            )
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.AnalyzeTextOperationState].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.AnalyzeTextOperationState](
+            self._client, raw_result, get_long_running_output, polling_method
+        )  # type: ignore
 
     def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -653,14 +726,18 @@ class _TextAnalysisClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -670,7 +747,9 @@ class _TextAnalysisClientOperationsMixin(
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
                 response,
@@ -678,7 +757,9 @@ class _TextAnalysisClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Location"] = self._deserialize(
+            "str", response.headers.get("Operation-Location")
+        )
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -708,22 +789,34 @@ class _TextAnalysisClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._cancel_job_initial(
-                job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+                job_id=job_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(
+            pipeline_response,
+        ):
             if cls:
                 return cls(pipeline_response, None, {})  # type: ignore
+            return None
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
         if polling is True:
             polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
+                ),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

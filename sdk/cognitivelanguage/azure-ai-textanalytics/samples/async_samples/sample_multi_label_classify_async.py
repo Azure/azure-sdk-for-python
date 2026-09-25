@@ -59,7 +59,9 @@ async def sample_multi_label_classify_async():
         )
 
         text_input = MultiLanguageTextInput(
-            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+            multi_language_inputs=[
+                MultiLanguageInput(id="A", text=text_a, language="en")
+            ]
         )
 
         action = CustomMultiLabelClassificationOperationAction(
@@ -76,39 +78,12 @@ async def sample_multi_label_classify_async():
             actions=[action],
         )
 
-        # Operation metadata (pre-final)
-        print(f"Operation ID: {poller.details.get('operation_id')}")
+        job_state = await poller.result()
+        print(f"Job ID: {job_state.job_id}")
+        print(f"Status: {job_state.status}")
 
-        # Wait for completion and get AsyncItemPaged of TextActions
-        paged_actions = await poller.result()
-
-        # Final-state metadata
-        d = poller.details
-        print(f"Job ID: {d.get('job_id')}")
-        print(f"Status: {d.get('status')}")
-        print(f"Created: {d.get('created_date_time')}")
-        print(f"Last Updated: {d.get('last_updated_date_time')}")
-        if d.get("expiration_date_time"):
-            print(f"Expires: {d.get('expiration_date_time')}")
-        if d.get("display_name"):
-            print(f"Display Name: {d.get('display_name')}")
-        if d.get("errors"):
-            print("\nErrors:")
-            for err in d["errors"]:
-                print(f"  Code: {err.code} - {err.message}")
-
-        # Iterate results (async pageable)
-        async for actions_page in paged_actions:
-            # Page-level counts if available
-            print(
-                f"Completed: {actions_page.completed}, "
-                f"In Progress: {actions_page.in_progress}, "
-                f"Failed: {actions_page.failed}, "
-                f"Total: {actions_page.total}"
-            )
-
-            # Items are the individual operation results
-            for op_result in actions_page.items_property or []:
+        if job_state.actions:
+            for op_result in job_state.actions.items_property or []:
                 if isinstance(op_result, CustomMultiLabelClassificationOperationResult):
                     print(f"\nAction Name: {op_result.task_name}")
                     print(f"Action Status: {op_result.status}")
@@ -121,14 +96,6 @@ async def sample_multi_label_classify_async():
                         for cls_item in doc.class_property or []:
                             print(f"  Category: {cls_item.category}")
                             print(f"  Confidence score: {cls_item.confidence_score}")
-                else:
-                    try:
-                        print(
-                            f"\n[Other action] name={op_result.task_name}, "
-                            f"status={op_result.status}, kind={op_result.kind}"
-                        )
-                    except (AttributeError, TypeError) as e:
-                        print(f"\n[Other action present] Error: {e}")
 
 
 # [END text_custom_multi_label_classification_async]

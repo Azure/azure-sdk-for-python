@@ -35,9 +35,8 @@ class TextAnalysisClient(
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in <a
-    href=\\"`https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview
-    <https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview>`_</a>.0.
+    detection and question answering. Further documentation can be found at
+    https://learn.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com). Required.
@@ -56,10 +55,15 @@ class TextAnalysisClient(
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = TextAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = TextAnalysisClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -75,10 +79,16 @@ class TextAnalysisClient(
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -106,10 +116,14 @@ class TextAnalysisClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
