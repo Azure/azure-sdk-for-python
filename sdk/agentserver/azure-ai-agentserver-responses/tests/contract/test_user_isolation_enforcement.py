@@ -357,14 +357,14 @@ class TestGetUserIsolation:
                 except (asyncio.CancelledError, Exception):
                     pass
 
-    def test_get_created_without_key_any_request_returns_200(self) -> None:
-        """GET with or without key when response was created without one → 200 (backward compat)."""
+    def test_get_created_without_key_is_visible_only_to_anonymous_requests(self) -> None:
+        """Anonymous responses are isolated from named user partitions."""
         client = _make_client()
         resp = _create_response(client)
         _wait_for_terminal(client, resp["id"])
         # With a key
         r = client.get(f"/responses/{resp['id']}", headers={"x-agent-user-id": "any_key"})
-        assert r.status_code == 200
+        assert r.status_code == 404
         # Without a key
         r = client.get(f"/responses/{resp['id']}")
         assert r.status_code == 200
