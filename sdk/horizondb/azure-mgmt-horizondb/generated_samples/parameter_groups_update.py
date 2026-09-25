@@ -30,24 +30,26 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_parameter_groups.begin_update(
-        resource_group_name="exampleresourcegroup",
-        parameter_group_name="exampleparametergroup",
+    response = client.parameter_groups.begin_update(
+        resource_group_name="example-resource-group",
+        parameter_group_name="production-parameters",
         properties={
             "properties": {
-                "applyImmediately": True,
-                "description": "Updated parameter group for high-throughput workloads",
+                "description": "Updated parameters for production transactional workloads",
                 "parameters": [
-                    {"name": "max_connections", "value": "300"},
-                    {"name": "log_min_error_statement", "value": "warning"},
+                    {"name": "application_name", "value": "horizondb-production"},
+                    {"name": "autovacuum", "value": "off"},
+                    {"name": "wal_receiver_timeout", "value": "45000"},
+                    {"name": "work_mem", "value": "8192"},
+                    {"name": "xmlbinary", "value": "base64"},
                 ],
             },
-            "tags": {"team": "updated-data-platform"},
+            "tags": {"environment": "production", "team": "data-platform"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ParameterGroups_Update.json
+# x-ms-original-file: 2026-10-01-preview/ParameterGroups_Update.json
 if __name__ == "__main__":
     main()

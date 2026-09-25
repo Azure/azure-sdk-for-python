@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_firewall_rules.list(
-        resource_group_name="exampleresourcegroup",
-        cluster_name="examplecluster",
-        pool_name="examplepool",
+    response = client.firewall_rules.list(
+        resource_group_name="example-resource-group",
+        cluster_name="example-cluster",
+        pool_name="example-pool-01",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-05-01-preview/FirewallRules_List.json
+# x-ms-original-file: 2026-10-01-preview/FirewallRules_List.json
 if __name__ == "__main__":
     main()

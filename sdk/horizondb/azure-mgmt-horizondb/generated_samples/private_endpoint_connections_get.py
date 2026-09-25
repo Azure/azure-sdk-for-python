@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_private_endpoint_connections.get(
-        resource_group_name="exampleresourcegroup",
-        cluster_name="examplecluster",
-        private_endpoint_connection_name="exampleprivateendpointconnection.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+    response = client.private_endpoint_connections.get(
+        resource_group_name="example-resource-group",
+        cluster_name="example-cluster",
+        private_endpoint_connection_name="example-private-endpoint-connection",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/PrivateEndpointConnections_Get.json
+# x-ms-original-file: 2026-10-01-preview/PrivateEndpointConnections_Get.json
 if __name__ == "__main__":
     main()

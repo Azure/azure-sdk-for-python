@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AuthenticationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of a service-created authentication configuration."""
+
+    PASSWORD_METHOD = "passwordMethod"
+    """PostgreSQL username-and-password authentication."""
+    MICROSOFT_ENTRA = "microsoftEntra"
+    """Microsoft Entra authentication."""
+
+
 class AuthenticationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates if authentication state is enabled or not."""
 
@@ -26,6 +35,241 @@ class AuthenticationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Is enabled."""
     DISABLED = "Disabled"
     """Is disabled."""
+
+
+class ChangeDataCaptureDesiredState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The requested state of a HorizonDB change data capture capability, destination, or
+    configuration.
+    """
+
+    ENABLED = "Enabled"
+    """The resource should be enabled."""
+    DISABLED = "Disabled"
+    """The resource should be disabled."""
+
+
+class ChangeDataCaptureDestinationEffectiveState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The effective state of a HorizonDB change data capture destination."""
+
+    WAITING_FOR_IDENTITY = "WaitingForIdentity"
+    """The destination is waiting for a validated active identity assignment."""
+    ENABLING = "Enabling"
+    """The destination is being enabled."""
+    ENABLED = "Enabled"
+    """The destination is enabled."""
+    DISABLING = "Disabling"
+    """The destination is being disabled."""
+    DISABLED = "Disabled"
+    """The destination is disabled."""
+    DEGRADED = "Degraded"
+    """The destination is available with reduced functionality or impaired health."""
+    FAILED = "Failed"
+    """The destination is not operational because reconciliation failed."""
+
+
+class ChangeDataCaptureDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The destination type supported by this API version."""
+
+    FABRIC = "Fabric"
+    """A Microsoft Fabric destination."""
+
+
+class ChangeDataCaptureEffectiveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The effective state of a HorizonDB change data capture capability or configuration."""
+
+    ENABLING = "Enabling"
+    """The resource is being enabled."""
+    ENABLED = "Enabled"
+    """The resource is enabled."""
+    DISABLING = "Disabling"
+    """The resource is being disabled."""
+    DISABLED = "Disabled"
+    """The resource is disabled."""
+    DEGRADED = "Degraded"
+    """The resource is available with reduced functionality or impaired health."""
+    FAILED = "Failed"
+    """The resource is not operational because reconciliation failed."""
+
+
+class ChangeDataCaptureEngineConfigurationState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The readiness of HorizonDB engine settings required for change data capture."""
+
+    READY = "Ready"
+    """The required engine settings are ready."""
+    NOT_READY = "NotReady"
+    """One or more required engine settings are not ready."""
+    RECONCILING = "Reconciling"
+    """The service is reconciling required engine settings."""
+    FAILED = "Failed"
+    """Engine-setting reconciliation failed."""
+
+
+class ChangeDataCaptureExtensionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle state of the HorizonDB change data capture extension."""
+
+    NOT_INSTALLED = "NotInstalled"
+    """The extension is not installed."""
+    INSTALLING = "Installing"
+    """The extension is being installed."""
+    READY = "Ready"
+    """The extension is ready."""
+    UPGRADING = "Upgrading"
+    """The extension is being upgraded."""
+    REMOVING = "Removing"
+    """The extension is being removed."""
+    FAILED = "Failed"
+    """The extension operation failed."""
+
+
+class ChangeDataCaptureIdentityActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The activation state of a change data capture identity assignment."""
+
+    INACTIVE = "Inactive"
+    """The identity assignment is not active."""
+    ACTIVATING = "Activating"
+    """The identity assignment is being activated."""
+    ACTIVE = "Active"
+    """The identity assignment is active."""
+    DEACTIVATING = "Deactivating"
+    """The identity assignment is being deactivated."""
+    FAILED = "Failed"
+    """The identity activation transition failed."""
+
+
+class ChangeDataCaptureIdentityAssignmentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle state of a change data capture identity assignment."""
+
+    ASSIGNING = "Assigning"
+    """The identity is being assigned."""
+    ASSIGNED = "Assigned"
+    """The identity is assigned."""
+    REMOVING = "Removing"
+    """The identity assignment is being removed."""
+    FAILED = "Failed"
+    """The identity assignment operation failed."""
+
+
+class ChangeDataCaptureIdentityValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The validation state of a change data capture identity assignment."""
+
+    NOT_STARTED = "NotStarted"
+    """Identity validation has not started."""
+    RUNNING = "Running"
+    """Identity validation is running."""
+    SUCCEEDED = "Succeeded"
+    """Identity validation succeeded."""
+    FAILED = "Failed"
+    """Identity validation failed."""
+
+
+class ChangeDataCaptureProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol used to communicate with a change data capture destination."""
+
+    NATIVE = "Native"
+    """The destination's native protocol."""
+
+
+class ChangeDataCaptureReadWriteEndpointState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The availability of a read-write endpoint for change data capture engine mutations."""
+
+    READY = "Ready"
+    """An eligible read-write endpoint is ready."""
+    UNAVAILABLE = "Unavailable"
+    """No eligible read-write endpoint is currently available."""
+
+
+class ChangeDataCaptureReplicationArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The implementation architecture used to capture and publish changes."""
+
+    COMPUTE_BASED = "ComputeBased"
+    """Change capture runs with the HorizonDB compute layer."""
+    STORAGE_BASED = "StorageBased"
+    """Change capture runs with the HorizonDB storage layer."""
+    HYBRID = "Hybrid"
+    """Change capture uses both compute and storage components."""
+
+
+class ChangeDataCaptureReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of a destination-owned replication session."""
+
+    NOT_APPLICABLE = "NotApplicable"
+    """A destination session does not apply to the current resource state."""
+    NOT_CONNECTED = "NotConnected"
+    """No destination session is connected."""
+    CONNECTING = "Connecting"
+    """A destination session is connecting."""
+    REPLICATING = "Replicating"
+    """A destination session is replicating changes."""
+    RECONNECTING = "Reconnecting"
+    """A destination session is reconnecting after an interruption."""
+    PAUSED = "Paused"
+    """The destination session is paused."""
+    STOPPING = "Stopping"
+    """The destination session is stopping."""
+    DEGRADED = "Degraded"
+    """The destination session is operating with impaired health."""
+    FAILED = "Failed"
+    """The destination session failed."""
+
+
+class ChangeDataCaptureTopologyBindingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The relationship of a change data capture configuration to the current writer topology."""
+
+    ACTIVE = "Active"
+    """The configuration belongs to the current active writer."""
+    RECONCILING = "Reconciling"
+    """The service is reconciling the configuration after a writer change."""
+    REBIND_REQUIRED = "RebindRequired"
+    """The destination session must bind to a replacement configuration resource ID."""
+    SUPERSEDED = "Superseded"
+    """The configuration belongs to a former writer and has been replaced."""
+    CONFLICT = "Conflict"
+    """Equivalent change data capture state could not be materialized without overwriting unrelated
+    state."""
+
+
+class ChangeDataCaptureUsageProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason that a change data capture configuration exists."""
+
+    MIRRORING = "Mirroring"
+    """The configuration publishes database changes for Microsoft Fabric Mirroring."""
+
+
+class ClusterCreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls how a HorizonDB cluster PUT request is processed."""
+
+    CREATE = "Create"
+    """Process the request as a normal cluster creation."""
+    POINT_IN_TIME_RESTORE = "PointInTimeRestore"
+    """Create the cluster from a point-in-time restore."""
+
+
+class ClusterState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of a HorizonDB cluster."""
+
+    READY = "Ready"
+    """Is ready and operational."""
+    PROVISIONING = "Provisioning"
+    """Is provisioning."""
+    DELETING = "Deleting"
+    """Is being deleted."""
+    INACCESSIBLE = "Inaccessible"
+    """Is inaccessible."""
+    UPDATING = "Updating"
+    """Is being updated."""
+
+
+class ComputeProcessorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compute processor type."""
+
+    INTEL = "Intel"
+    """Intel processor."""
+    AMD = "AMD"
+    """AMD processor."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,48 +285,106 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
-class CreateModeCluster(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new HorizonDB cluster."""
+class EndpointRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role of the endpoint."""
 
-    CREATE = "Create"
-    """Create a new cluster."""
-    UPDATE = "Update"
-    """Update an existing cluster."""
-    POINT_IN_TIME_RESTORE = "PointInTimeRestore"
-    """Create cluster from point-in-time restore."""
-
-
-class CreateModePool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new HorizonDB cluster."""
-
-    CREATE = "Create"
-    """Create a new pool."""
-    UPDATE = "Update"
-    """Update an existing pool."""
+    READ_ONLY = "ReadOnly"
+    """The Endpoint accepts read-only traffic. This applies to Pool-scoped Endpoints and may apply to
+    other endpoint scenarios introduced by later API versions."""
+    READ_WRITE = "ReadWrite"
+    """The Cluster-scoped Endpoint accepts read and write traffic."""
 
 
-class HorizonDbComputeModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The compute model type."""
+class EndpointScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scope of a HorizonDB endpoint."""
 
-    PROVISIONED = "Provisioned"
-    """Provisioned compute."""
-    SERVERLESS = "Serverless"
-    """Serverless compute."""
+    CLUSTER = "Cluster"
+    """The Endpoint is associated with its parent Cluster."""
+    POOL = "Pool"
+    """The Endpoint is associated with a Pool under its parent Cluster and has the ReadOnly role."""
 
 
-class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
-    allowed).
-    """
+class GeoRedundancyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the geo-redundancy state."""
+
+    ENABLED = "Enabled"
+    """Geo-redundancy is enabled."""
+    DISABLED = "Disabled"
+    """Geo-redundancy is disabled."""
+
+
+class HorizonDbClusterDataEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of data encryption used by a HorizonDB cluster."""
+
+    SYSTEM_MANAGED = "SystemManaged"
+    """Data encryption is managed by Azure using platform-managed keys."""
+    AZURE_KEY_VAULT = "AzureKeyVault"
+    """Data encryption uses customer-managed keys stored in Azure Key Vault."""
+
+
+class HorizonDbClusterEncryptionKeyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The validation status of a customer-managed encryption key used by a HorizonDB cluster."""
+
+    VALID = "Valid"
+    """The encryption key is valid and accessible to the configured user-assigned managed identity."""
+    INVALID = "Invalid"
+    """The encryption key is invalid or inaccessible to the configured user-assigned managed identity."""
+
+
+class HorizonDbClusterIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The managed identity types supported by a HorizonDB cluster."""
 
     NONE = "None"
-    """No managed identity."""
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """System assigned managed identity."""
+    """No managed identity is assigned."""
     USER_ASSIGNED = "UserAssigned"
-    """User assigned managed identity."""
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
-    """System and user assigned managed identity."""
+    """User-assigned managed identities are assigned."""
+
+
+class LogCaptureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether HorizonDB captures log files."""
+
+    ENABLED = "Enabled"
+    """Log capture is enabled."""
+    DISABLED = "Disabled"
+    """Log capture is disabled."""
+
+
+class LogFileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a captured HorizonDB log file."""
+
+    POSTGRE_SQL_SERVER = "PostgreSqlServer"
+    """A PostgreSQL server log file."""
+
+
+class MaintenanceEventStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a maintenance event."""
+
+    PLANNED = "Planned"
+    """The maintenance event is scheduled and has not yet started."""
+    IN_PROGRESS = "InProgress"
+    """The maintenance event is currently in progress."""
+    COMPLETE = "Complete"
+    """The maintenance event completed successfully."""
+    RESCHEDULED = "Rescheduled"
+    """The customer rescheduled the maintenance event."""
+    CANCELED = "Canceled"
+    """The maintenance event was canceled, failed, or timed out."""
+
+
+class MaintenanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a maintenance event."""
+
+    PLANNED_MAINTENANCE = "PlannedMaintenance"
+    """A planned maintenance event."""
+
+
+class NodeRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role performed by a node within its HorizonDB pool."""
+
+    READ_WRITE = "ReadWrite"
+    """The node accepts read and write traffic for its cluster."""
+    READ_ONLY = "ReadOnly"
+    """The node accepts read-only traffic."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,17 +400,119 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class ParameterApplyMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls when dynamic parameter changes become effective. Static parameter changes always
+    become effective only after a pool restart, whether initiated by the customer or performed
+    during scheduled maintenance.
+    """
+
+    IMMEDIATE = "Immediate"
+    """Apply dynamic parameter changes immediately. Static parameter changes remain pending until the
+    pool restarts."""
+    PENDING_REBOOT = "PendingReboot"
+    """Apply dynamic and static parameter changes when the pool next restarts, whether initiated by
+    the customer or performed during scheduled maintenance."""
+
+
+class ParameterGroupSyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates synchronization status between a HorizonDB resource and its parameter group."""
+
+    APPLYING = "Applying"
+    """Parameter updates are currently being applied."""
+    IN_SYNC = "InSync"
+    """Parameter values are synchronized and up to date."""
+    FAILED_TO_APPLY = "FailedToApply"
+    """Applying parameter updates failed."""
+    PENDING_REBOOT = "PendingReboot"
+    """Parameter updates are pending and require a reboot to take effect."""
+
+
+class ParameterValueSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of the effective value assigned to a HorizonDB parameter."""
+
+    SYSTEM_DEFAULT = "SystemDefault"
+    """The effective value is the system-defined default."""
+    USER_OVERRIDE = "UserOverride"
+    """The effective value was explicitly supplied by the user, even when it equals the system-defined
+    default value."""
+
+
+class PoolComputeModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compute model type."""
+
+    PROVISIONED = "Provisioned"
+    """Provisioned compute model."""
+
+
+class PoolHighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The high-availability mode requested for a HorizonDB pool."""
+
+    DISABLED = "Disabled"
+    """High availability is disabled. This mode is valid only when nodeCount is 1."""
+    ANY_ZONE = "AnyZone"
+    """The service may allocate nodes in the same availability zone or across availability zones. This
+    mode is valid only when nodeCount is 2 through 16."""
+    ZONE_REDUNDANT = "ZoneRedundant"
+    """The service must allocate nodes across availability zones. This mode is valid only when
+    nodeCount is 2 through 16."""
+
+
+class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of a HorizonDB pool."""
+
+    READY = "Ready"
+    """Is ready and operational."""
+    PROVISIONING = "Provisioning"
+    """Is provisioning."""
+    DELETING = "Deleting"
+    """Is being deleted."""
+    INACCESSIBLE = "Inaccessible"
+    """Is inaccessible."""
+    UPDATING = "Updating"
+    """Is being updated."""
+    STARTING = "Starting"
+    """Is starting up."""
+    RESTARTING = "Restarting"
+    """Is restarting."""
+    STOPPING = "Stopping"
+    """Is stopping."""
+    STOPPED = "Stopped"
+    """Is stopped."""
+
+
+class PostgreSqlCapabilityVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A PostgreSQL major version advertised by the HorizonDB capabilities API."""
+
+    V17 = "17"
+    """PostgreSQL major version 17."""
+    V18 = "18"
+    """PostgreSQL major version 18."""
+
+
+class PostgreSqlVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A PostgreSQL major version supported by HorizonDB. API version 2026-10-01-preview accepts 17
+    and 18. Future API versions may add named values, and clients must tolerate unknown values
+    returned by the service.
+    """
+
+    V17 = "17"
+    """PostgreSQL major version 17."""
+    V18 = "18"
+    """PostgreSQL major version 18."""
+
+
 class PrincipalTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the Entra ID principal."""
+    """The type of Microsoft Entra principal mapped to a PostgreSQL role."""
 
     UNKNOWN = "Unknown"
-    """Unknown or unrecognized type (internal only, not accepted in requests)."""
+    """An unknown or unrecognized type. This value is for internal use and is not accepted in
+    requests."""
     USER = "User"
-    """An Entra ID user account (UPN-based principal)."""
+    """A Microsoft Entra ID user account."""
     GROUP = "Group"
-    """An Entra ID security group. All members of the group inherit admin privileges."""
+    """A Microsoft Entra ID security group. All members of the group inherit administrator privileges."""
     SERVICE_PRINCIPAL = "ServicePrincipal"
-    """An Entra ID application / service principal (used for automated workloads)."""
+    """A Microsoft Entra ID application or service principal used for automated workloads."""
 
 
 class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
@@ -141,15 +545,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state."""
 
     SUCCEEDED = "Succeeded"
-    """Provisioning completed successfully."""
+    """Resource has been created."""
     FAILED = "Failed"
-    """Provisioning failed."""
+    """Resource creation failed."""
     CANCELED = "Canceled"
-    """Provisioning was canceled."""
+    """Resource creation was canceled."""
     IN_PROGRESS = "InProgress"
-    """Provisioning is in progress."""
+    """The HorizonDB resource operation is actively running."""
     PROVISIONING = "Provisioning"
-    """Provisioning is in progress."""
+    """The HorizonDB resource is still provisioning."""
 
 
 class PublicNetworkAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,44 +565,8 @@ class PublicNetworkAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Public network access is disabled."""
 
 
-class ReplicaRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Role of the replica."""
+class ScheduledMaintenanceManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies who manages scheduled maintenance for a HorizonDB pool."""
 
-    READ = "Read"
-    """Read-only replica."""
-    READ_WRITE = "ReadWrite"
-    """ReadWrite replica."""
-
-
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current states."""
-
-    READY = "Ready"
-    """Is ready and operational."""
-    DROPPING = "Dropping"
-    """Is being dropped/deleted."""
-    DISABLED = "Disabled"
-    """Is disabled."""
-    STARTING = "Starting"
-    """Is starting up."""
-    STOPPING = "Stopping"
-    """Is stopping."""
-    STOPPED = "Stopped"
-    """Is stopped."""
-    UPDATING = "Updating"
-    """Is being updated."""
-    HEALTHY = "Healthy"
-    """Is healthy."""
-    SUCCEEDED = "Succeeded"
-    """Is succeeded."""
-    UPGRADING = "Upgrading"
-    """Is upgrading."""
-
-
-class ZonePlacementPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The zone redundancy option for the cluster."""
-
-    STRICT = "Strict"
-    """Enforce zonal redundancy."""
-    BEST_EFFORT = "BestEffort"
-    """Best-effort placement (default)."""
+    SYSTEM = "System"
+    """Scheduled maintenance is managed by the system."""

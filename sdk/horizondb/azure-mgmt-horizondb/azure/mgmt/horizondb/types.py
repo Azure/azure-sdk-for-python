@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,25 +7,72 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
+
+from .models._enums import (
+    ChangeDataCaptureDestinationType,
+    ChangeDataCaptureProtocol,
+    PoolComputeModelType,
+    ScheduledMaintenanceManagementType,
+)
 
 if TYPE_CHECKING:
     from .models import (
         AuthenticationState,
-        CreateModeCluster,
+        ChangeDataCaptureDesiredState,
+        ChangeDataCaptureDestinationEffectiveState,
+        ChangeDataCaptureEffectiveState,
+        ChangeDataCaptureEngineConfigurationState,
+        ChangeDataCaptureExtensionState,
+        ChangeDataCaptureIdentityActivationState,
+        ChangeDataCaptureIdentityAssignmentState,
+        ChangeDataCaptureIdentityValidationState,
+        ChangeDataCaptureReadWriteEndpointState,
+        ChangeDataCaptureReplicationArchitecture,
+        ChangeDataCaptureReplicationState,
+        ChangeDataCaptureTopologyBindingState,
+        ChangeDataCaptureUsageProfile,
+        ClusterCreateMode,
+        ClusterState,
+        ComputeProcessorType,
         CreatedByType,
-        HorizonDbComputeModelType,
-        ManagedServiceIdentityType,
+        GeoRedundancyState,
+        HorizonDbClusterDataEncryptionType,
+        HorizonDbClusterEncryptionKeyStatus,
+        HorizonDbClusterIdentityType,
+        LogCaptureState,
+        ParameterApplyMethod,
+        ParameterGroupSyncStatus,
+        ParameterValueSource,
+        PoolHighAvailabilityMode,
+        PoolState,
+        PostgreSqlVersion,
         PrincipalTypes,
         PrivateEndpointConnectionProvisioningState,
         PrivateEndpointServiceConnectionStatus,
         ProvisioningState,
         PublicNetworkAccessState,
-        ReplicaRole,
-        State,
-        ZonePlacementPolicy,
     )
+
+
+class ActivateChangeDataCaptureIdentityRequest(TypedDict, total=False):
+    """The request to activate an identity assignment for a change data capture destination.
+
+    :ivar identityAssignmentResourceId: The resource ID of an inactive, successfully validated
+     identity assignment under the destination receiving the action. Required.
+    :vartype identityAssignmentResourceId: str
+    :ivar drainExistingSessions: Whether existing destination sessions should drain before the
+     identity cutover. The default is false.
+    :vartype drainExistingSessions: bool
+    """
+
+    identityAssignmentResourceId: Required[str]
+    """The resource ID of an inactive, successfully validated identity assignment under the
+     destination receiving the action. Required."""
+    drainExistingSessions: bool
+    """Whether existing destination sessions should drain before the identity cutover. The default is
+     false."""
 
 
 class Resource(TypedDict, total=False):
@@ -73,42 +120,553 @@ class ProxyResource(Resource):
     """
 
 
-class HorizonDbAdministratorAdd(TypedDict, total=False):
-    """The request body for adding a HorizonDB administrator.
+class BackupProperties(TypedDict, total=False):
+    """Backup configuration properties for a HorizonDB cluster.
 
-    :ivar properties: The properties for adding a HorizonDB administrator. Required.
-    :vartype properties: "HorizonDbAdministratorPropertiesForAdd"
+    :ivar geoRedundancy: The geo-redundancy state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype geoRedundancy: Union[str, "GeoRedundancyState"]
+    :ivar retentionDays: The number of days that automatic backups are retained. The service
+     defaults to 7 days when this property is omitted.
+    :vartype retentionDays: int
+    :ivar earliestRestorePointUtc: The earliest point in time, in UTC, to which the cluster can
+     currently be restored.
+    :vartype earliestRestorePointUtc: str
     """
 
-    properties: Required["HorizonDbAdministratorPropertiesForAdd"]
-    """The properties for adding a HorizonDB administrator. Required."""
+    geoRedundancy: Required[Union[str, "GeoRedundancyState"]]
+    """The geo-redundancy state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    retentionDays: int
+    """The number of days that automatic backups are retained. The service defaults to 7 days when
+     this property is omitted."""
+    earliestRestorePointUtc: str
+    """The earliest point in time, in UTC, to which the cluster can currently be restored."""
 
 
-class HorizonDbAdministratorPropertiesForAdd(TypedDict, total=False):
-    """The properties for adding a HorizonDB administrator.
+class BackupPropertiesForPatchUpdate(TypedDict, total=False):
+    """Backup configuration properties for updating a HorizonDB cluster.
 
-    :ivar principalName: The display name or UPN of the Entra ID principal. For users, typically
-     the User Principal Name (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups,
-     the group display name. For service principals, the application display name. Required.
-    :vartype principalName: str
-    :ivar principalType: The type of the Entra ID principal. Required. Known values are: "Unknown",
-     "User", "Group", and "ServicePrincipal".
-    :vartype principalType: Union[str, "PrincipalTypes"]
-    :ivar tenantId: The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the
-     tenant of the subscription.
+    :ivar retentionDays: The number of days that automatic backups are retained.
+    :vartype retentionDays: int
+    """
+
+    retentionDays: int
+    """The number of days that automatic backups are retained."""
+
+
+class ChangeDataCaptureCapability(ProxyResource):
+    """The singleton change data capture capability for a HorizonDB cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ChangeDataCaptureCapabilityProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "ChangeDataCaptureCapabilityProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ChangeDataCaptureCapabilityForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A sparse update request for the singleton change data capture capability.
+
+    :ivar properties: The capability properties to update.
+    :vartype properties: "ChangeDataCaptureCapabilityPropertiesForPatchUpdate"
+    """
+
+    properties: "ChangeDataCaptureCapabilityPropertiesForPatchUpdate"
+    """The capability properties to update."""
+
+
+class ChangeDataCaptureCapabilityProperties(TypedDict, total=False):
+    """The properties of the singleton change data capture capability.
+
+    :ivar desiredState: The requested capability state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    :ivar effectiveState: The current effective capability state. Required. Known values are:
+     "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effectiveState: Union[str, "ChangeDataCaptureEffectiveState"]
+    :ivar provisioningState: The provisioning state of the latest capability mutation. Known values
+     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar autoUpgradeExtension: Whether HorizonDB may automatically upgrade the service-owned
+     change data capture extension within the supported compatibility policy.
+    :vartype autoUpgradeExtension: bool
+    :ivar replicationArchitecture: The implementation architecture currently used for change
+     capture. Required. Known values are: "ComputeBased", "StorageBased", and "Hybrid".
+    :vartype replicationArchitecture: Union[str, "ChangeDataCaptureReplicationArchitecture"]
+    :ivar extension: The installed change data capture extension and its current lifecycle state.
+     Required.
+    :vartype extension: "ChangeDataCaptureExtensionStatus"
+    :ivar prerequisites: The current readiness of change data capture engine and read-write
+     endpoint prerequisites. Required.
+    :vartype prerequisites: "ChangeDataCapturePrerequisiteStatus"
+    :ivar destinationCount: The number of change data capture destinations under this cluster.
+     Required.
+    :vartype destinationCount: int
+    :ivar configurationCount: The number of change data capture configurations under this cluster.
+     Required.
+    :vartype configurationCount: int
+    :ivar status: Customer-safe health information for the capability. Required.
+    :vartype status: "ChangeDataCaptureStatus"
+    """
+
+    desiredState: Required[Union[str, "ChangeDataCaptureDesiredState"]]
+    """The requested capability state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effectiveState: Required[Union[str, "ChangeDataCaptureEffectiveState"]]
+    """The current effective capability state. Required. Known values are: \"Enabling\", \"Enabled\",
+     \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the latest capability mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    autoUpgradeExtension: bool
+    """Whether HorizonDB may automatically upgrade the service-owned change data capture extension
+     within the supported compatibility policy."""
+    replicationArchitecture: Required[Union[str, "ChangeDataCaptureReplicationArchitecture"]]
+    """The implementation architecture currently used for change capture. Required. Known values are:
+     \"ComputeBased\", \"StorageBased\", and \"Hybrid\"."""
+    extension: Required["ChangeDataCaptureExtensionStatus"]
+    """The installed change data capture extension and its current lifecycle state. Required."""
+    prerequisites: Required["ChangeDataCapturePrerequisiteStatus"]
+    """The current readiness of change data capture engine and read-write endpoint prerequisites.
+     Required."""
+    destinationCount: Required[int]
+    """The number of change data capture destinations under this cluster. Required."""
+    configurationCount: Required[int]
+    """The number of change data capture configurations under this cluster. Required."""
+    status: Required["ChangeDataCaptureStatus"]
+    """Customer-safe health information for the capability. Required."""
+
+
+class ChangeDataCaptureCapabilityPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating the singleton change data capture capability. Omitted properties
+    preserve their current values.
+
+    :ivar desiredState: The requested capability state. Known values are: "Enabled" and "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    :ivar autoUpgradeExtension: Whether HorizonDB may automatically upgrade the service-owned
+     change data capture extension within the supported compatibility policy.
+    :vartype autoUpgradeExtension: bool
+    """
+
+    desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    """The requested capability state. Known values are: \"Enabled\" and \"Disabled\"."""
+    autoUpgradeExtension: bool
+    """Whether HorizonDB may automatically upgrade the service-owned change data capture extension
+     within the supported compatibility policy."""
+
+
+class ChangeDataCaptureConfiguration(ProxyResource):
+    """A HorizonDB database enrollment for Microsoft Fabric Mirroring.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ChangeDataCaptureConfigurationProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "ChangeDataCaptureConfigurationProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ChangeDataCaptureConfigurationForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A sparse update request for a change data capture configuration.
+
+    :ivar properties: The configuration properties to update.
+    :vartype properties: "ChangeDataCaptureConfigurationPropertiesForPatchUpdate"
+    """
+
+    properties: "ChangeDataCaptureConfigurationPropertiesForPatchUpdate"
+    """The configuration properties to update."""
+
+
+class ChangeDataCaptureConfigurationProperties(TypedDict, total=False):
+    """The properties of a Microsoft Fabric Mirroring configuration.
+
+    :ivar databaseName: The exact PostgreSQL database name enrolled in this logical stream. This
+     value is immutable. Required.
+    :vartype databaseName: str
+    :ivar usageProfile: The immutable usage profile. API version 2026-10-01-preview accepts
+     Mirroring only. Required. "Mirroring"
+    :vartype usageProfile: Union[str, "ChangeDataCaptureUsageProfile"]
+    :ivar destinationResourceId: The immutable resource ID of an enabled change data capture
+     destination under the same cluster. Required.
+    :vartype destinationResourceId: str
+    :ivar logicalStreamId: A service-generated identifier for the logical stream, represented as an
+     RFC 4122 GUID. This value remains stable when a writer role moves and the service materializes
+     a replacement ARM resource under the new writer cluster. Required.
+    :vartype logicalStreamId: str
+    :ivar desiredState: The requested configuration state. Required. Known values are: "Enabled"
+     and "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    :ivar effectiveState: The current effective configuration state. Required. Known values are:
+     "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effectiveState: Union[str, "ChangeDataCaptureEffectiveState"]
+    :ivar provisioningState: The provisioning state of the latest configuration mutation. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar extension: The change data capture extension state for the enrolled database. Required.
+    :vartype extension: "ChangeDataCaptureExtensionStatus"
+    :ivar replication: The known status of the destination-owned replication session. Required.
+    :vartype replication: "ChangeDataCaptureReplicationStatus"
+    :ivar topology: The current writer-topology binding for this logical stream. Required.
+    :vartype topology: "ChangeDataCaptureTopologyBindingStatus"
+    :ivar status: Customer-safe health information for the configuration. Required.
+    :vartype status: "ChangeDataCaptureStatus"
+    """
+
+    databaseName: Required[str]
+    """The exact PostgreSQL database name enrolled in this logical stream. This value is immutable.
+     Required."""
+    usageProfile: Required[Union[str, "ChangeDataCaptureUsageProfile"]]
+    """The immutable usage profile. API version 2026-10-01-preview accepts Mirroring only. Required.
+     \"Mirroring\""""
+    destinationResourceId: Required[str]
+    """The immutable resource ID of an enabled change data capture destination under the same cluster.
+     Required."""
+    logicalStreamId: Required[str]
+    """A service-generated identifier for the logical stream, represented as an RFC 4122 GUID. This
+     value remains stable when a writer role moves and the service materializes a replacement ARM
+     resource under the new writer cluster. Required."""
+    desiredState: Required[Union[str, "ChangeDataCaptureDesiredState"]]
+    """The requested configuration state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effectiveState: Required[Union[str, "ChangeDataCaptureEffectiveState"]]
+    """The current effective configuration state. Required. Known values are: \"Enabling\",
+     \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the latest configuration mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    extension: Required["ChangeDataCaptureExtensionStatus"]
+    """The change data capture extension state for the enrolled database. Required."""
+    replication: Required["ChangeDataCaptureReplicationStatus"]
+    """The known status of the destination-owned replication session. Required."""
+    topology: Required["ChangeDataCaptureTopologyBindingStatus"]
+    """The current writer-topology binding for this logical stream. Required."""
+    status: Required["ChangeDataCaptureStatus"]
+    """Customer-safe health information for the configuration. Required."""
+
+
+class ChangeDataCaptureConfigurationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating a change data capture configuration. Omitted properties preserve their
+    current values.
+
+    :ivar desiredState: The requested configuration state. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    """
+
+    desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    """The requested configuration state. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ChangeDataCaptureDestination(ProxyResource):
+    """A reusable Microsoft Fabric destination for HorizonDB change data capture configurations.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ChangeDataCaptureDestinationProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "ChangeDataCaptureDestinationProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class ChangeDataCaptureDestinationForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A sparse update request for a change data capture destination.
+
+    :ivar properties: The destination properties to update.
+    :vartype properties: "ChangeDataCaptureDestinationPropertiesForPatchUpdate"
+    """
+
+    properties: "ChangeDataCaptureDestinationPropertiesForPatchUpdate"
+    """The destination properties to update."""
+
+
+class ChangeDataCaptureDestinationProperties(TypedDict, total=False):
+    """The properties of a Microsoft Fabric change data capture destination.
+
+    :ivar destination: The immutable Microsoft Fabric destination settings. Resubmitting the same
+     values is accepted; changing them requires deleting and recreating the destination. Required.
+    :vartype destination: "ChangeDataCaptureDestinationDetails"
+    :ivar desiredState: The requested destination state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    :ivar effectiveState: The current effective destination state. Required. Known values are:
+     "WaitingForIdentity", "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effectiveState: Union[str, "ChangeDataCaptureDestinationEffectiveState"]
+    :ivar provisioningState: The provisioning state of the latest destination mutation. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar activeIdentityAssignmentResourceId: The resource ID of the currently active identity
+     assignment, if one is active.
+    :vartype activeIdentityAssignmentResourceId: str
+    :ivar configurationCount: The number of change data capture configurations that reference this
+     destination. Required.
+    :vartype configurationCount: int
+    :ivar status: Customer-safe health information for the destination. Required.
+    :vartype status: "ChangeDataCaptureStatus"
+    """
+
+    destination: Required["ChangeDataCaptureDestinationDetails"]
+    """The immutable Microsoft Fabric destination settings. Resubmitting the same values is accepted;
+     changing them requires deleting and recreating the destination. Required."""
+    desiredState: Required[Union[str, "ChangeDataCaptureDesiredState"]]
+    """The requested destination state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effectiveState: Required[Union[str, "ChangeDataCaptureDestinationEffectiveState"]]
+    """The current effective destination state. Required. Known values are: \"WaitingForIdentity\",
+     \"Enabling\", \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the latest destination mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    activeIdentityAssignmentResourceId: str
+    """The resource ID of the currently active identity assignment, if one is active."""
+    configurationCount: Required[int]
+    """The number of change data capture configurations that reference this destination. Required."""
+    status: Required["ChangeDataCaptureStatus"]
+    """Customer-safe health information for the destination. Required."""
+
+
+class ChangeDataCaptureDestinationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating a change data capture destination. Omitted properties preserve their
+    current values.
+
+    :ivar desiredState: The requested destination state. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    """
+
+    desiredState: Union[str, "ChangeDataCaptureDesiredState"]
+    """The requested destination state. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ChangeDataCaptureExtensionStatus(TypedDict, total=False):
+    """The installed HorizonDB change data capture extension and its current state.
+
+    :ivar name: The extension name. Required.
+    :vartype name: str
+    :ivar version: The installed extension version. Required.
+    :vartype version: str
+    :ivar state: The current extension lifecycle state. Required. Known values are: "NotInstalled",
+     "Installing", "Ready", "Upgrading", "Removing", and "Failed".
+    :vartype state: Union[str, "ChangeDataCaptureExtensionState"]
+    """
+
+    name: Required[str]
+    """The extension name. Required."""
+    version: Required[str]
+    """The installed extension version. Required."""
+    state: Required[Union[str, "ChangeDataCaptureExtensionState"]]
+    """The current extension lifecycle state. Required. Known values are: \"NotInstalled\",
+     \"Installing\", \"Ready\", \"Upgrading\", \"Removing\", and \"Failed\"."""
+
+
+class ChangeDataCaptureIdentityAssignmentProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The properties of a change data capture identity assignment.
+
+    :ivar identityResourceId: The immutable resource ID of the user-assigned managed identity
+     selected for this destination. The ID must exactly match a key in the parent cluster's
+     top-level identity.userAssignedIdentities dictionary; otherwise creation is rejected. Attaching
+     the identity to the cluster does not grant destination access, so required role assignments
+     must be configured separately. Resubmitting the same value is accepted; changing it requires
+     deleting and recreating the assignment. Required.
+    :vartype identityResourceId: str
+    :ivar effectiveState: The current assignment lifecycle state. Required. Known values are:
+     "Assigning", "Assigned", "Removing", and "Failed".
+    :vartype effectiveState: Union[str, "ChangeDataCaptureIdentityAssignmentState"]
+    :ivar activationState: The current activation state within the parent destination. Required.
+     Known values are: "Inactive", "Activating", "Active", "Deactivating", and "Failed".
+    :vartype activationState: Union[str, "ChangeDataCaptureIdentityActivationState"]
+    :ivar principalId: The Microsoft Entra principal ID resolved from the user-assigned managed
+     identity, represented as an RFC 4122 GUID. Required.
+    :vartype principalId: str
+    :ivar tenantId: The Microsoft Entra tenant ID resolved from the user-assigned managed identity,
+     represented as an RFC 4122 GUID. Required.
     :vartype tenantId: str
+    :ivar provisioningState: The provisioning state of the latest identity-assignment mutation.
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar validation: The latest validation result for this identity assignment. Required.
+    :vartype validation: "IdentityValidationStatus"
+    :ivar status: Customer-safe health information for the identity assignment. Required.
+    :vartype status: "ChangeDataCaptureStatus"
     """
 
-    principalName: Required[str]
-    """The display name or UPN of the Entra ID principal. For users, typically the User Principal Name
-     (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups, the group display name.
-     For service principals, the application display name. Required."""
-    principalType: Required[Union[str, "PrincipalTypes"]]
-    """The type of the Entra ID principal. Required. Known values are: \"Unknown\", \"User\",
-     \"Group\", and \"ServicePrincipal\"."""
-    tenantId: str
-    """The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the tenant of the
-     subscription."""
+    identityResourceId: Required[str]
+    """The immutable resource ID of the user-assigned managed identity selected for this destination.
+     The ID must exactly match a key in the parent cluster's top-level
+     identity.userAssignedIdentities dictionary; otherwise creation is rejected. Attaching the
+     identity to the cluster does not grant destination access, so required role assignments must be
+     configured separately. Resubmitting the same value is accepted; changing it requires deleting
+     and recreating the assignment. Required."""
+    effectiveState: Required[Union[str, "ChangeDataCaptureIdentityAssignmentState"]]
+    """The current assignment lifecycle state. Required. Known values are: \"Assigning\",
+     \"Assigned\", \"Removing\", and \"Failed\"."""
+    activationState: Required[Union[str, "ChangeDataCaptureIdentityActivationState"]]
+    """The current activation state within the parent destination. Required. Known values are:
+     \"Inactive\", \"Activating\", \"Active\", \"Deactivating\", and \"Failed\"."""
+    principalId: Required[str]
+    """The Microsoft Entra principal ID resolved from the user-assigned managed identity, represented
+     as an RFC 4122 GUID. Required."""
+    tenantId: Required[str]
+    """The Microsoft Entra tenant ID resolved from the user-assigned managed identity, represented as
+     an RFC 4122 GUID. Required."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the latest identity-assignment mutation. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    validation: Required["IdentityValidationStatus"]
+    """The latest validation result for this identity assignment. Required."""
+    status: Required["ChangeDataCaptureStatus"]
+    """Customer-safe health information for the identity assignment. Required."""
+
+
+class ChangeDataCapturePrerequisiteStatus(TypedDict, total=False):
+    """The current readiness of prerequisites shared by change data capture configurations.
+
+    :ivar engineConfigurationState: The readiness of the required engine configuration. Required.
+     Known values are: "Ready", "NotReady", "Reconciling", and "Failed".
+    :vartype engineConfigurationState: Union[str, "ChangeDataCaptureEngineConfigurationState"]
+    :ivar readWriteEndpointState: The availability of the read-write endpoint required for engine
+     mutations. Required. Known values are: "Ready" and "Unavailable".
+    :vartype readWriteEndpointState: Union[str, "ChangeDataCaptureReadWriteEndpointState"]
+    """
+
+    engineConfigurationState: Required[Union[str, "ChangeDataCaptureEngineConfigurationState"]]
+    """The readiness of the required engine configuration. Required. Known values are: \"Ready\",
+     \"NotReady\", \"Reconciling\", and \"Failed\"."""
+    readWriteEndpointState: Required[Union[str, "ChangeDataCaptureReadWriteEndpointState"]]
+    """The availability of the read-write endpoint required for engine mutations. Required. Known
+     values are: \"Ready\" and \"Unavailable\"."""
+
+
+class ChangeDataCaptureReplicationStatus(TypedDict, total=False):
+    """The destination-owned replication-session status known to HorizonDB.
+
+    :ivar state: The current replication-session state. Required. Known values are:
+     "NotApplicable", "NotConnected", "Connecting", "Replicating", "Reconnecting", "Paused",
+     "Stopping", "Degraded", and "Failed".
+    :vartype state: Union[str, "ChangeDataCaptureReplicationState"]
+    :ivar externalArtifactId: An opaque identifier of a destination-owned artifact, such as a
+     Microsoft Fabric mirrored-database item. HorizonDB does not create, update, or delete the
+     identified artifact.
+    :vartype externalArtifactId: str
+    :ivar lastConnectedAtUtc: The date and time, in UTC, when a destination session most recently
+     connected.
+    :vartype lastConnectedAtUtc: str
+    """
+
+    state: Required[Union[str, "ChangeDataCaptureReplicationState"]]
+    """The current replication-session state. Required. Known values are: \"NotApplicable\",
+     \"NotConnected\", \"Connecting\", \"Replicating\", \"Reconnecting\", \"Paused\", \"Stopping\",
+     \"Degraded\", and \"Failed\"."""
+    externalArtifactId: str
+    """An opaque identifier of a destination-owned artifact, such as a Microsoft Fabric
+     mirrored-database item. HorizonDB does not create, update, or delete the identified artifact."""
+    lastConnectedAtUtc: str
+    """The date and time, in UTC, when a destination session most recently connected."""
+
+
+class ChangeDataCaptureStatus(TypedDict, total=False):
+    """Customer-safe health information for a HorizonDB change data capture resource.
+
+    :ivar code: A stable machine-readable status code. Required.
+    :vartype code: str
+    :ivar message: A localized customer-safe description of the current status. Required.
+    :vartype message: str
+    """
+
+    code: Required[str]
+    """A stable machine-readable status code. Required."""
+    message: Required[str]
+    """A localized customer-safe description of the current status. Required."""
+
+
+class ChangeDataCaptureTopologyBindingStatus(TypedDict, total=False):
+    """The current writer-topology binding of a change data capture configuration.
+
+    :ivar state: The configuration's relationship to the current writer topology. Required. Known
+     values are: "Active", "Reconciling", "RebindRequired", "Superseded", and "Conflict".
+    :vartype state: Union[str, "ChangeDataCaptureTopologyBindingState"]
+    :ivar generation: A monotonically increasing topology generation for this logical stream.
+     Required.
+    :vartype generation: int
+    :ivar activeClusterResourceId: The Azure resource ID of the cluster that currently owns the
+     active configuration projection. Required.
+    :vartype activeClusterResourceId: str
+    :ivar replacementConfigurationResourceId: The replacement configuration resource ID when this
+     projection has been superseded or requires rebinding.
+    :vartype replacementConfigurationResourceId: str
+    """
+
+    state: Required[Union[str, "ChangeDataCaptureTopologyBindingState"]]
+    """The configuration's relationship to the current writer topology. Required. Known values are:
+     \"Active\", \"Reconciling\", \"RebindRequired\", \"Superseded\", and \"Conflict\"."""
+    generation: Required[int]
+    """A monotonically increasing topology generation for this logical stream. Required."""
+    activeClusterResourceId: Required[str]
+    """The Azure resource ID of the cluster that currently owns the active configuration projection.
+     Required."""
+    replacementConfigurationResourceId: str
+    """The replacement configuration resource ID when this projection has been superseded or requires
+     rebinding."""
 
 
 class TrackedResource(Resource):
@@ -137,9 +695,121 @@ class TrackedResource(Resource):
     """The geo-location where the resource lives. Required."""
 
 
-class HorizonDbCluster(TrackedResource):
-    """Represents the HorizonDB cluster.
+class ClusterCreateProperties(TypedDict, total=False):
+    """Properties accepted when creating or replacing a HorizonDB cluster.
 
+    :ivar creationMode: The mode used to create the cluster. When this property is omitted while
+     creating a new cluster, the service records Create. PointInTimeRestore creates a new cluster
+     from an available backup; pointInTimeUtc and creationSourceClusterResourceId are then required,
+     postgreSqlVersion must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: "Create" and "PointInTimeRestore".
+    :vartype creationMode: Union[str, "ClusterCreateMode"]
+    :ivar pointInTimeUtc: The requested point in time, in UTC. This property is required in every
+     PointInTimeRestore request. For a same-location restore, the service restores the latest backup
+     available at or before this value. For a cross-location restore, the service requires but
+     ignores this value and restores the latest available backup; cross-location responses omit this
+     property. This property must be absent for other creation modes or when creationMode is omitted
+     and can only be specified during resource creation.
+    :vartype pointInTimeUtc: str
+    :ivar creationSourceClusterResourceId: The Azure resource ID of the source HorizonDB cluster
+     used by the selected creation mode. This property is required for PointInTimeRestore and other
+     source-based creation modes, and must be absent when creationMode is Create or omitted. A
+     source cluster does not need to have a pool to be restored, provided an available backup
+     exists. This immutable creation-provenance value does not change after creation.
+    :vartype creationSourceClusterResourceId: str
+    :ivar creationSourceClusterLocation: The Azure location of the source HorizonDB cluster used
+     for point-in-time restore. This property is optional when the source and target cluster
+     locations are the same. It is required when the source cluster location differs from the target
+     cluster location and must identify the source cluster's location. This property must be absent
+     for creation modes other than PointInTimeRestore or when creationMode is omitted. This
+     immutable creation-provenance value does not change after creation.
+    :vartype creationSourceClusterLocation: str
+    :ivar network: The network configuration for the cluster. When this object is omitted, the
+     service defaults it to publicAccess Disabled.
+    :vartype network: "Network"
+    :ivar backup: The backup configuration for the cluster.
+    :vartype backup: "BackupProperties"
+    :ivar dataEncryption: The data encryption configuration for the cluster. When omitted during
+     cluster creation, the service uses SystemManaged encryption.
+    :vartype dataEncryption: "HorizonDbClusterDataEncryption"
+    :ivar state: Current state of the cluster. Required. Known values are: "Ready", "Provisioning",
+     "Deleting", "Inaccessible", and "Updating".
+    :vartype state: Union[str, "ClusterState"]
+    :ivar provisioningState: The provisioning state of the cluster. Required. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar readWritePool: The pool currently designated to host the cluster's read-write node.
+     Required.
+    :vartype readWritePool: "ReadWritePoolProperties"
+    :ivar postgreSqlVersion: The PostgreSQL major version for the new cluster. This property is
+     required for ordinary cluster creation and must be omitted when creationMode is
+     PointInTimeRestore because the service obtains the version from the source backup metadata.
+     Known values are: "17" and "18".
+    :vartype postgreSqlVersion: Union[str, "PostgreSqlVersion"]
+    """
+
+    creationMode: Union[str, "ClusterCreateMode"]
+    """The mode used to create the cluster. When this property is omitted while creating a new
+     cluster, the service records Create. PointInTimeRestore creates a new cluster from an available
+     backup; pointInTimeUtc and creationSourceClusterResourceId are then required, postgreSqlVersion
+     must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
+    pointInTimeUtc: str
+    """The requested point in time, in UTC. This property is required in every PointInTimeRestore
+     request. For a same-location restore, the service restores the latest backup available at or
+     before this value. For a cross-location restore, the service requires but ignores this value
+     and restores the latest available backup; cross-location responses omit this property. This
+     property must be absent for other creation modes or when creationMode is omitted and can only
+     be specified during resource creation."""
+    creationSourceClusterResourceId: str
+    """The Azure resource ID of the source HorizonDB cluster used by the selected creation mode. This
+     property is required for PointInTimeRestore and other source-based creation modes, and must be
+     absent when creationMode is Create or omitted. A source cluster does not need to have a pool to
+     be restored, provided an available backup exists. This immutable creation-provenance value does
+     not change after creation."""
+    creationSourceClusterLocation: str
+    """The Azure location of the source HorizonDB cluster used for point-in-time restore. This
+     property is optional when the source and target cluster locations are the same. It is required
+     when the source cluster location differs from the target cluster location and must identify the
+     source cluster's location. This property must be absent for creation modes other than
+     PointInTimeRestore or when creationMode is omitted. This immutable creation-provenance value
+     does not change after creation."""
+    network: "Network"
+    """The network configuration for the cluster. When this object is omitted, the service defaults it
+     to publicAccess Disabled."""
+    backup: "BackupProperties"
+    """The backup configuration for the cluster."""
+    dataEncryption: "HorizonDbClusterDataEncryption"
+    """The data encryption configuration for the cluster. When omitted during cluster creation, the
+     service uses SystemManaged encryption."""
+    state: Required[Union[str, "ClusterState"]]
+    """Current state of the cluster. Required. Known values are: \"Ready\", \"Provisioning\",
+     \"Deleting\", \"Inaccessible\", and \"Updating\"."""
+    provisioningState: Required[Union[str, "ProvisioningState"]]
+    """The provisioning state of the cluster. Required. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    readWritePool: Required["ReadWritePoolProperties"]
+    """The pool currently designated to host the cluster's read-write node. Required."""
+    postgreSqlVersion: Union[str, "PostgreSqlVersion"]
+    """The PostgreSQL major version for the new cluster. This property is required for ordinary
+     cluster creation and must be omitted when creationMode is PointInTimeRestore because the
+     service obtains the version from the source backup metadata. Known values are: \"17\" and
+     \"18\"."""
+
+
+class ClusterCreateRequest(TypedDict, total=False):
+    """A request to create or replace a HorizonDB cluster.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
@@ -151,256 +821,140 @@ class HorizonDbCluster(TrackedResource):
     :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype systemData: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "HorizonDbClusterProperties"
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: "ManagedServiceIdentity"
+    :vartype identity: "HorizonDbClusterManagedServiceIdentity"
+    :ivar properties: The properties for the selected cluster creation mode. Required.
+    :vartype properties: "ClusterCreateProperties"
     """
 
-    properties: "HorizonDbClusterProperties"
-    """The resource-specific properties for this resource."""
-    identity: "ManagedServiceIdentity"
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    identity: "HorizonDbClusterManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+    properties: Required["ClusterCreateProperties"]
+    """The properties for the selected cluster creation mode. Required."""
 
 
-class HorizonDbClusterAuthConfig(TypedDict, total=False):
-    """Authentication configuration for a HorizonDB cluster.
-
-    :ivar entraIdAuth: Indicates whether Microsoft Entra ID authentication is enabled or disabled.
-     Known values are: "Enabled" and "Disabled".
-    :vartype entraIdAuth: Union[str, "AuthenticationState"]
-    :ivar tenantId: The Microsoft Entra tenant ID.
-    :vartype tenantId: str
-    :ivar passwordAuth: Indicates whether password authentication is enabled or disabled. Known
-     values are: "Enabled" and "Disabled".
-    :vartype passwordAuth: Union[str, "AuthenticationState"]
-    """
-
-    entraIdAuth: Union[str, "AuthenticationState"]
-    """Indicates whether Microsoft Entra ID authentication is enabled or disabled. Known values are:
-     \"Enabled\" and \"Disabled\"."""
-    tenantId: str
-    """The Microsoft Entra tenant ID."""
-    passwordAuth: Union[str, "AuthenticationState"]
-    """Indicates whether password authentication is enabled or disabled. Known values are: \"Enabled\"
-     and \"Disabled\"."""
-
-
-class HorizonDbClusterForPatchUpdate(TypedDict, total=False):
+class ClusterForPatchUpdate(TypedDict, total=False):
     """HorizonDB cluster for update operations.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: "ManagedServiceIdentity"
+    :vartype identity: "HorizonDbClusterManagedServiceIdentity"
     :ivar properties: The properties that can be updated for a HorizonDB cluster.
-    :vartype properties: "HorizonDbClusterPropertiesForPatchUpdate"
+    :vartype properties: "ClusterPropertiesForPatchUpdate"
     """
 
     tags: dict[str, str]
     """Resource tags."""
-    identity: "ManagedServiceIdentity"
+    identity: "HorizonDbClusterManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
-    properties: "HorizonDbClusterPropertiesForPatchUpdate"
+    properties: "ClusterPropertiesForPatchUpdate"
     """The properties that can be updated for a HorizonDB cluster."""
 
 
-class HorizonDbClusterMirroring(TypedDict, total=False):
-    """Mirroring configuration for a HorizonDB cluster.
-
-    :ivar databaseNames: The names of the databases to mirror.
-    :vartype databaseNames: list[str]
-    :ivar userAssignedIdentityId: The resource ID of the user-assigned managed identity used for
-     mirroring.
-    :vartype userAssignedIdentityId: str
-    """
-
-    databaseNames: list[str]
-    """The names of the databases to mirror."""
-    userAssignedIdentityId: str
-    """The resource ID of the user-assigned managed identity used for mirroring."""
-
-
-class HorizonDbClusterParameterGroupConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Connection information for HorizonDB parameter group.
-
-    :ivar id: The resource ID of the connected parameter group.
-    :vartype id: str
-    :ivar syncStatus: Indication of if parameter group is applied on HorizonDB resource.
-    :vartype syncStatus: str
-    :ivar applyImmediately: Indicates whether the parameters should be applied immediately.
-    :vartype applyImmediately: bool
-    """
-
-    id: str
-    """The resource ID of the connected parameter group."""
-    syncStatus: str
-    """Indication of if parameter group is applied on HorizonDB resource."""
-    applyImmediately: bool
-    """Indicates whether the parameters should be applied immediately."""
-
-
-class HorizonDbClusterProperties(TypedDict, total=False):
-    """Properties of a HorizonDB cluster.
-
-    :ivar administratorLogin: The administrator login name. Required.
-    :vartype administratorLogin: str
-    :ivar administratorLoginPassword: The administrator login password.
-    :vartype administratorLoginPassword: str
-    :ivar version: The version of the HorizonDB cluster.
-    :vartype version: str
-    :ivar createMode: The mode to create a new HorizonDB cluster. Known values are: "Create",
-     "Update", and "PointInTimeRestore".
-    :vartype createMode: Union[str, "CreateModeCluster"]
-    :ivar pointInTimeUTC: Restore point creation time specifying the time to restore from.
-    :vartype pointInTimeUTC: str
-    :ivar sourceClusterResourceId: The source cluster resource ID for restore or replica creation.
-    :vartype sourceClusterResourceId: str
-    :ivar poolName: The pool name for restore or replica operations.
-    :vartype poolName: str
-    :ivar replicaCount: Number of replicas.
-    :vartype replicaCount: int
-    :ivar vCores: Number of vCores.
-    :vartype vCores: int
-    :ivar processorType: The processor type for the HorizonDB cluster.
-    :vartype processorType: str
-    :ivar network: The network related info.
-    :vartype network: "Network"
-    :ivar state: Current state of the cluster. Known values are: "Ready", "Dropping", "Disabled",
-     "Starting", "Stopping", "Stopped", "Updating", "Healthy", "Succeeded", and "Upgrading".
-    :vartype state: Union[str, "State"]
-    :ivar fullyQualifiedDomainName: The fully qualified domain name of the cluster.
-    :vartype fullyQualifiedDomainName: str
-    :ivar readonlyEndpoint: The fully qualified domain name used for readonly endpoint for the
-     cluster.
-    :vartype readonlyEndpoint: str
-    :ivar provisioningState: The provisioning state of the cluster. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar zonePlacementPolicy: Defines how replicas are placed across availability zones. Known
-     values are: "Strict" and "BestEffort".
-    :vartype zonePlacementPolicy: Union[str, "ZonePlacementPolicy"]
-    :ivar parameterGroup: Defines connection to a parameter group.
-    :vartype parameterGroup: "HorizonDbClusterParameterGroupConnectionProperties"
-    :ivar authConfig: Authentication configuration for the HorizonDB cluster.
-    :vartype authConfig: "HorizonDbClusterAuthConfig"
-    :ivar computeModel: The compute model for the cluster.
-    :vartype computeModel: "HorizonDbComputeModel"
-    :ivar mirroring: Mirroring configuration for the HorizonDB cluster.
-    :vartype mirroring: "HorizonDbClusterMirroring"
-    """
-
-    administratorLogin: Required[str]
-    """The administrator login name. Required."""
-    administratorLoginPassword: str
-    """The administrator login password."""
-    version: str
-    """The version of the HorizonDB cluster."""
-    createMode: Union[str, "CreateModeCluster"]
-    """The mode to create a new HorizonDB cluster. Known values are: \"Create\", \"Update\", and
-     \"PointInTimeRestore\"."""
-    pointInTimeUTC: str
-    """Restore point creation time specifying the time to restore from."""
-    sourceClusterResourceId: str
-    """The source cluster resource ID for restore or replica creation."""
-    poolName: str
-    """The pool name for restore or replica operations."""
-    replicaCount: int
-    """Number of replicas."""
-    vCores: int
-    """Number of vCores."""
-    processorType: str
-    """The processor type for the HorizonDB cluster."""
-    network: "Network"
-    """The network related info."""
-    state: Union[str, "State"]
-    """Current state of the cluster. Known values are: \"Ready\", \"Dropping\", \"Disabled\",
-     \"Starting\", \"Stopping\", \"Stopped\", \"Updating\", \"Healthy\", \"Succeeded\", and
-     \"Upgrading\"."""
-    fullyQualifiedDomainName: str
-    """The fully qualified domain name of the cluster."""
-    readonlyEndpoint: str
-    """The fully qualified domain name used for readonly endpoint for the cluster."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """The provisioning state of the cluster. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
-    zonePlacementPolicy: Union[str, "ZonePlacementPolicy"]
-    """Defines how replicas are placed across availability zones. Known values are: \"Strict\" and
-     \"BestEffort\"."""
-    parameterGroup: "HorizonDbClusterParameterGroupConnectionProperties"
-    """Defines connection to a parameter group."""
-    authConfig: "HorizonDbClusterAuthConfig"
-    """Authentication configuration for the HorizonDB cluster."""
-    computeModel: "HorizonDbComputeModel"
-    """The compute model for the cluster."""
-    mirroring: "HorizonDbClusterMirroring"
-    """Mirroring configuration for the HorizonDB cluster."""
-
-
-class HorizonDbClusterPropertiesForPatchUpdate(TypedDict, total=False):
+class ClusterPropertiesForPatchUpdate(TypedDict, total=False):
     """Properties of a HorizonDB cluster for update operations.
 
-    :ivar administratorLoginPassword: The administrator login password.
-    :vartype administratorLoginPassword: str
-    :ivar vCores: Number of vCores.
-    :vartype vCores: int
-    :ivar parameterGroup: Defines connection to a parameter group.
-    :vartype parameterGroup: "HorizonDbClusterParameterGroupConnectionProperties"
-    :ivar authConfig: Authentication configuration for the HorizonDB cluster.
-    :vartype authConfig: "HorizonDbClusterAuthConfig"
-    :ivar computeModel: The compute model for the cluster.
-    :vartype computeModel: "HorizonDbComputeModel"
-    :ivar mirroring: Mirroring configuration for the HorizonDB cluster.
-    :vartype mirroring: "HorizonDbClusterMirroring"
+    :ivar network: The network configuration to update for the cluster.
+    :vartype network: "NetworkForPatchUpdate"
+    :ivar backup: The backup configuration for the cluster.
+    :vartype backup: "BackupPropertiesForPatchUpdate"
+    :ivar dataEncryption: The data encryption configuration to update for the cluster. Omitted
+     properties preserve their current values.
+    :vartype dataEncryption: "HorizonDbClusterDataEncryptionForPatchUpdate"
     """
 
-    administratorLoginPassword: str
-    """The administrator login password."""
-    vCores: int
-    """Number of vCores."""
-    parameterGroup: "HorizonDbClusterParameterGroupConnectionProperties"
-    """Defines connection to a parameter group."""
-    authConfig: "HorizonDbClusterAuthConfig"
-    """Authentication configuration for the HorizonDB cluster."""
-    computeModel: "HorizonDbComputeModel"
-    """The compute model for the cluster."""
-    mirroring: "HorizonDbClusterMirroring"
-    """Mirroring configuration for the HorizonDB cluster."""
+    network: "NetworkForPatchUpdate"
+    """The network configuration to update for the cluster."""
+    backup: "BackupPropertiesForPatchUpdate"
+    """The backup configuration for the cluster."""
+    dataEncryption: "HorizonDbClusterDataEncryptionForPatchUpdate"
+    """The data encryption configuration to update for the cluster. Omitted properties preserve their
+     current values."""
 
 
-class HorizonDbComputeModel(TypedDict, total=False):
-    """The compute model for a HorizonDB cluster.
+class ErrorAdditionalInfo(TypedDict, total=False):
+    """The resource management error additional info.
 
-    :ivar type: The compute model type. Supported values: 'Provisioned', 'Serverless'. Known values
-     are: "Provisioned" and "Serverless".
-    :vartype type: Union[str, "HorizonDbComputeModelType"]
-    :ivar vCores: The fixed vCore count for Provisioned compute.
-    :vartype vCores: int
-    :ivar minvCores: The minimum vCores for Serverless compute. Defines the lower autoscaling
-     bound.
-    :vartype minvCores: float
-    :ivar maxvCores: The maximum vCores for Serverless compute. Defines the upper autoscaling
-     bound.
-    :vartype maxvCores: float
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: Any
     """
 
-    type: Union[str, "HorizonDbComputeModelType"]
-    """The compute model type. Supported values: 'Provisioned', 'Serverless'. Known values are:
-     \"Provisioned\" and \"Serverless\"."""
-    vCores: int
-    """The fixed vCore count for Provisioned compute."""
-    minvCores: float
-    """The minimum vCores for Serverless compute. Defines the lower autoscaling bound."""
-    maxvCores: float
-    """The maximum vCores for Serverless compute. Defines the upper autoscaling bound."""
+    type: str
+    """The additional info type."""
+    info: Any
+    """The additional info."""
 
 
-class HorizonDbFirewallRule(ProxyResource):
-    """Represents the HorizonDB firewall rule.
+class ErrorDetail(TypedDict, total=False):
+    """The error detail.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list["ErrorDetail"]
+    :ivar additionalInfo: The error additional info.
+    :vartype additionalInfo: list["ErrorAdditionalInfo"]
+    """
+
+    code: str
+    """The error code."""
+    message: str
+    """The error message."""
+    target: str
+    """The error target."""
+    details: list["ErrorDetail"]
+    """The error details."""
+    additionalInfo: list["ErrorAdditionalInfo"]
+    """The error additional info."""
+
+
+class FabricDestinationDetails(TypedDict, total=False):
+    """Settings for a Microsoft Fabric destination.
+
+    :ivar destinationType: Specifies a Microsoft Fabric destination. Required. A Microsoft Fabric
+     destination.
+    :vartype destinationType: Literal[ChangeDataCaptureDestinationType.FABRIC]
+    :ivar protocol: Specifies the Microsoft Fabric native destination protocol. Required. The
+     destination's native protocol.
+    :vartype protocol: Literal[ChangeDataCaptureProtocol.NATIVE]
+    :ivar workspaceId: The opaque identifier of the Microsoft Fabric workspace that owns the
+     destination artifact. Required.
+    :vartype workspaceId: str
+    """
+
+    destinationType: Required[Literal[ChangeDataCaptureDestinationType.FABRIC]]
+    """Specifies a Microsoft Fabric destination. Required. A Microsoft Fabric destination."""
+    protocol: Required[Literal[ChangeDataCaptureProtocol.NATIVE]]
+    """Specifies the Microsoft Fabric native destination protocol. Required. The destination's native
+     protocol."""
+    workspaceId: Required[str]
+    """The opaque identifier of the Microsoft Fabric workspace that owns the destination artifact.
+     Required."""
+
+
+class FirewallRule(ProxyResource):
+    """Represents a customer-managed firewall rule for a HorizonDB pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -414,21 +968,36 @@ class HorizonDbFirewallRule(ProxyResource):
      information.
     :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "HorizonDbFirewallRuleProperties"
+    :vartype properties: "FirewallRuleProperties"
     """
 
-    properties: "HorizonDbFirewallRuleProperties"
+    properties: "FirewallRuleProperties"
     """The resource-specific properties for this resource."""
 
 
-class HorizonDbFirewallRuleProperties(TypedDict, total=False):
+class FirewallRuleForPatchUpdate(TypedDict, total=False):
+    """A HorizonDB pool firewall rule update request.
+
+    :ivar properties: The properties to update. Omission preserves all current firewall rule
+     properties.
+    :vartype properties: "FirewallRulePropertiesForPatchUpdate"
+    """
+
+    properties: "FirewallRulePropertiesForPatchUpdate"
+    """The properties to update. Omission preserves all current firewall rule properties."""
+
+
+class FirewallRuleProperties(TypedDict, total=False):
     """Properties of a HorizonDB firewall rule.
 
-    :ivar startIpAddress: The start IP address of the firewall rule (IPv4). Required.
+    :ivar startIpAddress: The start IPv4 address of the firewall rule in dotted-decimal notation.
+     Required.
     :vartype startIpAddress: str
-    :ivar endIpAddress: The end IP address of the firewall rule (IPv4). Required.
+    :ivar endIpAddress: The end IPv4 address of the firewall rule in dotted-decimal notation. This
+     address must be numerically greater than or equal to startIpAddress. Required.
     :vartype endIpAddress: str
-    :ivar description: The description of the HorizonDB firewall rule.
+    :ivar description: The description of the HorizonDB firewall rule. The maximum length is 1024
+     characters.
     :vartype description: str
     :ivar provisioningState: The provisioning state of the firewall rule. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
@@ -436,17 +1005,369 @@ class HorizonDbFirewallRuleProperties(TypedDict, total=False):
     """
 
     startIpAddress: Required[str]
-    """The start IP address of the firewall rule (IPv4). Required."""
+    """The start IPv4 address of the firewall rule in dotted-decimal notation. Required."""
     endIpAddress: Required[str]
-    """The end IP address of the firewall rule (IPv4). Required."""
+    """The end IPv4 address of the firewall rule in dotted-decimal notation. This address must be
+     numerically greater than or equal to startIpAddress. Required."""
     description: str
-    """The description of the HorizonDB firewall rule."""
+    """The description of the HorizonDB firewall rule. The maximum length is 1024 characters."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the firewall rule. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"InProgress\", and \"Provisioning\"."""
 
 
-class HorizonDbParameterGroup(TrackedResource):
+class FirewallRulePropertiesForPatchUpdate(TypedDict, total=False):
+    """Properties of a HorizonDB pool firewall rule for update operations. Omitted properties preserve
+    their current values. The service validates the effective IP range after merging the supplied
+    values with the existing rule.
+
+    :ivar startIpAddress: The start IPv4 address to apply in dotted-decimal notation. The resulting
+     effective start address must be numerically less than or equal to the effective end address.
+    :vartype startIpAddress: str
+    :ivar endIpAddress: The end IPv4 address to apply in dotted-decimal notation. The resulting
+     effective end address must be numerically greater than or equal to the effective start address.
+    :vartype endIpAddress: str
+    :ivar description: The description to apply to the HorizonDB firewall rule. The maximum length
+     is 1024 characters.
+    :vartype description: str
+    """
+
+    startIpAddress: str
+    """The start IPv4 address to apply in dotted-decimal notation. The resulting effective start
+     address must be numerically less than or equal to the effective end address."""
+    endIpAddress: str
+    """The end IPv4 address to apply in dotted-decimal notation. The resulting effective end address
+     must be numerically greater than or equal to the effective start address."""
+    description: str
+    """The description to apply to the HorizonDB firewall rule. The maximum length is 1024 characters."""
+
+
+class HorizonDbClusterDataEncryption(TypedDict, total=False):
+    """The Cluster-level data encryption configuration. For AzureKeyVault encryption, primaryKeyUri
+    and primaryUserAssignedIdentityId are required. When geographically redundant backup is
+    enabled, geoBackupKeyUri and geoBackupUserAssignedIdentityId are also required.
+    Customer-managed key identities must also be assigned to the Cluster through its top-level
+    identity property. Only versionless Azure Key Vault key URIs are supported; key version paths
+    are rejected. For SystemManaged encryption, key and identity properties must be omitted.
+
+    :ivar type: The type of data encryption used by the cluster. Known values are: "SystemManaged"
+     and "AzureKeyVault".
+    :vartype type: Union[str, "HorizonDbClusterDataEncryptionType"]
+    :ivar primaryKeyUri: The versionless Azure Key Vault key URI used to encrypt the cluster's
+     primary storage. Key version paths are not supported.
+    :vartype primaryKeyUri: str
+    :ivar primaryUserAssignedIdentityId: The Azure resource ID of the user-assigned managed
+     identity used to access the primary encryption key. The identity must also be assigned to the
+     Cluster through its top-level identity property.
+    :vartype primaryUserAssignedIdentityId: str
+    :ivar primaryEncryptionKeyStatus: The validation status of the primary encryption key. This
+     property is returned for AzureKeyVault encryption and is absent for SystemManaged encryption.
+     Known values are: "Valid" and "Invalid".
+    :vartype primaryEncryptionKeyStatus: Union[str, "HorizonDbClusterEncryptionKeyStatus"]
+    :ivar geoBackupKeyUri: The versionless Azure Key Vault key URI used to encrypt geographically
+     redundant backups. Key version paths are not supported.
+    :vartype geoBackupKeyUri: str
+    :ivar geoBackupUserAssignedIdentityId: The Azure resource ID of the user-assigned managed
+     identity used to access the geographically redundant backup encryption key. The identity must
+     also be assigned to the Cluster through its top-level identity property.
+    :vartype geoBackupUserAssignedIdentityId: str
+    :ivar geoBackupEncryptionKeyStatus: The validation status of the geographically redundant
+     backup encryption key. This property is returned for AzureKeyVault encryption when
+     geographically redundant backup is enabled. Known values are: "Valid" and "Invalid".
+    :vartype geoBackupEncryptionKeyStatus: Union[str, "HorizonDbClusterEncryptionKeyStatus"]
+    """
+
+    type: Union[str, "HorizonDbClusterDataEncryptionType"]
+    """The type of data encryption used by the cluster. Known values are: \"SystemManaged\" and
+     \"AzureKeyVault\"."""
+    primaryKeyUri: str
+    """The versionless Azure Key Vault key URI used to encrypt the cluster's primary storage. Key
+     version paths are not supported."""
+    primaryUserAssignedIdentityId: str
+    """The Azure resource ID of the user-assigned managed identity used to access the primary
+     encryption key. The identity must also be assigned to the Cluster through its top-level
+     identity property."""
+    primaryEncryptionKeyStatus: Union[str, "HorizonDbClusterEncryptionKeyStatus"]
+    """The validation status of the primary encryption key. This property is returned for
+     AzureKeyVault encryption and is absent for SystemManaged encryption. Known values are:
+     \"Valid\" and \"Invalid\"."""
+    geoBackupKeyUri: str
+    """The versionless Azure Key Vault key URI used to encrypt geographically redundant backups. Key
+     version paths are not supported."""
+    geoBackupUserAssignedIdentityId: str
+    """The Azure resource ID of the user-assigned managed identity used to access the geographically
+     redundant backup encryption key. The identity must also be assigned to the Cluster through its
+     top-level identity property."""
+    geoBackupEncryptionKeyStatus: Union[str, "HorizonDbClusterEncryptionKeyStatus"]
+    """The validation status of the geographically redundant backup encryption key. This property is
+     returned for AzureKeyVault encryption when geographically redundant backup is enabled. Known
+     values are: \"Valid\" and \"Invalid\"."""
+
+
+class HorizonDbClusterDataEncryptionForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for sparsely updating Cluster-level data encryption. Omitted properties preserve
+    their current values.
+
+    :ivar type: The type of data encryption used by the cluster. Known values are: "SystemManaged"
+     and "AzureKeyVault".
+    :vartype type: Union[str, "HorizonDbClusterDataEncryptionType"]
+    :ivar primaryKeyUri: The versionless Azure Key Vault key URI used to encrypt the cluster's
+     primary storage. Key version paths are not supported.
+    :vartype primaryKeyUri: str
+    :ivar primaryUserAssignedIdentityId: The Azure resource ID of the user-assigned managed
+     identity used to access the primary encryption key. The identity must also be assigned to the
+     Cluster through its top-level identity property.
+    :vartype primaryUserAssignedIdentityId: str
+    :ivar geoBackupKeyUri: The versionless Azure Key Vault key URI used to encrypt geographically
+     redundant backups. Key version paths are not supported.
+    :vartype geoBackupKeyUri: str
+    :ivar geoBackupUserAssignedIdentityId: The Azure resource ID of the user-assigned managed
+     identity used to access the geographically redundant backup encryption key. The identity must
+     also be assigned to the Cluster through its top-level identity property.
+    :vartype geoBackupUserAssignedIdentityId: str
+    """
+
+    type: Union[str, "HorizonDbClusterDataEncryptionType"]
+    """The type of data encryption used by the cluster. Known values are: \"SystemManaged\" and
+     \"AzureKeyVault\"."""
+    primaryKeyUri: str
+    """The versionless Azure Key Vault key URI used to encrypt the cluster's primary storage. Key
+     version paths are not supported."""
+    primaryUserAssignedIdentityId: str
+    """The Azure resource ID of the user-assigned managed identity used to access the primary
+     encryption key. The identity must also be assigned to the Cluster through its top-level
+     identity property."""
+    geoBackupKeyUri: str
+    """The versionless Azure Key Vault key URI used to encrypt geographically redundant backups. Key
+     version paths are not supported."""
+    geoBackupUserAssignedIdentityId: str
+    """The Azure resource ID of the user-assigned managed identity used to access the geographically
+     redundant backup encryption key. The identity must also be assigned to the Cluster through its
+     top-level identity property."""
+
+
+class HorizonDbClusterManagedServiceIdentity(TypedDict, total=False):
+    """The user-assigned managed identities assigned to a HorizonDB cluster. PUT and PATCH can assign
+    or remove identities. Omitting the top-level identity property from PATCH preserves all current
+    assignments. Removing an identity referenced by a change data capture identity assignment is
+    rejected until the referencing assignment is deleted.
+
+    :ivar type: The managed identity type assigned to the cluster. Required. Known values are:
+     "None" and "UserAssigned".
+    :vartype type: Union[str, "HorizonDbClusterIdentityType"]
+    :ivar userAssignedIdentities: The user-assigned managed identities associated with the cluster.
+     Each dictionary key must be the full Azure resource ID of a
+     Microsoft.ManagedIdentity/userAssignedIdentities resource. Request values can be empty objects;
+     response values contain the service-populated clientId and principalId. Assigning an identity
+     does not grant it access to destination resources; required role assignments must be configured
+     separately.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """
+
+    type: Required[Union[str, "HorizonDbClusterIdentityType"]]
+    """The managed identity type assigned to the cluster. Required. Known values are: \"None\" and
+     \"UserAssigned\"."""
+    userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """The user-assigned managed identities associated with the cluster. Each dictionary key must be
+     the full Azure resource ID of a Microsoft.ManagedIdentity/userAssignedIdentities resource.
+     Request values can be empty objects; response values contain the service-populated clientId and
+     principalId. Assigning an identity does not grant it access to destination resources; required
+     role assignments must be configured separately."""
+
+
+class IdentityAssignment(ProxyResource):
+    """A user-assigned managed identity authorized for a HorizonDB change data capture destination.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ChangeDataCaptureIdentityAssignmentProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "ChangeDataCaptureIdentityAssignmentProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class IdentityValidationStatus(TypedDict, total=False):
+    """The current validation result for a change data capture identity assignment.
+
+    :ivar state: The current validation state. Required. Known values are: "NotStarted", "Running",
+     "Succeeded", and "Failed".
+    :vartype state: Union[str, "ChangeDataCaptureIdentityValidationState"]
+    :ivar validatedAtUtc: The date and time, in UTC, when validation most recently completed.
+    :vartype validatedAtUtc: str
+    :ivar error: The customer-safe validation error when validation failed.
+    :vartype error: "ErrorDetail"
+    """
+
+    state: Required[Union[str, "ChangeDataCaptureIdentityValidationState"]]
+    """The current validation state. Required. Known values are: \"NotStarted\", \"Running\",
+     \"Succeeded\", and \"Failed\"."""
+    validatedAtUtc: str
+    """The date and time, in UTC, when validation most recently completed."""
+    error: "ErrorDetail"
+    """The customer-safe validation error when validation failed."""
+
+
+class LogCaptureConfigurationForPatchUpdate(TypedDict, total=False):
+    """A sparse update request for a log capture configuration.
+
+    :ivar properties: The log capture properties to update.
+    :vartype properties: "LogCaptureConfigurationPropertiesForPatchUpdate"
+    """
+
+    properties: "LogCaptureConfigurationPropertiesForPatchUpdate"
+    """The log capture properties to update."""
+
+
+class LogCaptureConfigurationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating the log capture configuration. Omitted properties preserve their
+    current values.
+
+    :ivar state: Specifies whether HorizonDB captures this type of log. Disabling capture stops the
+     production of new log files; existing files remain available until their retention period
+     expires. Known values are: "Enabled" and "Disabled".
+    :vartype state: Union[str, "LogCaptureState"]
+    :ivar retentionDays: The number of days captured log files are retained.
+    :vartype retentionDays: int
+    """
+
+    state: Union[str, "LogCaptureState"]
+    """Specifies whether HorizonDB captures this type of log. Disabling capture stops the production
+     of new log files; existing files remain available until their retention period expires. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+    retentionDays: int
+    """The number of days captured log files are retained."""
+
+
+class MaintenanceEventRescheduleRequest(TypedDict, total=False):
+    """Parameters for rescheduling a maintenance event.
+
+    :ivar postponeToDateTimeUtc: The new start time in RFC 3339 format. Required.
+    :vartype postponeToDateTimeUtc: str
+    """
+
+    postponeToDateTimeUtc: Required[str]
+    """The new start time in RFC 3339 format. Required."""
+
+
+class MicrosoftEntraAdministratorAdd(TypedDict, total=False):
+    """The request body for creating or updating a PostgreSQL role that is a member of azure_pg_admin
+    and mapped to a Microsoft Entra principal.
+
+    :ivar properties: The PostgreSQL role and Microsoft Entra principal mapping properties.
+     Required.
+    :vartype properties: "MicrosoftEntraAdministratorPropertiesForAdd"
+    """
+
+    properties: Required["MicrosoftEntraAdministratorPropertiesForAdd"]
+    """The PostgreSQL role and Microsoft Entra principal mapping properties. Required."""
+
+
+class MicrosoftEntraAdministratorPropertiesForAdd(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for creating or updating a PostgreSQL role that is a member of azure_pg_admin and
+    mapped to a Microsoft Entra principal.
+
+    :ivar principalName: The display name or user principal name of the Microsoft Entra principal
+     to map to the PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required.
+    :vartype principalName: str
+    :ivar principalType: The type of Microsoft Entra principal to map to the PostgreSQL role.
+     Required. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+    :vartype principalType: Union[str, "PrincipalTypes"]
+    :ivar tenantId: The identifier of the Microsoft Entra tenant containing the principal to map,
+     represented as an RFC 4122 GUID. If omitted, this value defaults to the tenant of the
+     subscription.
+    :vartype tenantId: str
+    """
+
+    principalName: Required[str]
+    """The display name or user principal name of the Microsoft Entra principal to map to the
+     PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required."""
+    principalType: Required[Union[str, "PrincipalTypes"]]
+    """The type of Microsoft Entra principal to map to the PostgreSQL role. Required. Known values
+     are: \"Unknown\", \"User\", \"Group\", and \"ServicePrincipal\"."""
+    tenantId: str
+    """The identifier of the Microsoft Entra tenant containing the principal to map, represented as an
+     RFC 4122 GUID. If omitted, this value defaults to the tenant of the subscription."""
+
+
+class MicrosoftEntraAuthenticationForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A sparse update request for Microsoft Entra authentication.
+
+    :ivar properties: The Microsoft Entra authentication properties to update.
+    :vartype properties: "MicrosoftEntraAuthenticationPropertiesForPatchUpdate"
+    """
+
+    properties: "MicrosoftEntraAuthenticationPropertiesForPatchUpdate"
+    """The Microsoft Entra authentication properties to update."""
+
+
+class MicrosoftEntraAuthenticationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating Microsoft Entra authentication. State Enabled enables the feature and
+    State Disabled disables it. Disabling Microsoft Entra authentication does not remove or modify
+    database roles or users previously created through the MicrosoftEntraAdministrators
+    control-plane API or directly through pgaadauth extension functions.
+
+    :ivar state: The target Microsoft Entra authentication state. Omission preserves the current
+     state. Known values are: "Enabled" and "Disabled".
+    :vartype state: Union[str, "AuthenticationState"]
+    """
+
+    state: Union[str, "AuthenticationState"]
+    """The target Microsoft Entra authentication state. Omission preserves the current state. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+
+class Network(TypedDict, total=False):
+    """Network properties.
+
+    :ivar publicAccess: Specifies whether public access is enabled for the cluster. The service
+     defaults to Disabled when this property is omitted. Known values are: "Enabled" and "Disabled".
+    :vartype publicAccess: Union[str, "PublicNetworkAccessState"]
+    """
+
+    publicAccess: Union[str, "PublicNetworkAccessState"]
+    """Specifies whether public access is enabled for the cluster. The service defaults to Disabled
+     when this property is omitted. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class NetworkForPatchUpdate(TypedDict, total=False):
+    """Network properties for updating a HorizonDB cluster.
+
+    :ivar publicAccess: Specifies whether public access is enabled for the cluster. Omission
+     preserves the current value. Known values are: "Enabled" and "Disabled".
+    :vartype publicAccess: Union[str, "PublicNetworkAccessState"]
+    """
+
+    publicAccess: Union[str, "PublicNetworkAccessState"]
+    """Specifies whether public access is enabled for the cluster. Omission preserves the current
+     value. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ParameterGroup(TrackedResource):
     """Represents the HorizonDB parameter group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -465,41 +1386,42 @@ class HorizonDbParameterGroup(TrackedResource):
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "HorizonDbParameterGroupProperties"
+    :vartype properties: "ParameterGroupProperties"
     """
 
-    properties: "HorizonDbParameterGroupProperties"
+    properties: "ParameterGroupProperties"
     """The resource-specific properties for this resource."""
 
 
-class HorizonDbParameterGroupForPatchUpdate(TypedDict, total=False):
+class ParameterGroupForPatchUpdate(TypedDict, total=False):
     """HorizonDB parameter group for update operations.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The properties that can be updated for a HorizonDB parameter group.
-    :vartype properties: "HorizonDbParameterGroupPropertiesForPatchUpdate"
+    :vartype properties: "ParameterGroupPropertiesForPatchUpdate"
     """
 
     tags: dict[str, str]
     """Resource tags."""
-    properties: "HorizonDbParameterGroupPropertiesForPatchUpdate"
+    properties: "ParameterGroupPropertiesForPatchUpdate"
     """The properties that can be updated for a HorizonDB parameter group."""
 
 
-class HorizonDbParameterGroupProperties(TypedDict, total=False):
+class ParameterGroupProperties(TypedDict, total=False):
     """Properties of a HorizonDB parameter group.
 
     :ivar parameters: Parameters in the parameter group.
     :vartype parameters: list["ParameterProperties"]
-    :ivar description: Description of the parameter group.
+    :ivar description: Description of the parameter group. The maximum length is 1024 characters.
     :vartype description: str
-    :ivar pgVersion: PostgreSQL version for the parameter group.
-    :vartype pgVersion: int
-    :ivar version: Current version of the parameter group.
-    :vartype version: int
-    :ivar applyImmediately: Indicates whether the parameters should be applied immediately.
-    :vartype applyImmediately: bool
+    :ivar postgreSqlVersion: The PostgreSQL major version for the parameter group. This property is
+     required during creation and is immutable thereafter. The service selects the unique
+     location-scoped default parameter group for this version in the resource location. The
+     DefaultParameterGroups APIs return at most one default parameter group for each PostgreSQL
+     version in a location, so this selection is unambiguous. Required. Known values are: "17" and
+     "18".
+    :vartype postgreSqlVersion: Union[str, "PostgreSqlVersion"]
     :ivar provisioningState: The provisioning state of the parameter group. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
     :vartype provisioningState: Union[str, "ProvisioningState"]
@@ -508,157 +1430,35 @@ class HorizonDbParameterGroupProperties(TypedDict, total=False):
     parameters: list["ParameterProperties"]
     """Parameters in the parameter group."""
     description: str
-    """Description of the parameter group."""
-    pgVersion: int
-    """PostgreSQL version for the parameter group."""
-    version: int
-    """Current version of the parameter group."""
-    applyImmediately: bool
-    """Indicates whether the parameters should be applied immediately."""
+    """Description of the parameter group. The maximum length is 1024 characters."""
+    postgreSqlVersion: Required[Union[str, "PostgreSqlVersion"]]
+    """The PostgreSQL major version for the parameter group. This property is required during creation
+     and is immutable thereafter. The service selects the unique location-scoped default parameter
+     group for this version in the resource location. The DefaultParameterGroups APIs return at most
+     one default parameter group for each PostgreSQL version in a location, so this selection is
+     unambiguous. Required. Known values are: \"17\" and \"18\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the parameter group. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"InProgress\", and \"Provisioning\"."""
 
 
-class HorizonDbParameterGroupPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+class ParameterGroupPropertiesForPatchUpdate(TypedDict, total=False):
     """Properties of a HorizonDB parameter group for update operations.
 
     :ivar parameters: Parameters in the parameter group.
     :vartype parameters: list["ParameterProperties"]
-    :ivar description: Description of the parameter group.
+    :ivar description: Description of the parameter group. The maximum length is 1024 characters.
     :vartype description: str
-    :ivar applyImmediately: Indicates whether the parameters should be applied immediately.
-    :vartype applyImmediately: bool
     """
 
     parameters: list["ParameterProperties"]
     """Parameters in the parameter group."""
     description: str
-    """Description of the parameter group."""
-    applyImmediately: bool
-    """Indicates whether the parameters should be applied immediately."""
-
-
-class HorizonDbReplica(ProxyResource):
-    """Represents the HorizonDB replica.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "HorizonDbReplicaProperties"
-    """
-
-    properties: "HorizonDbReplicaProperties"
-    """The resource-specific properties for this resource."""
-
-
-class HorizonDbReplicaForPatchUpdate(TypedDict, total=False):
-    """HorizonDB replica for update operations.
-
-    :ivar properties: Properties of a HorizonDB replica for update operations.
-    :vartype properties: "HorizonDbReplicaPropertiesForPatchUpdate"
-    """
-
-    properties: "HorizonDbReplicaPropertiesForPatchUpdate"
-    """Properties of a HorizonDB replica for update operations."""
-
-
-class HorizonDbReplicaProperties(TypedDict, total=False):
-    """Properties of a HorizonDB replica.
-
-    :ivar role: Role of the replica. Known values are: "Read" and "ReadWrite".
-    :vartype role: Union[str, "ReplicaRole"]
-    :ivar status: Current status of the replica. Known values are: "Ready", "Dropping", "Disabled",
-     "Starting", "Stopping", "Stopped", "Updating", "Healthy", "Succeeded", and "Upgrading".
-    :vartype status: Union[str, "State"]
-    :ivar fullyQualifiedDomainName: The fully qualified domain name of the replica.
-    :vartype fullyQualifiedDomainName: str
-    :ivar availabilityZone: The availability zone of the replica.
-    :vartype availabilityZone: str
-    :ivar provisioningState: The provisioning state of the replica. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    """
-
-    role: Union[str, "ReplicaRole"]
-    """Role of the replica. Known values are: \"Read\" and \"ReadWrite\"."""
-    status: Union[str, "State"]
-    """Current status of the replica. Known values are: \"Ready\", \"Dropping\", \"Disabled\",
-     \"Starting\", \"Stopping\", \"Stopped\", \"Updating\", \"Healthy\", \"Succeeded\", and
-     \"Upgrading\"."""
-    fullyQualifiedDomainName: str
-    """The fully qualified domain name of the replica."""
-    availabilityZone: str
-    """The availability zone of the replica."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """The provisioning state of the replica. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
-
-
-class HorizonDbReplicaPropertiesForPatchUpdate(TypedDict, total=False):
-    """Properties of a HorizonDB replica for update operations.
-
-    :ivar role: Role of the replica. Known values are: "Read" and "ReadWrite".
-    :vartype role: Union[str, "ReplicaRole"]
-    """
-
-    role: Union[str, "ReplicaRole"]
-    """Role of the replica. Known values are: \"Read\" and \"ReadWrite\"."""
-
-
-class ManagedServiceIdentity(TypedDict, total=False):
-    """Managed service identity (system assigned and/or user assigned identities).
-
-    :ivar principalId: The service principal ID of the system assigned identity. This property will
-     only be provided for a system assigned identity.
-    :vartype principalId: str
-    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenantId: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
-    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
-    """
-
-    principalId: str
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenantId: str
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Required[Union[str, "ManagedServiceIdentityType"]]
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    userAssignedIdentities: dict[str, "UserAssignedIdentity"]
-    """The identities assigned to this resource by the user."""
-
-
-class Network(TypedDict, total=False):
-    """Network properties.
-
-    :ivar publicNetworkAccess: The flag indicating whether public ip is requested. Known values
-     are: "Enabled" and "Disabled".
-    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccessState"]
-    """
-
-    publicNetworkAccess: Union[str, "PublicNetworkAccessState"]
-    """The flag indicating whether public ip is requested. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+    """Description of the parameter group. The maximum length is 1024 characters."""
 
 
 class ParameterProperties(TypedDict, total=False):
-    """Properties of a HorizonDB parameters.
+    """Properties of a HorizonDB parameter.
 
     :ivar name: The name of the parameter.
     :vartype name: str
@@ -666,13 +1466,21 @@ class ParameterProperties(TypedDict, total=False):
     :vartype description: str
     :ivar value: The value of the configuration.
     :vartype value: str
+    :ivar defaultValue: The system-defined default value of the parameter, independent of the
+     effective value.
+    :vartype defaultValue: str
+    :ivar valueSource: The source of the effective parameter value. UserOverride means that the
+     value was explicitly supplied by the user, even when it equals defaultValue. Known values are:
+     "SystemDefault" and "UserOverride".
+    :vartype valueSource: Union[str, "ParameterValueSource"]
     :ivar dataType: The data type of the parameter.
     :vartype dataType: str
     :ivar allowedValues: The allowed values for the parameter.
     :vartype allowedValues: str
     :ivar isDynamic: Whether the parameter can be changed dynamically.
     :vartype isDynamic: bool
-    :ivar isReadOnly: Whether the parameter is a read-only parameter.
+    :ivar isReadOnly: Whether the parameter is read-only. Read-only parameters cannot be
+     overridden.
     :vartype isReadOnly: bool
     :ivar documentationLink: Link to parameter documentation.
     :vartype documentationLink: str
@@ -686,6 +1494,12 @@ class ParameterProperties(TypedDict, total=False):
     """The description of the parameter."""
     value: str
     """The value of the configuration."""
+    defaultValue: str
+    """The system-defined default value of the parameter, independent of the effective value."""
+    valueSource: Union[str, "ParameterValueSource"]
+    """The source of the effective parameter value. UserOverride means that the value was explicitly
+     supplied by the user, even when it equals defaultValue. Known values are: \"SystemDefault\" and
+     \"UserOverride\"."""
     dataType: str
     """The data type of the parameter."""
     allowedValues: str
@@ -693,11 +1507,314 @@ class ParameterProperties(TypedDict, total=False):
     isDynamic: bool
     """Whether the parameter can be changed dynamically."""
     isReadOnly: bool
-    """Whether the parameter is a read-only parameter."""
+    """Whether the parameter is read-only. Read-only parameters cannot be overridden."""
     documentationLink: str
     """Link to parameter documentation."""
     unit: str
     """The unit of measurement for the parameter."""
+
+
+class PasswordAuthenticationForPatchUpdate(TypedDict, total=False):
+    """A sparse update request for PostgreSQL username-and-password authentication.
+
+    :ivar properties: The PostgreSQL username-and-password authentication properties to update.
+    :vartype properties: "PasswordAuthenticationPropertiesForPatchUpdate"
+    """
+
+    properties: "PasswordAuthenticationPropertiesForPatchUpdate"
+    """The PostgreSQL username-and-password authentication properties to update."""
+
+
+class PasswordAuthenticationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties for updating PostgreSQL username-and-password authentication. Omitted properties
+    preserve their current values. State-only requests enable or disable the authentication
+    mechanism. Credentials are secrets and are never returned or stored by the control plane.
+    Login-only, password-only, and combined credential updates require this authentication method
+    to already be Enabled unless the request also sets state to Enabled.
+
+    :ivar state: The target password-authentication state. Enabled or Disabled can be supplied
+     without credentials to toggle the feature. Disabled cannot be combined with administratorLogin
+     or administratorLoginPassword. Disabling password authentication does not remove or modify
+     existing database users or roles. Known values are: "Enabled" and "Disabled".
+    :vartype state: Union[str, "AuthenticationState"]
+    :ivar administratorLogin: The PostgreSQL administrator role name. A login-only update requires
+     password authentication to already be Enabled unless state is set to Enabled in this request,
+     and requires exactly one member in the AzureSU-owned special group. The current name is an
+     idempotent no-op; a different name renames the current member only when that target role does
+     not already exist. When supplied together with administratorLoginPassword, this value can
+     create the administrator if the special group has no member, reset the matching member's
+     password, or rename a differently named member and reset its password.
+    :vartype administratorLogin: str
+    :ivar administratorLoginPassword: The PostgreSQL administrator password. A password-only update
+     requires password authentication to already be Enabled unless state is set to Enabled in this
+     request, and requires exactly one member in the AzureSU-owned special group. When supplied
+     together with administratorLogin, it can create the administrator if the special group has no
+     member, reset the matching member's password, or rename a differently named member and reset
+     its password.
+    :vartype administratorLoginPassword: str
+    """
+
+    state: Union[str, "AuthenticationState"]
+    """The target password-authentication state. Enabled or Disabled can be supplied without
+     credentials to toggle the feature. Disabled cannot be combined with administratorLogin or
+     administratorLoginPassword. Disabling password authentication does not remove or modify
+     existing database users or roles. Known values are: \"Enabled\" and \"Disabled\"."""
+    administratorLogin: str
+    """The PostgreSQL administrator role name. A login-only update requires password authentication to
+     already be Enabled unless state is set to Enabled in this request, and requires exactly one
+     member in the AzureSU-owned special group. The current name is an idempotent no-op; a different
+     name renames the current member only when that target role does not already exist. When
+     supplied together with administratorLoginPassword, this value can create the administrator if
+     the special group has no member, reset the matching member's password, or rename a differently
+     named member and reset its password."""
+    administratorLoginPassword: str
+    """The PostgreSQL administrator password. A password-only update requires password authentication
+     to already be Enabled unless state is set to Enabled in this request, and requires exactly one
+     member in the AzureSU-owned special group. When supplied together with administratorLogin, it
+     can create the administrator if the special group has no member, reset the matching member's
+     password, or rename a differently named member and reset its password."""
+
+
+class Pool(ProxyResource):
+    """Represents the HorizonDB pool.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "PoolProperties"
+    """
+
+    properties: "PoolProperties"
+    """The resource-specific properties for this resource."""
+
+
+class PoolComputeModelForPatchUpdate(TypedDict, total=False):
+    """The compute model properties of a HorizonDB pool that can be updated. The object is recursively
+    mergeable: omitted properties preserve their current values. Properties that do not apply to
+    the current or target compute model type are rejected. When type changes, the request must
+    include the complete target compute model. Subtype-specific constraints are validated against
+    the effective merged configuration; invalid requests are rejected without changing the
+    resource.
+
+    :ivar type: The compute model type. Omit this property to retain the current type. Resubmitting
+     the current type succeeds as an idempotent no-op. To change the type, supply all common
+     properties and all properties required by the target type. "Provisioned"
+    :vartype type: Union[str, "PoolComputeModelType"]
+    :ivar computeProcessor: The processor type for the compute model. Omission preserves the
+     current processor type. Known values are: "Intel" and "AMD".
+    :vartype computeProcessor: Union[str, "ComputeProcessorType"]
+    :ivar computeGeneration: The compute generation for the compute model. Omission preserves the
+     current compute generation.
+    :vartype computeGeneration: int
+    :ivar vCores: The number of provisioned vCores. Allowed values are 1 through 192. This property
+     applies only to a Provisioned compute model. Omission preserves the current value.
+    :vartype vCores: int
+    """
+
+    type: Union[str, "PoolComputeModelType"]
+    """The compute model type. Omit this property to retain the current type. Resubmitting the current
+     type succeeds as an idempotent no-op. To change the type, supply all common properties and all
+     properties required by the target type. \"Provisioned\""""
+    computeProcessor: Union[str, "ComputeProcessorType"]
+    """The processor type for the compute model. Omission preserves the current processor type. Known
+     values are: \"Intel\" and \"AMD\"."""
+    computeGeneration: int
+    """The compute generation for the compute model. Omission preserves the current compute
+     generation."""
+    vCores: int
+    """The number of provisioned vCores. Allowed values are 1 through 192. This property applies only
+     to a Provisioned compute model. Omission preserves the current value."""
+
+
+class PoolForPatchUpdate(TypedDict, total=False):
+    """HorizonDB pool for update operations.
+
+    :ivar properties: The properties that can be updated for a HorizonDB pool.
+    :vartype properties: "PoolPropertiesForPatchUpdate"
+    """
+
+    properties: "PoolPropertiesForPatchUpdate"
+    """The properties that can be updated for a HorizonDB pool."""
+
+
+class PoolHighAvailability(TypedDict, total=False):
+    """The high-availability configuration for a HorizonDB pool.
+
+    :ivar mode: The high-availability mode. Disabled is required when nodeCount is 1. AnyZone or
+     ZoneRedundant is required when nodeCount is 2 through 16. Required. Known values are:
+     "Disabled", "AnyZone", and "ZoneRedundant".
+    :vartype mode: Union[str, "PoolHighAvailabilityMode"]
+    """
+
+    mode: Required[Union[str, "PoolHighAvailabilityMode"]]
+    """The high-availability mode. Disabled is required when nodeCount is 1. AnyZone or ZoneRedundant
+     is required when nodeCount is 2 through 16. Required. Known values are: \"Disabled\",
+     \"AnyZone\", and \"ZoneRedundant\"."""
+
+
+class PoolHighAvailabilityPatch(TypedDict, total=False):
+    """The high-availability configuration for a HorizonDB pool update.
+
+    :ivar mode: The high-availability mode. Omission preserves the current mode before the service
+     validates it with the effective nodeCount. Known values are: "Disabled", "AnyZone", and
+     "ZoneRedundant".
+    :vartype mode: Union[str, "PoolHighAvailabilityMode"]
+    """
+
+    mode: Union[str, "PoolHighAvailabilityMode"]
+    """The high-availability mode. Omission preserves the current mode before the service validates it
+     with the effective nodeCount. Known values are: \"Disabled\", \"AnyZone\", and
+     \"ZoneRedundant\"."""
+
+
+class PoolParameterGroupReference(TypedDict, total=False):
+    """A reference to the default or custom parameter group associated with a HorizonDB pool.
+
+    :ivar parameterGroupResourceId: The Azure resource ID of the default or custom parameter group.
+     Required.
+    :vartype parameterGroupResourceId: str
+    :ivar applyMethod: Determines when dynamic parameter changes from the associated parameter
+     group become effective. Static parameter changes always require a pool restart, regardless of
+     this value. Required. Known values are: "Immediate" and "PendingReboot".
+    :vartype applyMethod: Union[str, "ParameterApplyMethod"]
+    :ivar syncStatus: The synchronization status between the pool and its parameter group. Known
+     values are: "Applying", "InSync", "FailedToApply", and "PendingReboot".
+    :vartype syncStatus: Union[str, "ParameterGroupSyncStatus"]
+    """
+
+    parameterGroupResourceId: Required[str]
+    """The Azure resource ID of the default or custom parameter group. Required."""
+    applyMethod: Required[Union[str, "ParameterApplyMethod"]]
+    """Determines when dynamic parameter changes from the associated parameter group become effective.
+     Static parameter changes always require a pool restart, regardless of this value. Required.
+     Known values are: \"Immediate\" and \"PendingReboot\"."""
+    syncStatus: Union[str, "ParameterGroupSyncStatus"]
+    """The synchronization status between the pool and its parameter group. Known values are:
+     \"Applying\", \"InSync\", \"FailedToApply\", and \"PendingReboot\"."""
+
+
+class PoolParameterGroupReferenceForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A parameter group reference for updating a HorizonDB pool.
+
+    :ivar parameterGroupResourceId: The Azure resource ID of the default or custom parameter group
+     to associate with the pool.
+    :vartype parameterGroupResourceId: str
+    :ivar applyMethod: Determines when dynamic parameter changes from the associated parameter
+     group become effective. Static parameter changes always require a pool restart, regardless of
+     this value. Known values are: "Immediate" and "PendingReboot".
+    :vartype applyMethod: Union[str, "ParameterApplyMethod"]
+    """
+
+    parameterGroupResourceId: str
+    """The Azure resource ID of the default or custom parameter group to associate with the pool."""
+    applyMethod: Union[str, "ParameterApplyMethod"]
+    """Determines when dynamic parameter changes from the associated parameter group become effective.
+     Static parameter changes always require a pool restart, regardless of this value. Known values
+     are: \"Immediate\" and \"PendingReboot\"."""
+
+
+class PoolProperties(TypedDict, total=False):
+    """Properties of a HorizonDB pool.
+
+    :ivar state: Current state of the pool. Known values are: "Ready", "Provisioning", "Deleting",
+     "Inaccessible", "Updating", "Starting", "Restarting", "Stopping", and "Stopped".
+    :vartype state: Union[str, "PoolState"]
+    :ivar computeModel: The compute model for the HorizonDB pool.
+    :vartype computeModel: "PoolComputeModel"
+    :ivar nodeCount: The required number of nodes to allocate and assign to the pool. Allowed
+     values are 1 through 16. To deallocate runtime compute without changing the configured node
+     count, stop the pool. Required.
+    :vartype nodeCount: int
+    :ivar highAvailability: The required high-availability configuration for the pool. mode must be
+     Disabled when nodeCount is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through
+     16. Required.
+    :vartype highAvailability: "PoolHighAvailability"
+    :ivar parameterGroup: The required default or custom parameter group associated with the pool.
+     Required.
+    :vartype parameterGroup: "PoolParameterGroupReference"
+    :ivar scheduledMaintenance: The scheduled maintenance configuration for the pool. The
+     properties available depend on the selected maintenance management type.
+    :vartype scheduledMaintenance: "ScheduledMaintenanceProperties"
+    :ivar provisioningState: The provisioning state of the pool. Known values are: "Succeeded",
+     "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    state: Union[str, "PoolState"]
+    """Current state of the pool. Known values are: \"Ready\", \"Provisioning\", \"Deleting\",
+     \"Inaccessible\", \"Updating\", \"Starting\", \"Restarting\", \"Stopping\", and \"Stopped\"."""
+    computeModel: "PoolComputeModel"
+    """The compute model for the HorizonDB pool."""
+    nodeCount: Required[int]
+    """The required number of nodes to allocate and assign to the pool. Allowed values are 1 through
+     16. To deallocate runtime compute without changing the configured node count, stop the pool.
+     Required."""
+    highAvailability: Required["PoolHighAvailability"]
+    """The required high-availability configuration for the pool. mode must be Disabled when nodeCount
+     is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through 16. Required."""
+    parameterGroup: Required["PoolParameterGroupReference"]
+    """The required default or custom parameter group associated with the pool. Required."""
+    scheduledMaintenance: "ScheduledMaintenanceProperties"
+    """The scheduled maintenance configuration for the pool. The properties available depend on the
+     selected maintenance management type."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the pool. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"InProgress\", and \"Provisioning\"."""
+
+
+class PoolPropertiesForPatchUpdate(TypedDict, total=False):
+    """Properties of a HorizonDB pool for update operations.
+
+    :ivar computeModel: The compute model properties to update. Omitted properties preserve their
+     current values. To change the compute model type, supply the complete target compute model,
+     including type, computeProcessor, computeGeneration, and all properties required by the target
+     type.
+    :vartype computeModel: "PoolComputeModelForPatchUpdate"
+    :ivar nodeCount: The number of nodes to allocate and assign to the pool. Allowed values are 1
+     through 16. Omission preserves the current configured value. To deallocate runtime compute
+     without changing the configured node count, stop the pool.
+    :vartype nodeCount: int
+    :ivar highAvailability: The high-availability configuration to update. Omission preserves the
+     current mode. The service recursively merges omitted PATCH properties with the existing
+     resource before validating the effective nodeCount and mode together.
+    :vartype highAvailability: "PoolHighAvailabilityPatch"
+    :ivar parameterGroup: The default or custom parameter group to associate with the pool.
+     Omission preserves the current association.
+    :vartype parameterGroup: "PoolParameterGroupReferenceForPatchUpdate"
+    :ivar scheduledMaintenance: The scheduled maintenance configuration to update for the pool.
+     When supplied, the complete configuration for the selected maintenance management type is
+     required. Omission preserves the current configuration.
+    :vartype scheduledMaintenance: "ScheduledMaintenancePropertiesForPatchUpdate"
+    """
+
+    computeModel: "PoolComputeModelForPatchUpdate"
+    """The compute model properties to update. Omitted properties preserve their current values. To
+     change the compute model type, supply the complete target compute model, including type,
+     computeProcessor, computeGeneration, and all properties required by the target type."""
+    nodeCount: int
+    """The number of nodes to allocate and assign to the pool. Allowed values are 1 through 16.
+     Omission preserves the current configured value. To deallocate runtime compute without changing
+     the configured node count, stop the pool."""
+    highAvailability: "PoolHighAvailabilityPatch"
+    """The high-availability configuration to update. Omission preserves the current mode. The service
+     recursively merges omitted PATCH properties with the existing resource before validating the
+     effective nodeCount and mode together."""
+    parameterGroup: "PoolParameterGroupReferenceForPatchUpdate"
+    """The default or custom parameter group to associate with the pool. Omission preserves the
+     current association."""
+    scheduledMaintenance: "ScheduledMaintenancePropertiesForPatchUpdate"
+    """The scheduled maintenance configuration to update for the pool. When supplied, the complete
+     configuration for the selected maintenance management type is required. Omission preserves the
+     current configuration."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -783,6 +1900,67 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     """A message indicating if changes on the service provider require any updates on the consumer."""
 
 
+class ProvisionedHorizonDbPoolComputeModel(TypedDict, total=False):
+    """A provisioned compute model for a HorizonDB pool.
+
+    :ivar computeProcessor: The processor type for the compute model. Known values are: "Intel" and
+     "AMD".
+    :vartype computeProcessor: Union[str, "ComputeProcessorType"]
+    :ivar computeGeneration: The compute generation for the compute model.
+    :vartype computeGeneration: int
+    :ivar type: The type of compute model. Required. Provisioned compute model.
+    :vartype type: Literal[PoolComputeModelType.PROVISIONED]
+    :ivar vCores: The number of provisioned vCores. Allowed values are 1 through 192. Required.
+    :vartype vCores: int
+    """
+
+    computeProcessor: Union[str, "ComputeProcessorType"]
+    """The processor type for the compute model. Known values are: \"Intel\" and \"AMD\"."""
+    computeGeneration: int
+    """The compute generation for the compute model."""
+    type: Required[Literal[PoolComputeModelType.PROVISIONED]]
+    """The type of compute model. Required. Provisioned compute model."""
+    vCores: Required[int]
+    """The number of provisioned vCores. Allowed values are 1 through 192. Required."""
+
+
+class ReadWritePoolProperties(TypedDict, total=False):
+    """The pool currently designated to host a HorizonDB cluster's read-write node. When a pool is
+    created while the cluster currently has no pools, the service automatically designates the new
+    pool as the read-write pool. This behavior also applies after all pools that existed earlier in
+    the cluster's lifetime have been deleted.
+
+    :ivar designatedPoolResourceId: The Azure resource ID of the pool designated to host the
+     cluster's read-write node. The pool is a child resource of this cluster. When a pool is created
+     while the cluster currently has no pools, the service automatically sets this property to the
+     new pool's resource ID, including when all pools that existed earlier in the cluster's lifetime
+     were deleted. This property is absent when no pool is designated, such as after
+     clearReadWritePool succeeds.
+    :vartype designatedPoolResourceId: str
+    """
+
+    designatedPoolResourceId: str
+    """The Azure resource ID of the pool designated to host the cluster's read-write node. The pool is
+     a child resource of this cluster. When a pool is created while the cluster currently has no
+     pools, the service automatically sets this property to the new pool's resource ID, including
+     when all pools that existed earlier in the cluster's lifetime were deleted. This property is
+     absent when no pool is designated, such as after clearReadWritePool succeeds."""
+
+
+class ScheduledMaintenancePropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The scheduled maintenance configuration for a pool update operation.
+
+    :ivar maintenanceManagementType: Specifies whether scheduled maintenance is managed by the
+     system or by the user. When scheduledMaintenance is supplied, this property is required by the
+     service. "System"
+    :vartype maintenanceManagementType: Union[str, "ScheduledMaintenanceManagementType"]
+    """
+
+    maintenanceManagementType: Union[str, "ScheduledMaintenanceManagementType"]
+    """Specifies whether scheduled maintenance is managed by the system or by the user. When
+     scheduledMaintenance is supplied, this property is required by the service. \"System\""""
+
+
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -818,6 +1996,20 @@ class SystemData(TypedDict, total=False):
     """The timestamp of resource last modification (UTC)."""
 
 
+class SystemScheduledMaintenanceProperties(TypedDict, total=False):
+    """The system-managed scheduled maintenance configuration for a HorizonDB pool. User-managed
+    schedule properties must be absent.
+
+    :ivar maintenanceManagementType: Specifies that scheduled maintenance is managed by the system.
+     Required. Scheduled maintenance is managed by the system.
+    :vartype maintenanceManagementType: Literal[ScheduledMaintenanceManagementType.SYSTEM]
+    """
+
+    maintenanceManagementType: Required[Literal[ScheduledMaintenanceManagementType.SYSTEM]]
+    """Specifies that scheduled maintenance is managed by the system. Required. Scheduled maintenance
+     is managed by the system."""
+
+
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
@@ -831,3 +2023,8 @@ class UserAssignedIdentity(TypedDict, total=False):
     """The principal ID of the assigned identity."""
     clientId: str
     """The client ID of the assigned identity."""
+
+
+ChangeDataCaptureDestinationDetails = Union[FabricDestinationDetails]
+PoolComputeModel = Union[ProvisionedHorizonDbPoolComputeModel]
+ScheduledMaintenanceProperties = Union[SystemScheduledMaintenanceProperties]

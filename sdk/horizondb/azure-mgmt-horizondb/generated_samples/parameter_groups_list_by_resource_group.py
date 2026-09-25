@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_parameter_groups.list_by_resource_group(
-        resource_group_name="exampleresourcegroup",
+    response = client.parameter_groups.list_by_resource_group(
+        resource_group_name="example-resource-group",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-05-01-preview/ParameterGroups_ListByResourceGroup.json
+# x-ms-original-file: 2026-10-01-preview/ParameterGroups_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

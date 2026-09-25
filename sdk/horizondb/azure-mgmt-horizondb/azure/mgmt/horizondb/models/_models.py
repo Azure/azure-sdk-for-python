@@ -9,12 +9,2071 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import (
+    ChangeDataCaptureDestinationType,
+    ChangeDataCaptureProtocol,
+    PoolComputeModelType,
+    ScheduledMaintenanceManagementType,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class ActivateChangeDataCaptureIdentityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request to activate an identity assignment for a change data capture destination.
+
+    :ivar identity_assignment_resource_id: The resource ID of an inactive, successfully validated
+     identity assignment under the destination receiving the action. Required.
+    :vartype identity_assignment_resource_id: str
+    :ivar drain_existing_sessions: Whether existing destination sessions should drain before the
+     identity cutover. The default is false.
+    :vartype drain_existing_sessions: bool
+    """
+
+    identity_assignment_resource_id: str = rest_field(
+        name="identityAssignmentResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of an inactive, successfully validated identity assignment under the
+     destination receiving the action. Required."""
+    drain_existing_sessions: Optional[bool] = rest_field(
+        name="drainExistingSessions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether existing destination sessions should drain before the identity cutover. The default is
+     false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_assignment_resource_id: str,
+        drain_existing_sessions: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActivateChangeDataCaptureIdentityResult(_Model):  # pylint: disable=docstring-missing-param
+    """The completed result of activating a change data capture destination identity.
+
+    :ivar status: The completed activation status. Required. Default value is "Succeeded".
+    :vartype status: str
+    :ivar target_identity_assignment_resource_id: The resource ID of the newly active identity
+     assignment. Required.
+    :vartype target_identity_assignment_resource_id: str
+    :ivar previous_identity_assignment_resource_id: The resource ID of the previously active
+     identity assignment, when one existed.
+    :vartype previous_identity_assignment_resource_id: str
+    """
+
+    status: Literal["Succeeded"] = rest_field(visibility=["read"])
+    """The completed activation status. Required. Default value is \"Succeeded\"."""
+    target_identity_assignment_resource_id: str = rest_field(
+        name="targetIdentityAssignmentResourceId", visibility=["read"]
+    )
+    """The resource ID of the newly active identity assignment. Required."""
+    previous_identity_assignment_resource_id: Optional[str] = rest_field(
+        name="previousIdentityAssignmentResourceId", visibility=["read"]
+    )
+    """The resource ID of the previously active identity assignment, when one existed."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.status: Literal["Succeeded"] = "Succeeded"
+
+
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    """
+
+
+class Authentication(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-created authentication configuration returned by the authentications collection. The
+    resource name is passwordMethod or microsoftEntra.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.AuthenticationProperties
+    """
+
+    properties: Optional["_models.AuthenticationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AuthenticationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthenticationProperties(_Model):
+    """Common read-only properties of a service-created authentication configuration.
+
+    :ivar state: The state of the authentication configuration. Required. Known values are:
+     "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
+    :ivar provisioning_state: The provisioning state of the authentication configuration. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    """
+
+    state: Union[str, "_models.AuthenticationState"] = rest_field(visibility=["read"])
+    """The state of the authentication configuration. Required. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the authentication configuration. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+
+
+class BackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backup configuration properties for a HorizonDB cluster.
+
+    :ivar geo_redundancy: The geo-redundancy state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype geo_redundancy: str or ~azure.mgmt.horizondb.models.GeoRedundancyState
+    :ivar retention_days: The number of days that automatic backups are retained. The service
+     defaults to 7 days when this property is omitted.
+    :vartype retention_days: int
+    :ivar earliest_restore_point_utc: The earliest point in time, in UTC, to which the cluster can
+     currently be restored.
+    :vartype earliest_restore_point_utc: ~datetime.datetime
+    """
+
+    geo_redundancy: Union[str, "_models.GeoRedundancyState"] = rest_field(
+        name="geoRedundancy", visibility=["read", "create"]
+    )
+    """The geo-redundancy state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    retention_days: Optional[int] = rest_field(name="retentionDays", visibility=["read", "create", "update"])
+    """The number of days that automatic backups are retained. The service defaults to 7 days when
+     this property is omitted."""
+    earliest_restore_point_utc: Optional[datetime.datetime] = rest_field(
+        name="earliestRestorePointUtc", visibility=["read"], format="rfc3339"
+    )
+    """The earliest point in time, in UTC, to which the cluster can currently be restored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        geo_redundancy: Union[str, "_models.GeoRedundancyState"],
+        retention_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BackupPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backup configuration properties for updating a HorizonDB cluster.
+
+    :ivar retention_days: The number of days that automatic backups are retained.
+    :vartype retention_days: int
+    """
+
+    retention_days: Optional[int] = rest_field(name="retentionDays", visibility=["update"])
+    """The number of days that automatic backups are retained."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retention_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Capability(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The singleton HorizonDB capability catalog entry available to a subscription in a location.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.CapabilityProperties
+    """
+
+    properties: Optional["_models.CapabilityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapabilityProperties(_Model):
+    """Properties of the HorizonDB capabilities available to a subscription in a location.
+
+    :ivar provisioning_state: The provisioning state of the capability catalog entry. Known values
+     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar cluster_capabilities: The Cluster capabilities available in the region. Required.
+    :vartype cluster_capabilities: ~azure.mgmt.horizondb.models.ClusterCapability
+    :ivar pool_capabilities: The Pool capabilities available in the region, including processor,
+     generation, and compute-model details. Required.
+    :vartype pool_capabilities: ~azure.mgmt.horizondb.models.PoolCapability
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the capability catalog entry. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    cluster_capabilities: "_models.ClusterCapability" = rest_field(name="clusterCapabilities", visibility=["read"])
+    """The Cluster capabilities available in the region. Required."""
+    pool_capabilities: "_models.PoolCapability" = rest_field(name="poolCapabilities", visibility=["read"])
+    """The Pool capabilities available in the region, including processor, generation, and
+     compute-model details. Required."""
+
+
+class ChangeDataCaptureCapability(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The singleton change data capture capability for a HorizonDB cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ChangeDataCaptureCapabilityProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ChangeDataCaptureCapabilityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureCapabilityForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A sparse update request for the singleton change data capture capability.
+
+    :ivar properties: The capability properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureCapabilityPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.ChangeDataCaptureCapabilityPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The capability properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureCapabilityPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureCapabilityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of the singleton change data capture capability.
+
+    :ivar desired_state: The requested capability state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    :ivar effective_state: The current effective capability state. Required. Known values are:
+     "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effective_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureEffectiveState
+    :ivar provisioning_state: The provisioning state of the latest capability mutation. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar auto_upgrade_extension: Whether HorizonDB may automatically upgrade the service-owned
+     change data capture extension within the supported compatibility policy.
+    :vartype auto_upgrade_extension: bool
+    :ivar replication_architecture: The implementation architecture currently used for change
+     capture. Required. Known values are: "ComputeBased", "StorageBased", and "Hybrid".
+    :vartype replication_architecture: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureReplicationArchitecture
+    :ivar extension: The installed change data capture extension and its current lifecycle state.
+     Required.
+    :vartype extension: ~azure.mgmt.horizondb.models.ChangeDataCaptureExtensionStatus
+    :ivar prerequisites: The current readiness of change data capture engine and read-write
+     endpoint prerequisites. Required.
+    :vartype prerequisites: ~azure.mgmt.horizondb.models.ChangeDataCapturePrerequisiteStatus
+    :ivar destination_count: The number of change data capture destinations under this cluster.
+     Required.
+    :vartype destination_count: int
+    :ivar configuration_count: The number of change data capture configurations under this cluster.
+     Required.
+    :vartype configuration_count: int
+    :ivar status: Customer-safe health information for the capability. Required.
+    :vartype status: ~azure.mgmt.horizondb.models.ChangeDataCaptureStatus
+    """
+
+    desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"] = rest_field(
+        name="desiredState", visibility=["read", "create", "update"]
+    )
+    """The requested capability state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effective_state: Union[str, "_models.ChangeDataCaptureEffectiveState"] = rest_field(
+        name="effectiveState", visibility=["read"]
+    )
+    """The current effective capability state. Required. Known values are: \"Enabling\", \"Enabled\",
+     \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the latest capability mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    auto_upgrade_extension: Optional[bool] = rest_field(
+        name="autoUpgradeExtension", visibility=["read", "create", "update"]
+    )
+    """Whether HorizonDB may automatically upgrade the service-owned change data capture extension
+     within the supported compatibility policy."""
+    replication_architecture: Union[str, "_models.ChangeDataCaptureReplicationArchitecture"] = rest_field(
+        name="replicationArchitecture", visibility=["read"]
+    )
+    """The implementation architecture currently used for change capture. Required. Known values are:
+     \"ComputeBased\", \"StorageBased\", and \"Hybrid\"."""
+    extension: "_models.ChangeDataCaptureExtensionStatus" = rest_field(visibility=["read"])
+    """The installed change data capture extension and its current lifecycle state. Required."""
+    prerequisites: "_models.ChangeDataCapturePrerequisiteStatus" = rest_field(visibility=["read"])
+    """The current readiness of change data capture engine and read-write endpoint prerequisites.
+     Required."""
+    destination_count: int = rest_field(name="destinationCount", visibility=["read"])
+    """The number of change data capture destinations under this cluster. Required."""
+    configuration_count: int = rest_field(name="configurationCount", visibility=["read"])
+    """The number of change data capture configurations under this cluster. Required."""
+    status: "_models.ChangeDataCaptureStatus" = rest_field(visibility=["read"])
+    """Customer-safe health information for the capability. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"],
+        auto_upgrade_extension: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureCapabilityPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating the singleton change data capture capability. Omitted properties
+    preserve their current values.
+
+    :ivar desired_state: The requested capability state. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    :ivar auto_upgrade_extension: Whether HorizonDB may automatically upgrade the service-owned
+     change data capture extension within the supported compatibility policy.
+    :vartype auto_upgrade_extension: bool
+    """
+
+    desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = rest_field(
+        name="desiredState", visibility=["update"]
+    )
+    """The requested capability state. Known values are: \"Enabled\" and \"Disabled\"."""
+    auto_upgrade_extension: Optional[bool] = rest_field(name="autoUpgradeExtension", visibility=["update"])
+    """Whether HorizonDB may automatically upgrade the service-owned change data capture extension
+     within the supported compatibility policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = None,
+        auto_upgrade_extension: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A HorizonDB database enrollment for Microsoft Fabric Mirroring.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ChangeDataCaptureConfigurationProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ChangeDataCaptureConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureConfigurationForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A sparse update request for a change data capture configuration.
+
+    :ivar properties: The configuration properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureConfigurationPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.ChangeDataCaptureConfigurationPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureConfigurationPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a Microsoft Fabric Mirroring configuration.
+
+    :ivar database_name: The exact PostgreSQL database name enrolled in this logical stream. This
+     value is immutable. Required.
+    :vartype database_name: str
+    :ivar usage_profile: The immutable usage profile. API version 2026-10-01-preview accepts
+     Mirroring only. Required. "Mirroring"
+    :vartype usage_profile: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureUsageProfile
+    :ivar destination_resource_id: The immutable resource ID of an enabled change data capture
+     destination under the same cluster. Required.
+    :vartype destination_resource_id: str
+    :ivar logical_stream_id: A service-generated identifier for the logical stream, represented as
+     an RFC 4122 GUID. This value remains stable when a writer role moves and the service
+     materializes a replacement ARM resource under the new writer cluster. Required.
+    :vartype logical_stream_id: str
+    :ivar desired_state: The requested configuration state. Required. Known values are: "Enabled"
+     and "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    :ivar effective_state: The current effective configuration state. Required. Known values are:
+     "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effective_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureEffectiveState
+    :ivar provisioning_state: The provisioning state of the latest configuration mutation. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar extension: The change data capture extension state for the enrolled database. Required.
+    :vartype extension: ~azure.mgmt.horizondb.models.ChangeDataCaptureExtensionStatus
+    :ivar replication: The known status of the destination-owned replication session. Required.
+    :vartype replication: ~azure.mgmt.horizondb.models.ChangeDataCaptureReplicationStatus
+    :ivar topology: The current writer-topology binding for this logical stream. Required.
+    :vartype topology: ~azure.mgmt.horizondb.models.ChangeDataCaptureTopologyBindingStatus
+    :ivar status: Customer-safe health information for the configuration. Required.
+    :vartype status: ~azure.mgmt.horizondb.models.ChangeDataCaptureStatus
+    """
+
+    database_name: str = rest_field(name="databaseName", visibility=["read", "create"])
+    """The exact PostgreSQL database name enrolled in this logical stream. This value is immutable.
+     Required."""
+    usage_profile: Union[str, "_models.ChangeDataCaptureUsageProfile"] = rest_field(
+        name="usageProfile", visibility=["read", "create"]
+    )
+    """The immutable usage profile. API version 2026-10-01-preview accepts Mirroring only. Required.
+     \"Mirroring\""""
+    destination_resource_id: str = rest_field(name="destinationResourceId", visibility=["read", "create"])
+    """The immutable resource ID of an enabled change data capture destination under the same cluster.
+     Required."""
+    logical_stream_id: str = rest_field(name="logicalStreamId", visibility=["read"])
+    """A service-generated identifier for the logical stream, represented as an RFC 4122 GUID. This
+     value remains stable when a writer role moves and the service materializes a replacement ARM
+     resource under the new writer cluster. Required."""
+    desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"] = rest_field(
+        name="desiredState", visibility=["read", "create", "update"]
+    )
+    """The requested configuration state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effective_state: Union[str, "_models.ChangeDataCaptureEffectiveState"] = rest_field(
+        name="effectiveState", visibility=["read"]
+    )
+    """The current effective configuration state. Required. Known values are: \"Enabling\",
+     \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the latest configuration mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    extension: "_models.ChangeDataCaptureExtensionStatus" = rest_field(visibility=["read"])
+    """The change data capture extension state for the enrolled database. Required."""
+    replication: "_models.ChangeDataCaptureReplicationStatus" = rest_field(visibility=["read"])
+    """The known status of the destination-owned replication session. Required."""
+    topology: "_models.ChangeDataCaptureTopologyBindingStatus" = rest_field(visibility=["read"])
+    """The current writer-topology binding for this logical stream. Required."""
+    status: "_models.ChangeDataCaptureStatus" = rest_field(visibility=["read"])
+    """Customer-safe health information for the configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        database_name: str,
+        usage_profile: Union[str, "_models.ChangeDataCaptureUsageProfile"],
+        destination_resource_id: str,
+        desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureConfigurationPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating a change data capture configuration. Omitted properties preserve their
+    current values.
+
+    :ivar desired_state: The requested configuration state. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    """
+
+    desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = rest_field(
+        name="desiredState", visibility=["update"]
+    )
+    """The requested configuration state. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureDestination(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reusable Microsoft Fabric destination for HorizonDB change data capture configurations.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ChangeDataCaptureDestinationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureDestinationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureDestinationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Destination-specific settings discriminated by destinationType.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FabricDestinationDetails
+
+    :ivar destination_type: The destination family. Required. "Fabric"
+    :vartype destination_type: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationType
+    :ivar protocol: The protocol used to communicate with the destination. Required. "Native"
+    :vartype protocol: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureProtocol
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    destination_type: str = rest_discriminator(name="destinationType", visibility=["read", "create"])
+    """The destination family. Required. \"Fabric\""""
+    protocol: Union[str, "_models.ChangeDataCaptureProtocol"] = rest_field(visibility=["read", "create"])
+    """The protocol used to communicate with the destination. Required. \"Native\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination_type: str,
+        protocol: Union[str, "_models.ChangeDataCaptureProtocol"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureDestinationForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A sparse update request for a change data capture destination.
+
+    :ivar properties: The destination properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.ChangeDataCaptureDestinationPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The destination properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureDestinationPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureDestinationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a Microsoft Fabric change data capture destination.
+
+    :ivar destination: The immutable Microsoft Fabric destination settings. Resubmitting the same
+     values is accepted; changing them requires deleting and recreating the destination. Required.
+    :vartype destination: ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationDetails
+    :ivar desired_state: The requested destination state. Required. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    :ivar effective_state: The current effective destination state. Required. Known values are:
+     "WaitingForIdentity", "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
+    :vartype effective_state: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureDestinationEffectiveState
+    :ivar provisioning_state: The provisioning state of the latest destination mutation. Known
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar active_identity_assignment_resource_id: The resource ID of the currently active identity
+     assignment, if one is active.
+    :vartype active_identity_assignment_resource_id: str
+    :ivar configuration_count: The number of change data capture configurations that reference this
+     destination. Required.
+    :vartype configuration_count: int
+    :ivar status: Customer-safe health information for the destination. Required.
+    :vartype status: ~azure.mgmt.horizondb.models.ChangeDataCaptureStatus
+    """
+
+    destination: "_models.ChangeDataCaptureDestinationDetails" = rest_field(visibility=["read", "create"])
+    """The immutable Microsoft Fabric destination settings. Resubmitting the same values is accepted;
+     changing them requires deleting and recreating the destination. Required."""
+    desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"] = rest_field(
+        name="desiredState", visibility=["read", "create", "update"]
+    )
+    """The requested destination state. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    effective_state: Union[str, "_models.ChangeDataCaptureDestinationEffectiveState"] = rest_field(
+        name="effectiveState", visibility=["read"]
+    )
+    """The current effective destination state. Required. Known values are: \"WaitingForIdentity\",
+     \"Enabling\", \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the latest destination mutation. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    active_identity_assignment_resource_id: Optional[str] = rest_field(
+        name="activeIdentityAssignmentResourceId", visibility=["read"]
+    )
+    """The resource ID of the currently active identity assignment, if one is active."""
+    configuration_count: int = rest_field(name="configurationCount", visibility=["read"])
+    """The number of change data capture configurations that reference this destination. Required."""
+    status: "_models.ChangeDataCaptureStatus" = rest_field(visibility=["read"])
+    """Customer-safe health information for the destination. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destination: "_models.ChangeDataCaptureDestinationDetails",
+        desired_state: Union[str, "_models.ChangeDataCaptureDesiredState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureDestinationPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating a change data capture destination. Omitted properties preserve their
+    current values.
+
+    :ivar desired_state: The requested destination state. Known values are: "Enabled" and
+     "Disabled".
+    :vartype desired_state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureDesiredState
+    """
+
+    desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = rest_field(
+        name="desiredState", visibility=["update"]
+    )
+    """The requested destination state. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_state: Optional[Union[str, "_models.ChangeDataCaptureDesiredState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCaptureExtensionStatus(_Model):
+    """The installed HorizonDB change data capture extension and its current state.
+
+    :ivar name: The extension name. Required.
+    :vartype name: str
+    :ivar version: The installed extension version. Required.
+    :vartype version: str
+    :ivar state: The current extension lifecycle state. Required. Known values are: "NotInstalled",
+     "Installing", "Ready", "Upgrading", "Removing", and "Failed".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureExtensionState
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The extension name. Required."""
+    version: str = rest_field(visibility=["read"])
+    """The installed extension version. Required."""
+    state: Union[str, "_models.ChangeDataCaptureExtensionState"] = rest_field(visibility=["read"])
+    """The current extension lifecycle state. Required. Known values are: \"NotInstalled\",
+     \"Installing\", \"Ready\", \"Upgrading\", \"Removing\", and \"Failed\"."""
+
+
+class ChangeDataCaptureIdentityAssignmentProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The properties of a change data capture identity assignment.
+
+    :ivar identity_resource_id: The immutable resource ID of the user-assigned managed identity
+     selected for this destination. The ID must exactly match a key in the parent cluster's
+     top-level identity.userAssignedIdentities dictionary; otherwise creation is rejected. Attaching
+     the identity to the cluster does not grant destination access, so required role assignments
+     must be configured separately. Resubmitting the same value is accepted; changing it requires
+     deleting and recreating the assignment. Required.
+    :vartype identity_resource_id: str
+    :ivar effective_state: The current assignment lifecycle state. Required. Known values are:
+     "Assigning", "Assigned", "Removing", and "Failed".
+    :vartype effective_state: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureIdentityAssignmentState
+    :ivar activation_state: The current activation state within the parent destination. Required.
+     Known values are: "Inactive", "Activating", "Active", "Deactivating", and "Failed".
+    :vartype activation_state: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureIdentityActivationState
+    :ivar principal_id: The Microsoft Entra principal ID resolved from the user-assigned managed
+     identity, represented as an RFC 4122 GUID. Required.
+    :vartype principal_id: str
+    :ivar tenant_id: The Microsoft Entra tenant ID resolved from the user-assigned managed
+     identity, represented as an RFC 4122 GUID. Required.
+    :vartype tenant_id: str
+    :ivar provisioning_state: The provisioning state of the latest identity-assignment mutation.
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar validation: The latest validation result for this identity assignment. Required.
+    :vartype validation: ~azure.mgmt.horizondb.models.IdentityValidationStatus
+    :ivar status: Customer-safe health information for the identity assignment. Required.
+    :vartype status: ~azure.mgmt.horizondb.models.ChangeDataCaptureStatus
+    """
+
+    identity_resource_id: str = rest_field(name="identityResourceId", visibility=["read", "create"])
+    """The immutable resource ID of the user-assigned managed identity selected for this destination.
+     The ID must exactly match a key in the parent cluster's top-level
+     identity.userAssignedIdentities dictionary; otherwise creation is rejected. Attaching the
+     identity to the cluster does not grant destination access, so required role assignments must be
+     configured separately. Resubmitting the same value is accepted; changing it requires deleting
+     and recreating the assignment. Required."""
+    effective_state: Union[str, "_models.ChangeDataCaptureIdentityAssignmentState"] = rest_field(
+        name="effectiveState", visibility=["read"]
+    )
+    """The current assignment lifecycle state. Required. Known values are: \"Assigning\",
+     \"Assigned\", \"Removing\", and \"Failed\"."""
+    activation_state: Union[str, "_models.ChangeDataCaptureIdentityActivationState"] = rest_field(
+        name="activationState", visibility=["read"]
+    )
+    """The current activation state within the parent destination. Required. Known values are:
+     \"Inactive\", \"Activating\", \"Active\", \"Deactivating\", and \"Failed\"."""
+    principal_id: str = rest_field(name="principalId", visibility=["read"])
+    """The Microsoft Entra principal ID resolved from the user-assigned managed identity, represented
+     as an RFC 4122 GUID. Required."""
+    tenant_id: str = rest_field(name="tenantId", visibility=["read"])
+    """The Microsoft Entra tenant ID resolved from the user-assigned managed identity, represented as
+     an RFC 4122 GUID. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the latest identity-assignment mutation. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    validation: "_models.IdentityValidationStatus" = rest_field(visibility=["read"])
+    """The latest validation result for this identity assignment. Required."""
+    status: "_models.ChangeDataCaptureStatus" = rest_field(visibility=["read"])
+    """Customer-safe health information for the identity assignment. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeDataCapturePrerequisiteStatus(_Model):
+    """The current readiness of prerequisites shared by change data capture configurations.
+
+    :ivar engine_configuration_state: The readiness of the required engine configuration. Required.
+     Known values are: "Ready", "NotReady", "Reconciling", and "Failed".
+    :vartype engine_configuration_state: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureEngineConfigurationState
+    :ivar read_write_endpoint_state: The availability of the read-write endpoint required for
+     engine mutations. Required. Known values are: "Ready" and "Unavailable".
+    :vartype read_write_endpoint_state: str or
+     ~azure.mgmt.horizondb.models.ChangeDataCaptureReadWriteEndpointState
+    """
+
+    engine_configuration_state: Union[str, "_models.ChangeDataCaptureEngineConfigurationState"] = rest_field(
+        name="engineConfigurationState", visibility=["read"]
+    )
+    """The readiness of the required engine configuration. Required. Known values are: \"Ready\",
+     \"NotReady\", \"Reconciling\", and \"Failed\"."""
+    read_write_endpoint_state: Union[str, "_models.ChangeDataCaptureReadWriteEndpointState"] = rest_field(
+        name="readWriteEndpointState", visibility=["read"]
+    )
+    """The availability of the read-write endpoint required for engine mutations. Required. Known
+     values are: \"Ready\" and \"Unavailable\"."""
+
+
+class ChangeDataCaptureReplicationStatus(_Model):
+    """The destination-owned replication-session status known to HorizonDB.
+
+    :ivar state: The current replication-session state. Required. Known values are:
+     "NotApplicable", "NotConnected", "Connecting", "Replicating", "Reconnecting", "Paused",
+     "Stopping", "Degraded", and "Failed".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureReplicationState
+    :ivar external_artifact_id: An opaque identifier of a destination-owned artifact, such as a
+     Microsoft Fabric mirrored-database item. HorizonDB does not create, update, or delete the
+     identified artifact.
+    :vartype external_artifact_id: str
+    :ivar last_connected_at_utc: The date and time, in UTC, when a destination session most
+     recently connected.
+    :vartype last_connected_at_utc: ~datetime.datetime
+    """
+
+    state: Union[str, "_models.ChangeDataCaptureReplicationState"] = rest_field(visibility=["read"])
+    """The current replication-session state. Required. Known values are: \"NotApplicable\",
+     \"NotConnected\", \"Connecting\", \"Replicating\", \"Reconnecting\", \"Paused\", \"Stopping\",
+     \"Degraded\", and \"Failed\"."""
+    external_artifact_id: Optional[str] = rest_field(name="externalArtifactId", visibility=["read"])
+    """An opaque identifier of a destination-owned artifact, such as a Microsoft Fabric
+     mirrored-database item. HorizonDB does not create, update, or delete the identified artifact."""
+    last_connected_at_utc: Optional[datetime.datetime] = rest_field(
+        name="lastConnectedAtUtc", visibility=["read"], format="rfc3339"
+    )
+    """The date and time, in UTC, when a destination session most recently connected."""
+
+
+class ChangeDataCaptureStatus(_Model):
+    """Customer-safe health information for a HorizonDB change data capture resource.
+
+    :ivar code: A stable machine-readable status code. Required.
+    :vartype code: str
+    :ivar message: A localized customer-safe description of the current status. Required.
+    :vartype message: str
+    """
+
+    code: str = rest_field(visibility=["read"])
+    """A stable machine-readable status code. Required."""
+    message: str = rest_field(visibility=["read"])
+    """A localized customer-safe description of the current status. Required."""
+
+
+class ChangeDataCaptureTopologyBindingStatus(_Model):
+    """The current writer-topology binding of a change data capture configuration.
+
+    :ivar state: The configuration's relationship to the current writer topology. Required. Known
+     values are: "Active", "Reconciling", "RebindRequired", "Superseded", and "Conflict".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureTopologyBindingState
+    :ivar generation: A monotonically increasing topology generation for this logical stream.
+     Required.
+    :vartype generation: int
+    :ivar active_cluster_resource_id: The Azure resource ID of the cluster that currently owns the
+     active configuration projection. Required.
+    :vartype active_cluster_resource_id: str
+    :ivar replacement_configuration_resource_id: The replacement configuration resource ID when
+     this projection has been superseded or requires rebinding.
+    :vartype replacement_configuration_resource_id: str
+    """
+
+    state: Union[str, "_models.ChangeDataCaptureTopologyBindingState"] = rest_field(visibility=["read"])
+    """The configuration's relationship to the current writer topology. Required. Known values are:
+     \"Active\", \"Reconciling\", \"RebindRequired\", \"Superseded\", and \"Conflict\"."""
+    generation: int = rest_field(visibility=["read"])
+    """A monotonically increasing topology generation for this logical stream. Required."""
+    active_cluster_resource_id: str = rest_field(name="activeClusterResourceId", visibility=["read"])
+    """The Azure resource ID of the cluster that currently owns the active configuration projection.
+     Required."""
+    replacement_configuration_resource_id: Optional[str] = rest_field(
+        name="replacementConfigurationResourceId", visibility=["read"]
+    )
+    """The replacement configuration resource ID when this projection has been superseded or requires
+     rebinding."""
+
+
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Cluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the HorizonDB cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ClusterProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.horizondb.models.HorizonDbClusterManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ClusterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ClusterProperties"] = None,
+        identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterCapability(_Model):
+    """The HorizonDB Cluster capabilities available in a location.
+
+    :ivar recommended_postgre_sql_version: The PostgreSQL major version recommended for clients to
+     select for HorizonDB Clusters in the region. This recommendation does not describe backend
+     behavior when the PostgreSQL version is omitted from a request. Required. Known values are:
+     "17" and "18".
+    :vartype recommended_postgre_sql_version: str or
+     ~azure.mgmt.horizondb.models.PostgreSqlCapabilityVersion
+    :ivar supported_postgre_sql_versions: The PostgreSQL major versions supported by Clusters in
+     the region. Required.
+    :vartype supported_postgre_sql_versions:
+     list[~azure.mgmt.horizondb.models.PostgreSqlVersionCapability]
+    :ivar supported_features: Additional Cluster features supported in the region. Required.
+    :vartype supported_features: list[~azure.mgmt.horizondb.models.ClusterFeatureCapability]
+    """
+
+    recommended_postgre_sql_version: Union[str, "_models.PostgreSqlCapabilityVersion"] = rest_field(
+        name="recommendedPostgreSqlVersion", visibility=["read"]
+    )
+    """The PostgreSQL major version recommended for clients to select for HorizonDB Clusters in the
+     region. This recommendation does not describe backend behavior when the PostgreSQL version is
+     omitted from a request. Required. Known values are: \"17\" and \"18\"."""
+    supported_postgre_sql_versions: list["_models.PostgreSqlVersionCapability"] = rest_field(
+        name="supportedPostgreSqlVersions", visibility=["read"]
+    )
+    """The PostgreSQL major versions supported by Clusters in the region. Required."""
+    supported_features: list["_models.ClusterFeatureCapability"] = rest_field(
+        name="supportedFeatures", visibility=["read"]
+    )
+    """Additional Cluster features supported in the region. Required."""
+
+
+class ClusterCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties accepted when creating or replacing a HorizonDB cluster.
+
+    :ivar creation_mode: The mode used to create the cluster. When this property is omitted while
+     creating a new cluster, the service records Create. PointInTimeRestore creates a new cluster
+     from an available backup; pointInTimeUtc and creationSourceClusterResourceId are then required,
+     postgreSqlVersion must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: "Create" and "PointInTimeRestore".
+    :vartype creation_mode: str or ~azure.mgmt.horizondb.models.ClusterCreateMode
+    :ivar point_in_time_utc: The requested point in time, in UTC. This property is required in
+     every PointInTimeRestore request. For a same-location restore, the service restores the latest
+     backup available at or before this value. For a cross-location restore, the service requires
+     but ignores this value and restores the latest available backup; cross-location responses omit
+     this property. This property must be absent for other creation modes or when creationMode is
+     omitted and can only be specified during resource creation.
+    :vartype point_in_time_utc: ~datetime.datetime
+    :ivar creation_source_cluster_resource_id: The Azure resource ID of the source HorizonDB
+     cluster used by the selected creation mode. This property is required for PointInTimeRestore
+     and other source-based creation modes, and must be absent when creationMode is Create or
+     omitted. A source cluster does not need to have a pool to be restored, provided an available
+     backup exists. This immutable creation-provenance value does not change after creation.
+    :vartype creation_source_cluster_resource_id: str
+    :ivar creation_source_cluster_location: The Azure location of the source HorizonDB cluster used
+     for point-in-time restore. This property is optional when the source and target cluster
+     locations are the same. It is required when the source cluster location differs from the target
+     cluster location and must identify the source cluster's location. This property must be absent
+     for creation modes other than PointInTimeRestore or when creationMode is omitted. This
+     immutable creation-provenance value does not change after creation.
+    :vartype creation_source_cluster_location: str
+    :ivar network: The network configuration for the cluster. When this object is omitted, the
+     service defaults it to publicAccess Disabled.
+    :vartype network: ~azure.mgmt.horizondb.models.Network
+    :ivar backup: The backup configuration for the cluster.
+    :vartype backup: ~azure.mgmt.horizondb.models.BackupProperties
+    :ivar data_encryption: The data encryption configuration for the cluster. When omitted during
+     cluster creation, the service uses SystemManaged encryption.
+    :vartype data_encryption: ~azure.mgmt.horizondb.models.HorizonDbClusterDataEncryption
+    :ivar state: Current state of the cluster. Required. Known values are: "Ready", "Provisioning",
+     "Deleting", "Inaccessible", and "Updating".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ClusterState
+    :ivar provisioning_state: The provisioning state of the cluster. Required. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar read_write_pool: The pool currently designated to host the cluster's read-write node.
+     Required.
+    :vartype read_write_pool: ~azure.mgmt.horizondb.models.ReadWritePoolProperties
+    :ivar postgre_sql_version: The PostgreSQL major version for the new cluster. This property is
+     required for ordinary cluster creation and must be omitted when creationMode is
+     PointInTimeRestore because the service obtains the version from the source backup metadata.
+     Known values are: "17" and "18".
+    :vartype postgre_sql_version: str or ~azure.mgmt.horizondb.models.PostgreSqlVersion
+    """
+
+    creation_mode: Optional[Union[str, "_models.ClusterCreateMode"]] = rest_field(
+        name="creationMode", visibility=["read", "create"]
+    )
+    """The mode used to create the cluster. When this property is omitted while creating a new
+     cluster, the service records Create. PointInTimeRestore creates a new cluster from an available
+     backup; pointInTimeUtc and creationSourceClusterResourceId are then required, postgreSqlVersion
+     must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
+    point_in_time_utc: Optional[datetime.datetime] = rest_field(
+        name="pointInTimeUtc", visibility=["read", "create"], format="rfc3339"
+    )
+    """The requested point in time, in UTC. This property is required in every PointInTimeRestore
+     request. For a same-location restore, the service restores the latest backup available at or
+     before this value. For a cross-location restore, the service requires but ignores this value
+     and restores the latest available backup; cross-location responses omit this property. This
+     property must be absent for other creation modes or when creationMode is omitted and can only
+     be specified during resource creation."""
+    creation_source_cluster_resource_id: Optional[str] = rest_field(
+        name="creationSourceClusterResourceId", visibility=["read", "create"]
+    )
+    """The Azure resource ID of the source HorizonDB cluster used by the selected creation mode. This
+     property is required for PointInTimeRestore and other source-based creation modes, and must be
+     absent when creationMode is Create or omitted. A source cluster does not need to have a pool to
+     be restored, provided an available backup exists. This immutable creation-provenance value does
+     not change after creation."""
+    creation_source_cluster_location: Optional[str] = rest_field(
+        name="creationSourceClusterLocation", visibility=["read", "create"]
+    )
+    """The Azure location of the source HorizonDB cluster used for point-in-time restore. This
+     property is optional when the source and target cluster locations are the same. It is required
+     when the source cluster location differs from the target cluster location and must identify the
+     source cluster's location. This property must be absent for creation modes other than
+     PointInTimeRestore or when creationMode is omitted. This immutable creation-provenance value
+     does not change after creation."""
+    network: Optional["_models.Network"] = rest_field(visibility=["read", "create", "update"])
+    """The network configuration for the cluster. When this object is omitted, the service defaults it
+     to publicAccess Disabled."""
+    backup: Optional["_models.BackupProperties"] = rest_field(visibility=["read", "create", "update"])
+    """The backup configuration for the cluster."""
+    data_encryption: Optional["_models.HorizonDbClusterDataEncryption"] = rest_field(
+        name="dataEncryption", visibility=["read", "create", "update"]
+    )
+    """The data encryption configuration for the cluster. When omitted during cluster creation, the
+     service uses SystemManaged encryption."""
+    state: Union[str, "_models.ClusterState"] = rest_field(visibility=["read"])
+    """Current state of the cluster. Required. Known values are: \"Ready\", \"Provisioning\",
+     \"Deleting\", \"Inaccessible\", and \"Updating\"."""
+    provisioning_state: Union[str, "_models.ProvisioningState"] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the cluster. Required. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    read_write_pool: "_models.ReadWritePoolProperties" = rest_field(name="readWritePool", visibility=["read"])
+    """The pool currently designated to host the cluster's read-write node. Required."""
+    postgre_sql_version: Optional[Union[str, "_models.PostgreSqlVersion"]] = rest_field(
+        name="postgreSqlVersion", visibility=["create"]
+    )
+    """The PostgreSQL major version for the new cluster. This property is required for ordinary
+     cluster creation and must be omitted when creationMode is PointInTimeRestore because the
+     service obtains the version from the source backup metadata. Known values are: \"17\" and
+     \"18\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        creation_mode: Optional[Union[str, "_models.ClusterCreateMode"]] = None,
+        point_in_time_utc: Optional[datetime.datetime] = None,
+        creation_source_cluster_resource_id: Optional[str] = None,
+        creation_source_cluster_location: Optional[str] = None,
+        network: Optional["_models.Network"] = None,
+        backup: Optional["_models.BackupProperties"] = None,
+        data_encryption: Optional["_models.HorizonDbClusterDataEncryption"] = None,
+        postgre_sql_version: Optional[Union[str, "_models.PostgreSqlVersion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterCreateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A request to create or replace a HorizonDB cluster.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.horizondb.models.HorizonDbClusterManagedServiceIdentity
+    :ivar properties: The properties for the selected cluster creation mode. Required.
+    :vartype properties: ~azure.mgmt.horizondb.models.ClusterCreateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    properties: "_models.ClusterCreateProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties for the selected cluster creation mode. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.ClusterCreateProperties",
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterFeatureCapability(_Model):
+    """A HorizonDB Cluster feature supported in a location.
+
+    :ivar name: The name of the Cluster feature. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the Cluster feature. Required."""
+
+
+class ClusterForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """HorizonDB cluster for update operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.horizondb.models.HorizonDbClusterManagedServiceIdentity
+    :ivar properties: The properties that can be updated for a HorizonDB cluster.
+    :vartype properties: ~azure.mgmt.horizondb.models.ClusterPropertiesForPatchUpdate
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    properties: Optional["_models.ClusterPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties that can be updated for a HorizonDB cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.HorizonDbClusterManagedServiceIdentity"] = None,
+        properties: Optional["_models.ClusterPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB cluster.
+
+    :ivar postgre_sql_version: The PostgreSQL major version used by the HorizonDB cluster. API
+     version 2026-10-01-preview supports versions 17 and 18. For ordinary cluster creation, the
+     version is supplied in the request and is immutable after creation. For point-in-time restore,
+     the service obtains the version from the source backup metadata and the request must omit this
+     property. This API version does not support in-place PostgreSQL major-version upgrades.
+     Required. Known values are: "17" and "18".
+    :vartype postgre_sql_version: str or ~azure.mgmt.horizondb.models.PostgreSqlVersion
+    :ivar creation_mode: The mode used to create the cluster. When this property is omitted while
+     creating a new cluster, the service records Create. PointInTimeRestore creates a new cluster
+     from an available backup; pointInTimeUtc and creationSourceClusterResourceId are then required,
+     postgreSqlVersion must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: "Create" and "PointInTimeRestore".
+    :vartype creation_mode: str or ~azure.mgmt.horizondb.models.ClusterCreateMode
+    :ivar point_in_time_utc: The requested point in time, in UTC. This property is required in
+     every PointInTimeRestore request. For a same-location restore, the service restores the latest
+     backup available at or before this value. For a cross-location restore, the service requires
+     but ignores this value and restores the latest available backup; cross-location responses omit
+     this property. This property must be absent for other creation modes or when creationMode is
+     omitted and can only be specified during resource creation.
+    :vartype point_in_time_utc: ~datetime.datetime
+    :ivar creation_source_cluster_resource_id: The Azure resource ID of the source HorizonDB
+     cluster used by the selected creation mode. This property is required for PointInTimeRestore
+     and other source-based creation modes, and must be absent when creationMode is Create or
+     omitted. A source cluster does not need to have a pool to be restored, provided an available
+     backup exists. This immutable creation-provenance value does not change after creation.
+    :vartype creation_source_cluster_resource_id: str
+    :ivar creation_source_cluster_location: The Azure location of the source HorizonDB cluster used
+     for point-in-time restore. This property is optional when the source and target cluster
+     locations are the same. It is required when the source cluster location differs from the target
+     cluster location and must identify the source cluster's location. This property must be absent
+     for creation modes other than PointInTimeRestore or when creationMode is omitted. This
+     immutable creation-provenance value does not change after creation.
+    :vartype creation_source_cluster_location: str
+    :ivar network: The network configuration for the cluster. When this object is omitted, the
+     service defaults it to publicAccess Disabled.
+    :vartype network: ~azure.mgmt.horizondb.models.Network
+    :ivar backup: The backup configuration for the cluster.
+    :vartype backup: ~azure.mgmt.horizondb.models.BackupProperties
+    :ivar data_encryption: The data encryption configuration for the cluster. When omitted during
+     cluster creation, the service uses SystemManaged encryption.
+    :vartype data_encryption: ~azure.mgmt.horizondb.models.HorizonDbClusterDataEncryption
+    :ivar state: Current state of the cluster. Required. Known values are: "Ready", "Provisioning",
+     "Deleting", "Inaccessible", and "Updating".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ClusterState
+    :ivar provisioning_state: The provisioning state of the cluster. Required. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar read_write_pool: The pool currently designated to host the cluster's read-write node.
+     Required.
+    :vartype read_write_pool: ~azure.mgmt.horizondb.models.ReadWritePoolProperties
+    """
+
+    postgre_sql_version: Union[str, "_models.PostgreSqlVersion"] = rest_field(
+        name="postgreSqlVersion", visibility=["read", "create"]
+    )
+    """The PostgreSQL major version used by the HorizonDB cluster. API version 2026-10-01-preview
+     supports versions 17 and 18. For ordinary cluster creation, the version is supplied in the
+     request and is immutable after creation. For point-in-time restore, the service obtains the
+     version from the source backup metadata and the request must omit this property. This API
+     version does not support in-place PostgreSQL major-version upgrades. Required. Known values
+     are: \"17\" and \"18\"."""
+    creation_mode: Optional[Union[str, "_models.ClusterCreateMode"]] = rest_field(
+        name="creationMode", visibility=["read", "create"]
+    )
+    """The mode used to create the cluster. When this property is omitted while creating a new
+     cluster, the service records Create. PointInTimeRestore creates a new cluster from an available
+     backup; pointInTimeUtc and creationSourceClusterResourceId are then required, postgreSqlVersion
+     must be omitted because it is obtained from the backup metadata, and
+     creationSourceClusterLocation is required when the source and target cluster locations differ.
+     This property is immutable and is returned as creation provenance. On replacement, omission
+     preserves the recorded value, resubmitting the same value is accepted, and changing it is
+     rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
+    point_in_time_utc: Optional[datetime.datetime] = rest_field(
+        name="pointInTimeUtc", visibility=["read", "create"], format="rfc3339"
+    )
+    """The requested point in time, in UTC. This property is required in every PointInTimeRestore
+     request. For a same-location restore, the service restores the latest backup available at or
+     before this value. For a cross-location restore, the service requires but ignores this value
+     and restores the latest available backup; cross-location responses omit this property. This
+     property must be absent for other creation modes or when creationMode is omitted and can only
+     be specified during resource creation."""
+    creation_source_cluster_resource_id: Optional[str] = rest_field(
+        name="creationSourceClusterResourceId", visibility=["read", "create"]
+    )
+    """The Azure resource ID of the source HorizonDB cluster used by the selected creation mode. This
+     property is required for PointInTimeRestore and other source-based creation modes, and must be
+     absent when creationMode is Create or omitted. A source cluster does not need to have a pool to
+     be restored, provided an available backup exists. This immutable creation-provenance value does
+     not change after creation."""
+    creation_source_cluster_location: Optional[str] = rest_field(
+        name="creationSourceClusterLocation", visibility=["read", "create"]
+    )
+    """The Azure location of the source HorizonDB cluster used for point-in-time restore. This
+     property is optional when the source and target cluster locations are the same. It is required
+     when the source cluster location differs from the target cluster location and must identify the
+     source cluster's location. This property must be absent for creation modes other than
+     PointInTimeRestore or when creationMode is omitted. This immutable creation-provenance value
+     does not change after creation."""
+    network: Optional["_models.Network"] = rest_field(visibility=["read", "create", "update"])
+    """The network configuration for the cluster. When this object is omitted, the service defaults it
+     to publicAccess Disabled."""
+    backup: Optional["_models.BackupProperties"] = rest_field(visibility=["read", "create", "update"])
+    """The backup configuration for the cluster."""
+    data_encryption: Optional["_models.HorizonDbClusterDataEncryption"] = rest_field(
+        name="dataEncryption", visibility=["read", "create", "update"]
+    )
+    """The data encryption configuration for the cluster. When omitted during cluster creation, the
+     service uses SystemManaged encryption."""
+    state: Union[str, "_models.ClusterState"] = rest_field(visibility=["read"])
+    """Current state of the cluster. Required. Known values are: \"Ready\", \"Provisioning\",
+     \"Deleting\", \"Inaccessible\", and \"Updating\"."""
+    provisioning_state: Union[str, "_models.ProvisioningState"] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the cluster. Required. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    read_write_pool: "_models.ReadWritePoolProperties" = rest_field(name="readWritePool", visibility=["read"])
+    """The pool currently designated to host the cluster's read-write node. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        postgre_sql_version: Union[str, "_models.PostgreSqlVersion"],
+        creation_mode: Optional[Union[str, "_models.ClusterCreateMode"]] = None,
+        point_in_time_utc: Optional[datetime.datetime] = None,
+        creation_source_cluster_resource_id: Optional[str] = None,
+        creation_source_cluster_location: Optional[str] = None,
+        network: Optional["_models.Network"] = None,
+        backup: Optional["_models.BackupProperties"] = None,
+        data_encryption: Optional["_models.HorizonDbClusterDataEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB cluster for update operations.
+
+    :ivar network: The network configuration to update for the cluster.
+    :vartype network: ~azure.mgmt.horizondb.models.NetworkForPatchUpdate
+    :ivar backup: The backup configuration for the cluster.
+    :vartype backup: ~azure.mgmt.horizondb.models.BackupPropertiesForPatchUpdate
+    :ivar data_encryption: The data encryption configuration to update for the cluster. Omitted
+     properties preserve their current values.
+    :vartype data_encryption:
+     ~azure.mgmt.horizondb.models.HorizonDbClusterDataEncryptionForPatchUpdate
+    """
+
+    network: Optional["_models.NetworkForPatchUpdate"] = rest_field(visibility=["update"])
+    """The network configuration to update for the cluster."""
+    backup: Optional["_models.BackupPropertiesForPatchUpdate"] = rest_field(visibility=["update"])
+    """The backup configuration for the cluster."""
+    data_encryption: Optional["_models.HorizonDbClusterDataEncryptionForPatchUpdate"] = rest_field(
+        name="dataEncryption", visibility=["update"]
+    )
+    """The data encryption configuration to update for the cluster. Omitted properties preserve their
+     current values."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network: Optional["_models.NetworkForPatchUpdate"] = None,
+        backup: Optional["_models.BackupPropertiesForPatchUpdate"] = None,
+        data_encryption: Optional["_models.HorizonDbClusterDataEncryptionForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputeGenerationCapability(_Model):
+    """The capabilities of a HorizonDB compute generation.
+
+    :ivar compute_generation: The numeric compute generation used when configuring a HorizonDB
+     pool. Required.
+    :vartype compute_generation: int
+    :ivar recommended_compute_model_type: The compute model type recommended for clients to select
+     for this compute generation. This recommendation does not describe backend behavior when the
+     compute model type is omitted from a request. Required. "Provisioned"
+    :vartype recommended_compute_model_type: str or
+     ~azure.mgmt.horizondb.models.PoolComputeModelType
+    :ivar supported_compute_models: The compute models supported by the compute generation.
+     Required.
+    :vartype supported_compute_models: list[~azure.mgmt.horizondb.models.ComputeModelCapability]
+    """
+
+    compute_generation: int = rest_field(name="computeGeneration", visibility=["read"])
+    """The numeric compute generation used when configuring a HorizonDB pool. Required."""
+    recommended_compute_model_type: Union[str, "_models.PoolComputeModelType"] = rest_field(
+        name="recommendedComputeModelType", visibility=["read"]
+    )
+    """The compute model type recommended for clients to select for this compute generation. This
+     recommendation does not describe backend behavior when the compute model type is omitted from a
+     request. Required. \"Provisioned\""""
+    supported_compute_models: list["_models.ComputeModelCapability"] = rest_field(
+        name="supportedComputeModels", visibility=["read"]
+    )
+    """The compute models supported by the compute generation. Required."""
+
+
+class ComputeModelCapability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The capabilities of a HorizonDB compute model.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ProvisionedComputeModelCapability
+
+    :ivar type: The compute model represented by these capabilities. Required. "Provisioned"
+    :vartype type: str or ~azure.mgmt.horizondb.models.PoolComputeModelType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read"])
+    """The compute model represented by these capabilities. Required. \"Provisioned\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputeProcessorCapability(_Model):
+    """The capabilities of a processor family supported by HorizonDB.
+
+    :ivar name: The name of the processor family. Required. Known values are: "Intel" and "AMD".
+    :vartype name: str or ~azure.mgmt.horizondb.models.ComputeProcessorType
+    :ivar supported_generations: The compute generations supported by the processor family.
+     Required.
+    :vartype supported_generations: list[~azure.mgmt.horizondb.models.ComputeGenerationCapability]
+    """
+
+    name: Union[str, "_models.ComputeProcessorType"] = rest_field(visibility=["read"])
+    """The name of the processor family. Required. Known values are: \"Intel\" and \"AMD\"."""
+    supported_generations: list["_models.ComputeGenerationCapability"] = rest_field(
+        name="supportedGenerations", visibility=["read"]
+    )
+    """The compute generations supported by the processor family. Required."""
+
+
+class ComputeSizeCapability(_Model):
+    """A vCore configuration supported by a HorizonDB processor generation.
+
+    :ivar v_cores: The number of vCores in the configuration. Required.
+    :vartype v_cores: int
+    :ivar memory_per_v_core_in_mb: The memory in megabytes available for each vCore. Required.
+    :vartype memory_per_v_core_in_mb: int
+    """
+
+    v_cores: int = rest_field(name="vCores", visibility=["read"])
+    """The number of vCores in the configuration. Required."""
+    memory_per_v_core_in_mb: int = rest_field(name="memoryPerVCoreInMb", visibility=["read"])
+    """The memory in megabytes available for each vCore. Required."""
+
+
+class DefaultParameterGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A default parameter group available in a specific region. It contains engine-defined parameters
+    and excludes service and other non-engine entries. For each PostgreSQL version, the
+    DefaultParameterGroups APIs return at most one default parameter group in a location.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.DefaultParameterGroupProperties
+    """
+
+    properties: Optional["_models.DefaultParameterGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.DefaultParameterGroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefaultParameterGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a default parameter group.
+
+    :ivar provisioning_state: The provisioning state of the default parameter group. Known values
+     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    :ivar parameters: Engine-defined parameters in the default parameter group. Service and other
+     non-engine entries are excluded. Required.
+    :vartype parameters: list[~azure.mgmt.horizondb.models.ParameterProperties]
+    :ivar description: Description of the default parameter group.
+    :vartype description: str
+    :ivar postgre_sql_version: PostgreSQL version for which this default parameter group is valid.
+     Required. Known values are: "17" and "18".
+    :vartype postgre_sql_version: str or ~azure.mgmt.horizondb.models.PostgreSqlVersion
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the default parameter group. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    parameters: list["_models.ParameterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Engine-defined parameters in the default parameter group. Service and other non-engine entries
+     are excluded. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the default parameter group."""
+    postgre_sql_version: Union[str, "_models.PostgreSqlVersion"] = rest_field(
+        name="postgreSqlVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """PostgreSQL version for which this default parameter group is valid. Required. Known values are:
+     \"17\" and \"18\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: list["_models.ParameterProperties"],
+        postgre_sql_version: Union[str, "_models.PostgreSqlVersion"],
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Endpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a service-generated, service-managed HorizonDB endpoint. The Cluster-scoped Endpoint
+    is created and deleted with its parent Cluster. A Pool-scoped Endpoint is created and deleted
+    with the Pool identified by associatedResourceId. Endpoints cannot be created or deleted
+    independently from their lifecycle owner.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.EndpointProperties
+    """
+
+    properties: Optional["_models.EndpointProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.EndpointProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EndpointProperties(_Model):
+    """Properties of a service-generated HorizonDB endpoint.
+
+    :ivar scope: The scope of the endpoint. Cluster-scoped Endpoints provide the cluster
+     connection, and Pool-scoped Endpoints provide read-only connections to eligible nodes in one
+     pool. Required. Known values are: "Cluster" and "Pool".
+    :vartype scope: str or ~azure.mgmt.horizondb.models.EndpointScope
+    :ivar associated_resource_id: The Azure resource ID of the Endpoint's lifecycle owner. For
+     Cluster scope, this identifies the parent Cluster with which the Endpoint is created and
+     deleted. For Pool scope, this identifies the Pool with which the Endpoint is created and
+     deleted; the Pool must be a child of the Endpoint's parent Cluster. Required.
+    :vartype associated_resource_id: str
+    :ivar fully_qualified_domain_name: The service-generated fully qualified domain name of the
+     endpoint. A Cluster-scoped Endpoint uses <cluster>.<clusterid>.<region>.horizondb.azure.com. A
+     Pool-scoped Endpoint uses <poolid>.<cluster>.<clusterid>.<region>.horizondb.azure.com.
+     Required.
+    :vartype fully_qualified_domain_name: str
+    :ivar role: The routing role of the endpoint. A Cluster-scoped Endpoint normally has the
+     ReadWrite role. Pool-scoped Endpoints have the ReadOnly role and route only to allocated nodes
+     in the associated Pool that are not currently playing the read-write role. A Pool-scoped
+     ReadOnly Endpoint has no routing destination unless at least one such node exists, including
+     when the Pool is Stopped, has zero allocated nodes, or has only one allocated node and that
+     node is playing the read-write role. Required. Known values are: "ReadOnly" and "ReadWrite".
+    :vartype role: str or ~azure.mgmt.horizondb.models.EndpointRole
+    """
+
+    scope: Union[str, "_models.EndpointScope"] = rest_field(visibility=["read"])
+    """The scope of the endpoint. Cluster-scoped Endpoints provide the cluster connection, and
+     Pool-scoped Endpoints provide read-only connections to eligible nodes in one pool. Required.
+     Known values are: \"Cluster\" and \"Pool\"."""
+    associated_resource_id: str = rest_field(name="associatedResourceId", visibility=["read"])
+    """The Azure resource ID of the Endpoint's lifecycle owner. For Cluster scope, this identifies the
+     parent Cluster with which the Endpoint is created and deleted. For Pool scope, this identifies
+     the Pool with which the Endpoint is created and deleted; the Pool must be a child of the
+     Endpoint's parent Cluster. Required."""
+    fully_qualified_domain_name: str = rest_field(name="fullyQualifiedDomainName", visibility=["read"])
+    """The service-generated fully qualified domain name of the endpoint. A Cluster-scoped Endpoint
+     uses <cluster>.<clusterid>.<region>.horizondb.azure.com. A Pool-scoped Endpoint uses
+     <poolid>.<cluster>.<clusterid>.<region>.horizondb.azure.com. Required."""
+    role: Union[str, "_models.EndpointRole"] = rest_field(visibility=["read"])
+    """The routing role of the endpoint. A Cluster-scoped Endpoint normally has the ReadWrite role.
+     Pool-scoped Endpoints have the ReadOnly role and route only to allocated nodes in the
+     associated Pool that are not currently playing the read-write role. A Pool-scoped ReadOnly
+     Endpoint has no routing destination unless at least one such node exists, including when the
+     Pool is Stopped, has zero allocated nodes, or has only one allocated node and that node is
+     playing the read-write role. Required. Known values are: \"ReadOnly\" and \"ReadWrite\"."""
 
 
 class ErrorAdditionalInfo(_Model):
@@ -89,79 +2148,37 @@ class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
-    """Resource.
+class FabricDestinationDetails(
+    ChangeDataCaptureDestinationDetails, discriminator="Fabric"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for a Microsoft Fabric destination.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar destination_type: Specifies a Microsoft Fabric destination. Required. A Microsoft Fabric
+     destination.
+    :vartype destination_type: str or ~azure.mgmt.horizondb.models.FABRIC
+    :ivar protocol: Specifies the Microsoft Fabric native destination protocol. Required. The
+     destination's native protocol.
+    :vartype protocol: str or ~azure.mgmt.horizondb.models.NATIVE
+    :ivar workspace_id: The opaque identifier of the Microsoft Fabric workspace that owns the
+     destination artifact. Required.
+    :vartype workspace_id: str
     """
 
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    """
-
-
-class HorizonDbAdministrator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents an Entra ID administrator configured on a HorizonDB cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbAdministratorProperties
-    """
-
-    properties: Optional["_models.HorizonDbAdministratorProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
+    destination_type: Literal[ChangeDataCaptureDestinationType.FABRIC] = rest_discriminator(name="destinationType", visibility=["read", "create"])  # type: ignore
+    """Specifies a Microsoft Fabric destination. Required. A Microsoft Fabric destination."""
+    protocol: Literal[ChangeDataCaptureProtocol.NATIVE] = rest_field(visibility=["read", "create"])
+    """Specifies the Microsoft Fabric native destination protocol. Required. The destination's native
+     protocol."""
+    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create"])
+    """The opaque identifier of the Microsoft Fabric workspace that owns the destination artifact.
+     Required."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Optional["_models.HorizonDbAdministratorProperties"] = None,
+        protocol: Literal[ChangeDataCaptureProtocol.NATIVE],
+        workspace_id: str,
     ) -> None: ...
 
     @overload
@@ -173,673 +2190,11 @@ class HorizonDbAdministrator(ProxyResource):  # pylint: disable=docstring-keywor
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.destination_type = ChangeDataCaptureDestinationType.FABRIC  # type: ignore
 
 
-class HorizonDbAdministratorAdd(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The request body for adding a HorizonDB administrator.
-
-    :ivar properties: The properties for adding a HorizonDB administrator. Required.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbAdministratorPropertiesForAdd
-    """
-
-    properties: "_models.HorizonDbAdministratorPropertiesForAdd" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties for adding a HorizonDB administrator. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.HorizonDbAdministratorPropertiesForAdd",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbAdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB administrator.
-
-    :ivar principal_name: The display name or UPN of the Entra ID principal. For users, typically
-     the User Principal Name (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups,
-     the group display name. For service principals, the application display name. Required.
-    :vartype principal_name: str
-    :ivar principal_type: The type of the Entra ID principal. Required. Known values are:
-     "Unknown", "User", "Group", and "ServicePrincipal".
-    :vartype principal_type: str or ~azure.mgmt.horizondb.models.PrincipalTypes
-    :ivar object_id: The Entra ID object identifier of the principal (an RFC 4122 GUID). On PUT
-     requests, this value comes from the URI path parameter.
-    :vartype object_id: str
-    :ivar tenant_id: The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the
-     tenant of the subscription.
-    :vartype tenant_id: str
-    :ivar provisioning_state: The provisioning state of the administrator. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
-    """
-
-    principal_name: str = rest_field(name="principalName", visibility=["read", "create"])
-    """The display name or UPN of the Entra ID principal. For users, typically the User Principal Name
-     (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups, the group display name.
-     For service principals, the application display name. Required."""
-    principal_type: Union[str, "_models.PrincipalTypes"] = rest_field(
-        name="principalType", visibility=["read", "create"]
-    )
-    """The type of the Entra ID principal. Required. Known values are: \"Unknown\", \"User\",
-     \"Group\", and \"ServicePrincipal\"."""
-    object_id: Optional[str] = rest_field(name="objectId", visibility=["read"])
-    """The Entra ID object identifier of the principal (an RFC 4122 GUID). On PUT requests, this value
-     comes from the URI path parameter."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create"])
-    """The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the tenant of the
-     subscription."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the administrator. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        principal_name: str,
-        principal_type: Union[str, "_models.PrincipalTypes"],
-        tenant_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbAdministratorPropertiesForAdd(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties for adding a HorizonDB administrator.
-
-    :ivar principal_name: The display name or UPN of the Entra ID principal. For users, typically
-     the User Principal Name (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups,
-     the group display name. For service principals, the application display name. Required.
-    :vartype principal_name: str
-    :ivar principal_type: The type of the Entra ID principal. Required. Known values are:
-     "Unknown", "User", "Group", and "ServicePrincipal".
-    :vartype principal_type: str or ~azure.mgmt.horizondb.models.PrincipalTypes
-    :ivar tenant_id: The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the
-     tenant of the subscription.
-    :vartype tenant_id: str
-    """
-
-    principal_name: str = rest_field(name="principalName", visibility=["read", "create", "update", "delete", "query"])
-    """The display name or UPN of the Entra ID principal. For users, typically the User Principal Name
-     (e.g., `admin@contoso.com <mailto:admin@contoso.com>`_). For groups, the group display name.
-     For service principals, the application display name. Required."""
-    principal_type: Union[str, "_models.PrincipalTypes"] = rest_field(
-        name="principalType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the Entra ID principal. Required. Known values are: \"Unknown\", \"User\",
-     \"Group\", and \"ServicePrincipal\"."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
-    """The Entra ID tenant identifier (an RFC 4122 GUID). If omitted, defaults to the tenant of the
-     subscription."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        principal_name: str,
-        principal_type: Union[str, "_models.PrincipalTypes"],
-        tenant_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbClusterProperties
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.horizondb.models.ManagedServiceIdentity
-    """
-
-    properties: Optional["_models.HorizonDbClusterProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.HorizonDbClusterProperties"] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterAuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Authentication configuration for a HorizonDB cluster.
-
-    :ivar entra_id_auth: Indicates whether Microsoft Entra ID authentication is enabled or
-     disabled. Known values are: "Enabled" and "Disabled".
-    :vartype entra_id_auth: str or ~azure.mgmt.horizondb.models.AuthenticationState
-    :ivar tenant_id: The Microsoft Entra tenant ID.
-    :vartype tenant_id: str
-    :ivar password_auth: Indicates whether password authentication is enabled or disabled. Known
-     values are: "Enabled" and "Disabled".
-    :vartype password_auth: str or ~azure.mgmt.horizondb.models.AuthenticationState
-    """
-
-    entra_id_auth: Optional[Union[str, "_models.AuthenticationState"]] = rest_field(
-        name="entraIdAuth", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether Microsoft Entra ID authentication is enabled or disabled. Known values are:
-     \"Enabled\" and \"Disabled\"."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
-    """The Microsoft Entra tenant ID."""
-    password_auth: Optional[Union[str, "_models.AuthenticationState"]] = rest_field(
-        name="passwordAuth", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether password authentication is enabled or disabled. Known values are: \"Enabled\"
-     and \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        entra_id_auth: Optional[Union[str, "_models.AuthenticationState"]] = None,
-        tenant_id: Optional[str] = None,
-        password_auth: Optional[Union[str, "_models.AuthenticationState"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """HorizonDB cluster for update operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.horizondb.models.ManagedServiceIdentity
-    :ivar properties: The properties that can be updated for a HorizonDB cluster.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbClusterPropertiesForPatchUpdate
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
-    properties: Optional["_models.HorizonDbClusterPropertiesForPatchUpdate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties that can be updated for a HorizonDB cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-        properties: Optional["_models.HorizonDbClusterPropertiesForPatchUpdate"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterMirroring(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Mirroring configuration for a HorizonDB cluster.
-
-    :ivar database_names: The names of the databases to mirror.
-    :vartype database_names: list[str]
-    :ivar user_assigned_identity_id: The resource ID of the user-assigned managed identity used for
-     mirroring.
-    :vartype user_assigned_identity_id: str
-    """
-
-    database_names: Optional[list[str]] = rest_field(
-        name="databaseNames", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The names of the databases to mirror."""
-    user_assigned_identity_id: Optional[str] = rest_field(
-        name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource ID of the user-assigned managed identity used for mirroring."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        database_names: Optional[list[str]] = None,
-        user_assigned_identity_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterParameterGroupConnectionProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Connection information for HorizonDB parameter group.
-
-    :ivar id: The resource ID of the connected parameter group.
-    :vartype id: str
-    :ivar sync_status: Indication of if parameter group is applied on HorizonDB resource.
-    :vartype sync_status: str
-    :ivar apply_immediately: Indicates whether the parameters should be applied immediately.
-    :vartype apply_immediately: bool
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "update"])
-    """The resource ID of the connected parameter group."""
-    sync_status: Optional[str] = rest_field(name="syncStatus", visibility=["read"])
-    """Indication of if parameter group is applied on HorizonDB resource."""
-    apply_immediately: Optional[bool] = rest_field(name="applyImmediately", visibility=["read", "update"])
-    """Indicates whether the parameters should be applied immediately."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        apply_immediately: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB cluster.
-
-    :ivar administrator_login: The administrator login name. Required.
-    :vartype administrator_login: str
-    :ivar administrator_login_password: The administrator login password.
-    :vartype administrator_login_password: str
-    :ivar version: The version of the HorizonDB cluster.
-    :vartype version: str
-    :ivar create_mode: The mode to create a new HorizonDB cluster. Known values are: "Create",
-     "Update", and "PointInTimeRestore".
-    :vartype create_mode: str or ~azure.mgmt.horizondb.models.CreateModeCluster
-    :ivar point_in_time_utc: Restore point creation time specifying the time to restore from.
-    :vartype point_in_time_utc: ~datetime.datetime
-    :ivar source_cluster_resource_id: The source cluster resource ID for restore or replica
-     creation.
-    :vartype source_cluster_resource_id: str
-    :ivar pool_name: The pool name for restore or replica operations.
-    :vartype pool_name: str
-    :ivar replica_count: Number of replicas.
-    :vartype replica_count: int
-    :ivar v_cores: Number of vCores.
-    :vartype v_cores: int
-    :ivar processor_type: The processor type for the HorizonDB cluster.
-    :vartype processor_type: str
-    :ivar network: The network related info.
-    :vartype network: ~azure.mgmt.horizondb.models.Network
-    :ivar state: Current state of the cluster. Known values are: "Ready", "Dropping", "Disabled",
-     "Starting", "Stopping", "Stopped", "Updating", "Healthy", "Succeeded", and "Upgrading".
-    :vartype state: str or ~azure.mgmt.horizondb.models.State
-    :ivar fully_qualified_domain_name: The fully qualified domain name of the cluster.
-    :vartype fully_qualified_domain_name: str
-    :ivar readonly_endpoint: The fully qualified domain name used for readonly endpoint for the
-     cluster.
-    :vartype readonly_endpoint: str
-    :ivar provisioning_state: The provisioning state of the cluster. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
-    :ivar zone_placement_policy: Defines how replicas are placed across availability zones. Known
-     values are: "Strict" and "BestEffort".
-    :vartype zone_placement_policy: str or ~azure.mgmt.horizondb.models.ZonePlacementPolicy
-    :ivar parameter_group: Defines connection to a parameter group.
-    :vartype parameter_group:
-     ~azure.mgmt.horizondb.models.HorizonDbClusterParameterGroupConnectionProperties
-    :ivar auth_config: Authentication configuration for the HorizonDB cluster.
-    :vartype auth_config: ~azure.mgmt.horizondb.models.HorizonDbClusterAuthConfig
-    :ivar compute_model: The compute model for the cluster.
-    :vartype compute_model: ~azure.mgmt.horizondb.models.HorizonDbComputeModel
-    :ivar mirroring: Mirroring configuration for the HorizonDB cluster.
-    :vartype mirroring: ~azure.mgmt.horizondb.models.HorizonDbClusterMirroring
-    """
-
-    administrator_login: str = rest_field(name="administratorLogin", visibility=["read", "create"])
-    """The administrator login name. Required."""
-    administrator_login_password: Optional[str] = rest_field(
-        name="administratorLoginPassword", visibility=["create", "update"]
-    )
-    """The administrator login password."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version of the HorizonDB cluster."""
-    create_mode: Optional[Union[str, "_models.CreateModeCluster"]] = rest_field(
-        name="createMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The mode to create a new HorizonDB cluster. Known values are: \"Create\", \"Update\", and
-     \"PointInTimeRestore\"."""
-    point_in_time_utc: Optional[datetime.datetime] = rest_field(
-        name="pointInTimeUTC", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Restore point creation time specifying the time to restore from."""
-    source_cluster_resource_id: Optional[str] = rest_field(
-        name="sourceClusterResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The source cluster resource ID for restore or replica creation."""
-    pool_name: Optional[str] = rest_field(name="poolName", visibility=["read", "create", "update", "delete", "query"])
-    """The pool name for restore or replica operations."""
-    replica_count: Optional[int] = rest_field(name="replicaCount", visibility=["read", "create"])
-    """Number of replicas."""
-    v_cores: Optional[int] = rest_field(name="vCores", visibility=["read", "create", "update"])
-    """Number of vCores."""
-    processor_type: Optional[str] = rest_field(
-        name="processorType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The processor type for the HorizonDB cluster."""
-    network: Optional["_models.Network"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The network related info."""
-    state: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
-    """Current state of the cluster. Known values are: \"Ready\", \"Dropping\", \"Disabled\",
-     \"Starting\", \"Stopping\", \"Stopped\", \"Updating\", \"Healthy\", \"Succeeded\", and
-     \"Upgrading\"."""
-    fully_qualified_domain_name: Optional[str] = rest_field(name="fullyQualifiedDomainName", visibility=["read"])
-    """The fully qualified domain name of the cluster."""
-    readonly_endpoint: Optional[str] = rest_field(name="readonlyEndpoint", visibility=["read"])
-    """The fully qualified domain name used for readonly endpoint for the cluster."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the cluster. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
-    zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicy"]] = rest_field(
-        name="zonePlacementPolicy", visibility=["read", "create"]
-    )
-    """Defines how replicas are placed across availability zones. Known values are: \"Strict\" and
-     \"BestEffort\"."""
-    parameter_group: Optional["_models.HorizonDbClusterParameterGroupConnectionProperties"] = rest_field(
-        name="parameterGroup", visibility=["read", "update"]
-    )
-    """Defines connection to a parameter group."""
-    auth_config: Optional["_models.HorizonDbClusterAuthConfig"] = rest_field(
-        name="authConfig", visibility=["read", "create", "update"]
-    )
-    """Authentication configuration for the HorizonDB cluster."""
-    compute_model: Optional["_models.HorizonDbComputeModel"] = rest_field(
-        name="computeModel", visibility=["read", "create", "update"]
-    )
-    """The compute model for the cluster."""
-    mirroring: Optional["_models.HorizonDbClusterMirroring"] = rest_field(visibility=["read", "create", "update"])
-    """Mirroring configuration for the HorizonDB cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        administrator_login: str,
-        administrator_login_password: Optional[str] = None,
-        version: Optional[str] = None,
-        create_mode: Optional[Union[str, "_models.CreateModeCluster"]] = None,
-        point_in_time_utc: Optional[datetime.datetime] = None,
-        source_cluster_resource_id: Optional[str] = None,
-        pool_name: Optional[str] = None,
-        replica_count: Optional[int] = None,
-        v_cores: Optional[int] = None,
-        processor_type: Optional[str] = None,
-        network: Optional["_models.Network"] = None,
-        zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicy"]] = None,
-        parameter_group: Optional["_models.HorizonDbClusterParameterGroupConnectionProperties"] = None,
-        auth_config: Optional["_models.HorizonDbClusterAuthConfig"] = None,
-        compute_model: Optional["_models.HorizonDbComputeModel"] = None,
-        mirroring: Optional["_models.HorizonDbClusterMirroring"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbClusterPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB cluster for update operations.
-
-    :ivar administrator_login_password: The administrator login password.
-    :vartype administrator_login_password: str
-    :ivar v_cores: Number of vCores.
-    :vartype v_cores: int
-    :ivar parameter_group: Defines connection to a parameter group.
-    :vartype parameter_group:
-     ~azure.mgmt.horizondb.models.HorizonDbClusterParameterGroupConnectionProperties
-    :ivar auth_config: Authentication configuration for the HorizonDB cluster.
-    :vartype auth_config: ~azure.mgmt.horizondb.models.HorizonDbClusterAuthConfig
-    :ivar compute_model: The compute model for the cluster.
-    :vartype compute_model: ~azure.mgmt.horizondb.models.HorizonDbComputeModel
-    :ivar mirroring: Mirroring configuration for the HorizonDB cluster.
-    :vartype mirroring: ~azure.mgmt.horizondb.models.HorizonDbClusterMirroring
-    """
-
-    administrator_login_password: Optional[str] = rest_field(name="administratorLoginPassword", visibility=["update"])
-    """The administrator login password."""
-    v_cores: Optional[int] = rest_field(name="vCores", visibility=["update"])
-    """Number of vCores."""
-    parameter_group: Optional["_models.HorizonDbClusterParameterGroupConnectionProperties"] = rest_field(
-        name="parameterGroup", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Defines connection to a parameter group."""
-    auth_config: Optional["_models.HorizonDbClusterAuthConfig"] = rest_field(name="authConfig", visibility=["update"])
-    """Authentication configuration for the HorizonDB cluster."""
-    compute_model: Optional["_models.HorizonDbComputeModel"] = rest_field(name="computeModel", visibility=["update"])
-    """The compute model for the cluster."""
-    mirroring: Optional["_models.HorizonDbClusterMirroring"] = rest_field(visibility=["update"])
-    """Mirroring configuration for the HorizonDB cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        administrator_login_password: Optional[str] = None,
-        v_cores: Optional[int] = None,
-        parameter_group: Optional["_models.HorizonDbClusterParameterGroupConnectionProperties"] = None,
-        auth_config: Optional["_models.HorizonDbClusterAuthConfig"] = None,
-        compute_model: Optional["_models.HorizonDbComputeModel"] = None,
-        mirroring: Optional["_models.HorizonDbClusterMirroring"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbComputeModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The compute model for a HorizonDB cluster.
-
-    :ivar type: The compute model type. Supported values: 'Provisioned', 'Serverless'. Known values
-     are: "Provisioned" and "Serverless".
-    :vartype type: str or ~azure.mgmt.horizondb.models.HorizonDbComputeModelType
-    :ivar v_cores: The fixed vCore count for Provisioned compute.
-    :vartype v_cores: int
-    :ivar minv_cores: The minimum vCores for Serverless compute. Defines the lower autoscaling
-     bound.
-    :vartype minv_cores: float
-    :ivar maxv_cores: The maximum vCores for Serverless compute. Defines the upper autoscaling
-     bound.
-    :vartype maxv_cores: float
-    """
-
-    type: Optional[Union[str, "_models.HorizonDbComputeModelType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The compute model type. Supported values: 'Provisioned', 'Serverless'. Known values are:
-     \"Provisioned\" and \"Serverless\"."""
-    v_cores: Optional[int] = rest_field(name="vCores", visibility=["read", "create", "update", "delete", "query"])
-    """The fixed vCore count for Provisioned compute."""
-    minv_cores: Optional[float] = rest_field(
-        name="minvCores", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The minimum vCores for Serverless compute. Defines the lower autoscaling bound."""
-    maxv_cores: Optional[float] = rest_field(
-        name="maxvCores", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum vCores for Serverless compute. Defines the upper autoscaling bound."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.HorizonDbComputeModelType"]] = None,
-        v_cores: Optional[int] = None,
-        minv_cores: Optional[float] = None,
-        maxv_cores: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbFirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB firewall rule.
+class FirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a customer-managed firewall rule for a HorizonDB pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -853,10 +2208,10 @@ class HorizonDbFirewallRule(ProxyResource):  # pylint: disable=docstring-keyword
      information.
     :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbFirewallRuleProperties
+    :vartype properties: ~azure.mgmt.horizondb.models.FirewallRuleProperties
     """
 
-    properties: Optional["_models.HorizonDbFirewallRuleProperties"] = rest_field(
+    properties: Optional["_models.FirewallRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
@@ -865,7 +2220,7 @@ class HorizonDbFirewallRule(ProxyResource):  # pylint: disable=docstring-keyword
     def __init__(
         self,
         *,
-        properties: Optional["_models.HorizonDbFirewallRuleProperties"] = None,
+        properties: Optional["_models.FirewallRuleProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -879,14 +2234,48 @@ class HorizonDbFirewallRule(ProxyResource):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class HorizonDbFirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class FirewallRuleForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A HorizonDB pool firewall rule update request.
+
+    :ivar properties: The properties to update. Omission preserves all current firewall rule
+     properties.
+    :vartype properties: ~azure.mgmt.horizondb.models.FirewallRulePropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.FirewallRulePropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties to update. Omission preserves all current firewall rule properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.FirewallRulePropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a HorizonDB firewall rule.
 
-    :ivar start_ip_address: The start IP address of the firewall rule (IPv4). Required.
+    :ivar start_ip_address: The start IPv4 address of the firewall rule in dotted-decimal notation.
+     Required.
     :vartype start_ip_address: str
-    :ivar end_ip_address: The end IP address of the firewall rule (IPv4). Required.
+    :ivar end_ip_address: The end IPv4 address of the firewall rule in dotted-decimal notation.
+     This address must be numerically greater than or equal to startIpAddress. Required.
     :vartype end_ip_address: str
-    :ivar description: The description of the HorizonDB firewall rule.
+    :ivar description: The description of the HorizonDB firewall rule. The maximum length is 1024
+     characters.
     :vartype description: str
     :ivar provisioning_state: The provisioning state of the firewall rule. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
@@ -894,11 +2283,12 @@ class HorizonDbFirewallRuleProperties(_Model):  # pylint: disable=docstring-keyw
     """
 
     start_ip_address: str = rest_field(name="startIpAddress", visibility=["read", "create", "update"])
-    """The start IP address of the firewall rule (IPv4). Required."""
+    """The start IPv4 address of the firewall rule in dotted-decimal notation. Required."""
     end_ip_address: str = rest_field(name="endIpAddress", visibility=["read", "create", "update"])
-    """The end IP address of the firewall rule (IPv4). Required."""
+    """The end IPv4 address of the firewall rule in dotted-decimal notation. This address must be
+     numerically greater than or equal to startIpAddress. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The description of the HorizonDB firewall rule."""
+    """The description of the HorizonDB firewall rule. The maximum length is 1024 characters."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -925,150 +2315,39 @@ class HorizonDbFirewallRuleProperties(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
-class HorizonDbParameterGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB parameter group.
+class FirewallRulePropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB pool firewall rule for update operations. Omitted properties preserve
+    their current values. The service validates the effective IP range after merging the supplied
+    values with the existing rule.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbParameterGroupProperties
-    """
-
-    properties: Optional["_models.HorizonDbParameterGroupProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.HorizonDbParameterGroupProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbParameterGroupConnectionProperties(_Model):  # pylint: disable=name-too-long
-    """Connection information for HorizonDB parameter group.
-
-    :ivar name: The name of the connected resource.
-    :vartype name: str
-    :ivar id: The resource ID of the connected resource.
-    :vartype id: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the connected resource."""
-    id: Optional[str] = rest_field(visibility=["read"])
-    """The resource ID of the connected resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource."""
-
-
-class HorizonDbParameterGroupForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """HorizonDB parameter group for update operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The properties that can be updated for a HorizonDB parameter group.
-    :vartype properties:
-     ~azure.mgmt.horizondb.models.HorizonDbParameterGroupPropertiesForPatchUpdate
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    properties: Optional["_models.HorizonDbParameterGroupPropertiesForPatchUpdate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties that can be updated for a HorizonDB parameter group."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.HorizonDbParameterGroupPropertiesForPatchUpdate"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbParameterGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB parameter group.
-
-    :ivar parameters: Parameters in the parameter group.
-    :vartype parameters: list[~azure.mgmt.horizondb.models.ParameterProperties]
-    :ivar description: Description of the parameter group.
+    :ivar start_ip_address: The start IPv4 address to apply in dotted-decimal notation. The
+     resulting effective start address must be numerically less than or equal to the effective end
+     address.
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IPv4 address to apply in dotted-decimal notation. The resulting
+     effective end address must be numerically greater than or equal to the effective start address.
+    :vartype end_ip_address: str
+    :ivar description: The description to apply to the HorizonDB firewall rule. The maximum length
+     is 1024 characters.
     :vartype description: str
-    :ivar pg_version: PostgreSQL version for the parameter group.
-    :vartype pg_version: int
-    :ivar version: Current version of the parameter group.
-    :vartype version: int
-    :ivar apply_immediately: Indicates whether the parameters should be applied immediately.
-    :vartype apply_immediately: bool
-    :ivar provisioning_state: The provisioning state of the parameter group. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
     """
 
-    parameters: Optional[list["_models.ParameterProperties"]] = rest_field(visibility=["read", "create", "update"])
-    """Parameters in the parameter group."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """Description of the parameter group."""
-    pg_version: Optional[int] = rest_field(name="pgVersion", visibility=["read", "create"])
-    """PostgreSQL version for the parameter group."""
-    version: Optional[int] = rest_field(visibility=["read"])
-    """Current version of the parameter group."""
-    apply_immediately: Optional[bool] = rest_field(name="applyImmediately", visibility=["read", "create", "update"])
-    """Indicates whether the parameters should be applied immediately."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the parameter group. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+    start_ip_address: Optional[str] = rest_field(name="startIpAddress", visibility=["update"])
+    """The start IPv4 address to apply in dotted-decimal notation. The resulting effective start
+     address must be numerically less than or equal to the effective end address."""
+    end_ip_address: Optional[str] = rest_field(name="endIpAddress", visibility=["update"])
+    """The end IPv4 address to apply in dotted-decimal notation. The resulting effective end address
+     must be numerically greater than or equal to the effective start address."""
+    description: Optional[str] = rest_field(visibility=["update"])
+    """The description to apply to the HorizonDB firewall rule. The maximum length is 1024 characters."""
 
     @overload
     def __init__(
         self,
         *,
-        parameters: Optional[list["_models.ParameterProperties"]] = None,
+        start_ip_address: Optional[str] = None,
+        end_ip_address: Optional[str] = None,
         description: Optional[str] = None,
-        pg_version: Optional[int] = None,
-        apply_immediately: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1082,134 +2361,157 @@ class HorizonDbParameterGroupProperties(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
-class HorizonDbParameterGroupPropertiesForPatchUpdate(
+class HorizonDbClusterDataEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Cluster-level data encryption configuration. For AzureKeyVault encryption, primaryKeyUri
+    and primaryUserAssignedIdentityId are required. When geographically redundant backup is
+    enabled, geoBackupKeyUri and geoBackupUserAssignedIdentityId are also required.
+    Customer-managed key identities must also be assigned to the Cluster through its top-level
+    identity property. Only versionless Azure Key Vault key URIs are supported; key version paths
+    are rejected. For SystemManaged encryption, key and identity properties must be omitted.
+
+    :ivar type: The type of data encryption used by the cluster. Known values are: "SystemManaged"
+     and "AzureKeyVault".
+    :vartype type: str or ~azure.mgmt.horizondb.models.HorizonDbClusterDataEncryptionType
+    :ivar primary_key_uri: The versionless Azure Key Vault key URI used to encrypt the cluster's
+     primary storage. Key version paths are not supported.
+    :vartype primary_key_uri: str
+    :ivar primary_user_assigned_identity_id: The Azure resource ID of the user-assigned managed
+     identity used to access the primary encryption key. The identity must also be assigned to the
+     Cluster through its top-level identity property.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar primary_encryption_key_status: The validation status of the primary encryption key. This
+     property is returned for AzureKeyVault encryption and is absent for SystemManaged encryption.
+     Known values are: "Valid" and "Invalid".
+    :vartype primary_encryption_key_status: str or
+     ~azure.mgmt.horizondb.models.HorizonDbClusterEncryptionKeyStatus
+    :ivar geo_backup_key_uri: The versionless Azure Key Vault key URI used to encrypt
+     geographically redundant backups. Key version paths are not supported.
+    :vartype geo_backup_key_uri: str
+    :ivar geo_backup_user_assigned_identity_id: The Azure resource ID of the user-assigned managed
+     identity used to access the geographically redundant backup encryption key. The identity must
+     also be assigned to the Cluster through its top-level identity property.
+    :vartype geo_backup_user_assigned_identity_id: str
+    :ivar geo_backup_encryption_key_status: The validation status of the geographically redundant
+     backup encryption key. This property is returned for AzureKeyVault encryption when
+     geographically redundant backup is enabled. Known values are: "Valid" and "Invalid".
+    :vartype geo_backup_encryption_key_status: str or
+     ~azure.mgmt.horizondb.models.HorizonDbClusterEncryptionKeyStatus
+    """
+
+    type: Optional[Union[str, "_models.HorizonDbClusterDataEncryptionType"]] = rest_field(
+        visibility=["read", "create", "update"]
+    )
+    """The type of data encryption used by the cluster. Known values are: \"SystemManaged\" and
+     \"AzureKeyVault\"."""
+    primary_key_uri: Optional[str] = rest_field(name="primaryKeyUri", visibility=["read", "create", "update"])
+    """The versionless Azure Key Vault key URI used to encrypt the cluster's primary storage. Key
+     version paths are not supported."""
+    primary_user_assigned_identity_id: Optional[str] = rest_field(
+        name="primaryUserAssignedIdentityId", visibility=["read", "create", "update"]
+    )
+    """The Azure resource ID of the user-assigned managed identity used to access the primary
+     encryption key. The identity must also be assigned to the Cluster through its top-level
+     identity property."""
+    primary_encryption_key_status: Optional[Union[str, "_models.HorizonDbClusterEncryptionKeyStatus"]] = rest_field(
+        name="primaryEncryptionKeyStatus", visibility=["read"]
+    )
+    """The validation status of the primary encryption key. This property is returned for
+     AzureKeyVault encryption and is absent for SystemManaged encryption. Known values are:
+     \"Valid\" and \"Invalid\"."""
+    geo_backup_key_uri: Optional[str] = rest_field(name="geoBackupKeyUri", visibility=["read", "create", "update"])
+    """The versionless Azure Key Vault key URI used to encrypt geographically redundant backups. Key
+     version paths are not supported."""
+    geo_backup_user_assigned_identity_id: Optional[str] = rest_field(
+        name="geoBackupUserAssignedIdentityId", visibility=["read", "create", "update"]
+    )
+    """The Azure resource ID of the user-assigned managed identity used to access the geographically
+     redundant backup encryption key. The identity must also be assigned to the Cluster through its
+     top-level identity property."""
+    geo_backup_encryption_key_status: Optional[Union[str, "_models.HorizonDbClusterEncryptionKeyStatus"]] = rest_field(
+        name="geoBackupEncryptionKeyStatus", visibility=["read"]
+    )
+    """The validation status of the geographically redundant backup encryption key. This property is
+     returned for AzureKeyVault encryption when geographically redundant backup is enabled. Known
+     values are: \"Valid\" and \"Invalid\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.HorizonDbClusterDataEncryptionType"]] = None,
+        primary_key_uri: Optional[str] = None,
+        primary_user_assigned_identity_id: Optional[str] = None,
+        geo_backup_key_uri: Optional[str] = None,
+        geo_backup_user_assigned_identity_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HorizonDbClusterDataEncryptionForPatchUpdate(
     _Model
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB parameter group for update operations.
+    """Properties for sparsely updating Cluster-level data encryption. Omitted properties preserve
+    their current values.
 
-    :ivar parameters: Parameters in the parameter group.
-    :vartype parameters: list[~azure.mgmt.horizondb.models.ParameterProperties]
-    :ivar description: Description of the parameter group.
-    :vartype description: str
-    :ivar apply_immediately: Indicates whether the parameters should be applied immediately.
-    :vartype apply_immediately: bool
+    :ivar type: The type of data encryption used by the cluster. Known values are: "SystemManaged"
+     and "AzureKeyVault".
+    :vartype type: str or ~azure.mgmt.horizondb.models.HorizonDbClusterDataEncryptionType
+    :ivar primary_key_uri: The versionless Azure Key Vault key URI used to encrypt the cluster's
+     primary storage. Key version paths are not supported.
+    :vartype primary_key_uri: str
+    :ivar primary_user_assigned_identity_id: The Azure resource ID of the user-assigned managed
+     identity used to access the primary encryption key. The identity must also be assigned to the
+     Cluster through its top-level identity property.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar geo_backup_key_uri: The versionless Azure Key Vault key URI used to encrypt
+     geographically redundant backups. Key version paths are not supported.
+    :vartype geo_backup_key_uri: str
+    :ivar geo_backup_user_assigned_identity_id: The Azure resource ID of the user-assigned managed
+     identity used to access the geographically redundant backup encryption key. The identity must
+     also be assigned to the Cluster through its top-level identity property.
+    :vartype geo_backup_user_assigned_identity_id: str
     """
 
-    parameters: Optional[list["_models.ParameterProperties"]] = rest_field(visibility=["update"])
-    """Parameters in the parameter group."""
-    description: Optional[str] = rest_field(visibility=["update"])
-    """Description of the parameter group."""
-    apply_immediately: Optional[bool] = rest_field(name="applyImmediately", visibility=["update"])
-    """Indicates whether the parameters should be applied immediately."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        parameters: Optional[list["_models.ParameterProperties"]] = None,
-        description: Optional[str] = None,
-        apply_immediately: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbPool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB pool.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbPoolProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    properties: Optional["_models.HorizonDbPoolProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    type: Optional[Union[str, "_models.HorizonDbClusterDataEncryptionType"]] = rest_field(visibility=["update"])
+    """The type of data encryption used by the cluster. Known values are: \"SystemManaged\" and
+     \"AzureKeyVault\"."""
+    primary_key_uri: Optional[str] = rest_field(name="primaryKeyUri", visibility=["update"])
+    """The versionless Azure Key Vault key URI used to encrypt the cluster's primary storage. Key
+     version paths are not supported."""
+    primary_user_assigned_identity_id: Optional[str] = rest_field(
+        name="primaryUserAssignedIdentityId", visibility=["update"]
     )
-    """The resource-specific properties for this resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.HorizonDbPoolProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB pool.
-
-    :ivar location: The location of the HorizonDB pool.
-    :vartype location: str
-    :ivar state: Current state of the pool. Known values are: "Ready", "Dropping", "Disabled",
-     "Starting", "Stopping", "Stopped", "Updating", "Healthy", "Succeeded", and "Upgrading".
-    :vartype state: str or ~azure.mgmt.horizondb.models.State
-    :ivar replica_count: Number of replicas in the pool.
-    :vartype replica_count: int
-    :ivar version: The version of the HorizonDB pool.
-    :vartype version: str
-    :ivar create_mode: The create mode for the pool. Known values are: "Create" and "Update".
-    :vartype create_mode: str or ~azure.mgmt.horizondb.models.CreateModePool
-    :ivar provisioning_state: The provisioning state of the pool. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
-    """
-
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """The location of the HorizonDB pool."""
-    state: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
-    """Current state of the pool. Known values are: \"Ready\", \"Dropping\", \"Disabled\",
-     \"Starting\", \"Stopping\", \"Stopped\", \"Updating\", \"Healthy\", \"Succeeded\", and
-     \"Upgrading\"."""
-    replica_count: Optional[int] = rest_field(name="replicaCount", visibility=["read"])
-    """Number of replicas in the pool."""
-    version: Optional[str] = rest_field(visibility=["read"])
-    """The version of the HorizonDB pool."""
-    create_mode: Optional[Union[str, "_models.CreateModePool"]] = rest_field(name="createMode", visibility=["read"])
-    """The create mode for the pool. Known values are: \"Create\" and \"Update\"."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
+    """The Azure resource ID of the user-assigned managed identity used to access the primary
+     encryption key. The identity must also be assigned to the Cluster through its top-level
+     identity property."""
+    geo_backup_key_uri: Optional[str] = rest_field(name="geoBackupKeyUri", visibility=["update"])
+    """The versionless Azure Key Vault key URI used to encrypt geographically redundant backups. Key
+     version paths are not supported."""
+    geo_backup_user_assigned_identity_id: Optional[str] = rest_field(
+        name="geoBackupUserAssignedIdentityId", visibility=["update"]
     )
-    """The provisioning state of the pool. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"InProgress\", and \"Provisioning\"."""
+    """The Azure resource ID of the user-assigned managed identity used to access the geographically
+     redundant backup encryption key. The identity must also be assigned to the Cluster through its
+     top-level identity property."""
 
     @overload
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
+        type: Optional[Union[str, "_models.HorizonDbClusterDataEncryptionType"]] = None,
+        primary_key_uri: Optional[str] = None,
+        primary_user_assigned_identity_id: Optional[str] = None,
+        geo_backup_key_uri: Optional[str] = None,
+        geo_backup_user_assigned_identity_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1223,237 +2525,43 @@ class HorizonDbPoolProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class HorizonDbPrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB private link resource.
+class HorizonDbClusterManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The user-assigned managed identities assigned to a HorizonDB cluster. PUT and PATCH can assign
+    or remove identities. Omitting the top-level identity property from PATCH preserves all current
+    assignments. Removing an identity referenced by a change data capture identity assignment is
+    rejected until the referencing assignment is deleted.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.PrivateLinkResourceProperties
-    """
-
-    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbReplica(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Represents the HorizonDB replica.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbReplicaProperties
-    """
-
-    properties: Optional["_models.HorizonDbReplicaProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.HorizonDbReplicaProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbReplicaForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """HorizonDB replica for update operations.
-
-    :ivar properties: Properties of a HorizonDB replica for update operations.
-    :vartype properties: ~azure.mgmt.horizondb.models.HorizonDbReplicaPropertiesForPatchUpdate
-    """
-
-    properties: Optional["_models.HorizonDbReplicaPropertiesForPatchUpdate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of a HorizonDB replica for update operations."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.HorizonDbReplicaPropertiesForPatchUpdate"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbReplicaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB replica.
-
-    :ivar role: Role of the replica. Known values are: "Read" and "ReadWrite".
-    :vartype role: str or ~azure.mgmt.horizondb.models.ReplicaRole
-    :ivar status: Current status of the replica. Known values are: "Ready", "Dropping", "Disabled",
-     "Starting", "Stopping", "Stopped", "Updating", "Healthy", "Succeeded", and "Upgrading".
-    :vartype status: str or ~azure.mgmt.horizondb.models.State
-    :ivar fully_qualified_domain_name: The fully qualified domain name of the replica.
-    :vartype fully_qualified_domain_name: str
-    :ivar availability_zone: The availability zone of the replica.
-    :vartype availability_zone: str
-    :ivar provisioning_state: The provisioning state of the replica. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
-    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
-    """
-
-    role: Optional[Union[str, "_models.ReplicaRole"]] = rest_field(visibility=["read", "create", "update"])
-    """Role of the replica. Known values are: \"Read\" and \"ReadWrite\"."""
-    status: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
-    """Current status of the replica. Known values are: \"Ready\", \"Dropping\", \"Disabled\",
-     \"Starting\", \"Stopping\", \"Stopped\", \"Updating\", \"Healthy\", \"Succeeded\", and
-     \"Upgrading\"."""
-    fully_qualified_domain_name: Optional[str] = rest_field(name="fullyQualifiedDomainName", visibility=["read"])
-    """The fully qualified domain name of the replica."""
-    availability_zone: Optional[str] = rest_field(
-        name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The availability zone of the replica."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the replica. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        role: Optional[Union[str, "_models.ReplicaRole"]] = None,
-        availability_zone: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HorizonDbReplicaPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB replica for update operations.
-
-    :ivar role: Role of the replica. Known values are: "Read" and "ReadWrite".
-    :vartype role: str or ~azure.mgmt.horizondb.models.ReplicaRole
-    """
-
-    role: Optional[Union[str, "_models.ReplicaRole"]] = rest_field(visibility=["update"])
-    """Role of the replica. Known values are: \"Read\" and \"ReadWrite\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        role: Optional[Union[str, "_models.ReplicaRole"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Managed service identity (system assigned and/or user assigned identities).
-
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
-     provided for a system assigned identity.
-    :vartype tenant_id: str
-    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
-    :vartype type: str or ~azure.mgmt.horizondb.models.ManagedServiceIdentityType
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :ivar type: The managed identity type assigned to the cluster. Required. Known values are:
+     "None" and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.horizondb.models.HorizonDbClusterIdentityType
+    :ivar user_assigned_identities: The user-assigned managed identities associated with the
+     cluster. Each dictionary key must be the full Azure resource ID of a
+     Microsoft.ManagedIdentity/userAssignedIdentities resource. Request values can be empty objects;
+     response values contain the service-populated clientId and principalId. Assigning an identity
+     does not grant it access to destination resources; required role assignments must be configured
+     separately.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.horizondb.models.UserAssignedIdentity]
     """
 
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The service principal ID of the system assigned identity. This property will only be provided
-     for a system assigned identity."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of the system assigned identity. This property will only be provided for a system
-     assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+    type: Union[str, "_models.HorizonDbClusterIdentityType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    """The managed identity type assigned to the cluster. Required. Known values are: \"None\" and
+     \"UserAssigned\"."""
     user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identities assigned to this resource by the user."""
+    """The user-assigned managed identities associated with the cluster. Each dictionary key must be
+     the full Azure resource ID of a Microsoft.ManagedIdentity/userAssignedIdentities resource.
+     Request values can be empty objects; response values contain the service-populated clientId and
+     principalId. Assigning an identity does not grant it access to destination resources; required
+     role assignments must be configured separately."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Union[str, "_models.ManagedServiceIdentityType"],
+        type: Union[str, "_models.HorizonDbClusterIdentityType"],
         user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
@@ -1468,19 +2576,971 @@ class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class Network(_Model):
-    """Network properties.
+class IdentityAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A user-assigned managed identity authorized for a HorizonDB change data capture destination.
 
-    :ivar public_network_access: The flag indicating whether public ip is requested. Known values
-     are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.horizondb.models.PublicNetworkAccessState
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ChangeDataCaptureIdentityAssignmentProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
     """
 
-    public_network_access: Optional[Union[str, "_models.PublicNetworkAccessState"]] = rest_field(
-        name="publicNetworkAccess", visibility=["read"]
+    properties: Optional["_models.ChangeDataCaptureIdentityAssignmentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """The flag indicating whether public ip is requested. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ChangeDataCaptureIdentityAssignmentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityValidationStatus(_Model):
+    """The current validation result for a change data capture identity assignment.
+
+    :ivar state: The current validation state. Required. Known values are: "NotStarted", "Running",
+     "Succeeded", and "Failed".
+    :vartype state: str or ~azure.mgmt.horizondb.models.ChangeDataCaptureIdentityValidationState
+    :ivar validated_at_utc: The date and time, in UTC, when validation most recently completed.
+    :vartype validated_at_utc: ~datetime.datetime
+    :ivar error: The customer-safe validation error when validation failed.
+    :vartype error: ~azure.mgmt.horizondb.models.ErrorDetail
+    """
+
+    state: Union[str, "_models.ChangeDataCaptureIdentityValidationState"] = rest_field(visibility=["read"])
+    """The current validation state. Required. Known values are: \"NotStarted\", \"Running\",
+     \"Succeeded\", and \"Failed\"."""
+    validated_at_utc: Optional[datetime.datetime] = rest_field(
+        name="validatedAtUtc", visibility=["read"], format="rfc3339"
+    )
+    """The date and time, in UTC, when validation most recently completed."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
+    """The customer-safe validation error when validation failed."""
+
+
+class LogCaptureConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A predefined log capture configuration created by the service for a HorizonDB cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.LogCaptureConfigurationProperties
+    """
+
+    properties: Optional["_models.LogCaptureConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.LogCaptureConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogCaptureConfigurationForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A sparse update request for a log capture configuration.
+
+    :ivar properties: The log capture properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.LogCaptureConfigurationPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.LogCaptureConfigurationPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The log capture properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.LogCaptureConfigurationPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogCaptureConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The settings for capturing a specific type of HorizonDB log.
+
+    :ivar state: Specifies whether HorizonDB captures this type of log. Disabling capture stops the
+     production of new log files; existing files remain available until their retention period
+     expires. Required. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.horizondb.models.LogCaptureState
+    :ivar retention_days: The number of days captured log files are retained. Required.
+    :vartype retention_days: int
+    :ivar provisioning_state: The provisioning state of the log capture configuration. Known values
+     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    """
+
+    state: Union[str, "_models.LogCaptureState"] = rest_field(visibility=["read", "update"])
+    """Specifies whether HorizonDB captures this type of log. Disabling capture stops the production
+     of new log files; existing files remain available until their retention period expires.
+     Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    retention_days: int = rest_field(name="retentionDays", visibility=["read", "update"])
+    """The number of days captured log files are retained. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the log capture configuration. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Union[str, "_models.LogCaptureState"],
+        retention_days: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogCaptureConfigurationPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating the log capture configuration. Omitted properties preserve their
+    current values.
+
+    :ivar state: Specifies whether HorizonDB captures this type of log. Disabling capture stops the
+     production of new log files; existing files remain available until their retention period
+     expires. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.horizondb.models.LogCaptureState
+    :ivar retention_days: The number of days captured log files are retained.
+    :vartype retention_days: int
+    """
+
+    state: Optional[Union[str, "_models.LogCaptureState"]] = rest_field(visibility=["update"])
+    """Specifies whether HorizonDB captures this type of log. Disabling capture stops the production
+     of new log files; existing files remain available until their retention period expires. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+    retention_days: Optional[int] = rest_field(name="retentionDays", visibility=["update"])
+    """The number of days captured log files are retained."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.LogCaptureState"]] = None,
+        retention_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogFile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-generated log file captured for a HorizonDB cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.LogFileProperties
+    """
+
+    properties: Optional["_models.LogFileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.LogFileProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogFileDownloadUrl(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A short-lived signed URL for downloading a captured log file.
+
+    :ivar download_uri: A short-lived signed URL from which the original log file can be
+     downloaded. Required.
+    :vartype download_uri: str
+    :ivar expires_at_utc: The date and time when the signed download URL expires, in UTC. Required.
+    :vartype expires_at_utc: ~datetime.datetime
+    """
+
+    download_uri: str = rest_field(name="downloadUri", visibility=["read", "create", "update", "delete", "query"])
+    """A short-lived signed URL from which the original log file can be downloaded. Required."""
+    expires_at_utc: datetime.datetime = rest_field(
+        name="expiresAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The date and time when the signed download URL expires, in UTC. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        download_uri: str,
+        expires_at_utc: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogFileProperties(_Model):
+    """Metadata for a service-generated HorizonDB log file.
+
+    :ivar log_type: The type of the captured log file. Required. "PostgreSqlServer"
+    :vartype log_type: str or ~azure.mgmt.horizondb.models.LogFileType
+    :ivar created_at_utc: The date and time when the log file was created, in UTC. Required.
+    :vartype created_at_utc: ~datetime.datetime
+    :ivar last_modified_at_utc: The date and time when the log file was last modified, in UTC.
+     Required.
+    :vartype last_modified_at_utc: ~datetime.datetime
+    :ivar retention_expires_at_utc: The date and time when the log file expires according to its
+     retention period, in UTC. Required.
+    :vartype retention_expires_at_utc: ~datetime.datetime
+    :ivar is_mutable: Whether the platform can still append to or otherwise modify the log file.
+     Required.
+    :vartype is_mutable: bool
+    :ivar size_in_kilobytes: The size of the log file in kilobytes, where one kilobyte is 1024
+     bytes. Required.
+    :vartype size_in_kilobytes: int
+    :ivar pool_name: The name of the HorizonDB pool that generated the log file. Required.
+    :vartype pool_name: str
+    :ivar node_name: The name of the HorizonDB node that generated the log file. Required.
+    :vartype node_name: str
+    """
+
+    log_type: Union[str, "_models.LogFileType"] = rest_field(name="logType", visibility=["read"])
+    """The type of the captured log file. Required. \"PostgreSqlServer\""""
+    created_at_utc: datetime.datetime = rest_field(name="createdAtUtc", visibility=["read"], format="rfc3339")
+    """The date and time when the log file was created, in UTC. Required."""
+    last_modified_at_utc: datetime.datetime = rest_field(
+        name="lastModifiedAtUtc", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the log file was last modified, in UTC. Required."""
+    retention_expires_at_utc: datetime.datetime = rest_field(
+        name="retentionExpiresAtUtc", visibility=["read"], format="rfc3339"
+    )
+    """The date and time when the log file expires according to its retention period, in UTC.
+     Required."""
+    is_mutable: bool = rest_field(name="isMutable", visibility=["read"])
+    """Whether the platform can still append to or otherwise modify the log file. Required."""
+    size_in_kilobytes: int = rest_field(name="sizeInKilobytes", visibility=["read"])
+    """The size of the log file in kilobytes, where one kilobyte is 1024 bytes. Required."""
+    pool_name: str = rest_field(name="poolName", visibility=["read"])
+    """The name of the HorizonDB pool that generated the log file. Required."""
+    node_name: str = rest_field(name="nodeName", visibility=["read"])
+    """The name of the HorizonDB node that generated the log file. Required."""
+
+
+class MaintenanceEvent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a maintenance event for a HorizonDB pool.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.MaintenanceEventProperties
+    """
+
+    properties: Optional["_models.MaintenanceEventProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MaintenanceEventProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceEventActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response from a maintenance event reschedule or apply-now action.
+
+    :ivar maintenance_event_id: The maintenance event identifier.
+    :vartype maintenance_event_id: str
+    :ivar pool_resource_id: The full Azure resource ID of the HorizonDB pool.
+    :vartype pool_resource_id: str
+    :ivar status: The status of the maintenance event. Known values are: "Planned", "InProgress",
+     "Complete", "Rescheduled", and "Canceled".
+    :vartype status: str or ~azure.mgmt.horizondb.models.MaintenanceEventStatus
+    :ivar planned_start_time_utc: The planned start time of the maintenance event in UTC.
+    :vartype planned_start_time_utc: ~datetime.datetime
+    :ivar planned_end_time_utc: The planned end time of the maintenance event in UTC.
+    :vartype planned_end_time_utc: ~datetime.datetime
+    :ivar applied_now: Indicates whether the maintenance event was requested to be applied
+     immediately. The value is true for apply-now and false for reschedule.
+    :vartype applied_now: bool
+    :ivar last_updated_time_utc: The time when this maintenance event record was last updated, in
+     UTC.
+    :vartype last_updated_time_utc: ~datetime.datetime
+    """
+
+    maintenance_event_id: Optional[str] = rest_field(
+        name="maintenanceEventId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maintenance event identifier."""
+    pool_resource_id: Optional[str] = rest_field(
+        name="poolResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full Azure resource ID of the HorizonDB pool."""
+    status: Optional[Union[str, "_models.MaintenanceEventStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the maintenance event. Known values are: \"Planned\", \"InProgress\",
+     \"Complete\", \"Rescheduled\", and \"Canceled\"."""
+    planned_start_time_utc: Optional[datetime.datetime] = rest_field(
+        name="plannedStartTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The planned start time of the maintenance event in UTC."""
+    planned_end_time_utc: Optional[datetime.datetime] = rest_field(
+        name="plannedEndTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The planned end time of the maintenance event in UTC."""
+    applied_now: Optional[bool] = rest_field(
+        name="appliedNow", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the maintenance event was requested to be applied immediately. The value is
+     true for apply-now and false for reschedule."""
+    last_updated_time_utc: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when this maintenance event record was last updated, in UTC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_event_id: Optional[str] = None,
+        pool_resource_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.MaintenanceEventStatus"]] = None,
+        planned_start_time_utc: Optional[datetime.datetime] = None,
+        planned_end_time_utc: Optional[datetime.datetime] = None,
+        applied_now: Optional[bool] = None,
+        last_updated_time_utc: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceEventProperties(_Model):
+    """Properties of a maintenance event resource.
+
+    :ivar maintenance_event_id: A service-generated identifier for this maintenance event, assigned
+     by the platform. The format is not contractual, and clients should not attempt to parse or
+     construct this value.
+    :vartype maintenance_event_id: str
+    :ivar maintenance_type: The maintenance type. Required. "PlannedMaintenance"
+    :vartype maintenance_type: str or ~azure.mgmt.horizondb.models.MaintenanceType
+    :ivar description: The human-readable description of the maintenance event.
+    :vartype description: str
+    :ivar status: The customer-facing status of the maintenance event. Required. Known values are:
+     "Planned", "InProgress", "Complete", "Rescheduled", and "Canceled".
+    :vartype status: str or ~azure.mgmt.horizondb.models.MaintenanceEventStatus
+    :ivar start_time_utc: The scheduled start time of the maintenance event in UTC. Required.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: The scheduled end time of the maintenance event in UTC. Required.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar estimated_downtime: The estimated downtime as an ISO 8601 duration string, for example,
+     'PT60S' for 60 seconds.
+    :vartype estimated_downtime: ~datetime.timedelta
+    :ivar deferrable: Indicates whether the customer can reschedule this maintenance event.
+     Required.
+    :vartype deferrable: bool
+    :ivar deferral_deadline_utc: The latest date and time to which this maintenance event can be
+     postponed, in UTC. This property is present only when deferrable is true.
+    :vartype deferral_deadline_utc: ~datetime.datetime
+    :ivar rescheduled_from_utc: The scheduled start time before the most recent reschedule, in UTC.
+     This property is absent if the event has never been rescheduled.
+    :vartype rescheduled_from_utc: ~datetime.datetime
+    :ivar last_updated_time_utc: The time when this maintenance event record was last updated, in
+     UTC.
+    :vartype last_updated_time_utc: ~datetime.datetime
+    :ivar original_start_time_utc: The initially scheduled start time before any reschedule, in
+     UTC. This value equals startTimeUtc when the event has never been rescheduled. Required.
+    :vartype original_start_time_utc: ~datetime.datetime
+    """
+
+    maintenance_event_id: Optional[str] = rest_field(name="maintenanceEventId", visibility=["read"])
+    """A service-generated identifier for this maintenance event, assigned by the platform. The format
+     is not contractual, and clients should not attempt to parse or construct this value."""
+    maintenance_type: Union[str, "_models.MaintenanceType"] = rest_field(name="maintenanceType", visibility=["read"])
+    """The maintenance type. Required. \"PlannedMaintenance\""""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The human-readable description of the maintenance event."""
+    status: Union[str, "_models.MaintenanceEventStatus"] = rest_field(visibility=["read"])
+    """The customer-facing status of the maintenance event. Required. Known values are: \"Planned\",
+     \"InProgress\", \"Complete\", \"Rescheduled\", and \"Canceled\"."""
+    start_time_utc: datetime.datetime = rest_field(name="startTimeUtc", visibility=["read"], format="rfc3339")
+    """The scheduled start time of the maintenance event in UTC. Required."""
+    end_time_utc: datetime.datetime = rest_field(name="endTimeUtc", visibility=["read"], format="rfc3339")
+    """The scheduled end time of the maintenance event in UTC. Required."""
+    estimated_downtime: Optional[datetime.timedelta] = rest_field(name="estimatedDowntime", visibility=["read"])
+    """The estimated downtime as an ISO 8601 duration string, for example, 'PT60S' for 60 seconds."""
+    deferrable: bool = rest_field(visibility=["read"])
+    """Indicates whether the customer can reschedule this maintenance event. Required."""
+    deferral_deadline_utc: Optional[datetime.datetime] = rest_field(
+        name="deferralDeadlineUtc", visibility=["read"], format="rfc3339"
+    )
+    """The latest date and time to which this maintenance event can be postponed, in UTC. This
+     property is present only when deferrable is true."""
+    rescheduled_from_utc: Optional[datetime.datetime] = rest_field(
+        name="rescheduledFromUtc", visibility=["read"], format="rfc3339"
+    )
+    """The scheduled start time before the most recent reschedule, in UTC. This property is absent if
+     the event has never been rescheduled."""
+    last_updated_time_utc: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTimeUtc", visibility=["read"], format="rfc3339"
+    )
+    """The time when this maintenance event record was last updated, in UTC."""
+    original_start_time_utc: datetime.datetime = rest_field(
+        name="originalStartTimeUtc", visibility=["read"], format="rfc3339"
+    )
+    """The initially scheduled start time before any reschedule, in UTC. This value equals
+     startTimeUtc when the event has never been rescheduled. Required."""
+
+
+class MaintenanceEventRescheduleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for rescheduling a maintenance event.
+
+    :ivar postpone_to_date_time_utc: The new start time in RFC 3339 format. Required.
+    :vartype postpone_to_date_time_utc: ~datetime.datetime
+    """
+
+    postpone_to_date_time_utc: datetime.datetime = rest_field(
+        name="postponeToDateTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The new start time in RFC 3339 format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        postpone_to_date_time_utc: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAdministrator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a PostgreSQL role that is a member of the azure_pg_admin role and is mapped to a
+    Microsoft Entra principal.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.MicrosoftEntraAdministratorProperties
+    """
+
+    properties: Optional["_models.MicrosoftEntraAdministratorProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MicrosoftEntraAdministratorProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAdministratorAdd(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request body for creating or updating a PostgreSQL role that is a member of azure_pg_admin
+    and mapped to a Microsoft Entra principal.
+
+    :ivar properties: The PostgreSQL role and Microsoft Entra principal mapping properties.
+     Required.
+    :vartype properties: ~azure.mgmt.horizondb.models.MicrosoftEntraAdministratorPropertiesForAdd
+    """
+
+    properties: "_models.MicrosoftEntraAdministratorPropertiesForAdd" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The PostgreSQL role and Microsoft Entra principal mapping properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.MicrosoftEntraAdministratorPropertiesForAdd",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a PostgreSQL role that is a member of azure_pg_admin and mapped to a Microsoft
+    Entra principal.
+
+    :ivar principal_name: The display name or user principal name of the Microsoft Entra principal
+     mapped to the PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required.
+    :vartype principal_name: str
+    :ivar principal_type: The type of Microsoft Entra principal mapped to the PostgreSQL role.
+     Required. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+    :vartype principal_type: str or ~azure.mgmt.horizondb.models.PrincipalTypes
+    :ivar object_id: The Microsoft Entra object identifier of the principal mapped to the
+     PostgreSQL role, represented as an RFC 4122 GUID. On PUT requests, this value comes from the
+     URI path parameter.
+    :vartype object_id: str
+    :ivar tenant_id: The identifier of the Microsoft Entra tenant containing the mapped principal,
+     represented as an RFC 4122 GUID. If omitted, this value defaults to the tenant of the
+     subscription.
+    :vartype tenant_id: str
+    :ivar provisioning_state: The provisioning state of the PostgreSQL role and Microsoft Entra
+     principal mapping. Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and
+     "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    """
+
+    principal_name: str = rest_field(name="principalName", visibility=["read", "create"])
+    """The display name or user principal name of the Microsoft Entra principal mapped to the
+     PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required."""
+    principal_type: Union[str, "_models.PrincipalTypes"] = rest_field(
+        name="principalType", visibility=["read", "create"]
+    )
+    """The type of Microsoft Entra principal mapped to the PostgreSQL role. Required. Known values
+     are: \"Unknown\", \"User\", \"Group\", and \"ServicePrincipal\"."""
+    object_id: Optional[str] = rest_field(name="objectId", visibility=["read"])
+    """The Microsoft Entra object identifier of the principal mapped to the PostgreSQL role,
+     represented as an RFC 4122 GUID. On PUT requests, this value comes from the URI path parameter."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create"])
+    """The identifier of the Microsoft Entra tenant containing the mapped principal, represented as an
+     RFC 4122 GUID. If omitted, this value defaults to the tenant of the subscription."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the PostgreSQL role and Microsoft Entra principal mapping. Known
+     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        principal_name: str,
+        principal_type: Union[str, "_models.PrincipalTypes"],
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAdministratorPropertiesForAdd(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for creating or updating a PostgreSQL role that is a member of azure_pg_admin and
+    mapped to a Microsoft Entra principal.
+
+    :ivar principal_name: The display name or user principal name of the Microsoft Entra principal
+     to map to the PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required.
+    :vartype principal_name: str
+    :ivar principal_type: The type of Microsoft Entra principal to map to the PostgreSQL role.
+     Required. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+    :vartype principal_type: str or ~azure.mgmt.horizondb.models.PrincipalTypes
+    :ivar tenant_id: The identifier of the Microsoft Entra tenant containing the principal to map,
+     represented as an RFC 4122 GUID. If omitted, this value defaults to the tenant of the
+     subscription.
+    :vartype tenant_id: str
+    """
+
+    principal_name: str = rest_field(name="principalName", visibility=["read", "create", "update", "delete", "query"])
+    """The display name or user principal name of the Microsoft Entra principal to map to the
+     PostgreSQL role. For users, this is typically the user principal name, such as
+     `admin@contoso.com <mailto:admin@contoso.com>`_. For groups, this is the group display name.
+     For service principals, this is the application display name. Required."""
+    principal_type: Union[str, "_models.PrincipalTypes"] = rest_field(
+        name="principalType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of Microsoft Entra principal to map to the PostgreSQL role. Required. Known values
+     are: \"Unknown\", \"User\", \"Group\", and \"ServicePrincipal\"."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the Microsoft Entra tenant containing the principal to map, represented as an
+     RFC 4122 GUID. If omitted, this value defaults to the tenant of the subscription."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        principal_name: str,
+        principal_type: Union[str, "_models.PrincipalTypes"],
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAuthenticationForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A sparse update request for Microsoft Entra authentication.
+
+    :ivar properties: The Microsoft Entra authentication properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.MicrosoftEntraAuthenticationPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.MicrosoftEntraAuthenticationPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Entra authentication properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MicrosoftEntraAuthenticationPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftEntraAuthenticationPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating Microsoft Entra authentication. State Enabled enables the feature and
+    State Disabled disables it. Disabling Microsoft Entra authentication does not remove or modify
+    database roles or users previously created through the MicrosoftEntraAdministrators
+    control-plane API or directly through pgaadauth extension functions.
+
+    :ivar state: The target Microsoft Entra authentication state. Omission preserves the current
+     state. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
+    """
+
+    state: Optional[Union[str, "_models.AuthenticationState"]] = rest_field(visibility=["update"])
+    """The target Microsoft Entra authentication state. Omission preserves the current state. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.AuthenticationState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Network(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network properties.
+
+    :ivar public_access: Specifies whether public access is enabled for the cluster. The service
+     defaults to Disabled when this property is omitted. Known values are: "Enabled" and "Disabled".
+    :vartype public_access: str or ~azure.mgmt.horizondb.models.PublicNetworkAccessState
+    """
+
+    public_access: Optional[Union[str, "_models.PublicNetworkAccessState"]] = rest_field(
+        name="publicAccess", visibility=["read", "create", "update"]
+    )
+    """Specifies whether public access is enabled for the cluster. The service defaults to Disabled
+     when this property is omitted. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_access: Optional[Union[str, "_models.PublicNetworkAccessState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network properties for updating a HorizonDB cluster.
+
+    :ivar public_access: Specifies whether public access is enabled for the cluster. Omission
+     preserves the current value. Known values are: "Enabled" and "Disabled".
+    :vartype public_access: str or ~azure.mgmt.horizondb.models.PublicNetworkAccessState
+    """
+
+    public_access: Optional[Union[str, "_models.PublicNetworkAccessState"]] = rest_field(
+        name="publicAccess", visibility=["update"]
+    )
+    """Specifies whether public access is enabled for the cluster. Omission preserves the current
+     value. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_access: Optional[Union[str, "_models.PublicNetworkAccessState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Node(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-managed node allocated to a HorizonDB pool.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.NodeProperties
+    """
+
+    properties: Optional["_models.NodeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.NodeProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NodeProperties(_Model):
+    """Properties of a service-managed HorizonDB node.
+
+    :ivar role: The current role performed by the node within its pool. Required. Known values are:
+     "ReadWrite" and "ReadOnly".
+    :vartype role: str or ~azure.mgmt.horizondb.models.NodeRole
+    :ivar availability_zone: The availability zone in which the node is deployed. Required.
+    :vartype availability_zone: str
+    """
+
+    role: Union[str, "_models.NodeRole"] = rest_field(visibility=["read"])
+    """The current role performed by the node within its pool. Required. Known values are:
+     \"ReadWrite\" and \"ReadOnly\"."""
+    availability_zone: str = rest_field(name="availabilityZone", visibility=["read"])
+    """The availability zone in which the node is deployed. Required."""
 
 
 class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1571,8 +3631,191 @@ class OperationDisplay(_Model):
      views."""
 
 
+class ParameterGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the HorizonDB parameter group.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.ParameterGroupProperties
+    """
+
+    properties: Optional["_models.ParameterGroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ParameterGroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ParameterGroupConnectionProperties(_Model):
+    """Connection information for HorizonDB parameter group.
+
+    :ivar pool_resource_id: The Azure resource ID of the connected HorizonDB pool. Required.
+    :vartype pool_resource_id: str
+    """
+
+    pool_resource_id: str = rest_field(name="poolResourceId", visibility=["read"])
+    """The Azure resource ID of the connected HorizonDB pool. Required."""
+
+
+class ParameterGroupForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """HorizonDB parameter group for update operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The properties that can be updated for a HorizonDB parameter group.
+    :vartype properties: ~azure.mgmt.horizondb.models.ParameterGroupPropertiesForPatchUpdate
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ParameterGroupPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties that can be updated for a HorizonDB parameter group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ParameterGroupPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ParameterGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB parameter group.
+
+    :ivar parameters: Parameters in the parameter group.
+    :vartype parameters: list[~azure.mgmt.horizondb.models.ParameterProperties]
+    :ivar description: Description of the parameter group. The maximum length is 1024 characters.
+    :vartype description: str
+    :ivar postgre_sql_version: The PostgreSQL major version for the parameter group. This property
+     is required during creation and is immutable thereafter. The service selects the unique
+     location-scoped default parameter group for this version in the resource location. The
+     DefaultParameterGroups APIs return at most one default parameter group for each PostgreSQL
+     version in a location, so this selection is unambiguous. Required. Known values are: "17" and
+     "18".
+    :vartype postgre_sql_version: str or ~azure.mgmt.horizondb.models.PostgreSqlVersion
+    :ivar provisioning_state: The provisioning state of the parameter group. Known values are:
+     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    """
+
+    parameters: Optional[list["_models.ParameterProperties"]] = rest_field(visibility=["read", "create", "update"])
+    """Parameters in the parameter group."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update"])
+    """Description of the parameter group. The maximum length is 1024 characters."""
+    postgre_sql_version: Union[str, "_models.PostgreSqlVersion"] = rest_field(
+        name="postgreSqlVersion", visibility=["read", "create"]
+    )
+    """The PostgreSQL major version for the parameter group. This property is required during creation
+     and is immutable thereafter. The service selects the unique location-scoped default parameter
+     group for this version in the resource location. The DefaultParameterGroups APIs return at most
+     one default parameter group for each PostgreSQL version in a location, so this selection is
+     unambiguous. Required. Known values are: \"17\" and \"18\"."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the parameter group. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        postgre_sql_version: Union[str, "_models.PostgreSqlVersion"],
+        parameters: Optional[list["_models.ParameterProperties"]] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ParameterGroupPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB parameter group for update operations.
+
+    :ivar parameters: Parameters in the parameter group.
+    :vartype parameters: list[~azure.mgmt.horizondb.models.ParameterProperties]
+    :ivar description: Description of the parameter group. The maximum length is 1024 characters.
+    :vartype description: str
+    """
+
+    parameters: Optional[list["_models.ParameterProperties"]] = rest_field(visibility=["update"])
+    """Parameters in the parameter group."""
+    description: Optional[str] = rest_field(visibility=["update"])
+    """Description of the parameter group. The maximum length is 1024 characters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: Optional[list["_models.ParameterProperties"]] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties of a HorizonDB parameters.
+    """Properties of a HorizonDB parameter.
 
     :ivar name: The name of the parameter.
     :vartype name: str
@@ -1580,13 +3823,21 @@ class ParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype description: str
     :ivar value: The value of the configuration.
     :vartype value: str
+    :ivar default_value: The system-defined default value of the parameter, independent of the
+     effective value.
+    :vartype default_value: str
+    :ivar value_source: The source of the effective parameter value. UserOverride means that the
+     value was explicitly supplied by the user, even when it equals defaultValue. Known values are:
+     "SystemDefault" and "UserOverride".
+    :vartype value_source: str or ~azure.mgmt.horizondb.models.ParameterValueSource
     :ivar data_type: The data type of the parameter.
     :vartype data_type: str
     :ivar allowed_values: The allowed values for the parameter.
     :vartype allowed_values: str
     :ivar is_dynamic: Whether the parameter can be changed dynamically.
     :vartype is_dynamic: bool
-    :ivar is_read_only: Whether the parameter is a read-only parameter.
+    :ivar is_read_only: Whether the parameter is read-only. Read-only parameters cannot be
+     overridden.
     :vartype is_read_only: bool
     :ivar documentation_link: Link to parameter documentation.
     :vartype documentation_link: str
@@ -1594,12 +3845,20 @@ class ParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype unit: str
     """
 
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional[str] = rest_field(visibility=["read", "create", "update"])
     """The name of the parameter."""
     description: Optional[str] = rest_field(visibility=["read"])
     """The description of the parameter."""
-    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: Optional[str] = rest_field(visibility=["read", "create", "update"])
     """The value of the configuration."""
+    default_value: Optional[str] = rest_field(name="defaultValue", visibility=["read"])
+    """The system-defined default value of the parameter, independent of the effective value."""
+    value_source: Optional[Union[str, "_models.ParameterValueSource"]] = rest_field(
+        name="valueSource", visibility=["read"]
+    )
+    """The source of the effective parameter value. UserOverride means that the value was explicitly
+     supplied by the user, even when it equals defaultValue. Known values are: \"SystemDefault\" and
+     \"UserOverride\"."""
     data_type: Optional[str] = rest_field(name="dataType", visibility=["read"])
     """The data type of the parameter."""
     allowed_values: Optional[str] = rest_field(name="allowedValues", visibility=["read"])
@@ -1607,7 +3866,7 @@ class ParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     is_dynamic: Optional[bool] = rest_field(name="isDynamic", visibility=["read"])
     """Whether the parameter can be changed dynamically."""
     is_read_only: Optional[bool] = rest_field(name="isReadOnly", visibility=["read"])
-    """Whether the parameter is a read-only parameter."""
+    """Whether the parameter is read-only. Read-only parameters cannot be overridden."""
     documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
     """Link to parameter documentation."""
     unit: Optional[str] = rest_field(visibility=["read"])
@@ -1630,6 +3889,664 @@ class ParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-m
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class PasswordAuthenticationForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A sparse update request for PostgreSQL username-and-password authentication.
+
+    :ivar properties: The PostgreSQL username-and-password authentication properties to update.
+    :vartype properties:
+     ~azure.mgmt.horizondb.models.PasswordAuthenticationPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.PasswordAuthenticationPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The PostgreSQL username-and-password authentication properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PasswordAuthenticationPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PasswordAuthenticationPropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties for updating PostgreSQL username-and-password authentication. Omitted properties
+    preserve their current values. State-only requests enable or disable the authentication
+    mechanism. Credentials are secrets and are never returned or stored by the control plane.
+    Login-only, password-only, and combined credential updates require this authentication method
+    to already be Enabled unless the request also sets state to Enabled.
+
+    :ivar state: The target password-authentication state. Enabled or Disabled can be supplied
+     without credentials to toggle the feature. Disabled cannot be combined with administratorLogin
+     or administratorLoginPassword. Disabling password authentication does not remove or modify
+     existing database users or roles. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.horizondb.models.AuthenticationState
+    :ivar administrator_login: The PostgreSQL administrator role name. A login-only update requires
+     password authentication to already be Enabled unless state is set to Enabled in this request,
+     and requires exactly one member in the AzureSU-owned special group. The current name is an
+     idempotent no-op; a different name renames the current member only when that target role does
+     not already exist. When supplied together with administratorLoginPassword, this value can
+     create the administrator if the special group has no member, reset the matching member's
+     password, or rename a differently named member and reset its password.
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The PostgreSQL administrator password. A password-only
+     update requires password authentication to already be Enabled unless state is set to Enabled in
+     this request, and requires exactly one member in the AzureSU-owned special group. When supplied
+     together with administratorLogin, it can create the administrator if the special group has no
+     member, reset the matching member's password, or rename a differently named member and reset
+     its password.
+    :vartype administrator_login_password: str
+    """
+
+    state: Optional[Union[str, "_models.AuthenticationState"]] = rest_field(visibility=["update"])
+    """The target password-authentication state. Enabled or Disabled can be supplied without
+     credentials to toggle the feature. Disabled cannot be combined with administratorLogin or
+     administratorLoginPassword. Disabling password authentication does not remove or modify
+     existing database users or roles. Known values are: \"Enabled\" and \"Disabled\"."""
+    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["update"])
+    """The PostgreSQL administrator role name. A login-only update requires password authentication to
+     already be Enabled unless state is set to Enabled in this request, and requires exactly one
+     member in the AzureSU-owned special group. The current name is an idempotent no-op; a different
+     name renames the current member only when that target role does not already exist. When
+     supplied together with administratorLoginPassword, this value can create the administrator if
+     the special group has no member, reset the matching member's password, or rename a differently
+     named member and reset its password."""
+    administrator_login_password: Optional[str] = rest_field(name="administratorLoginPassword", visibility=["update"])
+    """The PostgreSQL administrator password. A password-only update requires password authentication
+     to already be Enabled unless state is set to Enabled in this request, and requires exactly one
+     member in the AzureSU-owned special group. When supplied together with administratorLogin, it
+     can create the administrator if the special group has no member, reset the matching member's
+     password, or rename a differently named member and reset its password."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.AuthenticationState"]] = None,
+        administrator_login: Optional[str] = None,
+        administrator_login_password: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Pool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the HorizonDB pool.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.PoolProperties
+    """
+
+    properties: Optional["_models.PoolProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PoolProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolCapability(_Model):
+    """The HorizonDB Pool capabilities available in a location.
+
+    :ivar recommended_compute_processor: The compute processor recommended for clients to select
+     for HorizonDB Pools in the region. This recommendation does not describe backend behavior when
+     the compute processor is omitted from a request. Required. Known values are: "Intel" and "AMD".
+    :vartype recommended_compute_processor: str or
+     ~azure.mgmt.horizondb.models.ComputeProcessorType
+    :ivar supported_processors: The processor families and their compute capabilities supported by
+     Pools in the region. Required.
+    :vartype supported_processors: list[~azure.mgmt.horizondb.models.ComputeProcessorCapability]
+    :ivar supported_features: Additional Pool features supported in the region independently of a
+     processor, generation, or compute model. Required.
+    :vartype supported_features: list[~azure.mgmt.horizondb.models.PoolFeatureCapability]
+    """
+
+    recommended_compute_processor: Union[str, "_models.ComputeProcessorType"] = rest_field(
+        name="recommendedComputeProcessor", visibility=["read"]
+    )
+    """The compute processor recommended for clients to select for HorizonDB Pools in the region. This
+     recommendation does not describe backend behavior when the compute processor is omitted from a
+     request. Required. Known values are: \"Intel\" and \"AMD\"."""
+    supported_processors: list["_models.ComputeProcessorCapability"] = rest_field(
+        name="supportedProcessors", visibility=["read"]
+    )
+    """The processor families and their compute capabilities supported by Pools in the region.
+     Required."""
+    supported_features: list["_models.PoolFeatureCapability"] = rest_field(
+        name="supportedFeatures", visibility=["read"]
+    )
+    """Additional Pool features supported in the region independently of a processor, generation, or
+     compute model. Required."""
+
+
+class PoolComputeModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The compute model for a HorizonDB pool.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ProvisionedHorizonDbPoolComputeModel
+
+    :ivar type: The type of compute model. Required. "Provisioned"
+    :vartype type: str or ~azure.mgmt.horizondb.models.PoolComputeModelType
+    :ivar compute_processor: The processor type for the compute model. Known values are: "Intel"
+     and "AMD".
+    :vartype compute_processor: str or ~azure.mgmt.horizondb.models.ComputeProcessorType
+    :ivar compute_generation: The compute generation for the compute model.
+    :vartype compute_generation: int
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update"])
+    """The type of compute model. Required. \"Provisioned\""""
+    compute_processor: Optional[Union[str, "_models.ComputeProcessorType"]] = rest_field(
+        name="computeProcessor", visibility=["read", "create", "update"]
+    )
+    """The processor type for the compute model. Known values are: \"Intel\" and \"AMD\"."""
+    compute_generation: Optional[int] = rest_field(name="computeGeneration", visibility=["read", "create", "update"])
+    """The compute generation for the compute model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        compute_processor: Optional[Union[str, "_models.ComputeProcessorType"]] = None,
+        compute_generation: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolComputeModelForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The compute model properties of a HorizonDB pool that can be updated. The object is recursively
+    mergeable: omitted properties preserve their current values. Properties that do not apply to
+    the current or target compute model type are rejected. When type changes, the request must
+    include the complete target compute model. Subtype-specific constraints are validated against
+    the effective merged configuration; invalid requests are rejected without changing the
+    resource.
+
+    :ivar type: The compute model type. Omit this property to retain the current type. Resubmitting
+     the current type succeeds as an idempotent no-op. To change the type, supply all common
+     properties and all properties required by the target type. "Provisioned"
+    :vartype type: str or ~azure.mgmt.horizondb.models.PoolComputeModelType
+    :ivar compute_processor: The processor type for the compute model. Omission preserves the
+     current processor type. Known values are: "Intel" and "AMD".
+    :vartype compute_processor: str or ~azure.mgmt.horizondb.models.ComputeProcessorType
+    :ivar compute_generation: The compute generation for the compute model. Omission preserves the
+     current compute generation.
+    :vartype compute_generation: int
+    :ivar v_cores: The number of provisioned vCores. Allowed values are 1 through 192. This
+     property applies only to a Provisioned compute model. Omission preserves the current value.
+    :vartype v_cores: int
+    """
+
+    type: Optional[Union[str, "_models.PoolComputeModelType"]] = rest_field(visibility=["update"])
+    """The compute model type. Omit this property to retain the current type. Resubmitting the current
+     type succeeds as an idempotent no-op. To change the type, supply all common properties and all
+     properties required by the target type. \"Provisioned\""""
+    compute_processor: Optional[Union[str, "_models.ComputeProcessorType"]] = rest_field(
+        name="computeProcessor", visibility=["update"]
+    )
+    """The processor type for the compute model. Omission preserves the current processor type. Known
+     values are: \"Intel\" and \"AMD\"."""
+    compute_generation: Optional[int] = rest_field(name="computeGeneration", visibility=["update"])
+    """The compute generation for the compute model. Omission preserves the current compute
+     generation."""
+    v_cores: Optional[int] = rest_field(name="vCores", visibility=["update"])
+    """The number of provisioned vCores. Allowed values are 1 through 192. This property applies only
+     to a Provisioned compute model. Omission preserves the current value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PoolComputeModelType"]] = None,
+        compute_processor: Optional[Union[str, "_models.ComputeProcessorType"]] = None,
+        compute_generation: Optional[int] = None,
+        v_cores: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolFeatureCapability(_Model):
+    """A HorizonDB Pool feature supported in a location.
+
+    :ivar name: The name of the Pool feature. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the Pool feature. Required."""
+
+
+class PoolForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """HorizonDB pool for update operations.
+
+    :ivar properties: The properties that can be updated for a HorizonDB pool.
+    :vartype properties: ~azure.mgmt.horizondb.models.PoolPropertiesForPatchUpdate
+    """
+
+    properties: Optional["_models.PoolPropertiesForPatchUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties that can be updated for a HorizonDB pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PoolPropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolHighAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The high-availability configuration for a HorizonDB pool.
+
+    :ivar mode: The high-availability mode. Disabled is required when nodeCount is 1. AnyZone or
+     ZoneRedundant is required when nodeCount is 2 through 16. Required. Known values are:
+     "Disabled", "AnyZone", and "ZoneRedundant".
+    :vartype mode: str or ~azure.mgmt.horizondb.models.PoolHighAvailabilityMode
+    """
+
+    mode: Union[str, "_models.PoolHighAvailabilityMode"] = rest_field(visibility=["read", "create", "update"])
+    """The high-availability mode. Disabled is required when nodeCount is 1. AnyZone or ZoneRedundant
+     is required when nodeCount is 2 through 16. Required. Known values are: \"Disabled\",
+     \"AnyZone\", and \"ZoneRedundant\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.PoolHighAvailabilityMode"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolHighAvailabilityPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The high-availability configuration for a HorizonDB pool update.
+
+    :ivar mode: The high-availability mode. Omission preserves the current mode before the service
+     validates it with the effective nodeCount. Known values are: "Disabled", "AnyZone", and
+     "ZoneRedundant".
+    :vartype mode: str or ~azure.mgmt.horizondb.models.PoolHighAvailabilityMode
+    """
+
+    mode: Optional[Union[str, "_models.PoolHighAvailabilityMode"]] = rest_field(visibility=["update"])
+    """The high-availability mode. Omission preserves the current mode before the service validates it
+     with the effective nodeCount. Known values are: \"Disabled\", \"AnyZone\", and
+     \"ZoneRedundant\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.PoolHighAvailabilityMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolParameterGroupReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference to the default or custom parameter group associated with a HorizonDB pool.
+
+    :ivar parameter_group_resource_id: The Azure resource ID of the default or custom parameter
+     group. Required.
+    :vartype parameter_group_resource_id: str
+    :ivar apply_method: Determines when dynamic parameter changes from the associated parameter
+     group become effective. Static parameter changes always require a pool restart, regardless of
+     this value. Required. Known values are: "Immediate" and "PendingReboot".
+    :vartype apply_method: str or ~azure.mgmt.horizondb.models.ParameterApplyMethod
+    :ivar sync_status: The synchronization status between the pool and its parameter group. Known
+     values are: "Applying", "InSync", "FailedToApply", and "PendingReboot".
+    :vartype sync_status: str or ~azure.mgmt.horizondb.models.ParameterGroupSyncStatus
+    """
+
+    parameter_group_resource_id: str = rest_field(
+        name="parameterGroupResourceId", visibility=["read", "create", "update"]
+    )
+    """The Azure resource ID of the default or custom parameter group. Required."""
+    apply_method: Union[str, "_models.ParameterApplyMethod"] = rest_field(
+        name="applyMethod", visibility=["read", "create", "update"]
+    )
+    """Determines when dynamic parameter changes from the associated parameter group become effective.
+     Static parameter changes always require a pool restart, regardless of this value. Required.
+     Known values are: \"Immediate\" and \"PendingReboot\"."""
+    sync_status: Optional[Union[str, "_models.ParameterGroupSyncStatus"]] = rest_field(
+        name="syncStatus", visibility=["read"]
+    )
+    """The synchronization status between the pool and its parameter group. Known values are:
+     \"Applying\", \"InSync\", \"FailedToApply\", and \"PendingReboot\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameter_group_resource_id: str,
+        apply_method: Union[str, "_models.ParameterApplyMethod"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolParameterGroupReferenceForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A parameter group reference for updating a HorizonDB pool.
+
+    :ivar parameter_group_resource_id: The Azure resource ID of the default or custom parameter
+     group to associate with the pool.
+    :vartype parameter_group_resource_id: str
+    :ivar apply_method: Determines when dynamic parameter changes from the associated parameter
+     group become effective. Static parameter changes always require a pool restart, regardless of
+     this value. Known values are: "Immediate" and "PendingReboot".
+    :vartype apply_method: str or ~azure.mgmt.horizondb.models.ParameterApplyMethod
+    """
+
+    parameter_group_resource_id: Optional[str] = rest_field(name="parameterGroupResourceId", visibility=["update"])
+    """The Azure resource ID of the default or custom parameter group to associate with the pool."""
+    apply_method: Optional[Union[str, "_models.ParameterApplyMethod"]] = rest_field(
+        name="applyMethod", visibility=["update"]
+    )
+    """Determines when dynamic parameter changes from the associated parameter group become effective.
+     Static parameter changes always require a pool restart, regardless of this value. Known values
+     are: \"Immediate\" and \"PendingReboot\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameter_group_resource_id: Optional[str] = None,
+        apply_method: Optional[Union[str, "_models.ParameterApplyMethod"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB pool.
+
+    :ivar state: Current state of the pool. Known values are: "Ready", "Provisioning", "Deleting",
+     "Inaccessible", "Updating", "Starting", "Restarting", "Stopping", and "Stopped".
+    :vartype state: str or ~azure.mgmt.horizondb.models.PoolState
+    :ivar compute_model: The compute model for the HorizonDB pool.
+    :vartype compute_model: ~azure.mgmt.horizondb.models.PoolComputeModel
+    :ivar node_count: The required number of nodes to allocate and assign to the pool. Allowed
+     values are 1 through 16. To deallocate runtime compute without changing the configured node
+     count, stop the pool. Required.
+    :vartype node_count: int
+    :ivar high_availability: The required high-availability configuration for the pool. mode must
+     be Disabled when nodeCount is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2
+     through 16. Required.
+    :vartype high_availability: ~azure.mgmt.horizondb.models.PoolHighAvailability
+    :ivar parameter_group: The required default or custom parameter group associated with the pool.
+     Required.
+    :vartype parameter_group: ~azure.mgmt.horizondb.models.PoolParameterGroupReference
+    :ivar scheduled_maintenance: The scheduled maintenance configuration for the pool. The
+     properties available depend on the selected maintenance management type.
+    :vartype scheduled_maintenance: ~azure.mgmt.horizondb.models.ScheduledMaintenanceProperties
+    :ivar provisioning_state: The provisioning state of the pool. Known values are: "Succeeded",
+     "Failed", "Canceled", "InProgress", and "Provisioning".
+    :vartype provisioning_state: str or ~azure.mgmt.horizondb.models.ProvisioningState
+    """
+
+    state: Optional[Union[str, "_models.PoolState"]] = rest_field(visibility=["read"])
+    """Current state of the pool. Known values are: \"Ready\", \"Provisioning\", \"Deleting\",
+     \"Inaccessible\", \"Updating\", \"Starting\", \"Restarting\", \"Stopping\", and \"Stopped\"."""
+    compute_model: Optional["_models.PoolComputeModel"] = rest_field(
+        name="computeModel", visibility=["read", "create", "update"]
+    )
+    """The compute model for the HorizonDB pool."""
+    node_count: int = rest_field(name="nodeCount", visibility=["read", "create", "update"])
+    """The required number of nodes to allocate and assign to the pool. Allowed values are 1 through
+     16. To deallocate runtime compute without changing the configured node count, stop the pool.
+     Required."""
+    high_availability: "_models.PoolHighAvailability" = rest_field(
+        name="highAvailability", visibility=["read", "create", "update"]
+    )
+    """The required high-availability configuration for the pool. mode must be Disabled when nodeCount
+     is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through 16. Required."""
+    parameter_group: "_models.PoolParameterGroupReference" = rest_field(
+        name="parameterGroup", visibility=["read", "create", "update"]
+    )
+    """The required default or custom parameter group associated with the pool. Required."""
+    scheduled_maintenance: Optional["_models.ScheduledMaintenanceProperties"] = rest_field(
+        name="scheduledMaintenance", visibility=["read", "create", "update"]
+    )
+    """The scheduled maintenance configuration for the pool. The properties available depend on the
+     selected maintenance management type."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the pool. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"InProgress\", and \"Provisioning\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        node_count: int,
+        high_availability: "_models.PoolHighAvailability",
+        parameter_group: "_models.PoolParameterGroupReference",
+        compute_model: Optional["_models.PoolComputeModel"] = None,
+        scheduled_maintenance: Optional["_models.ScheduledMaintenanceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoolPropertiesForPatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a HorizonDB pool for update operations.
+
+    :ivar compute_model: The compute model properties to update. Omitted properties preserve their
+     current values. To change the compute model type, supply the complete target compute model,
+     including type, computeProcessor, computeGeneration, and all properties required by the target
+     type.
+    :vartype compute_model: ~azure.mgmt.horizondb.models.PoolComputeModelForPatchUpdate
+    :ivar node_count: The number of nodes to allocate and assign to the pool. Allowed values are 1
+     through 16. Omission preserves the current configured value. To deallocate runtime compute
+     without changing the configured node count, stop the pool.
+    :vartype node_count: int
+    :ivar high_availability: The high-availability configuration to update. Omission preserves the
+     current mode. The service recursively merges omitted PATCH properties with the existing
+     resource before validating the effective nodeCount and mode together.
+    :vartype high_availability: ~azure.mgmt.horizondb.models.PoolHighAvailabilityPatch
+    :ivar parameter_group: The default or custom parameter group to associate with the pool.
+     Omission preserves the current association.
+    :vartype parameter_group:
+     ~azure.mgmt.horizondb.models.PoolParameterGroupReferenceForPatchUpdate
+    :ivar scheduled_maintenance: The scheduled maintenance configuration to update for the pool.
+     When supplied, the complete configuration for the selected maintenance management type is
+     required. Omission preserves the current configuration.
+    :vartype scheduled_maintenance:
+     ~azure.mgmt.horizondb.models.ScheduledMaintenancePropertiesForPatchUpdate
+    """
+
+    compute_model: Optional["_models.PoolComputeModelForPatchUpdate"] = rest_field(
+        name="computeModel", visibility=["update"]
+    )
+    """The compute model properties to update. Omitted properties preserve their current values. To
+     change the compute model type, supply the complete target compute model, including type,
+     computeProcessor, computeGeneration, and all properties required by the target type."""
+    node_count: Optional[int] = rest_field(name="nodeCount", visibility=["update"])
+    """The number of nodes to allocate and assign to the pool. Allowed values are 1 through 16.
+     Omission preserves the current configured value. To deallocate runtime compute without changing
+     the configured node count, stop the pool."""
+    high_availability: Optional["_models.PoolHighAvailabilityPatch"] = rest_field(
+        name="highAvailability", visibility=["update"]
+    )
+    """The high-availability configuration to update. Omission preserves the current mode. The service
+     recursively merges omitted PATCH properties with the existing resource before validating the
+     effective nodeCount and mode together."""
+    parameter_group: Optional["_models.PoolParameterGroupReferenceForPatchUpdate"] = rest_field(
+        name="parameterGroup", visibility=["update"]
+    )
+    """The default or custom parameter group to associate with the pool. Omission preserves the
+     current association."""
+    scheduled_maintenance: Optional["_models.ScheduledMaintenancePropertiesForPatchUpdate"] = rest_field(
+        name="scheduledMaintenance", visibility=["update"]
+    )
+    """The scheduled maintenance configuration to update for the pool. When supplied, the complete
+     configuration for the selected maintenance management type is required. Omission preserves the
+     current configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        compute_model: Optional["_models.PoolComputeModelForPatchUpdate"] = None,
+        node_count: Optional[int] = None,
+        high_availability: Optional["_models.PoolHighAvailabilityPatch"] = None,
+        parameter_group: Optional["_models.PoolParameterGroupReferenceForPatchUpdate"] = None,
+        scheduled_maintenance: Optional["_models.ScheduledMaintenancePropertiesForPatchUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PostgreSqlVersionCapability(_Model):
+    """The capabilities of a PostgreSQL major version supported by HorizonDB.
+
+    :ivar name: The PostgreSQL major version. Required. Known values are: "17" and "18".
+    :vartype name: str or ~azure.mgmt.horizondb.models.PostgreSqlCapabilityVersion
+    :ivar supported_versions_to_upgrade: The PostgreSQL major versions to which this version can be
+     upgraded in place. API version 2026-10-01-preview does not support in-place PostgreSQL
+     major-version upgrades, so this array is always empty. Required.
+    :vartype supported_versions_to_upgrade: list[str or
+     ~azure.mgmt.horizondb.models.PostgreSqlCapabilityVersion]
+    """
+
+    name: Union[str, "_models.PostgreSqlCapabilityVersion"] = rest_field(visibility=["read"])
+    """The PostgreSQL major version. Required. Known values are: \"17\" and \"18\"."""
+    supported_versions_to_upgrade: list[Union[str, "_models.PostgreSqlCapabilityVersion"]] = rest_field(
+        name="supportedVersionsToUpgrade", visibility=["read"]
+    )
+    """The PostgreSQL major versions to which this version can be upgraded in place. API version
+     2026-10-01-preview does not support in-place PostgreSQL major-version upgrades, so this array
+     is always empty. Required."""
 
 
 class PrivateEndpoint(_Model):
@@ -1737,6 +4654,47 @@ class PrivateEndpointConnectionResource(Resource):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the HorizonDB private link resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.horizondb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.horizondb.models.PrivateLinkResourceProperties
+    """
+
+    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
@@ -1821,6 +4779,185 @@ class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
+class ProvisionedComputeModelCapability(ComputeModelCapability, discriminator="Provisioned"):
+    """The capabilities of the Provisioned compute model.
+
+    :ivar type: The compute model represented by these capabilities. Required. Provisioned compute
+     model.
+    :vartype type: str or ~azure.mgmt.horizondb.models.PROVISIONED
+    :ivar recommended_v_core_count: The provisioned vCore count recommended for clients to select.
+     This recommendation does not describe backend behavior when vCores is omitted from a request.
+     Required.
+    :vartype recommended_v_core_count: int
+    :ivar supported_compute_sizes: The supported provisioned compute sizes. Required.
+    :vartype supported_compute_sizes: list[~azure.mgmt.horizondb.models.ComputeSizeCapability]
+    """
+
+    type: Literal[PoolComputeModelType.PROVISIONED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The compute model represented by these capabilities. Required. Provisioned compute model."""
+    recommended_v_core_count: int = rest_field(name="recommendedVCoreCount", visibility=["read"])
+    """The provisioned vCore count recommended for clients to select. This recommendation does not
+     describe backend behavior when vCores is omitted from a request. Required."""
+    supported_compute_sizes: list["_models.ComputeSizeCapability"] = rest_field(
+        name="supportedComputeSizes", visibility=["read"]
+    )
+    """The supported provisioned compute sizes. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = PoolComputeModelType.PROVISIONED  # type: ignore
+
+
+class ProvisionedHorizonDbPoolComputeModel(
+    PoolComputeModel, discriminator="Provisioned"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A provisioned compute model for a HorizonDB pool.
+
+    :ivar compute_processor: The processor type for the compute model. Known values are: "Intel"
+     and "AMD".
+    :vartype compute_processor: str or ~azure.mgmt.horizondb.models.ComputeProcessorType
+    :ivar compute_generation: The compute generation for the compute model.
+    :vartype compute_generation: int
+    :ivar type: The type of compute model. Required. Provisioned compute model.
+    :vartype type: str or ~azure.mgmt.horizondb.models.PROVISIONED
+    :ivar v_cores: The number of provisioned vCores. Allowed values are 1 through 192. Required.
+    :vartype v_cores: int
+    """
+
+    type: Literal[PoolComputeModelType.PROVISIONED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of compute model. Required. Provisioned compute model."""
+    v_cores: int = rest_field(name="vCores", visibility=["read", "create", "update"])
+    """The number of provisioned vCores. Allowed values are 1 through 192. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        v_cores: int,
+        compute_processor: Optional[Union[str, "_models.ComputeProcessorType"]] = None,
+        compute_generation: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = PoolComputeModelType.PROVISIONED  # type: ignore
+
+
+class ReadWritePoolProperties(_Model):
+    """The pool currently designated to host a HorizonDB cluster's read-write node. When a pool is
+    created while the cluster currently has no pools, the service automatically designates the new
+    pool as the read-write pool. This behavior also applies after all pools that existed earlier in
+    the cluster's lifetime have been deleted.
+
+    :ivar designated_pool_resource_id: The Azure resource ID of the pool designated to host the
+     cluster's read-write node. The pool is a child resource of this cluster. When a pool is created
+     while the cluster currently has no pools, the service automatically sets this property to the
+     new pool's resource ID, including when all pools that existed earlier in the cluster's lifetime
+     were deleted. This property is absent when no pool is designated, such as after
+     clearReadWritePool succeeds.
+    :vartype designated_pool_resource_id: str
+    """
+
+    designated_pool_resource_id: Optional[str] = rest_field(name="designatedPoolResourceId", visibility=["read"])
+    """The Azure resource ID of the pool designated to host the cluster's read-write node. The pool is
+     a child resource of this cluster. When a pool is created while the cluster currently has no
+     pools, the service automatically sets this property to the new pool's resource ID, including
+     when all pools that existed earlier in the cluster's lifetime were deleted. This property is
+     absent when no pool is designated, such as after clearReadWritePool succeeds."""
+
+
+class ScheduledMaintenanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The scheduled maintenance configuration for a HorizonDB pool.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SystemScheduledMaintenanceProperties
+
+    :ivar maintenance_management_type: Specifies whether scheduled maintenance is managed by the
+     system or by the user. Required. "System"
+    :vartype maintenance_management_type: str or
+     ~azure.mgmt.horizondb.models.ScheduledMaintenanceManagementType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    maintenance_management_type: str = rest_discriminator(
+        name="maintenanceManagementType", visibility=["read", "create", "update"]
+    )
+    """Specifies whether scheduled maintenance is managed by the system or by the user. Required.
+     \"System\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_management_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledMaintenancePropertiesForPatchUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The scheduled maintenance configuration for a pool update operation.
+
+    :ivar maintenance_management_type: Specifies whether scheduled maintenance is managed by the
+     system or by the user. When scheduledMaintenance is supplied, this property is required by the
+     service. "System"
+    :vartype maintenance_management_type: str or
+     ~azure.mgmt.horizondb.models.ScheduledMaintenanceManagementType
+    """
+
+    maintenance_management_type: Optional[Union[str, "_models.ScheduledMaintenanceManagementType"]] = rest_field(
+        name="maintenanceManagementType", visibility=["update"]
+    )
+    """Specifies whether scheduled maintenance is managed by the system or by the user. When
+     scheduledMaintenance is supplied, this property is required by the service. \"System\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_management_type: Optional[Union[str, "_models.ScheduledMaintenanceManagementType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -1886,6 +5023,36 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SystemScheduledMaintenanceProperties(ScheduledMaintenanceProperties, discriminator="System"):
+    """The system-managed scheduled maintenance configuration for a HorizonDB pool. User-managed
+    schedule properties must be absent.
+
+    :ivar maintenance_management_type: Specifies that scheduled maintenance is managed by the
+     system. Required. Scheduled maintenance is managed by the system.
+    :vartype maintenance_management_type: str or ~azure.mgmt.horizondb.models.SYSTEM
+    """
+
+    maintenance_management_type: Literal[ScheduledMaintenanceManagementType.SYSTEM] = rest_discriminator(name="maintenanceManagementType", visibility=["read", "create", "update"])  # type: ignore
+    """Specifies that scheduled maintenance is managed by the system. Required. Scheduled maintenance
+     is managed by the system."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.maintenance_management_type = ScheduledMaintenanceManagementType.SYSTEM  # type: ignore
 
 
 class UserAssignedIdentity(_Model):
