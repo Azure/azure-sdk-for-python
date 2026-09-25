@@ -105,7 +105,8 @@ def test_tool_request_is_canonical_and_token_is_not_forwarded(
     assert pipeline.get.call_args_list[1].args == ("https://downloads.example.test/artifacttool.zip",)
     assert pipeline.get.call_args_list[1].kwargs == {"permit_redirects": False}
     assert os.environ[_OVERRIDE] == str(tool_path.resolve())
-    assert (tool_path / "artifacttool").is_file()
+    tool_name = "artifacttool.exe" if os.name == "nt" else "artifacttool"
+    assert (tool_path / tool_name).is_file()
     artifact_cache._redirect_artifacts_tool_path(organization)
     assert pipeline.get.call_count == 2
     assert credential.call_count == 1
@@ -215,6 +216,42 @@ def test_rejected_archive_does_not_install_tool(artifact_cache, tool_request, tm
     assert not staging.exists()
     assert not (tmp_path / "outside").exists()
     assert _OVERRIDE not in os.environ
+    assert artifact_cache._artifacts_tool_path is None
+
+
+@pytest.mark.parametrize("layout", ["empty", "unrelated", "nested", "directory"])
+@pytest.mark.parametrize("existing_override", [None, "pre-existing-tool"])
+def test_archive_without_executable_does_not_install_tool(
+    artifact_cache, tool_request, tmp_path, mocker, monkeypatch, layout, existing_override
+):
+    _, pipeline = tool_request
+    tool_name = "artifacttool.exe" if os.name == "nt" else "artifacttool"
+    members = {
+        "empty": [],
+        "unrelated": ["readme.txt"],
+        "nested": [f"bin/{tool_name}"],
+        "directory": [f"{tool_name}/"],
+    }[layout]
+    archive = BytesIO()
+    with ZipFile(archive, "w") as zip_file:
+        for member in members:
+            zip_file.writestr(member, "test tool; never executed")
+    pipeline.get.side_effect = [
+        SimpleNamespace(status_code=200, json=lambda: {"uri": "https://downloads.example.test/tool.zip"}),
+        SimpleNamespace(status_code=200, content=archive.getvalue()),
+    ]
+    staging = tmp_path / "tool"
+    staging.mkdir()
+    mocker.patch(f"{_MODULE}.tempfile.mkdtemp", return_value=str(staging))
+    if existing_override is not None:
+        monkeypatch.setenv(_OVERRIDE, existing_override)
+
+    with pytest.raises(RuntimeError, match="archive does not contain"):
+        artifact_cache._redirect_artifacts_tool_path(_PARAMETERS["organization"])
+
+    assert pipeline.get.call_count == 2
+    assert not staging.exists()
+    assert os.environ.get(_OVERRIDE) == existing_override
     assert artifact_cache._artifacts_tool_path is None
 
 

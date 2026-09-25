@@ -270,6 +270,9 @@ class ArtifactCache:
             try:
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     self._safe_extractall(zip_file, artifacts_tool_path)
+                tool_name = "artifacttool.exe" if os_name == "Windows" else "artifacttool"
+                if not (artifacts_tool_path / tool_name).is_file():
+                    raise RuntimeError(f"Artifact tool archive does not contain {tool_name}.")
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
                 self._artifacts_tool_path = artifacts_tool_path
                 installed = True
