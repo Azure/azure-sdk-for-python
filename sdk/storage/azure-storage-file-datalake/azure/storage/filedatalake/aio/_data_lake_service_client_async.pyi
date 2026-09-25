@@ -17,7 +17,7 @@ from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
-from azure.storage.filedatalake._shared.session import SessionProvider
+from azure.storage.filedatalake._shared.session_async import AsyncSessionProvider
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -55,8 +55,8 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
-        use_session: Optional[bool] = None,
-        session_provider: Optional[SessionProvider] = None,
+        use_session: bool = False,
+        session_provider: Optional[AsyncSessionProvider] = None,
         session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...

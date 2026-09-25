@@ -71,12 +71,12 @@ class DataLakeDirectoryClient(PathClient):
         When enabled, eligible GET requests issued by this client will be authenticated using
         a short-lived session credential obtained from the service instead
         of the provided AsyncTokenCredential. Only supported with an AsyncTokenCredential;
-        ValueError is raised otherwise. Defaults to False.
+        TypeError is raised otherwise. Defaults to False.
     :keyword session_provider: Creates, caches, and invalidates the session credentials used for
         session-based authentication. Supply a shared instance to reuse the session cache across
         multiple clients; when omitted, one is created and scoped to this client. Only has an
         effect when `use_session` is True.
-    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :paramtype session_provider: ~azure.storage.filedatalake.aio.AsyncSessionProvider
     :keyword str session_account_name: The storage account name used to sign session-authenticated
         requests. If omitted, it is derived from the account URL. Required when using a custom
         endpoint, where the account name cannot be determined from the URL.

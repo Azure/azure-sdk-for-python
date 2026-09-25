@@ -33,6 +33,8 @@ from azure.storage.filedatalake import (
     ResourceTypes,
 )
 from azure.storage.filedatalake._models import FileSasPermissions
+from test_helpers import CaptureAuthHeader, _find_session_policy
+from azure.storage.filedatalake import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = "filesystem"
@@ -1312,6 +1314,150 @@ class TestFileSystem(StorageRecordedTestCase):
         content = file_client.download_file().readall()
         assert content == data
 
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_session(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        credential = self.get_credential(DataLakeServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+
+        with DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=credential,
+            use_session=True,
+            api_version="2026-10-06",
+        ) as service:
+            policy = _find_session_policy(service._pipeline)
+            cache = policy._session_provider._cache._entry
+
+            fs1_name = self.get_resource_name("utfs1")
+            fs1 = service.get_file_system_client(fs1_name)
+            try:
+                fs1.create_file_system()
+            except ResourceExistsError:
+                pass
+
+            data1 = b"abc123"
+            file1 = fs1.get_file_client("file1")
+            file1.upload_data(data1, overwrite=True, raw_response_hook=capture_auth_header.hook("f1_upload"))
+            assert capture_auth_header["f1_upload"].startswith("Bearer ")
+
+            actual1 = file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download")).readall()
+            assert data1 == actual1
+            assert capture_auth_header["f1_download"].startswith("Session ")
+            session1 = cache[fs1_name]
+            # Recorded expiration is stale so pin it forward to exercise caching
+            session1.expires_at = datetime.now(session1.expires_at.tzinfo) + timedelta(hours=1)
+
+            fs2_name = self.get_resource_name("utfs2")
+            fs2 = service.get_file_system_client(fs2_name)
+            try:
+                fs2.create_file_system()
+            except ResourceExistsError:
+                pass
+
+            data2 = b"def456"
+            file2 = fs2.get_file_client("file2")
+            file2.upload_data(data2, overwrite=True)
+
+            actual2 = file2.download_file(raw_response_hook=capture_auth_header.hook("f2_download")).readall()
+            assert data2 == actual2
+            assert capture_auth_header["f2_download"].startswith("Session ")
+            session2 = cache[fs2_name]
+            session2.expires_at = datetime.now(session2.expires_at.tzinfo) + timedelta(hours=1)
+
+            assert session1 is not session2
+            file1 = fs1.get_file_client("file1")
+            file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download2")).readall()
+            assert capture_auth_header["f1_download2"].startswith("Session ")
+            assert cache[fs1_name] is session1
+
+            session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
+            file1.download_file(raw_response_hook=capture_auth_header.hook("f1_download3")).readall()
+            assert capture_auth_header["f1_download3"].startswith("Session ")
+            assert cache[fs1_name] is not session1
+            assert cache[fs1_name] is not session2
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_sessions_disabled(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        credential = self.get_credential(DataLakeServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+
+        with DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=credential,
+            use_session=False,
+            api_version="2026-10-06",
+        ) as service:
+            fs = service.get_file_system_client(self.get_resource_name("utfs"))
+            try:
+                fs.create_file_system()
+            except ResourceExistsError:
+                pass
+
+            data = b"abc123"
+            file_client = fs.get_file_client("file1")
+            file_client.upload_data(data, overwrite=True)
+
+            actual = file_client.download_file(raw_response_hook=capture_auth_header.hook("download")).readall()
+            assert data == actual
+            assert capture_auth_header["download"].startswith("Bearer ")
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_session_with_session_provider(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        credential = self.get_credential(DataLakeServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+        dfs_url = self.account_url(datalake_storage_account_name, "dfs")
+        blob_url = self.account_url(datalake_storage_account_name, "blob")
+
+        session_provider = ContainerSessionProvider(blob_url, credential, api_version="2026-10-06")
+        cache = session_provider._cache._entry
+
+        with (
+            DataLakeServiceClient(
+                dfs_url, credential=credential, use_session=True,
+                session_provider=session_provider, api_version="2026-10-06",
+            ) as service1,
+            DataLakeServiceClient(
+                dfs_url, credential=credential, use_session=True,
+                session_provider=session_provider, api_version="2026-10-06",
+            ) as service2,
+        ):
+            assert _find_session_policy(service1._pipeline)._session_provider is session_provider
+            assert _find_session_policy(service2._pipeline)._session_provider is session_provider
+
+            fs_name = self.get_resource_name("utfs")
+            fs1 = service1.get_file_system_client(fs_name)
+            try:
+                fs1.create_file_system()
+            except ResourceExistsError:
+                pass
+
+            data = b"abc123"
+            fs1.get_file_client("file1").upload_data(data, overwrite=True)
+
+            actual = fs1.get_file_client("file1").download_file(
+                raw_response_hook=capture_auth_header.hook("f1_download")
+            ).readall()
+            assert data == actual
+            assert capture_auth_header["f1_download"].startswith("Session ")
+            session = cache[fs_name]
+            session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
+
+            actual = service2.get_file_system_client(fs_name).get_file_client("file1").download_file(
+                raw_response_hook=capture_auth_header.hook("f2_download")
+            ).readall()
+            assert data == actual
+            assert capture_auth_header["f2_download"].startswith("Session ")
+            assert cache[fs_name] is session
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":

@@ -346,7 +346,7 @@ class StorageAccountHostsMixin(object):
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = transport
                 session_provider = ContainerSessionProvider(
-                    f"{self.scheme}://{self.primary_hostname}",
+                    f"{self.scheme}://{self.primary_hostname}".replace(".dfs.", ".blob.", 1),
                     cast(TokenCredential, credential),
                     audience=audience,
                     **sub_kwargs,

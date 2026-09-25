@@ -42,7 +42,6 @@ if TYPE_CHECKING:
         PipelineResponse,
     )
 
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -364,7 +363,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         :keyword str account_name: Storage account name; used as the signer
             identity when signing session-authenticated requests.
         :keyword session_provider: Creates, caches, and invalidates per-container sessions.
-        :paramtype session_provider: ~azure.storage.blob._shared.session_async.AsyncSessionProvider
+        :paramtype session_provider: ~azure.storage.filedatalake._shared.session_async.AsyncSessionProvider
         :raises ValueError: if `account_name` is `None`.
         """
         if account_name is None:
@@ -392,7 +391,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
 
         :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
         :return: The session that was applied, else None.
-        :rtype: ~azure.storage.blob._shared.session.Session or None
+        :rtype: ~azure.storage.filedatalake._shared.session.Session or None
         """
         session = await self._session_provider.get_session(request)
         if session is None or not session.session_token or not session.session_key:
@@ -414,7 +413,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: The original request.
         :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
         :param session: The session that signed the request, or `None` if bearer was used.
-        :type session: ~azure.storage.blob._shared.session.Session or None
+        :type session: ~azure.storage.filedatalake._shared.session.Session or None
         :return: The final response.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """

@@ -75,7 +75,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         When enabled, eligible GET requests issued by this client will be authenticated using
         a short-lived session credential obtained from the service instead
         of the provided TokenCredential. Only supported with a TokenCredential;
-        ValueError is raised otherwise. Defaults to False.
+        TypeError is raised otherwise. Defaults to False.
     :keyword session_provider: Creates, caches, and invalidates the session credentials used for
         session-based authentication. Supply a shared instance to reuse the session cache across
         multiple clients; when omitted, one is created and scoped to this client. Only has an
