@@ -55,11 +55,11 @@ class ConnectionPropertiesV2(_Model):  # pylint: disable=docstring-keyword-shoul
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -117,10 +117,10 @@ class ConnectionPropertiesV2(_Model):  # pylint: disable=docstring-keyword-shoul
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -206,11 +206,11 @@ class AADAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -339,11 +339,11 @@ class AccessKeyAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -550,11 +550,11 @@ class AccountKeyAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -1160,6 +1160,182 @@ class AccountSkuListResult(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
+class AdapterDeployment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An independently managed LoRA adapter attached to a managed compute deployment.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the Cognitive Services adapter deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AdapterDeploymentProperties
+    :ivar etag: The concurrency token for this adapter deployment.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.AdapterDeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Cognitive Services adapter deployment."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The concurrency token for this adapter deployment."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AdapterDeploymentProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdapterDeploymentLastOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The most recently requested adapter lifecycle operation.
+
+    :ivar type: The type of lifecycle operation. Required. Known values are: "Create", "Update",
+     and "Delete".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationType
+    :ivar status: The current or terminal operation state. Required. Known values are: "Accepted",
+     "Running", "Succeeded", and "Failed".
+    :vartype status: str or ~azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationState
+    :ivar requested_target_deployment_name: The target deployment requested by a create or
+     re-target operation.
+    :vartype requested_target_deployment_name: str
+    :ivar started_at: The time at which the operation started. Required.
+    :vartype started_at: ~datetime.datetime
+    :ivar completed_at: The time at which the operation reached a terminal state.
+    :vartype completed_at: ~datetime.datetime
+    """
+
+    type: Union[str, "_models.AdapterDeploymentOperationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of lifecycle operation. Required. Known values are: \"Create\", \"Update\", and
+     \"Delete\"."""
+    status: Union[str, "_models.AdapterDeploymentOperationState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current or terminal operation state. Required. Known values are: \"Accepted\", \"Running\",
+     \"Succeeded\", and \"Failed\"."""
+    requested_target_deployment_name: Optional[str] = rest_field(
+        name="requestedTargetDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target deployment requested by a create or re-target operation."""
+    started_at: datetime.datetime = rest_field(
+        name="startedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the operation started. Required."""
+    completed_at: Optional[datetime.datetime] = rest_field(
+        name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time at which the operation reached a terminal state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AdapterDeploymentOperationType"],
+        status: Union[str, "_models.AdapterDeploymentOperationState"],
+        started_at: datetime.datetime,
+        requested_target_deployment_name: Optional[str] = None,
+        completed_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdapterDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an adapter deployment.
+
+    :ivar source_model_id: The immutable Project Models version produced by Foundry fine-tuning.
+     The identifier uses the Azure AI project model URI format. The service validates LoRA weight
+     type, protected status, provenance, compatibility metadata, and registration state. Required.
+    :vartype source_model_id: str
+    :ivar target_deployment_name: The name of the compatible managed compute parent deployment. The
+     service resolves this name within the adapter's owning account; full ARM resource IDs and
+     cross-account references are not accepted. It cannot equal the adapter deployment's resource
+     name. Updating this value re-targets the adapter while its source model remains unchanged.
+     Required.
+    :vartype target_deployment_name: str
+    :ivar active_target_deployment_name: The managed compute deployment currently serving the
+     adapter. During re-targeting this remains the prior deployment until atomic cutover.
+    :vartype active_target_deployment_name: str
+    :ivar provisioning_state: The provisioning state of the adapter deployment. Known values are:
+     "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled",
+     "ResolvingDNS", and "ExtensionUnreachable".
+    :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar last_operation: Information about the most recently requested lifecycle operation.
+    :vartype last_operation: ~azure.mgmt.cognitiveservices.models.AdapterDeploymentLastOperation
+    """
+
+    source_model_id: str = rest_field(name="sourceModelId", visibility=["read", "create", "update", "delete", "query"])
+    """The immutable Project Models version produced by Foundry fine-tuning. The identifier uses the
+     Azure AI project model URI format. The service validates LoRA weight type, protected status,
+     provenance, compatibility metadata, and registration state. Required."""
+    target_deployment_name: str = rest_field(
+        name="targetDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the compatible managed compute parent deployment. The service resolves this name
+     within the adapter's owning account; full ARM resource IDs and cross-account references are not
+     accepted. It cannot equal the adapter deployment's resource name. Updating this value
+     re-targets the adapter while its source model remains unchanged. Required."""
+    active_target_deployment_name: Optional[str] = rest_field(name="activeTargetDeploymentName", visibility=["read"])
+    """The managed compute deployment currently serving the adapter. During re-targeting this remains
+     the prior deployment until atomic cutover."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the adapter deployment. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
+     \"ExtensionUnreachable\"."""
+    last_operation: Optional["_models.AdapterDeploymentLastOperation"] = rest_field(
+        name="lastOperation", visibility=["read"]
+    )
+    """Information about the most recently requested lifecycle operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_model_id: str,
+        target_deployment_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AgentApplication(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent Application resource.
 
@@ -1687,11 +1863,11 @@ class ApiKeyAuthConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -4491,11 +4667,11 @@ class CustomKeysConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5678,6 +5854,36 @@ class FqdnOutboundRule(
         self.type = RuleType.FQDN  # type: ignore
 
 
+class GatedModelAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Gated model access configuration for a managed compute deployment.
+
+    :ivar connection_id: The fully qualified Azure resource ID of the project connection used to
+     authorize access to a gated model during deployment creation. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified Azure resource ID of the project connection used to authorize access to a
+     gated model during deployment creation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class HostedAgentDeployment(
     AgentDeploymentProperties, discriminator="Hosted"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -6210,6 +6416,9 @@ class ManagedComputeDeploymentProperties(_Model):  # pylint: disable=docstring-k
      "OnceCurrentVersionExpired", and "NoAutoUpgrade".
     :vartype version_upgrade_option: str or
      ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar gated_model_access: Configuration used to authorize access to a gated model during
+     deployment creation.
+    :vartype gated_model_access: ~azure.mgmt.cognitiveservices.models.GatedModelAccessProperties
     :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
      assetsV2: "true" }.
     :vartype capabilities: dict[str, str]
@@ -6253,6 +6462,10 @@ class ManagedComputeDeploymentProperties(_Model):  # pylint: disable=docstring-k
     )
     """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
      \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    gated_model_access: Optional["_models.GatedModelAccessProperties"] = rest_field(
+        name="gatedModelAccess", visibility=["read", "create"]
+    )
+    """Configuration used to authorize access to a gated model during deployment creation."""
     capabilities: Optional[dict[str, str]] = rest_field(visibility=["read"])
     """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
     compute_id: Optional[str] = rest_field(name="computeId", visibility=["read", "create"])
@@ -6287,6 +6500,7 @@ class ManagedComputeDeploymentProperties(_Model):  # pylint: disable=docstring-k
         deployment_template: Optional[str] = None,
         accelerator_type: Optional[str] = None,
         version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
+        gated_model_access: Optional["_models.GatedModelAccessProperties"] = None,
         compute_id: Optional[str] = None,
         priority: Optional[str] = None,
     ) -> None: ...
@@ -6470,11 +6684,11 @@ class ManagedIdentityAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -7740,11 +7954,11 @@ class NoneAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -7829,11 +8043,11 @@ class OAuth2AuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -8086,11 +8300,11 @@ class PATAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -9340,6 +9554,542 @@ class QuotaTierUpgradeEligibilityInfo(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
+class RaiAcsEmptyObject(_Model):
+    """An object that must contain no properties."""
+
+
+class RaiAcsHarmConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Selects one AACS harm-detector configuration.
+
+    :ivar category: The logical harm category exposed under input.snapshot.moderation.harm.
+     Required. Known values are: "Hate", "SelfHarm", "Sexual", "Violence", "PromptInjection",
+     "ProtectedMaterialText", and "ProtectedMaterialCode".
+    :vartype category: str or ~azure.mgmt.cognitiveservices.models.RaiAcsHarmCategory
+    :ivar harm_config_id: The AACS detector configuration identifier. When supplied, it must be the
+     configuration supported for the selected category.
+    :vartype harm_config_id: str
+    """
+
+    category: Union[str, "_models.RaiAcsHarmCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The logical harm category exposed under input.snapshot.moderation.harm. Required. Known values
+     are: \"Hate\", \"SelfHarm\", \"Sexual\", \"Violence\", \"PromptInjection\",
+     \"ProtectedMaterialText\", and \"ProtectedMaterialCode\"."""
+    harm_config_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The AACS detector configuration identifier. When supplied, it must be the configuration
+     supported for the selected category."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.RaiAcsHarmCategory"],
+        harm_config_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Binds one logical policy to an ACS intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Standard ACS annotation bindings are disabled; when present, this object
+     must be empty.
+    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    """
+
+    policy_target: Union[str, "_models.RaiAcsPolicyTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard ACS annotation bindings are disabled; when present, this object must be empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
+        policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsInterventionPoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Intervention points supported by the Unified Moderate AACS host profile.
+
+    :ivar input: The policy evaluated for user input.
+    :vartype input: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    :ivar pre_tool_call: The policy evaluated before a tool call.
+    :vartype pre_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
+    :ivar post_tool_call: The policy evaluated after a tool call.
+    :vartype post_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
+    :ivar output: The policy evaluated for final output.
+    :vartype output: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    """
+
+    input: Optional["_models.RaiAcsInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated for user input."""
+    pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated before a tool call."""
+    post_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated after a tool call."""
+    output: Optional["_models.RaiAcsInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated for final output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: Optional["_models.RaiAcsInterventionPoint"] = None,
+        pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
+        post_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
+        output: Optional["_models.RaiAcsInterventionPoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsManifest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The closed Rego-only Agent Control Specification profile supported by Unified Moderate.
+
+    :ivar agent_control_specification_version: The declared Agent Control Specification manifest
+     version. Required.
+    :vartype agent_control_specification_version: str
+    :ivar metadata: Non-policy manifest metadata.
+    :vartype metadata: dict[str, any]
+    :ivar policies: Named Rego policies in this manifest. Required.
+    :vartype policies: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsRegoPolicyDefinition]
+    :ivar intervention_points: ACS intervention-point bindings. At least one intervention point is
+     required. Required.
+    :vartype intervention_points: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoints
+    :ivar tools: Static tool catalog keyed by canonical tool name. The catalog may be omitted or
+     empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
+     unknown selected key fails closed.
+    :vartype tools: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsToolDefinition]
+    :ivar annotators: Standard ACS annotator dispatch is disabled; when present, this object must
+     be empty.
+    :vartype annotators: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    """
+
+    agent_control_specification_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The declared Agent Control Specification manifest version. Required."""
+    metadata: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Non-policy manifest metadata."""
+    policies: dict[str, "_models.RaiAcsRegoPolicyDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Named Rego policies in this manifest. Required."""
+    intervention_points: "_models.RaiAcsInterventionPoints" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ACS intervention-point bindings. At least one intervention point is required. Required."""
+    tools: Optional[dict[str, "_models.RaiAcsToolDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
+     tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
+     selected key fails closed."""
+    annotators: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard ACS annotator dispatch is disabled; when present, this object must be empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_control_specification_version: str,
+        policies: dict[str, "_models.RaiAcsRegoPolicyDefinition"],
+        intervention_points: "_models.RaiAcsInterventionPoints",
+        metadata: Optional[dict[str, Any]] = None,
+        tools: Optional[dict[str, "_models.RaiAcsToolDefinition"]] = None,
+        annotators: Optional["_models.RaiAcsEmptyObject"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsModerationBindingExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AACS-specific moderation work performed before ACS evaluates the selected Rego query.
+
+    :ivar subject_format: How the selected policy target is represented to moderation capabilities.
+     Required. Known values are: "text" and "canonical_json".
+    :vartype subject_format: str or
+     ~azure.mgmt.cognitiveservices.models.RaiAcsModerationSubjectFormat
+    :ivar harm_configs: Harm signals requested for this intervention point. Required.
+    :vartype harm_configs: list[~azure.mgmt.cognitiveservices.models.RaiAcsHarmConfiguration]
+    """
+
+    subject_format: Union[str, "_models.RaiAcsModerationSubjectFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the selected policy target is represented to moderation capabilities. Required. Known
+     values are: \"text\" and \"canonical_json\"."""
+    harm_configs: list["_models.RaiAcsHarmConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Harm signals requested for this intervention point. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subject_format: Union[str, "_models.RaiAcsModerationSubjectFormat"],
+        harm_configs: list["_models.RaiAcsHarmConfiguration"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsPolicyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identifies the logical policy evaluated at an ACS intervention point.
+
+    :ivar id: The logical policy identifier. Required.
+    :vartype id: str
+    :ivar query: An optional intervention-specific Rego query override.
+    :vartype query: str
+    :ivar aacs_moderation: Optional AACS moderation capabilities invoked before Rego evaluation.
+    :vartype aacs_moderation: ~azure.mgmt.cognitiveservices.models.RaiAcsModerationBindingExtension
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy identifier. Required."""
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional intervention-specific Rego query override."""
+    aacs_moderation: Optional["_models.RaiAcsModerationBindingExtension"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional AACS moderation capabilities invoked before Rego evaluation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        query: Optional[str] = None,
+        aacs_moderation: Optional["_models.RaiAcsModerationBindingExtension"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsRegoPolicyDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Rego policy definition in the Unified Moderate AACS host profile.
+
+    :ivar type: The policy language. This profile supports only Rego. Required. "rego"
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyDefinitionType
+    :ivar query: The fully qualified Rego query evaluated for this policy. Required.
+    :vartype query: str
+    """
+
+    type: Union[str, "_models.RaiAcsPolicyDefinitionType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy language. This profile supports only Rego. Required. \"rego\""""
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified Rego query evaluated for this policy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.RaiAcsPolicyDefinitionType"],
+        query: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsToolDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Static policy metadata for one ACS tool catalog entry.
+
+    :ivar id: Optional host-defined tool identifier. The catalog map key, not this value, controls
+     tool lookup.
+    :vartype id: str
+    :ivar type: Optional host-defined tool type.
+    :vartype type: str
+    :ivar description: Human-readable policy metadata.
+    :vartype description: str
+    :ivar security_labels: Labels describing the sink or capability.
+    :vartype security_labels: list[str]
+    :ivar clearance: Maximum sensitivity or host-defined clearance metadata.
+    :vartype clearance: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional host-defined tool identifier. The catalog map key, not this value, controls tool
+     lookup."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional host-defined tool type."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable policy metadata."""
+    security_labels: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Labels describing the sink or capability."""
+    clearance: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum sensitivity or host-defined clearance metadata."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        security_labels: Optional[list[str]] = None,
+        clearance: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsToolInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Binds one logical policy to a tool-call intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Standard ACS annotation bindings are disabled; when present, this object
+     must be empty.
+    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
+     extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
+    :vartype tool_name_from: str or ~azure.mgmt.cognitiveservices.models.RaiAcsToolNameSelector
+    """
+
+    policy_target: Union[str, "_models.RaiAcsPolicyTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Standard ACS annotation bindings are disabled; when present, this object must be empty."""
+    tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selects the tool catalog key from the raw Agent Hooks snapshot using an extensible snapshot
+     path. Known values are: \"$snap.tool_call.name\" and \"$.tool_call.name\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
+        policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+        tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An account-scoped binding from an Azure resource to an ACS policy.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the RAI binding.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiBindingProperties
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.RaiBindingProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the RAI binding."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource ETag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RaiBindingProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a binding from an Azure resource to an ACS policy.
+
+    :ivar bound_resource_id: A valid ARM resource ID of the resource to bind to the target RAI
+     policy. Required.
+    :vartype bound_resource_id: str
+    :ivar target_policy_name: The same-account ACS policy name targeted by the binding. Required.
+    :vartype target_policy_name: str
+    """
+
+    bound_resource_id: str = rest_field(name="boundResourceId", visibility=["read", "create", "update"])
+    """A valid ARM resource ID of the resource to bind to the target RAI policy. Required."""
+    target_policy_name: str = rest_field(
+        name="targetPolicyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The same-account ACS policy name targeted by the binding. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bound_resource_id: str,
+        target_policy_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RaiBlocklist(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cognitive Services RaiBlocklist.
 
@@ -10332,9 +11082,71 @@ class RaiPolicyContentFilter(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
+class RaiPolicyCustomExternalSafetyProviderReference(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A customer-visible reference to a subscription-level external safety provider.
+
+    :ivar external_safety_provider_name: The registered external safety-provider name. Required.
+    :vartype external_safety_provider_name: str
+    :ivar managed_identity_resource_id: Optional managed identity used when invoking the external
+     safety provider.
+    :vartype managed_identity_resource_id: str
+    :ivar source: The request stage at which the provider runs. Required. Known values are:
+     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+    :ivar blocking: Whether a provider rejection blocks the request.
+    :vartype blocking: bool
+    """
+
+    external_safety_provider_name: str = rest_field(
+        name="externalSafetyProviderName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The registered external safety-provider name. Required."""
+    managed_identity_resource_id: Optional[str] = rest_field(
+        name="managedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional managed identity used when invoking the external safety provider."""
+    source: Union[str, "_models.RaiPolicyContentSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
+     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+    blocking: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether a provider rejection blocks the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        external_safety_provider_name: str,
+        source: Union[str, "_models.RaiPolicyContentSource"],
+        managed_identity_resource_id: Optional[str] = None,
+        blocking: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RaiPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure OpenAI Content Filters properties.
 
+    :ivar format: The policy representation. Omission selects ContentFilters when creating a
+     policy. ACS policy creation and replacement require ACS. Known values are: "ContentFilters" and
+     "ACS".
+    :vartype format: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyFormat
+    :ivar acs: The ACS manifest. Required by service validation when format is ACS.
+    :vartype acs: ~azure.mgmt.cognitiveservices.models.RaiAcsManifest
+    :ivar acs_regos: Reusable same-account Rego resources loaded with the ACS manifest.
+    :vartype acs_regos: list[~azure.mgmt.cognitiveservices.models.RaiRegoReference]
     :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
     :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyType
     :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
@@ -10350,11 +11162,24 @@ class RaiPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
     :ivar safety_providers: The list of Safety Providers.
     :vartype safety_providers: list[~azure.mgmt.cognitiveservices.models.SafetyProviderConfig]
+    :ivar custom_external_safety_providers: Optional external safety-provider references used by
+     this policy.
+    :vartype custom_external_safety_providers:
+     list[~azure.mgmt.cognitiveservices.models.RaiPolicyCustomExternalSafetyProviderReference]
     :ivar egress_policy: Egress (outbound network) policy controlling which external endpoints
      sandboxed agents can reach. Includes rules with Allow/Deny/Transform/Rewrite actions.
     :vartype egress_policy: ~azure.mgmt.cognitiveservices.models.RaiEgressPolicyConfig
     """
 
+    format: Optional[Union[str, "_models.RaiPolicyFormat"]] = rest_field(visibility=["read", "create", "update"])
+    """The policy representation. Omission selects ContentFilters when creating a policy. ACS policy
+     creation and replacement require ACS. Known values are: \"ContentFilters\" and \"ACS\"."""
+    acs: Optional["_models.RaiAcsManifest"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ACS manifest. Required by service validation when format is ACS."""
+    acs_regos: Optional[list["_models.RaiRegoReference"]] = rest_field(
+        name="acsRegos", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reusable same-account Rego resources loaded with the ACS manifest."""
     type: Optional[Union[str, "_models.RaiPolicyType"]] = rest_field(visibility=["read"])
     """Content Filters policy type. Known values are: \"UserManaged\" and \"SystemManaged\"."""
     mode: Optional[Union[str, "_models.RaiPolicyMode"]] = rest_field(
@@ -10380,6 +11205,10 @@ class RaiPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         name="safetyProviders", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Safety Providers."""
+    custom_external_safety_providers: Optional[list["_models.RaiPolicyCustomExternalSafetyProviderReference"]] = (
+        rest_field(name="customExternalSafetyProviders", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Optional external safety-provider references used by this policy."""
     egress_policy: Optional["_models.RaiEgressPolicyConfig"] = rest_field(
         name="egressPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10390,12 +11219,133 @@ class RaiPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     def __init__(
         self,
         *,
+        format: Optional[Union[str, "_models.RaiPolicyFormat"]] = None,
+        acs: Optional["_models.RaiAcsManifest"] = None,
+        acs_regos: Optional[list["_models.RaiRegoReference"]] = None,
         mode: Optional[Union[str, "_models.RaiPolicyMode"]] = None,
         base_policy_name: Optional[str] = None,
         content_filters: Optional[list["_models.RaiPolicyContentFilter"]] = None,
         custom_blocklists: Optional[list["_models.CustomBlocklistConfig"]] = None,
         safety_providers: Optional[list["_models.SafetyProviderConfig"]] = None,
+        custom_external_safety_providers: Optional[
+            list["_models.RaiPolicyCustomExternalSafetyProviderReference"]
+        ] = None,
         egress_policy: Optional["_models.RaiEgressPolicyConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiRego(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An account-scoped reusable Rego artifact.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the reusable Rego artifact.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiRegoProperties
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.RaiRegoProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the reusable Rego artifact."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource ETag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.RaiRegoProperties"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiRegoProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an account-scoped reusable Rego resource.
+
+    :ivar encoding: How the Rego source is encoded on the wire. The default is None. Known values
+     are: "None" and "Base64".
+    :vartype encoding: str or ~azure.mgmt.cognitiveservices.models.RaiRegoEncoding
+    :ivar rego: Rego source in the selected transport encoding. Required.
+    :vartype rego: str
+    """
+
+    encoding: Optional[Union[str, "_models.RaiRegoEncoding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the Rego source is encoded on the wire. The default is None. Known values are: \"None\" and
+     \"Base64\"."""
+    rego: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rego source in the selected transport encoding. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rego: str,
+        encoding: Optional[Union[str, "_models.RaiRegoEncoding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiRegoReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """References one reusable Rego resource on the same account.
+
+    :ivar rego_name: The same-account Rego resource name. Required.
+    :vartype rego_name: str
+    """
+
+    rego_name: str = rest_field(name="regoName", visibility=["read", "create", "update", "delete", "query"])
+    """The same-account Rego resource name. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rego_name: str,
     ) -> None: ...
 
     @overload
@@ -11110,11 +12060,11 @@ class SASAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -11205,11 +12155,11 @@ class ServicePrincipalAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -11863,6 +12813,12 @@ class TrafficRoutingRule(_Model):  # pylint: disable=docstring-keyword-should-ma
 class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The usage data for a usage request.
 
+    :ivar id: Fully qualified resource ID for the usage. Ex -
+     /subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/usages/{usageName}.
+    :vartype id: str
+    :ivar type: The type of the usage resource. E.g.
+     "Microsoft.CognitiveServices/locations/usages".
+    :vartype type: str
     :ivar unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds", "Percent",
      "CountPerSecond", "BytesPerSecond", and "Milliseconds".
     :vartype unit: str or ~azure.mgmt.cognitiveservices.models.UnitType
@@ -11886,6 +12842,11 @@ class Usage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-o
     :vartype scope_id: str
     """
 
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the usage. Ex -
+     /subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/usages/{usageName}."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the usage resource. E.g. \"Microsoft.CognitiveServices/locations/usages\"."""
     unit: Optional[Union[str, "_models.UnitType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12012,11 +12973,11 @@ class UsernamePasswordAuthTypeConnectionProperties(
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
