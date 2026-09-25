@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-12-01/AFDProfiles_ListResourceUsage.json
+# x-ms-original-file: 2026-07-01/AFDProfiles_ListResourceUsage.json
 if __name__ == "__main__":
     main()
