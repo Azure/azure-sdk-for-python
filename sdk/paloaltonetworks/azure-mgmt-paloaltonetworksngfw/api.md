@@ -12,6 +12,7 @@ namespace azure.mgmt.paloaltonetworksngfw
         global_rulestack: GlobalRulestackOperations
         local_rules: LocalRulesOperations
         local_rulestacks: LocalRulestacksOperations
+        log_ingestion_settings_resources: LogIngestionSettingsResourcesOperations
         metrics_object_firewall: MetricsObjectFirewallOperations
         operations: Operations
         palo_alto_networks_cloudngfw_operations: PaloAltoNetworksCloudngfwOperationsOperations
@@ -56,6 +57,7 @@ namespace azure.mgmt.paloaltonetworksngfw.aio
         global_rulestack: GlobalRulestackOperations
         local_rules: LocalRulesOperations
         local_rulestacks: LocalRulestacksOperations
+        log_ingestion_settings_resources: LogIngestionSettingsResourcesOperations
         metrics_object_firewall: MetricsObjectFirewallOperations
         operations: Operations
         palo_alto_networks_cloudngfw_operations: PaloAltoNetworksCloudngfwOperationsOperations
@@ -267,7 +269,7 @@ namespace azure.mgmt.paloaltonetworksngfw.aio.operations
             ) -> CustomCaptureConfigurationsFirewallResource: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -276,7 +278,7 @@ namespace azure.mgmt.paloaltonetworksngfw.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -285,7 +287,7 @@ namespace azure.mgmt.paloaltonetworksngfw.aio.operations
             ) -> CustomCaptureConfigurationsFirewallResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         def list_by_firewall(
                 self, 
                 resource_group_name: str, 
@@ -1087,6 +1089,75 @@ namespace azure.mgmt.paloaltonetworksngfw.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LocalRulestackResource: ...
+
+
+    class azure.mgmt.paloaltonetworksngfw.aio.operations.LogIngestionSettingsResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: LogIngestionSettingsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: LogIngestionSettingsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-07-29-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-07-29-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-07-29-preview'])
+        def list_by_firewall(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[LogIngestionSettingsResource]: ...
 
 
     class azure.mgmt.paloaltonetworksngfw.aio.operations.MetricsObjectFirewallOperations:
@@ -2590,6 +2661,68 @@ namespace azure.mgmt.paloaltonetworksngfw.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.paloaltonetworksngfw.models.LogDestinationV2(_Model):
+        event_hub_configurations: Optional[EventHub]
+        monitor_configurations_v2: Optional[MonitorLogV2]
+        storage_configurations: Optional[StorageAccount]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_hub_configurations: Optional[EventHub] = ..., 
+                monitor_configurations_v2: Optional[MonitorLogV2] = ..., 
+                storage_configurations: Optional[StorageAccount] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsProperties(_Model):
+        application_insights: Optional[ApplicationInsights]
+        common_destination: Optional[LogDestinationV2]
+        decrypt_log_destination: Optional[LogDestinationV2]
+        log_option: Optional[Union[str, LogOption]]
+        log_type: Optional[Union[str, LogType]]
+        threat_log_destination: Optional[LogDestinationV2]
+        traffic_log_destination: Optional[LogDestinationV2]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                application_insights: Optional[ApplicationInsights] = ..., 
+                common_destination: Optional[LogDestinationV2] = ..., 
+                decrypt_log_destination: Optional[LogDestinationV2] = ..., 
+                log_option: Optional[Union[str, LogOption]] = ..., 
+                log_type: Optional[Union[str, LogType]] = ..., 
+                threat_log_destination: Optional[LogDestinationV2] = ..., 
+                traffic_log_destination: Optional[LogDestinationV2] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource(ProxyResource):
+        id: str
+        name: str
+        properties: LogIngestionSettingsProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: LogIngestionSettingsProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.paloaltonetworksngfw.models.LogOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INDIVIDUAL_DESTINATION = "INDIVIDUAL_DESTINATION"
         SAME_DESTINATION = "SAME_DESTINATION"
@@ -2726,6 +2859,26 @@ namespace azure.mgmt.paloaltonetworksngfw.models
                 secondary_key: Optional[str] = ..., 
                 subscription_id: Optional[str] = ..., 
                 workspace: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.paloaltonetworksngfw.models.MonitorLogV2(_Model):
+        dcr_id: str
+        dcr_immutable_id: str
+        log_ingestion_endpoint: str
+        stream_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                dcr_id: str, 
+                dcr_immutable_id: str, 
+                log_ingestion_endpoint: str, 
+                stream_name: str
             ) -> None: ...
 
         @overload
@@ -3758,7 +3911,7 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
             ) -> CustomCaptureConfigurationsFirewallResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -3767,7 +3920,7 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3776,7 +3929,7 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
             ) -> CustomCaptureConfigurationsFirewallResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview'])
+        @api_version_validation(method_added_on='2026-05-11-preview', params_added_on={'2026-05-11-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-05-11-preview', '2026-07-29-preview'])
         def list_by_firewall(
                 self, 
                 resource_group_name: str, 
@@ -4580,6 +4733,75 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
             ) -> LocalRulestackResource: ...
 
 
+    class azure.mgmt.paloaltonetworksngfw.operations.LogIngestionSettingsResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: LogIngestionSettingsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: LogIngestionSettingsResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name']}, api_versions_list=['2026-07-29-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-07-29-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> LogIngestionSettingsResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-29-preview', params_added_on={'2026-07-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'firewall_name', 'accept']}, api_versions_list=['2026-07-29-preview'])
+        def list_by_firewall(
+                self, 
+                resource_group_name: str, 
+                firewall_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[LogIngestionSettingsResource]: ...
+
+
     class azure.mgmt.paloaltonetworksngfw.operations.MetricsObjectFirewallOperations:
 
         def __init__(
@@ -5007,44 +5229,6 @@ namespace azure.mgmt.paloaltonetworksngfw.operations
 
 namespace azure.mgmt.paloaltonetworksngfw.types
 
-    class azure.mgmt.paloaltonetworksngfw.types.AdvSecurityObjectListResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[AdvSecurityObjectModel]
-        next_link: str
-        value: AdvSecurityObjectModel
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AdvSecurityObjectModel(TypedDict, total=False):
-        key "entry": Required[list[NameDescriptionObject]]
-        key "type": str
-        entry: list[NameDescriptionObject]
-        type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AppSeenData(TypedDict, total=False):
-        key "appSeenList": Required[list[AppSeenInfo]]
-        key "count": Required[int]
-        app_seen_list: list[AppSeenInfo]
-        count: int
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.AppSeenInfo(TypedDict, total=False):
-        key "category": Required[str]
-        key "risk": Required[str]
-        key "standardPorts": Required[str]
-        key "subCategory": Required[str]
-        key "tag": Required[str]
-        key "technology": Required[str]
-        key "title": Required[str]
-        category: str
-        risk: str
-        standard_ports: str
-        sub_category: str
-        tag: str
-        technology: str
-        title: str
-
-
     class azure.mgmt.paloaltonetworksngfw.types.ApplicationInsights(TypedDict, total=False):
         key "id": str
         key "key": str
@@ -5056,25 +5240,24 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedIdentityType]
         userAssignedIdentities: dict[str, AzureResourceManagerUserAssignedIdentity]
-        user_assigned_identities: dict[str, AzureResourceManagerUserAssignedIdentity]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.AzureResourceManagerUserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.Category(TypedDict, total=False):
         key "feeds": Required[list[str]]
         key "urlCustom": Required[list[str]]
         feeds: list[str]
-        url_custom: list[str]
+        urlCustom: list[str]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.CertificateObject(TypedDict, total=False):
@@ -5084,12 +5267,12 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "description": str
         key "etag": str
         key "provisioningState": Union[str, ProvisioningState]
-        audit_comment: str
-        certificate_self_signed: Union[str, BooleanEnum]
-        certificate_signer_resource_id: str
+        auditComment: str
+        certificateSelfSigned: Union[str, BooleanEnum]
+        certificateSignerResourceId: str
         description: str
         etag: str
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.CertificateObjectGlobalRulestackResource(ProxyResource):
@@ -5101,7 +5284,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: CertificateObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5114,36 +5297,8 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: CertificateObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.Changelog(TypedDict, total=False):
-        key "changes": Required[list[str]]
-        key "lastCommitted": str
-        key "lastModified": str
-        changes: list[str]
-        last_committed: str
-        last_modified: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.CloudManagerTenantList(TypedDict, total=False):
-        key "value": Required[list[str]]
-        value: list[str]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.CountriesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[Country]]
-        next_link: str
-        value: list[Country]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.Country(TypedDict, total=False):
-        key "code": Required[str]
-        key "description": str
-        code: str
-        description: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.CustomCaptureConfigurationsFilter(TypedDict, total=False):
@@ -5152,11 +5307,11 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "protocol": Required[Union[str, CustomCaptureConfigurationsProtocol]]
         key "sourceIpAddress": Required[str]
         key "sourcePort": int
-        destination_ip_address: str
-        destination_port: int
+        destinationIpAddress: str
+        destinationPort: int
         protocol: Union[str, CustomCaptureConfigurationsProtocol]
-        source_ip_address: str
-        source_port: int
+        sourceIpAddress: str
+        sourcePort: int
 
 
     class azure.mgmt.paloaltonetworksngfw.types.CustomCaptureConfigurationsFirewallResource(ProxyResource):
@@ -5168,7 +5323,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: CustomCaptureConfigurationsProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5179,25 +5334,22 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "pcapDetailReason": str
         key "pcapStatus": Union[str, CustomCaptureConfigurationsStatus]
         key "storageAccountResourceId": str
-        duration_in_sec: int
+        durationInSec: int
         message: str
-        next_check_in_seconds: int
+        nextCheckInSeconds: int
+        pcapDetailReason: str
         pcapFilter: list[CustomCaptureConfigurationsFilter]
         pcapStages: list[Union[str, CustomCaptureConfigurationsStage]]
-        pcap_detail_reason: str
-        pcap_filter: list[CustomCaptureConfigurationsFilter]
-        pcap_stages: list[Union[str, CustomCaptureConfigurationsStage]]
-        pcap_status: Union[str, CustomCaptureConfigurationsStatus]
-        storage_account_resource_id: str
+        pcapStatus: Union[str, CustomCaptureConfigurationsStatus]
+        storageAccountResourceId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.DNSSettings(TypedDict, total=False):
         key "enableDnsProxy": Union[str, DNSProxy]
         key "enabledDnsType": Union[str, EnabledDNSType]
         dnsServers: list[IPAddress]
-        dns_servers: list[IPAddress]
-        enable_dns_proxy: Union[str, DNSProxy]
-        enabled_dns_type: Union[str, EnabledDNSType]
+        enableDnsProxy: Union[str, DNSProxy]
+        enabledDnsType: Union[str, EnabledDNSType]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.DestinationAddr(TypedDict, total=False):
@@ -5205,9 +5357,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         countries: list[str]
         feeds: list[str]
         fqdnLists: list[str]
-        fqdn_lists: list[str]
         prefixLists: list[str]
-        prefix_lists: list[str]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.EndpointConfiguration(TypedDict, total=False):
@@ -5215,30 +5365,6 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "port": Required[str]
         address: IPAddress
         port: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
 
 
     class azure.mgmt.paloaltonetworksngfw.types.EventHub(TypedDict, total=False):
@@ -5249,9 +5375,9 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "subscriptionId": str
         id: str
         name: str
-        name_space: str
-        policy_name: str
-        subscription_id: str
+        nameSpace: str
+        policyName: str
+        subscriptionId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.FirewallDeploymentProperties(TypedDict, total=False):
@@ -5267,20 +5393,19 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "planData": Required[PlanData]
         key "provisioningState": Union[str, ProvisioningState]
         key "strataCloudManagerConfig": ForwardRef('StrataCloudManagerConfig', module='types')
-        associated_rulestack: RulestackDetails
-        dns_settings: DNSSettings
-        firewall_sku: str
+        associatedRulestack: RulestackDetails
+        dnsSettings: DNSSettings
+        firewallSku: str
         frontEndSettings: list[FrontendSetting]
-        front_end_settings: list[FrontendSetting]
-        is_panorama_managed: Union[str, BooleanEnum]
-        is_strata_cloud_managed: Union[str, BooleanEnum]
-        marketplace_details: MarketplaceDetails
-        network_profile: NetworkProfile
-        pan_etag: str
-        panorama_config: PanoramaConfig
-        plan_data: PlanData
-        provisioning_state: Union[str, ProvisioningState]
-        strata_cloud_manager_config: StrataCloudManagerConfig
+        isPanoramaManaged: Union[str, BooleanEnum]
+        isStrataCloudManaged: Union[str, BooleanEnum]
+        marketplaceDetails: MarketplaceDetails
+        networkProfile: NetworkProfile
+        panEtag: str
+        panoramaConfig: PanoramaConfig
+        planData: PlanData
+        provisioningState: Union[str, ProvisioningState]
+        strataCloudManagerConfig: StrataCloudManagerConfig
 
 
     class azure.mgmt.paloaltonetworksngfw.types.FirewallResource(TrackedResource):
@@ -5296,7 +5421,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         location: str
         name: str
         properties: FirewallDeploymentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5320,48 +5445,17 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "panoramaConfig": ForwardRef('PanoramaConfig', module='types')
         key "planData": ForwardRef('PlanData', module='types')
         key "strataCloudManagerConfig": ForwardRef('StrataCloudManagerConfig', module='types')
-        associated_rulestack: RulestackDetails
-        dns_settings: DNSSettings
+        associatedRulestack: RulestackDetails
+        dnsSettings: DNSSettings
         frontEndSettings: list[FrontendSetting]
-        front_end_settings: list[FrontendSetting]
-        is_panorama_managed: Union[str, BooleanEnum]
-        is_strata_cloud_managed: Union[str, BooleanEnum]
-        marketplace_details: MarketplaceDetails
-        network_profile: NetworkProfile
-        pan_etag: str
-        panorama_config: PanoramaConfig
-        plan_data: PlanData
-        strata_cloud_manager_config: StrataCloudManagerConfig
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.FirewallStatusProperty(TypedDict, total=False):
-        key "healthReason": str
-        key "healthStatus": Union[str, HealthStatus]
-        key "isPanoramaManaged": Union[str, BooleanEnum]
-        key "isStrataCloudManaged": Union[str, BooleanEnum]
-        key "panoramaStatus": ForwardRef('PanoramaStatus', module='types')
-        key "provisioningState": Union[str, ReadOnlyProvisioningState]
-        key "strataCloudManagerInfo": ForwardRef('StrataCloudManagerInfo', module='types')
-        health_reason: str
-        health_status: Union[str, HealthStatus]
-        is_panorama_managed: Union[str, BooleanEnum]
-        is_strata_cloud_managed: Union[str, BooleanEnum]
-        panorama_status: PanoramaStatus
-        provisioning_state: Union[str, ReadOnlyProvisioningState]
-        strata_cloud_manager_info: StrataCloudManagerInfo
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.FirewallStatusResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": Required[FirewallStatusProperty]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: FirewallStatusProperty
-        system_data: SystemData
-        type: str
+        isPanoramaManaged: Union[str, BooleanEnum]
+        isStrataCloudManaged: Union[str, BooleanEnum]
+        marketplaceDetails: MarketplaceDetails
+        networkProfile: NetworkProfile
+        panEtag: str
+        panoramaConfig: PanoramaConfig
+        planData: PlanData
+        strataCloudManagerConfig: StrataCloudManagerConfig
 
 
     class azure.mgmt.paloaltonetworksngfw.types.FqdnListGlobalRulestackResource(ProxyResource):
@@ -5373,7 +5467,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: FqdnObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5386,7 +5480,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: FqdnObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5396,11 +5490,11 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "etag": str
         key "fqdnList": Required[list[str]]
         key "provisioningState": Union[str, ProvisioningState]
-        audit_comment: str
+        auditComment: str
         description: str
         etag: str
-        fqdn_list: list[str]
-        provisioning_state: Union[str, ProvisioningState]
+        fqdnList: list[str]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.FrontendSetting(TypedDict, total=False):
@@ -5408,15 +5502,10 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "frontendConfiguration": Required[EndpointConfiguration]
         key "name": Required[str]
         key "protocol": Required[Union[str, ProtocolType]]
-        backend_configuration: EndpointConfiguration
-        frontend_configuration: EndpointConfiguration
+        backendConfiguration: EndpointConfiguration
+        frontendConfiguration: EndpointConfiguration
         name: str
         protocol: Union[str, ProtocolType]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.GlobalRulestackInfo(TypedDict, total=False):
-        key "azureId": Required[str]
-        azure_id: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.GlobalRulestackResource(ProxyResource):
@@ -5432,7 +5521,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         location: str
         name: str
         properties: RulestackProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5454,42 +5543,27 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "scope": Union[str, ScopeType]
         key "securityServices": ForwardRef('SecurityServices', module='types')
         associatedSubscriptions: list[str]
-        associated_subscriptions: list[str]
-        default_mode: Union[str, DefaultMode]
+        defaultMode: Union[str, DefaultMode]
         description: str
-        min_app_id_version: str
-        pan_etag: str
-        pan_location: str
+        minAppIdVersion: str
+        panEtag: str
+        panLocation: str
         scope: Union[str, ScopeType]
-        security_services: SecurityServices
+        securityServices: SecurityServices
 
 
     class azure.mgmt.paloaltonetworksngfw.types.IPAddress(TypedDict, total=False):
         key "address": str
         key "resourceId": str
         address: str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.IPAddressSpace(TypedDict, total=False):
         key "addressSpace": str
         key "resourceId": str
-        address_space: str
-        resource_id: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ListAppIdResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[str]]
-        next_link: str
-        value: list[str]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ListFirewallsResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[str]]
-        next_link: str
-        value: list[str]
+        addressSpace: str
+        resourceId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.LocalRulesResource(ProxyResource):
@@ -5501,7 +5575,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: RuleEntry
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5518,7 +5592,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         location: str
         name: str
         properties: RulestackProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5540,23 +5614,61 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "scope": Union[str, ScopeType]
         key "securityServices": ForwardRef('SecurityServices', module='types')
         associatedSubscriptions: list[str]
-        associated_subscriptions: list[str]
-        default_mode: Union[str, DefaultMode]
+        defaultMode: Union[str, DefaultMode]
         description: str
-        min_app_id_version: str
-        pan_etag: str
-        pan_location: str
+        minAppIdVersion: str
+        panEtag: str
+        panLocation: str
         scope: Union[str, ScopeType]
-        security_services: SecurityServices
+        securityServices: SecurityServices
 
 
     class azure.mgmt.paloaltonetworksngfw.types.LogDestination(TypedDict, total=False):
         key "eventHubConfigurations": ForwardRef('EventHub', module='types')
         key "monitorConfigurations": ForwardRef('MonitorLog', module='types')
         key "storageConfigurations": ForwardRef('StorageAccount', module='types')
-        event_hub_configurations: EventHub
-        monitor_configurations: MonitorLog
-        storage_configurations: StorageAccount
+        eventHubConfigurations: EventHub
+        monitorConfigurations: MonitorLog
+        storageConfigurations: StorageAccount
+
+
+    class azure.mgmt.paloaltonetworksngfw.types.LogDestinationV2(TypedDict, total=False):
+        key "eventHubConfigurations": ForwardRef('EventHub', module='types')
+        key "monitorConfigurationsV2": ForwardRef('MonitorLogV2', module='types')
+        key "storageConfigurations": ForwardRef('StorageAccount', module='types')
+        eventHubConfigurations: EventHub
+        monitorConfigurationsV2: MonitorLogV2
+        storageConfigurations: StorageAccount
+
+
+    class azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsProperties(TypedDict, total=False):
+        key "applicationInsights": ForwardRef('ApplicationInsights', module='types')
+        key "commonDestination": ForwardRef('LogDestinationV2', module='types')
+        key "decryptLogDestination": ForwardRef('LogDestinationV2', module='types')
+        key "logOption": Union[str, LogOption]
+        key "logType": Union[str, LogType]
+        key "threatLogDestination": ForwardRef('LogDestinationV2', module='types')
+        key "trafficLogDestination": ForwardRef('LogDestinationV2', module='types')
+        applicationInsights: ApplicationInsights
+        commonDestination: LogDestinationV2
+        decryptLogDestination: LogDestinationV2
+        logOption: Union[str, LogOption]
+        logType: Union[str, LogType]
+        threatLogDestination: LogDestinationV2
+        trafficLogDestination: LogDestinationV2
+
+
+    class azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[LogIngestionSettingsProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LogIngestionSettingsProperties
+        systemData: SystemData
+        type: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.LogSettings(TypedDict, total=False):
@@ -5567,13 +5679,13 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "logType": Union[str, LogType]
         key "threatLogDestination": ForwardRef('LogDestination', module='types')
         key "trafficLogDestination": ForwardRef('LogDestination', module='types')
-        application_insights: ApplicationInsights
-        common_destination: LogDestination
-        decrypt_log_destination: LogDestination
-        log_option: Union[str, LogOption]
-        log_type: Union[str, LogType]
-        threat_log_destination: LogDestination
-        traffic_log_destination: LogDestination
+        applicationInsights: ApplicationInsights
+        commonDestination: LogDestination
+        decryptLogDestination: LogDestination
+        logOption: Union[str, LogOption]
+        logType: Union[str, LogType]
+        threatLogDestination: LogDestination
+        trafficLogDestination: LogDestination
 
 
     class azure.mgmt.paloaltonetworksngfw.types.MarketplaceDetails(TypedDict, total=False):
@@ -5581,10 +5693,10 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "marketplaceSubscriptionStatus": Union[str, MarketplaceSubscriptionStatus]
         key "offerId": Required[str]
         key "publisherId": Required[str]
-        marketplace_subscription_id: str
-        marketplace_subscription_status: Union[str, MarketplaceSubscriptionStatus]
-        offer_id: str
-        publisher_id: str
+        marketplaceSubscriptionId: str
+        marketplaceSubscriptionStatus: Union[str, MarketplaceSubscriptionStatus]
+        offerId: str
+        publisherId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.MetricsObject(TypedDict, total=False):
@@ -5592,10 +5704,10 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "applicationInsightsResourceId": Required[str]
         key "panEtag": str
         key "provisioningState": Union[str, ProvisioningState]
-        application_insights_connection_string: str
-        application_insights_resource_id: str
-        pan_etag: str
-        provisioning_state: Union[str, ProvisioningState]
+        applicationInsightsConnectionString: str
+        applicationInsightsResourceId: str
+        panEtag: str
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.MetricsObjectFirewallResource(ProxyResource):
@@ -5607,7 +5719,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: MetricsObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5618,17 +5730,21 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "subscriptionId": str
         key "workspace": str
         id: str
-        primary_key: str
-        secondary_key: str
-        subscription_id: str
+        primaryKey: str
+        secondaryKey: str
+        subscriptionId: str
         workspace: str
 
 
-    class azure.mgmt.paloaltonetworksngfw.types.NameDescriptionObject(TypedDict, total=False):
-        key "description": str
-        key "name": Required[str]
-        description: str
-        name: str
+    class azure.mgmt.paloaltonetworksngfw.types.MonitorLogV2(TypedDict, total=False):
+        key "dcrId": Required[str]
+        key "dcrImmutableId": Required[str]
+        key "logIngestionEndpoint": Required[str]
+        key "streamName": Required[str]
+        dcrId: str
+        dcrImmutableId: str
+        logIngestionEndpoint: str
+        streamName: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.NetworkProfile(TypedDict, total=False):
@@ -5638,40 +5754,13 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "vnetConfiguration": ForwardRef('VnetConfiguration', module='types')
         key "vwanConfiguration": ForwardRef('VwanConfiguration', module='types')
         egressNatIp: list[IPAddress]
-        egress_nat_ip: list[IPAddress]
-        enable_egress_nat: Union[str, EgressNat]
-        network_type: Union[str, NetworkType]
+        enableEgressNat: Union[str, EgressNat]
+        networkType: Union[str, NetworkType]
         privateSourceNatRulesDestination: list[str]
-        private_source_nat_rules_destination: list[str]
-        public_ips: list[IPAddress]
+        publicIps: list[IPAddress]
         trustedRanges: list[str]
-        trusted_ranges: list[str]
-        vnet_configuration: VnetConfiguration
-        vwan_configuration: VwanConfiguration
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
+        vnetConfiguration: VnetConfiguration
+        vwanConfiguration: VwanConfiguration
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PanoramaConfig(TypedDict, total=False):
@@ -5683,21 +5772,14 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "panoramaServer2": str
         key "tplName": str
         key "vmAuthKey": str
-        cg_name: str
-        config_string: str
-        dg_name: str
-        host_name: str
-        panorama_server: str
-        panorama_server2: str
-        tpl_name: str
-        vm_auth_key: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PanoramaStatus(TypedDict, total=False):
-        key "panoramaServer2Status": Union[str, ServerStatus]
-        key "panoramaServerStatus": Union[str, ServerStatus]
-        panorama_server2_status: Union[str, ServerStatus]
-        panorama_server_status: Union[str, ServerStatus]
+        cgName: str
+        configString: str
+        dgName: str
+        hostName: str
+        panoramaServer: str
+        panoramaServer2: str
+        tplName: str
+        vmAuthKey: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PlanData(TypedDict, total=False):
@@ -5705,10 +5787,10 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "effectiveDate": str
         key "planId": Required[str]
         key "usageType": Union[str, UsageType]
-        billing_cycle: Union[str, BillingCycle]
-        effective_date: str
-        plan_id: str
-        usage_type: Union[str, UsageType]
+        billingCycle: Union[str, BillingCycle]
+        effectiveDate: str
+        planId: str
+        usageType: Union[str, UsageType]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PostRulesResource(ProxyResource):
@@ -5720,7 +5802,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: RuleEntry
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5733,22 +5815,8 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: RuleEntry
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PredefinedUrlCategoriesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PredefinedUrlCategory]]
-        next_link: str
-        value: list[PredefinedUrlCategory]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.PredefinedUrlCategory(TypedDict, total=False):
-        key "action": Required[str]
-        key "name": Required[str]
-        action: str
-        name: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.PrefixListGlobalRulestackResource(ProxyResource):
@@ -5760,7 +5828,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: PrefixObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5773,7 +5841,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         name: str
         properties: PrefixObject
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5783,23 +5851,11 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "etag": str
         key "prefixList": Required[list[str]]
         key "provisioningState": Union[str, ProvisioningState]
-        audit_comment: str
+        auditComment: str
         description: str
         etag: str
-        prefix_list: list[str]
-        provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ProductSerialNumberRequestStatus(TypedDict, total=False):
-        key "status": Required[str]
-        status: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.ProductSerialNumberStatus(TypedDict, total=False):
-        key "serialNumber": str
-        key "status": Required[Union[str, ProductSerialStatusValues]]
-        serial_number: str
-        status: Union[str, ProductSerialStatusValues]
+        prefixList: list[str]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.ProxyResource(Resource):
@@ -5809,7 +5865,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5820,44 +5876,8 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.RuleCounter(TypedDict, total=False):
-        key "appSeen": ForwardRef('AppSeenData', module='types')
-        key "firewallName": str
-        key "hitCount": int
-        key "lastUpdatedTimestamp": str
-        key "priority": Required[str]
-        key "requestTimestamp": str
-        key "ruleListName": str
-        key "ruleName": Required[str]
-        key "ruleStackName": str
-        key "timestamp": str
-        app_seen: AppSeenData
-        firewall_name: str
-        hit_count: int
-        last_updated_timestamp: str
-        priority: str
-        request_timestamp: str
-        rule_list_name: str
-        rule_name: str
-        rule_stack_name: str
-        timestamp: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.RuleCounterReset(TypedDict, total=False):
-        key "firewallName": str
-        key "priority": str
-        key "ruleListName": str
-        key "ruleName": str
-        key "ruleStackName": str
-        firewall_name: str
-        priority: str
-        rule_list_name: str
-        rule_name: str
-        rule_stack_name: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.RuleEntry(TypedDict, total=False):
@@ -5878,25 +5898,24 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "ruleName": Required[str]
         key "ruleState": Union[str, StateEnum]
         key "source": ForwardRef('SourceAddr', module='types')
-        action_type: Union[str, ActionEnum]
+        actionType: Union[str, ActionEnum]
         applications: list[str]
-        audit_comment: str
+        auditComment: str
         category: Category
-        decryption_rule_type: Union[str, DecryptionRuleTypeEnum]
+        decryptionRuleType: Union[str, DecryptionRuleTypeEnum]
         description: str
         destination: DestinationAddr
-        enable_logging: Union[str, StateEnum]
+        enableLogging: Union[str, StateEnum]
         etag: str
-        inbound_inspection_certificate: str
-        negate_destination: Union[str, BooleanEnum]
-        negate_source: Union[str, BooleanEnum]
+        inboundInspectionCertificate: str
+        negateDestination: Union[str, BooleanEnum]
+        negateSource: Union[str, BooleanEnum]
         priority: int
         protocol: str
         protocolPortList: list[str]
-        protocol_port_list: list[str]
-        provisioning_state: Union[str, ProvisioningState]
-        rule_name: str
-        rule_state: Union[str, StateEnum]
+        provisioningState: Union[str, ProvisioningState]
+        ruleName: str
+        ruleState: Union[str, StateEnum]
         source: SourceAddr
         tags: list[TagInfo]
 
@@ -5906,8 +5925,8 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "resourceId": str
         key "rulestackId": str
         location: str
-        resource_id: str
-        rulestack_id: str
+        resourceId: str
+        rulestackId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.RulestackProperties(TypedDict, total=False):
@@ -5920,15 +5939,14 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "scope": Union[str, ScopeType]
         key "securityServices": ForwardRef('SecurityServices', module='types')
         associatedSubscriptions: list[str]
-        associated_subscriptions: list[str]
-        default_mode: Union[str, DefaultMode]
+        defaultMode: Union[str, DefaultMode]
         description: str
-        min_app_id_version: str
-        pan_etag: str
-        pan_location: str
-        provisioning_state: Union[str, ProvisioningState]
+        minAppIdVersion: str
+        panEtag: str
+        panLocation: str
+        provisioningState: Union[str, ProvisioningState]
         scope: Union[str, ScopeType]
-        security_services: SecurityServices
+        securityServices: SecurityServices
 
 
     class azure.mgmt.paloaltonetworksngfw.types.SecurityServices(TypedDict, total=False):
@@ -5940,28 +5958,14 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "outboundUnTrustCertificate": str
         key "urlFilteringProfile": str
         key "vulnerabilityProfile": str
-        anti_spyware_profile: str
-        anti_virus_profile: str
-        dns_subscription: str
-        file_blocking_profile: str
-        outbound_trust_certificate: str
-        outbound_un_trust_certificate: str
-        url_filtering_profile: str
-        vulnerability_profile: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SecurityServicesResponse(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[SecurityServicesTypeList]
-        next_link: str
-        value: SecurityServicesTypeList
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SecurityServicesTypeList(TypedDict, total=False):
-        key "entry": Required[list[NameDescriptionObject]]
-        key "type": str
-        entry: list[NameDescriptionObject]
-        type: str
+        antiSpywareProfile: str
+        antiVirusProfile: str
+        dnsSubscription: str
+        fileBlockingProfile: str
+        outboundTrustCertificate: str
+        outboundUnTrustCertificate: str
+        urlFilteringProfile: str
+        vulnerabilityProfile: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.SourceAddr(TypedDict, total=False):
@@ -5969,88 +5973,20 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         countries: list[str]
         feeds: list[str]
         prefixLists: list[str]
-        prefix_lists: list[str]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.StorageAccount(TypedDict, total=False):
         key "accountName": str
         key "id": str
         key "subscriptionId": str
-        account_name: str
+        accountName: str
         id: str
-        subscription_id: str
+        subscriptionId: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.StrataCloudManagerConfig(TypedDict, total=False):
         key "cloudManagerName": Required[str]
-        cloud_manager_name: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.StrataCloudManagerInfo(TypedDict, total=False):
-        key "folderName": str
-        key "hubUrl": str
-        folder_name: str
-        hub_url: str
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SupportInfo(TypedDict, total=False):
-        key "accountId": str
-        key "accountRegistered": Union[str, BooleanEnum]
-        key "freeTrial": Union[str, BooleanEnum]
-        key "freeTrialCreditLeft": int
-        key "freeTrialDaysLeft": int
-        key "helpURL": str
-        key "productSerial": str
-        key "productSku": str
-        key "registerURL": str
-        key "supportURL": str
-        key "userDomainSupported": Union[str, BooleanEnum]
-        key "userRegistered": Union[str, BooleanEnum]
-        account_id: str
-        account_registered: Union[str, BooleanEnum]
-        free_trial: Union[str, BooleanEnum]
-        free_trial_credit_left: int
-        free_trial_days_left: int
-        help_url: str
-        product_serial: str
-        product_sku: str
-        register_url: str
-        support_url: str
-        user_domain_supported: Union[str, BooleanEnum]
-        user_registered: Union[str, BooleanEnum]
-
-
-    class azure.mgmt.paloaltonetworksngfw.types.SupportInfoModel(TypedDict, total=False):
-        key "accountId": str
-        key "accountRegistrationStatus": Union[str, RegistrationStatus]
-        key "credits": int
-        key "endDateForCredits": str
-        key "freeTrial": Union[str, EnableStatus]
-        key "freeTrialCreditLeft": int
-        key "freeTrialDaysLeft": int
-        key "helpURL": str
-        key "hubUrl": str
-        key "monthlyCreditLeft": int
-        key "productSerial": str
-        key "productSku": str
-        key "registerURL": str
-        key "startDateForCredits": str
-        key "supportURL": str
-        account_id: str
-        account_registration_status: Union[str, RegistrationStatus]
-        credits: int
-        end_date_for_credits: str
-        free_trial: Union[str, EnableStatus]
-        free_trial_credit_left: int
-        free_trial_days_left: int
-        help_url: str
-        hub_url: str
-        monthly_credit_left: int
-        product_serial: str
-        product_sku: str
-        register_url: str
-        start_date_for_credits: str
-        support_url: str
+        cloudManagerName: str
 
 
     class azure.mgmt.paloaltonetworksngfw.types.SystemData(TypedDict, total=False):
@@ -6060,12 +5996,12 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.paloaltonetworksngfw.types.TagInfo(TypedDict, total=False):
@@ -6084,7 +6020,7 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -6094,9 +6030,9 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "trustSubnet": Required[IPAddressSpace]
         key "unTrustSubnet": Required[IPAddressSpace]
         key "vnet": Required[IPAddressSpace]
-        ip_of_trust_subnet_for_udr: IPAddress
-        trust_subnet: IPAddressSpace
-        un_trust_subnet: IPAddressSpace
+        ipOfTrustSubnetForUdr: IPAddress
+        trustSubnet: IPAddressSpace
+        unTrustSubnet: IPAddressSpace
         vnet: IPAddressSpace
 
 
@@ -6106,11 +6042,11 @@ namespace azure.mgmt.paloaltonetworksngfw.types
         key "trustSubnet": ForwardRef('IPAddressSpace', module='types')
         key "unTrustSubnet": ForwardRef('IPAddressSpace', module='types')
         key "vHub": Required[IPAddressSpace]
-        ip_of_trust_subnet_for_udr: IPAddress
-        network_virtual_appliance_id: str
-        trust_subnet: IPAddressSpace
-        un_trust_subnet: IPAddressSpace
-        v_hub: IPAddressSpace
+        ipOfTrustSubnetForUdr: IPAddress
+        networkVirtualApplianceId: str
+        trustSubnet: IPAddressSpace
+        unTrustSubnet: IPAddressSpace
+        vHub: IPAddressSpace
 
 
 ```

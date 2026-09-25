@@ -63,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-11-preview/LocalRulestacks_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-07-29-preview/LocalRulestacks_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
