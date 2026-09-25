@@ -11,21 +11,23 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
+from ._tool_reqs import load_requirements, pinned_version
 from ci_tools.functions import install_into_venv, unzip_file_to_directory
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root, in_analyze_weekly
 
 from ci_tools.logging import logger
 
-# dependencies
-SPHINX_VERSION = "8.2.0"
-NEXT_SPHINX_VERSION = "8.2.0"
-SPHINX_RTD_THEME_VERSION = "3.0.2"
-NEXT_SPHINX_RTD_THEME_VERSION = "3.0.2"
-MYST_PARSER_VERSION = "4.0.1"
-NEXT_MYST_PARSER_VERSION = "4.0.1"
-SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
-NEXT_SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
+# Tool versions are pinned in eng/tool_requirements/{sphinx,sphinx_next}.txt
+# (single source of truth). Constants are derived for backwards compatibility.
+SPHINX_VERSION = pinned_version("sphinx", "sphinx")
+NEXT_SPHINX_VERSION = pinned_version("sphinx_next", "sphinx")
+SPHINX_RTD_THEME_VERSION = pinned_version("sphinx", "sphinx_rtd_theme")
+NEXT_SPHINX_RTD_THEME_VERSION = pinned_version("sphinx_next", "sphinx_rtd_theme")
+MYST_PARSER_VERSION = pinned_version("sphinx", "myst_parser")
+NEXT_MYST_PARSER_VERSION = pinned_version("sphinx_next", "myst_parser")
+SPHINX_CONTRIB_JQUERY_VERSION = pinned_version("sphinx", "sphinxcontrib-jquery")
+NEXT_SPHINX_CONTRIB_JQUERY_VERSION = pinned_version("sphinx_next", "sphinxcontrib-jquery")
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -257,28 +259,8 @@ class sphinx(Check):
 
             # install sphinx
             try:
-                if args.next:
-                    install_into_venv(
-                        executable,
-                        [
-                            f"sphinx=={NEXT_SPHINX_VERSION}",
-                            f"sphinx_rtd_theme=={NEXT_SPHINX_RTD_THEME_VERSION}",
-                            f"myst_parser=={NEXT_MYST_PARSER_VERSION}",
-                            f"sphinxcontrib-jquery=={NEXT_SPHINX_CONTRIB_JQUERY_VERSION}",
-                        ],
-                        package_dir,
-                    )
-                else:
-                    install_into_venv(
-                        executable,
-                        [
-                            f"sphinx=={SPHINX_VERSION}",
-                            f"sphinx_rtd_theme=={SPHINX_RTD_THEME_VERSION}",
-                            f"myst_parser=={MYST_PARSER_VERSION}",
-                            f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}",
-                        ],
-                        package_dir,
-                    )
+                requirements = load_requirements("sphinx_next" if args.next else "sphinx")
+                install_into_venv(executable, requirements, package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install sphinx: {e}")
                 return e.returncode
