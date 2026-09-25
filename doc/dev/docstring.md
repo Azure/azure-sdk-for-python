@@ -24,14 +24,14 @@ A method docstring is annotated by the Python long-string `"""<docstring>"""` ri
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
         a container URI (without SAS) is accepted only when the container is public. 
         See `SAS container details
-        <https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set>`__
+        <https://learn.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set>`__
         for more details.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
-            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+            https://learn.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container if set to `True`.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
