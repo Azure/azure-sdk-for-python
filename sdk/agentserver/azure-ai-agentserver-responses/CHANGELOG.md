@@ -27,7 +27,9 @@
   requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
   cleanup, without an additional pre-stream flush.
-
+- Partition live response execution and deletion state by the platform user
+  key, and reject duplicate live response IDs before a second request can
+  replace the original execution.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a

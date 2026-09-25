@@ -7,7 +7,7 @@ all subsequent GET, Cancel, DELETE, and InputItems requests must include
 the same key.  Mismatched or missing keys return an indistinguishable 404
 to prevent cross-user information leakage.
 
-Backward-compatible: no enforcement when the response was created without a key.
+Anonymous responses use a distinct partition and are not visible to keyed requests.
 """
 
 from __future__ import annotations
@@ -209,6 +209,47 @@ def _build_async_client(handler: Any) -> _AsyncAsgiClient:
     return _AsyncAsgiClient(app)
 
 
+@pytest.mark.asyncio
+async def test_duplicate_live_response_id_is_rejected_without_replacing_owner() -> None:
+    handler = _make_cancellable_bg_handler()
+    client = _build_async_client(handler)
+    response_id = IdGenerator.new_response_id()
+    owner_headers = {"x-agent-user-id": "key_A"}
+
+    owner_task = asyncio.create_task(
+        client.post(
+            "/responses",
+            json_body={
+                "response_id": response_id,
+                "model": "test",
+                "background": True,
+                "stream": True,
+            },
+            headers=owner_headers,
+        )
+    )
+    try:
+        await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+        collision = await client.post(
+            "/responses",
+            json_body={"response_id": response_id, "model": "test", "background": True},
+            headers={"x-agent-user-id": "key_B"},
+        )
+        assert collision.status_code == 409
+        assert collision.json()["error"]["code"] == "response_id_conflict"
+
+        owner = await client.get(f"/responses/{response_id}", headers=owner_headers)
+        assert owner.status_code == 200
+        denied = await client.get(
+            f"/responses/{response_id}",
+            headers={"x-agent-user-id": "key_B"},
+        )
+        assert denied.status_code == 404
+    finally:
+        if not owner_task.done():
+            owner_task.cancel()
+            with pytest.raises((asyncio.CancelledError, Exception)):
+                await owner_task
 # ── GET with isolation ────────────────────────────────────
 
 
