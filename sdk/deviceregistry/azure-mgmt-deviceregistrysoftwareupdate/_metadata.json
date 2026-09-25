@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-11-02-preview",
+  "apiVersions": {
+    "Microsoft.DeviceUpdate": "2026-11-02-preview"
+  },
+  "commit": "1937998d2d092451f08d4aa5f35dd93ebf2cf6cf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/DuDeviceRegistry",
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "^0.37.3"
+}
