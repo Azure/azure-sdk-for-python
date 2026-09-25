@@ -37,6 +37,7 @@ def main():
         parameters={
             "properties": {
                 "allowBlobPublicAccess": False,
+                "allowCrossTenantDelegationSas": False,
                 "allowSharedKeyAccess": True,
                 "allowSharedKeyAccessForServices": {
                     "blob": {"enabled": True},
@@ -72,13 +73,18 @@ def main():
                     "publishMicrosoftEndpoints": True,
                     "routingChoice": "MicrosoftRouting",
                 },
-                "sasPolicy": {"expirationAction": "Log", "sasExpirationPeriod": "1.15:59:59"},
+                "sasPolicy": {
+                    "expirationAction": "Log",
+                    "requireUserBoundUserDelegationSas": True,
+                    "requireUserBoundUserDelegationSasAction": "Block",
+                    "sasExpirationPeriod": "1.15:59:59",
+                },
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/StorageAccountUpdate.json
+# x-ms-original-file: 2026-06-01/StorageAccountUpdate.json
 if __name__ == "__main__":
     main()

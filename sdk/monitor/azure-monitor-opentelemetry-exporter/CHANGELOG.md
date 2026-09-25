@@ -3,6 +3,8 @@
 ## 1.0.0b58 (Unreleased)
 
 ### Features Added
+- Map the `session.id` attribute on spans and logs to the Azure Monitor session context
+  ([#49179](https://github.com/Azure/azure-sdk-for-python/pull/49179))
 
 ### Breaking Changes
 
