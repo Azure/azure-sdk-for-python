@@ -194,6 +194,7 @@ class TestFileBackedStreamsRegistry:
     async def test_stores_and_replays(self, tmp_path: Path) -> None:
         saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
         saved_factory = streams._factory  # type: ignore[attr-defined]
+        saved_restore = streams._restore
         streams._slots.clear()  # type: ignore[attr-defined]
         try:
             streams.use_file_backed_replay(
@@ -224,11 +225,13 @@ class TestFileBackedStreamsRegistry:
             streams._slots.clear()  # type: ignore[attr-defined]
             streams._slots.update(saved_slots)  # type: ignore[attr-defined]
             streams._factory = saved_factory  # type: ignore[attr-defined]
+            streams._restore = saved_restore
 
     @pytest.mark.asyncio
     async def test_ttl_evicts_closed_buffer(self, tmp_path: Path) -> None:
         saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
         saved_factory = streams._factory  # type: ignore[attr-defined]
+        saved_restore = streams._restore
         streams._slots.clear()  # type: ignore[attr-defined]
         try:
             streams.use_file_backed_replay(
@@ -253,3 +256,4 @@ class TestFileBackedStreamsRegistry:
             streams._slots.clear()  # type: ignore[attr-defined]
             streams._slots.update(saved_slots)  # type: ignore[attr-defined]
             streams._factory = saved_factory  # type: ignore[attr-defined]
+            streams._restore = saved_restore

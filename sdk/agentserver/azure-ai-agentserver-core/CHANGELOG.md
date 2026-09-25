@@ -26,6 +26,14 @@
 - Changed the default SSE keep-alive interval to 15 seconds. Set
   `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 
+## 2.2.1 (Unreleased)
+
+### Bugs Fixed
+
+- Restore existing file-backed replay logs during stream lookup and deletion
+  after restart without creating absent logs. Serialize lookup, creation, and
+  deletion for the same stream ID within the registry.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes
