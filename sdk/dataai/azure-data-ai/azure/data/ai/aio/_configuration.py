@@ -60,7 +60,7 @@ class InferenceClientConfiguration:  # pylint: disable=too-many-instance-attribu
             return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)
-        raise TypeError(f"Unsupported credential: {self.credential}")
+        raise TypeError(f"Unsupported credential type: {type(self.credential).__name__}")
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)

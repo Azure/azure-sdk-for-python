@@ -389,6 +389,27 @@ def test_missing_or_unsupported_credentials_fail(client_type):
 
 
 @pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
+@pytest.mark.parametrize("raw_key", [False, True])
+def test_unsupported_credentials_are_not_formatted(client_type, raw_key):
+    class UnsupportedCredential:
+        def __str__(self):
+            raise AssertionError("Credential must not be stringified")
+
+        def __repr__(self):
+            raise AssertionError("Credential must not be represented")
+
+    secret = "dummy-secret-for-redaction-test"
+    credential = secret if raw_key else UnsupportedCredential()
+    with pytest.raises(TypeError) as caught:
+        client_type("https://example.inference.azure.com", credential)
+
+    assert str(caught.value) == f"Unsupported credential type: {type(credential).__name__}"
+    assert secret not in str(caught.value)
+    assert caught.value.__cause__ is None
+    assert caught.value.__context__ is None
+
+
+@pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
 def test_none_endpoint_fails(client_type):
     with pytest.raises(ValueError, match="endpoint"):
         client_type(None, AzureKeyCredential("test-key"))

@@ -35,7 +35,7 @@ namespace azure.data.ai
         @overload
         def semantic_rerank(
                 self, 
-                request: IO[bytes], 
+                request: Union[bytes, IO[bytes]], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -86,7 +86,7 @@ namespace azure.data.ai.aio
         @overload
         async def semantic_rerank(
                 self, 
-                request: IO[bytes], 
+                request: Union[bytes, IO[bytes]], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any

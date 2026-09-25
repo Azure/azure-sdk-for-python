@@ -6,7 +6,9 @@
 from datetime import timedelta
 from copy import deepcopy
 from io import BytesIO
+import inspect
 import json
+from typing import get_args, get_type_hints
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -241,6 +243,12 @@ async def test_generated_request_forms(open_client, invoke, respond, transport, 
     assert result.as_dict() == result_payload
     sent = transport.send.call_args.args[0].content
     assert json.loads(sent.getvalue() if isinstance(sent, BytesIO) else sent) == request_payload
+
+
+@pytest.mark.parametrize("client_type", [InferenceClient, AsyncInferenceClient])
+def test_binary_request_annotation_accepts_bytes(client_type):
+    request_type = get_type_hints(inspect.unwrap(client_type.semantic_rerank))["request"]
+    assert bytes in get_args(request_type)
 
 
 @pytest.mark.asyncio

@@ -83,12 +83,12 @@ class _InferenceClientOperationsMixin(
 
     @overload
     async def semantic_rerank(
-        self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, request: Union[bytes, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SemanticRerankingResult:
         """Reranks documents by their relevance to a query.
 
         :param request: The semantic reranking request. Required.
-        :type request: IO[bytes]
+        :type request: bytes or IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -100,15 +100,20 @@ class _InferenceClientOperationsMixin(
     @distributed_trace_async
     async def semantic_rerank(
         self,
-        request: Union[_models.SemanticRerankingInferenceRequest, _types.SemanticRerankingInferenceRequest, IO[bytes]],
+        request: Union[
+            _models.SemanticRerankingInferenceRequest,
+            _types.SemanticRerankingInferenceRequest,
+            bytes,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.SemanticRerankingResult:
         """Reranks documents by their relevance to a query.
 
         :param request: The semantic reranking request. Is either a SemanticRerankingInferenceRequest
-         type or a IO[bytes] type. Required.
+         type, bytes or an IO[bytes] type. Required.
         :type request: ~azure.data.ai.models.SemanticRerankingInferenceRequest or
-         ~azure.data.ai.types.SemanticRerankingInferenceRequest or IO[bytes]
+         ~azure.data.ai.types.SemanticRerankingInferenceRequest or bytes or IO[bytes]
         :return: SemanticRerankingResult. The SemanticRerankingResult is compatible with MutableMapping
         :rtype: ~azure.data.ai.models.SemanticRerankingResult
         :raises ~azure.core.exceptions.HttpResponseError:
