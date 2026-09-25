@@ -1,8 +1,32 @@
 # Release History
 
-## 2.2.0b2 (Unreleased)
+## 2.2.0b2 (2026-09-24)
+
+### Features Added
+
+- Added optional response metadata to `ResponseEventStream.emit_failed`. Invalid failure metadata is logged and
+  omitted so metadata validation cannot suppress the original failure response.
 
 ### Bugs Fixed
+
+- Closed a graceful-shutdown admission race for stored streams and bounded
+  DELETE waits when deferred terminal persistence is stalled.
+
+- Changed the default history fetch limit from 100 to -1 (unlimited), avoiding
+  automatic truncation of conversation history. Positive limits remain supported.
+- Restored compatibility with usage payloads that omit
+  `ResponseUsageInputTokensDetails.cache_write_tokens`.
+- The per-request span flush in the Responses endpoint no longer blocks the
+  asyncio event loop. The synchronous `flush_spans()` call in the request
+  `finally` block ran `TracerProvider.force_flush` inline, which blocks the
+  event loop until the exporter drains and serialises concurrent requests
+  behind a single export (head-of-line blocking). It now awaits the
+  non-blocking `flush_spans_async()` by default. A new `AGENTSERVER_FLUSH_MODE`
+  environment variable selects the strategy: `async` (default, off the event
+  loop), `background` (return the response first, flush in the background --
+  requires a platform drain window), or `sync` (legacy blocking behaviour).
+  Streaming requests use the same strategy for a single flush after stream
+  cleanup, without an additional pre-stream flush.
 
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
@@ -11,13 +35,22 @@
 
 ### Other Changes
 
+- Optimized warm-path streaming last-byte latency: for in-process (non-resilient)
+  `store=true` streaming responses, the terminal `response.completed`/`response.failed`
+  event is now emitted to the client and the wire stream closed **before** the terminal
+  provider write, moving the terminal storage round-trip off the client's last-byte
+  path. A rare terminal-write failure now surfaces on a later GET (record stamped
+  `storage_error`) rather than on the stream. The resilient path is unchanged.
+  DELETE waits for pending execution and persistence before removing the response,
+  preventing deferred writes from recreating deleted data. Executions awaiting
+  their first event remain tracked for shutdown but are not publicly visible.
 - Reuse request-scoped history lookups and concurrent input-reference resolution without caching failed or cancelled reads.
 - Flush streaming telemetry after request-owned handler and iterator cleanup,
   including on disconnects, and before HTTP completion instead of delaying the first stream event.
 - Construct generated model types on demand while preserving real TypedDict contracts and public exports.
 - Avoid redundant event and recovery-seed copies while retaining validation and caller-owned mutation isolation.
 
-- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b1`,
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.2.0b2`,
   which provides the session GUID configuration and legacy task lookup used by
   resilient Responses.
 
