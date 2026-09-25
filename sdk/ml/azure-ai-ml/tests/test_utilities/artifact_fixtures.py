@@ -69,10 +69,14 @@ def tool_request(artifact_cache, mocker):
     archive = BytesIO()
     with ZipFile(archive, "w") as zip_file:
 <<<<<<< HEAD
+<<<<<<< HEAD
         zip_file.writestr("artifacttool.exe" if os.name == "nt" else "artifacttool", "test tool; never executed")
 =======
         zip_file.writestr("artifacttool", "test tool; never executed")
 >>>>>>> a345f27073 (Validate artifact tool download request destinations)
+=======
+        zip_file.writestr("artifacttool.exe" if os.name == "nt" else "artifacttool", "test tool; never executed")
+>>>>>>> cd6710979e (Reject artifact tool archives without an executable)
     metadata = SimpleNamespace(
         status_code=200,
         json=lambda: {"uri": "https://downloads.example.test/artifacttool.zip"},
