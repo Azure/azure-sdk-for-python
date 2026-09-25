@@ -91,7 +91,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class DirectoryOperations:
+class DirectoryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1179,7 +1179,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class FileOperations:  # pylint: disable=too-many-public-methods
+class FileOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1196,12 +1196,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
+    @overload
     async def create(  # pylint: disable=too-many-locals
         self,
         optional_body: Optional[bytes] = None,
         *,
         file_content_length: int,
+        content_type: str = "application/octet-stream",
         timeout: Optional[int] = None,
         file_content_type: Optional[str] = None,
         file_content_encoding: Optional[str] = None,
@@ -1235,6 +1236,278 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param optional_body: Initial data. Default value is None.
         :type optional_body: bytes
+        :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
+        :paramtype file_content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "SymLink". Default value is None.
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.".
+         Default value is None.
+        :paramtype content_length: int
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(  # pylint: disable=too-many-locals
+        self,
+        optional_body: Optional[IO[bytes]] = None,
+        *,
+        file_content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: IO[bytes]
+        :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
+        :paramtype file_content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "SymLink". Default value is None.
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.".
+         Default value is None.
+        :paramtype content_length: int
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(  # pylint: disable=too-many-locals
+        self,
+        optional_body: Optional[Union[bytes, IO[bytes]]] = None,
+        *,
+        file_content_length: int,
+        timeout: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+
+        :param optional_body: Initial data. Is either a bytes type or a IO[bytes] type. Default value
+         is None.
+        :type optional_body: bytes or IO[bytes]
         :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
         :paramtype file_content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
@@ -1339,12 +1612,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if optional_body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream" if optional_body else None
         _content = optional_body
 
         _request = build_file_create_request(
@@ -2454,10 +2726,140 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @overload
+    async def upload_range(
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        range: str,
+        file_range_write: Union[str, _models.FileRangeWriteType],
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: bytes
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
+         specified by the request body into the specified range. - Clear: Clears the specified range and
+         releases the space used in storage for that range. Known values are: "update" and "clear".
+         Required.
+        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_range(
+        self,
+        optional_body: Optional[IO[bytes]] = None,
+        *,
+        range: str,
+        file_range_write: Union[str, _models.FileRangeWriteType],
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: IO[bytes]
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
+         specified by the request body into the specified range. - Clear: Clears the specified range and
+         releases the space used in storage for that range. Known values are: "update" and "clear".
+         Required.
+        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace_async
     async def upload_range(  # pylint: disable=too-many-locals
         self,
-        optional_body: Optional[bytes] = None,
+        optional_body: Optional[Union[bytes, IO[bytes]]] = None,
         *,
         range: str,
         file_range_write: Union[str, _models.FileRangeWriteType],
@@ -2474,8 +2876,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Upload a range of bytes to a file.
 
-        :param optional_body: Initial data. Default value is None.
-        :type optional_body: bytes
+        :param optional_body: Initial data. Is either a bytes type or a IO[bytes] type. Default value
+         is None.
+        :type optional_body: bytes or IO[bytes]
         :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
          must be specified. Required.
         :paramtype range: str
@@ -2525,12 +2928,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if optional_body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream" if optional_body else None
         _content = optional_body
 
         _request = build_file_upload_range_request(
@@ -2874,7 +3276,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-10-06"],
+        api_versions_list=["2026-10-06", "2026-12-06", "2027-03-07"],
     )
     async def list_all_ranges(
         self,
@@ -3918,7 +4320,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4287,7 +4689,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
 
-class ShareOperations:
+class ShareOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4577,6 +4979,9 @@ class ShareOperations:
         )
         response_headers["x-ms-enable-smb-directory-lease"] = self._deserialize(
             "bool", response.headers.get("x-ms-enable-smb-directory-lease")
+        )
+        response_headers["x-ms-share-creation-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-creation-time")
         )
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessPolicy(_Model):
+class AccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Access policy.
 
     :ivar start: The date-time the policy is active.
@@ -79,7 +79,7 @@ class AccessPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClearRange(_Model):
+class ClearRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A clear range.
 
     :ivar start: Start of the range. Required.
@@ -122,7 +122,7 @@ class ClearRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsRule(_Model):
+class CorsRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CORS is an HTTP feature that enables a web application running under one domain to access
     resources in another domain. Web browsers implement a security restriction known as same-origin
     policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
@@ -214,7 +214,7 @@ class CorsRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DirectoryItem(_Model):
+class DirectoryItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A listed directory item.
 
     :ivar name: The directory name. Required.
@@ -284,7 +284,7 @@ class DirectoryItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error response.
 
     This defines the wire format only. Language SDKs wrap this in idiomatic error types.
@@ -414,7 +414,7 @@ class Error(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileItem(_Model):
+class FileItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A listed file item.
 
     :ivar name: The file name. Required.
@@ -484,7 +484,7 @@ class FileItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileProperty(_Model):
+class FileProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File properties.
 
     :ivar content_length: Content length of the file. This value may not be up-to-date since an SMB
@@ -585,7 +585,7 @@ class FileProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileRange(_Model):
+class FileRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Storage file range.
 
     :ivar start: Start of the range. Required.
@@ -628,7 +628,7 @@ class FileRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilesAndDirectoriesListSegment(_Model):
+class FilesAndDirectoriesListSegment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract for entries that can be listed from Directory.
 
     :ivar directory_items: The directory items. Required.
@@ -671,7 +671,7 @@ class FilesAndDirectoriesListSegment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HandleItem(_Model):
+class HandleItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A listed Azure Storage handle item.
 
     :ivar handle_id: XSMB service handle ID. Required.
@@ -803,7 +803,7 @@ class HandleItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyInfo(_Model):
+class KeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key information.
 
     :ivar start: The date-time the key is active in ISO 8601 UTC time.
@@ -856,7 +856,7 @@ class KeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListFilesAndDirectoriesSegmentResponse(_Model):
+class ListFilesAndDirectoriesSegmentResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An enumeration of directories and files.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -985,7 +985,7 @@ class ListFilesAndDirectoriesSegmentResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListHandlesResponse(_Model):
+class ListHandlesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An enumeration of handles.
 
     :ivar handle_list: The handle list.
@@ -1029,7 +1029,7 @@ class ListHandlesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListSharesResponse(_Model):
+class ListSharesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An enumeration of shares.
 
     :ivar service_endpoint: The service endpoint. Required.
@@ -1111,7 +1111,7 @@ class ListSharesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metrics(_Model):
+class Metrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Analytics metrics for file service.
 
     :ivar version: The version of Storage Analytics to configure. Required.
@@ -1174,7 +1174,7 @@ class Metrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicy(_Model):
+class RetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention policy.
 
     :ivar enabled: Indicates whether a retention policy is enabled for the File service. If false,
@@ -1223,7 +1223,7 @@ class RetentionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareFileRangeList(_Model):
+class ShareFileRangeList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of file ranges.
 
     :ivar ranges: The file ranges.
@@ -1265,7 +1265,7 @@ class ShareFileRangeList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareFileRangeListSegment(_Model):
+class ShareFileRangeListSegment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The paginated list of file ranges.
 
     :ivar ranges: The file ranges.
@@ -1317,7 +1317,7 @@ class ShareFileRangeListSegment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareItemInternal(_Model):
+class ShareItemInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A listed Azure Storage share item.
 
     :ivar name: The share name. Required.
@@ -1394,7 +1394,7 @@ class ShareItemInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareNfsSettings(_Model):
+class ShareNfsSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for NFS protocol.
 
     :ivar encryption_in_transit: Enable or disable encryption in transit.
@@ -1429,7 +1429,7 @@ class ShareNfsSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareNfsSettingsEncryptionInTransit(_Model):
+class ShareNfsSettingsEncryptionInTransit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable or disable encryption in transit.
 
     :ivar required: If encryption in transit is required.
@@ -1463,7 +1463,7 @@ class ShareNfsSettingsEncryptionInTransit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharePermission(_Model):
+class SharePermission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A permission (a security descriptor) at the share level.
 
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
@@ -1499,7 +1499,7 @@ class SharePermission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharePropertiesInternal(_Model):
+class SharePropertiesInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a share.
 
     :ivar last_modified: The last modified time. Required.
@@ -1563,6 +1563,8 @@ class SharePropertiesInternal(_Model):
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
     :ivar enable_smb_directory_lease: Whether SMB directory lease is enabled.
     :vartype enable_smb_directory_lease: bool
+    :ivar creation_time: The creation time.
+    :vartype creation_time: ~datetime.datetime
     """
 
     last_modified: datetime.datetime = rest_field(
@@ -1765,6 +1767,14 @@ class SharePropertiesInternal(_Model):
         deserializer=_xml_deser_bool,
     )
     """Whether SMB directory lease is enabled."""
+    creation_time: Optional[datetime.datetime] = rest_field(
+        name="creationTime",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
+        xml={"attribute": False, "name": "Creation-Time", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
+    )
+    """The creation time."""
 
     _xml = {"attribute": False, "name": "SharePropertiesInternal", "text": False, "unwrapped": False}
 
@@ -1799,6 +1809,7 @@ class SharePropertiesInternal(_Model):
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
         enable_smb_directory_lease: Optional[bool] = None,
+        creation_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1812,7 +1823,7 @@ class SharePropertiesInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareProtocolSettings(_Model):
+class ShareProtocolSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protocol settings.
 
     :ivar smb: Settings for SMB protocol.
@@ -1853,7 +1864,7 @@ class ShareProtocolSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareSmbSettings(_Model):
+class ShareSmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for SMB protocol.
 
     :ivar multichannel: Settings for SMB Multichannel.
@@ -1896,7 +1907,7 @@ class ShareSmbSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareSmbSettingsEncryptionInTransit(_Model):
+class ShareSmbSettingsEncryptionInTransit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable or disable encryption in transit.
 
     :ivar required: If encryption in transit is required.
@@ -1930,7 +1941,7 @@ class ShareSmbSettingsEncryptionInTransit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShareStats(_Model):
+class ShareStats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stats for the share.
 
     :ivar share_usage_bytes: The approximate size of the data stored in bytes. Note that this value
@@ -1967,7 +1978,7 @@ class ShareStats(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifier(_Model):
+class SignedIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Signed identifier.
 
     :ivar id: A unique id. Required.
@@ -2010,7 +2021,7 @@ class SignedIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SignedIdentifiers(_Model):
+class SignedIdentifiers(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an array of signed identifiers.
 
     :ivar items_property: The array of signed identifiers. Required.
@@ -2051,7 +2062,7 @@ class SignedIdentifiers(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SmbMultichannel(_Model):
+class SmbMultichannel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for SMB multichannel.
 
     :ivar enabled: If SMB multichannel is enabled.
@@ -2085,7 +2096,7 @@ class SmbMultichannel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageServiceProperties(_Model):
+class StorageServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage service properties.
 
     :ivar hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
@@ -2146,7 +2157,7 @@ class StorageServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringEncoded(_Model):
+class StringEncoded(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An encoded string value.
 
     :ivar encoded: Whether the value is encoded.
@@ -2189,7 +2200,7 @@ class StringEncoded(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDelegationKey(_Model):
+class UserDelegationKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A user delegation key.
 
     :ivar signed_oid: The Azure Active Directory object ID in GUID format. Required.
