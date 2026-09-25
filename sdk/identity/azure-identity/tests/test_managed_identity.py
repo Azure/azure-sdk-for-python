@@ -156,7 +156,20 @@ def test_service_fabric_uses_requests_transport_created_session():
 
 @pytest.mark.parametrize(
     "option",
-    ["transport", "raw_request_hook", "raw_response_hook", "retry_policy", "proxy_policy"],
+    [
+        "transport",
+        "raw_request_hook",
+        "raw_response_hook",
+        "retry_policy",
+        "proxy_policy",
+        "headers_policy",
+        "logging_policy",
+        "http_logging_policy",
+        "user_agent_policy",
+        "custom_hook_policy",
+        "per_call_policies",
+        "per_retry_policies",
+    ],
 )
 def test_service_fabric_warns_when_pipeline_option_is_ignored(option):
     with mock.patch.dict("os.environ", SERVICE_FABRIC_ENVIRON, clear=True):

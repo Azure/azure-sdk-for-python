@@ -45,6 +45,13 @@ class ServiceFabricCredential(MsalManagedIdentityClient):
                 "raw_response_hook",
                 "retry_policy",
                 "proxy_policy",
+                "headers_policy",
+                "logging_policy",
+                "http_logging_policy",
+                "user_agent_policy",
+                "custom_hook_policy",
+                "per_call_policies",
+                "per_retry_policies",
             )
             if kwargs.get(name) is not None and not (name == "transport" and isinstance(transport, RequestsTransport))
         ]

@@ -92,7 +92,7 @@ def _validate_user_assigned_identity(identity_config: Dict, content: Dict) -> No
         returned_id = content.get(response_field)
         if identity_type == "resource_id":
             returned_id = returned_id or content.get("mi_res_id")
-        if not returned_id or str(identity_config[identity_type]).lower() != returned_id.lower():
+        if not returned_id or str(identity_config[identity_type]).lower() != str(returned_id).lower():
             raise ClientAuthenticationError(
                 message="Azure Arc did not confirm the requested user-assigned managed identity "
                 "in the token response. The agent likely does not support user-assigned "
