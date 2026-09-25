@@ -566,7 +566,7 @@ async def test_reservation_only_create_cannot_access_another_users_stored_respon
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("operation", ["create", "replay", "delete"])
+@pytest.mark.parametrize("operation", ["create", "replay", "delete", "delete_failure", "runtime_delete_failure"])
 async def test_cold_file_replay_is_discovered_without_creating_absent_streams(tmp_path, monkeypatch, operation):
     from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
     from azure.ai.agentserver.responses.hosting import _endpoint_handler
@@ -620,6 +620,37 @@ async def test_cold_file_replay_is_discovered_without_creating_absent_streams(tm
             assert replay.status_code == 200, replay.body
             assert b"owner-private" in replay.body
         else:
+            if operation in {"delete_failure", "runtime_delete_failure"}:
+                from pathlib import Path
+
+                if operation == "runtime_delete_failure":
+                    from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+
+                    await host._endpoint._runtime_state.add(
+                        ResponseExecution(
+                            response_id=response_id,
+                            mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+                            status="completed",
+                            user_id_key="owner",
+                        )
+                    )
+                unlink = Path.unlink
+
+                def denied(path, *args, **kwargs):
+                    if path.suffix == ".jsonl":
+                        raise PermissionError("replay removal denied")
+                    return unlink(path, *args, **kwargs)
+
+                with monkeypatch.context() as patch:
+                    patch.setattr(Path, "unlink", denied)
+                    failed = await client.request("DELETE", f"/responses/{response_id}", headers=owner_headers)
+                    assert failed.status_code == 500, failed.body
+                    assert set(storage_dir.glob("*.jsonl")) == before
+                    owner = await provider.get_response(response_id, context=PlatformContext(user_id_key="owner"))
+                    assert owner["id"] == response_id
+                    assert not await host._endpoint._runtime_state.is_deleted(response_id, "owner")
+                    if operation == "runtime_delete_failure":
+                        assert await host._endpoint._runtime_state.get(response_id, "owner") is not None
             deleted = await client.request("DELETE", f"/responses/{response_id}", headers=owner_headers)
             assert deleted.status_code == 200, deleted.body
             assert list(storage_dir.iterdir()) == []
