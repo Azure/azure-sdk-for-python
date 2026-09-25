@@ -1235,7 +1235,7 @@ async def _run_background_non_stream(
         # Eager eviction: free memory once terminal (or store=False). Skip when
         # persistence failed — the in-memory record is the only GET source.
         if runtime_state is not None and record.is_terminal and not record.persistence_failed:
-            await runtime_state.try_evict(response_id)
+            await runtime_state.try_evict(response_id, record.user_id_key)
 
 
 def _refresh_background_status(record: ResponseExecution) -> None:
@@ -2027,7 +2027,7 @@ class _ResponseOrchestrator:
             # in runtime_state AFTER this resolution but BEFORE the deferred
             # persist runs, so stamp the failure on whatever record GET will
             # actually serve (fall back to the captured record if absent).
-            target = await self._runtime_state.get(ctx.response_id) or record
+            target = await self._runtime_state.get(ctx.response_id, ctx.user_id) or record
             await self._persist_terminal_io(
                 ctx,
                 state,
@@ -2055,9 +2055,9 @@ class _ResponseOrchestrator:
         await persist()
         state.deferred_terminal_persist = None
         state.defer_evict = False
-        record = await self._runtime_state.get(ctx.response_id)
+        record = await self._runtime_state.get(ctx.response_id, ctx.user_id)
         if record is not None and record.is_terminal and not record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
     async def _persist_and_resolve_terminal(
         self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
@@ -2658,7 +2658,7 @@ class _ResponseOrchestrator:
             evs.append(failed_normalized)
             return True, evs
         # Bg+stream: standalone error event (no response.created).
-        await self._runtime_state.try_evict(ctx.response_id)
+        await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         error_event = construct_event_model(
             {
                 "type": "error",
@@ -2936,7 +2936,7 @@ class _ResponseOrchestrator:
             # Skip eviction when persistence failed — the in-memory record is
             # the only remaining source of truth for GET.
             if record.is_terminal and not record.persistence_failed and not state.defer_evict:
-                await self._runtime_state.try_evict(ctx.response_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             return
 
         # --- Path B: No pre-existing record ---
@@ -3066,7 +3066,7 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — the in-memory record is the
         # only remaining source of truth for GET.
         if execution.is_terminal and not execution.persistence_failed and not state.defer_evict:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
     # ------------------------------------------------------------------
     # Public execution methods
@@ -3244,7 +3244,7 @@ class _ResponseOrchestrator:
                         # runtime_state record so a later GET (and the deferred
                         # persistence-failure stamping) observes the same object
                         # the GET read-through serves.
-                        r = await self._runtime_state.get(ctx.response_id) or state.bg_record
+                        r = await self._runtime_state.get(ctx.response_id, ctx.user_id) or state.bg_record
                         if r is None:
                             # No canonical record was registered (e.g. the
                             # handler produced a terminal without a create
@@ -3263,7 +3263,7 @@ class _ResponseOrchestrator:
                         await self._safe_close(wire_stream)
                         await self._drain_deferred_terminal_persist(ctx, state)
                     finally:
-                        await self._runtime_state.discard_pending(ctx.response_id)
+                        await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
 
             # Minimal record only for ``_start_resilient_background``'s parameter
             # shape. The fallback tracks it as unpublished shutdown work until
@@ -3302,10 +3302,10 @@ class _ResponseOrchestrator:
                     disposition=_unified_disposition,
                 )
             except asyncio.CancelledError:
-                await self._runtime_state.discard_pending(ctx.response_id)
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                await self._runtime_state.discard_pending(ctx.response_id)
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
                 if not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.
@@ -3510,7 +3510,7 @@ class _ResponseOrchestrator:
             # Try to remove the record so GET returns 404. Best-effort; the
             # record may already be evicted.
             try:
-                await self._runtime_state.try_evict(ctx.response_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
             ctx.span.end(None)
@@ -3582,7 +3582,7 @@ class _ResponseOrchestrator:
             ctx.response_id,
         )
         try:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         except Exception:  # pylint: disable=broad-exception-caught
             pass
         ctx.span.end(None)
@@ -3899,13 +3899,13 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — sync failures are handled below
         # where we evict before raising HTTP 500.
         if record.is_terminal and not record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
         # §3.1: For sync mode, persistence failure surfaces as HTTP 500.
         # The client never receives a response_id on 500, so evict the record
         # to avoid unbounded memory growth during storage outages.
         if record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             ctx.span.end(record.persistence_exception)
             raise _HandlerError(
                 record.persistence_exception or RuntimeError("Persistence failed")
@@ -4376,5 +4376,5 @@ class _ResponseOrchestrator:
             # Best-effort cleanup of the in-flight record so a later GET does not
             # observe a phantom ``in_progress`` response (no-op for callers that
             # never registered the record, e.g. the streaming path).
-            await self._runtime_state.delete(ctx.response_id)
+            await self._runtime_state.delete(ctx.response_id, ctx.user_id)
             raise

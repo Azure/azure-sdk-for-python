@@ -7,7 +7,7 @@ all subsequent GET, Cancel, DELETE, and InputItems requests must include
 the same key.  Mismatched or missing keys return an indistinguishable 404
 to prevent cross-user information leakage.
 
-Backward-compatible: no enforcement when the response was created without a key.
+Anonymous responses use a distinct partition and are not visible to keyed requests.
 """
 
 from __future__ import annotations
@@ -245,10 +245,10 @@ async def test_memory_provider_isolation_before_and_after_runtime_eviction(
     assert created.status_code == 200
     response_id = created.json()["id"]
     monkeypatch.setattr(runtime, "try_evict", try_evict)
-    assert await runtime.get(response_id) is not None
+    assert await runtime.get(response_id, owner_key) is not None
     if evict:
-        assert await runtime.try_evict(response_id)
-        assert await runtime.get(response_id) is None
+        assert await runtime.try_evict(response_id, owner_key)
+        assert await runtime.get(response_id, owner_key) is None
 
     path = f"/responses/{response_id}"
     for method, endpoint in [("GET", path), ("GET", f"{path}/input_items"), ("DELETE", path)]:
@@ -269,6 +269,47 @@ async def test_memory_provider_isolation_before_and_after_runtime_eviction(
         await provider.get_response(response_id, context=PlatformContext(user_id_key=owner_key))
 
 
+@pytest.mark.asyncio
+async def test_duplicate_live_response_id_is_rejected_without_replacing_owner() -> None:
+    handler = _make_cancellable_bg_handler()
+    client = _build_async_client(handler)
+    response_id = IdGenerator.new_response_id()
+    owner_headers = {"x-agent-user-id": "key_A"}
+
+    owner_task = asyncio.create_task(
+        client.post(
+            "/responses",
+            json_body={
+                "response_id": response_id,
+                "model": "test",
+                "background": True,
+                "stream": True,
+            },
+            headers=owner_headers,
+        )
+    )
+    try:
+        await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+        collision = await client.post(
+            "/responses",
+            json_body={"response_id": response_id, "model": "test", "background": True},
+            headers={"x-agent-user-id": "key_B"},
+        )
+        assert collision.status_code == 409
+        assert collision.json()["error"]["code"] == "response_id_conflict"
+
+        owner = await client.get(f"/responses/{response_id}", headers=owner_headers)
+        assert owner.status_code == 200
+        denied = await client.get(
+            f"/responses/{response_id}",
+            headers={"x-agent-user-id": "key_B"},
+        )
+        assert denied.status_code == 404
+    finally:
+        if not owner_task.done():
+            owner_task.cancel()
+            with pytest.raises((asyncio.CancelledError, Exception)):
+                await owner_task
 # ── GET with isolation ────────────────────────────────────
 
 
