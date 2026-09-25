@@ -39,19 +39,19 @@ def main():
                 {
                     "dependencies": [],
                     "solutionInstanceName": "testname",
-                    "solutionTemplateId": "liqauthxnscodbiwktwfwrrsg",
-                    "solutionTemplateVersion": "gordjasyxxrj",
-                    "solutionVersionId": "cydzqntmjlqtksbavjwteru",
-                    "targetId": "steadvphxtyhjokqicrtg",
+                    "solutionTemplateId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/SolutionTemplates/st",
+                    "solutionTemplateVersion": "bwji",
+                    "solutionVersionId": "bqeggxlmrbyitmhbfcsumackq",
+                    "targetId": "vpzvkhtgzwtrnbktyvsltfcel",
                 }
             ],
             "solutionInstanceName": "testname",
-            "solutionTemplateVersionId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}/{resourceType}/{resourceName}",
+            "solutionTemplateVersionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Edge/SolutionTemplates/st/versions/1.0.0",
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Targets_ReviewSolutionVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Targets_ReviewSolutionVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -36,37 +36,35 @@ def main():
         solution_name="testname",
         instance_name="testname",
         resource={
-            "extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"},
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
             "properties": {
                 "activeState": "active",
-                "reconciliationPolicy": {"interval": "szucgzdbydcowvhprhx", "state": "inactive"},
+                "reconciliationPolicy": {"interval": "sefmajhesdas", "state": "inactive"},
                 "solutionScope": "testname",
-                "solutionVersionId": "acpddbkfclsgxg",
+                "solutionVersionId": "nrufwrrlslbu",
                 "status": {
-                    "deployed": 24,
-                    "expectedRunningJobId": 19,
-                    "generation": 21,
-                    "lastModified": "2025-06-09T10:12:04.224Z",
-                    "runningJobId": 6,
-                    "status": "nnpksn",
-                    "statusDetails": "bslqqnfciczenaltdcmrgg",
+                    "deployed": 23,
+                    "expectedRunningJobId": 26,
+                    "generation": 6,
+                    "lastModified": "2026-04-03T06:50:31.397Z",
+                    "runningJobId": 14,
+                    "status": "cgnpefkydfiqivyeggo",
+                    "statusDetails": "tigubrypckktt",
                     "targetStatuses": [
                         {
-                            "componentStatuses": [
-                                {"name": "lxzbkoblvaoubknkblwplf", "status": "txtthlvducufbblgtctegtgpzkzgyi"}
-                            ],
-                            "name": "jpbfbxmjvr",
-                            "status": "gsgkxfwtyoaepwa",
+                            "componentStatuses": [{"name": "xyucclhkogrcbyasbibiuvjwxmw", "status": "iimiidgzeawmi"}],
+                            "name": "jtgdfywzpqjvyigrqy",
+                            "status": "uq",
                         }
                     ],
                 },
-                "targetId": "eguutiftuxrsavvckjrv",
+                "targetId": "cxhzexpvtx",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Instances_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Instances_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

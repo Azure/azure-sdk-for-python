@@ -33,11 +33,11 @@ def main():
     response = client.config_templates.remove_version(
         resource_group_name="rgconfigurationmanager",
         config_template_name="testname",
-        body={"version": "ghtvdzgmzncaifrnuumg"},
+        body={"version": "nipqereqmxeiv"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/ConfigTemplates_RemoveVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/ConfigTemplates_RemoveVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
