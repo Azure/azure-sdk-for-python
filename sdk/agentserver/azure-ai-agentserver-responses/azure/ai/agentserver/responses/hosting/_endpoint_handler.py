@@ -902,7 +902,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     {
                         "error": {
-                            "message": "An active execution or retained replay stream with this response ID already exists.",
+                            "message": (
+                                "An active execution or retained replay stream with this response ID already exists."
+                            ),
                             "type": "conflict",
                             "code": "response_id_conflict",
                             "param": "response_id",
