@@ -85,10 +85,10 @@ async def sample_analyze_actions_async():
 
         # Submit multi-action job (LRO)
         poller = await client.begin_analyze_text_job(text_input=text_input, actions=actions)
-        paged_actions = await poller.result()
+        job_state = await poller.result()
 
         # Iterate each action result
-        async for action_result in paged_actions:
+        for action_result in job_state.actions.items_property or []:
             print()  # spacing
             # --- Entities ---
             if isinstance(action_result, EntityRecognitionOperationResult):

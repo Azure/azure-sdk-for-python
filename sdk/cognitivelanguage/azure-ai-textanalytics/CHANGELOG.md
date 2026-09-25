@@ -1,5 +1,15 @@
 # Release History
 
+## 6.0.0b3 (2026-09-17)
+
+This version of the client library defaults to the service API version `2026-05-15-preview`.
+
+### Other Changes
+
+- Added sync and async tests and samples for the existing `cancel_after` parameter on `begin_analyze_text_job`.
+- Expanded PII test and sample coverage for existing entity synonyms, value exclusions, excluded categories, `NoMask` redaction, and entity mask metadata.
+- Updated tests to authenticate with Microsoft Entra ID.
+
 ## 6.0.0b2 (2025-11-06)
 
 This version of the client library defaults to the service API version `2025-11-15-preview`.

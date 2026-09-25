@@ -7,8 +7,7 @@
 # --------------------------------------------------------------------------
 import functools
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -17,23 +16,31 @@ from azure.ai.textanalytics.models import (
     HealthcareLROTask,
     HealthcareLROResult,
     TextActions,
+    AnalyzeTextOperationState,
 )
 
+
+def deserialize_job_state(pipeline_response, _, __):
+    return AnalyzeTextOperationState(pipeline_response.http_response.json())
+
+
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
 
     # Start with any helper functions you might need, for example a client creation method:
-    def create_client(self, endpoint, key):
-        credential = AzureKeyCredential(key)
-        client = TextAnalysisClient(endpoint, credential)
-        return client
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
     ...
 
@@ -41,8 +48,8 @@ class TestTextAnalysis(AzureRecordedTestCase):
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
-    def test_health_care_lro(self, text_analysis_endpoint, text_analysis_key):
-        client = self.create_client(text_analysis_endpoint, text_analysis_key)
+    def test_health_care_lro(self, text_analysis_endpoint):
+        client = self.create_client(text_analysis_endpoint)
 
         text_a = "Prescribed 100mg ibuprofen, taken twice daily."
 
@@ -62,39 +69,37 @@ class TestTextAnalysisCase(TestTextAnalysis):
         poller = client.begin_analyze_text_job(
             text_input=text_input,
             actions=actions,
+            cls=deserialize_job_state,
         )
 
         assert poller is not None
 
-        paged_actions = poller.result()
-        details = poller.details
-        assert "operation_id" in details
-        assert details.get("status") is not None
-
-        assert paged_actions is not None
+        job_state = poller.result()
+        assert job_state is not None
+        assert job_state.job_id is not None
+        assert job_state.status is not None
 
         found_healthcare = False
 
-        for actions_page in paged_actions:
-            assert isinstance(actions_page, TextActions)
-            # NOTE: Python property is items_property (wire name "items")
-            assert actions_page.items_property is not None
+        actions = job_state.actions
+        assert isinstance(actions, TextActions)
+        assert actions.items_property is not None  # wire: "items"
 
-            for op_result in actions_page.items_property:
-                if isinstance(op_result, HealthcareLROResult):
-                    found_healthcare = True
-                    hc_result = op_result.results
-                    assert hc_result is not None
-                    assert hc_result.documents is not None
+        for op_result in actions.items_property:
+            if isinstance(op_result, HealthcareLROResult):
+                found_healthcare = True
+                hc_result = op_result.results
+                assert hc_result is not None
+                assert hc_result.documents is not None
 
-                    for doc in hc_result.documents:
-                        assert doc.id is not None
-                        assert doc.entities is not None
-                        assert doc.relations is not None
+                for doc in hc_result.documents:
+                    assert doc.id is not None
+                    assert doc.entities is not None
+                    assert doc.relations is not None
 
-                        for relation in doc.relations:
-                            assert relation is not None
-                            assert relation.relation_type is not None
-                            assert relation.entities is not None
+                    for relation in doc.relations:
+                        assert relation is not None
+                        assert relation.relation_type is not None
+                        assert relation.entities is not None
 
         assert found_healthcare, "Expected a HealthcareLROResult in TextActions.items_property"
