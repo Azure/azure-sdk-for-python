@@ -15,8 +15,11 @@ code can use admin-connected connections **without any change to its calling cod
 """
 import inspect
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
+from openai.types import CompletionUsage
+from openai.types.chat import ChatCompletion, ChatCompletionMessage
+from openai.types.chat.chat_completion import Choice
 from openai.types.responses import EasyInputMessageParam, ResponseInputParam
 
 
@@ -87,38 +90,37 @@ def _map_params(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return mapped
 
 
-class _Usage:
-    """chat.completions-shaped usage view over a Responses API usage object.
+_FinishReason = Literal["stop", "length", "tool_calls", "content_filter", "function_call"]
+
+
+def _to_usage(response_usage: Any) -> Optional[CompletionUsage]:
+    """Adapt a Responses API usage object to a chat.completions ``CompletionUsage``.
 
     The Responses API reports ``input_tokens`` / ``output_tokens`` / ``total_tokens``; judge/grader
     code (and the prompty response formatter) expects ``prompt_tokens`` / ``completion_tokens`` /
-    ``total_tokens``. This adapts the former to the latter.
+    ``total_tokens``. Returns ``None`` when the result carries no usage.
     """
-
-    def __init__(self, response_usage: Any) -> None:
-        self.prompt_tokens = getattr(response_usage, "input_tokens", 0) or 0
-        self.completion_tokens = getattr(response_usage, "output_tokens", 0) or 0
-        # Fall back to prompt + completion when the Responses usage omits total_tokens.
-        self.total_tokens = (getattr(response_usage, "total_tokens", 0) or 0) or (
-            self.prompt_tokens + self.completion_tokens
-        )
-
-
-class _ChatMessage:
-    def __init__(self, content: str) -> None:
-        self.role = "assistant"
-        self.content = content
-        self.tool_calls = None
+    if response_usage is None:
+        return None
+    prompt_tokens = getattr(response_usage, "input_tokens", 0) or 0
+    completion_tokens = getattr(response_usage, "output_tokens", 0) or 0
+    # Fall back to prompt + completion when the Responses usage omits total_tokens.
+    total_tokens = (getattr(response_usage, "total_tokens", 0) or 0) or (prompt_tokens + completion_tokens)
+    return CompletionUsage(
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=total_tokens,
+    )
 
 
-def _finish_reason(response: Any) -> str:
-    """Map a Responses result's status to a chat-completions ``finish_reason``.
+def _finish_reason(response: Any) -> _FinishReason:
+    """Map a Responses result's status to a chat.completions ``finish_reason``.
 
     A Responses call that stops early reports ``status="incomplete"`` with an
-    ``incomplete_details.reason`` (e.g. ``"max_output_tokens"`` / ``"content_filter"``).
-    Chat.completions callers expect ``"length"`` for truncation; surfacing it lets the prompty
-    formatter distinguish a truncated (invalid-JSON-prone) judge output from a complete one instead
-    of always seeing ``"stop"``.
+    ``incomplete_details.reason`` (``"max_output_tokens"`` / ``"content_filter"``). chat.completions
+    callers expect ``"length"`` for truncation; surfacing it lets the prompty formatter distinguish a
+    truncated (invalid-JSON-prone) judge output from a complete one. Anything else clamps to ``"stop"``
+    to stay within the chat.completions ``finish_reason`` literal.
     """
     if getattr(response, "status", None) != "incomplete":
         return "stop"
@@ -126,33 +128,33 @@ def _finish_reason(response: Any) -> str:
     reason = getattr(details, "reason", None) if details is not None else None
     if reason == "max_output_tokens":
         return "length"
-    return reason or "stop"
+    if reason == "content_filter":
+        return "content_filter"
+    return "stop"
 
 
-class _Choice:
-    def __init__(self, content: str, finish_reason: str = "stop") -> None:
-        self.index = 0
-        self.message = _ChatMessage(content)
-        self.finish_reason = finish_reason
+def _to_chat_completion(response: Any) -> ChatCompletion:
+    """Re-shape a Responses API result into the openai ``ChatCompletion`` the prompty judge consumes.
 
-
-class _ChatCompletion:
-    """Minimal chat.completions-shaped view over a Responses API result."""
-
-    def __init__(self, response: Any) -> None:
-        self.id = getattr(response, "id", None)
-        self.model = getattr(response, "model", None)
-        _usage = getattr(response, "usage", None)
-        self.usage = _Usage(_usage) if _usage is not None else None
-        self.object = "chat.completion"
-        # Server timestamp: Responses uses created_at (older/mocked shapes may use created); else now.
-        _created = getattr(response, "created_at", None)
-        if _created is None:
-            _created = getattr(response, "created", None)
-        self.created = (
-            int(_created) if isinstance(_created, (int, float)) and not isinstance(_created, bool) else int(time.time())
-        )
-        self.choices = [_Choice(getattr(response, "output_text", "") or "", _finish_reason(response))]
+    The prompty judge path speaks the chat.completions contract, so the shim adapts each Responses
+    result into the real openai ``ChatCompletion`` / ``Choice`` / ``ChatCompletionMessage`` /
+    ``CompletionUsage`` types (rather than hand-written stand-ins) to stay in sync with the SDK schema.
+    """
+    message = ChatCompletionMessage(role="assistant", content=getattr(response, "output_text", "") or "")
+    choice = Choice(index=0, finish_reason=_finish_reason(response), message=message)
+    # Server timestamp: Responses uses created_at (older/mocked shapes may use created); else now.
+    created = getattr(response, "created_at", None)
+    if created is None:
+        created = getattr(response, "created", None)
+    created = int(created) if isinstance(created, (int, float)) and not isinstance(created, bool) else int(time.time())
+    return ChatCompletion(
+        id=getattr(response, "id", None) or "",
+        choices=[choice],
+        created=created,
+        model=getattr(response, "model", None) or "",
+        object="chat.completion",
+        usage=_to_usage(getattr(response, "usage", None)),
+    )
 
 
 class _AsyncChatCompletions:
@@ -161,10 +163,10 @@ class _AsyncChatCompletions:
 
     async def create(
         self, *, model: Optional[str] = None, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any
-    ) -> _ChatCompletion:
+    ) -> ChatCompletion:
         # ``model`` from the caller is ignored — the BYO model is fixed by the shim's config.
         response = await self._owner._responses_create(messages=messages, **kwargs)
-        return _ChatCompletion(response)
+        return _to_chat_completion(response)
 
 
 class _AsyncChat:

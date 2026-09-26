@@ -14,8 +14,8 @@ from azure.ai.evaluation._byo_judge import (
     _to_responses_input,
     _map_params,
     _map_response_format,
-    _ChatCompletion,
-    _Usage,
+    _to_chat_completion,
+    _to_usage,
 )
 
 
@@ -88,16 +88,16 @@ class TestResponseFormatMapping:
 
 class TestUsageAdapter:
     def test_responses_usage_mapped_to_chat_shape(self):
-        usage = _Usage(MagicMock(input_tokens=5, output_tokens=7, total_tokens=12))
+        usage = _to_usage(MagicMock(input_tokens=5, output_tokens=7, total_tokens=12))
         assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (5, 7, 12)
 
     def test_missing_fields_default_to_zero(self):
-        usage = _Usage(object())
+        usage = _to_usage(object())
         assert (usage.prompt_tokens, usage.completion_tokens, usage.total_tokens) == (0, 0, 0)
 
     def test_total_tokens_falls_back_to_prompt_plus_completion(self):
         # Responses usage without total_tokens -> compute it from prompt + completion.
-        usage = _Usage(SimpleNamespace(input_tokens=5, output_tokens=7))
+        usage = _to_usage(SimpleNamespace(input_tokens=5, output_tokens=7))
         assert usage.total_tokens == 12
 
 
@@ -113,18 +113,18 @@ class TestFinishReason:
         return SimpleNamespace(**kwargs)
 
     def test_completed_is_stop(self):
-        assert _ChatCompletion(self._resp(status="completed")).choices[0].finish_reason == "stop"
+        assert _to_chat_completion(self._resp(status="completed")).choices[0].finish_reason == "stop"
 
     def test_missing_status_defaults_to_stop(self):
-        assert _ChatCompletion(self._resp()).choices[0].finish_reason == "stop"
+        assert _to_chat_completion(self._resp()).choices[0].finish_reason == "stop"
 
     def test_truncation_is_length(self):
         resp = self._resp(status="incomplete", incomplete_details=SimpleNamespace(reason="max_output_tokens"))
-        assert _ChatCompletion(resp).choices[0].finish_reason == "length"
+        assert _to_chat_completion(resp).choices[0].finish_reason == "length"
 
     def test_other_incomplete_reason_passes_through(self):
         resp = self._resp(status="incomplete", incomplete_details=SimpleNamespace(reason="content_filter"))
-        assert _ChatCompletion(resp).choices[0].finish_reason == "content_filter"
+        assert _to_chat_completion(resp).choices[0].finish_reason == "content_filter"
 
 
 class TestAsyncByoProjectResponsesClient:
@@ -284,14 +284,16 @@ class TestAsyncByoProjectResponsesClient:
     @patch("azure.ai.projects.aio.AIProjectClient")
     def test_preserves_server_created_timestamp(self, mock_aipc):
         # Responses exposes the server timestamp as created_at; the shim preserves it (not local time).
-        cc = _ChatCompletion(SimpleNamespace(output_text="ok", usage=None, id="r", model="m", created_at=1752694800))
+        cc = _to_chat_completion(
+            SimpleNamespace(output_text="ok", usage=None, id="r", model="m", created_at=1752694800)
+        )
         assert cc.created == 1752694800
 
     def test_created_timestamp_falls_back_to_created_then_now(self):
         # Older/mocked shapes may only carry ``created``; that is honored as a fallback.
-        assert _ChatCompletion(SimpleNamespace(output_text="ok", created=1700000000)).created == 1700000000
+        assert _to_chat_completion(SimpleNamespace(output_text="ok", created=1700000000)).created == 1700000000
         # When neither is a real number, fall back to the local wall-clock time (a positive int).
-        assert _ChatCompletion(SimpleNamespace(output_text="ok")).created > 0
+        assert _to_chat_completion(SimpleNamespace(output_text="ok")).created > 0
 
 
 class TestValidateModelConfigByo:
