@@ -602,9 +602,9 @@ class BulkCreateCustomVmSizeProfile(TypedDict, total=False):
     operation-level base profile and beneath any per-VM override. Present only on the
     bulkCreateCustom endpoint; the uniform endpoint rejects a non-null override.
 
-    :ivar name: The name of the VM size, eg Standard_D2ads_v5. Required.
+    :ivar name: The virtual machine SKU, for example ``Standard_D2ads_v5``. Required.
     :vartype name: str
-    :ivar rank: The rank of this VM size in the priority order. Required.
+    :ivar rank: The customer-defined priority rank for this virtual machine size. Required.
     :vartype rank: int
     :ivar override: Optional per-VM-size profile override applied to every VM the service assigns
      to this size. A size maps to many VMs, so virtualMachineName is not part of this shape.
@@ -614,9 +614,9 @@ class BulkCreateCustomVmSizeProfile(TypedDict, total=False):
     """
 
     name: Required[str]
-    """The name of the VM size, eg Standard_D2ads_v5. Required."""
+    """The virtual machine SKU, for example ``Standard_D2ads_v5``. Required."""
     rank: Required[int]
-    """The rank of this VM size in the priority order. Required."""
+    """The customer-defined priority rank for this virtual machine size. Required."""
     override: "BulkCreateCustomOverrideBase"
     """Optional per-VM-size profile override applied to every VM the service assigns to this size. A
      size maps to many VMs, so virtualMachineName is not part of this shape. virtualMachineProfile
@@ -751,14 +751,15 @@ class CancelOccurrenceRequest(TypedDict, total=False):
 
 
 class CancelOperationsContent(TypedDict, total=False):
-    """This is the request to cancel running operations in scheduled actions using the operation ids.
+    """The eligible operations to cancel.
 
-    :ivar operationIds: The list of operation ids to cancel operations on. Required.
+    :ivar operationIds: The Bulk Action Operation Ids that identify the operations to cancel.
+     Required.
     :vartype operationIds: list[str]
     """
 
     operationIds: Required[list[str]]
-    """The list of operation ids to cancel operations on. Required."""
+    """The Bulk Action Operation Ids that identify the operations to cancel. Required."""
 
 
 class CapacityRecommendationParameters(TypedDict, total=False):
@@ -981,14 +982,14 @@ class DiffDiskSettings(TypedDict, total=False):
 
 
 class SubResource(TypedDict, total=False):
-    """Describes a reference to a sub-resource.
+    """A reference to an Azure resource.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     """
 
     id: str
-    """The ID of the sub-resource."""
+    """The Azure resource ID."""
 
 
 class DiskEncryptionSetParametersContent(SubResource):
@@ -997,7 +998,7 @@ class DiskEncryptionSetParametersContent(SubResource):
     managed disk. Please refer `https://aka.ms/mdssewithcmkoverview
     <https://aka.ms/mdssewithcmkoverview>`_ for more details.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     """
 
@@ -1054,11 +1055,11 @@ class EventGridAndResourceGraph(TypedDict, total=False):
 
 
 class ExecuteDeallocateContent(TypedDict, total=False):
-    """The ExecuteDeallocateRequest request for executeDeallocate operations.
+    """The virtual machines and execution settings for a bulk deallocate action.
 
-    :ivar executionParameters: The execution parameters for the request. Required.
+    :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: "Resources"
     :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -1066,45 +1067,46 @@ class ExecuteDeallocateContent(TypedDict, total=False):
     """
 
     executionParameters: Required["ExecutionParameters"]
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: "Resources"
-    """The resources for the request."""
+    """The target virtual machines."""
     resourcesWithContext: "ResourcesWithContext"
     """The resources for the request with resource context information. Cannot be provided together
      with ``resources`` - exactly one must be specified."""
 
 
 class ExecuteDeleteContent(TypedDict, total=False):
-    """The ExecuteDeleteRequest for delete VM operation.
+    """The virtual machines and execution settings for a bulk delete action.
 
-    :ivar executionParameters: The execution parameters for the request. Required.
+    :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: "Resources"
     :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
     :vartype resourcesWithContext: "ResourcesWithContext"
-    :ivar forceDeletion: Forced delete resource item.
+    :ivar forceDeletion: Indicates whether Bulk Actions uses forced deletion for the target virtual
+     machines.
     :vartype forceDeletion: bool
     """
 
     executionParameters: Required["ExecutionParameters"]
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: "Resources"
-    """The resources for the request."""
+    """The target virtual machines."""
     resourcesWithContext: "ResourcesWithContext"
     """The resources for the request with resource context information. Cannot be provided together
      with ``resources`` - exactly one must be specified."""
     forceDeletion: bool
-    """Forced delete resource item."""
+    """Indicates whether Bulk Actions uses forced deletion for the target virtual machines."""
 
 
 class ExecuteHibernateContent(TypedDict, total=False):
-    """The ExecuteHibernateRequest request for executeHibernate operations.
+    """The virtual machines and execution settings for a bulk hibernate action.
 
-    :ivar executionParameters: The execution parameters for the request. Required.
+    :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: "Resources"
     :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -1112,45 +1114,45 @@ class ExecuteHibernateContent(TypedDict, total=False):
     """
 
     executionParameters: Required["ExecutionParameters"]
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: "Resources"
-    """The resources for the request."""
+    """The target virtual machines."""
     resourcesWithContext: "ResourcesWithContext"
     """The resources for the request with resource context information. Cannot be provided together
      with ``resources`` - exactly one must be specified."""
 
 
 class ExecuteReimageRequest(TypedDict, total=False):
-    """The ExecuteReimageRequest request for reimage operations.
+    """The virtual machines and configuration for a bulk reimage action.
 
-    :ivar executionParameters: The execution parameters for the request. Required.
+    :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: "Resources"
     :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
     :vartype resourcesWithContext: "ResourcesWithContext"
-    :ivar reimageParameters: Reimage parameters including base profile and per-resource overrides.
+    :ivar reimageParameters: The shared and per-virtual-machine reimage configuration.
     :vartype reimageParameters: "ReimagePayload"
     """
 
     executionParameters: Required["ExecutionParameters"]
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: "Resources"
-    """The resources for the request."""
+    """The target virtual machines."""
     resourcesWithContext: "ResourcesWithContext"
     """The resources for the request with resource context information. Cannot be provided together
      with ``resources`` - exactly one must be specified."""
     reimageParameters: "ReimagePayload"
-    """Reimage parameters including base profile and per-resource overrides."""
+    """The shared and per-virtual-machine reimage configuration."""
 
 
 class ExecuteStartContent(TypedDict, total=False):
-    """The ExecuteStartRequest request for executeStart operations.
+    """The virtual machines and execution settings for a bulk start action.
 
-    :ivar executionParameters: The execution parameters for the request. Required.
+    :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: "Resources"
     :ivar resourcesWithContext: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -1158,22 +1160,22 @@ class ExecuteStartContent(TypedDict, total=False):
     """
 
     executionParameters: Required["ExecutionParameters"]
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: "Resources"
-    """The resources for the request."""
+    """The target virtual machines."""
     resourcesWithContext: "ResourcesWithContext"
     """The resources for the request with resource context information. Cannot be provided together
      with ``resources`` - exactly one must be specified."""
 
 
 class ExecutionParameters(TypedDict, total=False):
-    """Extra details needed to run the user's request.
+    """The execution settings for a bulk action.
 
-    :ivar retryPolicy: Retry policy the user can pass.
+    :ivar retryPolicy: The retry settings for the bulk action.
     :vartype retryPolicy: "RetryPolicy"
-    :ivar verifyVmAgentHealth: When true on an executeStart request, run a post-Start VM agent
-     health check and engage the fallback chain if the guest agent does not report Ready. Ignored
-     for non-Start operations.
+    :ivar verifyVmAgentHealth: If true, Bulk Actions verifies the virtual machine guest agent
+     health after a start operation. Setting this property to true for any other operation causes
+     the request to fail.
     :vartype verifyVmAgentHealth: bool
     :ivar capacityRecommendationParameters: Capacity recommendation parameters for the request.
      When provided on an executeStart request, the service computes placement recommendations only
@@ -1183,10 +1185,10 @@ class ExecutionParameters(TypedDict, total=False):
     """
 
     retryPolicy: "RetryPolicy"
-    """Retry policy the user can pass."""
+    """The retry settings for the bulk action."""
     verifyVmAgentHealth: bool
-    """When true on an executeStart request, run a post-Start VM agent health check and engage the
-     fallback chain if the guest agent does not report Ready. Ignored for non-Start operations."""
+    """If true, Bulk Actions verifies the virtual machine guest agent health after a start operation.
+     Setting this property to true for any other operation causes the request to fail."""
     capacityRecommendationParameters: "CapacityRecommendationParameters"
     """Capacity recommendation parameters for the request. When provided on an executeStart request,
      the service computes placement recommendations only if the VM fails to start due to an
@@ -1223,14 +1225,16 @@ class Resource(TypedDict, total=False):
 
 
 class GetOperationStatusContent(TypedDict, total=False):
-    """This is the request to get operation status using operationids.
+    """The operation for which current status should be returned.
 
-    :ivar operationIds: The list of operation ids to get the status of. Required.
+    :ivar operationIds: The Bulk Action Operation Ids that identify the operations for which
+     current status should be returned. Required.
     :vartype operationIds: list[str]
     """
 
     operationIds: Required[list[str]]
-    """The list of operation ids to get the status of. Required."""
+    """The Bulk Action Operation Ids that identify the operations for which current status should be
+     returned. Required."""
 
 
 class HardwareProfile(TypedDict, total=False):
@@ -1308,7 +1312,7 @@ class ImageReference(SubResource):
     creation operations. NOTE: Image reference publisher and offer can only be set when you create
     the scale set.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar publisher: The image publisher.
     :vartype publisher: str
@@ -1376,18 +1380,18 @@ class KeyVaultKeyReference(TypedDict, total=False):
 
 
 class KeyVaultSecretReference(TypedDict, total=False):
-    """Describes a reference to Key Vault Secret.
+    """A reference to a secret stored in Azure Key Vault.
 
-    :ivar secretUrl: The URL referencing a secret in a Key Vault. Required.
+    :ivar secretUrl: The URL of the secret in Azure Key Vault. Required.
     :vartype secretUrl: str
-    :ivar sourceVault: The relative URL of the Key Vault containing the secret. Required.
+    :ivar sourceVault: The Azure resource ID of the Key Vault that contains the secret. Required.
     :vartype sourceVault: "SubResource"
     """
 
     secretUrl: Required[str]
-    """The URL referencing a secret in a Key Vault. Required."""
+    """The URL of the secret in Azure Key Vault. Required."""
     sourceVault: Required["SubResource"]
-    """The relative URL of the Key Vault containing the secret. Required."""
+    """The Azure resource ID of the Key Vault that contains the secret. Required."""
 
 
 class LinuxConfiguration(TypedDict, total=False):
@@ -1581,7 +1585,7 @@ class LocationBasedBulkCreateCustom(ProxyResource):
 class ManagedDiskParametersContent(SubResource):
     """The parameters of a managed disk.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar storageAccountType: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
@@ -1638,7 +1642,7 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class NetworkInterfaceReference(SubResource):
     """Describes a network interface reference.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar properties: Describes a network interface reference properties.
     :vartype properties: "NetworkInterfaceReferenceProperties"
@@ -1951,56 +1955,33 @@ class OSProfile(TypedDict, total=False):
 
 
 class OSProfileProvisioningData(TypedDict, total=False):
-    """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
+    """Additional parameters for reimaging a virtual machine that does not use an ephemeral operating
+    system disk.
 
-    :ivar adminPassword: Specifies the password of the administrator account. <br><br>
-     **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
-     <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72
-     characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be
-     fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a
-     special character (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123", "P@$$w0rd",
-     "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22",
-     "iloveyou!" <br><br> For resetting the password, see `How to reset the Remote Desktop service
-     or its login password in a Windows VM
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
-     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
-     using the VMAccess Extension
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
+    :ivar adminPassword: The password for the virtual machine administrator account. The password
+     must be 8 to 123 characters long for Windows virtual machines or 6 to 72 characters long for
+     Linux virtual machines. It must contain characters from at least three of these categories:
+     lowercase letters, uppercase letters, digits, and special characters. The following values are
+     not allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
+     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
+     accepted only in the request and is not returned in responses.
     :vartype adminPassword: str
-    :ivar customData: Specifies a base-64 encoded string of custom data. The base-64 encoded string
-     is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum length
-     of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in customData
-     property.** This property cannot be updated after the VM is created. The property customData is
-     passed to the VM to be saved as a file, for more information see `Custom Data on Azure VMs
-     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If using
-     cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during creation
-     <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
+    :ivar customData: Base64-encoded custom data provided to the virtual machine. The decoded data
+     can contain up to 65,535 bytes. Do not include secrets or passwords.
     :vartype customData: str
     """
 
     adminPassword: str
-    """Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8
-     characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):**
-     123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity
-     requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters
-     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_])
-     <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\",
-     \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\"
-     <br><br> For resetting the password, see `How to reset the Remote Desktop service or its login
-     password in a Windows VM
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
-     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
-     using the VMAccess Extension
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_."""
+    """The password for the virtual machine administrator account. The password must be 8 to 123
+     characters long for Windows virtual machines or 6 to 72 characters long for Linux virtual
+     machines. It must contain characters from at least three of these categories: lowercase
+     letters, uppercase letters, digits, and special characters. The following values are not
+     allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
+     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
+     accepted only in the request and is not returned in responses."""
     customData: str
-    """Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a
-     binary array that is saved as a file on the Virtual Machine. The maximum length of the binary
-     array is 65535 bytes. **Note: Do not pass any secrets or passwords in customData property.**
-     This property cannot be updated after the VM is created. The property customData is passed to
-     the VM to be saved as a file, for more information see `Custom Data on Azure VMs
-     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If using
-     cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during creation
-     <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_."""
+    """Base64-encoded custom data provided to the virtual machine. The decoded data can contain up to
+     65,535 bytes. Do not include secrets or passwords."""
 
 
 class PartialFulfillmentPolicy(TypedDict, total=False):
@@ -2128,30 +2109,30 @@ class Plan(TypedDict, total=False):
 
 
 class PriorityProfile(TypedDict, total=False):
-    """The priority profile for flex VM creation.
+    """The priority and allocation preferences for virtual machines.
 
-    :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
+    :ivar type: The priority type for virtual machine allocation. Known values are: "Regular" and
+     "Spot".
     :vartype type: Union[str, "PriorityType"]
-    :ivar maxPricePerVM: Price per hour of each Spot VM will never exceed this. Available from
-     2026-04-06-preview.
+    :ivar maxPricePerVM: The maximum hourly price, in US dollars, for each Spot virtual machine.
     :vartype maxPricePerVM: float
-    :ivar evictionPolicy: Eviction Policy to follow when evicting Spot VMs. Available from
-     2026-04-06-preview. Known values are: "Delete" and "Deallocate".
+    :ivar evictionPolicy: The action applied to a Spot virtual machine when Azure evicts it. Known
+     values are: "Delete" and "Deallocate".
     :vartype evictionPolicy: Union[str, "EvictionPolicy"]
-    :ivar allocationStrategy: The allocation strategy for VM size selection. Known values are:
+    :ivar allocationStrategy: The strategy used to select a virtual machine size. Known values are:
      "LowestPrice", "Prioritized", and "CapacityOptimized".
     :vartype allocationStrategy: Union[str, "AllocationStrategy"]
     """
 
     type: Union[str, "PriorityType"]
-    """The priority type for VM allocation. Known values are: \"Regular\" and \"Spot\"."""
+    """The priority type for virtual machine allocation. Known values are: \"Regular\" and \"Spot\"."""
     maxPricePerVM: float
-    """Price per hour of each Spot VM will never exceed this. Available from 2026-04-06-preview."""
+    """The maximum hourly price, in US dollars, for each Spot virtual machine."""
     evictionPolicy: Union[str, "EvictionPolicy"]
-    """Eviction Policy to follow when evicting Spot VMs. Available from 2026-04-06-preview. Known
-     values are: \"Delete\" and \"Deallocate\"."""
+    """The action applied to a Spot virtual machine when Azure evicts it. Known values are: \"Delete\"
+     and \"Deallocate\"."""
     allocationStrategy: Union[str, "AllocationStrategy"]
-    """The allocation strategy for VM size selection. Known values are: \"LowestPrice\",
+    """The strategy used to select a virtual machine size. Known values are: \"LowestPrice\",
      \"Prioritized\", and \"CapacityOptimized\"."""
 
 
@@ -2217,33 +2198,36 @@ class PublicIPAddressSku(TypedDict, total=False):
 
 
 class ReimagePayload(TypedDict, total=False):
-    """Reimage payload with common profile and per-resource overrides.
+    """The shared and per-virtual-machine configuration for a bulk reimage action.
 
-    :ivar baseProfile: Common reimage profile applied to all resources unless overridden.
+    :ivar baseProfile: The reimage configuration applied to every virtual machine unless a
+     per-virtual-machine override is provided.
     :vartype baseProfile: "VirtualMachineReimageParameters"
-    :ivar resourceOverrides: Per-resource reimage overrides.
+    :ivar resourceOverrides: The reimage configuration overrides for individual virtual machines.
     :vartype resourceOverrides: list["ReimageResourceOverride"]
     """
 
     baseProfile: "VirtualMachineReimageParameters"
-    """Common reimage profile applied to all resources unless overridden."""
+    """The reimage configuration applied to every virtual machine unless a per-virtual-machine
+     override is provided."""
     resourceOverrides: list["ReimageResourceOverride"]
-    """Per-resource reimage overrides."""
+    """The reimage configuration overrides for individual virtual machines."""
 
 
 class ReimageResourceOverride(TypedDict, total=False):
-    """Per-resource override entry for reimage requests.
+    """A reimage configuration override for one virtual machine.
 
-    :ivar resourceId: The Azure resource ID of the virtual machine for this override. Required.
+    :ivar resourceId: The Azure resource ID of the virtual machine to which the override applies.
+     Required.
     :vartype resourceId: str
-    :ivar profile: Per-resource reimage profile override. Required.
+    :ivar profile: The reimage configuration for this virtual machine. Required.
     :vartype profile: "VirtualMachineReimageParameters"
     """
 
     resourceId: Required[str]
-    """The Azure resource ID of the virtual machine for this override. Required."""
+    """The Azure resource ID of the virtual machine to which the override applies. Required."""
     profile: Required["VirtualMachineReimageParameters"]
-    """Per-resource reimage profile override. Required."""
+    """The reimage configuration for this virtual machine. Required."""
 
 
 class ResourceAttachRequest(TypedDict, total=False):
@@ -2280,14 +2264,14 @@ class ResourcePatchRequest(TypedDict, total=False):
 
 
 class Resources(TypedDict, total=False):
-    """The resources needed for the user request.
+    """The virtual machines targeted by a bulk action.
 
-    :ivar ids: The resource ids used for the request. Required.
+    :ivar ids: The Azure resource IDs of the target virtual machines. Required.
     :vartype ids: list[str]
     """
 
     ids: Required[list[str]]
-    """The resource ids used for the request. Required."""
+    """The Azure resource IDs of the target virtual machines. Required."""
 
 
 class ResourcesWithContext(TypedDict, total=False):
@@ -2317,24 +2301,25 @@ class ResourceWithContext(TypedDict, total=False):
 
 
 class RetryPolicy(TypedDict, total=False):
-    """The retry policy for the user request.
+    """The retry settings for a bulk action.
 
-    :ivar retryCount: Retry count for user request.
+    :ivar retryCount: The maximum number of retry attempts.
     :vartype retryCount: int
-    :ivar retryWindowInMinutes: Retry window in minutes for user request.
+    :ivar retryWindowInMinutes: The period, in minutes, during which Bulk Actions can retry the
+     operation.
     :vartype retryWindowInMinutes: int
-    :ivar onFailureAction: Action to take on failure. Known values are: "Start", "Deallocate",
-     "Hibernate", "Create", and "Delete".
+    :ivar onFailureAction: The operation that Bulk Actions attempts when the requested operation
+     fails. Known values are: "Start", "Deallocate", "Hibernate", "Create", and "Delete".
     :vartype onFailureAction: Union[str, "ResourceOperationType"]
     """
 
     retryCount: int
-    """Retry count for user request."""
+    """The maximum number of retry attempts."""
     retryWindowInMinutes: int
-    """Retry window in minutes for user request."""
+    """The period, in minutes, during which Bulk Actions can retry the operation."""
     onFailureAction: Union[str, "ResourceOperationType"]
-    """Action to take on failure. Known values are: \"Start\", \"Deallocate\", \"Hibernate\",
-     \"Create\", and \"Delete\"."""
+    """The operation that Bulk Actions attempts when the requested operation fails. Known values are:
+     \"Start\", \"Deallocate\", \"Hibernate\", \"Create\", and \"Delete\"."""
 
 
 class TrackedResource(Resource):
@@ -3312,27 +3297,29 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(TypedDict, total=Fal
 
 
 class VirtualMachineReimageParameters(TypedDict, total=False):
-    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
-    reimaged.
+    """The parameters for reimaging a virtual machine. The operating system disk is always reimaged.
 
-    :ivar tempDisk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :ivar tempDisk: Indicates whether to reimage the temporary disk. The default value is
+     ``false``. This option is supported only for virtual machines or virtual machine scale sets
+     that use an ephemeral operating system disk.
     :vartype tempDisk: bool
-    :ivar exactVersion: Specifies in decimal number, the version the OS disk should be reimaged to.
-     If exact version is not provided, the OS disk is reimaged to the existing version of OS Disk.
+    :ivar exactVersion: The exact image version to use when reimaging the operating system disk.
+     When omitted, the disk is reimaged to its current image version.
     :vartype exactVersion: str
-    :ivar osProfile: Specifies information required for reimaging the non-ephemeral OS disk.
+    :ivar osProfile: The operating system profile used when reimaging a non-ephemeral operating
+     system disk.
     :vartype osProfile: "OSProfileProvisioningData"
     """
 
     tempDisk: bool
-    """Specifies whether to reimage temp disk. Default value: false. Note: This temp disk reimage
-     parameter is only supported for VM/VMSS with Ephemeral OS disk."""
+    """Indicates whether to reimage the temporary disk. The default value is ``false``. This option is
+     supported only for virtual machines or virtual machine scale sets that use an ephemeral
+     operating system disk."""
     exactVersion: str
-    """Specifies in decimal number, the version the OS disk should be reimaged to. If exact version is
-     not provided, the OS disk is reimaged to the existing version of OS Disk."""
+    """The exact image version to use when reimaging the operating system disk. When omitted, the disk
+     is reimaged to its current image version."""
     osProfile: "OSProfileProvisioningData"
-    """Specifies information required for reimaging the non-ephemeral OS disk."""
+    """The operating system profile used when reimaging a non-ephemeral operating system disk."""
 
 
 class VMDiskSecurityProfile(TypedDict, total=False):
@@ -3551,28 +3538,29 @@ class WinRMListener(TypedDict, total=False):
 
 
 class ZoneAllocationPolicy(TypedDict, total=False):
-    """The zone allocation policy for distributing VMs across availability zones.
+    """The preferences for distributing virtual machines across availability zones.
 
-    :ivar distributionStrategy: The distribution strategy for zone allocation. Known values are:
-     "BestEffortSingleZone", "Prioritized", "BestEffortBalanced", and "StrictBalanced".
+    :ivar distributionStrategy: The strategy used to distribute virtual machines across
+     availability zones. Known values are: "BestEffortSingleZone", "Prioritized",
+     "BestEffortBalanced", and "StrictBalanced".
     :vartype distributionStrategy: Union[str, "DistributionStrategy"]
-    :ivar zonePreferences: The zone preferences for allocation priority.
+    :ivar zonePreferences: The availability zones and their allocation priorities.
     :vartype zonePreferences: list["ZonePreference"]
     """
 
     distributionStrategy: Union[str, "DistributionStrategy"]
-    """The distribution strategy for zone allocation. Known values are: \"BestEffortSingleZone\",
-     \"Prioritized\", \"BestEffortBalanced\", and \"StrictBalanced\"."""
+    """The strategy used to distribute virtual machines across availability zones. Known values are:
+     \"BestEffortSingleZone\", \"Prioritized\", \"BestEffortBalanced\", and \"StrictBalanced\"."""
     zonePreferences: list["ZonePreference"]
-    """The zone preferences for allocation priority."""
+    """The availability zones and their allocation priorities."""
 
 
 class ZonePreference(TypedDict, total=False):
-    """A zone preference with a zone identifier and rank.
+    """An availability zone and its allocation priority.
 
-    :ivar zone: The zone identifier. Required.
+    :ivar zone: The availability zone identifier. Required.
     :vartype zone: str
-    :ivar rank: The rank of this zone in the priority order. Required.
+    :ivar rank: The customer-defined priority rank for this availability zone. Required.
     :vartype rank: int
     :ivar targetMaxCapacity: The maximum capacity to place in this zone. The sum across capped
      zones must not exceed the requested capacity, and when every zone preference is capped the sum
@@ -3581,9 +3569,9 @@ class ZonePreference(TypedDict, total=False):
     """
 
     zone: Required[str]
-    """The zone identifier. Required."""
+    """The availability zone identifier. Required."""
     rank: Required[int]
-    """The rank of this zone in the priority order. Required."""
+    """The customer-defined priority rank for this availability zone. Required."""
     targetMaxCapacity: int
     """The maximum capacity to place in this zone. The sum across capped zones must not exceed the
      requested capacity, and when every zone preference is capped the sum must equal the requested
