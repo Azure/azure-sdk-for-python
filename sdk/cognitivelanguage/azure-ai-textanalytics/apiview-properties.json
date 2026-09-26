@@ -200,5 +200,6 @@
         "azure.ai.textanalytics.aio.TextAnalysisClient.begin_analyze_text_job": "Language.Text.analyzeTextSubmitJob",
         "azure.ai.textanalytics.TextAnalysisClient.begin_cancel_job": "Language.Text.analyzeTextCancelJob",
         "azure.ai.textanalytics.aio.TextAnalysisClient.begin_cancel_job": "Language.Text.analyzeTextCancelJob"
-    }
+    },
+    "CrossLanguageVersion": "b62ef08f62e9"
 }
