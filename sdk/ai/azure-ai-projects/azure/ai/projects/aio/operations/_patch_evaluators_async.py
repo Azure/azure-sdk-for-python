@@ -27,7 +27,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @overload
     async def begin_create_generation_job(
         self,
-        body: _models.EvaluatorGenerationJob,
+        job: _models.EvaluatorGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -37,7 +37,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @overload
     async def begin_create_generation_job(
         self,
-        body: JSON,
+        job: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -47,7 +47,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @overload
     async def begin_create_generation_job(
         self,
-        body: IO[bytes],
+        job: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -57,15 +57,15 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_generation_job(
         self,
-        body: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncEvaluatorGenerationLROPoller:
         """Create an evaluator generation job.
 
-        :param body: The job to create. Required.
-        :type body: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -84,7 +84,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = await self._create_generation_job_initial(
-                body=body,
+                job=job,
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

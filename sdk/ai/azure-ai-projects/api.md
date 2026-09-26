@@ -1056,7 +1056,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                body: EvaluatorGenerationJob, 
+                job: EvaluatorGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -1066,7 +1066,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                body: JSON, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -1076,7 +1076,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                body: IO[bytes], 
+                job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -5489,7 +5489,7 @@ namespace azure.ai.projects.models
         COSMOS_DB = "CosmosDB"
         CUSTOM = "CustomKeys"
         OPEN_API = "OpenAPI"
-        REMOTE_A2_A = "RemoteA2A"
+        REMOTE_A2A = "RemoteA2A"
         REMOTE_TOOL = "RemoteTool_Preview"
 
 
@@ -17337,7 +17337,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                body: EvaluatorGenerationJob, 
+                job: EvaluatorGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -17347,7 +17347,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                body: JSON, 
+                job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -17357,7 +17357,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                body: IO[bytes], 
+                job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 

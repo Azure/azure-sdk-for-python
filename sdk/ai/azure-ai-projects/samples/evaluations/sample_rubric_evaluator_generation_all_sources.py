@@ -128,7 +128,7 @@ with (
     print("Begin creating an evaluator generation job.")
     try:
         poller = project_client.beta.evaluators.begin_create_generation_job(
-            body=EvaluatorGenerationJob(
+            job=EvaluatorGenerationJob(
                 inputs=EvaluatorGenerationInputs(
                     model=model_name,
                     evaluator_name=multi_name,
@@ -176,7 +176,7 @@ with (
         print("Begin creating an evaluator generation job.")
         try:
             poller = project_client.beta.evaluators.begin_create_generation_job(
-                body=EvaluatorGenerationJob(
+                job=EvaluatorGenerationJob(
                     inputs=EvaluatorGenerationInputs(
                         model=model_name,
                         evaluator_name=traces_name,

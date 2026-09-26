@@ -457,7 +457,7 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Remote tool."""
     OPEN_API = "OpenAPI"
     """OpenAPI connection."""
-    REMOTE_A2_A = "RemoteA2A"
+    REMOTE_A2A = "RemoteA2A"
     """Remote agent-to-agent (A2A) connection."""
 
 
