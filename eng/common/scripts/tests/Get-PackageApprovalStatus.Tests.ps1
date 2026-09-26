@@ -34,8 +34,9 @@ Describe "Get-PackageApprovalStatus.ps1" {
         $global:CapturedAzSdkInvocations = @()
         $packageInfoPath = Join-Path $TestDrive "azure-test.json"
         @{
-            Name = "azure-test"
+            Name    = "azure-test"
             Version = "1.0.0"
+            SdkType = "client"
         } | ConvertTo-Json | Set-Content $packageInfoPath
     }
 
@@ -51,6 +52,7 @@ Describe "Get-PackageApprovalStatus.ps1" {
             "--language", "python",
             "--package-name", "azure-test",
             "--package-version", "1.0.0",
+            "--package-type", "client",
             "--output", "json",
             "--api-hash", "abc123",
             "--repo-owner", "Contoso"
@@ -116,7 +118,7 @@ Describe "Get-PackageApprovalStatus.ps1" {
         $packageInfo | ConvertTo-Json | Set-Content $packageInfoPath
         $messages = @(& $scriptPath -PackageInfoFiles $packageInfoPath 6>&1)
 
-        ($messages -join [Environment]::NewLine) | Should Match 'Command: azsdk package get-approval-status --language python --package-name "azure test" --package-version 1.0.0 --output json'
+        ($messages -join [Environment]::NewLine) | Should Match 'Command: azsdk package get-approval-status --language python --package-name "azure test" --package-version 1.0.0 --package-type client --output json'
     }
 
     It "shows Review Hub and APIView results before the overall result" {
@@ -190,16 +192,17 @@ Describe "Get-PackageApprovalStatus.ps1" {
     It "checks every explicitly supplied package-info file" {
         $secondPackageInfoPath = Join-Path $TestDrive "azure-test-two.json"
         @{
-            Name = "azure-test-two"
+            Name    = "azure-test-two"
             Version = "2.0.0"
-            ApiHash = "def456"
+            SdkType = "mgmt"
+            ApiHash  = "def456"
         } | ConvertTo-Json | Set-Content $secondPackageInfoPath
 
         & $scriptPath -PackageInfoFiles @($packageInfoPath, $secondPackageInfoPath)
 
         $global:CapturedAzSdkInvocations.Count | Should Be 2
-        ($global:CapturedAzSdkInvocations[0] -join "|") | Should Match "--package-name\|azure-test\|--package-version\|1.0.0"
-        ($global:CapturedAzSdkInvocations[1] -join "|") | Should Match "--package-name\|azure-test-two\|--package-version\|2.0.0.*--api-hash\|def456"
+        ($global:CapturedAzSdkInvocations[0] -join "|") | Should Match "--package-name\|azure-test\|--package-version\|1.0.0\|--package-type\|client"
+        ($global:CapturedAzSdkInvocations[1] -join "|") | Should Match "--package-name\|azure-test-two\|--package-version\|2.0.0\|--package-type\|mgmt.*--api-hash\|def456"
     }
 
     It "continues checking valid packages after invalid package info" {
