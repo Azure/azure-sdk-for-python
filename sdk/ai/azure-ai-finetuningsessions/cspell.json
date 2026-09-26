@@ -4,7 +4,7 @@
     "CISPO", "SAPO", "GRPO", "qwen", "deadbeef", "resubmit", "dedup",
     "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
     "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
-    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd", "localns", "kwonlyargs",
+    "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd", "localns", "globalns", "kwonlyargs",
     "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "undoc", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
   ],
   "overrides": [
