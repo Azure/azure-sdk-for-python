@@ -1,15 +1,17 @@
-from datetime import time
-from time import sleep
-from azure.core.exceptions import HttpResponseError
-
 import pytest
 from deid_base_test_case import DeidBaseTestCase, BatchEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
-
-from azure.health.deidentification.models import *
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationOperationType,
+    OperationStatus,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
 
 
 class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):

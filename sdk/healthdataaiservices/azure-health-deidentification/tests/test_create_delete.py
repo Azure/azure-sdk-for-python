@@ -1,13 +1,16 @@
-from datetime import time
-from azure.core.exceptions import ResourceNotFoundError
-
 import pytest
 from deid_base_test_case import DeidBaseTestCase, BatchEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
-
-from azure.health.deidentification.models import *
+from azure.core.exceptions import ResourceNotFoundError
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationOperationType,
+    OperationStatus,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
 
 
 class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
