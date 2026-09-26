@@ -174,7 +174,7 @@ class ExceptionPolicySamples(object):
             labels_to_upsert={"EscalateJob": True, "EscalationReasonCode": "WaitTimeExceeded2Min"},
         )
 
-        updated_exception_policy: ExceptionPolicy = router_admin_client.upsert_exception_policy(
+        updated_exception_policy: ExceptionPolicy = router_admin_client.upsert_exception_policy(  # type: ignore[call-overload]
             policy_id,
             exception_rules=[
                 # adding new rule

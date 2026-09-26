@@ -183,7 +183,7 @@ class RouterJobSamplesAsync(object):
         print("JobRouterAdministrationClient created successfully!")
 
         async with router_client:
-            update_job = await router_client.upsert_job(job_id, channel_reference="45678")
+            update_job = await router_client.upsert_job(job_id, channel_reference="45678")  # type: ignore[call-overload]
 
             print(f"Job has been successfully update with channel reference: {update_job.channel_reference}")
         # [END update_job_async]
@@ -267,7 +267,7 @@ class RouterJobSamplesAsync(object):
                     await asyncio.sleep(1)
 
             queried_worker = await router_client.get_worker(worker_id=worker_id)
-            issued_offer: RouterJobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]
+            issued_offer: RouterJobOffer = [offer for offer in queried_worker.offers if offer.job_id == job_id][0]  # type: ignore[union-attr]
             offer_id = issued_offer.offer_id
 
             # [START accept_job_offer_async]
@@ -319,11 +319,11 @@ class RouterJobSamplesAsync(object):
         async with router_client:
             queried_job: RouterJob = await router_client.get_job(job_id)
 
-            assignment_id = [k for k, v in queried_job.assignments.items()][0]
+            assignment_id = [k for k, v in queried_job.assignments.items()][0]  # type: ignore[union-attr]
 
             await router_client.complete_job(job_id, assignment_id, CompleteJobOptions(note="Complete job"))
 
-            queried_job: RouterJob = await router_client.get_job(job_id)
+            queried_job = await router_client.get_job(job_id)
 
             print(f"Job has been successfully completed. Current status: {queried_job.status}")
             # [END complete_job_async]
@@ -336,7 +336,7 @@ class RouterJobSamplesAsync(object):
 
             await router_client.close_job(job_id, assignment_id, CloseJobOptions(note="Close job"))
 
-            queried_job: RouterJob = await router_client.get_job(job_id)
+            queried_job = await router_client.get_job(job_id)
 
             print(f"Job has been successfully closed. Current status: {queried_job.status}")
 
@@ -411,7 +411,7 @@ class RouterJobSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            await router_client.cancel_job(id=job_id)
+            await router_client.cancel_job(job_id=job_id)
 
         # [END cancel_job_async]
 
