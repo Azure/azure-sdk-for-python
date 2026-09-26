@@ -29,3 +29,6 @@ def test_begin_create_generation_job_exposes_job_id():
 
     assert isinstance(poller, EvaluatorGenerationLROPoller)
     assert poller.details["job_id"] == "evaluator-job-sync"
+    initial_call = operation._create_generation_job_initial.call_args  # pylint: disable=protected-access
+    assert initial_call.kwargs["job"] == {}
+    assert "body" not in initial_call.kwargs

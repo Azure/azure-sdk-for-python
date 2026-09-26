@@ -459,7 +459,7 @@ def test_realtime_logging_emits_metadata_without_sensitive_content(caplog):
     fake_connection.recv.return_value = json.dumps({"type": "some.new.event", "text": "secret-inbound-content"})
     connection_url = "wss://my-account.services.ai.azure.com/custom?sig=secret-query"
 
-    caplog.set_level(logging.DEBUG, logger="azure.ai.projects._realtime")
+    caplog.set_level(logging.DEBUG, logger="azure.ai.projects.realtime")
     with patch("websockets.sync.client.connect", return_value=fake_connection):
         manager = _make_manager(
             connection_url=connection_url,

@@ -19,11 +19,11 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
-    ResourceModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -3979,7 +3979,8 @@ class ConnectionsOperations:  # pylint: disable=docstring-missing-param
 
         :keyword connection_type: Lists connections of this specific type. Known values are:
          "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool_Preview". Default value is None.
+         "AppConfig", "AppInsights", "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
+         Default value is None.
         :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
         :keyword default_connection: Lists connections that are default connections. Default value is
          None.
@@ -6416,10 +6417,9 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_agents_create_from_prompt_request(
@@ -19156,9 +19156,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         self,
         agent_name: str,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -19168,13 +19168,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19254,9 +19254,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
@@ -19267,13 +19267,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
