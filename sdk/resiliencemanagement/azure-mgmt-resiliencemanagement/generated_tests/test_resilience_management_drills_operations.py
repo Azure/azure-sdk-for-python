@@ -81,6 +81,10 @@ class TestResilienceManagementDrillsOperations(AzureMgmtRecordedTestCase):
                         "faultDurationInMin": 0,
                     },
                     "drillAssetProperties": {"region": "str", "subscription": "str", "resourceGroup": "str"},
+                    "healthModelMonitoringProperties": {
+                        "discoveryRuleId": "str",
+                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    },
                     "monitoringProperties": {
                         "dataCollectionEndpointId": "str",
                         "identity": {"type": "str", "userAssignedIdentity": "str"},
@@ -93,6 +97,10 @@ class TestResilienceManagementDrillsOperations(AzureMgmtRecordedTestCase):
                         "identity": {"type": "str", "userAssignedIdentity": "str"},
                         "recoveryPlanId": "str",
                         "recoveryPlanResourceExcludedCount": 0,
+                    },
+                    "sliMonitoringProperties": {
+                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "slis": [{"sliId": "str", "type": "str"}],
                     },
                 },
             },
@@ -128,7 +136,7 @@ class TestResilienceManagementDrillsOperations(AzureMgmtRecordedTestCase):
         response = self.client.drills.begin_validate_for_execution(
             service_group_name="str",
             drill_name="str",
-            body={"validateForExecutionProperties": {"sourceLocations": ["str"]}},
+            body={"validateForExecutionProperties": {"operationName": "str", "sourceLocations": ["str"]}},
             operation_id="str",
         ).result()  # call '.result()' to poll until service return final result
 
