@@ -67,7 +67,7 @@ class DistributionPolicySamplesAsync(object):
         print("JobRouterAdministrationClient created successfully!")
 
         async with router_admin_client:
-            updated_distribution_policy: DistributionPolicy = await router_admin_client.upsert_distribution_policy(
+            updated_distribution_policy: DistributionPolicy = await router_admin_client.upsert_distribution_policy(  # type: ignore[call-overload]
                 policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
             )
 
