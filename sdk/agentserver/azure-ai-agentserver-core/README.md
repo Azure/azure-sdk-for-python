@@ -41,6 +41,8 @@ Protocol packages (e.g. `azure-ai-agentserver-invocations`) subclass `AgentServe
 | `FOUNDRY_AGENT_SESSION_ID` | Default session ID when not provided per-request | `""` |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Azure Monitor connection string | — |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
+| `AGENTSERVER_OBSERVABILITY_STARTUP` | Observability startup mode: `auto`, `sync`, or `concurrent`. `auto` selects concurrency only for a GIL-disabled free-threaded runtime with at least two effective CPUs. Unsupported `concurrent` requests safely fall back to `sync`. | `auto` |
+| `AGENTSERVER_CPU_LIMIT` | Optional positive CPU limit used by observability startup selection when the container quota cannot be discovered reliably. Linux cgroup quota, cpuset, and process CPU count are otherwise detected automatically. | — |
 
 ## Examples
 

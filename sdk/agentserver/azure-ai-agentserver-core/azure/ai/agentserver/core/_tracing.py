@@ -155,7 +155,18 @@ def configure_observability(
         to enable it.
     :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
-    # Console logging on the root logger so user logs are also visible.
+    _configure_console_logging(log_level)
+
+    # Tracing and OTel export
+    _configure_tracing(
+        connection_string=connection_string,
+        enable_sensitive_data=enable_sensitive_data,
+        instrumentation_options=instrumentation_options,
+    )
+
+
+def _configure_console_logging(log_level: Optional[str] = None) -> None:
+    """Configure root console logging without initializing OTel exporters."""
     resolved_level = _config.resolve_log_level(log_level)
     root = logging.getLogger()
     root.setLevel(resolved_level)
@@ -181,13 +192,6 @@ def configure_observability(
     if logging.getLevelName(resolved_level) > logging.DEBUG:
         for _noisy in _SUPPRESSED_LOGGERS:
             logging.getLogger(_noisy).setLevel(logging.WARNING)
-
-    # Tracing and OTel export
-    _configure_tracing(
-        connection_string=connection_string,
-        enable_sensitive_data=enable_sensitive_data,
-        instrumentation_options=instrumentation_options,
-    )
 
 
 def _configure_tracing(
