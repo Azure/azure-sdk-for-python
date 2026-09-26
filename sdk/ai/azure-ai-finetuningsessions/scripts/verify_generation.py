@@ -32,7 +32,11 @@ MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
 HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py", "_operation_compat.py"}
 MAINTAINED_MODULES = HANDWRITTEN_MODULES | {
-    "_patch.py", "aio/_patch.py", "models/_patch.py", "operations/_patch.py", "aio/operations/_patch.py"
+    "_patch.py",
+    "aio/_patch.py",
+    "models/_patch.py",
+    "operations/_patch.py",
+    "aio/operations/_patch.py",
 }
 HASH_NORMALIZATION = "CRLF-to-LF"
 
@@ -200,7 +204,9 @@ def emit(spec_repo: Path, output: Path, toolchain: Path | None = None) -> dict[s
     toolchain = (toolchain or toolchain_paths()[0].parent).resolve()
     # Keep a complete local input snapshot under the selected toolchain so
     # package resolution cannot accidentally mix pnpm and old npm libraries.
-    with tempfile.TemporaryDirectory(prefix="finetuning-inputs-", dir=toolchain, ignore_cleanup_errors=True) as directory:
+    with tempfile.TemporaryDirectory(
+        prefix="finetuning-inputs-", dir=toolchain, ignore_cleanup_errors=True
+    ) as directory:
         inputs = Path(directory)
         for folder in (PROJECT.name, "session-finetuning", "common"):
             source = spec_repo / PROJECT.parent / folder
@@ -252,7 +258,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spec-repo", type=Path, required=True)
     parser.add_argument("--toolchain", type=Path, help="Directory containing the pinned generation node_modules")
-    parser.add_argument("--sdk-repo", type=Path, help="SDK checkout containing the authoritative eng/emitter-package*.json")
+    parser.add_argument(
+        "--sdk-repo", type=Path, help="SDK checkout containing the authoritative eng/emitter-package*.json"
+    )
     args = parser.parse_args()
     spec_repo = args.spec_repo.resolve()
     toolchain = (args.toolchain or toolchain_paths(args.sdk_repo)[0].parent).resolve()

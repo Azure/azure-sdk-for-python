@@ -121,8 +121,50 @@ _LOOM_SUBPATH_TO_OP_TYPE: dict[str, str] = {
 #: Maximum number of datums in a single forward_backward HTTP request.
 _MAX_CHUNK_LEN = 1024
 
-#: Approximate maximum payload size (bytes) for a single request.
-_MAX_CHUNK_BYTES = 5_000_000
+#: Default approximate maximum payload size (bytes) for a single request.
+_DEFAULT_MAX_CHUNK_BYTES = 5_000_000
+
+#: Set before importing the SDK to override the request-size estimator budget.
+_MAX_CHUNK_BYTES_ENV = "AZURE_AI_FINETUNING_MAX_CHUNK_BYTES"
+
+
+def _max_chunk_bytes_from_env() -> int:
+    """Resolve a positive request-size estimator budget without changing service limits.
+
+    Unset, non-integer, or non-positive values retain the existing default.
+    Invalid values produce a warning. This runs before the module-level logger
+    is initialized, so it obtains its own logger.
+
+    :return: Maximum estimated bytes in a request chunk.
+    :rtype: int
+    """
+    raw = _os.environ.get(_MAX_CHUNK_BYTES_ENV)
+    if raw is None:
+        return _DEFAULT_MAX_CHUNK_BYTES
+    log = _logging.getLogger(__name__)
+    try:
+        value = int(raw)
+    except ValueError:
+        log.warning(
+            "Invalid %s=%r; must be a positive integer, using default %d",
+            _MAX_CHUNK_BYTES_ENV,
+            raw,
+            _DEFAULT_MAX_CHUNK_BYTES,
+        )
+        return _DEFAULT_MAX_CHUNK_BYTES
+    if value <= 0:
+        log.warning(
+            "Invalid %s=%r; must be a positive integer, using default %d",
+            _MAX_CHUNK_BYTES_ENV,
+            raw,
+            _DEFAULT_MAX_CHUNK_BYTES,
+        )
+        return _DEFAULT_MAX_CHUNK_BYTES
+    return value
+
+
+#: Resolved once at import time; an unset override retains the existing default.
+_MAX_CHUNK_BYTES = _max_chunk_bytes_from_env()
 
 # Bound per-call synchronous fan-out independently of caller batch size.
 _MAX_CONCURRENT_CHUNKS = 32

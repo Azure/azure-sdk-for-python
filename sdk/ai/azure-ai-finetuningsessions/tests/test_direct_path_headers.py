@@ -130,9 +130,7 @@ def test_empty_string_env_var_is_not_sent(monkeypatch):
 def test_extra_headers_merge_and_override(monkeypatch):
     monkeypatch.setenv("LOOM_AZURE_RESOURCE_LOCATION", "from-env")
 
-    headers = p._base_headers(
-        {"Content-Type": "application/json", "azure-resource-location": "explicit"}
-    )
+    headers = p._base_headers({"Content-Type": "application/json", "azure-resource-location": "explicit"})
 
     assert headers["Content-Type"] == "application/json"
     assert headers["azure-resource-location"] == "explicit"
@@ -225,10 +223,7 @@ def test_async_insecure_http_flag_remains_compatible_with_https_endpoint():
     )
 
     assert config.allow_insecure_http is True
-    assert (
-        type(config.authentication_policy)
-        is policies.AsyncBearerTokenCredentialPolicy
-    )
+    assert type(config.authentication_policy) is policies.AsyncBearerTokenCredentialPolicy
 
 
 def test_async_insecure_http_flag_remains_compatible_with_remote_api_key_endpoint():

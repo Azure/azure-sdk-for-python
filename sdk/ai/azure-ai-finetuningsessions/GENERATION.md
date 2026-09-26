@@ -8,12 +8,15 @@ additional source directories, and exact commit. Use
 toolchain, generated-output, and complete-runtime fingerprints. Historical SHAs
 below are decision records, **not the current source pin**.
 
-The combined SDK-first changes are pinned to committed TypeSpec source
-`ace87c52c336cad1f6b777a0c23095d292982aa8`. Source, shared-toolchain,
-generated-output, and complete-runtime fingerprints pass their checks. Two
-independent emissions match the checked-in SDK. For subsequent source changes,
-update these records together and repeat the strict generation check; do not
-reuse earlier results when their inputs differ.
+The current refresh uses TypeSpec source
+`b37e3333b3e35ebc1539e33ebee09bd0c9ea101d`, committed and pushed with a clean
+source checkout at the refresh snapshot. Two fresh isolated emissions using the
+current shared toolchain match all **21 generated entries and 28 runtime files**,
+with no diagnostics. These are recorded generation results, not commands run
+for this documentation-only update. Final Loom, installed-wheel, and public CI
+checks are not yet verified; use final validation records for their outcomes.
+For subsequent source changes, update the pin and provenance together and repeat
+the strict generation check; do not reuse earlier results when inputs differ.
 
 ## Current SDK-first decisions
 
@@ -46,22 +49,32 @@ extensibility is not a promise that the service accepts arbitrary future tags.
 
 ### Canonical reuse and intentional Python projections
 
+The Python entry point imports the moved
+[session-finetuning/models-custom-code.tsp](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp)
+from the adjacent session-finetuning directory. This is SDK-only custom-model
+source, not a REST entry point import. The move retains the existing
+`Azure.AI.FineTuning.Sessions.Loom` namespace and public type identities; the
+Python package remains `azure.ai.finetuningsessions`. Existing public models and
+unions are not made internal merely because they support custom code.
+
 The Python-only compatibility file now contains **18 aliases, 22 compatibility
 models, and three compatibility unions**, compared with the earlier 17/23/4
 snapshot. Canonical `ModelInput` reuse removes one local model. The duplicate
 `FoundryFeaturesOptInKeys` union and its alternate mapping are removed; Python
 name/usage customizations reuse the canonical closed union from the shared
-Foundry service patterns. That underlying REST union is unchanged.
+Foundry service patterns rather than redefining its inventory.
 
-`FoundryFeaturesOptInKeys` retains all six existing names and values:
+`FoundryFeaturesOptInKeys` currently has **12 members**. It retains all six
+original names and values:
 `EVALUATIONS_V1_PREVIEW`, `SCHEDULES_V1_PREVIEW`, `RED_TEAMS_V1_PREVIEW`,
 `INSIGHTS_V1_PREVIEW`, `MEMORY_STORES_V1_PREVIEW`, and
-`FINETUNING_SESSIONS_V1_PREVIEW`. It adds the seven canonical members
+`FINETUNING_SESSIONS_V1_PREVIEW`. The six canonical additions are
 `AGENT_INSIGHTS_V1_PREVIEW`, `ROUTINES_V2_PREVIEW`, `SKILLS_V1_PREVIEW`,
 `DATA_GENERATION_JOBS_V1_PREVIEW`, `MODELS_V1_PREVIEW`,
-`AGENTS_OPTIMIZATION_V2_PREVIEW`, and `MODEL_ROUTER_CONTROLS_V1_PREVIEW`.
-The fine-tuning preview header is unchanged; exposing these names does not opt
-requests into other features.
+and `MODEL_ROUTER_CONTROLS_V1_PREVIEW`. Upstream removed
+`AGENTS_OPTIMIZATION_V2_PREVIEW`; the earlier 13-member inventory is historical.
+The header `Foundry-Features: FineTuningSessions=V1Preview` is unchanged;
+exposing these names does not opt requests into other features.
 
 The remaining definitions are intentional Python-only projections:
 
@@ -79,21 +92,58 @@ reuse, Python API compatibility, and service wire conformance remain separate
 checks. The two TypeSpec review comments are code-addressed, but no replies are
 posted or threads resolved by this follow-up; see [REVIEW.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/REVIEW.md#typespec-follow-up-decisions).
 
+### Maintained Loom customizations
+
+The public package now includes both maintained Loom behaviors; they are not
+Loom-only differences:
+
+- `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` is read once at import time. A positive
+  integer overrides the approximate request chunk-size budget. Unset or invalid
+  values retain the 5,000,000-byte default; invalid values log a warning. This
+  does not change service-side limits.
+- `SampleOperationResult.prompt_tokens` is a read-only `Optional[int]` for the
+  API's top-level result field, populated from backend `usage.prompt_tokens` and
+  counted once per prompt regardless of the number of samples. Only exact Python
+  `int` values greater than or equal to zero are accepted. Missing or invalid
+  evidence is `None`; booleans, floats, and strings are not coerced, and request
+  length, prompt log-probabilities, or COGS metrics are never used to infer it.
+  `SamplingOperationResult` remains the identical alias, and constructor keywords
+  and overloads are unchanged.
+
+The raw TypeSpec result is already a generic record capable of carrying this
+data. Typed, read-only deserialization belongs in the maintained Python model
+hook; no TypeSpec change or generated constructor rewrite is needed for it.
+
 ### Generation evidence and limits
 
-Discriminator generation preceded the shared-enum follow-up. Genuine generation
-uses the SDK repository's shared emitter **0.63.8** and backend **0.37.3**.
-The enum follow-up changes only the generated enum, API source metadata, and
-sync/async operation docstrings. Operation executable ASTs are identical after
-excluding docstrings, and all **28 runtime files** equal the genuine emitted
-output. This does not claim that the earlier discriminator generation changed
-only those files.
+The current shared toolchain is emitter **0.63.8**, backend **0.38.0**, compiler
+**1.16.0**, and TCGC **0.72.2**. Two fresh isolated emissions, with only the nine
+maintained modules seeded, match all 21 generated entries and all 28 runtime
+files with no diagnostics. A public source-test run passed during this refresh;
+no final test total is asserted here.
 
-The combined discriminator and canonical-feature changes have the following
-local validation results (2026-09-25), obtained before this documentation-only
-record update:
+Final Loom validation, installed-wheel checks, and public CI success are not yet
+verified. Record their actual outcomes against the final source, tests, and
+artifacts; historical passes and intermediate test totals are not substitutes.
+No commands, builds, or remote CI queries were run for this documentation update.
 
-| Check | Result |
+### Historical discriminator and canonical-feature validation (2026-09-25)
+
+This earlier snapshot used TypeSpec
+`ace87c52c336cad1f6b777a0c23095d292982aa8`, emitter **0.63.8**, and backend
+**0.37.3**. It predates the model-file move, upstream feature removal, current
+backend, and maintained Loom customizations above. Its 13-member feature
+inventory and validation results are historical, not current gate results.
+
+Discriminator generation preceded that shared-enum follow-up. The enum follow-up
+changed only the generated enum, API source metadata, and sync/async operation
+docstrings. Operation executable ASTs were identical after excluding docstrings,
+and all 28 runtime files matched genuine emitted output. This was not a claim
+that the earlier discriminator generation changed only those files.
+
+The following local results belong only to that earlier combined snapshot:
+
+| Check | Recorded result |
 |---|---|
 | Public SDK source and installed wheel | **1,850 passed** on Python 3.13.14; all 28 wheel runtime files match source bytes. |
 | Public SDK minimum Python | **1,849 passed, one expected eager-task test skipped** on Python 3.10.21. |
@@ -101,10 +151,10 @@ record update:
 | Strict compatibility | **20 paired cases**, 134 requests and 2,246 checks per SDK; **49 public types**, all **336 original raw cases**, **328 additional probes**, and **97 mutation guards** pass. |
 | SDK-to-service compatibility | **162 offline checks passed**, including 20 real SDK pipeline cases against unchanged checked-out API schemas and handlers. |
 | Generation and quality | Two independent emissions match all 21 generated entries and 28 runtime files; Pylint, Mypy, Pyright, formatting, and strict Sphinx checks passed. |
-| Spelling | **94 files checked, zero issues** before this final documentation update. |
+| Spelling | **94 files checked, zero issues** at that snapshot. |
 
-These results do not certify a live deployment, GPU execution, remote CI, or
-release approval. Remote CI for the delivery commits is a separate follow-up.
+These historical results do not validate the current refresh or certify a live
+deployment, GPU execution, remote CI, or release approval.
 
 ### Historical local validation (2026-09-24)
 
@@ -133,8 +183,8 @@ Generation uses the SDK repository's central
 [../../../eng/emitter-package.json](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/emitter-package.json) and
 [../../../eng/emitter-package-lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/emitter-package-lock.json).
 The package-local emitter override has been removed. The validated shared lock
-resolves Python emitter **0.63.8**, Python backend **0.37.3**, TypeSpec compiler
-**1.16.0**, and TypeSpec client generator core (TCGC) **0.72.1**. Genuine
+resolves Python emitter **0.63.8**, Python backend **0.38.0**, TypeSpec compiler
+**1.16.0**, and TypeSpec client generator core (TCGC) **0.72.2**. Genuine
 regeneration incorporates the upstream unused-import fix; generated imports
 are not manually edited or exempted from CI checks.
 
@@ -172,8 +222,8 @@ SDK-to-SDK compatibility, and service conformance are separate checks.
 
 | Maintained input | Responsibility |
 |---|---|
-| [azure/ai/finetuningsessions/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_patch.py), [azure/ai/finetuningsessions/aio/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/aio/_patch.py) | Training conveniences, request-ID polling, chunking, recovery, identifiers, lifecycle, and exports. |
-| [azure/ai/finetuningsessions/models/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/models/_patch.py) | Image/checkpoint helpers and reviewed model constructors, annotations, and aliases. |
+| [azure/ai/finetuningsessions/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_patch.py), [azure/ai/finetuningsessions/aio/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/aio/_patch.py) | Training conveniences, request-ID polling, chunking with the import-time byte-budget override, recovery, identifiers, lifecycle, and exports. |
+| [azure/ai/finetuningsessions/models/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/models/_patch.py) | Image/checkpoint helpers, strict read-only prompt-token evidence, and reviewed model constructors, annotations, and aliases. |
 | [azure/ai/finetuningsessions/operations/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/operations/_patch.py), [azure/ai/finetuningsessions/aio/operations/_patch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/aio/operations/_patch.py) | Established raw signatures/overloads, JSON submission, and poller integration. |
 | [azure/ai/finetuningsessions/_client_options.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_client_options.py) | Credential transport/origin rules, scoped context headers, default POST-retry policy, and constructor compatibility. |
 | [azure/ai/finetuningsessions/_operation_compat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/azure/ai/finetuningsessions/_operation_compat.py) | Generated request builders, raw HTTP 200 request-ID polling, callbacks, custom polling/continuation, and the legacy sampling request shape. |
@@ -333,7 +383,7 @@ count includes `StopCriteria`). The retained groups had these reasons:
 | `OperationResult` and its five derived results, `OperationStatus`, `OperationType` | Preserve public result classes, enums, and poller return types. The later raw-polling fix uses HTTP 200 request-ID envelopes without deleting these classes or caller-owned polling behavior. |
 | `ApiError`, `ApiErrorResponse` | Preserve existing Python error names, recursive detail representation, optionality, and encoded additional/debug information. |
 | `SessionStatus` | Preserve the previously exported named members. REST also names `created`; the Python union remains open and can represent that string without adding an unrelated enum member in this review. |
-| `FoundryFeaturesOptInKeys` | Then retained the older enum inventory and open-string projection. **Superseded:** current source reuses the shared closed union, retaining the six old names/values and adding seven canonical members without changing REST. |
+| `FoundryFeaturesOptInKeys` | Then retained the older enum inventory and open-string projection. **Superseded:** canonical reuse initially preserved the six old names/values and added seven members without changing REST. That 13-member snapshot is historical; the current 12-member inventory follows upstream removal as described above. |
 
 Deleting all remaining Python-only projections would change constructor signatures,
 inheritance, public exports, or legacy results. That is a separate migration,

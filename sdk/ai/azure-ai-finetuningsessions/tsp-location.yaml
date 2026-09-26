@@ -1,6 +1,5 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions
-# Discriminated input chunks and canonical preview features; use the shared emitter.
-commit: ace87c52c336cad1f6b777a0c23095d292982aa8
+commit: b37e3333b3e35ebc1539e33ebee09bd0c9ea101d
 repo: Azure/azure-rest-api-specs
 additionalDirectories:
 - specification/ai-foundry/data-plane/Foundry/src/session-finetuning

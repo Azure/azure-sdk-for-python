@@ -202,13 +202,25 @@ class SamplingParams(_models.SamplingParams):
         super().__init__(*args, **kwargs)
 
 
+def _deserialize_prompt_tokens(value: Any) -> Optional[int]:
+    # The default int deserializer coerces strings, floats, and bools.
+    return value if type(value) is int and value >= 0 else None  # pylint: disable=unidiomatic-typecheck
+
+
 class SampleOperationResult(_models.SampleOperationResult, discriminator="sample"):
     """Sampling result with the tested preview's nested nullable annotations.
 
     The pinned emitter cannot represent nested nullable tuple arrays. These
     two fields therefore use the supported model override, not generated-file
     rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
+
+    :ivar prompt_tokens: Backend ``usage.prompt_tokens`` for the single prompt,
+        counted once regardless of the number of sampled sequences. Missing or
+        invalid evidence is ``None`` (unverified), never inferred from input size.
+    :vartype prompt_tokens: int or None
     """
+
+    prompt_tokens: Optional[int] = rest_field(type=_deserialize_prompt_tokens, visibility=["read"])
 
     # The emitter drops nested nullability. These intentional mutable-field
     # replacements preserve the published type, verified by round-trip tests.

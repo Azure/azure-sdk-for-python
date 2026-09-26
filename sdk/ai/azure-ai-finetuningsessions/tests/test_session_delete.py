@@ -12,6 +12,7 @@ Verifies:
 * ``404`` is swallowed (idempotent — session already gone).
 * Other ``4xx``/``5xx`` surface via the standard SDK error path.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -84,9 +85,7 @@ class TestFineTuningSessionDelete:
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning/sessions/model_abc12345" in req.url, (
-            f"Expected model_abc12345 in URL, got: {req.url}"
-        )
+        assert "/fine_tuning/sessions/model_abc12345" in req.url, f"Expected model_abc12345 in URL, got: {req.url}"
         # Headers include the foundry features opt-in.
         assert "Foundry-Features" in req.headers
         assert req.headers["Accept"] == "application/json"
@@ -122,18 +121,14 @@ class TestFineTuningSessionDelete:
         sess.delete()
 
     def test_500_raises(self) -> None:
-        client = _RecordingClient(
-            [_FakeResponse(500, {"detail": "internal error"})]
-        )
+        client = _RecordingClient([_FakeResponse(500, {"detail": "internal error"})])
         sess = _make_session(client)
 
         with pytest.raises(HttpResponseError):
             sess.delete()
 
     def test_403_raises(self) -> None:
-        client = _RecordingClient(
-            [_FakeResponse(403, {"detail": "forbidden"})]
-        )
+        client = _RecordingClient([_FakeResponse(403, {"detail": "forbidden"})])
         sess = _make_session(client)
 
         with pytest.raises(HttpResponseError):
@@ -158,8 +153,8 @@ class TestFineTuningSessionDelete:
             order.append("send_request")
             return orig_send(req)
 
-        sess._stop_heartbeat = _spy_stop   # type: ignore[method-assign]
-        client.send_request = _spy_send    # type: ignore[method-assign]
+        sess._stop_heartbeat = _spy_stop  # type: ignore[method-assign]
+        client.send_request = _spy_send  # type: ignore[method-assign]
 
         sess.delete()
 
@@ -198,6 +193,7 @@ class TestAsyncDeleteSession:
 
     def _import(self) -> Any:
         from azure.ai.finetuningsessions.aio import _patch as aio_patch
+
         return aio_patch
 
     def test_success_issues_delete_with_correct_url(self) -> None:
@@ -211,9 +207,7 @@ class TestAsyncDeleteSession:
         assert len(client.requests) == 1
         req = client.requests[0]
         assert req.method == "DELETE"
-        assert "/fine_tuning/sessions/session_abc12345" in req.url, (
-            f"Expected session_abc12345, got: {req.url}"
-        )
+        assert "/fine_tuning/sessions/session_abc12345" in req.url, f"Expected session_abc12345, got: {req.url}"
         assert "model_abc12345" not in req.url
         assert "Foundry-Features" in req.headers
 
@@ -259,5 +253,6 @@ class TestAsyncDeleteSession:
         from azure.ai.finetuningsessions.aio._client import (
             FineTuningSessionClient as Gen,
         )
+
         assert hasattr(Gen, "delete_session")
         assert getattr(Gen, "delete_session") is aio_patch.delete_session

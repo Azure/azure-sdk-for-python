@@ -2161,7 +2161,7 @@
     {
       "filename": "sdk/ai/azure-ai-finetuningsessions/**",
       "words": [
-        "finetuningsessions", "AICLIENT", "CISPO", "SAPO", "TCGC", "pygen",
+        "finetuningsessions", "AICLIENT", "CISPO", "SAPO", "TCGC", "pygen", "undici",
         "skyrl", "falsey", "ungated", "rhno", "sess", "coro", "dedups",
         "unconfigured", "chunker", "aabbccdd", "xffjpeg", "xffoffline", "xfftest",
         "gethostbyaddr", "WRONLY", "RDWR", "CREAT", "xffvalid", "nopolling", "undoc"

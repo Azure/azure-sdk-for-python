@@ -3,7 +3,7 @@
   "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
   "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
   "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
-  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling", "input-chunk-discriminator", "canonical-foundry-features"],
+  "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling", "input-chunk-discriminator", "canonical-foundry-features", "sampling-prompt-tokens"],
   "foundry_features_contract": {
     "version": 1,
     "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
@@ -19,12 +19,30 @@
       "SKILLS_V1_PREVIEW": "Skills=V1Preview",
       "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
       "MODELS_V1_PREVIEW": "Models=V1Preview",
-      "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
       "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
       "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview"
     },
     "header": "FineTuningSessions=V1Preview",
-    "behavior": "Preserve six existing members, signatures and wire headers; add only seven canonical members"
+    "behavior": "Preserve six existing members, signatures and wire headers; add only six canonical members"
+  },
+  "sampling_prompt_tokens_contract": {
+    "version": 1,
+    "source_commit": "3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377",
+    "model": "SampleOperationResult",
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": true},
+    "field": {
+      "name": "prompt_tokens",
+      "type": "Optional[int]",
+      "wire_name": "prompt_tokens",
+      "visibility": ["read"],
+      "discriminator": false,
+      "format": null
+    },
+    "deserialization": "value if type(value) is int and value >= 0 else None",
+    "missing": null,
+    "constructor": "Existing keyword overload unchanged; no prompt_tokens parameter",
+    "semantics": "Backend count once per prompt; no inference or metrics/usage fallback",
+    "wire": "Absent stays absent; present field excluded from writable serialization"
   },
   "input_chunk_contract": {
     "version": 1,
@@ -61,17 +79,28 @@
     }
   },
   "adapted_upstream_tests": {
-    "tests/test_create_session_id_normalization.py": "dbc5531f34fd9e4e7fa3462717f94f55b2d1f271e3e204b370be8f9db25fcda8",
-    "tests/test_create_session_user_metadata.py": "38fc663dd608c11dd43e203963d2c4ede5fe3c205e3c56f40b2e6597fd393bea",
-    "tests/test_session_delete.py": "5da86e257872765f62664f16a0b29049448a8dcbc865e579040fb40f7d00a9db",
-    "tests/test_forward_backward_waves.py": "81c6909c59c6c0b4438cacbce8ca874a461d5bb67df5453aa94a5839f5135540",
+    "tests/test_async_poll_error_budget.py": "dda840723dc5d9aa28c871d625b35a0c8bd5793b088048f9895e07bb1460a29f",
+    "tests/test_checkpoint_results.py": "b4fa3f14bb2182437759393d4a29c0329e83e3ad7d548b911b972ae2de5768e1",
+    "tests/test_create_session_id_normalization.py": "f65969ebaf192b170a2e95bfe15e685a8ec17beec4c5cfe93b0ec71788c00007",
+    "tests/test_create_session_user_metadata.py": "5e4040faf9db0e6176acaee05c127d939ecf577455fa0e3e1fe1d1e37c91771f",
+    "tests/test_direct_path_headers.py": "90aa498548b1adb6c5ba83ecec3ed8fe951a13265b0fc28c9d95f9ec04c48681",
+    "tests/test_exceptions.py": "3a24a48f3d599399876f860e5edbdbf3119db22569a18ec6975d06bb1dc7c4a4",
+    "tests/test_session_delete.py": "30d2a24decf9192f49005779bfb62d0591ebd2ea0fd203c338c8e232e03b5592",
+    "tests/test_forward_backward_waves.py": "598544e6f1e88a8b4335ef1567ffecbb0ea9a21b7a3f2be961da0ca5e63f4436",
     "tests/test_forward_result.py": "5045dc1800820408004e96bce747bae2d51521db23ab01fd67418654f611311a",
-    "tests/test_image_chunks.py": "2bfb0ab7733381e086b7b2f07f50227ea976560652577033f8d2edacfaacdb77"
+    "tests/test_image_chunks.py": "7ab4d271f6dcb3fa81cd7a56ae51d7ea875a2554e38868fe6f008ff54b405532",
+    "tests/test_logging_setup.py": "7f3f615a0f7ca14e7c173901e7d1d317d79d0f6f57426c1f1c97c5f79fd38f53",
+    "tests/test_maybe_log_poll_progress.py": "e27fa18c022795c100ea8bbfa981a464318cf40deb349d10393753cc5a2a0d65",
+    "tests/test_poll_error_budget_async.py": "46c056fe9f22dea2e29af706143b0edc64fe38fcb79631ad00d7578fecf5a23e",
+    "tests/test_post_and_poll_error_budget.py": "1ed7ac9c012e348e91e8be05d4c7d5c96d1857ae8a941b7389e82c76e2ba56af",
+    "tests/test_proxy_jwt_retry.py": "1312345b9b2a007498c07151381fdb29e851f0b4d044c16e4e83f3f00dc77a88",
+    "tests/test_retry_policy.py": "bb2ff380f20a9978e1f9712ce554ba948a96a4e93aaab05e08cf99ab489cc104",
+    "tests/test_sampling_limits.py": "581f7c434c8db7dc8d7c80b9ffba2d9c6e6129208fc87ba6b623097650d026af"
   },
   "ci_test_source_changes": {
-    "tests/test_forward_backward_waves.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_forward_backward_waves.py": "Formatting preserves all earlier assertions; retain the additional upstream synchronous chunk-accumulation regression before one optimizer step.",
     "tests/test_forward_result.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
-    "tests/test_image_chunks.py": "One final newline added by generation formatting; all other bytes and assertions unchanged.",
+    "tests/test_image_chunks.py": "Generator formatting only; complete AST including every assertion verified unchanged.",
     "tests/test_review_regressions.py": "Inspect shipped overload definitions using AST instead of Python 3.11-only typing.get_overloads; retain exact discriminator-base annotation assertions, resolving the known generated forward reference on Python 3.10.",
     "tests/test_service_contracts.py": "Resolve the generated model namespace while checking inherited annotations; include the reviewed text discriminator in expected input chunks, without changing tensor or returned-token expectations."
   },
@@ -79,14 +108,16 @@
     "tests/test_async_heartbeat_shutdown.py": "c19834377429dff095ff8972763774514eabbddbe12304ffa1d2115ea7b1ab6a",
     "tests/test_review_regressions.py": "1670f3e7f3dddbcf77b5d6751251ca6d5e70e06ee39e2d8c80fecfababda3206",
     "tests/test_input_chunk_discriminator.py": "0897165999bdee26a0599213498039e5e0fc07daac137d613841678d66675efe",
-    "tests/test_foundry_features.py": "77ee757a56ae2d48c7b962702012d69936f33af6a1f60fdce56e553b86082a36",
-    "tests/test_training_type.py": "673e82d5cbdca67eff404c922b696dad7113e9a8436ba49dfd9194cd16a840f7",
+    "tests/test_foundry_features.py": "3df2140dab9f24987f280515757d3160477e370f7b712b02f11074acc1945a8c",
+    "tests/test_training_type.py": "09b805c8b34aa658e5f5cccbe0ffaf0cff7055f5db1b0ab0f025bebd7379a13b",
     "tests/test_error_image_regressions.py": "aaed6c38c42c431406a2c5d3572087b9468a73d43fa33c06d35cb9198d1443d9",
-    "tests/test_mutation_transport_retry.py": "491cfe662195e52558d15f8ebe32e0181c47207ebca88fa76def3759b7d81cf2",
-    "tests/test_raw_request_polling.py": "b040f1260e6616451af6c5685e3462cea35413085a41e4a2e136550672f0659d",
-    "tests/test_sampling_response_format.py": "ec6c2dec34d8520c1ff6e70e3d8ac3331a10d78951587c7741455ee81cfe6b8c",
-    "tests/test_service_contracts.py": "1a4069ad056ef79da054370782febe821bfbdeb4f0351344b3a988816eb7cda9",
-    "tests/test_transport_security.py": "f234e7402ca256a7e2df4dccf4eec44f4a36edda00034cc468886f7864513936"
+    "tests/test_mutation_transport_retry.py": "a4d6ae70a0e54cf3ba99d128b8013317ddd147f34311afeaef0052e4751145ee",
+    "tests/test_raw_request_polling.py": "da74993c5b0a9269d8bbd621e3c561173ace928f954a3a590c85c04e8ed4daaa",
+    "tests/test_sampling_response_format.py": "56fdaa780d42c87dd0b643b6b20587c91a9a517d7c290299f965c329d739fecf",
+    "tests/test_service_contracts.py": "d2ff87689bad9b12751c6ead7be5f5f58f840b66f8b38ac77ac5f4f0d1a12879",
+    "tests/test_transport_security.py": "df2c5e7d79f1431792b3c3ff0496c2a64acb746093f4668fa30582908e415f8f",
+    "tests/test_sample_prompt_tokens.py": "f36bb2feaf7605b4d35f5a5d11027c73cecad9c867840ce503a93c3cb0a15c60",
+    "tests/test_max_chunk_bytes_env.py": "a1b57c16b3f40abaa45e1b8de5e3e422ec18db1c1b2f9547d168ca404de9e004"
   },
   "training_type_contract": {
     "type": "TrainingType",
@@ -96,7 +127,9 @@
     "behavior": "String inputs remain accepted without coercion; omission stays omitted; no client-side default or service validation change. Only this export, exact members, and four annotation sites are allowed by the comparison."
   },
   "changes": [
-    {"comments": [4099598821, 4099604743], "change": "Reuse canonical ModelInput and the sole shared FoundryFeaturesOptInKeys declaration; retain 18 aliases, 22 justified Python-only model projections, and three compatibility unions. Add exactly seven canonical feature enum members; preserve the six existing names, values, operation signatures and FineTuningSessions header. The shared closed service union is unchanged."},
+    {"comments": [], "change": "Record official generator formatting only after full AST equality for existing tests. The original 48-file oracle is unchanged. Additional test changes are the canonical 12-member feature expectation and the exact upstream chunk-size/prompt-count regressions; no assertions were removed."},
+    {"comments": [4099598821, 4099604743], "change": "Reuse canonical ModelInput and the sole shared FoundryFeaturesOptInKeys declaration; retain 18 aliases, 22 justified Python-only model projections, and three compatibility unions. The canonical feature enum now has 12 members after upstream removal of the obsolete optimization key: add exactly six members to the immutable six-member preview, preserving existing names, values, operation signatures and the FineTuningSessions header."},
+    {"comments": [], "change": "Sync Loom master 3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377: add only maintained read-only Optional[int] SampleOperationResult.prompt_tokens and preserve identical SamplingOperationResult alias identity and constructor overloads. Accept only nonnegative exact int values; absent or malformed evidence is None without coercion or fallback. Guard fixed surface/serialization projections; retain all 20 convenience, 336 original raw and 328 service cases and unchanged immutable baseline hashes."},
     {"comments": [], "change": "Generate an open InputChunk discriminator hierarchy while preserving ModelInputChunk and ImageChunk constructors and image validation. Add type=text only in input text chunks. Actual unmodified Loom API schemas and offline handlers accept tagged and legacy forms with identical internal encoded_text payloads; strict service discriminator enforcement is deferred to PuPr. No production API, engine, APIM, RP, route or authentication changes."},
     {"comments": [], "change": "Explicitly approved service contracts supersede the earlier deferred decisions: require LoRAConfig.rank and CreateSessionRequest.lora_config plus four convenience arguments, without inferred defaults; add optional SamplingParams.response_format and an identical SamplingOperationResult alias. Guard the original immutable reference before each exact projection."},
     {"comments": [4049473726, 4066580692], "change": "Explicitly approved API-key HTTPS/origin protection, cleanup of prepopulated SDK-default direct headers outside scope, and no automatic POST retries in the default policy; distinct caller-owned overrides remain unchanged."},

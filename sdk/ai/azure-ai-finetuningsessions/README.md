@@ -161,6 +161,18 @@ supplied; supported formats depend on the selected model and provider.
 `SamplingOperationResult` is a friendly alias for `SampleOperationResult`.
 Both names identify the same result model; the existing name remains available.
 
+#### Sampling prompt token evidence
+
+`SampleOperationResult.prompt_tokens` is a read-only `Optional[int]` from the
+API's top-level `prompt_tokens` result field, populated from backend
+`usage.prompt_tokens`. It counts the single prompt once, even when `num_samples`
+(`n`) is greater than one. Only exact non-negative Python `int` values are
+accepted; booleans, floats, and strings are not coerced. Missing, ambiguous, or
+invalid evidence is `None` (unverified), including responses from older services.
+The SDK does not infer this count from request length, prompt log-probabilities,
+or COGS metrics. The identical `SamplingOperationResult` alias exposes the same
+field; existing constructor keywords and overloads are unchanged.
+
 ### Forward-only passes and session deletion
 
 Both capabilities are available through maintained convenience methods. In the
@@ -177,6 +189,11 @@ large batches into chunks, submit requests, and poll request IDs until the
 completed result is available. Alternatively,
 `await async_client.forward_async(session_id, batch)` returns an awaitable for
 the result; await that returned object to obtain the completed result.
+
+Set `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` before importing the SDK to override
+the approximate per-request chunk-size budget. The value must be a positive
+integer; unset or invalid values retain the 5,000,000-byte default, and invalid
+values log a warning. This setting does not change service-side request limits.
 
 The delete methods stop the session heartbeat, send HTTP DELETE, and return
 `None`. They treat HTTP 404 as success, so deleting an already absent session is
@@ -244,8 +261,10 @@ requests missing both a path and sampling-session ordinal are rejected locally
 rather than producing an invalid request or a false successful no-op.
 
 `FoundryFeaturesOptInKeys` now reuses the canonical shared Foundry definition.
-The six existing member names and values are preserved, with seven canonical
-members added. This does not activate other preview features or change the
+The current 12-member inventory preserves the six original member names and
+values, with six canonical additions. The earlier 13-member inventory is
+historical: upstream removed `AGENTS_OPTIMIZATION_V2_PREVIEW`.
+This does not activate other preview features or change the
 fine-tuning header `Foundry-Features: FineTuningSessions=V1Preview`.
 
 ## Troubleshooting
@@ -311,7 +330,8 @@ python -m pip install --editable ./sdk/ai/azure-ai-finetuningsessions
 Run the package's tests with `pytest`; the package configuration enables asyncio
 tests. The [reference verifier][snapshot-check] verifies the immutable upstream
 Git blobs and manifest. Intentional review deltas are recorded separately from
-the reproducible baseline; current runtime is not claimed to be byte-identical.
+the reproducible baseline; current runtime is not claimed to be byte-identical
+to that historical reference.
 
 The [generation verifier][generation-check] emits TypeSpec twice with maintained
 customizations pre-seeded and compares the complete runtime. It uses the SDK

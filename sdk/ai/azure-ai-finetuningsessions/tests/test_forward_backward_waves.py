@@ -1,4 +1,5 @@
 """Bounded-wave behavior for async forward/backward chunk submission."""
+
 from __future__ import annotations
 
 import asyncio
@@ -7,12 +8,15 @@ import time
 
 import pytest
 
+from azure.ai.finetuningsessions import _patch as _sync_mod
 from azure.ai.finetuningsessions.aio import _patch as _aio_mod
 from azure.ai.finetuningsessions.models import (
+    AdamParams,
     Datum,
     ForwardBackwardOperationResult,
     ModelInput,
     ModelInputChunk,
+    OptimStepOperationResult,
     TensorData,
 )
 
@@ -36,12 +40,7 @@ def _realistic_batch(datum_count=96, shifts_per_datum=10, tokens_per_shift=128):
     logprobs = [-0.5] * sequence_length
     return [
         Datum(
-            model_input=ModelInput(
-                chunks=[
-                    ModelInputChunk(tokens=shift_tokens)
-                    for _ in range(shifts_per_datum)
-                ]
-            ),
+            model_input=ModelInput(chunks=[ModelInputChunk(tokens=shift_tokens) for _ in range(shifts_per_datum)]),
             loss_fn_inputs={
                 "target_tokens": TensorData(data=target_tokens),
                 "weights": TensorData(data=weights),
@@ -81,9 +80,7 @@ async def test_forward_backward_post_chunking_does_not_block_event_loop(monkeypa
     monkeypatch.setattr(_aio_mod, "_chunk_data", _slow_chunk_data)
     monkeypatch.setattr(_aio_mod, "_forward_backward_chunks_post", _post_chunks)
 
-    post_task = asyncio.create_task(
-        _aio_mod.forward_backward_post(object(), "session_deadbeef", ["datum"])
-    )
+    post_task = asyncio.create_task(_aio_mod.forward_backward_post(object(), "session_deadbeef", ["datum"]))
     ticker_task = asyncio.create_task(_ticker())
     await _wait_for_thread_event(chunking_started)
     for _ in range(10):
@@ -246,6 +243,52 @@ async def test_optim_step_is_not_posted_until_all_forward_backward_chunks_comple
     ]
 
 
+def test_sync_forward_backward_5mb_chunks_accumulate_before_one_optim_step(monkeypatch):
+    batch = _realistic_batch(datum_count=96)
+    chunks = _sync_mod._chunk_data(batch)
+    assert len(chunks) > 1
+    assert all(
+        sum(_sync_mod._estimate_bytes_count(datum) for datum in chunk) <= _sync_mod._MAX_CHUNK_BYTES
+        or len(chunk) == 1
+        for chunk in chunks
+    )
+
+    session = object.__new__(_sync_mod.FineTuningSession)
+    session.session_id = "session_deadbeef"
+    events = []
+    lock = threading.Lock()
+
+    def _post_and_poll(subpath, body, extra_params=None, extra_result_fields=None):
+        del extra_params, extra_result_fields
+        with lock:
+            events.append(subpath.rsplit("/", 1)[-1])
+        if subpath.endswith("/forward_backward"):
+            data = body.forward_backward_input.data
+            return ForwardBackwardOperationResult(
+                {
+                    "total_loss": float(len(data)),
+                    "loss_fn_outputs": [{"chunk_size": len(data)}],
+                    "metrics": {"total_loss:sum": float(len(data))},
+                }
+            )
+        if subpath.endswith("/optim_step"):
+            return OptimStepOperationResult({"grad_norm": 1.0, "step_count": 1})
+        raise AssertionError(subpath)
+
+    session._post_and_poll = _post_and_poll
+
+    fb = session.forward_backward(batch, loss_fn="cross_entropy")
+    assert events.count("forward_backward") == len(chunks)
+    assert "optim_step" not in events
+    assert fb.total_loss == pytest.approx(float(len(batch)))
+    assert [item["chunk_size"] for item in fb.loss_fn_outputs] == [len(chunk) for chunk in chunks]
+
+    opt = session.optim_step(AdamParams(learning_rate=1e-5))
+    assert opt.step_count == 1
+    assert events.count("optim_step") == 1
+    assert events[-1] == "optim_step"
+
+
 async def test_forward_backward_async_posts_and_drains_bounded_waves(monkeypatch):
     chunks = [["a"], ["b", "c"], ["d"], ["e"], ["f"]]
     events = []
@@ -332,7 +375,7 @@ async def test_forward_backward_async_default_keeps_all_chunks_in_one_submission
 
     result_future = await _aio_mod.forward_backward_async(object(), "session_deadbeef", ["batch"])
 
-    assert calls == [[['a'], ['b'], ['c']]]
+    assert calls == [[["a"], ["b"], ["c"]]]
     assert (await result_future).total_loss == 1.0
 
 

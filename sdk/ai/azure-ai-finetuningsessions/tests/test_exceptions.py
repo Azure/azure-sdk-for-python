@@ -11,6 +11,7 @@ Verifies that:
 3. ``_classify_poll_failure`` correctly maps poll envelope failures to typed exceptions.
 4. Unknown errors fall through (return None) so generic handling still applies.
 """
+
 from __future__ import annotations
 
 import pytest

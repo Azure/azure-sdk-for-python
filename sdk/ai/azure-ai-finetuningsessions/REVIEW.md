@@ -6,8 +6,10 @@ Source pins and fingerprints are authoritative in [tsp-location.yaml](https://gi
 and [eng/generation/provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/provenance.json), not historical
 SHAs in this assessment. [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) documents genuine shared
 emission with only nine seeded hooks and exact comparison of the 28-file runtime.
-The shared toolchain is emitter **0.63.8**, backend **0.37.3**, compiler **1.16.0**,
-and TCGC **0.72.1**. Regeneration includes the upstream unused-import CI fix,
+The current TypeSpec source is `b37e3333b3e35ebc1539e33ebee09bd0c9ea101d`,
+committed and pushed with a clean checkout at the refresh snapshot.
+The shared toolchain is emitter **0.63.8**, backend **0.38.0**, compiler **1.16.0**,
+and TCGC **0.72.2**. Regeneration includes the upstream unused-import CI fix,
 without handwritten generated-source repairs or a package-local emitter override.
 
 Previously deferred API-key transport/origin protection, default no-POST
@@ -19,6 +21,30 @@ Non-object error bodies, finite/non-negative retry hints, and positional image
 mappings also have focused regression coverage. **Opt-in-only heartbeat startup
 remains unimplemented**; convenience creation still starts background heartbeats.
 
+The public package now includes Loom's maintained import-time
+`AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` override and read-only
+`SampleOperationResult.prompt_tokens: Optional[int]`; these are no longer
+Loom-only differences. The positive-integer budget keeps its 5,000,000-byte
+default for unset/invalid values and warns on invalid input. Prompt-token
+evidence accepts only exact non-negative Python integers, with no coercion or
+inference; missing/invalid evidence is `None`. The identical
+`SamplingOperationResult` alias and constructor keywords/overloads are unchanged.
+The raw TypeSpec result record already accommodates this data.
+
+Two fresh isolated emissions match all 21 generated entries and 28 runtime files
+with no diagnostics. A public source-test run passed during the refresh, but
+final test totals and gate outcomes must come from final validation records.
+Final Loom, installed-wheel, and public CI checks are **not yet verified**.
+No commands, builds, or remote CI queries were run for this documentation update.
+
+<!-- cspell:ignore globalns -->
+The public spelling pipeline failure on Python's `globalns` keyword was fixed
+with an identifier-scoped spelling directive in the surface verifier, without
+weakening type or overload assertions. That fix is not evidence that the current
+public CI run is green.
+
+### Historical local validation
+
 Historical local results (2026-09-24), before the input-chunk/shared-enum work:
 **1,637 SDK tests passed on Python 3.13.14**; 20 paired
 cases with 134 requests/2,246 checks per SDK; 47 public type names and all 336
@@ -28,16 +54,19 @@ immutable 48-file oracle at `485774df502642879fdf3a53777be4a0d95155dc` is unchan
 The main verifier still requires exact finalized inventory/provenance records;
 independent comparison results do not waive those checks.
 
-The combined discriminator/enum changes have separate validation on 2026-09-25:
+The earlier discriminator/enum snapshot at TypeSpec
+`ace87c52c336cad1f6b777a0c23095d292982aa8` has historical validation on 2026-09-25:
 **1,850 public source and installed-wheel tests passed**, plus **1,849 passed
-and one expected skip on Python 3.10**. The synchronized Loom SDK passed
+and one expected skip on Python 3.10**. The then-synchronized Loom SDK passed
 **1,869 source and installed-wheel tests** with its master regressions retained.
-Exact source/generated/runtime provenance checks pass. The strict comparison
-retains all 336 original raw cases and passes 20 paired cases, 328 additional
-probes, and 97 mutation guards; all 162 offline API compatibility checks pass.
-No live-service, remote CI, publication, or review-approval claim is made.
-Custom pipelines/policies remain caller-owned, and no service deduplication
-guarantee is implied.
+Exact source/generated/runtime provenance checks passed at that snapshot. Its
+strict comparison retained all 336 original raw cases and passed 20 paired
+cases, 328 additional probes, and 97 mutation guards; all 162 offline API
+compatibility checks passed. These results predate the current model-file move,
+12-member enum, toolchain refresh, and maintained Loom customizations; they do
+not validate the final refreshed artifacts. No live-service, remote CI,
+publication, or review-approval claim is made. Custom pipelines/policies remain
+caller-owned, and no service deduplication guarantee is implied.
 
 ## TypeSpec follow-up decisions
 
@@ -47,8 +76,8 @@ inventory below.
 
 | Comment | Current decision |
 |---|---|
-| [4099598821: why an SDK model file?](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099598821) | Reuse canonical models where compatible, now including `ModelInput`. The Python-only file has 18 aliases, 22 compatibility models, and three compatibility unions. Retain only intentional constructor/default, optionality/nullability/read-only, inheritance, error, and legacy-result projections; moving these into REST would misstate the service contract. |
-| [4099604743: duplicate opt-in union](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099604743) | Remove the local `FoundryFeaturesOptInKeys` union and alternate mapping; use Python name/usage customizations on the canonical closed shared union. Preserve the six old names/values and add seven canonical names, without changing the underlying REST union or fine-tuning header. |
+| [4099598821: why an SDK model file?](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099598821) | Reuse canonical models where compatible, including `ModelInput`. Move the Python-only definitions to [session-finetuning/models-custom-code.tsp](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp), retaining the namespace and existing public types. Its 18 aliases, 22 models, and three unions preserve intentional constructor/default, optionality/nullability/read-only, inheritance, error, and legacy-result contracts. Import only from SDK entry points, not REST. |
+| [4099604743: duplicate opt-in union](https://github.com/Azure/azure-rest-api-specs/pull/43961#discussion_r4099604743) | Remove the local `FoundryFeaturesOptInKeys` union and alternate mapping; use Python name/usage customizations on the canonical closed shared union. The current 12 members retain the six original names/values with six canonical additions. Upstream removed `AGENTS_OPTIMIZATION_V2_PREVIEW`; the prior 13-member inventory is historical. The fine-tuning preview header is unchanged. |
 
 The SDK-first input-chunk contract uses canonical `@discriminator("type")`
 models, exposed as `InputChunk`, `InputChunkType`, `ModelInputChunk`, and
@@ -68,11 +97,11 @@ part of this SDK-first work, and no live-deployment/GPU result is claimed.
 Strict discriminator enforcement and the compatibility policy for older clients
 are deferred to public preview (PuPr).
 
-Genuine shared-emitter `0.63.8`/backend `0.37.3` generation of the enum follow-up
-changes only the enum, API source metadata, and sync/async operation docstrings;
-non-docstring operation executable ASTs are identical and the complete 28-file
-runtime matches emitted output. This is separate from the earlier discriminator
-generation and is not a final combined test or CI result.
+Historical shared-emitter `0.63.8`/backend `0.37.3` generation of the earlier enum
+follow-up changed only the enum, API source metadata, and sync/async operation
+docstrings; non-docstring operation executable ASTs were identical and the
+complete 28-file runtime matched emitted output. This was separate from the
+earlier discriminator generation and is not current toolchain or final CI evidence.
 
 ## Historical review inventory
 

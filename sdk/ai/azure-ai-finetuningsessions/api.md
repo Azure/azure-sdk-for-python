@@ -1039,7 +1039,6 @@ namespace azure.ai.finetuningsessions.models
 
 
     class azure.ai.finetuningsessions.models.FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
         AGENT_INSIGHTS_V1_PREVIEW = "AgentInsights=V1Preview"
         DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
         EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
@@ -1284,6 +1283,7 @@ namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.SampleOperationResult(SampleOperationResult, discriminator='sample'):
         prompt_logprobs: Optional[list[Optional[float]]]
+        prompt_tokens: Optional[int]
         topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]]
 
         @overload
@@ -1346,6 +1346,7 @@ namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.SamplingOperationResult(SampleOperationResult, discriminator='sample'):
         prompt_logprobs: Optional[list[Optional[float]]]
+        prompt_tokens: Optional[int]
         topk_prompt_logprobs: Optional[list[Optional[list[tuple[int, float]]]]]
 
         @overload

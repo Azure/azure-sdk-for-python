@@ -158,7 +158,15 @@ class ProvenanceLinkTests(unittest.TestCase):
             reference_tool.load_manifest(self.package)
 
     def test_invalid_paths_are_rejected(self):
-        for value in (None, "", 7, "../provenance.json", "/tmp/provenance.json", "C:/provenance.json", "eng\\generation\\provenance.json"):
+        for value in (
+            None,
+            "",
+            7,
+            "../provenance.json",
+            "/tmp/provenance.json",
+            "C:/provenance.json",
+            "eng\\generation\\provenance.json",
+        ):
             with self.subTest(path=value):
                 self.manifest["generation_provenance"] = value
                 self.write_records()

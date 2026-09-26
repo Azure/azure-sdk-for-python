@@ -5,8 +5,10 @@
 ### Features Added
 
 - Add the generated `InputChunk` hierarchy and `InputChunkType`. Existing `ModelInputChunk` keyword/mapping calls remain valid and now emit `type="text"`; image inputs retain their existing serialization and validation.
-- Reuse the canonical shared `FoundryFeaturesOptInKeys`, preserving six existing member names/values and adding seven canonical members. The shared REST union and fine-tuning preview header are unchanged.
+- Reuse the current 12-member canonical shared `FoundryFeaturesOptInKeys`, preserving six original member names/values with six canonical additions. The fine-tuning preview header is unchanged.
 - Add optional `SamplingParams.response_format` for compatible sampling providers and the friendly `SamplingOperationResult` alias for `SampleOperationResult`.
+- Include Loom's maintained read-only `SampleOperationResult.prompt_tokens: Optional[int]` for backend-reported evidence, counted once per prompt. Accept only exact non-negative integers; missing or invalid evidence is `None`, with no boolean/float/string coercion or inferred counts. The identical `SamplingOperationResult` alias and existing constructor keywords/overloads are unchanged.
+- Support `AZURE_AI_FINETUNING_MAX_CHUNK_BYTES` as an import-time positive-integer override for the approximate request chunk-size budget. Unset or invalid values keep the 5,000,000-byte default; invalid values log a warning. Service-side limits are unchanged.
 - Add the string-backed `TrainingType` enum, reusing the REST training-tier definition. Existing string inputs and omission behavior remain supported.
 - Initial preview of interactive fine-tuning sessions with synchronous and asynchronous clients.
 - Forward-only requests, checkpoint resume and deletion, JSON-valued session metadata, and training-tier selection.
@@ -16,6 +18,7 @@
 ### Breaking Changes
 
 - Require Python 3.10 or later; Python 3.9 is no longer supported.
+- Remove `AGENTS_OPTIMIZATION_V2_PREVIEW` from the historical 13-member enum snapshot to follow its removal from the upstream canonical definition; the six original fine-tuning SDK members remain available.
 - Require an explicit `lora_config` with `LoRAConfig.rank` in session creation and checkpoint-resume methods, and in `CreateSessionRequest`. No implicit rank or empty configuration is supplied.
 - The distribution is named `azure-ai-finetuningsessions` and Python imports now use `azure.ai.finetuningsessions`. Remove older preview installations and update imports/dependency files before installing this build.
 - The preview baseline replaces the earlier regenerated-only surface with the established preview API plus explicitly documented contract changes. Callers of earlier raw models, operation methods, or keyword adapters should check the current signatures when migrating.
@@ -39,15 +42,22 @@
 ### Other Changes
 
 - Reuse 18 canonical TypeSpec aliases, including `ModelInput`, while retaining 22 compatibility models and three compatibility unions for intentional Python-only contracts. Correct LoRA, sampling, and training-tier documentation without changing service behavior.
+- Move Python-only TypeSpec compatibility definitions to [session-finetuning/models-custom-code.tsp](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp), imported only by SDK generation. Retain the existing SDK namespace, public types, and generated type identities; the move does not add these projections to REST.
 - Keep the input-chunk migration SDK-first: normalize legacy token-only `ModelInput` mappings only when `type` is absent and preserve unknown explicit tags. Production service behavior is unchanged; strict discriminator enforcement and compatibility policy are deferred to public preview (PuPr).
 - Refresh TypeSpec provenance after snake_case training-tier member naming and service-grounded identifier minimum lengths; training-tier wire values are unchanged.
 - Use the Foundry required-preview operation contract and documented schema defaults with supported Python customization hooks for request query ordering and established convenience behavior.
-- Use the repository's shared Python emitter `0.63.8`, backend `0.37.3`, compiler `1.16.0`, and client generator core `0.72.1`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
+- Use the repository's shared Python emitter `0.63.8`, backend `0.38.0`, compiler `1.16.0`, and client generator core `0.72.2`. Genuine regeneration incorporates the upstream unused-import fix; generated files are not manually patched to pass CI.
 - Remove the package-local emitter override. Keep standalone tooling archives and validation records under the package's engineering directory, and verification commands under its scripts directory; standard README and generation guidance remain at the package root.
 - Record the unchanged 48-file historical oracle at source commit `485774df502642879fdf3a53777be4a0d95155dc` in [eng/generation/reference.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/reference.json). See [GENERATION.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/GENERATION.md) for current guidance, exact reviewed contracts, and historical evidence.
 - Retain `/fine_tuning/sessions` routes and established convenience APIs. The earlier `use_legacy_routes` option is not included in this preview.
 - Use AST overload inspection on all supported Python versions rather than importing Python 3.11-only `typing.get_overloads`; retain the assertions on Python 3.10.
+- Correct the spelling pipeline failure on Python's global-namespace keyword in the surface verifier without changing runtime behavior or weakening validation.
 - Preserve the separately committed preview baseline and record intentional changes in [eng/generation/review-deltas.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/review-deltas.json). Background heartbeat startup remains unchanged; opt-in-only startup is still deferred.
+
+The current refresh has two matching isolated emissions and a passing public
+source-test run. Final test totals and gate outcomes must come from final
+validation records; final Loom, installed-wheel, and public CI results are not
+yet verified. No commands or builds were run for this documentation-only update.
 
 Historical local validation, before the input-chunk and shared-enum changes:
 **1,637 SDK tests passed on Python 3.13.14**. The

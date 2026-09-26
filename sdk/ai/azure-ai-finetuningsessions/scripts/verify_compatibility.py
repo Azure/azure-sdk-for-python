@@ -70,8 +70,12 @@ KEY = "offline-verifier-key-not-a-secret"
 TOKEN = "offline-verifier-token-not-a-secret"
 ORIGINAL_CONTRACTS = ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]
 SERVICE_CONTRACTS = [
-    "required-lora-config", "sampling-response-format", "sampling-operation-result-alias",
-    "credential-transport-security", "no-post-retries", "raw-request-id-polling",
+    "required-lora-config",
+    "sampling-response-format",
+    "sampling-operation-result-alias",
+    "credential-transport-security",
+    "no-post-retries",
+    "raw-request-id-polling",
 ]
 INPUT_CHUNK_CONTRACT = "input-chunk-discriminator"
 INPUT_CHUNK_DEFINITION = {
@@ -109,33 +113,65 @@ FOUNDRY_FEATURES_DEFINITION = {
         "SKILLS_V1_PREVIEW": "Skills=V1Preview",
         "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
         "MODELS_V1_PREVIEW": "Models=V1Preview",
-        "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
         "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
         "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
     },
     "header": "FineTuningSessions=V1Preview",
-    "behavior": "Preserve six existing members, signatures and wire headers; add only seven canonical members",
+    "behavior": "Preserve six existing members, signatures and wire headers; add only six canonical members",
+}
+SAMPLING_PROMPT_TOKENS_CONTRACT = "sampling-prompt-tokens"
+SAMPLING_PROMPT_TOKENS_DEFINITION = {
+    "version": 1,
+    "source_commit": "3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377",
+    "model": "SampleOperationResult",
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": True},
+    "field": {
+        "name": "prompt_tokens",
+        "type": "Optional[int]",
+        "wire_name": "prompt_tokens",
+        "visibility": ["read"],
+        "discriminator": False,
+        "format": None,
+    },
+    "deserialization": "value if type(value) is int and value >= 0 else None",
+    "missing": None,
+    "constructor": "Existing keyword overload unchanged; no prompt_tokens parameter",
+    "semantics": "Backend count once per prompt; no inference or metrics/usage fallback",
+    "wire": "Absent stays absent; present field excluded from writable serialization",
 }
 # This is a fixed specification, not an allowlist of diff paths or candidate values.
 SERVICE_CONTRACT_DEFINITIONS = {
     "version": 1,
     "required_lora": {
         "models": {"LoRAConfig": "rank", "CreateSessionRequest": "lora_config"},
-        "methods": ["sync.create", "sync.create_from_checkpoint", "async.create_session",
-                    "async.create_session_from_checkpoint"],
+        "methods": [
+            "sync.create",
+            "sync.create_from_checkpoint",
+            "async.create_session",
+            "async.create_session_from_checkpoint",
+        ],
         "default": "required; no client default",
     },
-    "response_format": {"model": "SamplingParams", "field": "response_format",
-                        "type": "Optional[Dict[str, Any]]", "default": None},
+    "response_format": {
+        "model": "SamplingParams",
+        "field": "response_format",
+        "type": "Optional[Dict[str, Any]]",
+        "default": None,
+    },
     "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": True},
-    "security": {"api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
-                 "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides"},
+    "security": {
+        "api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
+        "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides",
+    },
     "retry": {"default_post_retries": 0, "caller_owned_policy": "unchanged"},
-    "raw_polling": {"acceptance_status": 200, "locator": ["session_id", "request_id"],
-                    "poll": "GET pending then completed; never repeat POST",
-                    "result": "exact OperationResult deserialization and cls",
-                    "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
-                    "legacy_cases": 336},
+    "raw_polling": {
+        "acceptance_status": 200,
+        "locator": ["session_id", "request_id"],
+        "poll": "GET pending then completed; never repeat POST",
+        "result": "exact OperationResult deserialization and cls",
+        "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
+        "legacy_cases": 336,
+    },
 }
 IMAGE = b"\xff\xd8\xffoffline-jpeg"
 IMAGE_WIRE = {
@@ -664,8 +700,13 @@ def _transport_types() -> tuple[type, type]:
 
 
 class _Context:
-    def __init__(self, legacy_routes: bool, service_contracts: bool = False,
-                 input_chunk_discriminator: bool = False) -> None:
+    def __init__(
+        self,
+        legacy_routes: bool,
+        service_contracts: bool = False,
+        input_chunk_discriminator: bool = False,
+        sampling_prompt_tokens: bool = False,
+    ) -> None:
         self.sdk = importlib.import_module(NAMESPACE)
         self.aio = importlib.import_module(NAMESPACE + ".aio")
         self.models = importlib.import_module(NAMESPACE + ".models")
@@ -674,6 +715,7 @@ class _Context:
         self.legacy_routes = legacy_routes
         self.service_contracts = service_contracts
         self.input_chunk_discriminator = input_chunk_discriminator
+        self.sampling_prompt_tokens = sampling_prompt_tokens
         # Preserve the upstream Loom moniker; do not change the SDK merely to
         # satisfy the earlier regenerated public SDK's user-agent convention.
         self.moniker = f"azsdk-python-finetuning-sessions/{self.sdk.__version__}"
@@ -827,7 +869,10 @@ def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
     )
     case.check(ctx.sdk.EngineDeadError is ctx.sdk.TrainingEngineError, "EngineDeadError alias")
     case.check(ctx.sdk.MalformedDatumError is ctx.sdk.RequestValidationError, "MalformedDatumError alias")
-    if hasattr(ctx.models, "SamplingOperationResult") and ctx.models.SamplingOperationResult is not ctx.models.SampleOperationResult:
+    if (
+        hasattr(ctx.models, "SamplingOperationResult")
+        and ctx.models.SamplingOperationResult is not ctx.models.SampleOperationResult
+    ):
         raise AssertionError("SamplingOperationResult must be the identical SampleOperationResult class")
     return {
         "version": ctx.sdk.__version__,
@@ -1004,7 +1049,10 @@ def _training_plan(case: _Case, action: str, request_id: str, configured: bool =
         expected = {**payload, "grad_norm": 0.75, "step_count": 3}
         model, fields, discriminator = "OptimStepOperationResult", ("grad_norm", "step_count", "metrics"), "optim_step"
     else:
-        inputs = {"data": case.context.batch_wire(), "loss_fn": "importance_sampling" if configured else "cross_entropy"}
+        inputs = {
+            "data": case.context.batch_wire(),
+            "loss_fn": "importance_sampling" if configured else "cross_entropy",
+        }
         if configured:
             inputs["loss_fn_config"] = LOSS_CONFIG
         body = {"forward_input" if action == "forward" else "forward_backward_input": inputs}
@@ -1107,7 +1155,8 @@ def _sample_result(ctx: _Context, case: _Case, result: Any, expected: dict) -> d
         result,
         "SampleOperationResult",
         expected,
-        ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics"),
+        ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics")
+        + (("prompt_tokens",) if ctx.sampling_prompt_tokens else ()),
     )
     case.equal(result.sequences[0].tokens, [31, 32], "Sample token IDs remain integers")
     case.equal(result.sequences[0].text, "caf\u00e9", "Sample text")
@@ -1611,8 +1660,13 @@ async def _run_async_cases(ctx: _Context, results: dict) -> None:
         results[name] = case.finish(output, error)
 
 
-def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = False,
-              input_chunk_discriminator: bool = False) -> dict:
+def _snapshot(
+    package: Path,
+    legacy_routes: bool,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> dict:
     sys.dont_write_bytecode = True
     _offline_environment()
     if any(name == NAMESPACE or name.startswith(NAMESPACE + ".") for name in sys.modules):
@@ -1632,7 +1686,7 @@ def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = Fals
         from azure.core.settings import settings
 
         settings.tracing_enabled = False
-        ctx = _Context(legacy_routes, service_contracts, input_chunk_discriminator)
+        ctx = _Context(legacy_routes, service_contracts, input_chunk_discriminator, sampling_prompt_tokens)
         expected_origin = (package / MODULE / "__init__.py").resolve()
         if Path(ctx.sdk.__file__).resolve() != expected_origin:
             raise RuntimeError(f"Imported the wrong SDK: {ctx.sdk.__file__}; expected {expected_origin}")
@@ -1669,6 +1723,7 @@ def _snapshot(package: Path, legacy_routes: bool, service_contracts: bool = Fals
                 "legacy_routes": legacy_routes,
                 "service_contracts": service_contracts,
                 **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
+                **({"sampling_prompt_tokens": True} if sampling_prompt_tokens else {}),
                 "network_guard": True,
                 "write_guard": True,
                 "heartbeat_start_disabled": True,
@@ -1728,16 +1783,24 @@ def _apply_review_header_contract(cases: dict, *, raw: bool) -> dict:
     }
     for name, case in result.items():
         for request in case["requests"]:
-            if raw or name in {"sync_generated_reads", "async_generated_reads"} or (
-                name in {"sync_lifecycle", "async_lifecycle"} and "/heartbeat?" in request["url"]
+            if (
+                raw
+                or name in {"sync_generated_reads", "async_generated_reads"}
+                or (name in {"sync_lifecycle", "async_lifecycle"} and "/heartbeat?" in request["url"])
             ):
                 for header, value in context.items():
                     request["headers"].setdefault(header, value)
     return result
 
 
-def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool = False,
-                input_chunk_discriminator: bool = False) -> dict:
+def _run_worker(
+    package: Path,
+    *,
+    legacy_routes: bool,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> dict:
     command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
     if legacy_routes:
         command.append("--legacy-routes")
@@ -1745,6 +1808,8 @@ def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool =
         command.append("--service-contracts")
     if input_chunk_discriminator:
         command.append("--input-chunk-discriminator")
+    if sampling_prompt_tokens:
+        command.append("--sampling-prompt-tokens")
     completed = subprocess.run(
         command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False
     )
@@ -1760,6 +1825,7 @@ def _run_worker(package: Path, *, legacy_routes: bool, service_contracts: bool =
         "legacy_routes": legacy_routes,
         "service_contracts": service_contracts,
         **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
+        **({"sampling_prompt_tokens": True} if sampling_prompt_tokens else {}),
         "network_guard": True,
         "write_guard": True,
         "heartbeat_start_disabled": True,
@@ -1787,24 +1853,30 @@ def _review_contracts(deltas: dict) -> list[str]:
     previous = ORIGINAL_CONTRACTS + ["training-type-enum"]
     service = previous + SERVICE_CONTRACTS
     chunks = service + [INPUT_CHUNK_CONTRACT]
-    current = chunks + [FOUNDRY_FEATURES_CONTRACT]
-    if contracts not in (ORIGINAL_CONTRACTS, previous, service, chunks, current):
+    features = chunks + [FOUNDRY_FEATURES_CONTRACT]
+    current = features + [SAMPLING_PROMPT_TOKENS_CONTRACT]
+    if contracts not in (ORIGINAL_CONTRACTS, previous, service, chunks, features, current):
         raise ValueError("Unsupported review comparison contract")
-    if contracts in (service, chunks, current):
+    if contracts in (service, chunks, features, current):
         if _dump(deltas.get("service_contracts")) != _dump(SERVICE_CONTRACT_DEFINITIONS):
             raise ValueError("The fixed service contract definitions changed")
     elif "service_contracts" in deltas:
         raise ValueError("Service definitions require the complete explicit service contract set")
-    if contracts in (chunks, current):
+    if contracts in (chunks, features, current):
         if _dump(deltas.get("input_chunk_contract")) != _dump(INPUT_CHUNK_DEFINITION):
             raise ValueError("The fixed input-chunk contract definition changed")
     elif "input_chunk_contract" in deltas:
         raise ValueError("Input-chunk definitions require the complete explicit contract set")
-    if contracts == current:
+    if contracts in (features, current):
         if _dump(deltas.get("foundry_features_contract")) != _dump(FOUNDRY_FEATURES_DEFINITION):
             raise ValueError("The fixed Foundry feature contract definition changed")
     elif "foundry_features_contract" in deltas:
         raise ValueError("Foundry feature definitions require the complete explicit contract set")
+    if contracts == current:
+        if _dump(deltas.get("sampling_prompt_tokens_contract")) != _dump(SAMPLING_PROMPT_TOKENS_DEFINITION):
+            raise ValueError("The fixed sampling prompt-token contract definition changed")
+    elif "sampling_prompt_tokens_contract" in deltas:
+        raise ValueError("Sampling prompt-token definitions require the complete explicit contract set")
     return contracts
 
 
@@ -1833,8 +1905,13 @@ def _apply_service_contracts(cases: dict) -> dict:
     model = result["serialization_and_error_contracts"]["output"]["CreateSessionRequest"]
     model["json"]["lora_config"] = deepcopy(LORA)
     model["attributes"]["lora_config"] = deepcopy(LORA)
-    for name in ("sync_create_identifiers", "async_create_identifiers", "sync_create_from_checkpoint",
-                 "async_create_from_checkpoint", "async_lifecycle"):
+    for name in (
+        "sync_create_identifiers",
+        "async_create_identifiers",
+        "sync_create_from_checkpoint",
+        "async_create_from_checkpoint",
+        "async_lifecycle",
+    ):
         for request in result[name]["requests"]:
             if request["method"] == "POST" and request["url"] == ENDPOINT + ROUTE + "?api-version=v1":
                 body = request["body"]
@@ -1848,7 +1925,9 @@ def _apply_service_contracts(cases: dict) -> dict:
 
 def _apply_input_chunk_contract(cases: dict) -> dict:
     """Extend the exact prior service contract, not a candidate-derived baseline."""
-    _require_baseline(cases, "c7aa534f1383ce7c32984ebd9282bd60f721a86bb52606ee2567313897420ea5", "prior reviewed 20-case")
+    _require_baseline(
+        cases, "c7aa534f1383ce7c32984ebd9282bd60f721a86bb52606ee2567313897420ea5", "prior reviewed 20-case"
+    )
     result = deepcopy(cases)
     api = result["surface_and_signatures"]["output"]
     api["exports"]["models"] = sorted([*api["exports"]["models"], "InputChunk", "InputChunkType"])
@@ -1879,9 +1958,40 @@ def _apply_foundry_features_contract(cases: dict) -> dict:
     return result
 
 
-def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_enum: bool = False,
-             service_contracts: bool = False, input_chunk_discriminator: bool = False,
-             canonical_foundry_features: bool = False) -> int:
+def _apply_sampling_prompt_tokens_contract(cases: dict) -> dict:
+    """Observe absence at four fixed sampling results; never change their wire JSON."""
+    result = deepcopy(cases)
+    for name, offset, count in (("sync_sampling", 0, 2), ("async_sampling", 3, 5)):
+        output = result[name]["output"]
+        if len(output) != count:
+            raise ValueError(f"The immutable {name} result inventory changed")
+        for index in range(2):
+            original = {
+                "class": "SampleOperationResult",
+                "json": {**deepcopy(SAMPLES), "type": "sample", "status": "succeeded", "operation_id": f"sample_{index}"},
+                "attributes": {
+                    field: deepcopy(SAMPLES[field])
+                    for field in ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics")
+                },
+            }
+            observation = output[offset + index]
+            if _dump(observation) != _dump(original):
+                raise ValueError(f"The immutable {name} sampling result changed")
+            observation["attributes"]["prompt_tokens"] = None
+    return result
+
+
+def _compare(
+    loom: dict,
+    public: dict,
+    *,
+    reviewed: bool = False,
+    training_type_enum: bool = False,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    canonical_foundry_features: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> int:
     if service_contracts:
         loom = {**loom, "cases": _apply_service_contracts(loom["cases"])}
     if reviewed:
@@ -1902,6 +2012,8 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
         loom = {**loom, "cases": _apply_input_chunk_contract(loom["cases"])}
     if canonical_foundry_features:
         loom = {**loom, "cases": _apply_foundry_features_contract(loom["cases"])}
+    if sampling_prompt_tokens:
+        loom = {**loom, "cases": _apply_sampling_prompt_tokens_contract(loom["cases"])}
     failed = []
     for name in CASE_NAMES:
         left, right = loom["cases"][name], public["cases"][name]
@@ -1921,16 +2033,34 @@ def _compare(loom: dict, public: dict, *, reviewed: bool = False, training_type_
         if len(differences) > 20:
             print(f"  ... {len(differences) - 20} further differences; use --snapshot to inspect full actual records.")
     print("\nExplicitly allowed surface differences:")
-    print("  " + ("Only the exact direct-context header additions recorded in eng/generation/review-deltas.json." if reviewed
-                  else "None. Customer-facing API and behavior must match; internal hook placement may differ."))
+    print(
+        "  "
+        + (
+            "Only the exact direct-context header additions recorded in eng/generation/review-deltas.json."
+            if reviewed
+            else "None. Customer-facing API and behavior must match; internal hook placement may differ."
+        )
+    )
     if training_type_enum:
-        print("  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences.")
+        print(
+            "  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences."
+        )
     if service_contracts:
-        print("  Also fixed required-LoRA inputs/four signatures and the identical sampling alias; original reference fixtures remain unchanged.")
+        print(
+            "  Also fixed required-LoRA inputs/four signatures and the identical sampling alias; original reference fixtures remain unchanged."
+        )
     if input_chunk_discriminator:
-        print("  Also the two fixed input-chunk exports and type=text only in model-input chunks; tensors, returned tokens and extensions stay exact.")
+        print(
+            "  Also the two fixed input-chunk exports and type=text only in model-input chunks; tensors, returned tokens and extensions stay exact."
+        )
     if canonical_foundry_features:
-        print("  Also seven exact canonical Foundry feature members; six existing members and every wire header remain exact.")
+        print(
+            "  Also six exact canonical Foundry feature members; six existing members and every wire header remain exact."
+        )
+    if sampling_prompt_tokens:
+        print(
+            "  Also the fixed read-only Optional[int] sampling prompt count; absent legacy values are None attributes, never new wire fields."
+        )
     print("\nNormalization rules:")
     for note in NORMALIZATIONS:
         print("  " + note)
@@ -1951,20 +2081,35 @@ def main() -> int:
     parser.add_argument("--legacy-routes", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--input-chunk-discriminator", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--artifacts", type=Path, help="Save original and candidate worker JSON without altering the source oracle")
+    parser.add_argument("--sampling-prompt-tokens", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--artifacts", type=Path, help="Save original and candidate worker JSON without altering the source oracle"
+    )
     args = parser.parse_args()
     if args.snapshot is not None:
         if args.loom_repo is not None:
             parser.error("--snapshot and --loom-repo are mutually exclusive")
         try:
             with redirect_stdout(sys.stderr):
-                report = _snapshot(args.snapshot, args.legacy_routes, args.service_contracts, args.input_chunk_discriminator)
+                report = _snapshot(
+                    args.snapshot,
+                    args.legacy_routes,
+                    args.service_contracts,
+                    args.input_chunk_discriminator,
+                    args.sampling_prompt_tokens,
+                )
             print(_dump(report))
             return 0 if all(case["ok"] for case in report["cases"].values()) else 1
         except Exception as exc:
             print(_dump({"fatal": {"type": type(exc).__name__, "message": str(exc)}}))
             return 2
-    if args.loom_repo is None or args.legacy_routes or args.service_contracts or args.input_chunk_discriminator:
+    if (
+        args.loom_repo is None
+        or args.legacy_routes
+        or args.service_contracts
+        or args.input_chunk_discriminator
+        or args.sampling_prompt_tokens
+    ):
         parser.error("--loom-repo is required; --legacy-routes is for internal --snapshot mode only")
     try:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -1983,7 +2128,9 @@ def main() -> int:
         deltas = json.loads(delta_path.read_text(encoding="utf-8")) if delta_path.exists() else None
         if deltas is None:
             if expected_tests != actual_tests:
-                raise ValueError("The complete upstream test inventory must remain byte-identical after naming normalization")
+                raise ValueError(
+                    "The complete upstream test inventory must remain byte-identical after naming normalization"
+                )
         else:
             _review_contracts(deltas)
             adapted = deltas["adapted_upstream_tests"]
@@ -2001,25 +2148,44 @@ def main() -> int:
         with reference_package(args.loom_repo, public_package) as reference:
             service_contracts = deltas is not None and "raw-request-id-polling" in _review_contracts(deltas)
             input_chunk_discriminator = deltas is not None and INPUT_CHUNK_CONTRACT in _review_contracts(deltas)
+            sampling_prompt_tokens = deltas is not None and SAMPLING_PROMPT_TOKENS_CONTRACT in _review_contracts(deltas)
             loom = _run_worker(_check_package(reference), legacy_routes=False)
-            public = _run_worker(public_package, legacy_routes=False, service_contracts=service_contracts,
-                                 input_chunk_discriminator=input_chunk_discriminator)
+            public = _run_worker(
+                public_package,
+                legacy_routes=False,
+                service_contracts=service_contracts,
+                input_chunk_discriminator=input_chunk_discriminator,
+                sampling_prompt_tokens=sampling_prompt_tokens,
+            )
             if args.artifacts:
                 args.artifacts.mkdir(parents=True, exist_ok=True)
                 for name, report in (("reference-convenience", loom), ("candidate-convenience", public)):
                     (args.artifacts / f"{name}.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
             if _compare(
-                loom, public, reviewed=deltas is not None,
+                loom,
+                public,
+                reviewed=deltas is not None,
                 training_type_enum=deltas is not None and "training-type-enum" in _review_contracts(deltas),
                 service_contracts=service_contracts,
                 input_chunk_discriminator=input_chunk_discriminator,
-                canonical_foundry_features=deltas is not None and FOUNDRY_FEATURES_CONTRACT in _review_contracts(deltas),
+                canonical_foundry_features=deltas is not None
+                and FOUNDRY_FEATURES_CONTRACT in _review_contracts(deltas),
+                sampling_prompt_tokens=sampling_prompt_tokens,
             ):
                 return 1
             command = [
-                sys.executable, "-I", "-B", "-X", "utf8", str(PACKAGE / "scripts/verify_surface.py"),
-                "--reference", str(reference), "--candidate", str(public_package),
-                "--harness", str(Path(__file__).resolve()),
+                sys.executable,
+                "-I",
+                "-B",
+                "-X",
+                "utf8",
+                str(PACKAGE / "scripts/verify_surface.py"),
+                "--reference",
+                str(reference),
+                "--candidate",
+                str(public_package),
+                "--harness",
+                str(Path(__file__).resolve()),
             ]
             if deltas is not None:
                 command.extend(["--review-deltas", str(delta_path)])

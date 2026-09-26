@@ -42,8 +42,6 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Opts in to the V1 preview of data generation jobs."""
     MODELS_V1_PREVIEW = "Models=V1Preview"
     """Opts in to the V1 preview of model operations."""
-    AGENTS_OPTIMIZATION_V2_PREVIEW = "AgentsOptimization=V2Preview"
-    """Opts in to the V2 preview of agent optimization."""
     MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
     """Opts in to the V1 preview of model-router configuration controls."""
     FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"

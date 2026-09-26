@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Bounded recovery from Envoy JWT rejections before application execution."""
+
 from __future__ import annotations
 
 import asyncio
@@ -18,7 +19,6 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.ai.finetuningsessions import _patch as sync
 from azure.ai.finetuningsessions.aio import _patch as aio
-
 
 _SESSION_ID = "session_deadbeef"
 _ACCEPTED = {"request_id": "req-accepted", "session_id": _SESSION_ID}
@@ -83,6 +83,7 @@ def client_factory(request):
             posts if posts is not None else [_Response(200, _ACCEPTED)],
             polls if polls is not None else [_Response(200, _COMPLETED)],
         )
+
     return create
 
 
@@ -115,9 +116,7 @@ def clock(monkeypatch):
 
 async def _sample(client):
     if isinstance(client, _AsyncClient):
-        return await aio.sample(
-            client, _SESSION_ID, [1, 2], sync.SamplingParams(), checkpoint_id="ckpt-1"
-        )
+        return await aio.sample(client, _SESSION_ID, [1, 2], sync.SamplingParams(), checkpoint_id="ckpt-1")
     session = sync.FineTuningSession.__new__(sync.FineTuningSession)
     session.session_id = _SESSION_ID
     session._client = client
@@ -130,10 +129,14 @@ def _requests(client, method):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("verbose", [False, True])
-@pytest.mark.parametrize("body", [
-    {"error": {"code": "Unauthorized", "message": "Token expired"}},
-    "Jwt verification fails",
-], ids=["json", "plaintext"])
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"error": {"code": "Unauthorized", "message": "Token expired"}},
+        "Jwt verification fails",
+    ],
+    ids=["json", "plaintext"],
+)
 async def test_sync_submit_error_logging_preserves_json_body(clock, monkeypatch, caplog, verbose, body):
     response = _Response(401, body)
     response.json = Mock(wraps=response.json)
@@ -147,8 +150,7 @@ async def test_sync_submit_error_logging_preserves_json_body(clock, monkeypatch,
     assert caught.value.response is response
     response.json.assert_called_once_with()
     response_logs = [
-        record.getMessage() for record in caplog.records
-        if record.getMessage().startswith("[HTTP] <-- POST")
+        record.getMessage() for record in caplog.records if record.getMessage().startswith("[HTTP] <-- POST")
     ]
     expected = f"[HTTP] <-- POST /fine_tuning/sessions/{_SESSION_ID}/sample  status=401"
     if isinstance(body, dict):
@@ -171,12 +173,10 @@ async def test_sync_submit_success_logs_body_parsed_once(clock, monkeypatch, cap
     assert result.operation_id == "req-accepted"
     response.json.assert_called_once_with()
     response_logs = [
-        record.getMessage() for record in caplog.records
-        if record.getMessage().startswith("[HTTP] <-- POST")
+        record.getMessage() for record in caplog.records if record.getMessage().startswith("[HTTP] <-- POST")
     ]
-    expected = (
-        f"[HTTP] <-- POST /fine_tuning/sessions/{_SESSION_ID}/sample  status=200\n"
-        + json.dumps(_ACCEPTED, indent=2)
+    expected = f"[HTTP] <-- POST /fine_tuning/sessions/{_SESSION_ID}/sample  status=200\n" + json.dumps(
+        _ACCEPTED, indent=2
     )
     assert response_logs == ([expected] if verbose else [])
 
@@ -207,12 +207,14 @@ async def test_recovers_after_transient_proxy_failure(client_factory, clock, sta
 
 @pytest.mark.asyncio
 async def test_poll_recovers_after_long_healthy_wait(client_factory, clock):
-    client = client_factory(polls=[
-        *[_Response(200, _PENDING) for _ in range(20)],
-        _rejection(),
-        _rejection(),
-        _Response(200, _COMPLETED),
-    ])
+    client = client_factory(
+        polls=[
+            *[_Response(200, _PENDING) for _ in range(20)],
+            _rejection(),
+            _rejection(),
+            _Response(200, _COMPLETED),
+        ]
+    )
 
     result = await _sample(client)
 
@@ -225,12 +227,14 @@ async def test_poll_recovers_after_long_healthy_wait(client_factory, clock):
 
 @pytest.mark.asyncio
 async def test_healthy_poll_resets_proxy_retry_window(client_factory, clock):
-    client = client_factory(polls=[
-        *[_rejection() for _ in range(10)],
-        _Response(200, _PENDING),
-        *[_rejection() for _ in range(10)],
-        _Response(200, _COMPLETED),
-    ])
+    client = client_factory(
+        polls=[
+            *[_rejection() for _ in range(10)],
+            _Response(200, _PENDING),
+            *[_rejection() for _ in range(10)],
+            _Response(200, _COMPLETED),
+        ]
+    )
 
     result = await _sample(client)
 
@@ -241,9 +245,7 @@ async def test_healthy_poll_resets_proxy_retry_window(client_factory, clock):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("prior_error", [False, True], ids=["fresh-budget", "expired-budget"])
-async def test_proxy_poll_recovers_despite_shorter_error_budget(
-    client_factory, clock, monkeypatch, prior_error
-):
+async def test_proxy_poll_recovers_despite_shorter_error_budget(client_factory, clock, monkeypatch, prior_error):
     monkeypatch.setattr(sync, "_DEFAULT_OPERATION_TIMEOUT_SEC", 2.0)
     monkeypatch.setattr(aio, "_DEFAULT_OPERATION_TIMEOUT_SEC", 2.0)
 
@@ -268,12 +270,14 @@ async def test_proxy_poll_recovers_despite_shorter_error_budget(
 async def test_proxy_retries_do_not_reset_existing_error_budget(client_factory, clock, monkeypatch):
     monkeypatch.setattr(sync, "_DEFAULT_OPERATION_TIMEOUT_SEC", 2.0)
     monkeypatch.setattr(aio, "_DEFAULT_OPERATION_TIMEOUT_SEC", 2.0)
-    client = client_factory(polls=[
-        _Response(503, {"message": "unavailable"}),
-        _rejection(),
-        _rejection(),
-        _Response(503, {"message": "unavailable"}),
-    ])
+    client = client_factory(
+        polls=[
+            _Response(503, {"message": "unavailable"}),
+            _rejection(),
+            _rejection(),
+            _Response(503, {"message": "unavailable"}),
+        ]
+    )
 
     with pytest.raises(TimeoutError, match="HTTP 503"):
         await _sample(client)
@@ -287,10 +291,14 @@ async def test_proxy_retries_do_not_reset_existing_error_budget(client_factory, 
 @pytest.mark.parametrize("stage", ["submit", "poll"])
 async def test_json_wrapped_proxy_rejection_recovers(client_factory, clock, stage):
     responses = [
-        _rejection(body={"error": {
-            "code": "Unauthorized",
-            "message": "Jwt verification fails",
-        }}),
+        _rejection(
+            body={
+                "error": {
+                    "code": "Unauthorized",
+                    "message": "Jwt verification fails",
+                }
+            }
+        ),
         _Response(200, _ACCEPTED if stage == "submit" else _COMPLETED),
     ]
     client = client_factory(**{"posts" if stage == "submit" else "polls": responses})
@@ -310,9 +318,11 @@ async def test_persistent_rejection_raises_original_http_error(
     monkeypatch.setattr(sync, "_DEFAULT_OPERATION_TIMEOUT_SEC", error_budget_sec)
     monkeypatch.setattr(aio, "_DEFAULT_OPERATION_TIMEOUT_SEC", error_budget_sec)
     rejection = _rejection()
-    client = client_factory(**{
-        "posts" if stage == "submit" else "polls": itertools.repeat(rejection),
-    })
+    client = client_factory(
+        **{
+            "posts" if stage == "submit" else "polls": itertools.repeat(rejection),
+        }
+    )
     started = clock.now
 
     with pytest.raises(HttpResponseError) as caught:
@@ -322,9 +332,7 @@ async def test_persistent_rejection_raises_original_http_error(
     assert caught.value.response is rejection
     assert clock.now - started == 120
     assert len(_requests(client, "POST" if stage == "submit" else "GET")) <= 18
-    assert len(_requests(client, "GET" if stage == "submit" else "POST")) == (
-        0 if stage == "submit" else 1
-    )
+    assert len(_requests(client, "GET" if stage == "submit" else "POST")) == (0 if stage == "submit" else 1)
 
 
 @pytest.mark.asyncio
@@ -342,13 +350,17 @@ async def test_persistent_rejection_raises_original_http_error(
         _Response(403, "Jwt verification fails", _PROXY_HEADERS),
     ],
     ids=[
-        "ordinary-401", "expired-token", "no-proxy-headers", "application-response",
-        "no-invalid-token-challenge", "substring-only", "malformed-json", "forbidden",
+        "ordinary-401",
+        "expired-token",
+        "no-proxy-headers",
+        "application-response",
+        "no-invalid-token-challenge",
+        "substring-only",
+        "malformed-json",
+        "forbidden",
     ],
 )
-async def test_other_authentication_errors_are_not_retried(
-    client_factory, clock, stage, response
-):
+async def test_other_authentication_errors_are_not_retried(client_factory, clock, stage, response):
     client = client_factory(**{"posts" if stage == "submit" else "polls": [response]})
 
     with pytest.raises(HttpResponseError) as caught:
@@ -374,14 +386,17 @@ async def test_other_authentication_errors_are_not_retried(
         'Bearer error="invalid_token", realm="unfinished',
     ],
     ids=[
-        "hyphenated-name", "dotted-name", "extension-after-error",
-        "malformed-quoted-realm", "trailing-value", "quoted-realm",
-        "unclosed-escaped-value", "unclosed-realm",
+        "hyphenated-name",
+        "dotted-name",
+        "extension-after-error",
+        "malformed-quoted-realm",
+        "trailing-value",
+        "quoted-realm",
+        "unclosed-escaped-value",
+        "unclosed-realm",
     ],
 )
-async def test_invalid_token_lookalikes_are_not_retried(
-    client_factory, clock, stage, challenge
-):
+async def test_invalid_token_lookalikes_are_not_retried(client_factory, clock, stage, challenge):
     response = _rejection(headers={**_PROXY_HEADERS, "www-authenticate": challenge})
     client = client_factory(**{"posts" if stage == "submit" else "polls": [response]})
 
@@ -395,11 +410,18 @@ async def test_invalid_token_lookalikes_are_not_retried(
 
 @pytest.mark.asyncio
 async def test_terminal_operation_error_is_not_replayed(client_factory, clock):
-    client = client_factory(polls=[_Response(200, {
-        "status": "failed",
-        "error": "Jwt verification fails",
-        "should_retry": False,
-    })])
+    client = client_factory(
+        polls=[
+            _Response(
+                200,
+                {
+                    "status": "failed",
+                    "error": "Jwt verification fails",
+                    "should_retry": False,
+                },
+            )
+        ]
+    )
 
     with pytest.raises(RuntimeError, match="Jwt verification fails"):
         await _sample(client)
@@ -510,13 +532,17 @@ async def test_other_errors_do_not_reset_proxy_retry_window(client_factory, cloc
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stage", ["submit", "poll"])
 async def test_retry_logs_correlation_without_credentials(client_factory, clock, caplog, stage):
-    response = _rejection(headers={
-        **_PROXY_HEADERS,
-        "authorization": "Bearer test-secret-not-for-logs",
-    })
-    client = client_factory(**{
-        "posts" if stage == "submit" else "polls": itertools.repeat(response),
-    })
+    response = _rejection(
+        headers={
+            **_PROXY_HEADERS,
+            "authorization": "Bearer test-secret-not-for-logs",
+        }
+    )
+    client = client_factory(
+        **{
+            "posts" if stage == "submit" else "polls": itertools.repeat(response),
+        }
+    )
     with caplog.at_level(logging.WARNING):
         with pytest.raises(HttpResponseError) as caught:
             await _sample(client)

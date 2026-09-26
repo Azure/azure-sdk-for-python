@@ -10,7 +10,6 @@ from azure.ai.finetuningsessions import models
 from azure.ai.finetuningsessions.models import FoundryFeaturesOptInKeys
 from azure.ai.finetuningsessions.operations import _operations as generated
 
-
 MEMBERS = {
     "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
     "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
@@ -22,7 +21,6 @@ MEMBERS = {
     "SKILLS_V1_PREVIEW": "Skills=V1Preview",
     "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
     "MODELS_V1_PREVIEW": "Models=V1Preview",
-    "AGENTS_OPTIMIZATION_V2_PREVIEW": "AgentsOptimization=V2Preview",
     "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
     "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
 }
@@ -30,6 +28,7 @@ MEMBERS = {
 
 def test_canonical_members_preserve_names_values_and_order():
     assert models.__all__.count("FoundryFeaturesOptInKeys") == 1
+    assert len(FoundryFeaturesOptInKeys.__members__) == 12
     assert [(name, member.value) for name, member in FoundryFeaturesOptInKeys.__members__.items()] == list(
         MEMBERS.items()
     )

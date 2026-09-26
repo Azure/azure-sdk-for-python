@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Verify the immutable Loom source oracle, or an explicitly supplied exact snapshot.
@@ -156,7 +157,9 @@ def reference_package(loom_repo: Path, package: Path = PACKAGE) -> Iterator[Path
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--loom-repo", type=Path, help="Local Git clone containing the pinned upstream Loom commit")
-    parser.add_argument("--snapshot", type=Path, help="Verify an archived exact source snapshot (not the regenerated SDK)")
+    parser.add_argument(
+        "--snapshot", type=Path, help="Verify an archived exact source snapshot (not the regenerated SDK)"
+    )
     args = parser.parse_args()
     try:
         if args.snapshot is not None:

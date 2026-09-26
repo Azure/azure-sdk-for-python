@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 """Isolated exhaustive public-surface and raw-operation parity probe."""
 
 # cspell:ignore globalns
@@ -30,32 +31,81 @@ NAMESPACE = "azure.ai.finetuningsessions"
 MODULE = Path("azure/ai/finetuningsessions")
 RAW_RESULT = {"type": "sample", "operation_id": "op", "status": "succeeded", "sequences": []}
 RAW_BEGIN = {
-    "sessions.begin_create": "", "sessions.begin_unload": "/a/complete",
-    "training.begin_forward_backward": "/a/forward_backward", "training.begin_optim_step": "/a/optim_step",
-    "checkpoints.begin_save": "/a/checkpoint", "checkpoints.begin_save_sampler_weights": "/a/checkpoint_sample",
+    "sessions.begin_create": "",
+    "sessions.begin_unload": "/a/complete",
+    "training.begin_forward_backward": "/a/forward_backward",
+    "training.begin_optim_step": "/a/optim_step",
+    "checkpoints.begin_save": "/a/checkpoint",
+    "checkpoints.begin_save_sampler_weights": "/a/checkpoint_sample",
     "sampling.begin_sample": "/a/sample",
 }
 SERVICE_RAW_MODES = (
-    "pending", "cls", "resume", "custom", "custom_continuation", "post202", "post503", "poll404", "poll503",
-    "failed", "engine_dead", "retryable", "result_unavailable", "unknown_status", "missing_result",
-    "wrong_request", "wrong_session", "nonobject", "missing_request_id", "empty_token",
+    "pending",
+    "cls",
+    "resume",
+    "custom",
+    "custom_continuation",
+    "post202",
+    "post503",
+    "poll404",
+    "poll503",
+    "failed",
+    "engine_dead",
+    "retryable",
+    "result_unavailable",
+    "unknown_status",
+    "missing_result",
+    "wrong_request",
+    "wrong_session",
+    "nonobject",
+    "missing_request_id",
+    "empty_token",
 )
 SERVICE_SECURITY_MODES = (
-    "remote_http", "remote_http_opt_in", "loopback_http", "loopback_http_opt_in", "cross_origin",
-    "prepopulated_cross_origin", "prepopulated_other_path", "distinct_override", "equivalent_https_port",
-    "downgrade", "redirect_cross_origin", "post408", "post429", "post500", "post503", "get_retry", "explicit_post_retry",
+    "remote_http",
+    "remote_http_opt_in",
+    "loopback_http",
+    "loopback_http_opt_in",
+    "cross_origin",
+    "prepopulated_cross_origin",
+    "prepopulated_other_path",
+    "distinct_override",
+    "equivalent_https_port",
+    "downgrade",
+    "redirect_cross_origin",
+    "post408",
+    "post429",
+    "post500",
+    "post503",
+    "get_retry",
+    "explicit_post_retry",
 )
 SERVICE_MODEL_MODES = (
-    "rank_missing_mapping", "rank_none_mapping", "rank_missing_keyword", "rank_none_keyword",
-    "config_missing_mapping", "config_none_mapping", "config_missing_keyword", "config_none_keyword",
-    "nested_rank_missing", "nested_rank_none", "response_format_mapping", "response_format_keyword",
-    "response_format_omitted", "sampling_alias",
+    "rank_missing_mapping",
+    "rank_none_mapping",
+    "rank_missing_keyword",
+    "rank_none_keyword",
+    "config_missing_mapping",
+    "config_none_mapping",
+    "config_missing_keyword",
+    "config_none_keyword",
+    "nested_rank_missing",
+    "nested_rank_none",
+    "response_format_mapping",
+    "response_format_keyword",
+    "response_format_omitted",
+    "sampling_alias",
 )
 
 
 def _service_case_names():
     return {
-        *(f"service:{side}:{target}:{mode}" for side in ("sync", "async") for target in RAW_BEGIN for mode in SERVICE_RAW_MODES),
+        *(
+            f"service:{side}:{target}:{mode}"
+            for side in ("sync", "async")
+            for target in RAW_BEGIN
+            for mode in SERVICE_RAW_MODES
+        ),
         *(f"security:{side}:{mode}" for side in ("sync", "async") for mode in SERVICE_SECURITY_MODES),
         *(f"model:{mode}" for mode in SERVICE_MODEL_MODES),
     }
@@ -85,9 +135,7 @@ def _resolve_annotation(value, namespace):
     if isinstance(value, list):  # Callable argument lists are not annotations themselves.
         return [_resolve_annotation(item, namespace) for item in value]
     holder = types.SimpleNamespace(__annotations__={"value": value})
-    result = typing.get_type_hints(
-        holder, globalns=namespace, localns=namespace, include_extras=True
-    )["value"]
+    result = typing.get_type_hints(holder, globalns=namespace, localns=namespace, include_extras=True)["value"]
     origin, args = typing.get_origin(result), typing.get_args(result)
     if origin is typing.Literal or origin is None:
         return result
@@ -186,15 +234,22 @@ def declared_overloads(function):
 def signature(function, models):
     unwrapped = inspect.unwrap(function)
     sig = inspect.signature(function)
+
     def annotation(value):
         if value is inspect.Signature.empty:
             return typename(value)
         return typename(evaluate(value, unwrapped, models))
+
     return {
         "parameters": [
-            {"name": p.name, "kind": p.kind.name, "type": annotation(p.annotation),
-             "default": typename(p.default) if p.default is inspect.Signature.empty else p.default}
-            for p in sig.parameters.values() if p.name not in ("self", "cls")
+            {
+                "name": p.name,
+                "kind": p.kind.name,
+                "type": annotation(p.annotation),
+                "default": typename(p.default) if p.default is inspect.Signature.empty else p.default,
+            }
+            for p in sig.parameters.values()
+            if p.name not in ("self", "cls")
         ],
         "returns": annotation(sig.return_annotation),
         "async": inspect.iscoroutinefunction(unwrapped),
@@ -205,7 +260,10 @@ def surface(input_chunk_discriminator=False):
     sdk = importlib.import_module(NAMESPACE)
     models = importlib.import_module(NAMESPACE + ".models")
     base = importlib.import_module(NAMESPACE + "._utils.model_base")
-    if hasattr(models, "SamplingOperationResult") and models.SamplingOperationResult is not models.SampleOperationResult:
+    if (
+        hasattr(models, "SamplingOperationResult")
+        and models.SamplingOperationResult is not models.SampleOperationResult
+    ):
         raise AssertionError("SamplingOperationResult must be an identical alias, not a subclass or replacement")
     report = {"version": sdk.__version__, "modules": {}, "models": {}, "clients": {}, "exceptions": {}}
     for suffix in ("", ".aio", ".models", ".operations", ".aio.operations"):
@@ -227,18 +285,22 @@ def surface(input_chunk_discriminator=False):
         for field, owner in owners.items():
             descriptor = inspect.getattr_static(cls, field)
             metadata[field] = {
-                "type": fields[field], "wire_name": descriptor._rest_name_input or field,
-                "visibility": descriptor._visibility, "discriminator": descriptor._is_discriminator,
+                "type": fields[field],
+                "wire_name": descriptor._rest_name_input or field,
+                "visibility": descriptor._visibility,
+                "discriminator": descriptor._is_discriminator,
                 "format": descriptor._format,
             }
         report["models"][name] = {
             "signature": signature(cls.__init__, models),
             "overloads": [signature(fn, models) for fn in declared_overloads(cls.__init__)],
             "fields": metadata,
-            "properties": sorted(n for n in dir(cls) if not n.startswith("_") and isinstance(inspect.getattr_static(cls, n), property)),
+            "properties": sorted(
+                n for n in dir(cls) if not n.startswith("_") and isinstance(inspect.getattr_static(cls, n), property)
+            ),
         }
         if input_chunk_discriminator and name in ("InputChunk", "ModelInputChunk", "ImageChunk"):
-            report["models"][name]["bases"] = [c.__name__ for c in cls.__mro__[1:cls.__mro__.index(base.Model) + 1]]
+            report["models"][name]["bases"] = [c.__name__ for c in cls.__mro__[1 : cls.__mro__.index(base.Model) + 1]]
     for suffix in ("", ".aio", ".operations", ".aio.operations"):
         module = importlib.import_module(NAMESPACE + suffix)
         for name in module.__all__:
@@ -260,6 +322,7 @@ def surface(input_chunk_discriminator=False):
                         "overloads": [signature(fn, models) for fn in declared_overloads(function)],
                     }
             report["clients"][suffix + "." + name] = methods
+
     # Every public model gets mapping/keyword construction and serialization.
     def sample(annotation, depth=0):
         if depth > 8:
@@ -294,6 +357,7 @@ def surface(input_chunk_discriminator=False):
         if getattr(annotation, "__name__", "") == "datetime":
             return "2026-09-22T00:00:00Z"
         raise TypeError(f"No fixture for {annotation}")
+
     def model_input(cls, depth=0):
         values = {}
         for parent in reversed(cls.__mro__):
@@ -314,8 +378,10 @@ def surface(input_chunk_discriminator=False):
         if cls.__name__ == "ImageChunk":
             values.update(type="image", format="jpeg", data=b"\xff\xd8\xfftest")
         return values
+
     def record(value):
         return json.loads(json.dumps(value, cls=base.SdkJSONEncoder))
+
     serialization = {}
     for name in models.__all__:
         cls = getattr(models, name)
@@ -326,11 +392,16 @@ def surface(input_chunk_discriminator=False):
         for constructor in (lambda: cls(data), lambda: cls(**data)):
             try:
                 obj = constructor()
-                observations.append({
-                    "class": type(obj).__name__, "all": record(obj),
-                    "writable": record(obj.as_dict(exclude_readonly=True)),
-                    "attributes": {field: record(getattr(obj, field)) for field in report["models"][name]["fields"]},
-                })
+                observations.append(
+                    {
+                        "class": type(obj).__name__,
+                        "all": record(obj),
+                        "writable": record(obj.as_dict(exclude_readonly=True)),
+                        "attributes": {
+                            field: record(getattr(obj, field)) for field in report["models"][name]["fields"]
+                        },
+                    }
+                )
             except Exception as exc:
                 observations.append({"error": type(exc).__name__, "message": str(exc)})
         serialization[name] = observations
@@ -338,11 +409,16 @@ def surface(input_chunk_discriminator=False):
     if input_chunk_discriminator:
         data = _input_chunk_probe()
         probes = {}
-        for name, obj in (("mapping", models.ModelInput(deepcopy(data))),
-                          ("keyword", models.ModelInput(chunks=deepcopy(data["chunks"])))):
-            probes[name] = {"wire": record(obj), "classes": [type(c).__name__ for c in obj.chunks],
-                            "public_image": type(obj.chunks[1]) is models.ImageChunk,
-                            "image_bytes": obj.chunks[1].data == b"\xff\xd8\xfftest"}
+        for name, obj in (
+            ("mapping", models.ModelInput(deepcopy(data))),
+            ("keyword", models.ModelInput(chunks=deepcopy(data["chunks"]))),
+        ):
+            probes[name] = {
+                "wire": record(obj),
+                "classes": [type(c).__name__ for c in obj.chunks],
+                "public_image": type(obj.chunks[1]) is models.ImageChunk,
+                "image_bytes": obj.chunks[1].data == b"\xff\xd8\xfftest",
+            }
         invalid = {**data["chunks"][1], "type": "text"}
         probes["incorrect_image_type"] = []
         for constructor in (lambda: models.ImageChunk(invalid), lambda: models.ImageChunk(**invalid)):
@@ -357,10 +433,14 @@ def surface(input_chunk_discriminator=False):
 
 
 def _input_chunk_probe():
-    return {"chunks": [{"tokens": [2]},
-                       {"type": "image", "data": "/9j/dGVzdA==", "format": "jpeg", "expected_tokens": 2},
-                       {"type": "future", "tokens": [7], "extension": {"tokens": [8]}}],
-            "extension": {"tokens": [9], "chunks": [{"tokens": [10]}]}}
+    return {
+        "chunks": [
+            {"tokens": [2]},
+            {"type": "image", "data": "/9j/dGVzdA==", "format": "jpeg", "expected_tokens": 2},
+            {"type": "future", "tokens": [7], "extension": {"tokens": [8]}},
+        ],
+        "extension": {"tokens": [9], "chunks": [{"tokens": [10]}]},
+    }
 
 
 async def raw_operations(harness, service_contracts=False):
@@ -388,26 +468,76 @@ async def raw_operations(harness, service_contracts=False):
     common = {"foundry_features": harness.PREVIEW, "api_version": "v1"}
     result = deepcopy(RAW_RESULT)
     calls = [
-        ("sessions.create", [], {"body": {"type": "training", "base_model": "m"}}, "POST", "", {"type": "training", "base_model": "m"}, {"session_id": "session_a", "request_id": "op"}),
-        ("sessions.list", [], {}, "GET", "", None, {"data": [], "cursor": {"offset": 0, "limit": 20, "total_count": 0}}),
-        ("sessions.get", ["a /%"], {}, "GET", "/a%20%2F%25", None, {"session_id": "a", "status": "running", "type": "training", "model_data": {"base_model": "m"}}),
+        (
+            "sessions.create",
+            [],
+            {"body": {"type": "training", "base_model": "m"}},
+            "POST",
+            "",
+            {"type": "training", "base_model": "m"},
+            {"session_id": "session_a", "request_id": "op"},
+        ),
+        (
+            "sessions.list",
+            [],
+            {},
+            "GET",
+            "",
+            None,
+            {"data": [], "cursor": {"offset": 0, "limit": 20, "total_count": 0}},
+        ),
+        (
+            "sessions.get",
+            ["a /%"],
+            {},
+            "GET",
+            "/a%20%2F%25",
+            None,
+            {"session_id": "a", "status": "running", "type": "training", "model_data": {"base_model": "m"}},
+        ),
         ("sessions.heartbeat", ["a"], {}, "POST", "/a/heartbeat", None, {"session_id": "a"}),
         ("checkpoints.list", ["a"], {}, "GET", "/a/checkpoints", None, {"checkpoints": []}),
-        ("checkpoints.get", ["a", "cp"], {}, "GET", "/a/checkpoints/cp", None, {"base_model": "m", "is_lora": True, "lora_rank": 4}),
+        (
+            "checkpoints.get",
+            ["a", "cp"],
+            {},
+            "GET",
+            "/a/checkpoints/cp",
+            None,
+            {"base_model": "m", "is_lora": True, "lora_rank": 4},
+        ),
         ("operations.get", ["a", "op /"], {}, "GET", "/a/request/op%20%2F", None, result),
         ("sessions.begin_create", [], {"body": {}}, "POST", "", {}, {"result": result}),
         ("sessions.begin_unload", ["a"], {}, "POST", "/a/complete", None, {"result": result}),
         ("training.begin_forward_backward", ["a"], {"body": {}}, "POST", "/a/forward_backward", {}, {"result": result}),
         ("training.begin_optim_step", ["a"], {"body": {}}, "POST", "/a/optim_step", {}, {"result": result}),
         ("checkpoints.begin_save", ["a"], {"body": {}}, "POST", "/a/checkpoint", {}, {"result": result}),
-        ("checkpoints.begin_save_sampler_weights", ["a"], {"body": {}}, "POST", "/a/checkpoint_sample", {}, {"result": result}),
+        (
+            "checkpoints.begin_save_sampler_weights",
+            ["a"],
+            {"body": {}},
+            "POST",
+            "/a/checkpoint_sample",
+            {},
+            {"result": result},
+        ),
         ("sampling.begin_sample", ["a"], {"body": {}}, "POST", "/a/sample", {}, {"result": result}),
     ]
     outcomes = {}
     for asynchronous in (False, True):
         for target, args, params, verb, path, body, payload in calls:
             is_lro = ".begin_" in target
-            modes = ("normal", "cls", "stream", "raw_stream", "bytes", "io", "custom_poll", "continuation", "default_poll")
+            modes = (
+                "normal",
+                "cls",
+                "stream",
+                "raw_stream",
+                "bytes",
+                "io",
+                "custom_poll",
+                "continuation",
+                "default_poll",
+            )
             for mode in modes:
                 if mode in ("bytes", "io") and "body" not in params:
                     continue
@@ -421,13 +551,18 @@ async def raw_operations(harness, service_contracts=False):
                 if is_lro:
                     options["polling"] = (
                         (AsyncContinuationPolling() if asynchronous else ContinuationPolling())
-                        if mode in ("custom_poll", "continuation") else mode == "default_poll"
+                        if mode in ("custom_poll", "continuation")
+                        else mode == "default_poll"
                     )
                 if service_contracts and is_lro and mode == "default_poll":
                     options["polling_interval"] = 0
                     case.allow_zero_poll_sleep = True
                 if mode == "cls":
-                    options["cls"] = lambda response, value, headers: {"value": ctx.value(value), "headers": dict(headers), "status": response.http_response.status_code}
+                    options["cls"] = lambda response, value, headers: {
+                        "value": ctx.value(value),
+                        "headers": dict(headers),
+                        "status": response.http_response.status_code,
+                    }
                 if mode in ("stream", "raw_stream"):
                     options["stream"] = True
                     if mode == "raw_stream":
@@ -440,12 +575,18 @@ async def raw_operations(harness, service_contracts=False):
                 if service_contracts and is_lro and mode == "default_poll":
                     session_id = "session_a" if target == "sessions.begin_create" else "a"
                     actual_payload = {"session_id": session_id, "request_id": "op", "status": "pending"}
-                case.expect(verb, path, actual_payload, body=body,
-                            status=202 if asynchronous and is_lro and not service_contracts else 200)
+                case.expect(
+                    verb,
+                    path,
+                    actual_payload,
+                    body=body,
+                    status=202 if asynchronous and is_lro and not service_contracts else 200,
+                )
                 if service_contracts and is_lro and mode == "default_poll":
                     case.expect("GET", f"/{session_id}/request/op", actual_payload)
-                    case.expect("GET", f"/{session_id}/request/op",
-                                {**actual_payload, "status": "completed", "result": result})
+                    case.expect(
+                        "GET", f"/{session_id}/request/op", {**actual_payload, "status": "completed", "result": result}
+                    )
                 group, method = target.split(".")
                 try:
                     value = getattr(getattr(client, group), method)(*args, **options)
@@ -482,25 +623,43 @@ async def raw_operations(harness, service_contracts=False):
                         await client.close()
                     else:
                         client.close()
-            for status in ((200,) if asynchronous and is_lro else ()) + ((202,) if not asynchronous and is_lro else ()) + (400, 401, 404, 409, 418):
+            for status in (
+                ((200,) if asynchronous and is_lro else ())
+                + ((202,) if not asynchronous and is_lro else ())
+                + (400, 401, 404, 409, 418)
+            ):
                 name = f"{'async' if asynchronous else 'sync'}:{target}:error{status}"
                 case = harness._Case(name, ctx)
                 client = ctx.client(case, asynchronous)
-                case.expect(verb, path, {"error": {"code": "bad", "message": "fixture", "param": "x"}}, body=body, status=status)
+                case.expect(
+                    verb, path, {"error": {"code": "bad", "message": "fixture", "param": "x"}}, body=body, status=status
+                )
                 try:
-                    value = getattr(getattr(client, target.split('.')[0]), target.split('.')[1])(*args, **params, **common, **({"polling": False} if is_lro else {}))
+                    value = getattr(getattr(client, target.split(".")[0]), target.split(".")[1])(
+                        *args, **params, **common, **({"polling": False} if is_lro else {})
+                    )
                     if asynchronous:
                         value = await value
                     if service_contracts and asynchronous and is_lro and status == 200:
                         # Keep the original error200 fixture/case ID. Explicit
                         # NoPolling now accepts HTTP 200 even without a result.
                         value = await value.result()
-                        outcomes[name] = case.finish({"accepted": 200, "type": type(value).__name__, "value": ctx.value(value)})
+                        outcomes[name] = case.finish(
+                            {"accepted": 200, "type": type(value).__name__, "value": ctx.value(value)}
+                        )
                     else:
-                        outcomes[name] = case.finish(error=AssertionError("Expected the same HTTP error as the frozen preview"))
+                        outcomes[name] = case.finish(
+                            error=AssertionError("Expected the same HTTP error as the frozen preview")
+                        )
                 except Exception as exc:
                     error = getattr(exc, "error", None)
-                    outcomes[name] = case.finish({"type": type(exc).__name__, "message": str(exc), "error": ctx.value(error) if isinstance(error, dict) else str(error)})
+                    outcomes[name] = case.finish(
+                        {
+                            "type": type(exc).__name__,
+                            "message": str(exc),
+                            "error": ctx.value(error) if isinstance(error, dict) else str(error),
+                        }
+                    )
                 finally:
                     if asynchronous:
                         await client.close()
@@ -520,34 +679,60 @@ async def service_operations(harness, input_chunk_discriminator=False):
 
     ctx = harness._Context(False, input_chunk_discriminator=input_chunk_discriminator)
     outcomes = {}
-    common = {"foundry_features": harness.PREVIEW, "api_version": "v1", "polling_interval": 0,
-              "headers": {"x-contract-probe": "preserved"}, "params": {"api-version": "v1", "custom": "value"},
-              "connection_timeout": 2, "read_timeout": 3, "retry_total": 7}
+    common = {
+        "foundry_features": harness.PREVIEW,
+        "api_version": "v1",
+        "polling_interval": 0,
+        "headers": {"x-contract-probe": "preserved"},
+        "params": {"api-version": "v1", "custom": "value"},
+        "connection_timeout": 2,
+        "read_timeout": 3,
+        "retry_total": 7,
+    }
     query = (("custom", "value"),)
     bodies = {
         "sessions.begin_create": {"type": "training", "base_model": harness.BASE_MODEL, "lora_config": harness.LORA},
         "sessions.begin_unload": None,
-        "training.begin_forward_backward": {"forward_backward_input": {"data": ctx.batch_wire(), "loss_fn": "cross_entropy"}},
+        "training.begin_forward_backward": {
+            "forward_backward_input": {"data": ctx.batch_wire(), "loss_fn": "cross_entropy"}
+        },
         "training.begin_optim_step": {"adam_params": harness.ADAM},
         "checkpoints.begin_save": {"path": "contract", "step_number": 1, "metrics": {"value": 1.0}},
         "checkpoints.begin_save_sampler_weights": {"path": "contract", "seq_id": 0},
-        "sampling.begin_sample": {"prompt": ctx.input_wire({"chunks": [{"tokens": [1, 2]}]}),
-                                  "sampling_params": {**harness.SAMPLING, "response_format": {"type": "json_object"}},
-                                  "num_samples": 1},
+        "sampling.begin_sample": {
+            "prompt": ctx.input_wire({"chunks": [{"tokens": [1, 2]}]}),
+            "sampling_params": {**harness.SAMPLING, "response_format": {"type": "json_object"}},
+            "num_samples": 1,
+        },
     }
     results = {
         "sessions.begin_create": ("OperationResult", {"type": "create"}),
         "sessions.begin_unload": ("OperationResult", {"type": "unload"}),
-        "training.begin_forward_backward": ("ForwardBackwardOperationResult", {"type": "forward_backward", **harness.BACKWARD, "total_loss": 1.25}),
-        "training.begin_optim_step": ("OptimStepOperationResult", {"type": "optim_step", **harness.OPTIMIZER, "grad_norm": 0.75, "step_count": 3}),
-        "checkpoints.begin_save": ("SaveCheckpointOperationResult", {"type": "save_checkpoint", "checkpoint_id": "contract", "path": "loom://a/weights/contract"}),
-        "checkpoints.begin_save_sampler_weights": ("SaveSamplerWeightsOperationResult", {"type": "save_sampler_weights", "checkpoint_id": "contract", "sampling_session_id": "sampler"}),
+        "training.begin_forward_backward": (
+            "ForwardBackwardOperationResult",
+            {"type": "forward_backward", **harness.BACKWARD, "total_loss": 1.25},
+        ),
+        "training.begin_optim_step": (
+            "OptimStepOperationResult",
+            {"type": "optim_step", **harness.OPTIMIZER, "grad_norm": 0.75, "step_count": 3},
+        ),
+        "checkpoints.begin_save": (
+            "SaveCheckpointOperationResult",
+            {"type": "save_checkpoint", "checkpoint_id": "contract", "path": "loom://a/weights/contract"},
+        ),
+        "checkpoints.begin_save_sampler_weights": (
+            "SaveSamplerWeightsOperationResult",
+            {"type": "save_sampler_weights", "checkpoint_id": "contract", "sampling_session_id": "sampler"},
+        ),
         "sampling.begin_sample": ("SampleOperationResult", {"type": "sample", **harness.SAMPLES}),
     }
     builders = {
-        "sessions.begin_create": "build_sessions_create_request", "sessions.begin_unload": "build_sessions_unload_request",
-        "training.begin_forward_backward": "build_training_forward_backward_request", "training.begin_optim_step": "build_training_optim_step_request",
-        "checkpoints.begin_save": "build_checkpoints_save_request", "checkpoints.begin_save_sampler_weights": "build_checkpoints_save_sampler_weights_request",
+        "sessions.begin_create": "build_sessions_create_request",
+        "sessions.begin_unload": "build_sessions_unload_request",
+        "training.begin_forward_backward": "build_training_forward_backward_request",
+        "training.begin_optim_step": "build_training_optim_step_request",
+        "checkpoints.begin_save": "build_checkpoints_save_request",
+        "checkpoints.begin_save_sampler_weights": "build_checkpoints_save_sampler_weights_request",
         "sampling.begin_sample": "_build_sampling_request",
     }
     bad_http = {"error": {"code": "bad", "message": "fixture", "param": "x"}}
@@ -559,8 +744,15 @@ async def service_operations(harness, input_chunk_discriminator=False):
                 case.allow_zero_poll_sleep = True
                 transport = (ctx.async_transport if asynchronous else ctx.sync_transport)(case)
                 client_type = (ctx.aio if asynchronous else ctx.sdk).FineTuningSessionClient
-                client = client_type(harness.ENDPOINT, AzureKeyCredential(harness.KEY), transport=transport,
-                                     retry_total=5, retry_backoff_factor=0, retry_on_methods=["GET", "POST"], logging_enable=False)
+                client = client_type(
+                    harness.ENDPOINT,
+                    AzureKeyCredential(harness.KEY),
+                    transport=transport,
+                    retry_total=5,
+                    retry_backoff_factor=0,
+                    retry_on_methods=["GET", "POST"],
+                    logging_enable=False,
+                )
                 session_id = "session_a" if target == "sessions.begin_create" else "a"
                 args = [] if target == "sessions.begin_create" else ["a"]
                 body = bodies[target]
@@ -580,14 +772,21 @@ async def service_operations(harness, input_chunk_discriminator=False):
                 poll_status = 200
                 if mode == "cls":
                     options["cls"] = lambda response, value, headers: {
-                        "value": ctx.value(value), "headers": dict(headers), "status": response.http_response.status_code}
+                        "value": ctx.value(value),
+                        "headers": dict(headers),
+                        "status": response.http_response.status_code,
+                    }
                 if mode in ("custom", "custom_continuation"):
                     saved = {}
 
                     class Custom(NoPolling):
                         def initialize(self, client, response, callback):
                             case.equal(response.http_response.status_code, 200, "Custom polling sees the real HTTP 200")
-                            case.equal(response.http_response.json(), {**accepted, "result": result}, "Unchanged custom initial response")
+                            case.equal(
+                                response.http_response.json(),
+                                {**accepted, "result": result},
+                                "Unchanged custom initial response",
+                            )
                             super().initialize(client, response, callback)
 
                         def get_continuation_token(self):
@@ -614,7 +813,11 @@ async def service_operations(harness, input_chunk_discriminator=False):
                     expected_fields = {"reason": "engine_busy", "retry_after_sec": None}
                 elif mode == "missing_request_id":
                     initial = {"session_id": session_id, "status": "pending"}
-                    expected_error = ("HttpResponseError", "Invalid request acceptance: request_id must be a nonempty string without control characters or dot segments", 200)
+                    expected_error = (
+                        "HttpResponseError",
+                        "Invalid request acceptance: request_id must be a nonempty string without control characters or dot segments",
+                        200,
+                    )
                 elif mode == "empty_token":
                     options["continuation_token"] = ""
                     expected_error = ("ValueError", "continuation_token must not be empty", None)
@@ -633,7 +836,11 @@ async def service_operations(harness, input_chunk_discriminator=False):
                         if mode == "engine_dead":
                             terminal.update(error_code="engine_dead", debug_ref="fixed-ref")
                             expected_error = ("TrainingEngineError", "fixture", 200)
-                            expected_fields = {"session_id": session_id, "error_code": "engine_dead", "debug_ref": "fixed-ref"}
+                            expected_fields = {
+                                "session_id": session_id,
+                                "error_code": "engine_dead",
+                                "debug_ref": "fixed-ref",
+                            }
                         elif mode == "retryable":
                             terminal.update(error_code="transient", should_retry=True, retry_after_sec=2)
                             expected_error = ("RequestRetryableError", "fixture", 200)
@@ -641,20 +848,35 @@ async def service_operations(harness, input_chunk_discriminator=False):
                         elif mode == "result_unavailable":
                             terminal.update(error_code="operation_completed_result_unavailable", should_retry=True)
                             expected_error = ("OperationResultUnavailableError", "fixture", 200)
-                            expected_fields = {"error_code": "operation_completed_result_unavailable", "operation_completed": True}
+                            expected_fields = {
+                                "error_code": "operation_completed_result_unavailable",
+                                "operation_completed": True,
+                            }
                     elif mode == "unknown_status":
                         terminal = {**accepted, "status": "unexpected"}
                         expected_error = ("HttpResponseError", "Unexpected request envelope status 'unexpected'", 200)
                     elif mode == "missing_result":
                         terminal = {**accepted, "status": "completed"}
-                        expected_error = ("HttpResponseError", "Invalid completed request envelope: result must be an object", 200)
+                        expected_error = (
+                            "HttpResponseError",
+                            "Invalid completed request envelope: result must be an object",
+                            200,
+                        )
                     elif mode in ("wrong_request", "wrong_session"):
                         field = "request_id" if mode == "wrong_request" else "session_id"
                         terminal = {**completed, field: "other"}
-                        expected_error = ("HttpResponseError", f"Polling response {field} does not match the request", 200)
+                        expected_error = (
+                            "HttpResponseError",
+                            f"Polling response {field} does not match the request",
+                            200,
+                        )
                     elif mode == "nonobject":
                         terminal = []
-                        expected_error = ("HttpResponseError", "Invalid request polling response: expected a JSON object", 200)
+                        expected_error = (
+                            "HttpResponseError",
+                            "Invalid request polling response: expected a JSON object",
+                            200,
+                        )
                 if mode != "empty_token":
                     case.expect("POST", path, initial, body=body, status=initial_status, query=query)
                 if poll_count == 2:
@@ -692,33 +914,79 @@ async def service_operations(harness, input_chunk_discriminator=False):
                         if poller is not None:
                             # Core's async wait sets _done only on success;
                             # sync done means its background thread has exited.
-                            case.equal((poller.status(), poller.done()), ("Failed", not asynchronous), "Terminal failure state")
+                            case.equal(
+                                (poller.status(), poller.done()), ("Failed", not asynchronous), "Terminal failure state"
+                            )
                         output = {"error": list(observed), "fields": expected_fields}
                     else:
                         case.check(expected_error is None, "Expected service failure must not resolve successfully")
-                        expected_value = {"value": result, "headers": {"Operation-Location": None}, "status": 200} if mode == "cls" else result
-                        case.equal(ctx.value(value), expected_value, "Exact typed/cls result, including all nested fields")
+                        expected_value = (
+                            {"value": result, "headers": {"Operation-Location": None}, "status": 200}
+                            if mode == "cls"
+                            else result
+                        )
+                        case.equal(
+                            ctx.value(value), expected_value, "Exact typed/cls result, including all nested fields"
+                        )
                         case.equal(type(value).__name__, "dict" if mode == "cls" else model, "Exact result model class")
-                        case.equal((poller.status(), poller.done()), ("succeeded" if mode.startswith("custom") else "Succeeded", True), "Completed poller state")
+                        case.equal(
+                            (poller.status(), poller.done()),
+                            ("succeeded" if mode.startswith("custom") else "Succeeded", True),
+                            "Completed poller state",
+                        )
                         if mode in ("resume", "custom_continuation"):
                             token = poller.continuation_token()
                             if mode == "resume":
-                                case.equal(json.loads(base64.urlsafe_b64decode(token)), {
-                                    "kind": NAMESPACE + ".request", "version": 1, "endpoint": harness.ENDPOINT,
-                                    "operation": builders[target], "api_version": "v1", "session_id": session_id, "request_id": "op",
-                                }, "Continuation locator contains exactly the bound fields, no body/credentials")
+                                case.equal(
+                                    json.loads(base64.urlsafe_b64decode(token)),
+                                    {
+                                        "kind": NAMESPACE + ".request",
+                                        "version": 1,
+                                        "endpoint": harness.ENDPOINT,
+                                        "operation": builders[target],
+                                        "api_version": "v1",
+                                        "session_id": session_id,
+                                        "request_id": "op",
+                                    },
+                                    "Continuation locator contains exactly the bound fields, no body/credentials",
+                                )
                             resumed = function(*args, **{**options, "continuation_token": token})
                             if asynchronous:
                                 resumed = await resumed
                             value = await resumed.result() if asynchronous else resumed.result()
                             case.equal(ctx.value(value), result, "Continuation result without a second POST")
-                        output = {"type": type(value).__name__, "value": ctx.value(value), "status": poller.status(), "done": poller.done()}
-                    case.equal(sum(r["method"] == "POST" for r in case.requests), 0 if mode == "empty_token" else 1, "Never replay POST")
-                    case.equal(sum(r["method"] == "GET" for r in case.requests), poll_count + (mode == "resume"), "Exactly the scripted GETs")
-                    case.equal(case.poll_sleeps, [0.0] if mode == "pending" else [], "Only the explicit zero-delay pending wait")
+                        output = {
+                            "type": type(value).__name__,
+                            "value": ctx.value(value),
+                            "status": poller.status(),
+                            "done": poller.done(),
+                        }
+                    case.equal(
+                        sum(r["method"] == "POST" for r in case.requests),
+                        0 if mode == "empty_token" else 1,
+                        "Never replay POST",
+                    )
+                    case.equal(
+                        sum(r["method"] == "GET" for r in case.requests),
+                        poll_count + (mode == "resume"),
+                        "Exactly the scripted GETs",
+                    )
+                    case.equal(
+                        case.poll_sleeps,
+                        [0.0] if mode == "pending" else [],
+                        "Only the explicit zero-delay pending wait",
+                    )
                     for request in case.requests:
-                        case.equal(request["headers"].get("x-contract-probe"), "preserved", "Custom header retained on POST and GET")
-                        case.equal(request["options"], {"stream": True, "connection_timeout": 2, "read_timeout": 3}, "Exact transport options after policy consumption")
+                        case.equal(
+                            request["headers"].get("x-contract-probe"),
+                            "preserved",
+                            "Custom header retained on POST and GET",
+                        )
+                        case.equal(
+                            request["options"],
+                            {"stream": True, "connection_timeout": 2, "read_timeout": 3},
+                            "Exact transport options after policy consumption",
+                        )
                     outcomes[name] = case.finish(output)
                 except Exception as exc:
                     outcomes[name] = case.finish(error=exc)
@@ -740,7 +1008,8 @@ async def security_operations(harness):
     context_headers = {
         "apim-subscription-id": "offline-subscription",
         "azure-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
-        "azure-resource-tenant-id": "offline-tenant", "azure-resource-location": "offline-region",
+        "azure-resource-tenant-id": "offline-tenant",
+        "azure-resource-location": "offline-region",
         "x-workspace-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
     }
 
@@ -751,14 +1020,22 @@ async def security_operations(harness):
             self.equal(headers.get("user-agent"), ctx.user_agent, "Exact user agent")
             headers["user-agent"] = ctx.moniker
             body = None if request.content is None else json.loads(request.content)
-            record = {"method": request.method, "url": request.url, "headers": headers, "body": body, "options": harness._plain(options)}
+            record = {
+                "method": request.method,
+                "url": request.url,
+                "headers": headers,
+                "body": body,
+                "options": harness._plain(options),
+            }
             self.requests.append(record)
             self.check(bool(self.replies), "No unexpected send/retry/redirect")
             reply = self.replies.popleft()
             self.equal(request.method, reply.method, "Exact security probe method")
             self.equal(request.url, reply.url, "Exact security probe URL")
             self.equal(body, reply.body, "Exact security probe body")
-            self.equal(headers, self.expected_headers.pop(0), "All request headers, including credentials and identity scope")
+            self.equal(
+                headers, self.expected_headers.pop(0), "All request headers, including credentials and identity scope"
+            )
             return reply
 
     outcomes = {}
@@ -773,7 +1050,9 @@ async def security_operations(harness):
             elif mode.startswith("loopback_http"):
                 endpoint = "http://localhost/api/projects/compatibility"
             own_url = endpoint + harness.ROUTE + "/a/heartbeat?api-version=v1"
-            foreign_url = "https://other.invalid/api/projects/compatibility" + harness.ROUTE + "/a/heartbeat?api-version=v1"
+            foreign_url = (
+                "https://other.invalid/api/projects/compatibility" + harness.ROUTE + "/a/heartbeat?api-version=v1"
+            )
             url = own_url
             key, direct = True, True
             if mode in ("cross_origin", "prepopulated_cross_origin", "distinct_override"):
@@ -793,11 +1072,18 @@ async def security_operations(harness):
                 supplied.update(context_headers)
             elif mode == "distinct_override":
                 supplied.update({k: "caller-owned" for k in context_headers})
-            base_headers = {"user-agent": ctx.moniker, "accept": "application/json", "foundry-features": harness.PREVIEW}
+            base_headers = {
+                "user-agent": ctx.moniker,
+                "accept": "application/json",
+                "foundry-features": harness.PREVIEW,
+            }
             if method == "POST":
                 base_headers.update({"content-type": "application/json", "content-length": "2"})
-            expected_headers = {**base_headers, **({"api-key": harness.KEY} if key else {}),
-                                **(context_headers if direct else {})}
+            expected_headers = {
+                **base_headers,
+                **({"api-key": harness.KEY} if key else {}),
+                **(context_headers if direct else {}),
+            }
             if mode == "distinct_override":
                 expected_headers.update({k: "caller-owned" for k in context_headers})
             blocked = mode in ("remote_http", "remote_http_opt_in", "loopback_http", "downgrade")
@@ -806,19 +1092,34 @@ async def security_operations(harness):
                 if mode in ("get_retry", "explicit_post_retry"):
                     case.replies.append(harness._Reply(method, url, body, {}, 503))
                     case.expected_headers.append(expected_headers)
-                case.replies.append(harness._Reply(method, url, body, {}, 307 if mode == "redirect_cross_origin" else status,
-                                                   {"Location": foreign_url} if mode == "redirect_cross_origin" else None))
+                case.replies.append(
+                    harness._Reply(
+                        method,
+                        url,
+                        body,
+                        {},
+                        307 if mode == "redirect_cross_origin" else status,
+                        {"Location": foreign_url} if mode == "redirect_cross_origin" else None,
+                    )
+                )
                 case.expected_headers.append(expected_headers)
                 if mode == "redirect_cross_origin":
                     case.replies.append(harness._Reply(method, foreign_url, body, {}))
                     case.expected_headers.append(base_headers)
             transport = (ctx.async_transport if asynchronous else ctx.sync_transport)(case)
-            options = {"transport": transport, "retry_total": 3, "retry_backoff_factor": 0,
-                       "retry_on_methods": ["GET", "POST"], "allow_insecure_http": mode.endswith("opt_in"),
-                       "logging_enable": False}
+            options = {
+                "transport": transport,
+                "retry_total": 3,
+                "retry_backoff_factor": 0,
+                "retry_on_methods": ["GET", "POST"],
+                "allow_insecure_http": mode.endswith("opt_in"),
+                "logging_enable": False,
+            }
             if mode == "explicit_post_retry":
                 policy = AsyncRetryPolicy if asynchronous else RetryPolicy
-                options["retry_policy"] = policy(retry_total=1, retry_backoff_factor=0, retry_on_methods=["GET", "POST"])
+                options["retry_policy"] = policy(
+                    retry_total=1, retry_backoff_factor=0, retry_on_methods=["GET", "POST"]
+                )
             client_type = (ctx.aio if asynchronous else ctx.sdk).FineTuningSessionClient
             client = None
             try:
@@ -830,13 +1131,19 @@ async def security_operations(harness):
                         response = await response
                 except ValueError as exc:
                     case.check(blocked, "Only the fixed TLS failures are allowed")
-                    case.equal(str(exc), "API key authentication requires HTTPS. allow_insecure_http=True only permits the configured loopback HTTP origin (localhost, 127.0.0.1, [::1]).", "Exact insecure-key error")
+                    case.equal(
+                        str(exc),
+                        "API key authentication requires HTTPS. allow_insecure_http=True only permits the configured loopback HTTP origin (localhost, 127.0.0.1, [::1]).",
+                        "Exact insecure-key error",
+                    )
                     output = {"rejected": "ValueError", "message": str(exc)}
                 else:
                     case.check(not blocked, "Unsafe key transport must fail before send")
                     case.equal(response.status_code, status, "Final status (default POST retry stays disabled)")
                     output = {"status": response.status_code}
-                expected_count = 0 if blocked else 2 if mode in ("get_retry", "explicit_post_retry", "redirect_cross_origin") else 1
+                expected_count = (
+                    0 if blocked else 2 if mode in ("get_retry", "explicit_post_retry", "redirect_cross_origin") else 1
+                )
                 case.equal(len(case.requests), expected_count, "Exact retry/redirect/send count")
                 case.equal(case.expected_headers, [], "All independent header expectations consumed")
                 case.equal(case.poll_sleeps, [], "No retry/backoff sleep")
@@ -874,24 +1181,37 @@ def model_contracts(harness):
                 try:
                     constructor(data) if mode.endswith("mapping") else constructor(**data)
                 except ValueError as exc:
-                    expected = "lora_config.rank is required; pass LoRAConfig(rank=<integer>)" if rank else "lora_config is required; pass LoRAConfig(rank=<integer>)"
+                    expected = (
+                        "lora_config.rank is required; pass LoRAConfig(rank=<integer>)"
+                        if rank
+                        else "lora_config is required; pass LoRAConfig(rank=<integer>)"
+                    )
                     case.equal(str(exc), expected, "Required-field rejection without a fabricated default")
                     output = {"rejected": "ValueError", "message": str(exc)}
                 else:
                     raise AssertionError("Missing/null required LoRA field was accepted")
             elif mode == "sampling_alias":
-                case.check(m.SamplingOperationResult is m.SampleOperationResult, "Exact class identity, not a copy/subclass")
+                case.check(
+                    m.SamplingOperationResult is m.SampleOperationResult, "Exact class identity, not a copy/subclass"
+                )
                 wire = {**harness.SAMPLES, "type": "sample", "operation_id": "op", "status": "succeeded"}
                 for constructor in (m.SampleOperationResult, m.SamplingOperationResult):
-                    case.equal(ctx.value(constructor(wire)), wire, "Alias preserves full nullable sampling serialization")
+                    case.equal(
+                        ctx.value(constructor(wire)), wire, "Alias preserves full nullable sampling serialization"
+                    )
                 output = {"identical": True, "value": wire}
             else:
                 data = deepcopy(harness.SAMPLING)
                 if mode != "response_format_omitted":
-                    data["response_format"] = {"type": "json_schema", "json_schema": {"name": "fixed", "schema": {"type": "object"}}}
+                    data["response_format"] = {
+                        "type": "json_schema",
+                        "json_schema": {"name": "fixed", "schema": {"type": "object"}},
+                    }
                 value = m.SamplingParams(data) if mode.endswith("mapping") else m.SamplingParams(**data)
                 case.equal(ctx.value(value), data, "Exact response_format serialization/omission")
-                case.equal(ctx.value(value.response_format), data.get("response_format"), "Optional response_format attribute")
+                case.equal(
+                    ctx.value(value.response_format), data.get("response_format"), "Optional response_format attribute"
+                )
                 output = {"value": ctx.value(value)}
             outcomes[case.name] = case.finish(output)
         except Exception as exc:
@@ -918,11 +1238,13 @@ def worker(package, harness_path, service_contracts=False, input_chunk_discrimin
     loop = asyncio.new_event_loop()
     # Extend only fixture input decoding for binary/file-like request bodies.
     original_receive = harness._Case.receive
+
     def receive(case, request, options):
         content = request.content
         if hasattr(content, "read"):
             request._data = content.read()
         return original_receive(case, request, options)
+
     harness._Case.receive = receive
     # Windows platform discovery can invoke a subprocess/open NUL. Cache it
     # before the read-only guard, never relax that guard for SDK execution.
@@ -965,8 +1287,11 @@ def _apply_training_type_contract(report):
         raise RuntimeError("The reference SessionType export changed")
     exports.insert(exports.index("SessionType") + 1, "TrainingType")
     surface["models"]["TrainingType"] = {
-        "enum": [["GLOBAL_STANDARD", "GlobalStandard"], ["DATAZONE_STANDARD", "DatazoneStandard"],
-                 ["DEVELOPER_TIER", "DeveloperTier"]]
+        "enum": [
+            ["GLOBAL_STANDARD", "GlobalStandard"],
+            ["DATAZONE_STANDARD", "DatazoneStandard"],
+            ["DEVELOPER_TIER", "DeveloperTier"],
+        ]
     }
     original = {"origin": "Union", "args": ["str", "None"]}
     expected = {"origin": "Union", "args": ["str", "TrainingType", "None"]}
@@ -979,7 +1304,10 @@ def _apply_training_type_contract(report):
     def widen(signature):
         fields = [p for p in signature["parameters"] if p["name"] == "training_type"]
         if len(fields) != 1 or fields[0] != {
-            "name": "training_type", "kind": "KEYWORD_ONLY", "type": original, "default": None,
+            "name": "training_type",
+            "kind": "KEYWORD_ONLY",
+            "type": original,
+            "default": None,
         }:
             raise RuntimeError("The reference training_type parameter changed")
         fields[0]["type"] = deepcopy(expected)
@@ -997,10 +1325,14 @@ def _apply_service_contracts(report, harness):
     hash-verified against Loom; these observation guards reject baseline drift,
     including extra fields, defaults, methods and changed serializer probes.
     """
-    harness._require_baseline(report["surface"],
-        "d46c1d9a22c83953cc81a0501a00541293fd2b734644fd8eecaeafa6f8ab6c4e", "complete surface after TrainingType")
-    harness._require_baseline(report["raw"],
-        "cbf4dbe14d07295a5086b99f29236030d1b1efd59f3fa807718c0e4515abdec9", "336 original raw cases")
+    harness._require_baseline(
+        report["surface"],
+        "d46c1d9a22c83953cc81a0501a00541293fd2b734644fd8eecaeafa6f8ab6c4e",
+        "complete surface after TrainingType",
+    )
+    harness._require_baseline(
+        report["raw"], "cbf4dbe14d07295a5086b99f29236030d1b1efd59f3fa807718c0e4515abdec9", "336 original raw cases"
+    )
     result = deepcopy(report)
     api = result["surface"]
 
@@ -1015,19 +1347,30 @@ def _apply_service_contracts(report, harness):
         model = api["models"][name]
         model["fields"][field]["type"] = value
         require_parameter(model["overloads"][0], field, {"origin": "Union", "args": [value, "None"]}, value)
-    for client, method in ((".FineTuningSession", "create"), (".FineTuningSession", "create_from_checkpoint"),
-                           (".aio.FineTuningSessionClient", "create_session"),
-                           (".aio.FineTuningSessionClient", "create_session_from_checkpoint")):
-        require_parameter(api["clients"][client][method]["signature"], "lora_config",
-                          {"origin": "Union", "args": ["LoRAConfig", "None"]}, "LoRAConfig")
+    for client, method in (
+        (".FineTuningSession", "create"),
+        (".FineTuningSession", "create_from_checkpoint"),
+        (".aio.FineTuningSessionClient", "create_session"),
+        (".aio.FineTuningSessionClient", "create_session_from_checkpoint"),
+    ):
+        require_parameter(
+            api["clients"][client][method]["signature"],
+            "lora_config",
+            {"origin": "Union", "args": ["LoRAConfig", "None"]},
+            "LoRAConfig",
+        )
     annotation = {"origin": "Union", "args": [{"origin": "dict", "args": ["str", "Any"]}, "None"]}
     sampling = api["models"]["SamplingParams"]
     sampling["fields"]["response_format"] = {
-        "type": deepcopy(annotation), "wire_name": "response_format", "visibility": ["read", "create", "update", "delete", "query"],
-        "discriminator": False, "format": None,
+        "type": deepcopy(annotation),
+        "wire_name": "response_format",
+        "visibility": ["read", "create", "update", "delete", "query"],
+        "discriminator": False,
+        "format": None,
     }
     sampling["overloads"][0]["parameters"].append(
-        {"name": "response_format", "kind": "KEYWORD_ONLY", "type": deepcopy(annotation), "default": None})
+        {"name": "response_format", "kind": "KEYWORD_ONLY", "type": deepcopy(annotation), "default": None}
+    )
     # Fixed value produced by the existing model probe for Dict[str, Any].
     response_format = {"sample": {"nested": [1, 1.5, None, False, "utf8-caf\u00e9"]}}
     for name in ("SamplingParams", "SampleRequest"):
@@ -1053,20 +1396,32 @@ def _apply_service_contracts(report, harness):
             get["headers"].pop("content-length", None)
             case["requests"].extend([deepcopy(get), deepcopy(get)])
             case["checks"] += 26  # Existing observer: thirteen independent checks per GET.
-            case["output"] = {"type": "SampleOperationResult", "value": deepcopy(RAW_RESULT),
-                              "poller": {"status": "Succeeded", "done": True}, "sleeps": [0.0]}
+            case["output"] = {
+                "type": "SampleOperationResult",
+                "value": deepcopy(RAW_RESULT),
+                "poller": {"status": "Succeeded", "done": True},
+                "sleeps": [0.0],
+            }
             if asynchronous:
                 result["raw"][prefix + ":cls"]["output"]["value"]["status"] = 200
-                result["raw"][prefix + ":error200"]["output"] = {"accepted": 200, "type": "OperationResult", "value": {}}
+                result["raw"][prefix + ":error200"]["output"] = {
+                    "accepted": 200,
+                    "type": "OperationResult",
+                    "value": {},
+                }
     return result
 
 
 def _apply_input_chunk_contract(report, harness):
     """Project ONLY from the fixed prior service-contract surface and raw cases."""
-    harness._require_baseline(report["surface"],
-        "1834b78806e53c6cac72fe112454cc06edf922da8d0d60a6f6272a0d079ec112", "prior reviewed surface")
-    harness._require_baseline(report["raw"],
-        "641f397095f9b9fa0bcf435a167c9cfcd3eb7bb630878c2b69214b8a4958e4c6", "prior reviewed 336 raw cases")
+    harness._require_baseline(
+        report["surface"], "1834b78806e53c6cac72fe112454cc06edf922da8d0d60a6f6272a0d079ec112", "prior reviewed surface"
+    )
+    harness._require_baseline(
+        report["raw"],
+        "641f397095f9b9fa0bcf435a167c9cfcd3eb7bb630878c2b69214b8a4958e4c6",
+        "prior reviewed 336 raw cases",
+    )
     result = deepcopy(report)
     api = result["surface"]
     exports = api["modules"][".models"]
@@ -1080,7 +1435,8 @@ def _apply_input_chunk_contract(report, harness):
     base["fields"] = {"type": deepcopy(field)}
     base["bases"] = ["Model"]
     base["overloads"][0]["parameters"] = [
-        {"name": "type", "kind": "KEYWORD_ONLY", "type": "str", "default": {"empty": True}}]
+        {"name": "type", "kind": "KEYWORD_ONLY", "type": "str", "default": {"empty": True}}
+    ]
     api["models"]["InputChunk"] = base
     text = api["models"]["ModelInputChunk"]
     text["fields"]["type"] = {**deepcopy(field), "type": {"origin": "Literal", "args": ["text"]}}
@@ -1095,11 +1451,15 @@ def _apply_input_chunk_contract(report, harness):
     api["models"]["ModelInput"]["fields"]["chunks"]["type"] = deepcopy(chunks)
     api["models"]["ModelInput"]["overloads"][0]["parameters"][0]["type"] = deepcopy(chunks)
     # Explicit schema paths only: no recursive token-shaped mapping rewrite.
-    paths = {"ModelInput": (), "Datum": ("model_input",),
-             "ForwardInput": ("data", 0, "model_input"), "ForwardBackwardInput": ("data", 0, "model_input"),
-             "ForwardRequest": ("forward_input", "data", 0, "model_input"),
-             "ForwardBackwardRequest": ("forward_backward_input", "data", 0, "model_input"),
-             "SampleRequest": ("prompt",)}
+    paths = {
+        "ModelInput": (),
+        "Datum": ("model_input",),
+        "ForwardInput": ("data", 0, "model_input"),
+        "ForwardBackwardInput": ("data", 0, "model_input"),
+        "ForwardRequest": ("forward_input", "data", 0, "model_input"),
+        "ForwardBackwardRequest": ("forward_backward_input", "data", 0, "model_input"),
+        "SampleRequest": ("prompt",),
+    }
     for name, path in paths.items():
         for observation in api["serialization"][name]:
             for kind in ("all", "writable", "attributes"):
@@ -1112,11 +1472,19 @@ def _apply_input_chunk_contract(report, harness):
             observation[kind]["type"] = "text"
     api["serialization"]["InputChunk"] = [
         {"class": "InputChunk", **{kind: {"type": "example"} for kind in ("all", "writable", "attributes")}}
-        for _ in range(2)]
-    mixed = {"wire": harness._input_chunk_wire(_input_chunk_probe()),
-             "classes": ["ModelInputChunk", "ImageChunk", "InputChunk"], "public_image": True, "image_bytes": True}
-    api["input_chunks"] = {"mapping": deepcopy(mixed), "keyword": deepcopy(mixed),
-                           "incorrect_image_type": [["ValueError", "image type must be 'image'"] for _ in range(2)]}
+        for _ in range(2)
+    ]
+    mixed = {
+        "wire": harness._input_chunk_wire(_input_chunk_probe()),
+        "classes": ["ModelInputChunk", "ImageChunk", "InputChunk"],
+        "public_image": True,
+        "image_bytes": True,
+    }
+    api["input_chunks"] = {
+        "mapping": deepcopy(mixed),
+        "keyword": deepcopy(mixed),
+        "incorrect_image_type": [["ValueError", "image type must be 'image'"] for _ in range(2)],
+    }
     del api["input_chunks"]["keyword"]["wire"]["extension"]  # Arbitrary fields use the mapping constructor.
     return result
 
@@ -1134,6 +1502,124 @@ def _apply_foundry_features_contract(report, harness):
     return result
 
 
+def _apply_sampling_prompt_tokens_contract(report, harness):
+    """Add one read-only field to two identical names, from fixed old observations.
+
+    The existing annotation-driven mapping AND keyword fixtures supply 2 for
+    Optional[int]. Only their complete JSON and attributes gain that value;
+    writable JSON, every constructor signature, and all raw fixtures stay exact.
+    Legacy absent-value observations are covered by the convenience comparator.
+    """
+    harness._require_baseline(
+        report["raw"],
+        "641f397095f9b9fa0bcf435a167c9cfcd3eb7bb630878c2b69214b8a4958e4c6",
+        "prior reviewed 336 raw cases",
+    )
+    optional_float = {"origin": "Union", "args": ["float", "None"]}
+    prompt = {"origin": "Union", "args": [{"origin": "list", "args": [optional_float]}, "None"]}
+    pairs = {"origin": "list", "args": [{"origin": "tuple", "args": ["int", "float"]}]}
+    topk = {
+        "origin": "Union",
+        "args": [{"origin": "list", "args": [{"origin": "Union", "args": [pairs, "None"]}]}, "None"],
+    }
+    visibility = ["read", "create", "update", "delete", "query"]
+    field_types = {
+        "type": {"origin": "Literal", "args": ["sample"]},
+        "operation_id": "str",
+        "status": {"origin": "Union", "args": ["str", "OperationStatus"]},
+        "sequences": {"origin": "list", "args": ["SampledSequence"]},
+        "prompt_logprobs": prompt,
+        "topk_prompt_logprobs": topk,
+        "metrics": {"origin": "Union", "args": [{"origin": "dict", "args": ["str", "Any"]}, "None"]},
+    }
+    original_model = {
+        "signature": {
+            "parameters": [
+                {"name": name, "kind": kind, "type": "Any", "default": {"empty": True}}
+                for name, kind in (("args", "VAR_POSITIONAL"), ("kwargs", "VAR_KEYWORD"))
+            ],
+            "returns": "None",
+            "async": False,
+        },
+        "overloads": [
+            {
+                "parameters": [
+                    {
+                        "name": name,
+                        "kind": "KEYWORD_ONLY",
+                        "type": field_types[name],
+                        "default": {"empty": True} if name == "sequences" else None,
+                    }
+                    for name in ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics")
+                ],
+                "returns": "None",
+                "async": False,
+            },
+            {
+                "parameters": [
+                    {
+                        "name": "mapping",
+                        "kind": "POSITIONAL_OR_KEYWORD",
+                        "type": {"origin": "Mapping", "args": ["str", "Any"]},
+                        "default": {"empty": True},
+                    }
+                ],
+                "returns": "None",
+                "async": False,
+            },
+        ],
+        "fields": {
+            name: {
+                "type": annotation,
+                "wire_name": name,
+                "visibility": ["read"] if name in ("operation_id", "status") else visibility,
+                "discriminator": name == "type",
+                "format": None,
+            }
+            for name, annotation in field_types.items()
+        },
+        "properties": [],
+    }
+    wire = {
+        "type": "sample",
+        "operation_id": "example",
+        "status": "example",
+        "sequences": [{"tokens": [2], "text": "example", "logprobs": [0.5]}],
+        "prompt_logprobs": [0.5],
+        "topk_prompt_logprobs": [[[2, 0.5]]],
+        "metrics": {"sample": {"nested": [1, 1.5, None, False, "utf8-caf\u00e9"]}},
+    }
+    original_serialization = [
+        {
+            "class": "SampleOperationResult",
+            "all": deepcopy(wire),
+            "attributes": deepcopy(wire),
+            "writable": {key: deepcopy(value) for key, value in wire.items() if key not in ("operation_id", "status")},
+        }
+        for _ in range(2)
+    ]
+    result = deepcopy(report)
+    api = result["surface"]
+    for name in ("SampleOperationResult", "SamplingOperationResult"):
+        if (
+            api["modules"][".models"].count(name) != 1
+            or harness._dump(api["models"].get(name)) != harness._dump(original_model)
+            or harness._dump(api["serialization"].get(name)) != harness._dump(original_serialization)
+        ):
+            raise ValueError(f"The immutable {name} surface or serialization changed")
+        api["models"][name]["fields"]["prompt_tokens"] = {
+            "type": {"origin": "Union", "args": ["int", "None"]},
+            "wire_name": "prompt_tokens",
+            "visibility": ["read"],
+            "discriminator": False,
+            "format": None,
+        }
+        for observation in api["serialization"][name]:
+            observation["all"]["prompt_tokens"] = 2
+            observation["attributes"]["prompt_tokens"] = 2
+    return result
+
+
 def _apply_review_contracts(report, harness, contracts):
     result = deepcopy(report)
     if "training-type-enum" in contracts:
@@ -1141,10 +1627,17 @@ def _apply_review_contracts(report, harness, contracts):
     if "raw-request-id-polling" in contracts:
         result = _apply_service_contracts(result, harness)
     result["raw"] = harness._apply_review_header_contract(result["raw"], raw=True)
-    for client, original in ((".FineTuningSessionClient", "TokenCredential"),
-                             (".aio.FineTuningSessionClient", "AsyncTokenCredential")):
+    for client, original in (
+        (".FineTuningSessionClient", "TokenCredential"),
+        (".aio.FineTuningSessionClient", "AsyncTokenCredential"),
+    ):
         parameter = result["surface"]["clients"][client]["__init__"]["signature"]["parameters"][1]
-        if parameter != {"name": "credential", "kind": "POSITIONAL_OR_KEYWORD", "type": original, "default": {"empty": True}}:
+        if parameter != {
+            "name": "credential",
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "type": original,
+            "default": {"empty": True},
+        }:
             raise ValueError("The immutable baseline credential parameter changed")
         parameter["type"] = {"origin": "Union", "args": [original, "AzureKeyCredential"]}
     model = result["surface"]["models"]["ModelInput"]
@@ -1153,15 +1646,30 @@ def _apply_review_contracts(report, harness, contracts):
     chunks = {"origin": "list", "args": [{"origin": "Union", "args": ["ModelInputChunk", "ImageChunk"]}]}
     model["fields"]["chunks"]["type"] = chunks
     model["overloads"] = [
-        {"parameters": [{"name": "chunks", "kind": "KEYWORD_ONLY", "type": chunks, "default": {"empty": True}}],
-         "returns": "None", "async": False},
-        {"parameters": [{"name": "mapping", "kind": "POSITIONAL_OR_KEYWORD", "type": {"origin": "Mapping", "args": ["str", "Any"]}, "default": {"empty": True}}],
-         "returns": "None", "async": False},
+        {
+            "parameters": [{"name": "chunks", "kind": "KEYWORD_ONLY", "type": chunks, "default": {"empty": True}}],
+            "returns": "None",
+            "async": False,
+        },
+        {
+            "parameters": [
+                {
+                    "name": "mapping",
+                    "kind": "POSITIONAL_OR_KEYWORD",
+                    "type": {"origin": "Mapping", "args": ["str", "Any"]},
+                    "default": {"empty": True},
+                }
+            ],
+            "returns": "None",
+            "async": False,
+        },
     ]
     if harness.INPUT_CHUNK_CONTRACT in contracts:
         result = _apply_input_chunk_contract(result, harness)
     if harness.FOUNDRY_FEATURES_CONTRACT in contracts:
         result = _apply_foundry_features_contract(result, harness)
+    if harness.SAMPLING_PROMPT_TOKENS_CONTRACT in contracts:
+        result = _apply_sampling_prompt_tokens_contract(result, harness)
     return result
 
 
@@ -1173,25 +1681,44 @@ def main():
     parser.add_argument("--worker", type=Path)
     parser.add_argument("--harness", type=Path, required=True)
     parser.add_argument("--review-deltas", type=Path, help="Explicit, versioned post-baseline bug-fix contracts")
-    parser.add_argument("--training-type-enum", action="store_true", help="Apply only the reviewed additive TrainingType contract")
+    parser.add_argument(
+        "--training-type-enum", action="store_true", help="Apply only the reviewed additive TrainingType contract"
+    )
     parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--input-chunk-discriminator", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--artifacts", type=Path, help="Directory for unmodified reference and candidate worker JSON")
     args = parser.parse_args()
     if args.worker:
         with redirect_stdout(sys.stderr):
-            report = worker(args.worker.resolve(), args.harness.resolve(), args.service_contracts, args.input_chunk_discriminator)
+            report = worker(
+                args.worker.resolve(), args.harness.resolve(), args.service_contracts, args.input_chunk_discriminator
+            )
         print(json.dumps(report, sort_keys=True, ensure_ascii=True))
         return 0
     if args.reference is None or args.candidate is None:
         parser.error("--reference and --candidate are required unless --worker is used")
     sys.path.insert(0, str(args.harness.parent))
     import verify_compatibility as harness
-    contracts = harness._review_contracts(json.loads(args.review_deltas.read_text(encoding="utf-8"))) if args.review_deltas else []
+
+    contracts = (
+        harness._review_contracts(json.loads(args.review_deltas.read_text(encoding="utf-8")))
+        if args.review_deltas
+        else []
+    )
     reports = []
     for side, package in (("reference", args.reference), ("candidate", args.candidate)):
-        command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()),
-                   "--worker", str(package.resolve()), "--harness", str(args.harness.resolve())]
+        command = [
+            sys.executable,
+            "-I",
+            "-B",
+            "-X",
+            "utf8",
+            str(Path(__file__).resolve()),
+            "--worker",
+            str(package.resolve()),
+            "--harness",
+            str(args.harness.resolve()),
+        ]
         if side == "candidate" and "raw-request-id-polling" in contracts:
             command.append("--service-contracts")
         if side == "candidate" and harness.INPUT_CHUNK_CONTRACT in contracts:
@@ -1209,7 +1736,9 @@ def main():
         print("Applied only fixed reviewed contracts; original reference fixtures and all 336 raw case IDs retained.")
     if args.training_type_enum and "training-type-enum" not in contracts:
         reports[0] = _apply_training_type_contract(reports[0])
-        print("Applied only the exact TrainingType export, members, and four annotation sites; all other fields remain exact.")
+        print(
+            "Applied only the exact TrainingType export, members, and four annotation sites; all other fields remain exact."
+        )
     candidate = deepcopy(reports[1])
     service_failures = []
     if "raw-request-id-polling" in contracts:
@@ -1228,11 +1757,13 @@ def main():
     print(f"Public models/enums: {len(reports[0]['surface']['models'])}; raw cases: {len(reports[0]['raw'])}")
     for delta in differences[:60]:
         print(delta)
-    failed = {side: [name for name, case in report['raw'].items() if not case['ok']]
-              for side, report in zip(('reference', 'candidate'), reports)}
-    print('Case failures:', {side: len(names) for side, names in failed.items()})
-    for name in failed['reference'][:6]:
-        print(name, reports[0]['raw'][name].get('error'))
+    failed = {
+        side: [name for name, case in report["raw"].items() if not case["ok"]]
+        for side, report in zip(("reference", "candidate"), reports)
+    }
+    print("Case failures:", {side: len(names) for side, names in failed.items()})
+    for name in failed["reference"][:6]:
+        print(name, reports[0]["raw"][name].get("error"))
     print(f"{'FAIL' if differences else 'MATCH'}: {len(differences)} API/behavior differences")
     return 1 if differences or any(failed.values()) else 0
 

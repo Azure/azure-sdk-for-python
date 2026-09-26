@@ -17,7 +17,6 @@ from azure.core.utils import case_insensitive_dict
 from azure.ai.finetuningsessions import FineTuningSessionClient
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncClient
 
-
 pytestmark = pytest.mark.asyncio
 
 _ENDPOINT = "https://unit.invalid/api/projects/p"

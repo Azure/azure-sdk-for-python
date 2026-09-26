@@ -10,6 +10,7 @@ loggers at package import time. The filter prepends an ISO-8601 UTC
 timestamp to ``record.msg`` only when no handler is reachable; otherwise
 it is a no-op (the caller's formatter owns the timestamp).
 """
+
 from __future__ import annotations
 
 import logging
@@ -29,14 +30,10 @@ from azure.ai.finetuningsessions._logging_setup import (
 )
 
 # Matches "[YYYY-MM-DDTHH:MM:SS.mmm+00:00] " at the start of a string.
-_PREFIX_RE = re.compile(
-    r"^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+00:00\] "
-)
+_PREFIX_RE = re.compile(r"^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+00:00\] ")
 
 
-def _make_record(
-    name: str, msg: str = "hello", args: tuple = ()
-) -> logging.LogRecord:
+def _make_record(name: str, msg: str = "hello", args: tuple = ()) -> logging.LogRecord:
     return logging.LogRecord(
         name=name,
         level=logging.WARNING,
@@ -90,17 +87,12 @@ class TestInstallation:
         install_default_logging()
         install_default_logging()
         for name in _SDK_EMITTING_LOGGERS:
-            count = sum(
-                isinstance(f, _SdkTimestampFilter)
-                for f in logging.getLogger(name).filters
-            )
+            count = sum(isinstance(f, _SdkTimestampFilter) for f in logging.getLogger(name).filters)
             assert count == 1, f"{name!r} has {count} filters, expected 1"
 
     def test_no_handler_installed_by_sdk(self) -> None:
         for name in ("azure.ai.finetuningsessions", *_SDK_EMITTING_LOGGERS):
-            assert (
-                logging.getLogger(name).handlers == []
-            ), f"SDK unexpectedly attached a handler to {name!r}"
+            assert logging.getLogger(name).handlers == [], f"SDK unexpectedly attached a handler to {name!r}"
 
     def test_propagation_unchanged(self) -> None:
         for name in _SDK_EMITTING_LOGGERS:
@@ -124,14 +116,10 @@ class TestHasAnyHandler:
             if not had:
                 root.handlers.pop()
 
-    def test_false_when_no_handler_anywhere(
-        self, no_handlers_anywhere: None
-    ) -> None:
+    def test_false_when_no_handler_anywhere(self, no_handlers_anywhere: None) -> None:
         assert _has_any_handler(_SDK_EMITTING_LOGGERS[0]) is False
 
-    def test_propagate_false_blocks_walk(
-        self, no_handlers_anywhere: None
-    ) -> None:
+    def test_propagate_false_blocks_walk(self, no_handlers_anywhere: None) -> None:
         # The fixture itself sets propagate=False on the SDK logger and
         # clears its handlers, so _has_any_handler must return False even
         # though the root logger has handlers (pytest's plugin).
@@ -143,9 +131,7 @@ class TestHasAnyHandler:
 # Filter behavior: prepend in Case B, no-op in Case A
 # ---------------------------------------------------------------------------
 class TestTimestampPrefix:
-    def test_prepends_when_no_handler(
-        self, no_handlers_anywhere: None
-    ) -> None:
+    def test_prepends_when_no_handler(self, no_handlers_anywhere: None) -> None:
         record = _make_record(_SDK_EMITTING_LOGGERS[0], "session crashed")
         # The filter both mutates the record and reports True (never
         # drops -- only annotates).
@@ -166,38 +152,28 @@ class TestTimestampPrefix:
         finally:
             logger.removeHandler(h)
 
-    def test_args_still_interpolate(
-        self, no_handlers_anywhere: None
-    ) -> None:
-        record = _make_record(
-            _SDK_EMITTING_LOGGERS[0], "hello %s number %d", ("world", 7)
-        )
+    def test_args_still_interpolate(self, no_handlers_anywhere: None) -> None:
+        record = _make_record(_SDK_EMITTING_LOGGERS[0], "hello %s number %d", ("world", 7))
         _SdkTimestampFilter().filter(record)
         rendered = record.getMessage()
         assert _PREFIX_RE.match(rendered)
         assert rendered.endswith("hello world number 7")
 
-    def test_uses_record_created_not_wall_clock(
-        self, no_handlers_anywhere: None
-    ) -> None:
+    def test_uses_record_created_not_wall_clock(self, no_handlers_anywhere: None) -> None:
         # Pin record.created to a known epoch (2020-01-02 03:04:05.678 UTC).
         record = _make_record(_SDK_EMITTING_LOGGERS[0])
         record.created = 1577934245.678
         _SdkTimestampFilter().filter(record)
         assert record.msg.startswith("[2020-01-02T03:04:05.678+00:00] ")
 
-    def test_timestamp_visible_under_lastresort_format(
-        self, no_handlers_anywhere: None
-    ) -> None:
+    def test_timestamp_visible_under_lastresort_format(self, no_handlers_anywhere: None) -> None:
         """Rendering through ``logging.lastResort``'s format string
         (``"%(levelname)s:%(name)s:%(message)s"``) must include a
         timestamp, because the filter put it inside ``record.msg``.
         """
         record = _make_record(_SDK_EMITTING_LOGGERS[0], "session crashed")
         _SdkTimestampFilter().filter(record)
-        rendered = logging.Formatter(
-            "%(levelname)s:%(name)s:%(message)s"
-        ).format(record)
+        rendered = logging.Formatter("%(levelname)s:%(name)s:%(message)s").format(record)
         assert "session crashed" in rendered
         assert re.search(
             r"\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+00:00\]", rendered
@@ -231,15 +207,11 @@ class TestEndToEndSessionCrash:
         buf = io.StringIO()
         capture = logging.StreamHandler(buf)
         capture.setLevel(logging.WARNING)
-        capture.setFormatter(
-            logging.Formatter("%(levelname)s:%(name)s:%(message)s")
-        )
+        capture.setFormatter(logging.Formatter("%(levelname)s:%(name)s:%(message)s"))
         prior_lastresort = logging.lastResort
         logging.lastResort = capture
         try:
-            sdk_logger.warning(
-                "[heartbeat] failed for %s: %s", "sess-123", "ConnectionError"
-            )
+            sdk_logger.warning("[heartbeat] failed for %s: %s", "sess-123", "ConnectionError")
         finally:
             logging.lastResort = prior_lastresort
 
@@ -282,9 +254,7 @@ class TestEndToEndSessionCrash:
         buf = io.StringIO()
         capture = logging.StreamHandler(buf)
         capture.setLevel(logging.DEBUG)  # Gate 2: lastResort
-        capture.setFormatter(
-            logging.Formatter("%(levelname)s:%(name)s:%(message)s")
-        )
+        capture.setFormatter(logging.Formatter("%(levelname)s:%(name)s:%(message)s"))
         prior_lastresort = logging.lastResort
         prior_logger_level = sdk_logger.level
         logging.lastResort = capture
@@ -296,9 +266,7 @@ class TestEndToEndSessionCrash:
                 except RuntimeError:
                     sdk_logger.exception("session crashed: %s", "sess-123")
             else:
-                getattr(sdk_logger, level_method)(
-                    "session crashed: %s", "sess-123"
-                )
+                getattr(sdk_logger, level_method)("session crashed: %s", "sess-123")
         finally:
             logging.lastResort = prior_lastresort
             sdk_logger.setLevel(prior_logger_level)
@@ -389,23 +357,17 @@ class TestEnableDisableFlag:
             install_default_logging()
         for name in _SDK_EMITTING_LOGGERS:
             assert not any(
-                isinstance(f, _SdkTimestampFilter)
-                for f in logging.getLogger(name).filters
+                isinstance(f, _SdkTimestampFilter) for f in logging.getLogger(name).filters
             ), f"filter still present on {name!r} after disable via {trigger}"
 
     def test_disable_then_enable_reinstalls(self, restore_filter: None) -> None:
         install_default_logging(enabled=False)
         install_default_logging(enabled=True)
         for name in _SDK_EMITTING_LOGGERS:
-            count = sum(
-                isinstance(f, _SdkTimestampFilter)
-                for f in logging.getLogger(name).filters
-            )
+            count = sum(isinstance(f, _SdkTimestampFilter) for f in logging.getLogger(name).filters)
             assert count == 1, f"{name!r} has {count} filters, expected 1"
 
-    def test_disabled_filter_does_not_mutate(
-        self, no_handlers_anywhere: None, restore_filter: None
-    ) -> None:
+    def test_disabled_filter_does_not_mutate(self, no_handlers_anywhere: None, restore_filter: None) -> None:
         install_default_logging(enabled=False)
         logger = logging.getLogger(_SDK_EMITTING_LOGGERS[0])
         # No filter installed -> calling logger.warning() goes straight

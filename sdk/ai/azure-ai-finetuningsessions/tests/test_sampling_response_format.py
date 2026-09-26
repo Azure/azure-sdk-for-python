@@ -26,8 +26,6 @@ def test_sampling_params_serializes_response_format() -> None:
         response_format=response_format,
     )
 
-    payload = json.loads(
-        json.dumps(sampling_params, cls=_SdkJSONEncoder, exclude_readonly=True)
-    )
+    payload = json.loads(json.dumps(sampling_params, cls=_SdkJSONEncoder, exclude_readonly=True))
 
     assert payload["response_format"] == response_format

@@ -73,9 +73,7 @@ def test_logs_queued_message_on_resuming_session(caplog, clock):
 
 
 def test_logs_generic_message_on_other_pending(caplog, clock):
-    _patch_mod._request_active_since[("sess-1", "req-1")] = clock.now - (
-        _POLL_LOG_DEDUP_SEC + 1.0
-    )
+    _patch_mod._request_active_since[("sess-1", "req-1")] = clock.now - (_POLL_LOG_DEDUP_SEC + 1.0)
     with caplog.at_level(logging.INFO, logger=_LOGGER_NAME):
         _call(_GENERIC_PENDING)
     [rec] = _records(caplog)
@@ -119,12 +117,18 @@ def test_dedup_keyed_by_session_id(caplog, clock):
     elapsed = _POLL_LOG_DEDUP_SEC + 1.0
     with caplog.at_level(logging.INFO, logger=_LOGGER_NAME):
         _maybe_log_poll_progress(
-            _RESUMING, session_id="sess-A", request_id="req-A",
-            op_type="sample", elapsed=elapsed,
+            _RESUMING,
+            session_id="sess-A",
+            request_id="req-A",
+            op_type="sample",
+            elapsed=elapsed,
         )
         _maybe_log_poll_progress(
-            _RESUMING, session_id="sess-B", request_id="req-B",
-            op_type="sample", elapsed=elapsed,
+            _RESUMING,
+            session_id="sess-B",
+            request_id="req-B",
+            op_type="sample",
+            elapsed=elapsed,
         )
     assert len(_records(caplog)) == 2
 
@@ -158,9 +162,7 @@ def test_in_progress_elapsed_is_since_active_not_since_submission(caplog, clock)
     m = re.search(r"(\d+)s elapsed", msgs[1])
     assert m is not None, msgs[1]
     active_elapsed = int(m.group(1))
-    assert active_elapsed < 60, (
-        f"in-progress elapsed should reflect active time, got {active_elapsed}s"
-    )
+    assert active_elapsed < 60, f"in-progress elapsed should reflect active time, got {active_elapsed}s"
 
 
 def test_active_since_resets_when_request_re_queues(caplog, clock):
@@ -250,10 +252,7 @@ def test_warn_dedup_independent_per_request(caplog, clock):
         _warn_call(clock, request_id="req-B", op_type="sample")
     warns = _warns(caplog)
     assert len(warns) == 2
-    warned_requests = {
-        rid for rid in ("req-A", "req-B")
-        if any(rid in w.getMessage() for w in warns)
-    }
+    warned_requests = {rid for rid in ("req-A", "req-B") if any(rid in w.getMessage() for w in warns)}
     assert warned_requests == {"req-A", "req-B"}
 
 
@@ -309,10 +308,10 @@ def test_warn_dedup_per_request_contract(caplog, clock):
         _warn_call(clock, request_id="req-A", op_type="sample")
         _warn_call(clock, request_id="req-B", op_type="sample")
         assert len(_warns(caplog)) == 2
-        assert {
-            rid for rid in ("req-A", "req-B")
-            if any(rid in w.getMessage() for w in _warns(caplog))
-        } == {"req-A", "req-B"}
+        assert {rid for rid in ("req-A", "req-B") if any(rid in w.getMessage() for w in _warns(caplog))} == {
+            "req-A",
+            "req-B",
+        }
 
         # 2. A repeat warning for req-A inside its dedup window is throttled,
         #    even though req-B warned in between (no shared-state reset).

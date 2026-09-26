@@ -10,16 +10,17 @@ Verifies:
 2. Retry-After header is honored over default backoff.
 3. Network errors use escalating backoff between retries.
 """
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 import asyncio
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Async _post retry cap (#5261585)
 # ---------------------------------------------------------------------------
+
 
 class TestAsyncPostRetryCap:
     """The async _post function should retry at most 2 times (3 total attempts)."""
@@ -138,9 +139,7 @@ class TestAsyncPostRetryCap:
         from azure.core.exceptions import ServiceResponseError
 
         # All attempts raise network error to exercise the retry path fully.
-        mock_client.send_request = AsyncMock(
-            side_effect=ServiceResponseError("read timeout")
-        )
+        mock_client.send_request = AsyncMock(side_effect=ServiceResponseError("read timeout"))
 
         with patch("azure.ai.finetuningsessions.aio._patch.asyncio.sleep", new_callable=AsyncMock):
             with pytest.raises(ServiceResponseError):
@@ -166,6 +165,7 @@ class TestAsyncPostRetryCap:
 # Terminal engine-dead 409 is non-retryable (bug 5547547)
 # ---------------------------------------------------------------------------
 
+
 class TestAsyncEngineDead409NonRetryable:
     """A structured ``engine_dead`` 409 is terminal: it must classify to a typed
     ``TrainingEngineError`` and hit the backend exactly ONCE, on both the
@@ -189,8 +189,7 @@ class TestAsyncEngineDead409NonRetryable:
         resp.headers = {}
         resp.json.return_value = {
             "reason": "engine_dead",
-            "message": "Model 'model_fffe9b40' failed because its engine died. "
-            "LoRA weights are lost.",
+            "message": "Model 'model_fffe9b40' failed because its engine died. " "LoRA weights are lost.",
             "error_code": "engine_dead",
         }
         return resp

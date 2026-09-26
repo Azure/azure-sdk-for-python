@@ -36,7 +36,6 @@ from azure.core.utils import case_insensitive_dict
 from azure.ai.finetuningsessions import FineTuningSessionClient, _exceptions, _operation_compat
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
 
-
 ENDPOINT = "https://unit.invalid/api/projects/p"
 COMMON = {"api_version": "v1", "foundry_features": "FineTuningSessions=V1Preview"}
 RESULT = {"type": "optim_step", "operation_id": "request_test", "status": "succeeded", "step_count": 2}
@@ -242,7 +241,9 @@ def test_public_source_import() -> None:
 
     def inventory(directory):
         return {
-            file.relative_to(directory).as_posix(): hashlib.sha256(file.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            file.relative_to(directory)
+            .as_posix(): hashlib.sha256(file.read_bytes().replace(b"\r\n", b"\n"))
+            .hexdigest()
             for file in directory.rglob("*")
             if file.is_file() and "__pycache__" not in file.parts
         }

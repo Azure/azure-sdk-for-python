@@ -17,6 +17,7 @@ so both clients behave identically.
     trip it.
   * ``error_budget_sec=None`` disables the budget (retry forever).
 """
+
 from __future__ import annotations
 
 import itertools
@@ -71,6 +72,7 @@ class _FakeAsyncClient:
 @pytest.fixture
 def clock(monkeypatch):
     """Deterministic monotonic clock; ``asyncio.sleep`` advances it by its arg."""
+
     class _Clock:
         now: float = 1000.0
 
