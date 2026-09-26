@@ -33,13 +33,14 @@ def _clear_invalid_flush_modes() -> None:
         # background
         ("background", "schedule_flush_spans"),
         ("Background", "schedule_flush_spans"),
-        # async (explicit default)
+        # async (explicit opt-in)
         ("async", "flush_spans_async"),
         ("ASYNC", "flush_spans_async"),
-        # fail-safe fallback to async for empty / unknown values
-        ("", "flush_spans_async"),
-        ("bogus", "flush_spans_async"),
-        ("background-disabled", "flush_spans_async"),
+        # fallback to the background default for empty / unknown values
+        ("", "schedule_flush_spans"),
+        ("   ", "schedule_flush_spans"),
+        ("bogus", "schedule_flush_spans"),
+        ("background-disabled", "schedule_flush_spans"),
     ],
 )
 async def test_flush_mode_dispatch(mode: str, expected_helper: str) -> None:
@@ -64,7 +65,7 @@ async def test_flush_mode_dispatch(mode: str, expected_helper: str) -> None:
 
 @pytest.mark.asyncio
 async def test_flush_mode_dispatch_awaits_async_helper() -> None:
-    """The default async path is actually awaited (not fire-and-forget)."""
+    """The explicit async path is actually awaited (not fire-and-forget)."""
     with mock.patch.object(eh, "flush_spans"), mock.patch.object(
         eh, "schedule_flush_spans"
     ), mock.patch.object(
@@ -77,9 +78,10 @@ async def test_flush_mode_dispatch_awaits_async_helper() -> None:
 @pytest.mark.asyncio
 async def test_invalid_flush_mode_warns_once(caplog: pytest.LogCaptureFixture) -> None:
     """Repeated requests with the same invalid mode emit one warning."""
-    with mock.patch.object(eh, "flush_spans_async", new_callable=mock.AsyncMock):
+    with mock.patch.object(eh, "schedule_flush_spans"):
         await eh._flush_spans_for_mode("invalid-mode")
         await eh._flush_spans_for_mode(" INVALID-MODE ")
 
     warnings = [record for record in caplog.records if record.levelname == "WARNING"]
     assert len(warnings) == 1
+    assert "falling back to 'background' flush mode" in warnings[0].getMessage()
