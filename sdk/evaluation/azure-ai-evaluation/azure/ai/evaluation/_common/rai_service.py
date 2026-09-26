@@ -381,6 +381,16 @@ async def submit_request_onedp(
     return operation_id
 
 
+def _log_terminal_poll_response(operation_id: str, poll_count: int, elapsed_seconds: float) -> None:
+    """Record polling diagnostics without response content or credentials."""
+    LOGGER.warning(
+        "Stopping annotation polling after HTTP 400: operation_id=%s, poll_count=%d, elapsed_seconds=%.2f.",
+        operation_id,
+        poll_count,
+        elapsed_seconds,
+    )
+
+
 async def fetch_result(
     operation_id: str,
     rai_svc_url: str,
@@ -416,6 +426,7 @@ async def fetch_result(
             return response.json()
 
         if response.status_code == 400:
+            _log_terminal_poll_response(operation_id, request_count + 1, time.time() - start)
             response.raise_for_status()
 
         request_count += 1
@@ -448,6 +459,7 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
             return client.evaluations.operation_results(operation_id, headers=headers)
         except HttpResponseError as error:
             if error.status_code == 400:
+                _log_terminal_poll_response(operation_id, request_count + 1, time.time() - start)
                 raise
             request_count += 1
             time_elapsed = time.time() - start

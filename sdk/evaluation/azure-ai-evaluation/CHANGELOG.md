@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately; pending responses and other retry behavior are unchanged.
+- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
 
 ## 1.18.7 (2026-09-25)
 

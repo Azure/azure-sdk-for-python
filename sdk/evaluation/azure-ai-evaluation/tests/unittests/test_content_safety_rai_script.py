@@ -180,7 +180,7 @@ class TestContentSafetyEvaluator:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("pending_first", [False, True])
     async def test_fetch_result_stops_on_terminal_bad_request(
-        self, pending_first: bool, polling_clock: PollingClock, mock_token: str
+        self, pending_first: bool, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Preserve terminal errors instead of replacing them with timeouts."""
         response = self._terminal_poll_response()
@@ -195,11 +195,12 @@ class TestContentSafetyEvaluator:
         assert get.await_count == 1 + int(pending_first)
         assert polling_clock.sleeps == ([2] if pending_first else [])
         self._assert_terminal_response(caught.value, response)
+        self._assert_terminal_poll_log(caplog, 1 + int(pending_first), polling_clock.elapsed, mock_token)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("pending_first", [False, True])
     async def test_fetch_result_onedp_stops_on_terminal_bad_request(
-        self, pending_first: bool, polling_clock: PollingClock, mock_token: str
+        self, pending_first: bool, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Reraise the original OneDP exception, including its response."""
         response = self._terminal_poll_response()
@@ -215,6 +216,27 @@ class TestContentSafetyEvaluator:
         assert client.evaluations.operation_results.call_count == 1 + int(pending_first)
         assert polling_clock.sleeps == ([2] if pending_first else [])
         self._assert_terminal_response(caught.value, response)
+        self._assert_terminal_poll_log(caplog, 1 + int(pending_first), polling_clock.elapsed, mock_token)
+
+    @staticmethod
+    def _assert_terminal_poll_log(
+        caplog: pytest.LogCaptureFixture, poll_count: int, elapsed: float, token: str
+    ) -> None:
+        """Log one diagnostic without recording credentials or error content."""
+        records = [
+            record
+            for record in caplog.records
+            if record.name == "azure.ai.evaluation._common.rai_service" and record.levelname == "WARNING"
+        ]
+        assert len(records) == 1
+        message = records[0].getMessage()
+        assert "HTTP 400" in message
+        assert "operation_id=op-id" in message
+        assert f"poll_count={poll_count}" in message
+        assert f"elapsed_seconds={elapsed:.2f}" in message
+        assert token not in message
+        assert "annotation input exceeds" not in message
+        assert "example.org" not in message
 
     @staticmethod
     def _assert_terminal_response(error: HttpResponseError, response: MockAsyncHttpResponse) -> None:
@@ -228,7 +250,7 @@ class TestContentSafetyEvaluator:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("status_code", [202, 404, 408, 429, 500, 503])
     async def test_fetch_result_other_statuses_keep_polling(
-        self, status_code: int, polling_clock: PollingClock, mock_token: str
+        self, status_code: int, polling_clock: PollingClock, mock_token: str, caplog: pytest.LogCaptureFixture
     ) -> None:
         """The narrow bad-request fix leaves other polling behavior unchanged."""
         responses = [MockAsyncHttpResponse(status_code), MockAsyncHttpResponse(200, json={"result": "done"})]
@@ -238,11 +260,16 @@ class TestContentSafetyEvaluator:
         assert result == {"result": "done"}
         assert get.await_count == 2
         assert polling_clock.sleeps == [2]
+        assert not any(record.name == "azure.ai.evaluation._common.rai_service" for record in caplog.records)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("status_code", [202, 404, 408, 429, 500, 503, None])
     async def test_fetch_result_onedp_other_errors_keep_polling(
-        self, status_code: Optional[int], polling_clock: PollingClock, mock_token: str
+        self,
+        status_code: Optional[int],
+        polling_clock: PollingClock,
+        mock_token: str,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Pending/transient and statusless errors retain the existing path."""
         response = MockAsyncHttpResponse(status_code) if status_code is not None else None
@@ -255,6 +282,7 @@ class TestContentSafetyEvaluator:
         assert result == {"result": "done"}
         assert client.evaluations.operation_results.call_count == 2
         assert polling_clock.sleeps == [2]
+        assert not any(record.name == "azure.ai.evaluation._common.rai_service" for record in caplog.records)
 
     def test_rai_subscript_functions(self):
         # ensure_service_availability()
