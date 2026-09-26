@@ -16,7 +16,8 @@ The registry is the lifecycle owner for the three SDK-bundled
 backings. Third-party :class:`EventStream` impls do NOT plug into
 this registry — they ship their own peer registry.
 
-: ``get(id)`` raises
+: ``get(id)`` restores an existing file-backed replay log when needed, but
+never creates a log for an absent id. It raises
 :class:`EventStreamNotFoundError` for ANY id that is not currently
 a live stream — never registered, explicitly :meth:`delete`d, or
 close-clock TTL elapsed. The registry retains tombstones for
@@ -78,6 +79,7 @@ class _StreamsRegistry:
         # Factory closure — set by use_* configurators. Default:
         # use_in_memory_live per rule 37a (also).
         self._factory: Callable[[str], EventStream] = lambda _id: BroadcastEventStream()
+        self._restore: Callable[[str], Optional[EventStream]] = lambda _id: None
 
     # ----- Configurators (sync) -----
 
@@ -88,6 +90,7 @@ class _StreamsRegistry:
         Suitable when consumers attach before the producer starts.
         """
         self._factory = lambda _id: BroadcastEventStream()
+        self._restore = lambda _id: None
 
     def use_in_memory_replay(
         self,
@@ -109,6 +112,7 @@ class _StreamsRegistry:
         :paramtype ttl_seconds: Optional[float]
         """
         self._factory = lambda _id: ReplayEventStream(cursor_fn=cursor_fn, ttl_seconds=ttl_seconds)
+        self._restore = lambda _id: None
 
     def use_file_backed_replay(
         self,
@@ -171,6 +175,15 @@ class _StreamsRegistry:
             deserializer=deserializer,
         )
 
+        def restore(_id: str) -> Optional[EventStream]:
+            try:
+                (storage_dir / _safe_stream_filename(_id)).stat()
+            except FileNotFoundError:
+                return None
+            return self._factory(_id)
+
+        self._restore = restore
+
     # ----- Lifecycle (async) -----
 
     async def _get_id_lock(self, id: str) -> asyncio.Lock:
@@ -182,12 +195,15 @@ class _StreamsRegistry:
             return lock
 
     async def get(self, id: str) -> EventStream:
-        """Look up the existing instance for ``id``.
+        """Look up an existing stream, restoring a persisted replay if present.
+
+        Lookup and restoration share the per-id lifecycle lock with creation
+        and deletion. An absent replay log is never created by this operation.
 
           — every "id is not currently a live
         stream" condition raises :class:`EventStreamNotFoundError`:
 
-        - Unregistered id (never seen).
+        - Unregistered id with no persisted replay log.
         - Explicitly :meth:`delete`d id (tombstoned).
         - Closed stream whose close-clock TTL deadline has elapsed
           (auto-tombstoned).
@@ -197,20 +213,29 @@ class _StreamsRegistry:
         :return: The live stream instance for ``id``.
         :rtype: EventStream
         """
-        slot = self._slots.get(id, None)
+        lock = await self._get_id_lock(id)
+        async with lock:
+            slot = self._load_existing(id)
+            if slot is None or slot is _TOMBSTONE:
+                raise EventStreamNotFoundError(id)
+            if await self._tombstone_if_close_clock_elapsed(id, slot):
+                raise EventStreamNotFoundError(id)
+            return slot  # type: ignore[return-value]
+
+    def _load_existing(self, id: str) -> Union[EventStream, object, None]:
+        """Load an existing slot or replay while holding the per-id lock.
+
+        :param id: The stream id to look up.
+        :type id: str
+        :return: An existing stream, tombstone, or ``None``.
+        :rtype: EventStream | object | None
+        """
+        slot = self._slots.get(id)
         if slot is None:
-            raise EventStreamNotFoundError(id)
-        if slot is _TOMBSTONE:
-            raise EventStreamNotFoundError(id)
-        #   — opportunistic close-clock check.
-        # If the stream's internal _maybe_auto_transition_to_gone
-        # would fire, install the registry tombstone now and raise
-        # NotFound. This makes the registry-level auto-tombstone
-        # observable even without an explicit emit/subscribe on the
-        # instance.
-        if await self._tombstone_if_close_clock_elapsed(id, slot):
-            raise EventStreamNotFoundError(id)
-        return slot  # type: ignore[return-value]
+            slot = self._restore(id)
+            if slot is not None:
+                self._slots[id] = slot
+        return slot
 
     async def _tombstone_if_close_clock_elapsed(self, id: str, slot: Any) -> bool:
         """If the stream's close-clock TTL elapsed, run its
@@ -248,6 +273,7 @@ class _StreamsRegistry:
                 logger.warning(
                     "EventStream %s: _on_delete cleanup hook failed during auto-tombstone", id, exc_info=True
                 )
+                raise
         self._slots[id] = _TOMBSTONE
         logger.debug("EventStream %s auto-tombstoned (close-clock TTL elapsed)", id)
         return True
@@ -265,11 +291,6 @@ class _StreamsRegistry:
         :return: The cached or newly-created stream instance.
         :rtype: EventStream
         """
-        # Fast path — already present, not tombstoned
-        slot = self._slots.get(id, None)
-        if slot is not None and slot is not _TOMBSTONE:
-            return slot  # type: ignore[return-value]
-        # Slow path — acquire per-id lock + create
         lock = await self._get_id_lock(id)
         async with lock:
             slot = self._slots.get(id, None)
@@ -281,7 +302,7 @@ class _StreamsRegistry:
             return instance
 
     async def delete(self, id: str) -> None:
-        """Destroy the stream registered for ``id``.
+        """Destroy the registered or persisted stream for ``id``.
 
         Idempotent — calling on an unregistered or already-destroyed
         id is a no-op (but still ensures the tombstone is in place so
@@ -294,22 +315,16 @@ class _StreamsRegistry:
         :param id: The stream id to destroy.
         :type id: str
         """
-        slot = self._slots.get(id, None)
-        if slot is None:
-            # Never registered — install tombstone for symmetry
-            # (the next get(id) raises ``EventStreamNotFoundError``).
-            # This matches rule 36a's "delete is symmetric with rm -f
-            # but still leaves a marker" semantics.
+        lock = await self._get_id_lock(id)
+        async with lock:
+            slot = self._load_existing(id)
+            if slot is _TOMBSTONE:
+                return
+            on_delete = getattr(slot, "_on_delete", None)
+            if on_delete is not None:
+                await on_delete()
             self._slots[id] = _TOMBSTONE
-            return
-        if slot is _TOMBSTONE:
-            return  # idempotent
-        # Invoke private cleanup hook on the bundled impl
-        on_delete = getattr(slot, "_on_delete", None)
-        if on_delete is not None:
-            await on_delete()
-        self._slots[id] = _TOMBSTONE
-        logger.debug("EventStream %s deleted", id)
+            logger.debug("EventStream %s deleted", id)
 
 
 # Module-level singleton — THE public registry.

@@ -71,6 +71,7 @@ from ..streaming._state_machine import EventStreamValidator
 from ._execution_context import _ExecutionContext
 from ._dispatch import decide_disposition
 from ._runtime_state import _RuntimeState
+from ._task_id import derive_lifecycle_id
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -1235,7 +1236,7 @@ async def _run_background_non_stream(
         # Eager eviction: free memory once terminal (or store=False). Skip when
         # persistence failed — the in-memory record is the only GET source.
         if runtime_state is not None and record.is_terminal and not record.persistence_failed:
-            await runtime_state.try_evict(response_id)
+            await runtime_state.try_evict(response_id, record.user_id_key)
 
 
 def _refresh_background_status(record: ResponseExecution) -> None:
@@ -1995,7 +1996,7 @@ class _ResponseOrchestrator:
             # ctx.store`` because only Row 1 used the wire_stream pattern;
             # unified Row 2/3 stream now also subscribe to wire_stream and need
             # the terminal emit.
-            _term_stream = await streams.get_or_create(ctx.response_id)
+            _term_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_term_stream, state.pending_terminal)
 
     async def _resolve_emit_and_defer_terminal_persist(
@@ -2027,7 +2028,7 @@ class _ResponseOrchestrator:
             # in runtime_state AFTER this resolution but BEFORE the deferred
             # persist runs, so stamp the failure on whatever record GET will
             # actually serve (fall back to the captured record if absent).
-            target = await self._runtime_state.get(ctx.response_id) or record
+            target = await self._runtime_state.get(ctx.response_id, ctx.user_id) or record
             await self._persist_terminal_io(
                 ctx,
                 state,
@@ -2055,9 +2056,9 @@ class _ResponseOrchestrator:
         await persist()
         state.deferred_terminal_persist = None
         state.defer_evict = False
-        record = await self._runtime_state.get(ctx.response_id)
+        record = await self._runtime_state.get(ctx.response_id, ctx.user_id)
         if record is not None and record.is_terminal and not record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
     async def _persist_and_resolve_terminal(
         self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
@@ -2162,7 +2163,7 @@ class _ResponseOrchestrator:
         # guarantees the same instance for the same id, so any other caller
         # that does ``streams.get_or_create(response_id)`` for this id sees
         # the same fan-out target.
-        execution.subject = await streams.get_or_create(ctx.response_id)
+        execution.subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         state.bg_record = execution
         assert state.bg_record.subject is not None
         # Attach the draining task (set by the in-process store=True fallback)
@@ -2359,7 +2360,7 @@ class _ResponseOrchestrator:
             }
         )
         if ctx.store and ctx.stream:
-            _err_stream = await streams.get_or_create(ctx.response_id)
+            _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_err_stream, event)
         return event
 
@@ -2415,7 +2416,7 @@ class _ResponseOrchestrator:
                 # yet — bind the per-response stream so the wire iterator sees the
                 # fallback events. Skip terminal (the caller emits the resolved one).
                 if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
-                    _fallback_stream = await streams.get_or_create(ctx.response_id)
+                    _fallback_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                     await self._safe_emit(_fallback_stream, event)
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
                     state.pending_terminal = event
@@ -2639,7 +2640,7 @@ class _ResponseOrchestrator:
                 error_code="storage_error",
                 error_message=_STORAGE_ERROR_MESSAGE,
             )
-            _wire_stream = await streams.get_or_create(ctx.response_id)
+            _wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_wire_stream, first_normalized)
             evs.append(first_normalized)
             # Build, validate, and APPEND the terminal BEFORE emitting it so a
@@ -2658,7 +2659,7 @@ class _ResponseOrchestrator:
             evs.append(failed_normalized)
             return True, evs
         # Bg+stream: standalone error event (no response.created).
-        await self._runtime_state.try_evict(ctx.response_id)
+        await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         error_event = construct_event_model(
             {
                 "type": "error",
@@ -2668,7 +2669,7 @@ class _ResponseOrchestrator:
                 "sequence_number": 0,
             }
         )
-        _err_stream = await streams.get_or_create(ctx.response_id)
+        _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         await self._safe_emit(_err_stream, error_event)
         evs.append(error_event)
         return True, evs
@@ -2919,7 +2920,7 @@ class _ResponseOrchestrator:
             # ``GET ?stream=true`` correctly reports "no stream available".
             if record.status == "cancelled":
                 try:
-                    await streams.delete(ctx.response_id)
+                    await streams.delete(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
                         "Cancelled stream cleanup failed (response_id=%s)",
@@ -2936,7 +2937,7 @@ class _ResponseOrchestrator:
             # Skip eviction when persistence failed — the in-memory record is
             # the only remaining source of truth for GET.
             if record.is_terminal and not record.persistence_failed and not state.defer_evict:
-                await self._runtime_state.try_evict(ctx.response_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             return
 
         # --- Path B: No pre-existing record ---
@@ -3030,7 +3031,7 @@ class _ResponseOrchestrator:
         # for them, so no stream is needed.
         replay_subject: EventStream | None = None
         if ctx.store and ctx.background:
-            replay_subject = await streams.get_or_create(ctx.response_id)
+            replay_subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_close(replay_subject)
 
         execution = ResponseExecution(
@@ -3066,7 +3067,7 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — the in-memory record is the
         # only remaining source of truth for GET.
         if execution.is_terminal and not execution.persistence_failed and not state.defer_evict:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
     # ------------------------------------------------------------------
     # Public execution methods
@@ -3208,7 +3209,7 @@ class _ResponseOrchestrator:
             # same instance for the same id, so the resilient body's
             # ``_register_bg_execution`` gets back this exact stream — every
             # emit fans out to the wire iterator below.
-            wire_stream = await streams.get_or_create(ctx.response_id)
+            wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
 
             async def _resilient_stream_fallback() -> None:
                 # In-process fallback if ``_start_resilient_background`` cannot
@@ -3244,7 +3245,7 @@ class _ResponseOrchestrator:
                         # runtime_state record so a later GET (and the deferred
                         # persistence-failure stamping) observes the same object
                         # the GET read-through serves.
-                        r = await self._runtime_state.get(ctx.response_id) or state.bg_record
+                        r = await self._runtime_state.get(ctx.response_id, ctx.user_id) or state.bg_record
                         if r is None:
                             # No canonical record was registered (e.g. the
                             # handler produced a terminal without a create
@@ -3263,7 +3264,7 @@ class _ResponseOrchestrator:
                         await self._safe_close(wire_stream)
                         await self._drain_deferred_terminal_persist(ctx, state)
                     finally:
-                        await self._runtime_state.discard_pending(ctx.response_id)
+                        await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
 
             # Minimal record only for ``_start_resilient_background``'s parameter
             # shape. The fallback tracks it as unpublished shutdown work until
@@ -3302,10 +3303,10 @@ class _ResponseOrchestrator:
                     disposition=_unified_disposition,
                 )
             except asyncio.CancelledError:
-                await self._runtime_state.discard_pending(ctx.response_id)
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                await self._runtime_state.discard_pending(ctx.response_id)
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
                 if not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.
@@ -3510,7 +3511,7 @@ class _ResponseOrchestrator:
             # Try to remove the record so GET returns 404. Best-effort; the
             # record may already be evicted.
             try:
-                await self._runtime_state.try_evict(ctx.response_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
             ctx.span.end(None)
@@ -3582,7 +3583,7 @@ class _ResponseOrchestrator:
             ctx.response_id,
         )
         try:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         except Exception:  # pylint: disable=broad-exception-caught
             pass
         ctx.span.end(None)
@@ -3899,13 +3900,13 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — sync failures are handled below
         # where we evict before raising HTTP 500.
         if record.is_terminal and not record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
         # §3.1: For sync mode, persistence failure surfaces as HTTP 500.
         # The client never receives a response_id on 500, so evict the record
         # to avoid unbounded memory growth during storage outages.
         if record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             ctx.span.end(record.persistence_exception)
             raise _HandlerError(
                 record.persistence_exception or RuntimeError("Persistence failed")
@@ -4150,7 +4151,7 @@ class _ResponseOrchestrator:
         # the registry returns the SAME instance — every emit fans out to
         # the wire iterator. Bind it on ``record`` so the helpers that read
         # ``record.subject`` (publish, close) target this stream.
-        wire_stream = await streams.get_or_create(response_id)
+        wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
         record.subject = wire_stream
         # Seed the per-attempt sequence counter from the prior persisted
         # event count. On fresh entry the persisted log is empty →
@@ -4166,8 +4167,8 @@ class _ResponseOrchestrator:
         except EventStreamNotFoundError:
             # The previous run completed AND every persisted event has
             # since expired. Start fresh.
-            await streams.delete(response_id)
-            wire_stream = await streams.get_or_create(response_id)
+            await streams.delete(derive_lifecycle_id(response_id, ctx.user_id))
+            wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
             record.subject = wire_stream
             state.next_seq = 0
         except Exception:  # pylint: disable=broad-exception-caught
@@ -4376,5 +4377,5 @@ class _ResponseOrchestrator:
             # Best-effort cleanup of the in-flight record so a later GET does not
             # observe a phantom ``in_progress`` response (no-op for callers that
             # never registered the record, e.g. the streaming path).
-            await self._runtime_state.delete(ctx.response_id)
+            await self._runtime_state.delete(ctx.response_id, ctx.user_id)
             raise

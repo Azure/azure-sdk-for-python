@@ -48,6 +48,32 @@ the full surface.
 | `DELETE` | `/responses/{response_id}` | Delete a stored response |
 | `GET` | `/responses/{response_id}/input_items` | List input items (paginated) |
 
+### User isolation and response identifiers
+
+The host scopes live execution, cancellation, SSE replay, and resilient task
+state by `context.platform_context.user_id_key`. Different users can run the
+same public response ID independently. Anonymous requests use a separate
+partition. The platform must supply trusted identity headers; accepting a
+caller-supplied user header without authentication is not an isolation boundary.
+
+A duplicate `POST /responses` within the same user partition returns
+`409 response_id_conflict` while execution or replay is retained. This does not
+prevent the owner from retrieving, reconnecting to, or cancelling the existing
+response; it is not an idempotent retry of POST.
+With file-backed replay, Core 2.2.1 or later also discovers retained logs after
+restart for admission, authorized replay, and deletion. Missing logs are not
+created by lookups, and expired logs no longer reserve the response ID.
+
+Storage providers must also enforce the supplied `PlatformContext` for response,
+item, and history operations. Runtime partitioning does not make a shared custom
+provider safe. Stored SSE replay requires a successful provider lookup for the
+requesting user before accessing that user's stream.
+
+User-scoped internal identifiers do not change response IDs on the wire.
+Legacy shared task chains and replay logs are not used for identified users;
+drain active work before upgrading. Anonymous identifiers retain their previous
+format for recovery compatibility.
+
 ### TextResponse
 
 The simplest way to return text. Handles the full SSE lifecycle automatically (`response.created` → `response.in_progress` → message/content events → `response.completed`):

@@ -27,11 +27,27 @@
   requires a platform drain window), or `sync` (legacy blocking behaviour).
   Streaming requests use the same strategy for a single flush after stream
   cleanup, without an additional pre-stream flush.
-
+- Partition live execution, cancellation state, SSE streams, and resilient
+  task identifiers by the platform user key. Different users can use the same
+  public response ID independently. Duplicate creation within one user's
+  partition returns HTTP 409 while execution or replay is retained.
+- Require a successful user-scoped provider lookup before replaying stored SSE
+  events; storage errors no longer fall through to cached replay.
+- Require Core 2.2.1 so retained file replay is discovered after restart for
+  duplicate admission, authorized replay, and deletion.
+- Return an error when replay cleanup fails during DELETE and retain ownership
+  state so the owner can retry cleanup.
 - Scoped durable multi-turn task IDs with `FOUNDRY_AGENT_SESSION_GUID` when
   available, preventing recreated same-name sessions from colliding with task
   tombstones. Existing pre-rollout active chains remain resumable through a
   legacy-ID lookup.
+
+### Breaking Changes
+
+- Identified users now use private user-scoped stream and task keys. Existing
+  shared replay logs and task chains are not adopted for those users because
+  their ownership cannot be verified. Drain active work before upgrading.
+  Anonymous lifecycle keys retain their previous format.
 
 ### Other Changes
 

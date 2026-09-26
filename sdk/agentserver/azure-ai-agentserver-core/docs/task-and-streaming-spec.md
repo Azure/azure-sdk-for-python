@@ -2572,7 +2572,7 @@ streams.use_file_backed_replay(cursor_fn=...)                   # configurator (
 #   resolve_state_subdir("streams"); ttl_seconds defaults to 600 (10 min);
 #   serializer/deserializer default to JSON. Explicit args override.
 
-await streams.get(id)                  # raises NotFound if never registered
+await streams.get(id)                  # registered or retained file replay; never creates absent logs
 await streams.get_or_create(id)        # atomic per id
 await streams.delete(id)               # idempotent; installs tombstone
 ```
@@ -2580,12 +2580,19 @@ await streams.delete(id)               # idempotent; installs tombstone
 Six methods total: three sync configurators + three async
 lifecycle methods.
 
-Atomicity: `get_or_create(id)` MUST be safe under concurrent
-callers. The implementation uses a per-id lock to prevent
-split-brain construction when two coroutines race to create the
-same id. The lock is acquired only on the slow path (first
-access for an id); subsequent `get_or_create` calls return the
-cached instance without taking the lock.
+Atomicity: `get(id)`, `get_or_create(id)`, and `delete(id)` MUST
+share a per-id lock within the registry. Lookup, restoration,
+creation, and deletion are serialized, preventing split-brain
+construction for concurrent callers. This guarantee is in-process,
+not cross-process coordination.
+
+With file-backed replay configured, `get(id)` restores an existing
+log even when the id has not been registered in the current process.
+It MUST NOT create an absent log. A restored stream is subject to the
+same close-clock expiry check as a cached stream. File access and lock
+failures propagate instead of being converted to NotFound.
+`delete(id)` also restores and removes a retained log that has not
+yet been loaded after restart.
 
 Tombstones: `delete(id)` causes the next `get(id)` against that
 id to raise `EventStreamNotFoundError`. The registry uses an
@@ -2596,7 +2603,7 @@ not currently a live stream" condition raises
 `EventStreamNotFoundError`. This covers all three paths
 into the missing-stream state:
 
-- the id was never registered;
+- the id has no registered stream or retained file-backed replay log;
 - the id was registered and then explicitly `delete(id)`d;
 - the id was registered, then transitioned to Closed, then the
   TTL-since-close clock elapsed (§46) and the registry
@@ -2627,6 +2634,9 @@ attempt to use an id that is not currently a live stream raises
 Each `use_*` configurator replaces the registry's stream factory
 **globally for the process**. Subsequent `get_or_create(id)` calls
 use the new factory; existing stream instances are unaffected.
+Cold `get(id)` and `delete(id)` lookups restore existing logs only
+when file-backed replay is configured. Switching to an in-memory
+backing disables disk lookup for unregistered ids.
 Configurators are synchronous and idempotent. The default factory
 (if no configurator is called) produces `BroadcastEventStream`
 instances.
@@ -2817,7 +2827,7 @@ EventStreamError                     # base
   ├── EventStreamClosedError         # emit on closed stream
   └── EventStreamNotFoundError       # any "id is not currently a
                                      #   live stream" condition —
-                                     #   never registered, deleted,
+                                     #   no registered or retained stream, deleted,
                                      #   or close-clock elapsed
 ```
 
@@ -2838,7 +2848,7 @@ exception:
 
 | Path to NotFound | Broadcast (live) | Replay (in-memory) | Replay (file-backed) |
 |---|---|---|---|
-| 1. `get(id)` for an id that was never registered. | ✓ | ✓ | ✓ |
+| 1. `get(id)` for an id with no registered stream or retained replay log. | ✓ | ✓ | ✓ (an existing log is restored, not reported missing) |
 | 2. Explicit `streams.delete(id)` → instance removed + registry tombstones the id. Works in ANY state (Active or Closed). | ✓ | ✓ | ✓ (file removed before tombstone) |
 | 3. Closed stream's close-clock elapses (`now >= close_time + ttl_seconds`) → registry tombstones the id. Requires the backing to have been constructed with `ttl_seconds`. | ✗ (no TTL) | ✓ | ✓ (file removed before tombstone) |
 
@@ -3772,21 +3782,30 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (`get`, `get_or_create`, `delete`).
 - **C-STR-REG-2.** Default backing MUST be `BroadcastEventStream`
   (live, no buffer).
-- **C-STR-REG-3.** `get_or_create(id)` MUST be atomic under
-  concurrent callers (per-id lock).
+- **C-STR-REG-3.** `get(id)`, `get_or_create(id)`, and `delete(id)`
+  MUST share a per-id lock within the registry so lookup,
+  restoration, creation, and deletion are serialized.
 - **C-STR-REG-4.** `delete(id)` MUST be idempotent and MUST
   install a tombstone (even for ids that were never registered)
   so a subsequent `get(id)` raises `EventStreamNotFoundError`.
+  With file-backed replay configured, it MUST also remove an existing
+  retained log that has not been loaded in the current process.
+  Backing deletion failures MUST propagate before installing the tombstone,
+  leaving cleanup retryable. This also applies to close-clock expiry cleanup.
 - **C-STR-REG-5.** Tombstone MUST be cleared on the next
   `get_or_create(id)` for the same id.
 - **C-STR-REG-6.** `get(id)` MUST raise `EventStreamNotFoundError`
   for ANY id that is not currently a live stream — whether it
-  was never registered, was explicitly `delete(id)`d, or had its
+  has no registered stream or retained log, was explicitly `delete(id)`d, or had its
   close-clock elapse (§46). `get(id)` MUST NOT itself install a
   tombstone (only `delete(id)` and the close-clock auto-tombstone
   do). There is no `EventStreamGoneError` — that error type has
   been removed; every "id is not live" condition surfaces
   uniformly as `EventStreamNotFoundError`.
+- **C-STR-REG-7.** With file-backed replay configured, `get(id)`
+  MUST restore an existing retained log without creating an absent
+  log and MUST apply the close-clock expiry check after restoration.
+  File access and lock failures MUST propagate, not become NotFound.
 
 ### C-STR-TTL (replay TTL)
 

@@ -26,6 +26,7 @@ def _make_execution(
     status: str = "queued",
     input_items: list[dict] | None = None,
     previous_response_id: str | None = None,
+    user_id_key: str | None = None,
 ) -> ResponseExecution:
     return ResponseExecution(
         response_id=response_id,
@@ -33,6 +34,7 @@ def _make_execution(
         status=status,  # type: ignore[arg-type]
         input_items=input_items,
         previous_response_id=previous_response_id,
+        user_id_key=user_id_key,
     )
 
 
@@ -59,6 +61,55 @@ async def test_add_and_get() -> None:
 async def test_get_nonexistent_returns_none() -> None:
     state = _RuntimeState()
     assert await state.get("unknown_id") is None
+
+
+@pytest.mark.asyncio
+async def test_same_id_records_are_partitioned_by_user() -> None:
+    state = _RuntimeState()
+    response_id = "caresp_shared000000000000000000000000"
+    user_a = _make_execution(response_id, user_id_key="user-A")
+    user_b = _make_execution(response_id, user_id_key="user-B")
+
+    await state.add(user_a)
+    await state.add(user_b)
+
+    assert await state.get(response_id, "user-A") is user_a
+    assert await state.get(response_id, "user-B") is user_b
+    assert await state.get(response_id) is None
+
+
+@pytest.mark.asyncio
+async def test_reserve_rejects_duplicate_live_id_only_within_user() -> None:
+    state = _RuntimeState()
+    response_id = "caresp_reserved0000000000000000000000"
+
+    assert await state.reserve(response_id, "user-A") is True
+    assert await state.reserve(response_id, "user-A") is False
+    assert await state.reserve(response_id, "user-B") is True
+
+    await state.release_reservation(response_id, "user-A")
+    assert await state.reserve(response_id, "user-A") is True
+    assert await state.reserve(response_id, "user-B") is False
+
+
+def test_anonymous_user_isolation_is_not_a_wildcard() -> None:
+    assert _RuntimeState.check_user_isolation(None, None) is True
+    assert _RuntimeState.check_user_isolation(None, "user-A") is False
+
+
+@pytest.mark.asyncio
+async def test_reservation_survives_publication_and_eviction_until_request_cleanup():
+    state = _RuntimeState()
+    record = _make_execution("shared", user_id_key="user-A", status="completed")
+    assert await state.reserve("shared", "user-A")
+    assert await state.add_pending(record)
+    await state.add(record)
+    assert await state.try_evict("shared", "user-A")
+    assert not await state.reserve("shared", "user-A")
+    assert await state.reserve("shared", "user-B")
+    await state.release_reservation("shared", "user-A")
+    assert await state.reserve("shared", "user-A")
+    assert not await state.reserve("shared", "user-B")
 
 
 # ---------------------------------------------------------------------------
