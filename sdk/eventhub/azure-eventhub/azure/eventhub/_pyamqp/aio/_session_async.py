@@ -407,7 +407,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._set_state(new_state)
             await self._wait_for_response(wait, SessionState.UNMAPPED)
         except Exception as exc:  # pylint: disable=broad-except
-            _LOGGER.info("An error occurred when ending the session: %r", exc, extra=self.network_trace_params)
+            _LOGGER.debug("An error occurred when ending the session: %r", exc, extra=self.network_trace_params)
             await self._set_state(SessionState.UNMAPPED)
 
     def create_receiver_link(self, source_address, **kwargs):
