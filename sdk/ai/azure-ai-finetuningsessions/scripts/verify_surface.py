@@ -1,5 +1,7 @@
 """Isolated exhaustive public-surface and raw-operation parity probe."""
 
+# cspell:ignore globalns
+
 from __future__ import annotations
 
 import argparse
