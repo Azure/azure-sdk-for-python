@@ -17,6 +17,7 @@
 
 ### Bugs Fixed
 
+- Fixed a leak of `aiohttp.ClientSession` instances when the async `AmqpOverWebsocket` transport could not connect or its WebSocket failed while closing. ([#49131](https://github.com/Azure/azure-sdk-for-python/issues/49131))
 - Management, send and receive operations now bound AMQP link acquisition by the caller's timeout, rather than timing only the operation that follows it. Previously a link that never became ready could block indefinitely even when a timeout was supplied. Management and send deduct the time spent from the operation itself, so one attempt shares a single budget.
 
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
