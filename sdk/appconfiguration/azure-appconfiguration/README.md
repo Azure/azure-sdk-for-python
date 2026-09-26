@@ -110,6 +110,13 @@ credential = DefaultAzureCredential()
 client = AzureAppConfigurationClient(base_url="your_endpoint_url", credential=credential)
 ```
 
+When using Microsoft Entra ID, the client automatically infers the authentication audience from the endpoint hostname,
+including sovereign cloud and staging endpoints. For example, `https://my-store.appconfig.sovereign.cloud` uses
+`https://appconfig.sovereign.cloud/`, and `https://my-store.azconfig.io` uses `https://azconfig.io/`.
+Unrecognized domains default to `https://appconfig.azure.com/`. To override detection, pass an explicit `audience`
+(including the trailing slash) to the client constructor. This applies to both synchronous and asynchronous clients.
+See [authentication token audiences](https://aka.ms/appconfig/client-token-audience) for details.
+
 #### Use a connection string
 
 Use the [Azure CLI][azure_cli] snippet below to get the connection string from the Configuration Store:
