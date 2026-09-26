@@ -415,6 +415,9 @@ async def fetch_result(
         if response.status_code == 200:
             return response.json()
 
+        if response.status_code == 400:
+            response.raise_for_status()
+
         request_count += 1
         time_elapsed = time.time() - start
         if time_elapsed > RAIService.TIMEOUT:
@@ -443,7 +446,9 @@ async def fetch_result_onedp(client: AIProjectClient, operation_id: str, token: 
         headers = get_common_headers(token)
         try:
             return client.evaluations.operation_results(operation_id, headers=headers)
-        except HttpResponseError:
+        except HttpResponseError as error:
+            if error.status_code == 400:
+                raise
             request_count += 1
             time_elapsed = time.time() - start
             if time_elapsed > RAIService.TIMEOUT:

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.18.8 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately; pending responses and other retry behavior are unchanged.
+
 ## 1.18.7 (2026-09-25)
 
 ### Breaking Changes
