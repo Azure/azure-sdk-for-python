@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Updated internal statsbeat routing to follow the customer's effective ingestion route after an accepted redirect so EU SDK statistics are reported to the EU statsbeat destination
+  ([#48817](https://github.com/Azure/azure-sdk-for-python/pull/48817))
 - Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`
@@ -29,9 +31,7 @@
   ([#48812](https://github.com/Azure/azure-sdk-for-python/pull/48812))
 
 ### Other Changes
-- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string
-  override values, list-valued matching conditions, and caller-specified value conversion while preserving existing
-  boolean feature-flag behavior.
+- Extend OneSettings configuration evaluation to parse JSON-encoded feature settings and support explicit string override values, list-valued matching conditions, and caller-specified value conversion while preserving existing boolean feature-flag behavior.
   ([#48595](https://github.com/Azure/azure-sdk-for-python/pull/48595))
 
 ## 1.0.0b56 (2026-08-06)
