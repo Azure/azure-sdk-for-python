@@ -2,6 +2,12 @@
     "CrossLanguagePackageId": "KeyVault",
     "CrossLanguageDefinitionId": {
         "azure.keyvault.administration._generated.models.EkmConnection": "KeyVault.EkmConnection",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpoint": "KeyVault.EkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionState": "KeyVault.EkmPrivateEndpointConnectionState",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointCreateParameters": "KeyVault.EkmPrivateEndpointCreateParameters",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointListResult": "KeyVault.EkmPrivateEndpointListResult",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointOperation": "KeyVault.EkmPrivateEndpointOperation",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointProperties": "KeyVault.EkmPrivateEndpointProperties",
         "azure.keyvault.administration._generated.models.EkmProxyClientCertificateInfo": "KeyVault.EkmProxyClientCertificateInfo",
         "azure.keyvault.administration._generated.models.EkmProxyInfo": "KeyVault.EkmProxyInfo",
         "azure.keyvault.administration._generated.models.FullBackupOperation": "KeyVault.FullBackupOperation",
@@ -31,6 +37,11 @@
         "azure.keyvault.administration._generated.models.RoleScope": "KeyVault.RoleScope",
         "azure.keyvault.administration._generated.models.OperationStatus": "KeyVault.OperationStatus",
         "azure.keyvault.administration._generated.models.SettingTypeEnum": "KeyVault.SettingTypeEnum",
+        "azure.keyvault.administration._generated.models.EkmConnectivityMode": "KeyVault.EkmConnectivityMode",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointOperationType": "KeyVault.EkmPrivateEndpointOperationType",
+        "azure.keyvault.administration._generated.models.OperationState": "Azure.Core.Foundations.OperationState",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointProvisioningState": "KeyVault.EkmPrivateEndpointProvisioningState",
+        "azure.keyvault.administration._generated.models.EkmPrivateEndpointConnectionStatus": "KeyVault.EkmPrivateEndpointConnectionStatus",
         "azure.keyvault.administration._generated.operations.RoleDefinitionsOperations.delete": "KeyVault.RoleDefinitions.delete",
         "azure.keyvault.administration._generated.aio.operations.RoleDefinitionsOperations.delete": "KeyVault.RoleDefinitions.delete",
         "azure.keyvault.administration._generated.operations.RoleDefinitionsOperations.create_or_update": "KeyVault.RoleDefinitions.createOrUpdate",
@@ -80,7 +91,17 @@
         "azure.keyvault.administration._generated.KeyVaultClient.update_ekm_connection": "KeyVault.updateEkmConnection",
         "azure.keyvault.administration._generated.aio.KeyVaultClient.update_ekm_connection": "KeyVault.updateEkmConnection",
         "azure.keyvault.administration._generated.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection",
-        "azure.keyvault.administration._generated.aio.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection"
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection",
+        "azure.keyvault.administration._generated.KeyVaultClient.get_ekm_private_endpoint_operation_status": "KeyVault.getEkmPrivateEndpointOperationStatus",
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.get_ekm_private_endpoint_operation_status": "KeyVault.getEkmPrivateEndpointOperationStatus",
+        "azure.keyvault.administration._generated.KeyVaultClient.begin_create_ekm_private_endpoint": "KeyVault.createEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.begin_create_ekm_private_endpoint": "KeyVault.createEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.KeyVaultClient.begin_delete_ekm_private_endpoint": "KeyVault.deleteEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.begin_delete_ekm_private_endpoint": "KeyVault.deleteEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.KeyVaultClient.get_ekm_private_endpoint": "KeyVault.getEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.get_ekm_private_endpoint": "KeyVault.getEkmPrivateEndpoint",
+        "azure.keyvault.administration._generated.KeyVaultClient.list_ekm_private_endpoints": "KeyVault.listEkmPrivateEndpoints",
+        "azure.keyvault.administration._generated.aio.KeyVaultClient.list_ekm_private_endpoints": "KeyVault.listEkmPrivateEndpoints"
     },
-    "CrossLanguageVersion": "a3023239f547"
+    "CrossLanguageVersion": "7c52c44e1bdf"
 }

@@ -35,7 +35,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
 
-
 # Key under which the original request is stashed on the per-request pipeline context during the challenge flow.
 # Storing this per-request (rather than on the policy instance) prevents the body of one request from leaking into a
 # subsequent request made by the same client.

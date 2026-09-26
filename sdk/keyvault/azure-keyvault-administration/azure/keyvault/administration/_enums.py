@@ -91,3 +91,68 @@ class KeyVaultSettingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type specifier of the setting value."""
 
     BOOLEAN = "boolean"
+
+
+class KeyVaultEkmConnectivityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connectivity mode used to reach the EKM proxy."""
+
+    #: The EKM proxy is reachable over the public internet; the connection's host is a DNS name or IP address.
+    PUBLIC = "Public"
+    #: The EKM proxy is reachable through a private endpoint; the connection's host is the name of a private endpoint.
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+
+
+class KeyVaultEkmPrivateEndpointProvisioningState(  # pylint:disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The provisioning state of an EKM proxy private endpoint."""
+
+    #: The private endpoint has been successfully provisioned.
+    SUCCEEDED = "Succeeded"
+    #: The private endpoint provisioning failed.
+    FAILED = "Failed"
+    #: The private endpoint is being updated.
+    UPDATING = "Updating"
+    #: The private endpoint is being deleted.
+    DELETING = "Deleting"
+
+
+class KeyVaultEkmPrivateEndpointConnectionStatus(  # pylint:disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The status of the connection between an EKM proxy private endpoint and the Private Link Service."""
+
+    #: The connection is awaiting approval by the Private Link Service owner.
+    PENDING = "Pending"
+    #: The connection has been approved by the Private Link Service owner.
+    APPROVED = "Approved"
+    #: The connection has been rejected by the Private Link Service owner.
+    REJECTED = "Rejected"
+    #: The connection has been disconnected by the Private Link Service owner.
+    DISCONNECTED = "Disconnected"
+
+
+class KeyVaultEkmPrivateEndpointOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a long-running EKM proxy private endpoint operation."""
+
+    #: A private endpoint create operation.
+    CREATE = "Create"
+    #: A private endpoint delete operation.
+    DELETE = "Delete"
+
+
+class KeyVaultEkmPrivateEndpointOperationStatus(  # pylint:disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The status of a long-running EKM proxy private endpoint operation."""
+
+    #: The operation has not started.
+    NOT_STARTED = "NotStarted"
+    #: The operation is in progress.
+    RUNNING = "Running"
+    #: The operation has completed successfully.
+    SUCCEEDED = "Succeeded"
+    #: The operation has failed.
+    FAILED = "Failed"
+    #: The operation has been canceled by the user.
+    CANCELED = "Canceled"
