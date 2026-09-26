@@ -1120,6 +1120,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
+        "DSTS",
+        "dstsv",
         "eddsa",
         "Thawte"
       ]

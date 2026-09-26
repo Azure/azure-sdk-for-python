@@ -6,6 +6,8 @@ import base64
 from typing import Dict, MutableMapping, Optional
 from urllib import parse
 
+_DSTS_V2_PATH_SEGMENT = "dstsv2"
+
 
 class HttpChallenge(object):
     """An object representing the content of a Key Vault authentication challenge.
@@ -66,17 +68,34 @@ class HttpChallenge(object):
         if "authorization" not in self._parameters and "authorization_uri" not in self._parameters:
             raise ValueError("Invalid challenge parameters")
 
-        authorization_uri = self.get_authorization_server()
-        # the authorization server URI should look something like https://login.windows.net/tenant-id
-        raw_uri_path = str(parse.urlparse(authorization_uri).path)
-        uri_path = raw_uri_path.lstrip("/")
-        self.tenant_id = uri_path.split("/", maxsplit=1)[0] or None
+        self.tenant_id = self._parse_tenant_id(self.get_authorization_server())
 
         # if the response headers were supplied
         if response_headers:
             # get the message signing key and message key encryption key from the headers
             self.server_signature_key = response_headers.get("x-ms-message-signing-key", None)
             self.server_encryption_key = response_headers.get("x-ms-message-encryption-key", None)
+
+    @staticmethod
+    def _parse_tenant_id(authorization_uri: str) -> "Optional[str]":
+        """Extracts the tenant ID from the authorization server URI of a challenge.
+
+        For Microsoft Entra ID authorities the tenant ID is the first path segment, for example
+        https://login.microsoftonline.com/<tenant-id>. For DSTSv2 authorities the first path segment is the literal
+        "dstsv2" and the tenant ID is the second path segment, for example
+        https://uswest2-passive-dsts.dsts.core.windows.net/dstsv2/<tenant-id>.
+
+        :param str authorization_uri: The authorization server URI from the challenge.
+
+        :returns: The tenant ID, or None if the URI does not contain one.
+        :rtype: str or None
+        """
+        raw_uri_path = str(parse.urlparse(authorization_uri).path)
+        path_segments = raw_uri_path.lstrip("/").split("/")
+        tenant_id = path_segments[0]
+        if tenant_id.lower() == _DSTS_V2_PATH_SEGMENT and len(path_segments) > 1 and path_segments[1]:
+            tenant_id = path_segments[1]
+        return tenant_id or None
 
     def is_bearer_challenge(self) -> bool:
         """Tests whether the HttpChallenge is a Bearer challenge.
