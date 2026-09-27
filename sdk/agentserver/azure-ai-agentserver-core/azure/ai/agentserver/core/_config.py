@@ -46,6 +46,13 @@ _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 _DEFAULT_WS_PING_INTERVAL = 0.0
 
 
+def _validate_session_guid(session_guid: str, is_hosted: bool) -> None:
+    if is_hosted and session_guid and re.fullmatch(r"[0-9a-f]{32}", session_guid) is None:
+        raise ValueError(
+            "FOUNDRY_AGENT_SESSION_GUID must be a 32-character lowercase hexadecimal GUID"
+        )
+
+
 # ======================================================================
 # AgentConfig — resolved environment values
 # ======================================================================
@@ -132,10 +139,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
 
         is_hosted = bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, ""))
         session_guid = os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_GUID, "")
-        if is_hosted and session_guid and re.fullmatch(r"[0-9a-f]{32}", session_guid) is None:
-            raise ValueError(
-                "FOUNDRY_AGENT_SESSION_GUID must be a 32-character lowercase hexadecimal GUID"
-            )
+        _validate_session_guid(session_guid, is_hosted)
 
         return cls(
             agent_name=agent_name,

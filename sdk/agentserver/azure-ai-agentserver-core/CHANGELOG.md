@@ -9,7 +9,11 @@
   restoring hosted agent processes. Applications can register
   `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
   calls are serialized and idempotent, and restored session environment
-  overrides are applied before the after-restore callback runs.
+  overrides are applied before the after-restore callback runs. Protocol
+  subclasses can extend the lifecycle through protected hooks without
+  bypassing the host's required hydration and rollback behavior. Later
+  materializations reset omitted overrides to their captured values and expose
+  the restored session through the ambient request context during callbacks.
 
 ## 2.2.0 (2026-09-23)
 

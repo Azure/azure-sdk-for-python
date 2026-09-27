@@ -26,6 +26,12 @@ from . import _config, _tracing
 from ._errors import create_error_response
 from ._lifecycle import AgentSessionContext, _LifecycleState
 from ._middleware import InboundRequestLoggingMiddleware
+from ._request_context import (
+    FoundryAgentRequestContext,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._types import MiddlewareFactory, P
@@ -428,17 +434,24 @@ class AgentServerHost(Starlette):
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error shutting down TaskManager", exc_info=True)
 
-        # Register reserved platform routes first so callers cannot shadow them.
+        async def _before_snapshot_route(request: Request) -> Response:
+            return await AgentServerHost._before_snapshot_endpoint(self, request)
+
+        async def _after_restore_route(request: Request) -> Response:
+            return await AgentServerHost._after_restore_endpoint(self, request)
+
+        # Bind reserved routes to the framework implementation so subclasses
+        # can extend only through the protected lifecycle hooks.
         all_routes: list[Any] = [
             Route(
                 _BEFORE_SNAPSHOT_PATH,
-                self._before_snapshot_endpoint,
+                _before_snapshot_route,
                 methods=["POST"],
                 name="before_snapshot",
             ),
             Route(
                 _AFTER_RESTORE_PATH,
-                self._after_restore_endpoint,
+                _after_restore_route,
                 methods=["POST"],
                 name="after_restore",
             ),
@@ -534,6 +547,30 @@ class AgentServerHost(Starlette):
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)
     # ------------------------------------------------------------------
+
+    async def _before_snapshot(self) -> None:
+        """Extend snapshot preparation in protocol-specific subclasses.
+
+        This hook runs before the application callback registered with
+        :meth:`before_snapshot_handler`. The host retains responsibility for
+        serialization, retry handling, and lifecycle state.
+
+        Cooperative subclasses should call ``await super()._before_snapshot()``
+        before performing their own work.
+        """
+
+    async def _after_restore(self, context: AgentSessionContext) -> None:
+        """Extend restoration in protocol-specific subclasses.
+
+        This hook runs after mandatory environment and configuration hydration
+        and before the application callback registered with
+        :meth:`after_restore_handler`. The host retains responsibility for
+        validation, rollback, idempotency, and session affinity.
+
+        :param context: Hydrated restored-session context.
+        :type context: AgentSessionContext
+        """
+        del context
 
     def before_snapshot_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
         """Register a function to release process state before a memory snapshot.
@@ -670,7 +707,7 @@ class AgentServerHost(Starlette):
 
     async def _before_snapshot_endpoint(self, request: Request) -> Response:
         try:
-            await self._read_json_object(request)
+            await AgentServerHost._read_json_object(request)
         except ValueError:
             return create_error_response(
                 "invalid_before_snapshot_request",
@@ -682,6 +719,7 @@ class AgentServerHost(Starlette):
             if self._lifecycle.before_snapshot_completed:
                 return JSONResponse({"status": "ok"})
             try:
+                await self._before_snapshot()
                 if self._lifecycle.before_snapshot_fn is not None:
                     await self._lifecycle.before_snapshot_fn()
             except Exception:  # pylint: disable=broad-exception-caught
@@ -696,8 +734,11 @@ class AgentServerHost(Starlette):
 
     async def _after_restore_endpoint(self, request: Request) -> Response:
         try:
-            payload = await self._read_json_object(request)
-            context = self._parse_session_context(payload)
+            payload = await AgentServerHost._read_json_object(request)
+            context = AgentServerHost._parse_session_context(payload)
+            session_guid = context.session_env_overrides.get(_SESSION_GUID_ENV)
+            if session_guid is not None:
+                _config._validate_session_guid(session_guid, self.config.is_hosted)  # pylint: disable=protected-access
         except ValueError:
             return create_error_response(
                 "invalid_after_restore_request",
@@ -717,33 +758,60 @@ class AgentServerHost(Starlette):
                 if previous_context.restore_id == context.restore_id:
                     return JSONResponse({"status": "ok"})
 
-            environment_updates = dict(context.session_env_overrides)
-            environment_updates.setdefault(_SESSION_ID_ENV, context.session_id)
+            effective_environment = dict(context.session_env_overrides)
+            effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
+            environment_variables = (
+                self._lifecycle.applied_environment_variables
+                | effective_environment.keys()
+            )
             previous_environment = {
                 key: os.environ.get(key, _MISSING_ENV)
-                for key in environment_updates
+                for key in environment_variables
             }
+            captured_environment = dict(self._lifecycle.captured_environment_values)
+            for key, value in previous_environment.items():
+                if key not in captured_environment:
+                    captured_environment[key] = (
+                        None if value is _MISSING_ENV else str(value)
+                    )
             previous_session_id = self.config.session_id
             previous_session_guid = self.config.session_guid
 
-            for key, value in environment_updates.items():
-                os.environ[key] = value
-            self.config.session_id = context.session_id
-            if _SESSION_GUID_ENV in environment_updates:
-                self.config.session_guid = environment_updates[_SESSION_GUID_ENV]
-
             try:
-                if self._lifecycle.after_restore_fn is not None:
-                    await self._lifecycle.after_restore_fn(context)
+                for key in environment_variables:
+                    value = effective_environment.get(key, captured_environment[key])
+                    if value is None:
+                        os.environ.pop(key, None)
+                    else:
+                        os.environ[key] = value
+                self.config.session_id = context.session_id
+                self.config.session_guid = os.environ.get(_SESSION_GUID_ENV, "")
+
+                current_request_context = get_request_context()
+                request_context_token = set_request_context(
+                    FoundryAgentRequestContext(
+                        call_id=current_request_context.call_id,
+                        user_id=current_request_context.user_id,
+                        session_id=context.session_id,
+                    )
+                )
+                try:
+                    await self._after_restore(context)
+                    if self._lifecycle.after_restore_fn is not None:
+                        await self._lifecycle.after_restore_fn(context)
+                finally:
+                    reset_request_context(request_context_token)
             except asyncio.CancelledError:
-                self._restore_lifecycle_environment(
+                AgentServerHost._restore_lifecycle_environment(
+                    self,
                     previous_environment,
                     previous_session_id,
                     previous_session_guid,
                 )
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
-                self._restore_lifecycle_environment(
+                AgentServerHost._restore_lifecycle_environment(
+                    self,
                     previous_environment,
                     previous_session_id,
                     previous_session_guid,
@@ -756,6 +824,10 @@ class AgentServerHost(Starlette):
                 )
 
             self._lifecycle.restored_session_context = context
+            self._lifecycle.captured_environment_values = captured_environment
+            self._lifecycle.applied_environment_variables = set(
+                effective_environment
+            )
             self._lifecycle.before_snapshot_completed = False
             return JSONResponse({"status": "ok"})
 

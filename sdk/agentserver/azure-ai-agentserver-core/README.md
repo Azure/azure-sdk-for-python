@@ -155,6 +155,21 @@ request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
 
+Protocol-specific hosts can override the protected `_before_snapshot` and
+`_after_restore` methods to extend the lifecycle before application callbacks
+run. The host still performs validation, session environment and configuration
+hydration, serialization, rollback, and idempotency, so subclass extensions
+cannot accidentally omit those required steps. Overrides should call the
+corresponding `super()` method first so multiple protocol layers compose
+cooperatively:
+
+```python
+class ProtocolAgentHost(AgentServerHost):
+    async def _after_restore(self, context: AgentSessionContext):
+        await super()._after_restore(context)
+        await self._rebuild_protocol_state(context)
+```
+
 ### Durable state storage
 
 `FoundryStateStore` is a durable, server-backed key-value store for agent state
