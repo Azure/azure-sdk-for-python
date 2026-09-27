@@ -1,5 +1,16 @@
 # Release History
 
+## 2.3.0b1 (Unreleased)
+
+### Features Added
+
+- Added the private `POST /_agent/before-snapshot` and
+  `POST /_agent/after-restore` lifecycle endpoints for safely capturing and
+  restoring hosted agent processes. Applications can register
+  `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
+  calls are serialized and idempotent, and restored session environment
+  overrides are applied before the after-restore callback runs.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes
