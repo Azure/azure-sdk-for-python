@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.computeworkloadmanager import WorkloadManagerClient
+from azure.mgmt.computeworkloadmanager import ComputeWorkloadManagerMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestWorkloadManagerRuntimeLinksOperations(AzureMgmtRecordedTestCase):
+class TestComputeWorkloadManagerMgmtRuntimeBindingsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(WorkloadManagerClient)
+        self.client = self.create_mgmt_client(ComputeWorkloadManagerMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_links_get(self, resource_group):
-        response = self.client.runtime_links.get(
+    def test_runtime_bindings_get(self, resource_group):
+        response = self.client.runtime_bindings.get(
             resource_group_name=resource_group.name,
             space_name="str",
-            link_name="str",
+            binding_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,23 +32,17 @@ class TestWorkloadManagerRuntimeLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_links_begin_create_or_update(self, resource_group):
-        response = self.client.runtime_links.begin_create_or_update(
+    def test_runtime_bindings_begin_create_or_update(self, resource_group):
+        response = self.client.runtime_bindings.begin_create_or_update(
             resource_group_name=resource_group.name,
             space_name="str",
-            link_name="str",
+            binding_name="str",
             resource={
                 "location": "str",
                 "id": "str",
+                "kind": "str",
                 "name": "str",
-                "properties": {
-                    "orchestratorBindingResourceId": "str",
-                    "capacityProfile": {"maximumNodes": 0, "minimumNodes": 0},
-                    "executionBindingResourceId": "str",
-                    "integrationProfile": {"managedIdentityResourceId": "str"},
-                    "providerResourceId": "str",
-                    "provisioningState": "str",
-                },
+                "properties": "runtime_binding_properties",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -67,13 +61,16 @@ class TestWorkloadManagerRuntimeLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_links_begin_update(self, resource_group):
-        response = self.client.runtime_links.begin_update(
+    def test_runtime_bindings_begin_update(self, resource_group):
+        response = self.client.runtime_bindings.begin_update(
             resource_group_name=resource_group.name,
             space_name="str",
-            link_name="str",
+            binding_name="str",
             properties={
-                "properties": {"capacityProfile": {"maximumNodes": 0, "minimumNodes": 0}},
+                "properties": {
+                    "identityProfile": {"executionIdentity": {"scope": "str"}},
+                    "networkProfile": {"egressMode": "str", "subnetResourceId": "str"},
+                },
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -83,11 +80,11 @@ class TestWorkloadManagerRuntimeLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_links_begin_delete(self, resource_group):
-        response = self.client.runtime_links.begin_delete(
+    def test_runtime_bindings_begin_delete(self, resource_group):
+        response = self.client.runtime_bindings.begin_delete(
             resource_group_name=resource_group.name,
             space_name="str",
-            link_name="str",
+            binding_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,8 +92,8 @@ class TestWorkloadManagerRuntimeLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runtime_links_list_by_workload_space(self, resource_group):
-        response = self.client.runtime_links.list_by_workload_space(
+    def test_runtime_bindings_list_by_workload_space(self, resource_group):
+        response = self.client.runtime_bindings.list_by_workload_space(
             resource_group_name=resource_group.name,
             space_name="str",
         )
