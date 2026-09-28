@@ -18,7 +18,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     AgentsOperations as GeneratedAgentsOperations,
-    BetaAgentsOperations as BetaAgentsOperationsGenerated,
     JSON,
     _Unset,
 )
@@ -359,9 +358,6 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
-
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom operations for beta agent optimization jobs."""
 
     @overload
     def begin_create_optimization_job(

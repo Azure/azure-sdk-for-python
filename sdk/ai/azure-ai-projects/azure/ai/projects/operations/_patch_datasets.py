@@ -46,7 +46,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.DataGenerationJob,
+        job: _models.DataGenerationJobInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -76,7 +76,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
@@ -84,7 +84,7 @@ class BetaDatasetsOperations(BetaDatasetsOperationsGenerated):
         """Create a data generation job.
 
         :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str

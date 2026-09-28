@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, List
-from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
+from ._patch_agents_async import AgentsOperations
 from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
 from ._patch_datasets_async import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluators_async import BetaEvaluatorsOperations
@@ -28,6 +28,7 @@ from .._realtime import (
     ServerEvent,
 )
 from ._operations import (
+    BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
