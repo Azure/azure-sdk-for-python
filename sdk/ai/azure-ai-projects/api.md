@@ -101,7 +101,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -111,7 +111,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -121,7 +121,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
+            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @distributed_trace_async
         async def cancel_optimization_job(
@@ -929,36 +929,6 @@ namespace azure.ai.projects.aio.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @overload
-        async def begin_create_optimization_job(
-                self, 
-                job: AgentOptimizationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
-
-        @overload
-        async def begin_create_optimization_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
-
-        @overload
-        async def begin_create_optimization_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
 
         @distributed_trace_async
         async def create_from_prompt(
@@ -3310,7 +3280,7 @@ namespace azure.ai.projects.models
         base_url: Optional[str]
         project_connection_id: Optional[str]
         send_credentials_for_agent_card: Optional[bool]
-        type: Literal[ToolType.A2_A]
+        type: Literal[ToolType.A2A]
 
         @overload
         def __init__(
@@ -3336,7 +3306,7 @@ namespace azure.ai.projects.models
         project_connection_id: Optional[str]
         send_credentials_for_agent_card: Optional[bool]
         tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.A2_A]
+        type: Literal[ToolboxToolType.A2A]
 
         @overload
         def __init__(
@@ -14528,8 +14498,8 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        A2A = "a2a"
         A2A_PREVIEW = "a2a_preview"
-        A2_A = "a2a"
         APPLY_PATCH = "apply_patch"
         AZURE_AI_SEARCH = "azure_ai_search"
         AZURE_FUNCTION = "azure_function"
@@ -14764,8 +14734,8 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        A2A = "a2a"
         A2A_PREVIEW = "a2a_preview"
-        A2_A = "a2a"
         AZURE_AI_SEARCH = "azure_ai_search"
         BROWSER_AUTOMATION = "browser_automation"
         BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
@@ -17494,7 +17464,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[AgentOptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -17504,7 +17474,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[AgentOptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @overload
         def begin_create_optimization_job(
@@ -17514,7 +17484,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> LROPoller[AgentOptimizationJobResult]: ...
+            ) -> AgentOptimizationLROPoller: ...
 
         @distributed_trace
         def cancel_optimization_job(
@@ -18253,36 +18223,6 @@ namespace azure.ai.projects.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @overload
-        def begin_create_optimization_job(
-                self, 
-                job: AgentOptimizationJob, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
-
-        @overload
-        def begin_create_optimization_job(
-                self, 
-                job: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
-
-        @overload
-        def begin_create_optimization_job(
-                self, 
-                job: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
 
         @distributed_trace
         def create_from_prompt(

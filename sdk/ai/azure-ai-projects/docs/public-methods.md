@@ -6,11 +6,11 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 193 unique public methods:
+There are a total of 192 unique public methods:
 
 - 5 stable methods on the client
 - 68 stable methods on top-level sub-clients
-- 120 beta methods on nested beta sub-clients
+- 119 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
@@ -30,7 +30,7 @@ There are a total of 193 unique public methods:
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
 | `beta.agent_insight_monitors` | BetaAgentInsightMonitorsOperations | 13 |
-| `beta.agents` | BetaAgentsOperations | 2 |
+| `beta.agents` | BetaAgentsOperations | 1 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -62,7 +62,7 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.agents.begin_create_optimization_job
+.agents.begin_create_optimization_job*
 .agents.cancel_optimization_job
 .agents.create_session
 .agents.create_version*
@@ -158,7 +158,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.agent_insight_monitors.update
 .beta.agent_insight_monitors.update_insight
 
-.beta.agents.begin_create_optimization_job*
 .beta.agents.create_from_prompt
 
 .beta.datasets.begin_create_generation_job*

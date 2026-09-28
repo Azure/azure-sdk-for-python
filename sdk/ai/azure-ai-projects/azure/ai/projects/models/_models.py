@@ -424,8 +424,8 @@ class A2AProtocolConfiguration(_Model):
 class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An agent implementing the A2A protocol.
 
-    :ivar type: The type of the tool. Always ``"a2a"``. Required. A2_A.
-    :vartype type: str or ~azure.ai.projects.models.A2_A
+    :ivar type: The type of the tool. Always ``"a2a"``. Required. A2A.
+    :vartype type: str or ~azure.ai.projects.models.A2A
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -443,8 +443,8 @@ class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-s
     :vartype a2a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
     """
 
-    type: Literal[ToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``\"a2a\"``. Required. A2_A."""
+    type: Literal[ToolType.A2A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``\"a2a\"``. Required. A2A."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
     agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -483,7 +483,7 @@ class A2ATool(Tool, discriminator="a2a"):  # pylint: disable=docstring-keyword-s
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2_A  # type: ignore
+        self.type = ToolType.A2A  # type: ignore
 
 
 class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -497,8 +497,8 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. A2_A.
-    :vartype type: str or ~azure.ai.projects.models.A2_A
+    :ivar type: Required. A2A.
+    :vartype type: str or ~azure.ai.projects.models.A2A
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -516,8 +516,8 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
     :vartype a2a_version: str or ~azure.ai.projects.models.A2AProtocolVersion
     """
 
-    type: Literal[ToolboxToolType.A2_A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A2_A."""
+    type: Literal[ToolboxToolType.A2A] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A2A."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
     agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -559,7 +559,7 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.A2_A  # type: ignore
+        self.type = ToolboxToolType.A2A  # type: ignore
 
 
 class ActivityProtocolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
