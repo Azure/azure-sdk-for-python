@@ -1,5 +1,29 @@
 # Release History
 
+## 2.2.0b3 (Unreleased)
+
+### Bugs Fixed
+
+- Partition live execution, cancellation state, SSE streams, and resilient
+  task identifiers by the platform user key. Different users can use the same
+  public response ID independently. Duplicate creation within one user's
+  partition returns HTTP 409 while execution or replay is retained.
+- Require a successful user-scoped provider lookup before replaying stored SSE
+  events; storage errors no longer fall through to cached replay.
+- Require Core 2.2.1 so retained file replay is discovered after restart for
+  duplicate admission, authorized replay, and deletion.
+- Return an error when replay cleanup fails during DELETE and retain ownership
+  state so the owner can retry cleanup.
+- Reserve the caller-scoped response ID throughout DELETE cleanup so a new
+  POST cannot reuse the ID before stream, runtime, and provider cleanup finish.
+
+### Breaking Changes
+
+- Identified users now use private user-scoped stream and task keys. Existing
+  shared replay logs and task chains are not adopted for those users because
+  their ownership cannot be verified. Drain active work before upgrading.
+  Anonymous lifecycle keys retain their previous format.
+
 ## 2.2.0b2 (2026-09-24)
 
 ### Features Added

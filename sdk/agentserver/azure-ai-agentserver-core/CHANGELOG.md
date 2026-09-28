@@ -1,5 +1,17 @@
 # Release History
 
+## 2.2.1 (Unreleased)
+
+### Bugs Fixed
+
+- Restore existing file-backed replay logs during stream lookup and deletion
+  after restart without creating absent logs. Serialize lookup, creation, and
+  deletion for the same stream ID within the registry.
+- Propagate replay-file deletion failures without installing a successful
+  deletion tombstone, allowing cleanup to be retried.
+- Make Windows replay lock-file removal failures retryable without closing
+  an already-released file descriptor or reporting successful deletion.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes

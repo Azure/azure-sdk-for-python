@@ -547,6 +547,8 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         self._buffer: list[_BufferedEvent] = []
         self._highest_cursor: Optional[int] = None
         self._evictions_since_compaction = 0
+        self._lock_fd: Optional[int] = None
+        self._lock_path: Optional[Path] = None
 
         # Acquire single-writer lock + open file for append (rule 32).
         self._path.parent.mkdir(parents=True, exist_ok=True)
@@ -693,17 +695,19 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
 
     def _cleanup_locks(self) -> None:
         try:
-            if fcntl is not None:
-                fcntl.flock(self._file.fileno(), fcntl.LOCK_UN)
-            else:
+            # Closing the file also releases a POSIX flock. Keep each remaining
+            # resource recorded until its cleanup succeeds so retries are safe.
+            if not self._file.closed:
+                self._file.close()
+            if self._lock_fd is not None:
                 os.close(self._lock_fd)
+                self._lock_fd = None
+            if self._lock_path is not None:
                 self._lock_path.unlink(missing_ok=True)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        try:
-            self._file.close()
-        except Exception:  # pylint: disable=broad-except
-            pass
+                self._lock_path = None
+        except OSError:
+            logger.error("FileBackedReplayEventStream: failed to release resources for %s", self._path, exc_info=True)
+            raise
 
     def _evict_expired(self) -> None:
         if self._ttl_seconds is None:
@@ -836,8 +840,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             self._cleanup_locks()
             try:
                 self._path.unlink(missing_ok=True)
-            except Exception:  # pylint: disable=broad-except
-                pass
+            except OSError:
+                logger.error("FileBackedReplayEventStream: failed to delete %s", self._path, exc_info=True)
+                raise
 
 
 __all__ = [
