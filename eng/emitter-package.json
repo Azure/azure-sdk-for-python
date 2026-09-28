@@ -14,7 +14,7 @@
     "@typespec/streams": "~0.86.0",
     "@typespec/xml": "~0.86.0",
     "@typespec/openapi3": "^1.16.0",
-    "@typespec/http-client-python": "^0.37.3",
+    "@typespec/http-client-python": "0.38.0",
     "@azure-tools/typespec-autorest": "~0.72.0",
     "@azure-tools/typespec-azure-core": "~0.72.0",
     "@azure-tools/typespec-azure-resource-manager": "~0.72.0",

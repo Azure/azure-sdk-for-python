@@ -6,6 +6,9 @@
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
+- Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
+- Fixed artifact cache reads failing on transient Windows checksum-sharing errors during initial validation.
+- Improved the missing Azure CLI error reported when initializing the artifact cache.
 - Fixed `MLClient.jobs.download(..., output_name=...)` returning without downloading named data outputs ([#48941](https://github.com/Azure/azure-sdk-for-python/issues/48941)).
 - Fixed `MLClient.jobs.stream()` failing for jobs using identity-based or SAS-authenticated datastores.
 - Fixed datastore-backed log streaming for output paths ending in a slash and corrected log URL generation for Azure Data Lake Storage Gen2.

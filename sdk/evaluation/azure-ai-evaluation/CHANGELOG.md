@@ -1,14 +1,18 @@
 # Release History
 
-## 1.18.7 (Unreleased)
-
-### Features Added
+## 1.18.7 (2026-09-25)
 
 ### Breaking Changes
 
+- Removed the `aoai_output_items_page_size` option from `evaluate` and its input validation.
+  Callers using this option must remove it; it no longer configures native Azure OpenAI grader output retrieval.
+  Output-item requests again use a fixed page size of 100 and the existing OpenAI client's configured retry
+  policy, without adaptive page-size reduction or a separate SDK-level retry budget. All cursor pages are
+  still retrieved, and result ordering and missing-row alignment are unchanged.
+
 ### Bugs Fixed
 
-### Other Changes
+- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and converting corresponding typed input values to strings during request construction, including fields governed by a schema-valued `additionalProperties`.
 
 ## 1.18.6 (2026-09-23)
 
