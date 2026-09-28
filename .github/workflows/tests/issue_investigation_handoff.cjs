@@ -17,6 +17,7 @@ const context = {
 };
 const issueUrl = "https://api.github.com/repos/example/sdk/issues/42";
 const analysis = { issue_url: issueUrl, body: "## Agentic Issue Triage\n\nAnalysis" };
+const receipt = { type: "add_comment", url: "https://github.com/example/sdk/issues/42#issuecomment-99" };
 let cases = 0;
 
 async function run(changes = {}, comment = analysis, event = context, inputs = {}) {
@@ -24,12 +25,22 @@ async function run(changes = {}, comment = analysis, event = context, inputs = {
   const calls = [];
   const github = { rest: { issues: {
     get: async request => { calls.push(request); return { data: issue }; },
-    getComment: async request => { calls.push(request); return { data: comment }; },
+    getComment: async request => {
+      calls.push(request);
+      return { data: inputs.comments ? inputs.comments[request.comment_id] : comment };
+    },
   } } };
-  const result = await prepareHandoff({ github, context: event, issueNumber: "42", commentId: "99", ...inputs });
+  const result = await prepareHandoff({
+    github, context: event, issueNumber: "42",
+    appliedItems: [receipt],
+    agentOutput: { items: [{ type: "mention_owners" }], errors: [] },
+    ownerNotification: "success",
+    normalizeAssignment: item => ({ success: true, issueNumber: item.issue_number, assignees: item.assignees }),
+    ...inputs,
+  });
   assert.deepEqual(calls[0], { ...context.repo, issue_number: 42 });
   if (result.output) {
-    assert.deepEqual(calls[1], { ...context.repo, comment_id: 99 });
+    assert.ok(calls.length >= 2);
     assert.deepEqual(result.output.items, [{
       type: "dispatch_workflow", workflow_name: "issue-investigation",
       inputs: { issue_number: "42" }, ref: "refs/heads/main",
@@ -73,19 +84,59 @@ async function main() {
   }
   for (const value of ["", "0", "-1", "42suffix", "1.5", "9007199254740992"]) {
     await assert.rejects(run({}, analysis, context, { issueNumber: value }), /positive integer/);
-    await assert.rejects(run({}, analysis, context, { commentId: value }), /positive integer/);
+    await assert.rejects(run({}, analysis, context, {
+      appliedItems: [{ ...receipt, url: `https://github.com/example/sdk/issues/42#issuecomment-${value}` }],
+    }), /positive integer|comment receipt/);
     cases += 2;
   }
   await assert.rejects(run({ labels: ["customer-reported"] }), /names or colors/);
   await assert.rejects(run({}, { ...analysis, issue_url: issueUrl + "0" }), /does not belong/);
-  await assert.rejects(run({}, { ...analysis, body: "No analysis was posted" }), /does not belong/);
+  await assert.rejects(run({}, { ...analysis, body: "No analysis was posted" }), /No applied triage analysis/);
   await assert.rejects(run({}, analysis, { ...context, payload: {} }), /default branch/);
   const unavailable = { rest: { issues: { get: async () => { throw new Error("API unavailable"); } } } };
   await assert.rejects(
-    prepareHandoff({ github: unavailable, context, issueNumber: "42", commentId: "99" }),
+    prepareHandoff({
+      github: unavailable, context, issueNumber: "42",
+      appliedItems: [receipt], agentOutput: { items: [{ type: "mention_owners" }], errors: [] },
+    }),
     /API unavailable/
   );
   cases += 5;
+
+  const singleOwner = {
+    appliedItems: [
+      { type: "assign_to_user" },
+      receipt,
+      { ...receipt, url: "https://github.com/example/sdk/issues/42#issuecomment-100" },
+    ],
+    agentOutput: { items: [{ type: "assign_to_user", issue_number: 42, assignees: ["Owner"] }], errors: [] },
+    ownerNotification: "skipped",
+    comments: {
+      99: { ...analysis, body: "Routing to the assigned owner." },
+      100: analysis,
+    },
+  };
+  assert.ok((await run({ assignees: [{ login: "owner" }] }, analysis, context, singleOwner)).output);
+  await assert.rejects(run({}, analysis, context, singleOwner), /assignment route/);
+  await assert.rejects(run({ assignees: [{ login: "someone-else" }] }, analysis, context, singleOwner), /assignment route/);
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, appliedItems: singleOwner.appliedItems.filter(item => item.type !== "assign_to_user"),
+  }), /assignment route/);
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, agentOutput: { items: [{ type: "assign_to_user", issue_number: 43, assignees: ["owner"] }] },
+  }), /assignment route/);
+  await assert.rejects(run({ assignees: [{ login: "owner" }] }, analysis, context, {
+    ...singleOwner, appliedItems: singleOwner.appliedItems.slice(0, 2),
+  }), /No applied triage analysis/);
+  for (const ownerNotification of ["skipped", "failure", "cancelled"]) {
+    await assert.rejects(run({}, analysis, context, { ownerNotification }), /notification did not succeed/);
+  }
+  for (const type of ["report_incomplete", "missing_tool", "missing_data"]) {
+    await assert.rejects(run({}, analysis, context, { agentOutput: { items: [{ type }] } }), /incomplete work/);
+  }
+  await assert.rejects(run({}, analysis, context, { appliedItems: [] }), /No applied triage analysis/);
+  await assert.rejects(run({}, analysis, context, { agentOutput: { items: [], errors: ["failure"] } }), /Invalid triage/);
+  cases += 13;
 
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "investigation-handoff-"));
   const file = path.join(directory, "output.json");

@@ -234,7 +234,7 @@ jobs:
       needs.safe_outputs.outputs.process_safe_outputs_status == 'success' &&
       fromJSON(needs.safe_outputs.outputs.process_safe_outputs_items_applied || '0') > 0 &&
       needs.safe_outputs.outputs.comment_id != '' &&
-      needs.mention_owners.result == 'success'
+      (needs.mention_owners.result == 'success' || needs.mention_owners.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -252,12 +252,23 @@ jobs:
         uses: github/gh-aw-actions/setup@v0.88.8
         with:
           destination: ${{ runner.temp }}/gh-aw/actions
+      - name: Download applied triage receipts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: safe-outputs-items
+          path: ${{ runner.temp }}/triage-receipts
+      - name: Download triage routing requests
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: "{agent,agent-output-fallback}"
+          merge-multiple: true
+          path: ${{ runner.temp }}/triage-requests
       - name: Validate applied triage and dispatch investigation
         id: handoff
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           TRIAGE_ISSUE_NUMBER: ${{ github.event.issue.number || github.event.inputs.issue_number }}
-          TRIAGE_COMMENT_ID: ${{ needs.safe_outputs.outputs.comment_id }}
+          TRIAGE_OWNER_NOTIFICATION: ${{ needs.mention_owners.result }}
           GH_AW_DETECTION_CONCLUSION: ${{ needs.detection.outputs.detection_conclusion }}
           GH_AW_WORKFLOW_ID: issue-triage
           GH_AW_WORKFLOW_NAME: Agentic Triage
@@ -267,6 +278,17 @@ jobs:
           script: |
             const fs = require('node:fs');
             const path = require('node:path');
+            const actionsDir = path.join(process.env.RUNNER_TEMP, 'gh-aw', 'actions');
+            require(path.join(actionsDir, 'setup_globals.cjs'))
+              .setupGlobals(core, github, context, exec, io, getOctokit);
+            const { extractAssignees, resolveIssueNumber } = require(path.join(actionsDir, 'safe_output_helpers.cjs'));
+            const { processItems } = require(path.join(actionsDir, 'safe_output_processor.cjs'));
+            const appliedItems = fs.readFileSync(
+              path.join(process.env.RUNNER_TEMP, 'triage-receipts', 'safe-output-items.jsonl'), 'utf8'
+            ).split(/\r?\n/).filter(line => line.trim()).map(line => JSON.parse(line));
+            const agentOutput = JSON.parse(fs.readFileSync(
+              path.join(process.env.RUNNER_TEMP, 'triage-requests', 'agent_output.json'), 'utf8'
+            ));
             const helper = require(path.join(
               process.env.GITHUB_WORKSPACE, 'triage-handoff',
               '.github', 'workflows', 'scripts', 'issue_investigation_handoff.cjs'
@@ -274,7 +296,12 @@ jobs:
             const handoff = await helper.prepareHandoff({
               github, context,
               issueNumber: process.env.TRIAGE_ISSUE_NUMBER,
-              commentId: process.env.TRIAGE_COMMENT_ID
+              appliedItems, agentOutput,
+              ownerNotification: process.env.TRIAGE_OWNER_NOTIFICATION,
+              normalizeAssignment: item => ({
+                ...resolveIssueNumber(item),
+                assignees: processItems(extractAssignees(item), [], 1, [])
+              })
             });
             if (!handoff.output) {
               core.notice(`Investigation handoff skipped: ${handoff.reason}`);
@@ -285,9 +312,8 @@ jobs:
             core.setOutput('dispatch_requested', 'true');
             process.env.GH_AW_AGENT_OUTPUT = file;
             process.env.GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG = JSON.stringify(handoff.config);
-            const actionsDir = path.join(process.env.RUNNER_TEMP, 'gh-aw', 'actions');
-            require(path.join(actionsDir, 'setup_globals.cjs'))
-              .setupGlobals(core, github, context, exec, io, getOctokit);
+            const { MANIFEST_FILE_PATH } = require(path.join(actionsDir, 'constants.cjs'));
+            fs.mkdirSync(path.dirname(MANIFEST_FILE_PATH), { recursive: true });
             await require(path.join(actionsDir, 'process_safe_outputs.cjs')).main();
       - name: Confirm investigation dispatch succeeded
         if: >-
@@ -686,6 +712,6 @@ Rules for the standard sections:
 
 Do not call `dispatch_workflow` or `issue_investigation` from the agent. Label, comment, and routing calls are buffered: rereading the issue during this run cannot observe those pending changes.
 
-Finish the triage outputs above. The trusted `investigation_handoff` job runs only after label/comment safe outputs and owner notification have succeeded. It rereads the actual issue and confirms the posted analysis comment belongs to that issue before dispatching `issue-investigation` through the native safe-output processor.
+Finish the triage outputs above. The trusted `investigation_handoff` job runs after label/comment safe outputs have succeeded. It verifies the actual owner route: either successful `mention_owners` notification, or a completed assignment for the single-AzureSdkOwner path where `mention_owners` is not needed. It rereads the issue and uses applied comment receipts to find the analysis comment, even when a plain routing comment was posted first, before dispatching `issue-investigation` through the native safe-output processor.
 
-The handoff requires an open, unlocked issue with `customer-reported`, exactly one service label (color `#e99695`), exactly one category label (color `#ffeb77`), and none of `needs-triage`, `needs-team-triage`, `issue-addressed`, or `needs-author-feedback`. Failed, partial, skipped, or staged triage does not authorize a handoff.
+The handoff requires an open, unlocked issue with `customer-reported`, exactly one service label (color `#e99695`), exactly one category label (color `#ffeb77`), and none of `needs-triage`, `needs-team-triage`, `issue-addressed`, or `needs-author-feedback`. Failed, partial, skipped, or staged triage does not authorize a handoff. A skipped `mention_owners` job is valid only when the completed single-owner assignment route is independently verified.

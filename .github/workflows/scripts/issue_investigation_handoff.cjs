@@ -45,9 +45,19 @@ function ineligibleReason(issue, issueNumber) {
   return null;
 }
 
-async function prepareHandoff({ github, context, issueNumber, commentId }) {
+async function prepareHandoff({
+  github, context, issueNumber, appliedItems, agentOutput, ownerNotification, normalizeAssignment,
+}) {
   const number = positiveInteger(issueNumber, "Issue number");
-  const analysisId = positiveInteger(commentId, "Analysis comment ID");
+  if (!Array.isArray(appliedItems) || !Array.isArray(agentOutput?.items) ||
+      agentOutput.items.some(item => !item || typeof item.type !== "string") ||
+      (agentOutput.errors !== undefined &&
+        (!Array.isArray(agentOutput.errors) || agentOutput.errors.length !== 0))) {
+    throw new Error("Invalid triage requests or applied receipts");
+  }
+  if (agentOutput.items.some(item => ["report_incomplete", "missing_tool", "missing_data"].includes(item.type))) {
+    throw new Error("Triage reported incomplete work");
+  }
   const { data: issue } = await github.rest.issues.get({
     ...context.repo,
     issue_number: number,
@@ -56,13 +66,43 @@ async function prepareHandoff({ github, context, issueNumber, commentId }) {
   if (reason) {
     return { reason };
   }
-  const { data: comment } = await github.rest.issues.getComment({
-    ...context.repo,
-    comment_id: analysisId,
-  });
-  if (typeof issue.url !== "string" || comment.issue_url !== issue.url ||
-      typeof comment.body !== "string" || !/^## .*Agentic Issue Triage\b/m.test(comment.body)) {
-    throw new Error("The posted triage analysis does not belong to the triggering issue");
+  const mentionRequested = agentOutput.items.some(item => item.type === "mention_owners");
+  if (mentionRequested) {
+    if (ownerNotification !== "success") {
+      throw new Error("Requested owner notification did not succeed");
+    }
+  } else {
+    const requestedOwners = agentOutput.items.filter(item => item.type === "assign_to_user")
+      .map(normalizeAssignment)
+      .filter(item => item.success && item.issueNumber === number)
+      .flatMap(item => item.assignees).map(login => login.toLowerCase());
+    if (ownerNotification !== "skipped" ||
+        !appliedItems.some(item => item.type === "assign_to_user") ||
+        !issue.assignees?.some(assignee => requestedOwners.includes(assignee.login.toLowerCase()))) {
+      throw new Error("The single-owner assignment route was not completed");
+    }
+  }
+  let analysisPosted = false;
+  // The native comment_id output can refer to routing rather than analysis.
+  for (const receipt of appliedItems.filter(item => item.type === "add_comment").reverse()) {
+    const match = typeof receipt.url === "string" && receipt.url.match(/#issuecomment-(\d+)$/);
+    if (!match) {
+      throw new Error("Invalid applied comment receipt");
+    }
+    const { data: comment } = await github.rest.issues.getComment({
+      ...context.repo,
+      comment_id: positiveInteger(match[1], "Analysis comment ID"),
+    });
+    if (typeof issue.url !== "string" || comment.issue_url !== issue.url) {
+      throw new Error("The posted triage comment does not belong to the triggering issue");
+    }
+    if (typeof comment.body === "string" && /^## .*Agentic Issue Triage\b/m.test(comment.body)) {
+      analysisPosted = true;
+      break;
+    }
+  }
+  if (!analysisPosted) {
+    throw new Error("No applied triage analysis comment was found");
   }
   const defaultBranch = context.payload.repository?.default_branch;
   if (typeof defaultBranch !== "string" || !defaultBranch) {
