@@ -452,6 +452,8 @@ with full commit SHAs from the trusted SDK/specification context. For verified f
 Verify lines against the complete file at that revision, not a diff or truncated excerpt.
 If exact lines cannot be verified, use `line_status: "unavailable"`, omit the anchor and explain
 the limitation in `reason`; this cannot support a high-confidence TypeSpec/API attribution.
+For `Version consistency`, `Preview version`, and `Stability flags`, cite `_version.py` only
+as evidence of the version literal; do not review other generated source files.
 Do not claim candidate replacements are proven mappings without connecting source evidence.
 
 ## Step 5 - Submit structured data, not Markdown
