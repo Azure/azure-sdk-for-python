@@ -43,11 +43,8 @@ def main():
                 ],
                 "resourceType": "VirtualMachine",
                 "schedule": {
-                    "deadlineType": "Unknown",
-                    "executionParameters": {
-                        "optimizationPreference": "Cost",
-                        "retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29},
-                    },
+                    "deadlineType": "InitiateAt",
+                    "executionParameters": {"retryPolicy": {"retryCount": 17, "retryWindowInMinutes": 29}},
                     "requestedDaysOfTheMonth": [15],
                     "requestedMonths": ["January"],
                     "requestedWeekDays": ["Monday"],
@@ -61,6 +58,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-06-preview/ScheduledActions_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-06-preview/ScheduledActions_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

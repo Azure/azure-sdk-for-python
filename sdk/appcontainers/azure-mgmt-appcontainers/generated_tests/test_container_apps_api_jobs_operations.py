@@ -84,6 +84,7 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
                     "eventStreamEndpoint": "str",
                     "outboundIpAddresses": ["str"],
                     "provisioningState": "str",
+                    "runningState": "str",
                     "template": {
                         "containers": [
                             {
@@ -323,6 +324,28 @@ class TestContainerAppsAPIJobsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             job_name="str",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_jobs_begin_resume(self, resource_group):
+        response = self.client.jobs.begin_resume(
+            resource_group_name=resource_group.name,
+            job_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_jobs_begin_suspend(self, resource_group):
+        response = self.client.jobs.begin_suspend(
+            resource_group_name=resource_group.name,
+            job_name="str",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

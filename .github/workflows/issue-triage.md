@@ -18,6 +18,11 @@ on:
   roles: all
   reaction: eyes
 
+concurrency:
+  group: "gh-aw-${{ github.workflow }}-${{ github.event.issue.number || github.event.inputs.issue_number }}"
+  queue: max
+  job-discriminator: ${{ github.event.issue.number || github.event.inputs.issue_number || github.run_id }}
+
 permissions:
   copilot-requests: write
   contents: read
@@ -190,6 +195,8 @@ safe-outputs:
               }
 
 tools:
+  bash: false
+  cli-proxy: false
   web-fetch:
   github:
     toolsets: [issues]
@@ -576,7 +583,7 @@ Rules for the standard sections:
 
 Dispatch the `issue-investigation` workflow after the analysis comment only when the issue is in a clean, just-triaged state:
 
-- The target is an issue
+- The target is an open, unlocked issue
 - Exactly one service label (color `#e99695`) was confidently applied
 - Exactly one category label (color `#ffeb77`) was confidently applied
 - The `customer-reported` label is assigned

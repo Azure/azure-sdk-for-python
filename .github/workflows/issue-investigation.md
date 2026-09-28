@@ -31,29 +31,26 @@ network:
     - "*.in.applicationinsights.azure.com"
     - "learn.microsoft.com"
     - "feedback.azure.com"
+    - "azure.github.io"
 
 safe-outputs:
   report-failure-as-issue: false
+  report-incomplete:
+    create-issue: false
+  missing-tool:
+    create-issue: false
   add-comment:
     max: 1
     target: "${{ github.event.inputs.issue_number }}"
   close-issue:
     max: 1
     target: "${{ github.event.inputs.issue_number }}"
+    required-labels: [customer-reported]
     state-reason: not_planned
-  # Direct Copilot assignment is best effort only and will usually skip on this
-  # repository. GitHub accepts only a user to server identity (a PAT, an OAuth app
-  # token, or a GitHub App user to server token) for Copilot coding agent
-  # assignment, and it rejects server to server tokens. The credential available
-  # to this job resolves through GH_AW_AGENT_TOKEN then GH_AW_GITHUB_TOKEN then the
-  # default Actions GITHUB_TOKEN, which is server to server, so the assignee check
-  # returns 404 and the step skips. Adding permission scopes such as pull-requests
-  # write does not change the token type and does not help. No user to server
-  # credential is available here without adding a secret, which is out of scope.
-  # This is kept with ignore-if-error true so it upgrades to a real assignment
-  # automatically if a user to server identity is ever wired into GH_AW_AGENT_TOKEN.
-  # Until then the workflow recommends Copilot in its comment and a maintainer
-  # performs the assignment.
+  # Coding-agent assignment requires a user-to-server identity, unlike native
+  # Copilot inference. The default Actions token cannot assign the coding agent.
+  # Keep this best effort: a maintainer can assign it manually, or a repository
+  # administrator can configure a suitable GH_AW_AGENT_TOKEN separately.
   assign-to-agent:
     name: copilot
     allowed: [copilot]
@@ -90,10 +87,11 @@ Use only repository context, GitHub issue data, PyPI metadata, package documenta
 
 ## Required Handoff Validation
 
-Retrieve the issue with `issue_read` (method `get`). Inspect labels and label colors.
+The dispatch input must be a positive integer issue number. If it is invalid, call `noop` without looking up a different issue. Retrieve that issue in `${{ github.repository }}` with `issue_read` (method `get`). Inspect its state, lock status, labels, and label colors; compare colors case-insensitively, with or without a leading `#`.
 
 Continue only if all of these are true:
 - The target is an issue.
+- It is open and is not locked.
 - It has exactly one service label with color `#e99695`.
 - It has exactly one category label with color `#ffeb77`.
 - It has the `customer-reported` label.
@@ -103,6 +101,10 @@ Continue only if all of these are true:
 - It does not have `needs-author-feedback`.
 
 If any condition fails, call `noop` with a short message explaining the failed precondition. Do not comment, label, close, or assign.
+
+Read the issue comments with `issue_read` (method `get_comments`) for the triage analysis and previous investigation results. If an existing investigation already supplies the same decision and next step, and no new evidence changes them, call `noop` instead of repeating the comment or assignment.
+
+Immediately before requesting any comment, closure, or assignment, retrieve the issue again and recheck all handoff conditions. A queued investigation must not act on an issue that has since been closed, locked, or returned to manual triage. If required tools or repository data are unavailable and the investigation cannot be completed, call `report_incomplete` with the concrete blocker; do not disguise an incomplete investigation as `noop` or ask the author to supply information already present.
 
 ## Investigation Inputs
 
@@ -119,19 +121,20 @@ Use service/package context when available:
 - `sdk/<service>/TROUBLESHOOTING.md`
 - `sdk/<service>/<package>/TROUBLESHOOTING.md`
 - The package README and CHANGELOG
+- Service/package `known-behaviors.md` files, if present. These are advisory context, not rules that replace issue evidence.
 
 For example, when the service is Key Vault, consult:
 - `sdk/keyvault/TROUBLESHOOTING.md`
 - package README/CHANGELOG under `sdk/keyvault/<package>/` (e.g. `sdk/keyvault/azure-keyvault-secrets/`)
 
-## Support Policy Expectation
+## Package Lifecycle and Version Context
 
-By policy, Azure SDK support is only available for the latest package version. Version currency is a mandatory decision point, not just background guidance.
+Use the Azure SDK lifecycle and support policy at https://azure.github.io/azure-sdk/policies_support.html. Lifecycle applies to package major versions: Active versions are fully supported, and customers are encouraged to use the latest compatible release because it receives fixes. An older minor or patch release is not automatically unsupported. Deprecated versions can still receive critical fixes; Beta and Community versions have different support expectations. Verify the package's lifecycle from the published release/support documentation rather than inferring it from version age.
 
 When a package name and customer-reported package version are available:
-1. Determine the latest stable version from PyPI package metadata or package release context.
-2. Compare the reported version to the latest stable version.
-3. If the reported version is older than the latest stable version, you MUST handle the issue using the Version Currency decision rule below before considering Copilot assignment. That rule -- including its bypass condition and its fallback when the latest version cannot be verified -- is the single source of truth for this decision; do not apply a different bar here.
+1. Check published PyPI metadata and package release notes for a newer compatible release, considering the reported major version, Python runtime, dependency requirements, and target Azure cloud. Do not assume the globally newest release is compatible.
+2. Treat preview reports as preview reports. Do not require a stable release that lacks the affected preview API, or recommend moving a stable customer to a preview. Do not recommend a yanked release or an unreleased repository version.
+3. Apply the Version Currency decision rule below. Version age alone must not prevent investigation of a supported release.
 
 ## Decision Rules
 
@@ -147,30 +150,22 @@ Before taking any consequential action (closing, declaring a duplicate, or assig
 
 - **Issue evidence**: The reported symptom, error, and repro context are concrete and specific enough to support the exact decision being made -- not vague, speculative, or self-contradictory.
 - **Ownership evidence**: Trusted evidence -- repository docs, package/service source, `TROUBLESHOOTING.md`, or PyPI metadata -- explicitly establishes whether the behavior is SDK-side or service-side, as required by the rule being applied.
-- **Alternative checks**: Version currency and duplicate status have both been checked and do not change the outcome -- the reported version is confirmed current (or the problem is confirmed present in current code), and no specific matching issue was found, where relevant to the rule being applied.
+- **Alternative checks**: Package lifecycle, compatible releases, and duplicate status have been checked where relevant to the action. No verified released fix or specific matching issue changes the proposed outcome. An older supported minor/patch version alone is not a reason to stop.
 - **Action evidence**: The specific fact required for the chosen action (for example, "the service fully controls this behavior," "issue #N is a specific duplicate," or "this is a bounded SDK-side fix") is explicitly supported by evidence above, not inferred from a related-but-different fact.
 - **Scope safety** (Copilot assignment only): The change is bounded, testable, and does not fall into any exclusion listed under Actionable SDK Issue.
 - **No reasonable competing interpretation** remains for the decision being made.
 
 If any dimension is missing, conflicting, or only weakly inferred, do not take the consequential action. Use a targeted Insufficient Context request if that would resolve the gap; otherwise call `noop`.
 
-### Version Currency / Support Policy
+### Version Currency
 
-If the customer reports an older package version than the latest stable version:
+Check release notes and the affected source or documentation before asking for an upgrade:
 
-1. Inspect current repository content (source, README, CHANGELOG, or documentation) to determine whether the reported problem is confirmed present in current code or current documentation. Confirmed means you can point to a specific current file, snippet, or CHANGELOG entry showing the behavior still exists -- not that it seems plausible.
-2. If it is NOT confirmed present in current code/current documentation, add one comment that:
-   - States Azure SDK support applies to the latest package version.
-   - Names the reported package/version.
-   - Names the latest stable version, if known.
-   - Asks the customer to reproduce on the latest stable version and report back.
-   - Optionally includes mitigations or investigation notes supported by current repository content.
-3. Do not assign Copilot.
-4. Do not continue to actionable-SDK handling.
+1. If a specific published fix addresses the reported behavior in a newer compatible release, and current source or documentation does not show that the problem persists, add one comment naming the reported version, the fixed release, and the evidence. Ask the author to reproduce on that release or a newer compatible release. Do not close the issue or assign Copilot, and stop here.
+2. Otherwise continue investigating. Do not short-circuit solely because the version is older. If the problem persists in maintained code or current documentation, cite the specific file, snippet, or release evidence in the eventual analysis.
+3. If authoritative documentation establishes that the affected package line no longer receives the relevant fixes, explain that limitation and any documented migration path using the `Requires a human. Analysis provided below` outcome. Do not close or assign Copilot based on lifecycle alone. Deprecation is not, by itself, proof that fixes are unavailable.
 
-If the reported package and version are known but the latest stable version cannot be verified from PyPI metadata or repository context, do not invent or guess an exact version number. Instead, assume the customer is not confirmed to be on the latest version for support-policy purposes, and add one comment that states the exact latest version could not be verified during this investigation, explains that Azure SDK support applies to the latest package version, and asks the customer to reproduce on the latest available version. Do not assign Copilot and do not continue to actionable-SDK handling.
-
-Only bypass this rule when the issue is confirmed present in current code/current documentation despite the old reported version, per the same evidence bar in step 1. If you bypass it, explain that in the actionable-SDK comment before assigning Copilot.
+If the latest compatible version or lifecycle cannot be verified, do not invent a version or declare the customer unsupported. State the uncertainty in any eventual analysis and continue with the evidence available. Copilot assignment still requires a specific, testable defect in maintained code or current documentation and evidence that a released fix does not already resolve it. Use the Global Abstention Rule when missing version evidence prevents that conclusion, or `report_incomplete` when unavailable tools/data prevent meaningful investigation.
 
 ### Duplicate
 
@@ -203,6 +198,8 @@ When either is true, add one comment using this style and close the issue as not
 
 The comment must make clear that the SDK cannot change the behavior, include the relevant documentation link when the behavior is a documented known behavior from service/package context, and direct the customer to the approved support/Q&A/Feedback paths before closing.
 
+Use `add_comment` for that single explanation, then call `close_issue` without a comment body so closure does not produce a second comment.
+
 Use exactly these service-support links in the service-side comment as plain URLs, not Markdown links:
 - Azure support request: `https://learn.microsoft.com/services-hub/unified/support/open-support-requests?pivots=existing`
 - Microsoft Q&A: `https://learn.microsoft.com/answers/questions/`
@@ -217,9 +214,10 @@ Assign Copilot only when ALL of the following are true:
 - The issue is SDK-side, not service-side, per the Confidence Decision Gate above.
 - A specific package/API, or an exact documentation location, is identified -- not a general area of the codebase.
 - There is explicit evidence for a specific SDK-side cause (for example, a source-code path, a README/sample defect, or a CHANGELOG gap), not just a plausible guess.
+- The defect is present in maintained code or current documentation, and a verified compatible released fix does not already resolve it.
 - The likely fix is a bounded, testable, first-pass change -- one whose correctness could be checked by a reasonably small, specific test or documentation diff.
 - The issue is not a duplicate.
-- The package/version context does not require first asking the customer to reproduce on latest.
+- The package/version context does not require first asking the customer to reproduce on a release with a verified fix.
 
 Do not assign Copilot, even if the above are met, when the issue requires any of the following. Instead, follow the routing below.
 - Public API design or compatibility decisions (new members, signature changes, breaking changes).
@@ -238,7 +236,7 @@ Before assigning Copilot, add one comment that follows the Comment Format sectio
 - The likely fix area.
 - Any constraints for the coding agent.
 
-Then call `assign_to_agent` for the issue number with agent `copilot`. This assignment is best effort. On this repository it usually skips because Copilot assignment requires a user to server identity and the available token is server to server. See the code comment on the `assign-to-agent` block in the frontmatter for the full reason. The comment therefore recommends Copilot rather than claiming assignment, and a maintainer completes the assignment when the skip occurs.
+Then call `assign_to_agent` for the issue number with agent `copilot`. This assignment is best effort: the default Actions token cannot assign the coding agent, and a suitable user-to-server credential may not be configured. The comment recommends Copilot rather than claiming assignment; a maintainer can complete the assignment if it is skipped.
 
 ### No Action
 
@@ -256,12 +254,12 @@ The comment always opens with this H2 title.
 
 Directly under the title, an `### Outcome` header holds the verdict. The verdict text is chosen from this fixed set. Pick the one that matches the decision rule that fired.
 
-- `Recommended for Copilot automated fix`. The Actionable SDK Issue rule matched. Direct Copilot assignment is best effort and usually skips on this repository, so the verdict recommends rather than claims assignment. A maintainer performs the assignment.
-- `Requires a human. Analysis provided below`. SDK-side but an exclusion under Actionable SDK Issue applied, or ownership is SDK-side but the fix is not a bounded first pass.
+- `Recommended for Copilot automated fix`. The Actionable SDK Issue rule matched. Direct Copilot assignment is best effort, so the verdict recommends rather than claims assignment.
+- `Requires a human. Analysis provided below`. SDK-side but an exclusion under Actionable SDK Issue applied, the fix is not a bounded first pass, or verified package lifecycle limits require maintainer judgment.
 - `More information needed from the author`. The Insufficient Context rule matched.
 - `Closed as service side or working as designed`. The Working as Designed or Service-Side rule matched.
 - `Likely duplicate of #<N>`. The Duplicate rule matched.
-- `Reproduce on the latest version`. The Version Currency rule matched and asked the author to retest on latest.
+- `Reproduce on a compatible release with the fix`. The Version Currency rule found a published fix and asked the author to retest on a compatible release containing it.
 - `No automated action taken`. Used only when a comment is warranted but no other outcome applies. When there is no user-visible action at all, call `noop` and post no comment.
 
 After the outcome, a `### Summary` header holds a one or two sentence summary.
@@ -284,7 +282,7 @@ For the service-side, insufficient-context, duplicate, and version-currency outc
 
 Do not use at mentions anywhere in the comment. Address the author by plain name with no at symbol, or omit the name. The issue author is a participant and is notified of the comment without a mention. This keeps safe outputs sanitization intact for the analysis body.
 
-Example, actionable path.
+Template, actionable path. Replace placeholders with evidence from the current investigation; this is not a worked example of a repository defect.
 
 ```markdown
 ## 🔍 Agentic Issue Investigation
@@ -295,26 +293,26 @@ Recommended for Copilot automated fix
 
 ### Summary
 
-`set_configuration_setting` silently ignores an explicitly-passed `etag` keyword argument whenever the `ConfigurationSetting` object already has its own `.etag` set, because the fallback expression checks the object's etag before the keyword argument instead of after.
+<one or two sentences describing the evidenced SDK defect>
 
 ### 🩹 Mitigation
 
-Until the fix ships, construct the `ConfigurationSetting` object without setting its `.etag` attribute, and rely solely on the explicit `etag` keyword argument to `set_configuration_setting`.
+<a verified workaround, or a plain statement that none is known>
 
 ### 🧭 Root Cause
 
-In `sdk/appconfiguration/azure-appconfiguration/azure/appconfiguration/_azure_appconfiguration_client.py`, `set_configuration_setting` builds the request with `etag=configuration_setting.etag or etag` instead of `etag=etag or configuration_setting.etag`. This means the object's own etag always wins whenever it is set, contradicting the documented behavior ("Will use the value from param configuration_setting if not set"). The bug is present in current code on the latest stable release.
+<the specific source/documentation location and evidence explaining the behavior>
 
 ### 🛠️ Suggested Fix
 
-Swap the operand order to `etag=etag or configuration_setting.etag`, restoring the documented priority. A regression test that passes both an explicit `etag` kwarg and a `ConfigurationSetting` with a different `.etag` set, then asserts the request used the explicit kwarg, verifies the fix.
+<a bounded change and a concrete regression test or documentation correction>
 
 ### ✅ Decision Basis
 
-- Version currency. Reported version equals latest stable, so the support policy check passes.
-- Duplicate. No specific matching issue found.
-- Ownership. SDK side, confirmed by the source path above.
-- Scope. Bounded, testable, single-line operand swap with a small regression test.
+- Version context. <reported version, lifecycle/compatibility evidence, and released-fix checks>
+- Duplicate. <specific search evidence>
+- Ownership. <evidence of SDK ownership>
+- Scope. <why the fix is bounded, testable, and outside all exclusions>
 
 A maintainer can assign Copilot to proceed. Automated assignment is best effort on this repository and may not complete.
 ```
@@ -350,4 +348,4 @@ Observations, suspected area, and any constraints for the human reviewer.
 
 ## Output Requirements
 
-Use at most one user-visible comment, and it MUST follow the Comment Format section above, including the H2 title and the required outcome line. Every user-visible comment must state the investigation decision and the next action; never post only a generic acknowledgement such as "thank you for reaching out." Do not use at mentions in the comment. Do not add new state labels such as `auto-fix-candidate`, `auto-fix-attempted`, `auto-fix-skipped`, or `Service`. Do not use Azure OpenAI secrets or external LLM endpoints. If no action is needed, you MUST call `noop` with a message explaining why.
+Use at most one user-visible comment, and it MUST follow the Comment Format section above, including the H2 title and the required outcome line. Every user-visible comment must state the investigation decision and the next action; never post only a generic acknowledgement such as "thank you for reaching out." Do not use at mentions in the comment. Do not add new state labels such as `auto-fix-candidate`, `auto-fix-attempted`, `auto-fix-skipped`, or `Service`. Do not use Azure OpenAI secrets or external LLM endpoints. If completed investigation finds no action is needed, you MUST call `noop` with a message explaining why. Use `report_incomplete`, not `noop`, for infrastructure/tool failures that prevent completion.

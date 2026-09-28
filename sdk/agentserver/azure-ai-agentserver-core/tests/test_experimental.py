@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
+import asyncio
+import inspect
 import logging
 
 from azure.ai.agentserver.core import experimental
@@ -25,6 +27,12 @@ class ExperimentalClass:
 @experimental
 def experimental_function() -> bool:
     """A test function."""
+    return True
+
+
+@experimental
+async def experimental_async_function() -> bool:
+    """A test coroutine function."""
     return True
 
 
@@ -75,6 +83,22 @@ def test_experimental_decorator_on_function(caplog) -> None:
     assert experimental_function.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in experimental_function.__doc__
     assert EXPERIMENTAL_LINK_MESSAGE in experimental_function.__doc__
+    assert len(caplog.records) == 1
+    assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+
+
+def test_experimental_decorator_on_async_function_preserves_coroutine_introspection(caplog) -> None:
+    _warning_cache.clear()
+
+    assert inspect.iscoroutinefunction(experimental_async_function)
+    assert asyncio.iscoroutinefunction(experimental_async_function)
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        assert asyncio.run(experimental_async_function()) is True
+
+    assert experimental_async_function.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_METHOD_MESSAGE in experimental_async_function.__doc__
+    assert EXPERIMENTAL_LINK_MESSAGE in experimental_async_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
 

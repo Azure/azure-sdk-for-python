@@ -91,9 +91,13 @@ def main() -> None:
         )
         print(f"Agent created (name: {agent.name}, version: {agent.version})")
 
-        # max_samples must be in [15, 1000]. The agent source lets the service
-        # derive seed scenarios from the agent's instructions and metadata.
-        print(f"\nGenerating {SEED_COUNT} seed scenarios (this takes a few minutes)...")
+        # The model constructor does not expose max_samples, but the service
+        # requires it for simulation seed generation.
+        print("\nGenerating seed scenarios (this takes a few minutes)...")
+        generation_options = SimulationSeedDataGenerationJobOptions(
+            model_options=DataGenerationModelOptions(model=model_deployment_name),
+        )
+        generation_options["max_samples"] = SEED_COUNT
         poller = project_client.beta.datasets.begin_create_generation_job(
             job=DataGenerationJob(
                 inputs=DataGenerationJobInputs(
@@ -106,15 +110,8 @@ def main() -> None:
                             agent_version=agent.version,
                         ),
                     ],
-                    options=SimulationSeedDataGenerationJobOptions(
-                        max_samples=SEED_COUNT,
-                        model_options=DataGenerationModelOptions(
-                            model=model_deployment_name
-                        ),
-                    ),
-                    output_options=DataGenerationJobOutputOptions(
-                        name=f"{agent_name}-simulation-seeds"
-                    ),
+                    options=generation_options,
+                    output_options=DataGenerationJobOutputOptions(name=f"{agent_name}-simulation-seeds"),
                 ),
             ),
             polling_interval=10,
@@ -122,9 +119,7 @@ def main() -> None:
 
         generation_result = poller.result()
         seeds = generation_result.outputs[0] if generation_result.outputs else None
-        assert isinstance(
-            seeds, DatasetDataGenerationJobOutput
-        ), "Expected a dataset output from the generation job"
+        assert isinstance(seeds, DatasetDataGenerationJobOutput), "Expected a dataset output from the generation job"
         assert seeds.id is not None, "Generation job returned a dataset without an id"
 
         print(f"Generated {generation_result.generated_samples} seed scenarios")
@@ -205,14 +200,10 @@ def main() -> None:
             print("Simulation runs can take several minutes. Polling...")
 
             while True:
-                run = client.evals.runs.retrieve(
-                    run_id=eval_run.id, eval_id=eval_object.id
-                )
+                run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
                 if run.status in ("completed", "failed", "canceled"):
                     break
-                print(
-                    f"Waiting for simulation to complete... current status: {run.status}"
-                )
+                print(f"Waiting for simulation to complete... current status: {run.status}")
                 time.sleep(10)
 
             if run.status != "completed":
@@ -221,28 +212,17 @@ def main() -> None:
             print("\nSynthetic multi-turn evaluation completed successfully.")
             print(f"Result Counts: {run.result_counts}")
             if run.result_counts.errored:
-                raise RuntimeError(
-                    f"{run.result_counts.errored} evaluation item(s) errored"
-                )
+                raise RuntimeError(f"{run.result_counts.errored} evaluation item(s) errored")
 
-            expected_conversations = (
-                generation_result.generated_samples * CONVERSATIONS_PER_SEED
-            )
+            expected_conversations = generation_result.generated_samples * CONVERSATIONS_PER_SEED
             print(
                 f"Expected: {expected_conversations} conversations "
                 f"({generation_result.generated_samples} generated scenarios x "
                 f"{CONVERSATIONS_PER_SEED} per scenario)"
             )
 
-            output_items = list(
-                client.evals.runs.output_items.list(
-                    run_id=run.id, eval_id=eval_object.id
-                )
-            )
-            if (
-                run.result_counts.total != expected_conversations
-                or len(output_items) != expected_conversations
-            ):
+            output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+            if run.result_counts.total != expected_conversations or len(output_items) != expected_conversations:
                 raise RuntimeError(
                     f"Expected {expected_conversations} conversations, got "
                     f"{run.result_counts.total} results and {len(output_items)} output items"

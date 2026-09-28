@@ -51,6 +51,46 @@ class EventStreamValidator:
     def validate_next(self, event: Mapping[str, Any]) -> None:
         """Validate one new event against accumulated state.
 
+        Transactional: if validation fails, every mutable field is restored so
+        the validator is never left partially advanced ("poisoned"). Without
+        this, a terminal event that clears the duplicate/ordering checks but
+        fails a later check (e.g. a status mismatch) would still bump
+        ``_terminal_count``; the ``_make_failed_event`` fallback's
+        ``response.failed`` would then trip "multiple terminal lifecycle events"
+        and could not be emitted.
+
+        :param event: The event mapping to validate.
+        :type event: Mapping[str, Any]
+        :rtype: None
+        :raises ValueError: If any ordering or structural constraint is violated.
+        """
+        snapshot = (
+            self._last_stage,
+            self._terminal_count,
+            self._terminal_seen,
+            self._event_count,
+            self._added_indexes.copy(),
+            self._done_indexes.copy(),
+        )
+        try:
+            self._commit_next(event)
+        except ValueError:
+            (
+                self._last_stage,
+                self._terminal_count,
+                self._terminal_seen,
+                self._event_count,
+                self._added_indexes,
+                self._done_indexes,
+            ) = snapshot
+            raise
+
+    def _commit_next(self, event: Mapping[str, Any]) -> None:
+        """Apply validation for one event, advancing state as each check passes.
+
+        Callers must go through :meth:`validate_next`, which wraps this in the
+        rollback that guarantees no state change on failure.
+
         :param event: The event mapping to validate.
         :type event: Mapping[str, Any]
         :rtype: None

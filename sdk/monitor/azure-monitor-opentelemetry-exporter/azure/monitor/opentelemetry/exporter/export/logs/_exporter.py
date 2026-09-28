@@ -2,8 +2,6 @@
 # Licensed under the MIT License.
 import json
 import logging
-import datetime
-import re
 from typing import Dict, Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
@@ -25,9 +23,11 @@ except ImportError:
 try:
     from opentelemetry.semconv._incubating.attributes import (
         enduser_attributes as _enduser_attributes,
+        session_attributes as _session_attributes,
     )
 except ImportError:
     _enduser_attributes = None  # type: ignore
+    _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -43,7 +43,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_AVAILABILITY_NAME,
     _MICROSOFT_AVAILABILITY_RUN_LOCATION,
     _MICROSOFT_AVAILABILITY_SUCCESS,
-    _MICROSOFT_AVAILABILITY_TEST_TIMESTAMP,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
@@ -80,6 +79,7 @@ _ENDUSER_PSEUDO_ID_ATTRIBUTE = (
     or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
     or "enduser.pseudo.id"
 )
+_SESSION_ID_ATTRIBUTE = getattr(_session_attributes, "SESSION_ID", None) or "session.id"
 
 _logger = logging.getLogger(__name__)
 
@@ -184,6 +184,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
+    session_id = log_record.attributes.get(_SESSION_ID_ATTRIBUTE) if log_record.attributes else None
+    if isinstance(session_id, str):
+        tags[ContextTagKeys.AI_SESSION_ID] = session_id
     if _utils._is_any_synthetic_source(log_record.attributes):
         tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
@@ -250,9 +253,6 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         )
         envelope.data = MonitorBase(base_data=data, base_type="EventData")
     elif availability_data:  # Availability telemetry
-        availability_time = _get_availability_time(log_record)
-        if availability_time:
-            envelope.time = availability_time
         envelope.name = _AVAILABILITY_ENVELOPE_NAME
         data = AvailabilityData(
             version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
@@ -345,19 +345,6 @@ def _get_availability_data(log_record) -> Optional[Dict[str, str]]:
     return {key: str(value) for key, value in availability_data.items() if value is not None}
 
 
-def _get_availability_time(log_record) -> Optional[datetime.datetime]:
-    if not log_record.attributes:
-        return None
-    test_timestamp = log_record.attributes.get(_MICROSOFT_AVAILABILITY_TEST_TIMESTAMP)
-    if not isinstance(test_timestamp, str):
-        return None
-    try:
-        normalized_timestamp = re.sub(r"(\.\d{6})\d+", r"\1", test_timestamp.replace("Z", "+00:00"))
-        return datetime.datetime.fromisoformat(normalized_timestamp).astimezone(datetime.timezone.utc)
-    except (ValueError, OverflowError):
-        return None
-
-
 def _is_ignored_attribute(key: str) -> bool:
     return key in _IGNORED_ATTRS
 
@@ -377,9 +364,9 @@ _IGNORED_ATTRS = frozenset(
         _MICROSOFT_AVAILABILITY_SUCCESS,
         _MICROSOFT_AVAILABILITY_RUN_LOCATION,
         _MICROSOFT_AVAILABILITY_MESSAGE,
-        _MICROSOFT_AVAILABILITY_TEST_TIMESTAMP,
         _ENDUSER_ID_ATTRIBUTE,
         _ENDUSER_PSEUDO_ID_ATTRIBUTE,
+        _SESSION_ID_ATTRIBUTE,
     )
 )
 

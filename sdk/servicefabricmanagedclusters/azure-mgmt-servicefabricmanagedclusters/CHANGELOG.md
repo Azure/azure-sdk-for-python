@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.0b2 (2026-08-31)
+
+### Other Changes
+
+- Regenerated the client with the latest TypeSpec tooling.
+
 ## 3.1.0b1 (2026-05-19)
 
 ### Features Added

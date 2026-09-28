@@ -64,6 +64,7 @@ from ._enums import (  # type: ignore
     Relaytype,
     SkuName,
     SkuTier,
+    TlsVersion,
     UnavailableReason,
 )
 from ._patch import __all__ as _patch_all
@@ -118,6 +119,7 @@ __all__ = [
     "Relaytype",
     "SkuName",
     "SkuTier",
+    "TlsVersion",
     "UnavailableReason",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

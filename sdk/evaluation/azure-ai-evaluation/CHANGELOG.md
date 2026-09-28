@@ -1,14 +1,31 @@
 # Release History
 
-## 1.18.5 (Unreleased)
+## 1.18.7 (2026-09-25)
+
+### Breaking Changes
+
+- Removed the `aoai_output_items_page_size` option from `evaluate` and its input validation.
+  Callers using this option must remove it; it no longer configures native Azure OpenAI grader output retrieval.
+  Output-item requests again use a fixed page size of 100 and the existing OpenAI client's configured retry
+  policy, without adaptive page-size reduction or a separate SDK-level retry budget. All cursor pages are
+  still retrieved, and result ordering and missing-row alignment are unchanged.
+
+### Bugs Fixed
+
+- Fixed native Azure OpenAI grader evaluations overriding explicit item-schema types and constraints with inferred schemas and converting corresponding typed input values to strings during request construction, including fields governed by a schema-valued `additionalProperties`.
+
+## 1.18.6 (2026-09-23)
+
+### Bugs Fixed
+
+- Fixed automatic mappings for Azure OpenAI graders omitting nested input fields with duplicate leaf names from the evaluation schema, and corrected type inference for wrapped input fields.
+- Prevented AOAI data-source generation from mutating nested input data shared with callable evaluators.
+
+## 1.18.5 (2026-09-02)
 
 ### Bugs Fixed
 
 - Made Application Insights export failures best-effort for evaluations using project managed identity authentication.
-
-## 1.18.4 (2026-08-27)
-
-### Bugs Fixed
 
 - Fixed keyword argument routing so bare `messages=[...]` input, with optional top-level `context`, `ground_truth`,
   and `tool_definitions`, is normalized into the already-supported conversation path for `RelevanceEvaluator`,

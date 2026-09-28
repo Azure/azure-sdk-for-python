@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-08-01-preview",
+  "apiVersion": "2026-09-01-preview",
   "apiVersions": {
-    "Microsoft.Fabric": "2026-08-01-preview"
+    "Microsoft.Fabric": "2026-09-01-preview"
   },
-  "commit": "2c275e5b4f834495b2dc99c0ed162436f38686bd",
+  "commit": "a5f26c6c3fb4ee06fdfaf038cb10af909ace7551",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/fabric/resource-manager/Microsoft.Fabric/Fabric",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.35.1"
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
 }

@@ -27,7 +27,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -403,6 +403,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -423,6 +426,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -580,6 +586,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -604,6 +613,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -837,6 +849,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1268,6 +1283,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1735,6 +1753,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1755,6 +1776,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -1990,6 +2014,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -2010,6 +2037,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -2342,6 +2372,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -2947,6 +2978,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -3397,6 +3429,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3421,6 +3456,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -3550,6 +3588,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -3574,6 +3615,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                                     "id": "str",
                                                                                                                                     "name": "str",
                                                                                                                                     "properties": {
+                                                                                                                                        "approvalReference": {
+                                                                                                                                            "privateEndpointId": "str"
+                                                                                                                                        },
                                                                                                                                         "groupIds": [
                                                                                                                                             "str"
                                                                                                                                         ],
@@ -3768,6 +3812,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4126,6 +4173,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4642,6 +4692,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4662,6 +4715,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -4781,6 +4837,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -4805,6 +4864,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -4975,6 +5037,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -5305,6 +5370,9 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -5475,7 +5543,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                     },
                     "type": "str",
                 },
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5490,7 +5558,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 load_balancer_name="str",
                 inbound_nat_rule_name="str",
-                api_version="2025-09-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5503,7 +5571,7 @@ class TestNetworkManagementInboundNatRulesOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.inbound_nat_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-09-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

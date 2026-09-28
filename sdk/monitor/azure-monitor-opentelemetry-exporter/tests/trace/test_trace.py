@@ -21,6 +21,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+from opentelemetry.semconv._incubating.attributes import session_attributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -294,6 +295,8 @@ class TestAzureTraceExporter(unittest.TestCase):
             attributes={
                 "enduser.id": "testAuthId",
                 "enduser.pseudo.id": "testUserId",
+                session_attributes.SESSION_ID: "testSessionId",
+                session_attributes.SESSION_PREVIOUS_ID: "testPreviousSessionId",
                 "user_agent.synthetic.type": "bot",
             },
             parent=context,
@@ -339,6 +342,12 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_AUTH_USER_ID), "testAuthId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testUserId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "testSessionId")
+        self.assertNotIn(session_attributes.SESSION_ID, envelope.data.base_data.properties)
+        self.assertEqual(
+            envelope.data.base_data.properties.get(session_attributes.SESSION_PREVIOUS_ID),
+            "testPreviousSessionId",
+        )
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
@@ -593,7 +602,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
 
-        # SpanKind.CLIENT Db
+        # SpanKind.CLIENT Db, deprecated semconv
         span = trace._Span(
             name="test",
             context=SpanContext(
@@ -660,6 +669,26 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "postgresql")
+
+        # Stable semconv
+        span._attributes = {
+            "db.system.name": "postgresql",
+            "db.query.text": "SELECT * from stable_test",
+            "db.namespace": "stableDb",
+            "server.address": "stable-server",
+            "server.port": 15432,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "postgresql")
+        self.assertEqual(envelope.data.base_data.data, "SELECT * from stable_test")
+        self.assertEqual(envelope.data.base_data.target, "stable-server:15432|stableDb")
+
+        span._attributes = {
+            "db.system.name": "postgresql",
+            "db.operation.name": "SELECT",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.data, "SELECT")
 
         # Type
         span._attributes = {
@@ -1674,6 +1703,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 is_remote=False,
             ),
             kind=SpanKind.CLIENT,
+            attributes={session_attributes.SESSION_ID: "testSessionId"},
         )
         attributes = {
             EXCEPTION_TYPE: "ZeroDivisionError",
@@ -1716,6 +1746,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID),
             "{:016x}".format(span.context.span_id),
         )
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "testSessionId")
         self.assertEqual(envelope.time, datetime.fromisoformat("2019-12-04T21:18:36.027613+00:00"))
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
@@ -1789,6 +1820,52 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
+
+    def test_span_events_to_envelopes_session_id(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        for span_session_id, event_session_id, expected_session_id in (
+            ("spanSessionId", None, "spanSessionId"),
+            (None, "eventSessionId", "eventSessionId"),
+            ("spanSessionId", "eventSessionId", "eventSessionId"),
+        ):
+            with self.subTest(span_session_id=span_session_id, event_session_id=event_session_id):
+                span_attributes = (
+                    {session_attributes.SESSION_ID: span_session_id} if span_session_id is not None else None
+                )
+                event_attributes = (
+                    {session_attributes.SESSION_ID: event_session_id} if event_session_id is not None else None
+                )
+                span = trace._Span(
+                    name="test",
+                    context=SpanContext(
+                        trace_id=36873507687745823477771305566750195431,
+                        span_id=12030755672171557337,
+                        is_remote=False,
+                    ),
+                    kind=SpanKind.CLIENT,
+                    attributes=span_attributes,
+                )
+                span.add_event(
+                    "test event",
+                    event_attributes,
+                    time,
+                )
+                span.start()
+                span.end()
+                envelopes = exporter._span_events_to_envelopes(span)
+
+                self.assertEqual(len(envelopes), 1)
+                envelope = envelopes[0]
+                self.assertEqual(
+                    envelope.tags.get(ContextTagKeys.AI_SESSION_ID),
+                    expected_session_id,
+                )
+                self.assertNotIn(
+                    session_attributes.SESSION_ID,
+                    envelope.data.base_data.properties,
+                )
 
     def test_span_events_to_envelopes_custom_measurements(self):
         exporter = self._exporter

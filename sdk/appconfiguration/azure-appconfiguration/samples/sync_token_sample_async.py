@@ -15,20 +15,22 @@ DESCRIPTION:
 USAGE: python sync_token_sample_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import asyncio
 import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.identity.aio import DefaultAzureCredential
 
 
 async def handle_event_grid_notifications(event_grid_events):
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    credential = DefaultAzureCredential()
 
     all_keys = []
 
-    async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    async with AzureAppConfigurationClient(endpoint, credential) as client:
         for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == "Microsoft.KeyValueModified":
                 sync_token = event_grid_event["data"]["syncToken"]
@@ -39,6 +41,7 @@ async def handle_event_grid_notifications(event_grid_events):
                 )
 
                 all_keys.append(new_key)
+    await credential.close()
 
 
 if __name__ == "__main__":

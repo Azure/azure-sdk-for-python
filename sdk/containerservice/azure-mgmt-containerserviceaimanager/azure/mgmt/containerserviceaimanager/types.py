@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
@@ -15,6 +15,7 @@ if TYPE_CHECKING:
         AIManagerNamespaceProvisioningState,
         AIManagerProvisioningState,
         CreatedByType,
+        CustomAIModelProvisioningState,
         DeletePolicy,
         ManagedServiceIdentityType,
         ModelDeploymentPerformanceMode,
@@ -216,6 +217,12 @@ class AIManagerProperties(TypedDict, total=False):
     :ivar managedResourceGroupName: The name of the managed resource group created by the AI
      Manager to hold underlying infrastructure resources.
     :vartype managedResourceGroupName: str
+    :ivar clusterResourceId: The Azure resource ID of an existing AKS cluster to attach
+     (bring-your-own). When omitted, AI Manager provisions and manages its own underlying cluster.
+     The referenced cluster must be in the same region as this AI Manager, but may reside in a
+     different subscription within the same Microsoft Entra tenant. This property is immutable after
+     creation.
+    :vartype clusterResourceId: str
     """
 
     provisioningState: Union[str, "AIManagerProvisioningState"]
@@ -227,6 +234,11 @@ class AIManagerProperties(TypedDict, total=False):
     managedResourceGroupName: str
     """The name of the managed resource group created by the AI Manager to hold underlying
      infrastructure resources."""
+    clusterResourceId: str
+    """The Azure resource ID of an existing AKS cluster to attach (bring-your-own). When omitted, AI
+     Manager provisions and manages its own underlying cluster. The referenced cluster must be in
+     the same region as this AI Manager, but may reside in a different subscription within the same
+     Microsoft Entra tenant. This property is immutable after creation."""
 
 
 class AutoscaleProfile(TypedDict, total=False):
@@ -248,24 +260,157 @@ class AutoscaleProfile(TypedDict, total=False):
      subscription GPU quota."""
 
 
-class CalculateCostRequest(TypedDict, total=False):
-    """Request body for the AI model ``calculateCost`` action."""
+class BaseModelReference(TypedDict, total=False):
+    """The base model a custom model was trained from. A HuggingFace repository supplied by the user
+    because the platform may lack access to private source repositories.
+
+    :ivar id: The HuggingFace ``<org>/<repo>`` id of the base model, e.g.
+     ``meta-llama/Llama-2-7b-chat``. Immutable after creation. Required.
+    :vartype id: str
+    :ivar totalWeightSizeBytes: The total size of the model weights in bytes. eg ``28000000000``.
+     Required if the base model is not publicly accessible on HuggingFace.
+    :vartype totalWeightSizeBytes: int
+    :ivar config: The verbatim ``config.json`` of the base model, supplied by the user. Required if
+     the base model is not publicly accessible on HuggingFace.  For more information on
+     CustomAIModel configuration see `https://aka.ms/aks/aim-customaimodel
+     <https://aka.ms/aks/aim-customaimodel>`_.
+    :vartype config: dict[str, Any]
+    """
+
+    id: Required[str]
+    """The HuggingFace ``<org>/<repo>`` id of the base model, e.g. ``meta-llama/Llama-2-7b-chat``.
+     Immutable after creation. Required."""
+    totalWeightSizeBytes: int
+    """The total size of the model weights in bytes. eg ``28000000000``. Required if the base model is
+     not publicly accessible on HuggingFace."""
+    config: dict[str, Any]
+    """The verbatim ``config.json`` of the base model, supplied by the user. Required if the base
+     model is not publicly accessible on HuggingFace.  For more information on CustomAIModel
+     configuration see `https://aka.ms/aks/aim-customaimodel
+     <https://aka.ms/aks/aim-customaimodel>`_."""
 
 
 class CredentialValue(TypedDict, total=False):
-    """A credential value. Exactly one variant must be set.
-
-    In the current API version, only the ``inline`` variant is supported. Future
-    API versions are expected to add additional credential kinds (for example,
-    managed identity and Key Vault secret references) as sibling variants on
-    this model.
+    """A credential value used for accessing gated or private models.
 
     :ivar inline: An inline credential containing a secret value supplied in the request payload.
     :vartype inline: "InlineCredential"
+    :ivar managedIdentity:   A user-assigned managed identity the platform authenticates as.
+     Required for ``MicrosoftFoundry`` sources and the user must grant the ``Foundry User`` role
+     (role definition id 53ca6127-db72-4b80-b1b0-d745d6d5456d) on the Foundry project. See
+     `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_ for more details.
+     The platform federates this identity to an in-cluster puller ServiceAccount (Workload Identity)
+     at deployment time.
+    :vartype managedIdentity: "ManagedIdentityCredential"
     """
 
     inline: "InlineCredential"
     """An inline credential containing a secret value supplied in the request payload."""
+    managedIdentity: "ManagedIdentityCredential"
+    """A user-assigned managed identity the platform authenticates as. Required for
+     ``MicrosoftFoundry`` sources and the user must grant the ``Foundry User`` role (role definition
+     id 53ca6127-db72-4b80-b1b0-d745d6d5456d) on the Foundry project. See
+     `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_ for more details.
+     The platform federates this identity to an in-cluster puller ServiceAccount (Workload Identity)
+     at deployment time."""
+
+
+class CustomAIModel(ProxyResource):
+    """A custom AI model registered by the user and scoped to a specific AIManager.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "CustomAIModelProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "CustomAIModelProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class CustomAIModelProperties(TypedDict, total=False):
+    """Custom AI model properties.
+
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioningState: Union[str, "CustomAIModelProvisioningState"]
+    :ivar modelId: The model identifier, interpreted per the referenced ModelSource type. For
+     ``HuggingFace`` sources this is the upstream ``<org>/<repo>`` id, e.g.
+     ``meta-llama/Llama-2-7b-chat``. For ``MicrosoftFoundry`` sources this is ``modelName/version``,
+     e.g. ``private-llama/1``. Immutable after creation. Required.
+    :vartype modelId: str
+    :ivar baseModel: The base model this custom model was trained from (id + config.json).
+     Immutable after creation. Required.
+    :vartype baseModel: "BaseModelReference"
+    :ivar modelSourceResourceId: Azure resource id of the ModelSource to use when pulling
+     artifacts. Used to determine model location and access. Immutable after creation. Required.
+    :vartype modelSourceResourceId: str
+    :ivar description: Optional. Free-form description of the model. Mutable.
+    :vartype description: str
+    :ivar spec: Read-only. Platform-resolved specification of the model.
+    :vartype spec: "CustomAIModelSpec"
+    """
+
+    provisioningState: Union[str, "CustomAIModelProvisioningState"]
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Creating\", \"Updating\", and \"Deleting\"."""
+    modelId: Required[str]
+    """The model identifier, interpreted per the referenced ModelSource type. For ``HuggingFace``
+     sources this is the upstream ``<org>/<repo>`` id, e.g. ``meta-llama/Llama-2-7b-chat``. For
+     ``MicrosoftFoundry`` sources this is ``modelName/version``, e.g. ``private-llama/1``. Immutable
+     after creation. Required."""
+    baseModel: Required["BaseModelReference"]
+    """The base model this custom model was trained from (id + config.json). Immutable after creation.
+     Required."""
+    modelSourceResourceId: Required[str]
+    """Azure resource id of the ModelSource to use when pulling artifacts. Used to determine model
+     location and access. Immutable after creation. Required."""
+    description: str
+    """Optional. Free-form description of the model. Mutable."""
+    spec: "CustomAIModelSpec"
+    """Read-only. Platform-resolved specification of the model."""
+
+
+class CustomAIModelSpec(TypedDict, total=False):
+    """Platform-resolved specification of a custom model. Extends ``ModelSpec`` with custom
+    model-specific metadata. All fields are read-only. Reserved so custom-model-specific fields can
+    be added without changing the SDK surface.
+
+    :ivar license: The license of the model, when known. SPDX license identifier, e.g. ``mit``,
+     ``apache-2.0``.
+    :vartype license: str
+    :ivar isRestricted: Whether access to the model is restricted and requires credential.
+     Required.
+    :vartype isRestricted: bool
+    :ivar maxContextLength: The maximum context length supported by the model, in tokens. Required.
+    :vartype maxContextLength: int
+    """
+
+    license: str
+    """The license of the model, when known. SPDX license identifier, e.g. ``mit``, ``apache-2.0``."""
+    isRestricted: Required[bool]
+    """Whether access to the model is restricted and requires credential. Required."""
+    maxContextLength: Required[int]
+    """The maximum context length supported by the model, in tokens. Required."""
 
 
 class InlineCredential(TypedDict, total=False):
@@ -277,6 +422,20 @@ class InlineCredential(TypedDict, total=False):
 
     value: Required[str]
     """The access token, password, or other secret value. Required."""
+
+
+class ManagedIdentityCredential(TypedDict, total=False):
+    """A credential backed by a user-owned user-assigned managed identity. The platform authenticates
+    to the model source as this identity via Workload Identity; no secret is stored.
+
+    :ivar resourceId: The Azure resource id of the user-assigned managed identity to authenticate
+     with. Only user-assigned identities are supported. Required.
+    :vartype resourceId: str
+    """
+
+    resourceId: Required[str]
+    """The Azure resource id of the user-assigned managed identity to authenticate with. Only
+     user-assigned identities are supported. Required."""
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
@@ -319,6 +478,30 @@ class ManualScalingProfile(TypedDict, total=False):
     replicas: Required[int]
     """Fixed number of replicas. May be ``0`` to stop serving traffic while keeping the deployment
      configuration (see ``ScalingProfile``). Required."""
+
+
+class MicrosoftFoundrySource(TypedDict, total=False):
+    """Reference to a Microsoft Foundry project that backs a ``MicrosoftFoundry``
+    ModelSource. Only the project Azure id is required; the Foundry account and its
+    data-plane endpoint (``*.services.ai.azure.com``) are resolved by the platform
+    from the project (the account is the project's parent resource).
+
+    Authentication uses the user-assigned managed identity referenced in the
+    ModelSource ``credential.managedIdentity``, which the user must grant the
+    ``Foundry User`` role (role definition id 53ca6127-db72-4b80-b1b0-d745d6d5456d)
+    on this project. See `https://aka.ms/aks/aim-modelsource <https://aka.ms/aks/aim-modelsource>`_
+    for more details.
+
+    :ivar projectResourceId: The ARM resource id of the Foundry project. The scope on which the
+     referenced managed identity must hold the ``Foundry User`` role. The account and endpoint host
+     are derived from this id. Required.
+    :vartype projectResourceId: str
+    """
+
+    projectResourceId: Required[str]
+    """The ARM resource id of the Foundry project. The scope on which the referenced managed identity
+     must hold the ``Foundry User`` role. The account and endpoint host are derived from this id.
+     Required."""
 
 
 class ModelDeployment(ProxyResource):
@@ -379,10 +562,10 @@ class ModelDeploymentProperties(TypedDict, total=False):
     :ivar provisioningState: The status of the last reconciliation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioningState: Union[str, "ModelDeploymentProvisioningState"]
-    :ivar modelResourceId: Full ARM resource id of the model to deploy. Phase 1 accepts an
-     ``AIModel`` resource id only. Immutable after creation. Required.
+    :ivar modelResourceId: Full Azure resource ID of the model to deploy. Immutable after creation.
+     Required.
     :vartype modelResourceId: str
-    :ivar modelSourceResourceId: Full ARM resource id of a ``ModelSource`` to use when pulling
+    :ivar modelSourceResourceId: Full Azure resource ID of a ``ModelSource`` to use when pulling
      artifacts for this deployment. Immutable after creation.
     :vartype modelSourceResourceId: str
     :ivar performanceMode: Runtime performance mode. Known values are: "Balanced", "Latency", and
@@ -404,10 +587,9 @@ class ModelDeploymentProperties(TypedDict, total=False):
     """The status of the last reconciliation. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
     modelResourceId: Required[str]
-    """Full ARM resource id of the model to deploy. Phase 1 accepts an ``AIModel`` resource id only.
-     Immutable after creation. Required."""
+    """Full Azure resource ID of the model to deploy. Immutable after creation. Required."""
     modelSourceResourceId: str
-    """Full ARM resource id of a ``ModelSource`` to use when pulling artifacts for this deployment.
+    """Full Azure resource ID of a ``ModelSource`` to use when pulling artifacts for this deployment.
      Immutable after creation."""
     performanceMode: Union[str, "ModelDeploymentPerformanceMode"]
     """Runtime performance mode. Known values are: \"Balanced\", \"Latency\", and \"Throughput\"."""
@@ -514,13 +696,16 @@ class ModelSourceProperties(TypedDict, total=False):
      "Failed", and "Canceled".
     :vartype provisioningState: Union[str, "ResourceProvisioningState"]
     :ivar sourceType: Model source type. Constrains the legal authentication kinds. Immutable after
-     creation. Required. "HuggingFace"
+     creation. Required. Known values are: "HuggingFace" and "MicrosoftFoundry".
     :vartype sourceType: Union[str, "ModelSourceType"]
     :ivar description: An optional, free-form description of the source.
     :vartype description: str
     :ivar credential: Credential the platform uses to authenticate to the source. Optional for
      public sources (e.g. ungated Hugging Face models).
     :vartype credential: "CredentialValue"
+    :ivar microsoftFoundry: Microsoft Foundry project reference. Required when ``sourceType`` is
+     ``MicrosoftFoundry``; must be omitted otherwise. Immutable after creation.
+    :vartype microsoftFoundry: "MicrosoftFoundrySource"
     """
 
     provisioningState: Union[str, "ResourceProvisioningState"]
@@ -528,12 +713,15 @@ class ModelSourceProperties(TypedDict, total=False):
      \"Canceled\"."""
     sourceType: Required[Union[str, "ModelSourceType"]]
     """Model source type. Constrains the legal authentication kinds. Immutable after creation.
-     Required. \"HuggingFace\""""
+     Required. Known values are: \"HuggingFace\" and \"MicrosoftFoundry\"."""
     description: str
     """An optional, free-form description of the source."""
     credential: "CredentialValue"
     """Credential the platform uses to authenticate to the source. Optional for public sources (e.g.
      ungated Hugging Face models)."""
+    microsoftFoundry: "MicrosoftFoundrySource"
+    """Microsoft Foundry project reference. Required when ``sourceType`` is ``MicrosoftFoundry``; must
+     be omitted otherwise. Immutable after creation."""
 
 
 class ScalingProfile(TypedDict, total=False):
