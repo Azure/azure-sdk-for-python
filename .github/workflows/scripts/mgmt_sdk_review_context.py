@@ -13,9 +13,17 @@ import difflib
 import json
 import os
 import re
+import tomllib
 import urllib.error
 import urllib.parse
 import urllib.request
+
+from mgmt_sdk_review_evidence import (
+    MAX_SNAPSHOT_BYTES,
+    allowed_sdk_file,
+    deterministic_checks,
+    source_record,
+)
 
 
 API_ROOT = os.environ.get("GH_API_ROOT", "https://api.github.com")
@@ -58,6 +66,7 @@ class GitHubClient:
         self.token = token
         self.api_root = api_root.rstrip("/")
         self.request_count = 0
+        self.files = {}
 
     def get(self, path):
         if not path.startswith("/"):
@@ -108,6 +117,12 @@ class GitHubClient:
         return items, True
 
     def read_file(self, path, revision):
+        key = (path, revision)
+        if key not in self.files:
+            self.files[key] = self._read_file(path, revision)
+        return self.files[key]
+
+    def _read_file(self, path, revision):
         encoded_path = urllib.parse.quote(path, safe="/")
         encoded_ref = urllib.parse.quote(revision, safe="")
         api_path = f"/repos/{self.repository}/contents/{encoded_path}?ref={encoded_ref}"
@@ -116,6 +131,7 @@ class GitHubClient:
         except GitHubApiError as error:
             return {
                 "status": "missing" if error.status == 404 else "unverified",
+                "httpStatus": error.status,
                 "path": path,
                 "revision": revision,
                 "error": str(error),
@@ -761,6 +777,8 @@ def collect():
         )
 
     context = {
+        "schemaVersion": "2",
+        "reviewDate": datetime.datetime.now(datetime.timezone.utc).date().isoformat(),
         "repository": repository,
         "pullRequestNumber": pr_number,
         "toolingRevision": os.environ.get("REVIEW_TOOLING_SHA"),
@@ -810,6 +828,7 @@ def collect():
             "githubApiRequests": client.request_count,
         },
     }
+    collect_review_sources(client, context)
     if expected_head:
         current = client.get(f"/repos/{repository}/pulls/{pr_number}")
         if (
@@ -823,6 +842,80 @@ def collect():
     with open("review-context.json", "w", encoding="utf-8") as output:
         json.dump(context, output, indent=2)
         output.write("\n")
+
+
+def collect_review_sources(client, context):
+    """Collect bounded package data without importing or executing any PR code."""
+    context["sources"] = []
+    context["sourceCollectionIssues"] = []
+    byte_count = 0
+    for package in context["affectedPackages"]:
+        paths = {
+            f"{package}/{name}" for name in ("README.md", "api.md", "_metadata.json", "pyproject.toml", "CHANGELOG.md")
+        }
+        project = client.files.get((f"{package}/pyproject.toml", context["latestRevision"]), {})
+        if project.get("status") == "available":
+            try:
+                attr = (
+                    tomllib.loads(project["content"])
+                    .get("tool", {})
+                    .get("setuptools", {})
+                    .get("dynamic", {})
+                    .get("version", {})
+                    .get("attr", "")
+                )
+                if re.fullmatch(r"azure\.mgmt\.(?:[A-Za-z_][A-Za-z0-9_]*\.)+_version\.VERSION", attr):
+                    version_path = attr.rsplit(".", 1)[0].replace(".", "/") + ".py"
+                    paths.update(
+                        {
+                            f"{package}/{version_path}",
+                            f"{package}/{version_path.rsplit('/', 1)[0]}/_client.py",
+                            f"{package}/{version_path.rsplit('/', 1)[0]}/aio/_client.py",
+                        }
+                    )
+            except (ValueError, TypeError, AttributeError) as error:
+                context["sourceCollectionIssues"].append(
+                    f"{package}/pyproject.toml cannot identify version data: {error}"
+                )
+        for changed in context["changedFiles"]:
+            path = changed["filename"]
+            if path.startswith(package + "/") and path.endswith(("/_client.py", "/_version.py")):
+                paths.add(path)
+        if not any(path.endswith("/_version.py") for path in paths):
+            context["sourceCollectionIssues"].append(
+                f"{package}: version/client paths were not discoverable from literal packaging metadata or changed files."
+            )
+        if len(paths) > 16:
+            context["sourceCollectionIssues"].append(f"{package}: source discovery exceeded the 16-file package limit.")
+        for path in sorted(paths)[:16]:
+            key = (path, context["latestRevision"])
+            if key not in client.files and client.request_count >= MAX_API_REQUESTS - 1:
+                client.files[key] = {
+                    "path": path,
+                    "revision": context["latestRevision"],
+                    "status": "unverified",
+                    "error": "Evidence request budget exhausted; completed evidence is preserved.",
+                }
+            else:
+                client.read_file(*key)
+        for (path, revision), evidence in client.files.items():
+            if not path.startswith(package + "/"):
+                continue
+            if not allowed_sdk_file(path[len(package) + 1 :], "Version consistency"):
+                continue
+            evidence = dict(evidence)
+            size = len(evidence.get("content", "").encode())
+            if byte_count + size > MAX_SNAPSHOT_BYTES:
+                evidence.update(status="truncated", error="Total snapshot text budget exhausted.")
+                evidence.pop("content", None)
+            else:
+                byte_count += size
+            context["sources"].append(source_record(context["repository"], evidence, package))
+    context["deterministicChecks"] = {
+        package: dict(zip(("checks", "findings"), deterministic_checks(context, package)))
+        for package in context["affectedPackages"]
+    }
+    context["collectionLimits"]["githubApiRequests"] = client.request_count
 
 
 if __name__ == "__main__":

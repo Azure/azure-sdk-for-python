@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import sys
 import unittest
 from unittest import mock
 import urllib.error
@@ -10,6 +11,7 @@ import urllib.parse
 
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "mgmt_sdk_review_context.py"
+sys.path.insert(0, str(SCRIPT.parent))
 SPEC = importlib.util.spec_from_file_location("mgmt_sdk_review_context", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
@@ -558,7 +560,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(3, len(context["affectedPackages"]))
         self.assertEqual(["complete", "unverified", "unverified"], [package["status"] for package in packages])
         self.assertEqual(["unchanged", "unverified", "unverified"], [drift["status"] for drift in context["apiVersionDrift"]])
-        self.assertEqual(31, context["collectionLimits"]["githubApiRequests"])
+        self.assertEqual(39, context["collectionLimits"]["githubApiRequests"])
         for package in packages[1:]:
             self.assertEqual([], package["introducedEntries"])
             self.assertIn("Needs human review", package["collectionIssues"][0])

@@ -16,6 +16,7 @@ from urllib.parse import quote
 
 WORKFLOW = Path(__file__).parents[1] / "mgmt-sdk-pr-review.md"
 SCRIPT = WORKFLOW.parent / "scripts" / "mgmt_sdk_review_contract.py"
+sys.path.insert(0, str(SCRIPT.parent))
 SPEC = importlib.util.spec_from_file_location("mgmt_sdk_review_contract", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
@@ -144,6 +145,7 @@ def add_entry(data, trusted, *, direct=False, release="2.0.0 (2026-09-22)"):
                 if direct
                 else []
             ),
+            "sdk_context": [],
         }
     )
 
@@ -154,6 +156,71 @@ def lock_json(name):
     return json.JSONDecoder().raw_decode(textwrap.dedent(block).lstrip())[0]
 
 
+def production_fixture(data=None, trusted=None):
+    """Explicit test-only migration. Fabricated content is NOT production evidence."""
+    from mgmt_sdk_review_evidence import SEMANTIC_CHECKS, entry_id, source_record
+
+    data, trusted = copy.deepcopy(data or review()), copy.deepcopy(trusted or context())
+    trusted.update(schemaVersion="2", reviewDate="2026-09-28", sources=[], deterministicChecks={})
+    known = {}
+
+    def convert(source, package):
+        repository, revision, path = MODULE.source_identity(source, "fixture.source")
+        anchor = re.search(r"#L(\d+)(?:-L(\d+))?$", source["url"])
+        start, end = (int(anchor[1]), int(anchor[2] or anchor[1])) if anchor else (0, 0)
+        role = "sdk" if repository == REPO else "specification"
+        record = source_record(
+            repository,
+            {
+                "path": path,
+                "revision": revision,
+                "status": "available",
+                "content": "\n".join(["Fixture evidence, not a real SDK claim."] * max(3, end)),
+            },
+            package,
+            role,
+        )
+        known[(record["id"], package)] = record
+        return {"source_id": record["id"], "start_line": start, "end_line": end, "reason": source["reason"]}
+
+    draft = {"schema_version": "2", "outcome": data["outcome"], "packages": []}
+    for package in data["packages"]:
+        name = package["package"]
+        breaking = next(item for item in trusted["breakingChangeContext"] if item["packagePath"] == name)
+        draft["packages"].append(
+            {
+                "package": name,
+                "checks": {
+                    item["name"]: {
+                        **{key: item[key] for key in ("outcome", "reason")},
+                        "sources": [convert(source, name) for source in item["sources"]],
+                    }
+                    for item in package["checks"]
+                    if item["name"] in SEMANTIC_CHECKS
+                },
+                "findings": [
+                    {**item, "sources": [convert(source, name) for source in item["sources"]]}
+                    for item in package["findings"]
+                    if item["check"] in SEMANTIC_CHECKS
+                ],
+                "attribution": [
+                    {
+                        "entry_id": entry_id(breaking["introducedEntries"][item["entry_index"]]),
+                        "cause": item["cause"],
+                        "explanation": item["explanation"],
+                        "sources": [convert(source, name) for source in item["sources"]],
+                        "sdk_context": [convert(source, name) for source in item["sdk_context"]],
+                    }
+                    for item in package["attribution"]["entries"]
+                ],
+            }
+        )
+    trusted["sources"] = list(known.values())
+    final = {**draft, "registrations": []}
+    final["preflight"] = {"attempt": 1, "digest": MODULE.digest(final)}
+    return final, trusted
+
+
 class StructuredReviewTests(unittest.TestCase):
     def setUp(self):
         self.data = review()
@@ -162,7 +229,7 @@ class StructuredReviewTests(unittest.TestCase):
         self.breaking = self.context["breakingChangeContext"][0]
 
     def render(self):
-        return MODULE.prepare_output(envelope(self.data), self.context)["items"][0]["body"]
+        return MODULE.prepare_rendered_output(envelope(self.data), self.context)["items"][0]["body"]
 
     def reject(self, field):
         with self.assertRaisesRegex(ValueError, re.escape(field)):
@@ -254,6 +321,7 @@ class StructuredReviewTests(unittest.TestCase):
                     "confidence": "not_applicable",
                     "explanation": "The historical specification and release heading are unavailable.",
                     "sources": [],
+                    "sdk_context": [],
                 }
             ],
         )
@@ -594,20 +662,20 @@ class StructuredReviewTests(unittest.TestCase):
         valid = envelope(self.data)
         for errors in (None, False, 0, "", {}, ["Line 2: Invalid JSON"]):
             with self.subTest(errors=errors), self.assertRaisesRegex(ValueError, "output.errors"):
-                MODULE.prepare_output({**valid, "errors": errors}, self.context)
+                MODULE.prepare_rendered_output({**valid, "errors": errors}, self.context)
         for items in (None, [], [None], valid["items"] * 2):
             with self.subTest(items=items), self.assertRaises(ValueError):
-                MODULE.prepare_output({"errors": [], "items": items}, self.context)
+                MODULE.prepare_rendered_output({"errors": [], "items": items}, self.context)
         for kind in ("noop", "missing_tool", "missing_data", "report_incomplete"):
             diagnostic = {"type": kind, "reason": "Failed to submit review"}
             for items in ([diagnostic], [*valid["items"], diagnostic]):
                 with self.subTest(kind=kind, items=items), self.assertRaises(ValueError):
-                    MODULE.prepare_output({"errors": [], "items": items}, self.context)
+                    MODULE.prepare_rendered_output({"errors": [], "items": items}, self.context)
         for field, value in (("item_number", 123), ("comment_id", 123), ("body", "Some handwritten Markdown")):
             payload = copy.deepcopy(valid)
             payload["items"][0][field] = value
             with self.assertRaises(ValueError):
-                MODULE.prepare_output(payload, self.context)
+                MODULE.prepare_rendered_output(payload, self.context)
 
     def test_size_and_duplicate_json_keys_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -636,7 +704,7 @@ class StructuredReviewTests(unittest.TestCase):
                 self.assertNotRegex(old_body, r"\b[0-9a-f]{40}\b")
                 self.assertIn("### Breaking-change attribution", old_body)
                 with self.assertRaisesRegex(ValueError, "body"):
-                    MODULE.prepare_output(payload, self.context)
+                    MODULE.prepare_rendered_output(payload, self.context)
                 data, trusted = review(), context()
                 if outcome == "incomplete":
                     self.assertIn("\nNeeds human review:", old_body)
@@ -648,7 +716,7 @@ class StructuredReviewTests(unittest.TestCase):
                         collectionIssues=["No previous release heading was found at the merge base"],
                     )
                     data["packages"][0]["attribution"].update(outcome="incomplete", reason=explanation)
-                    body = MODULE.prepare_output(envelope(data), trusted)["items"][0]["body"]
+                    body = MODULE.prepare_rendered_output(envelope(data), trusted)["items"][0]["body"]
                     self.assertIn("**Needs human review:**", body)
                 else:
                     self.assertIn("No newly added or modified entries. This is", old_body)
@@ -657,13 +725,18 @@ class StructuredReviewTests(unittest.TestCase):
                         "reason": "Initial release confirmed by complete added-file and absent-directory evidence.",
                     }
                     data["packages"][0]["attribution"]["initial_release"] = True
-                    body = MODULE.prepare_output(envelope(data), trusted)["items"][0]["body"]
+                    body = MODULE.prepare_rendered_output(envelope(data), trusted)["items"][0]["body"]
                     self.assertIn("No newly added or modified entries.", body)
                 self.assertTrue(body.startswith(MODULE.MARKER))
 
 
 class PublicationIntegrationTests(unittest.TestCase):
     def run_publisher(self, directory, payload, trusted):
+        payload = copy.deepcopy(payload)
+        if payload.get("items", [{}])[0].get("data", {}).get("schema_version") == "1":
+            data, trusted = production_fixture(payload["items"][0]["data"], trusted)
+            migrated = envelope(data)["items"][0]
+            payload["items"][0].update(data=data, body=migrated["body"])
         directory = Path(directory)
         output = directory / "agent_output.json"
         output.write_text(json.dumps(payload), encoding="utf-8")
@@ -702,7 +775,7 @@ class PublicationIntegrationTests(unittest.TestCase):
                 useful_comment.publish(output)
             self.assertNotEqual(0, result.returncode)
             self.assertIn("No review will be published or hidden", result.stderr)
-            self.assertEqual(payload, output)
+            self.assertEqual(payload["errors"], output["errors"])
             useful_comment.hide.assert_not_called()
             useful_comment.publish.assert_not_called()
             self.assertEqual("Existing useful review", useful_comment.body)
@@ -710,11 +783,12 @@ class PublicationIntegrationTests(unittest.TestCase):
     def test_agent_workspace_context_cannot_override_snapshot(self):
         with tempfile.TemporaryDirectory() as directory:
             trusted = context()
-            trusted["breakingChangeContext"][0].update(status="unverified", collectionIssues=["Missing baseline"])
-            Path(directory, "review-context.json").write_text(json.dumps(context()), encoding="utf-8")
-            result, _ = self.run_publisher(directory, envelope(review()), trusted)
+            data, trusted = production_fixture()
+            Path(directory, "review-context.json").write_text(json.dumps(trusted), encoding="utf-8")
+            trusted["sources"] = []
+            result, _ = self.run_publisher(directory, envelope(data), trusted)
             self.assertNotEqual(0, result.returncode)
-            self.assertIn("trusted collection requires 'incomplete'", result.stderr)
+            self.assertIn("unknown_source", result.stderr)
 
     def test_generated_contract_matches_publisher_schema(self):
         meta = lock_json("GH_AW_TOOLS_META_JSON")
@@ -752,13 +826,16 @@ class PublicationIntegrationTests(unittest.TestCase):
         jq = shutil.which("jq") or os.environ.get("JQ")
         self.assertTrue(jq, "Install jq or set JQ to test the workflow's submission command.")
         expression = re.search(r"(?m)^jq '([^']+)' .* \| safeoutputs add_comment \.$", SOURCE)[1]
-        data = review()
-        add_entry(data, context())
-        data["packages"][0]["attribution"]["entries"][0][
-            "explanation"
-        ] = '@renamedFrom("a") @@clientName <Widget> | `name`\n\n"quoted" \\ path & value'
-        result = subprocess.run([jq, expression], input=json.dumps(data), capture_output=True, text=True, check=True)
-        self.assertEqual({"body": MODULE.SUBMISSION, "data": data}, json.loads(result.stdout))
+        data, _ = production_fixture()
+        submission = {"body": MODULE.SUBMISSION, "data": data}
+        result = subprocess.run(
+            [jq, expression],
+            input=json.dumps({"ok": True, "submission": submission}),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertEqual(submission, json.loads(result.stdout))
 
     @unittest.skipUnless(os.environ.get("GH_AW_RUNTIME"), "Set GH_AW_RUNTIME to pinned gh-aw actions/setup/js")
     def test_pinned_ingestion_and_builtin_handler(self):
@@ -771,6 +848,7 @@ class PublicationIntegrationTests(unittest.TestCase):
         entry["explanation"] = "\n".join(
             '@renamedFrom("a") @@clientName <Widget> \\| `name` "quoted" \\ path' for _ in range(15)
         )
+        data, trusted = production_fixture(data, trusted)
         script = Path(__file__).parent / "mgmt_review_runtime.cjs"
         request = {
             "mode": "ingest",
