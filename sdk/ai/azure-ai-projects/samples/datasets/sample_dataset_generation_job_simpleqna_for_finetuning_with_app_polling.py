@@ -141,7 +141,7 @@ with (
     # ------------------------------------------------------------------
     # 2. Submit a fine-tuning data generation job without SDK polling.
     # ------------------------------------------------------------------
-    job = SupervisedFineTuningDataGenerationJobInputs(
+    job_inputs = SupervisedFineTuningDataGenerationJobInputs(
         name=f"simpleqna-finetuning-{run_id}",
         sources=[
             FileDataGenerationJobSource(
@@ -167,7 +167,7 @@ with (
 
     print("Create a dataset generation job without SDK polling.")
     poller = project_client.beta.datasets.begin_create_generation_job(
-        job=job,
+        job=job_inputs,
         polling=False,
     )
     job_id = poller.details["job_id"]
