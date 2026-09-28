@@ -280,7 +280,11 @@ def validate_sources(sources, path, context, breaking, package, required=False, 
         if repo == context["repository"]:
             require(filename.startswith(package + "/"), field, "source belongs to another package")
             relative = filename[len(package) + 1 :]
-            version_metadata = relative.endswith("/_version.py") and check in {"Version consistency", "Preview version"}
+            version_metadata = relative.endswith("/_version.py") and check in {
+                "Version consistency",
+                "Preview version",
+                "Stability flags",
+            }
             require(
                 not relative.startswith(("generated_samples/", "generated_tests/"))
                 and not (
