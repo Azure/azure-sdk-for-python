@@ -9,7 +9,7 @@ DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
 
       1. Creates an agent and seeds spans with a sample conversation.
-      2. Waits for ingestion, then submits a `DataGenerationJob`
+      2. Waits for ingestion, then submits a data generation job
          (scenario=EVALUATION, source=traces) that extracts and formats the
          trace data into an evaluation dataset.
       3. Polls the job and fetches the resulting `DatasetVersion`.
@@ -48,12 +48,10 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
@@ -140,22 +138,19 @@ with (
             try:
                 print("Begin creating a dataset generation job.")
                 poller = project_client.beta.datasets.begin_create_generation_job(
-                    job=DataGenerationJob(
-                        inputs=DataGenerationJobInputs(
-                            name=f"traces-eval-{run_id}-a{attempt}",
-                            scenario=DataGenerationJobScenario.EVALUATION,
-                            sources=[
-                                TracesDataGenerationJobSource(
-                                    description="Application Insights conversation traces for the agent.",
-                                    agent_name=agent_name,
-                                    start_time=start_time,
-                                    end_time=end_time,
-                                ),
-                            ],
-                            # max_samples must be in [15, 1000]; caps output dataset size.
-                            options=TracesDataGenerationJobOptions(max_samples=15),
-                            output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
-                        ),
+                    job=EvaluationDataGenerationJobInputs(
+                        name=f"traces-eval-{run_id}-a{attempt}",
+                        sources=[
+                            TracesDataGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                        ],
+                        # max_samples must be in [15, 1000]; caps output dataset size.
+                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15),
+                        output_configuration=EvaluationDataGenerationJobOutputTarget(name=output_dataset_name),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )

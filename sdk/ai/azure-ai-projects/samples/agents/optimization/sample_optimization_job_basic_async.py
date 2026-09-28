@@ -41,12 +41,23 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentOptimizationEvaluatorRef,
+    AgentOptimizationCandidateExpand,
+    AgentOptimizationCandidateEvaluation,
+    AgentOptimizationCandidateOutput,
+    AgentOptimizationCandidatePromotionInfo,
+    AgentOptimizationCandidateSearchConfiguration,
+    AgentOptimizationConfiguration,
+    AgentOptimizationEvaluationConfiguration,
+    AgentOptimizationEvaluator,
+    AgentOptimizationFoundryAgentTargetConfiguration,
     AgentOptimizationJob,
-    AgentOptimizationJobInputs,
-    AgentOptimizationOptions,
-    AgentOptimizationReferenceDatasetInput,
-    OptimizedAgentIdentifier,
+    AgentOptimizationJobResult,
+    AgentOptimizationModelConfiguration,
+    AgentOptimizationSpace,
+    AgentOptimizationTargetCompletionDatasetReferenceDataSource,
+    AgentOptimizationTargetCompletionEvaluationSet,
+    EvaluationModelConfiguration,
+    TargetAttribute,
 )
 
 load_dotenv()
@@ -61,6 +72,65 @@ eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
 
+def create_optimization_job() -> AgentOptimizationJob:
+    return AgentOptimizationJob(
+        display_name=f"Optimize {agent_name}",
+        target_configuration=AgentOptimizationFoundryAgentTargetConfiguration(name=agent_name),
+        optimization_model_configuration=AgentOptimizationModelConfiguration(model=optimization_model),
+        optimization_configuration=AgentOptimizationConfiguration(
+            agent_optimization_space=AgentOptimizationSpace(
+                target_attributes=[TargetAttribute.INSTRUCTIONS],
+            ),
+            candidate_search_configuration=AgentOptimizationCandidateSearchConfiguration(max_candidates=3),
+            evaluation_configuration=AgentOptimizationEvaluationConfiguration(
+                evaluation_model=EvaluationModelConfiguration(model=eval_model),
+                evaluators=[AgentOptimizationEvaluator(name=evaluator_name)],
+                training_set=AgentOptimizationTargetCompletionEvaluationSet(
+                    source=AgentOptimizationTargetCompletionDatasetReferenceDataSource(
+                        name=dataset_name,
+                        version=dataset_version,
+                    )
+                ),
+            ),
+        ),
+    )
+
+
+def print_result_summary(result: AgentOptimizationJobResult) -> None:
+    summary = result.candidate_summary
+    if summary:
+        print(
+            f"\nCandidate summary:"
+            f" baseline={summary.baseline_id} (score={summary.baseline_score})"
+            f" | best={summary.best_id} (score={summary.best_score})"
+            f" | completed={summary.completed_candidate_count}"
+        )
+        promotion = summary.latest_promoted_candidate
+        if promotion:
+            print(f"Latest promoted candidate: {promotion.promoted_agent.name} at {promotion.promoted_at}")
+
+    if result.termination_reason:
+        print(f"Termination reason: {result.termination_reason}")
+
+
+def print_candidate_details(
+    name: str,
+    evaluation: AgentOptimizationCandidateEvaluation | None,
+    output: AgentOptimizationCandidateOutput | None,
+    promotion: AgentOptimizationCandidatePromotionInfo | None,
+) -> None:
+    print(f"  - {name}", end="")
+    if evaluation:
+        print(f" | score={evaluation.score} | avg_tokens={evaluation.avg_tokens}", end="")
+        if evaluation.eval_id:
+            print(f" | eval_id={evaluation.eval_id}", end="")
+    if output and hasattr(output, "mutations"):
+        print(f" | mutations={len(output.mutations or [])}", end="")
+    if promotion:
+        print(f" | promoted_agent={promotion.promoted_agent.name}", end="")
+    print()
+
+
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
@@ -70,27 +140,16 @@ async def main() -> None:
         # ------------------------------------------------------------------
         # 1. Create an optimization job and observe the SDK-managed poller.
         # ------------------------------------------------------------------
-        job = AgentOptimizationJob(
-            inputs=AgentOptimizationJobInputs(
-                agent=OptimizedAgentIdentifier(agent_name=agent_name),
-                train_dataset=AgentOptimizationReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
-                ),
-                evaluators=[AgentOptimizationEvaluatorRef(name=evaluator_name)],
-                options=AgentOptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
-            ),
-        )
+        job = create_optimization_job()
 
         print("Begin creating an agent optimization job.")
-        poller = await project_client.beta.agents.begin_create_optimization_job(
-            job=job,
+        poller = await project_client.agents.begin_create_optimization_job(
+            body=job,
             polling_interval=poll_interval,
         )
+        job_id = poller.details["job_id"]
+        if not job_id:
+            raise RuntimeError("The create operation did not return an optimization job ID.")
 
         print("Waiting for the agent optimization job to complete.")
         result = await poller.result()
@@ -99,17 +158,20 @@ async def main() -> None:
         # ------------------------------------------------------------------
         # 2. Inspect the results.
         # ------------------------------------------------------------------
-        print(f"\nBaseline candidate: {result.baseline}")
-        print(f"Best candidate:     {result.best}")
-        print(f"Candidates ({len(result.candidates or [])}):")
-        for candidate in result.candidates or []:
-            print(
-                f"  - {candidate.name}"
-                f" | avg_score={candidate.avg_score:.4f}"
-                f" | avg_tokens={candidate.avg_tokens:.0f}"
+        print_result_summary(result)
+
+        print("\nCandidates:")
+        async for candidate in project_client.agents.list_optimization_candidates(
+            job_id=job_id,
+            expand=[AgentOptimizationCandidateExpand.MUTATIONS],
+            limit=10,
+        ):
+            print_candidate_details(
+                candidate.name,
+                candidate.evaluation,
+                candidate.output,
+                candidate.promotion,
             )
-            if candidate.eval_id:
-                print(f"      eval_id={candidate.eval_id}")
 
 
 if __name__ == "__main__":

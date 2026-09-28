@@ -9,7 +9,7 @@ DESCRIPTION:
     Generates a supervised fine-tuning dataset from an agent's conversation traces.
 
       1. Creates an agent and seeds multiple short conversations against it.
-      2. Waits for ingestion, then submits a `DataGenerationJob`
+      2. Waits for ingestion, then submits a data generation job
          (scenario=SUPERVISED_FINETUNING, source=traces) that extracts and
          formats the trace data into training/validation JSONL files.
       3. Polls the job and inspects the resulting Azure OpenAI file outputs.
@@ -48,12 +48,10 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     FileDataGenerationJobOutput,
     PromptAgentDefinition,
+    SupervisedFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobOutputTarget,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
 )
@@ -141,24 +139,21 @@ with (
             try:
                 print("Begin creating a dataset generation job.")
                 poller = project_client.beta.datasets.begin_create_generation_job(
-                    job=DataGenerationJob(
-                        inputs=DataGenerationJobInputs(
-                            name=f"traces-ft-{run_id}-a{attempt}",
-                            scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-                            sources=[
-                                TracesDataGenerationJobSource(
-                                    description="Application Insights conversation traces for the agent.",
-                                    agent_name=agent_name,
-                                    start_time=start_time,
-                                    end_time=end_time,
-                                ),
-                            ],
-                            # max_samples must be in [15, 1000]; caps output dataset size.
-                            # train_split=0.8 splits generated samples into a training
-                            # and a validation Azure OpenAI file.
-                            options=TracesDataGenerationJobOptions(max_samples=15, train_split=0.8),
-                            output_options=DataGenerationJobOutputOptions(name=output_name),
-                        ),
+                    job=SupervisedFineTuningDataGenerationJobInputs(
+                        name=f"traces-ft-{run_id}-a{attempt}",
+                        sources=[
+                            TracesDataGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                        ],
+                        # max_samples must be in [15, 1000]; caps output dataset size.
+                        # train_split=0.8 splits generated samples into a training
+                        # and a validation Azure OpenAI file.
+                        generation_configuration=TracesDataGenerationJobOptions(max_samples=15, train_split=0.8),
+                        output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 )

@@ -89,7 +89,7 @@ with (
     # 1. Generate an evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
     poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=EvaluatorGenerationJob(
+        body=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
                 evaluator_name=evaluator_name,

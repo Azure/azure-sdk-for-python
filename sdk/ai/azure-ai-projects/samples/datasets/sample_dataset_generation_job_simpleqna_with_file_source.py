@@ -11,7 +11,7 @@ DESCRIPTION:
 
       1. Uploads a short Markdown reference document via the Azure OpenAI Files
          API (`purpose=user_data`) so it can be referenced by file id.
-      2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
+      2. Creates an `EvaluationDataGenerationJobInputs` (type=simple_qna)
          with two sources: the uploaded `File` and a `Prompt` that adds an
          instruction to generate expert-level, high-difficulty questions.
       3. Polls the job to completion, resolves the generated `DatasetVersion`,
@@ -58,13 +58,11 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     FileDataGenerationJobSource,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
@@ -153,37 +151,34 @@ with (
     #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-    job = DataGenerationJob(
-        inputs=DataGenerationJobInputs(
-            name=f"simpleqna-multisource-{run_id}",
-            scenario=DataGenerationJobScenario.EVALUATION,
-            sources=[
-                FileDataGenerationJobSource(
-                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                    id=seed_file.id,
-                ),
-                PromptDataGenerationJobSource(
-                    description="Specifies the question difficulty for SimpleQnA generation.",
-                    prompt="Generate expert-level questions of high difficulty.",
-                ),
-            ],
-            options=SimpleQnADataGenerationJobOptions(
-                # Service requires max_samples to be between 15 and 1000.
-                max_samples=15,
-                # `simple_qna` REQUIRES model_options.
-                model_options=DataGenerationModelOptions(model=model_name),
+    job_inputs = EvaluationDataGenerationJobInputs(
+        name=f"simpleqna-multisource-{run_id}",
+        sources=[
+            FileDataGenerationJobSource(
+                description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                id=seed_file.id,
             ),
-            output_options=DataGenerationJobOutputOptions(
-                name=output_dataset_name,
-                description=EXPECTED_OUTPUT_DESCRIPTION,
-                tags=EXPECTED_OUTPUT_TAGS,
+            PromptDataGenerationJobSource(
+                description="Specifies the question difficulty for SimpleQnA generation.",
+                prompt="Generate expert-level questions of high difficulty.",
             ),
+        ],
+        generation_configuration=SimpleQnADataGenerationJobOptions(
+            # Service requires max_samples to be between 15 and 1000.
+            max_samples=15,
+            # `simple_qna` REQUIRES model_options.
+            model_options=DataGenerationModelOptions(model=model_name),
+        ),
+        output_configuration=EvaluationDataGenerationJobOutputTarget(
+            name=output_dataset_name,
+            description=EXPECTED_OUTPUT_DESCRIPTION,
+            tags=EXPECTED_OUTPUT_TAGS,
         ),
     )
 
     print("Begin creating a dataset generation job.")
     poller = project_client.beta.datasets.begin_create_generation_job(
-        job=job,
+        job=job_inputs,
         polling_interval=poll_interval_seconds,
     )
 

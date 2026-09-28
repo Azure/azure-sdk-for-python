@@ -95,7 +95,7 @@ with (
     # 1. Create the generation job. `operation_id` makes the call idempotent.
     print("Begin creating an evaluator generation job.")
     poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body,
+        body=job_body,
         operation_id=operation_id,
         polling_interval=poll_interval_seconds,
     )
