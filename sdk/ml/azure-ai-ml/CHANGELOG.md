@@ -1,8 +1,6 @@
 # Release History
 
-## 1.36.0 (unreleased)
-
-### Features Added
+## 1.35.1 (2026-09-30)
 
 ### Bugs Fixed
 - Fixed artifact cache path validation, wildcard version handling across supported Python versions, and concurrent downloads for component `additional_includes`.
