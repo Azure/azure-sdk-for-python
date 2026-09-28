@@ -29,7 +29,7 @@ async def test_begin_create_generation_job_exposes_job_id_async():
         return_value=initial_response
     )
 
-    poller = await operation.begin_create_generation_job(job={}, polling=False)
+    poller = await operation.begin_create_generation_job(body={}, polling=False)
 
     assert isinstance(poller, AsyncEvaluatorGenerationLROPoller)
     assert poller.details["job_id"] == "evaluator-job-async"

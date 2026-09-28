@@ -16,7 +16,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     AgentsOperations as GeneratedAgentsOperations,
-    BetaAgentsOperations as BetaAgentsOperationsGenerated,
     JSON,
     _Unset,
 )
@@ -326,13 +325,10 @@ class AgentsOperations(GeneratedAgentsOperations):
             raise
 
 
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom async operations for beta agent optimization jobs."""
-
     @overload
     async def begin_create_optimization_job(
         self,
-        job: _models.AgentOptimizationJob,
+        body: _models.AgentOptimizationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -342,7 +338,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @overload
     async def begin_create_optimization_job(
         self,
-        job: JSON,
+        body: JSON,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -352,7 +348,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @overload
     async def begin_create_optimization_job(
         self,
-        job: IO[bytes],
+        body: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -362,15 +358,15 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
     @distributed_trace_async
     async def begin_create_optimization_job(
         self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        body: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncAgentOptimizationLROPoller:
         """Create an agent optimization job.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
+        :param body: The job to create. Required.
+        :type body: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -389,7 +385,7 @@ class BetaAgentsOperations(BetaAgentsOperationsGenerated):
         raw_result = None
         if continuation_token is None:
             raw_result = await self._create_optimization_job_initial(
-                job=job,
+                body=body,
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

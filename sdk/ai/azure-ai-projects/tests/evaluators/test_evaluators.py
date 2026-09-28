@@ -25,7 +25,7 @@ def test_begin_create_generation_job_exposes_job_id():
         return_value=initial_response
     )
 
-    poller = operation.begin_create_generation_job(job={}, polling=False)
+    poller = operation.begin_create_generation_job(body={}, polling=False)
 
     assert isinstance(poller, EvaluatorGenerationLROPoller)
     assert poller.details["job_id"] == "evaluator-job-sync"
