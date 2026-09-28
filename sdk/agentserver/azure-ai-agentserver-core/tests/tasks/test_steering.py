@@ -123,40 +123,131 @@ class TestSteering:
 
     @pytest.mark.asyncio
     async def test_steering_queue_full(self, tmp_path):
-        """start() raises SteeringQueueFull when queue is at capacity.
-
-        : the per-task ``max_pending`` knob was
-                demoted; the framework-wide default
-                ``_DEFAULT_MAX_PENDING_STEERING`` (10) applies. This test fills the
-                queue at that default to verify the exception still surfaces.
-        """
+        """Rejected steers do not leak futures or steal accepted acknowledgments."""
         from azure.ai.agentserver.core.tasks._decorator import _DEFAULT_MAX_PENDING_STEERING
 
         manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
         try:
-            gate = asyncio.Event()
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                return {"msg": ctx.input["msg"]}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+
+            accepted = []
+            for i in range(_DEFAULT_MAX_PENDING_STEERING):
+                accepted.append(await chat.start(task_id="t1", input={"msg": f"fill-{i}"}))
+            registered = list(manager._pending_steering_futures["t1"])
+            assert len(registered) == _DEFAULT_MAX_PENDING_STEERING
+
+            for i in range(3):
+                with pytest.raises(SteeringQueueFull):
+                    await chat.start(task_id="t1", input={"msg": f"overflow-{i}"})
+                assert manager._pending_steering_futures["t1"] == registered
+
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert [entry["msg"] for entry in info.payload["steering"]["pending_inputs"]] == [
+                f"fill-{i}" for i in range(_DEFAULT_MAX_PENDING_STEERING)
+            ]
+
+            gate.set()
+            assert await asyncio.wait_for(run1.result(), timeout=5.0) == {"msg": "A"}
+            for i, run in enumerate(accepted):
+                assert await asyncio.wait_for(run.result(), timeout=5.0) == {"msg": f"fill-{i}"}
+            assert not manager._pending_steering_futures.get("t1")
+        finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_steering_storage_failure_unregisters_only_failed_future(self, tmp_path, monkeypatch):
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        try:
 
             @multi_turn_task(name="chat", steerable=True)
             async def chat(ctx: TaskContext[dict]) -> dict:
                 await gate.wait()
-                return {"msg": "done"}
+                return {"msg": ctx.input["msg"]}
 
-            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            first = await chat.start(task_id="t1", input={"msg": "first"})
+            accepted = await chat.start(task_id="t1", input={"msg": "accepted"})
+            accepted_future = manager._pending_steering_futures["t1"][0]
+            rejected_future: asyncio.Future[Any] | None = None
 
-            # Fill the queue to the framework default
-            for i in range(_DEFAULT_MAX_PENDING_STEERING):
-                await chat.start(task_id="t1", input={"msg": f"fill-{i}"})
+            async def reject_update(task_id: str, _patch: Any) -> Any:
+                nonlocal rejected_future
+                rejected_future = manager._pending_steering_futures[task_id][-1]
+                raise OSError("storage unavailable")
 
-            # Queue is full — should raise
-            with pytest.raises(SteeringQueueFull):
-                await chat.start(task_id="t1", input={"msg": "overflow"})
+            with monkeypatch.context() as patcher:
+                patcher.setattr(manager.provider, "update", reject_update)
+                with pytest.raises(OSError, match="storage unavailable"):
+                    await chat.start(task_id="t1", input={"msg": "rejected"})
 
-            #: SteeringQueueFull is bare exception (no max_pending)
+            assert rejected_future is not None
+            assert rejected_future.cancelled()
+            assert manager._pending_steering_futures["t1"] == [accepted_future]
+            assert not accepted_future.done()
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert info.payload["steering"]["pending_inputs"] == [{"msg": "accepted"}]
 
             gate.set()
-            await asyncio.wait_for(run1.result(), timeout=5.0)
-
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first"}
+            assert await asyncio.wait_for(accepted.result(), timeout=5.0) == {"msg": "accepted"}
         finally:
+            gate.set()
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_steering_cancelled_append_unregisters_future(self, tmp_path, monkeypatch):
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        gate = asyncio.Event()
+        append_started = asyncio.Event()
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                await gate.wait()
+                return {"msg": ctx.input["msg"]}
+
+            first = await chat.start(task_id="t1", input={"msg": "first"})
+            aborted_future: asyncio.Future[Any] | None = None
+
+            async def blocked_update(task_id: str, _patch: Any) -> Any:
+                nonlocal aborted_future
+                aborted_future = manager._pending_steering_futures[task_id][-1]
+                append_started.set()
+                await asyncio.Event().wait()
+
+            with monkeypatch.context() as patcher:
+                patcher.setattr(manager.provider, "update", blocked_update)
+                aborted = asyncio.create_task(chat.start(task_id="t1", input={"msg": "aborted"}))
+                try:
+                    await asyncio.wait_for(append_started.wait(), timeout=5.0)
+                    assert manager._get_task_write_lock("t1").locked()
+                finally:
+                    aborted.cancel()
+                    with pytest.raises(asyncio.CancelledError):
+                        await aborted
+
+            assert aborted_future is not None
+            assert aborted_future.cancelled()
+            assert "t1" not in manager._pending_steering_futures
+            info = await manager.provider.get("t1")
+            assert info is not None
+            assert info.payload.get("steering", {}).get("pending_inputs", []) == []
+
+            accepted = await chat.start(task_id="t1", input={"msg": "accepted"})
+            gate.set()
+            assert await asyncio.wait_for(first.result(), timeout=5.0) == {"msg": "first"}
+            assert await asyncio.wait_for(accepted.result(), timeout=5.0) == {"msg": "accepted"}
+        finally:
+            gate.set()
             await self._teardown_manager(manager, mgr_mod)
 
     @pytest.mark.asyncio
