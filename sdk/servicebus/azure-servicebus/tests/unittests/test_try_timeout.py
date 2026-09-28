@@ -5,10 +5,11 @@
 """Unit tests for the opt-in per-attempt timeout (`try_timeout`).
 
 `try_timeout` bounds a single attempt of an operation rather than the whole operation. It
-applies to sending, to management operations, and to AMQP link acquisition, where the wait for
-the link to become ready was previously unbounded. That includes the link acquisition performed
-by `receive_messages` and by the streaming iterator. It must be greater than 0 if given, and is
-off by default.
+applies to sending, to management operations (including management-link message settlement),
+and to AMQP link acquisition, where the wait for the link to become ready was previously
+unbounded. That includes the link acquisition performed by `receive_messages` and by the
+streaming iterator. It must be greater than 0 if given, and is off by default.
+Management-link settlement remains bounded by an internal 60-second default when it is off.
 
 It deliberately does not apply to the receive long poll or the iterator's own wait: bounding
 those would silently truncate a caller who asked for a long wait. That exclusion is the
@@ -27,11 +28,16 @@ from unittest.mock import MagicMock, patch
 import azure.servicebus._common.utils as utils_module
 import azure.servicebus._servicebus_receiver as sync_receiver_module
 import azure.servicebus.aio._servicebus_receiver_async as async_receiver_module
+import azure.servicebus._pyamqp.client as pyamqp_client_module
 
 import pytest
 
 from azure.servicebus._common._configuration import Configuration
-from azure.servicebus._common.constants import DEFAULT_RECEIVE_WAIT_TIME_SECS
+from azure.servicebus._common.constants import (
+    DEFAULT_RECEIVE_WAIT_TIME_SECS,
+    DEFAULT_SERVER_TIMEOUT_MS,
+    MESSAGE_COMPLETE,
+)
 from azure.servicebus._common.utils import (
     check_link_ready_deadline,
     get_attempt_timeout,
@@ -766,18 +772,53 @@ class TestDeadlineSentinels:
                 receiver._open(timeout=0)
 
 
-class TestSettlementIsNotBounded:
-    """Settlement is documented as excluded; pin it so opting it in fails loudly."""
+class TestManagementLinkSettlementIsBounded:
+    """Only the management-link fallback gets an attempt timeout."""
 
-    def _receiver(self):
+    def _receiver(self, try_timeout=5):
         from azure.servicebus import ServiceBusClient
 
-        client = ServiceBusClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        client = ServiceBusClient(
+            "fake.servicebus.windows.net",
+            MagicMock(),
+            try_timeout=try_timeout,
+            retry_total=1,
+            retry_backoff_factor=0,
+        )
         receiver = client.get_queue_receiver("q")
         receiver._check_live = lambda: None
+        receiver._populate_message_properties = lambda m: None
+        receiver._running = True
         return receiver
 
-    def test_settle_message_never_receives_a_timeout(self):
+    def test_management_link_settlement_uses_the_direct_request_with_timeout(self):
+        receiver = self._receiver()
+        direct, wrapped = [], []
+        expected = object()
+
+        def fake_direct(*args, **kwargs):
+            direct.append(kwargs.get("timeout"))
+            return expected
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._mgmt_request_response_with_retry = lambda *args, **kwargs: wrapped.append(kwargs)
+
+        result = receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert result is expected
+        assert direct == [5]
+        assert wrapped == []
+
+    def test_management_link_settlement_uses_default_timeout_when_try_timeout_is_off(self):
+        receiver = self._receiver(try_timeout=None)
+        direct = []
+        receiver._mgmt_request_response = lambda *args, **kwargs: direct.append(kwargs.get("timeout"))
+
+        receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert direct == [DEFAULT_SERVER_TIMEOUT_MS / 1000]
+
+    def test_receiver_link_settlement_does_not_receive_a_timeout(self):
         from azure.servicebus import ServiceBusReceivedMessage
 
         receiver = self._receiver()
@@ -789,9 +830,137 @@ class TestSettlementIsNotBounded:
         message._settled = False
         message._lock_expired = False
         message.auto_renew_error = None
-        receiver._settle_message_with_retry(message, "completed")
+        receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
         assert seen == ["unset"]
+
+    def test_management_link_timeout_retries_only_at_the_settlement_layer(self):
+        from azure.servicebus import ServiceBusReceivedMessage
+        from azure.servicebus.exceptions import OperationTimeoutError
+
+        receiver = self._receiver()
+        attempts = []
+
+        def fake_direct(*args, **kwargs):
+            attempts.append(kwargs.get("timeout"))
+            if len(attempts) == 1:
+                raise OperationTimeoutError(message="settlement timed out")
+            return None
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._handle_exception = lambda exception: exception
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._is_deferred_message = True
+        message._is_peeked_message = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        message.lock_token = "tok"
+
+        receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
+
+        assert attempts == [5, 5]
+        assert message._settled is True
+
+
+class TestPyamqpManagementRequestReadiness:
+    """Management links must not depend on the associated receiver link remaining attached."""
+
+    def test_sync_management_request_skips_broken_primary_link(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = True
+        mgmt_link.execute.return_value = (200, "OK", "response")
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+        client.client_ready = MagicMock(side_effect=AssertionError("primary link readiness must not be checked"))
+
+        result = client.mgmt_request(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        client.client_ready.assert_not_called()
+
+    def test_sync_management_link_readiness_uses_the_request_deadline(self):
+        from azure.servicebus._pyamqp.client import AMQPClient
+
+        clock = VirtualClock()
+        client = AMQPClient.__new__(AMQPClient)
+        client._mgmt_link_lock = MagicMock()
+        client._mgmt_link_lock.__enter__.return_value = None
+        client._mgmt_link_lock.__exit__.return_value = None
+        mgmt_link = MagicMock()
+        mgmt_link.ready.return_value = False
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete = MagicMock(return_value=True)
+        client._connection = MagicMock()
+        client._connection.listen.side_effect = lambda **kwargs: clock.sleep(0.02)
+
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                client.mgmt_request(MagicMock(), timeout=0.05)
+
+        assert client._connection.listen.call_count == 3
+
+    @pytest.mark.asyncio
+    async def test_async_management_request_skips_broken_primary_link(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        mgmt_link = MagicMock()
+
+        async def ready():
+            return True
+
+        async def execute(*args, **kwargs):
+            return (200, "OK", "response")
+
+        async def auth_complete():
+            return True
+
+        mgmt_link.ready = ready
+        mgmt_link.execute = execute
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete_async = auth_complete
+        client.client_ready_async = MagicMock(side_effect=AssertionError("primary link readiness must not be checked"))
+
+        result = await client.mgmt_request_async(MagicMock(), timeout=5)
+
+        assert result == (200, "OK", "response")
+        client.client_ready_async.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_async_management_link_readiness_uses_the_request_deadline(self):
+        from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
+
+        clock = VirtualClock()
+        client = AMQPClientAsync.__new__(AMQPClientAsync)
+        client._mgmt_link_lock_async = asyncio.Lock()
+        mgmt_link = MagicMock()
+
+        async def ready():
+            return False
+
+        async def auth_complete():
+            return True
+
+        async def listen(**kwargs):
+            await clock.sleep_async(0.02)
+
+        mgmt_link.ready = ready
+        client._mgmt_links = {"$management": mgmt_link}
+        client.auth_complete_async = auth_complete
+        client._connection = MagicMock()
+        client._connection.listen = listen
+
+        with patch.object(pyamqp_client_module, "time", clock):
+            with pytest.raises(TimeoutError):
+                await client.mgmt_request_async(MagicMock(), timeout=0.05)
 
 
 class TestAsyncLinkAcquisitionIsBounded:
@@ -1311,30 +1480,34 @@ class TestAsyncExpiredBudgetDoesNotIssueLinkCredit:
         assert credit_calls == [9]
 
 
-class TestAsyncSettlementIsNotBounded:
-    """Async settlement must use the direct request path like sync, not the retry wrapper.
+class TestAsyncManagementLinkSettlementIsBounded:
+    """Async management-link settlement mirrors the sync timeout and retry layering."""
 
-    The wrapper opts into try_timeout, which the docs exclude for settlement, and it nests a
-    retry inside the one _settle_message_with_retry already provides.
-    """
-
-    def _receiver(self):
+    def _receiver(self, try_timeout=5):
         from azure.servicebus.aio import ServiceBusClient as AsyncClient
 
-        client = AsyncClient("fake.servicebus.windows.net", MagicMock(), try_timeout=5)
+        client = AsyncClient(
+            "fake.servicebus.windows.net",
+            MagicMock(),
+            try_timeout=try_timeout,
+            retry_total=1,
+            retry_backoff_factor=0,
+        )
         receiver = client.get_queue_receiver("q")
         receiver._check_live = lambda: None
         receiver._populate_message_properties = lambda m: None
+        receiver._running = True
         return receiver
 
     @pytest.mark.asyncio
-    async def test_settlement_uses_the_direct_request_path(self):
+    async def test_management_link_settlement_uses_the_direct_request_with_timeout(self):
         receiver = self._receiver()
         direct, wrapped = [], []
+        expected = object()
 
         async def fake_direct(*args, **kwargs):
-            direct.append(kwargs.get("timeout", "unset"))
-            return None
+            direct.append(kwargs.get("timeout"))
+            return expected
 
         async def fake_wrapped(*args, **kwargs):
             wrapped.append(kwargs)
@@ -1342,14 +1515,27 @@ class TestAsyncSettlementIsNotBounded:
 
         receiver._mgmt_request_response = fake_direct
         receiver._mgmt_request_response_with_retry = fake_wrapped
-        await receiver._settle_message_via_mgmt_link("completed", ["tok"])
+        result = await receiver._settle_message_via_mgmt_link("completed", ["tok"])
 
-        assert wrapped == []  # the retry wrapper must not be used
-        assert direct == ["unset"]  # and no timeout is applied
+        assert result is expected
+        assert direct == [5]
+        assert wrapped == []
 
     @pytest.mark.asyncio
-    async def test_settle_message_never_receives_a_timeout(self):
-        # Mirrors the sync coverage in TestSettlementIsNotBounded.
+    async def test_management_link_settlement_uses_default_timeout_when_try_timeout_is_off(self):
+        receiver = self._receiver(try_timeout=None)
+        direct = []
+
+        async def fake_direct(*args, **kwargs):
+            direct.append(kwargs.get("timeout"))
+
+        receiver._mgmt_request_response = fake_direct
+        await receiver._settle_message_via_mgmt_link("completed", ["tok"])
+
+        assert direct == [DEFAULT_SERVER_TIMEOUT_MS / 1000]
+
+    @pytest.mark.asyncio
+    async def test_receiver_link_settlement_does_not_receive_a_timeout(self):
         from azure.servicebus import ServiceBusReceivedMessage
 
         receiver = self._receiver()
@@ -1365,9 +1551,41 @@ class TestAsyncSettlementIsNotBounded:
         message._settled = False
         message._lock_expired = False
         message.auto_renew_error = None
-        await receiver._settle_message_with_retry(message, "completed")
+        await receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
         assert seen == ["unset"]
+
+    @pytest.mark.asyncio
+    async def test_management_link_timeout_retries_only_at_the_settlement_layer(self):
+        from azure.servicebus import ServiceBusReceivedMessage
+        from azure.servicebus.exceptions import OperationTimeoutError
+
+        receiver = self._receiver()
+        attempts = []
+
+        async def fake_direct(*args, **kwargs):
+            attempts.append(kwargs.get("timeout"))
+            if len(attempts) == 1:
+                raise OperationTimeoutError(message="settlement timed out")
+            return None
+
+        async def fake_handle_exception(exception):
+            return exception
+
+        receiver._mgmt_request_response = fake_direct
+        receiver._handle_exception = fake_handle_exception
+        message = MagicMock(spec=ServiceBusReceivedMessage)
+        message._settled = False
+        message._is_deferred_message = True
+        message._is_peeked_message = False
+        message._lock_expired = False
+        message.auto_renew_error = None
+        message.lock_token = "tok"
+
+        await receiver._settle_message_with_retry(message, MESSAGE_COMPLETE)
+
+        assert attempts == [5, 5]
+        assert message._settled is True
 
 
 class TestSleepCrossingDeadlineStopsPolling:

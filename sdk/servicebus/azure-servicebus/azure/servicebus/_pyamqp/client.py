@@ -58,6 +58,15 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
+def _get_mgmt_request_remaining_timeout(timeout, started):
+    if timeout and timeout > 0:
+        remaining = timeout - (time.monotonic() - started)
+        if remaining <= 0:
+            raise TimeoutError("Management request timed out.")
+        return remaining
+    return timeout
+
+
 class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
@@ -458,6 +467,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         # The method also takes "status_code_field" and "status_description_field"
         # keyword arguments as alternate names for the status code and description
         # in the response body. Those two keyword arguments are used in Azure services only.
+        started = time.monotonic()
         with self._mgmt_link_lock:
             try:
                 mgmt_link = self._mgmt_links[node]
@@ -466,14 +476,19 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
-        while not self.client_ready():
-            time.sleep(0.05)
+        while not self.auth_complete():
+            remaining = _get_mgmt_request_remaining_timeout(timeout, started)
+            time.sleep(min(0.05, remaining) if remaining else 0.05)
 
         while not mgmt_link.ready():
+            _get_mgmt_request_remaining_timeout(timeout, started)
             self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
-            message, operation=operation, operation_type=operation_type, timeout=timeout
+            message,
+            operation=operation,
+            operation_type=operation_type,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
         )
         return status, description, response
 
