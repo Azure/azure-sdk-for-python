@@ -88,6 +88,100 @@ def submit(data, trusted):
 
 
 class EvidenceAndChecksTests(unittest.TestCase):
+    def test_source_collection_issues_preserve_checks_and_force_partial(self):
+        draft, trusted = fixture()
+        for issue in (
+            f"{PACKAGE}: source discovery exceeded the 16-file package limit.",
+            f"{PACKAGE}/pyproject.toml cannot identify version data: invalid TOML.",
+        ):
+            with self.subTest(issue=issue):
+                trusted["sourceCollectionIssues"] = [issue]
+                result = contract.preflight(draft, trusted)
+                self.assertTrue(result["ok"], result)
+                self.assertEqual("partial", result["reviewCompleteness"])
+                body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+                self.assertIn(issue, body)
+                self.assertIn("Source collection", body)
+                self.assertIn("Version consistency", body)
+                self.assertIn("README snippets", body)
+                self.assertNotIn("**Unverified checks:** None.", body)
+        trusted["sourceCollectionIssues"] = [f"{PACKAGE}-other: source discovery exceeded the limit."]
+        result = contract.preflight(draft, trusted)
+        self.assertEqual("complete", result["reviewCompleteness"])
+        self.assertNotIn(
+            "Source collection", contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+        )
+
+    def test_checks_and_findings_reject_historical_sdk_evidence(self):
+        for revision in ("a" * 40, "c" * 40, "9" * 40):
+            for location in ("check", "finding"):
+                with self.subTest(revision=revision, location=location):
+                    draft, trusted = fixture()
+                    trusted["breakingChangeContext"][0]["releaseBaseline"]["revision"] = "9" * 40
+                    stale = evidence.source_record(
+                        REPO,
+                        {
+                            "path": PACKAGE + "/pyproject.toml",
+                            "revision": revision,
+                            "status": "available",
+                            "content": '[packaging]\ntitle = "HistoricalClient"\n',
+                        },
+                        PACKAGE,
+                    )
+                    trusted["sources"].append(stale)
+                    if location == "check":
+                        draft["packages"][0]["checks"]["Client name consistency"]["sources"] = [reference(stale)]
+                    else:
+                        draft["packages"][0]["findings"] = [
+                            {
+                                "check": "Client name consistency",
+                                "severity": "Blocking",
+                                "title": "Client names differ",
+                                "observation": "The packaging title differs from the client name.",
+                                "remediation": "Align the packaging title and client name.",
+                                "sources": [reference(stale)],
+                            }
+                        ]
+                    errors = contract.preflight(draft, trusted)["errors"]
+                    self.assertIn("wrong_revision", {item["code"] for item in errors})
+                    with self.assertRaisesRegex(contract.ReviewError, "wrong_revision"):
+                        contract.validate_sources(
+                            [evidence.citation(stale, 1, 2)],
+                            "test.sources",
+                            trusted,
+                            trusted["breakingChangeContext"][0],
+                            PACKAGE,
+                            check="Client name consistency",
+                        )
+                    # Even a forged success-shaped receipt cannot bypass independent publication validation.
+                    data = {**draft, "registrations": []}
+                    data["preflight"] = {"attempt": 1, "digest": contract.digest(data)}
+                    with self.assertRaisesRegex(contract.ReviewError, "wrong_revision"):
+                        contract.prepare_output(envelope(data), trusted)
+
+    def test_attribution_retains_historical_sdk_context(self):
+        old, trusted = review(), context()
+        add_entry(old, trusted)
+        final, trusted = production_fixture(old, trusted)
+        draft = {key: value for key, value in final.items() if key not in {"preflight", "registrations"}}
+        for revision in (trusted["firstRevision"], trusted["mergeBaseRevision"], "9" * 40):
+            trusted["breakingChangeContext"][0]["releaseBaseline"]["revision"] = "9" * 40
+            historical = evidence.source_record(
+                REPO,
+                {
+                    "path": PACKAGE + "/pyproject.toml",
+                    "revision": revision,
+                    "status": "available",
+                    "content": '[packaging]\ntitle = "HistoricalClient"\n',
+                },
+                PACKAGE,
+            )
+            trusted["sources"].append(historical)
+            draft["packages"][0]["attribution"][0]["sdk_context"] = [reference(historical)]
+            body = contract.prepare_output(submit(draft, trusted), trusted)["items"][0]["body"]
+            self.assertIn(revision, body)
+            self.assertIn("Human review", body)
+
     def test_collector_discovers_clients_from_data_and_bounds_snapshot(self):
         _, trusted = fixture()
         trusted["changedFiles"] = []

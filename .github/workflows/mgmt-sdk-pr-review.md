@@ -509,6 +509,9 @@ For every affected package, fill the draft's `checks` object: `Client signature`
 Use `completed` with an empty reason only after actually checking supported evidence.
 Use `unverified` with a concrete missing-evidence reason, or `not_applicable` with supported
 applicability reasoning. Retain completed checks when other checks remain unverified.
+Checks and findings must cite SDK evidence at `latestRevision`; historical SDK records are
+reserved for attribution context. Package source-collection diagnostics remain visible and
+force partial review completeness even when all individual checks completed.
 Findings require a completed corresponding check, substantive observation/remediation and sources.
 Keep plain-text analysis, multiline snippets and decorator sigils intact; code renders Markdown.
 Do not report passing checks or unrelated pre-existing problems as findings.

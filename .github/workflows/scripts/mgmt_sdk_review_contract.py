@@ -349,6 +349,13 @@ def validate_sources(sources, path, context, breaking, package, required=False, 
             "wrong_evidence_role" if specification and (repo, revision) in allowed else "wrong_revision",
         )
         if repo == context["repository"]:
+            if check is not None:
+                require(
+                    revision == context["latestRevision"],
+                    field,
+                    "Check and finding evidence must use the latest SDK revision; historical evidence is attribution context only.",
+                    "wrong_revision",
+                )
             require(filename.startswith(package + "/"), field, "source belongs to another package")
             relative = filename[len(package) + 1 :]
             require(
@@ -575,6 +582,9 @@ def render(data, context):
     breaking_by_package = {item["packagePath"]: item for item in context["breakingChangeContext"]}
     for package in sorted(data["packages"], key=lambda item: item["package"]):
         name = package["package"]
+        for issue in context.get("sourceCollectionIssues", []):
+            if issue.startswith((name + ":", name + "/")):
+                unverified.append([text(name), "Source collection", text(issue)])
         completed = []
         for check in sorted(package["checks"], key=lambda item: CHECKS.index(item["name"])):
             if check["outcome"] == "unverified":
@@ -843,6 +853,13 @@ def expand_draft(data, context):
                 )
                 require(role in record["roles"], field, f"This list requires {role} evidence.", "wrong_evidence_role")
                 if role == "sdk":
+                    if check is not None:
+                        require(
+                            record["revision"] == context["latestRevision"],
+                            field,
+                            "Check and finding evidence must use the latest SDK revision; historical evidence is attribution context only.",
+                            "wrong_revision",
+                        )
                     require(
                         allowed_sdk_file(record["path"][len(package) + 1 :], check),
                         field,
