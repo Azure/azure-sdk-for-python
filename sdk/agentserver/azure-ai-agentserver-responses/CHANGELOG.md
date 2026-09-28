@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.0b2 (Unreleased)
+## 2.2.0b2 (2026-09-24)
 
 ### Features Added
 
