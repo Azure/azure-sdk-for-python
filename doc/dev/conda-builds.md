@@ -12,7 +12,7 @@ Follow the instructions [here](https://docs.conda.io/projects/conda-build/en/lat
 
 - Update `CondaArtifacts` parameters as necessary within `eng/pipelines/templates/stages/conda-sdk-client.yml` .
 - If necessary, add or update the conda recipes present under `/conda/conda-recipes`.
-- Update `eng/conda_env.yml` variable `AZURESDK_CONDA_VERSION` to the target version you wish to release.
+- The `conda-update-pipeline.yml` pipeline runs [`conda/update_conda_files.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/conda/update_conda_files.py) on a quarterly schedule (or on demand) to compute the next `CondaReleaseVersion` and open a PR updating the conda recipe files and `conda-sdk-client.yml` with the new version. Merge that PR before starting the release build.
 - Invoke [python - conda](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321) manually, checking off which packages you wish to release.
 - Once built, approve the packages for release individually, there will be pending approval stages.
 

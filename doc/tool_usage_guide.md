@@ -33,6 +33,12 @@ The following checks are available via the `azpysdk` entrypoint.
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 |`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
+|`whl`| Installs the wheel version of the target package and its dev requirements, then runs pytest. | `azpysdk whl .` |
+|`whl_no_aio`| Same as `whl`, but ensures `aiohttp` is uninstalled before running pytest. | `azpysdk whl_no_aio .` |
+|`sdist`| Builds and installs the source distribution, then runs pytest. | `azpysdk sdist .` |
+|`mindependency`| Installs the oldest supported versions of a package's dependencies and runs pytest. | `azpysdk mindependency .` |
+|`latestdependency`| Installs the latest available versions of a package's dependencies and runs pytest. | `azpysdk latestdependency .` |
+|`changelog`| Manages changelogs with Chronus (`add`, `verify`, `create`, `status` subcommands). | `azpysdk changelog add .` |
 
 ## Common arguments
 
