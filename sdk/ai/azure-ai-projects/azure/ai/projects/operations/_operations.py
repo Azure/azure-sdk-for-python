@@ -19,8 +19,8 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
-    ResourceNotFoundError,
     ResourceModifiedError,
+    ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
     StreamConsumedError,
@@ -566,6 +566,263 @@ def build_agents_get_session_log_stream_request(  # pylint: disable=name-too-lon
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_create_optimization_job_request(  # pylint: disable=name-too-long
+    *, operation_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_estimate_optimization_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs:estimate"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_optimization_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_list_optimization_jobs_request(  # pylint: disable=name-too-long
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    status: Optional[Union[str, _models.JobStatus]] = None,
+    agent_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs"
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    if agent_name is not None:
+        _params["agent_name"] = _SERIALIZER.query("agent_name", agent_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_cancel_optimization_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}:cancel"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_delete_optimization_job_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_agents_list_optimization_candidates_request(  # pylint: disable=name-too-long
+    job_id: str,
+    *,
+    expand: Optional[List[Union[str, _models.AgentOptimizationCandidateExpand]]] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}/candidates"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if expand is not None:
+        _params["expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_optimization_candidate_request(  # pylint: disable=name-too-long
+    job_id: str, candidate_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}/candidates/{candidateId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "candidateId": _SERIALIZER.url("candidate_id", candidate_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_promote_optimization_candidate_request(  # pylint: disable=name-too-long
+    job_id: str, candidate_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/agent_optimization_jobs/{jobId}/candidates/{candidateId}:promote"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "candidateId": _SERIALIZER.url("candidate_id", candidate_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_agents_publish_to_microsoft365_request(  # pylint: disable=name-too-long
@@ -1548,7 +1805,7 @@ def build_beta_agents_create_from_prompt_request(**kwargs: Any) -> HttpRequest: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    content_type: str = kwargs.pop("content_type")
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1559,149 +1816,10 @@ def build_beta_agents_create_from_prompt_request(**kwargs: Any) -> HttpRequest: 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agents_create_optimization_job_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_optimization_jobs"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if operation_id is not None:
-        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agents_get_optimization_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_optimization_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agents_list_optimization_jobs_request(  # pylint: disable=name-too-long
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    status: Optional[Union[str, _models.JobStatus]] = None,
-    agent_name: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_optimization_jobs"
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
-    if agent_name is not None:
-        _params["agent_name"] = _SERIALIZER.query("agent_name", agent_name, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agents_cancel_optimization_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agent_optimization_jobs/{jobId}:cancel"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_agents_delete_optimization_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/agent_optimization_jobs/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_beta_agent_insight_monitors_list_request(  # pylint: disable=name-too-long
@@ -4708,10 +4826,13 @@ def build_beta_voice_agents_telephony_update_binding_request(  # pylint: disable
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4739,6 +4860,9 @@ def build_beta_voice_agents_telephony_delete_binding_request(  # pylint: disable
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -4927,12 +5051,15 @@ def build_beta_voice_agents_telephony_replace_transfer_targets_request(  # pylin
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if_match = prep_if_match(etag, match_condition)
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -5016,10 +5143,13 @@ def build_beta_voice_agents_telephony_cancel_call_job_request(  # pylint: disabl
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -6954,23 +7084,29 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -7012,7 +7148,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7042,6 +7178,924 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _create_optimization_job_initial(
+        self,
+        body: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_optimization_job_request(
+            operation_id=operation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_optimization_job(
+        self,
+        body: _models.AgentOptimizationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry. Clients poll the URL in ``Operation-Location`` by using the get operation.
+
+        :param body: The job to create. Required.
+        :type body: ~azure.ai.projects.models.AgentOptimizationJob
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_optimization_job(
+        self, body: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry. Clients poll the URL in ``Operation-Location`` by using the get operation.
+
+        :param body: The job to create. Required.
+        :type body: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_optimization_job(
+        self,
+        body: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry. Clients poll the URL in ``Operation-Location`` by using the get operation.
+
+        :param body: The job to create. Required.
+        :type body: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_optimization_job(
+        self,
+        body: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AgentOptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry. Clients poll the URL in ``Operation-Location`` by using the get operation.
+
+        :param body: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
+         AgentOptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentOptimizationJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_optimization_job_initial(
+                body=body,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AgentOptimizationJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AgentOptimizationJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    def estimate_optimization_job(
+        self, inputs: _models.AgentOptimizationEstimateInputs, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentOptimizationEstimateResult:
+        """Estimate an agent optimization job.
+
+        Estimates validation-set rows, per-stage model call volumes, and cost bands without submitting
+        the job.
+
+        :param inputs: The inputs to estimate against. Required.
+        :type inputs: ~azure.ai.projects.models.AgentOptimizationEstimateInputs
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationEstimateResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def estimate_optimization_job(
+        self, inputs: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentOptimizationEstimateResult:
+        """Estimate an agent optimization job.
+
+        Estimates validation-set rows, per-stage model call volumes, and cost bands without submitting
+        the job.
+
+        :param inputs: The inputs to estimate against. Required.
+        :type inputs: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationEstimateResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def estimate_optimization_job(
+        self, inputs: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentOptimizationEstimateResult:
+        """Estimate an agent optimization job.
+
+        Estimates validation-set rows, per-stage model call volumes, and cost bands without submitting
+        the job.
+
+        :param inputs: The inputs to estimate against. Required.
+        :type inputs: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationEstimateResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def estimate_optimization_job(
+        self, inputs: Union[_models.AgentOptimizationEstimateInputs, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.AgentOptimizationEstimateResult:
+        """Estimate an agent optimization job.
+
+        Estimates validation-set rows, per-stage model call volumes, and cost bands without submitting
+        the job.
+
+        :param inputs: The inputs to estimate against. Is one of the following types:
+         AgentOptimizationEstimateInputs, JSON, IO[bytes] Required.
+        :type inputs: ~azure.ai.projects.models.AgentOptimizationEstimateInputs or JSON or IO[bytes]
+        :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationEstimateResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentOptimizationEstimateResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(inputs, (IOBase, bytes)):
+            _content = inputs
+        else:
+            _content = json.dumps(inputs, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_estimate_optimization_job_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentOptimizationEstimateResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
+        """Get an agent optimization job.
+
+        Retrieves an optimization job by its identifier.
+
+        :param job_id: The ID of the job. Required.
+        :type job_id: str
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_optimization_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_optimization_jobs(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        status: Optional[Union[str, _models.JobStatus]] = None,
+        agent_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentOptimizationJob"]:
+        """List agent optimization jobs.
+
+        Lists optimization jobs with cursor pagination and optional status or agent name filters.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
+         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
+        :paramtype status: str or ~azure.ai.projects.models.JobStatus
+        :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
+        :paramtype agent_name: str
+        :return: An iterator like instance of AgentOptimizationJob
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentOptimizationJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentOptimizationJob]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_optimization_jobs_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                status=status,
+                agent_name=agent_name,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentOptimizationJob],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
+        """Cancel an agent optimization job.
+
+        Requests cancellation of a running or queued job. Returns 409 Conflict if the job is already in
+        a terminal state.
+
+        :param job_id: The ID of the job to cancel. Required.
+        :type job_id: str
+        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
+
+        _request = build_agents_cancel_optimization_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_optimization_job(  # pylint: disable=inconsistent-return-statements
+        self, job_id: str, **kwargs: Any
+    ) -> None:
+        """Delete an agent optimization job.
+
+        Cancels active work, then deletes the job and its candidate artifacts.
+
+        :param job_id: The ID of the job to delete. Required.
+        :type job_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_optimization_job_request(
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_optimization_candidates(
+        self,
+        job_id: str,
+        *,
+        expand: Optional[List[Union[str, _models.AgentOptimizationCandidateExpand]]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.AgentOptimizationCandidate"]:
+        """List candidates for an agent optimization job.
+
+        Lists candidates for the given optimization job with cursor pagination, including the original
+        baseline and generated candidates. Each ``output.mutations`` item identifies a changed
+        attribute by ``type``; mutation ``value`` fields are omitted unless the client passes
+        ``expand=mutations``.
+
+        :param job_id: The ID of the parent optimization job. Required.
+        :type job_id: str
+        :keyword expand: Comma-separated list of expand keys. Pass ``mutations`` to populate mutation
+         ``value`` fields; omit to receive mutation items containing only ``type``. Additional expand
+         keys may be added in future previews. Default value is None.
+        :paramtype expand: list[str or ~azure.ai.projects.models.AgentOptimizationCandidateExpand]
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the candidate ``started_at`` timestamp. Known values are: "asc"
+         and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: Candidate-ID cursor identifying the first item from the following page.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of AgentOptimizationCandidate
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentOptimizationCandidate]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentOptimizationCandidate]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_optimization_candidates_request(
+                job_id=job_id,
+                expand=expand,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentOptimizationCandidate],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_optimization_candidate(
+        self, job_id: str, candidate_id: str, **kwargs: Any
+    ) -> _models.AgentOptimizationCandidate:
+        """Get a candidate for an agent optimization job.
+
+        Retrieves a single candidate. Mutation values are always included.
+
+        :param job_id: The ID of the parent optimization job. Required.
+        :type job_id: str
+        :param candidate_id: The candidate identifier. Required.
+        :type candidate_id: str
+        :return: AgentOptimizationCandidate. The AgentOptimizationCandidate is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationCandidate
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentOptimizationCandidate] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_optimization_candidate_request(
+            job_id=job_id,
+            candidate_id=candidate_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentOptimizationCandidate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def promote_optimization_candidate(
+        self, job_id: str, candidate_id: str, **kwargs: Any
+    ) -> _models.AgentOptimizationCandidate:
+        """Promote a candidate for an agent optimization job.
+
+        Promotes a candidate to the Foundry agent stored in the parent job's target configuration.
+        Promotion is unavailable when the job omitted target_configuration. Prompt-agent promotion
+        creates a new agent version. Hosted-agent promotion currently records promotion metadata
+        without deploying a new hosted-agent version.
+
+        :param job_id: The ID of the parent optimization job. Required.
+        :type job_id: str
+        :param candidate_id: The candidate identifier. Required.
+        :type candidate_id: str
+        :return: AgentOptimizationCandidate. The AgentOptimizationCandidate is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentOptimizationCandidate
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentOptimizationCandidate] = kwargs.pop("cls", None)
+
+        _request = build_agents_promote_optimization_candidate_request(
+            job_id=job_id,
+            candidate_id=candidate_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentOptimizationCandidate, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -8771,7 +9825,8 @@ class ConnectionsOperations:  # pylint: disable=docstring-missing-param
 
         :keyword connection_type: Lists connections of this specific type. Known values are:
          "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool_Preview". Default value is None.
+         "AppConfig", "AppInsights", "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
+         Default value is None.
         :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
         :keyword default_connection: Lists connections that are default connections. Default value is
          None.
@@ -11210,10 +12265,9 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
         _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_agents_create_from_prompt_request(
@@ -11258,533 +12312,6 @@ class BetaAgentsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    def _create_optimization_job_initial(
-        self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_agents_create_optimization_job_request(
-            operation_id=operation_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_create_optimization_job(
-        self,
-        job: _models.AgentOptimizationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentOptimizationJobResult]:
-        """Create an agent optimization job.
-
-        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
-        retry.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
-         AgentOptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_optimization_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.AgentOptimizationJobResult]:
-        """Create an agent optimization job.
-
-        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
-        retry.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
-         AgentOptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_optimization_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentOptimizationJobResult]:
-        """Create an agent optimization job.
-
-        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
-        retry.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
-         AgentOptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_optimization_job(
-        self,
-        job: Union[_models.AgentOptimizationJob, JSON, IO[bytes]],
-        *,
-        operation_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.AgentOptimizationJobResult]:
-        """Create an agent optimization job.
-
-        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
-        retry.
-
-        :param job: The job to create. Is one of the following types: AgentOptimizationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.AgentOptimizationJob or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
-         AgentOptimizationJobResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.projects.models.AgentOptimizationJobResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentOptimizationJobResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_optimization_job_initial(
-                job=job,
-                operation_id=operation_id,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.AgentOptimizationJobResult, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.AgentOptimizationJobResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.AgentOptimizationJobResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
-        """Get an agent optimization job.
-
-        Retrieves an optimization job by its identifier.
-
-        :param job_id: The ID of the job. Required.
-        :type job_id: str
-        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_get_optimization_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_optimization_jobs(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        status: Optional[Union[str, _models.JobStatus]] = None,
-        agent_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.AgentOptimizationJobListItem"]:
-        """List agent optimization jobs.
-
-        Lists optimization jobs with cursor pagination and optional status or agent name filters.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
-         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
-        :paramtype status: str or ~azure.ai.projects.models.JobStatus
-        :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
-        :paramtype agent_name: str
-        :return: An iterator like instance of AgentOptimizationJobListItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentOptimizationJobListItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentOptimizationJobListItem]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_beta_agents_list_optimization_jobs_request(
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                status=status,
-                agent_name=agent_name,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentOptimizationJobListItem],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.AgentOptimizationJob:
-        """Cancel an agent optimization job.
-
-        Requests cancellation of a running or queued job and returns an error if the job is already in
-        a terminal state.
-
-        :param job_id: The ID of the job to cancel. Required.
-        :type job_id: str
-        :return: AgentOptimizationJob. The AgentOptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentOptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentOptimizationJob] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_cancel_optimization_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentOptimizationJob, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_optimization_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, **kwargs: Any
-    ) -> None:
-        """Delete an agent optimization job.
-
-        Deletes the job and its candidate artifacts, canceling the job first if it is non-terminal.
-
-        :param job_id: The ID of the job to delete. Required.
-        :type job_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agents_delete_optimization_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-param
@@ -14674,7 +15201,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     def _create_generation_job_initial(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        body: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -14695,10 +15222,10 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(job, (IOBase, bytes)):
-            _content = job
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_evaluators_create_generation_job_request(
             operation_id=operation_id,
@@ -14747,7 +15274,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.EvaluatorGenerationJob,
+        body: _models.EvaluatorGenerationJob,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -14758,8 +15285,8 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :param body: The job to create. Required.
+        :type body: ~azure.ai.projects.models.EvaluatorGenerationJob
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -14774,15 +15301,15 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
 
     @overload
     def begin_create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.EvaluatorVersion]:
         """Create an evaluator generation job.
 
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: JSON
+        :param body: The job to create. Required.
+        :type body: JSON
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -14798,7 +15325,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @overload
     def begin_create_generation_job(
         self,
-        job: IO[bytes],
+        body: IO[bytes],
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -14809,8 +15336,8 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
+        :param body: The job to create. Required.
+        :type body: IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -14826,7 +15353,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        body: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -14836,9 +15363,9 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Creates an evaluator generation job. The service generates rubric-based evaluator definitions
         from the provided source materials asynchronously.
 
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
+        :param body: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
          IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -14857,7 +15384,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_generation_job_initial(
-                job=job,
+                body=body,
                 operation_id=operation_id,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -21262,7 +21789,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
     def _create_generation_job_initial(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -21335,7 +21862,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     @overload
     def begin_create_generation_job(
         self,
-        job: _models.DataGenerationJob,
+        job: _models.DataGenerationJobInputs,
         *,
         operation_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -21345,8 +21872,8 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob
+        :param job: The data generation job inputs to create. Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -21367,7 +21894,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Required.
+        :param job: The data generation job inputs to create. Required.
         :type job: JSON
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
@@ -21394,7 +21921,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Required.
+        :param job: The data generation job inputs to create. Required.
         :type job: IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
@@ -21411,7 +21938,7 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace
     def begin_create_generation_job(
         self,
-        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        job: Union[_models.DataGenerationJobInputs, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
@@ -21420,9 +21947,9 @@ class BetaDatasetsOperations:  # pylint: disable=docstring-missing-param
 
         Submits a new data generation job for asynchronous execution.
 
-        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :param job: The data generation job inputs to create. Is one of the following types:
+         DataGenerationJobInputs, JSON, IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJobInputs or JSON or IO[bytes]
         :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
@@ -23937,9 +24464,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         self,
         agent_name: str,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget],
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
@@ -23949,13 +24476,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose transfer targets are replaced. Required.
         :type agent_name: str
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24035,9 +24562,9 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         etag: str,
         match_condition: MatchConditions,
-        transfer_targets: List[_models.TelephonyTransferTarget] = _Unset,
         **kwargs: Any
     ) -> _models.TelephonyTransferTargets:
         """Replace agent telephony transfer targets.
@@ -24048,13 +24575,13 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword transfer_targets: The complete set of destinations to which the voice agent may
+         transfer calls. An empty array clears all targets when replacing the configuration. Required.
+        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword transfer_targets: The complete set of destinations to which the voice agent may
-         transfer calls. An empty array clears all targets when replacing the configuration. Required.
-        :paramtype transfer_targets: list[~azure.ai.projects.models.TelephonyTransferTarget]
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyTransferTargets
