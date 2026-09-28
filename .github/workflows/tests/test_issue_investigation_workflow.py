@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 import re
+import subprocess
+import textwrap
 import unittest
 
 
@@ -61,7 +63,7 @@ class InvestigationWorkflowTests(unittest.TestCase):
         self.assertIn("report-failure-as-issue: false", self.source)
         self.assertIn("report_incomplete", self.config)
 
-    def test_handoff_prompt_excludes_stale_and_untriaged_issues(self):
+    def test_handoff_prompt_excludes_stale_and_pending_triage_issues(self):
         handoff = self.source.split("## Required Handoff Validation\n", 1)[1].split("\n## ", 1)[0]
         for condition in (
             "positive integer issue number",
@@ -119,8 +121,9 @@ class WorkflowIntegrationTests(unittest.TestCase):
                 self.assertTrue(compiled["strict"])
                 version = tuple(int(part) for part in compiled["compiler_version"].lstrip("v").split("."))
                 self.assertGreaterEqual(version, (0, 87, 1))
-                setup = next(action for action in manifest["actions"] if action["repo"] == "github/gh-aw-actions/setup")
-                self.assertEqual(compiled["compiler_version"], setup["version"])
+                setups = [action for action in manifest["actions"] if action["repo"] == "github/gh-aw-actions/setup"]
+                setup = next(action for action in setups if action["version"] == compiled["compiler_version"])
+                self.assertTrue(all(action["sha"] == setup["sha"] for action in setups))
                 self.assertIn(f"uses: github/gh-aw-actions/setup@{setup['sha']} # {setup['version']}", lock)
                 self.assertIn('GH_AW_COPILOT_SRC="$(command -v copilot', lock)
                 self.assertIn('cp "$GH_AW_COPILOT_SRC" "$GH_AW_COPILOT_BIN"', lock)
@@ -141,6 +144,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
                     self.assertNotIn("actions: write", section)
                 self.assertNotIn("--allow-tool shell", lock)
                 self.assertIn("bash: false", read_workflow(name))
+                self.assertNotIn("get_issue", read_workflow(name))
                 manifest = metadata(lock, "manifest")
                 github = next(server for server in manifest["mcp_servers"] if server["name"] == "github")
                 self.assertIn("issue_read", github["tools"])
@@ -156,7 +160,37 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertEqual(["refs/heads/${{ github.event.repository.default_branch }}"], dispatch["allowed_refs"])
         self.assertIn('"name": "issue_investigation"', lock)
         self.assertIn("actions: write", job(lock, "safe_outputs"))
-        self.assertIn("The target is an open, unlocked issue", read_workflow("issue-triage"))
+        source = read_workflow("issue-triage")
+        self.assertIn("Do not call `dispatch_workflow` or `issue_investigation` from the agent.", source)
+        handoff = job(lock, "investigation_handoff")
+        for dependency in ("agent", "detection", "safe_outputs", "mention_owners"):
+            self.assertIn(f"- {dependency}", handoff)
+            self.assertIn(f"needs.{dependency}.result == 'success'", handoff)
+        self.assertIn("process_safe_outputs_status == 'success'", handoff)
+        self.assertIn("process_safe_outputs_items_applied", handoff)
+        self.assertIn("needs.safe_outputs.outputs.comment_id != ''", handoff)
+        self.assertIn("ref: ${{ github.workflow_sha }}", handoff)
+        self.assertIn("issues: read", handoff)
+        self.assertNotIn("issues: write", handoff)
+        self.assertIn("process_safe_outputs.cjs", handoff)
+        owners = job(lock, "mention_owners")
+        self.assertIn("- safe_outputs", owners)
+        self.assertIn("process_safe_outputs_status == 'success'", owners)
+        self.assertIn("process_safe_outputs_items_applied", owners)
+
+    def test_handoff_runtime(self):
+        source = read_workflow("issue-triage")
+        defer_step = source.split("- name: Defer investigation dispatch until triage is applied\n", 1)[1]
+        script = textwrap.dedent(defer_step.split("script: |\n", 1)[1].split("\n  jobs:", 1)[0])
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "issue_investigation_handoff.cjs")],
+            input=json.dumps({"deferScript": script}),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Handoff runtime cases passed", result.stdout)
 
     def test_concurrency_is_partitioned_by_issue(self):
         for name in ("issue-investigation", "issue-triage"):
