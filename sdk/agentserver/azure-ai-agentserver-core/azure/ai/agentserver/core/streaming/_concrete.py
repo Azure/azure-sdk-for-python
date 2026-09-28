@@ -25,6 +25,8 @@ from collections.abc import AsyncIterator, Callable
 from pathlib import Path
 from typing import Any, Optional
 
+from anyio import CancelScope
+
 from ._protocol import (
     EventStreamClosedError,
     EventStreamNotFoundError,
@@ -518,7 +520,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
     See ``streaming.md`` §5.3 +  + rules 26-32. Persists every
     emit to ``path`` before fan-out (persist-before-publish).
     Rehydrates from disk on construction. Single-writer-per-path
-    enforced via ``fcntl.flock``.
+    enforced via ``fcntl.flock``. Writes and lazy compaction are awaited on a
+    worker thread; cancellation drains persistence and publication before
+    another mutation or deletion may proceed.
     """
 
     def __init__(
@@ -716,23 +720,22 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         if i > 0:
             del self._buffer[:i]
             self._evictions_since_compaction += i
-            if self._evictions_since_compaction >= _COMPACTION_INTERVAL:
-                self._compact_on_disk()
-                self._evictions_since_compaction = 0
 
-    def _compact_on_disk(self) -> None:
+    def _compact_on_disk(self, records: Optional[list[bytes]] = None) -> None:
         """Rewrite the on-disk file to contain only surviving records.
 
         Lazy compaction (rule 30) — keeps the file bounded across
         repeated process restarts.
         """
+        if records is None:
+            records = [self._serialize(entry.payload, entry.emit_time) for entry in self._buffer]
+            if self._state == self._STATE_CLOSED:
+                records.append(self._serialize_terminal())
         tmp_path = self._path.with_suffix(self._path.suffix + ".compact")
         try:
             with open(tmp_path, "wb") as tmp:
-                for entry in self._buffer:
-                    tmp.write(self._serialize(entry.payload, entry.emit_time))
-                if self._state == self._STATE_CLOSED:
-                    tmp.write(self._serialize_terminal())
+                for record in records:
+                    tmp.write(record)
             # Atomic replace (POSIX guarantees atomicity on same fs).
             os.replace(tmp_path, self._path)
             # ``os.replace`` swapped ``self._path`` to a brand-new inode; our
@@ -754,10 +757,39 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             except Exception:  # pylint: disable=broad-except
                 pass
         except Exception:  # pylint: disable=broad-except
+            logger.warning("FileBackedReplayEventStream: compaction failed for %s", self._path, exc_info=True)
             try:
                 tmp_path.unlink(missing_ok=True)
             except Exception:  # pylint: disable=broad-except
                 pass
+
+    def _write_record(self, record: bytes, compacted_records: Optional[list[bytes]]) -> None:
+        if compacted_records is not None:
+            self._compact_on_disk(compacted_records)
+        self._file.write(record)
+        self._file.flush()
+        os.fsync(self._file.fileno())
+
+    async def _persist_record(self, record: bytes) -> Optional[asyncio.CancelledError]:
+        compacted_records = None
+        if self._evictions_since_compaction >= _COMPACTION_INTERVAL:
+            # Snapshot on the event loop: subscribe() may evict entries while
+            # the worker writes, but must never touch the active file handle.
+            compacted_records = [self._serialize(entry.payload, entry.emit_time) for entry in self._buffer]
+            if self._state == self._STATE_CLOSED:
+                compacted_records.append(self._serialize_terminal())
+            self._evictions_since_compaction = 0
+        # A running worker cannot be cancelled. Drain it even when queued, so
+        # the caller can finish publication before releasing the stream lock.
+        cancellation: Optional[asyncio.CancelledError] = None
+        future = asyncio.get_running_loop().run_in_executor(None, self._write_record, record, compacted_records)
+        while not future.done():
+            try:
+                await asyncio.shield(future)
+            except asyncio.CancelledError as exc:
+                cancellation = exc
+        future.result()
+        return cancellation
 
     def _maybe_auto_transition_to_gone(self) -> None:
         """— close-clock auto-tombstone.
@@ -776,43 +808,45 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
 
     async def emit(self, payload: Any, *, close: bool = False) -> None:
         async with self._lock:
-            self._evict_expired()
-            self._maybe_auto_transition_to_gone()
-            if self._state == self._STATE_GONE:
-                raise EventStreamNotFoundError("stream id is tombstoned")
-            if self._state == self._STATE_CLOSED:
-                raise EventStreamClosedError("stream is CLOSED")
-            emit_time = time.time()
-            # Persist BEFORE fan-out (rule 26). For atomic emit+close
-            # (rule 14), write both records in one fsync.
-            record_bytes = self._serialize(payload, emit_time)
-            if close:
-                record_bytes += self._serialize_terminal()
-            self._file.write(record_bytes)
-            self._file.flush()
-            os.fsync(self._file.fileno())
-            # Now update in-memory state + fan out
-            self._buffer.append(_BufferedEvent(payload, emit_time))
-            if self._cursor_fn is not None:
-                cursor = self._cursor_fn(payload)
-                if self._highest_cursor is None or cursor > self._highest_cursor:
-                    self._highest_cursor = cursor
-            await self._fanout_emit(payload)
-            if close:
-                self._state = self._STATE_CLOSED
-                self._close_time = time.time()
-                await self._fanout_terminate()
+            cancellation: Optional[asyncio.CancelledError] = None
+            with CancelScope(shield=True):
+                self._evict_expired()
+                self._maybe_auto_transition_to_gone()
+                if self._state == self._STATE_GONE:
+                    raise EventStreamNotFoundError("stream id is tombstoned")
+                if self._state == self._STATE_CLOSED:
+                    raise EventStreamClosedError("stream is CLOSED")
+                emit_time = time.time()
+                # Persist BEFORE fan-out; emit+close still uses one fsync.
+                record_bytes = self._serialize(payload, emit_time)
+                if close:
+                    record_bytes += self._serialize_terminal()
+                cancellation = await self._persist_record(record_bytes)
+                self._buffer.append(_BufferedEvent(payload, emit_time))
+                if self._cursor_fn is not None:
+                    cursor = self._cursor_fn(payload)
+                    if self._highest_cursor is None or cursor > self._highest_cursor:
+                        self._highest_cursor = cursor
+                await self._fanout_emit(payload)
+                if close:
+                    self._state = self._STATE_CLOSED
+                    self._close_time = time.time()
+                    await self._fanout_terminate()
+            if cancellation is not None:
+                raise cancellation
 
     async def close(self) -> None:
         async with self._lock:
             if self._state != self._STATE_ACTIVE:
                 return
-            self._file.write(self._serialize_terminal())
-            self._file.flush()
-            os.fsync(self._file.fileno())
-            self._state = self._STATE_CLOSED
-            self._close_time = time.time()
-            await self._fanout_terminate()
+            cancellation: Optional[asyncio.CancelledError] = None
+            with CancelScope(shield=True):
+                cancellation = await self._persist_record(self._serialize_terminal())
+                self._state = self._STATE_CLOSED
+                self._close_time = time.time()
+                await self._fanout_terminate()
+            if cancellation is not None:
+                raise cancellation
 
     def subscribe(self, *, after: Optional[int] = None) -> AsyncIterator[Any]:
         if self._cursor_fn is None:

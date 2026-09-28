@@ -17,9 +17,12 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
+from anyio import CancelScope, create_task_group
 
 from azure.ai.agentserver.core.streaming import (
     EventStreamClosedError,
@@ -50,6 +53,254 @@ class TestPersistBeforeFanout:
         content = p.read_text()
         assert '"n": 1' in content, f"emit MUST persist before returning; file={content!r}"
         await s._on_delete()
+
+
+class TestOrderedDiskOffload:
+    @pytest.mark.parametrize("operation", ["emit", "emit_close", "close"])
+    async def test_fsync_does_not_block_or_publish_early(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, operation: str
+    ) -> None:
+        stream = FileBackedReplayEventStream(path=tmp_path / "offload.jsonl", cursor_fn=lambda e: e["n"])
+        loop = asyncio.get_running_loop()
+        started = asyncio.Event()
+        release = threading.Event()
+        loop_thread = threading.get_ident()
+        worker_threads = []
+        original_fsync = os.fsync
+
+        def blocked_fsync(fd: int) -> None:
+            worker_threads.append(threading.get_ident())
+            loop.call_soon_threadsafe(started.set)
+            assert release.wait(5), "test did not release disk worker"
+            original_fsync(fd)
+
+        monkeypatch.setattr(os, "fsync", blocked_fsync)
+        iterator = stream.subscribe().__aiter__()
+        received = asyncio.create_task(iterator.__anext__())
+        task = asyncio.create_task(
+            stream.close() if operation == "close" else stream.emit({"n": 1}, close=operation == "emit_close")
+        )
+        try:
+            await asyncio.wait_for(started.wait(), 3)
+            assert len(worker_threads) == 1
+            assert worker_threads[0] != loop_thread
+            assert not task.done()
+            assert not received.done()
+            assert await stream.last_cursor() is None
+            release.set()
+            await task
+            if operation == "close":
+                with pytest.raises(StopAsyncIteration):
+                    await received
+            else:
+                assert await received == {"n": 1}
+                assert await stream.last_cursor() == 1
+            assert stream._state == (stream._STATE_ACTIVE if operation == "emit" else stream._STATE_CLOSED)
+            assert len(worker_threads) == 1
+        finally:
+            release.set()
+            await asyncio.gather(task, return_exceptions=True)
+            received.cancel()
+            await asyncio.gather(received, return_exceptions=True)
+            await stream._on_delete()
+
+    @pytest.mark.parametrize("operation", ["emit", "emit_close", "close"])
+    async def test_cancellation_drains_write_before_delete(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, operation: str
+    ) -> None:
+        path = tmp_path / "cancel.jsonl"
+        stream = FileBackedReplayEventStream(path=path, cursor_fn=lambda e: e["n"])
+        loop = asyncio.get_running_loop()
+        started = asyncio.Event()
+        release = threading.Event()
+        original_fsync = os.fsync
+
+        def blocked_fsync(fd: int) -> None:
+            loop.call_soon_threadsafe(started.set)
+            assert release.wait(5), "test did not release disk worker"
+            original_fsync(fd)
+
+        monkeypatch.setattr(os, "fsync", blocked_fsync)
+        task = asyncio.create_task(
+            stream.close() if operation == "close" else stream.emit({"n": 1}, close=operation == "emit_close")
+        )
+        deleting = None
+        try:
+            await asyncio.wait_for(started.wait(), 3)
+            task.cancel()
+            await asyncio.sleep(0)
+            task.cancel()
+            await asyncio.sleep(0)
+            deleting = asyncio.create_task(stream._on_delete())
+            await asyncio.sleep(0)
+            assert not task.done()
+            assert not deleting.done()
+            assert not stream._file.closed
+            release.set()
+            with pytest.raises(asyncio.CancelledError):
+                await task
+            await deleting
+            assert stream._file.closed
+            assert not path.exists()
+            assert stream._highest_cursor == (None if operation == "close" else 1)
+        finally:
+            release.set()
+            await asyncio.gather(task, return_exceptions=True)
+            if deleting is not None:
+                await deleting
+            else:
+                await stream._on_delete()
+
+    async def test_cancelled_queued_write_finishes_before_next_mutation(self, tmp_path: Path) -> None:
+        stream = FileBackedReplayEventStream(path=tmp_path / "queued.jsonl", cursor_fn=lambda e: e["n"])
+        loop = asyncio.get_running_loop()
+        started = asyncio.Event()
+        release = threading.Event()
+        executor = ThreadPoolExecutor(max_workers=1)
+        loop.set_default_executor(executor)
+
+        def occupy_worker() -> None:
+            loop.call_soon_threadsafe(started.set)
+            assert release.wait(5), "test did not release occupied worker"
+
+        blocker = loop.run_in_executor(None, occupy_worker)
+        await asyncio.wait_for(started.wait(), 3)
+        first = asyncio.create_task(stream.emit({"n": 1}))
+        try:
+            # Let the mutation acquire the stream lock and queue its disk work.
+            await asyncio.sleep(0)
+            await asyncio.sleep(0)
+            first.cancel()
+            await asyncio.sleep(0)
+            assert not first.done()
+            release.set()
+            with pytest.raises(asyncio.CancelledError):
+                await first
+            await stream.emit({"n": 2}, close=True)
+            assert [event["n"] async for event in stream.subscribe()] == [1, 2]
+            records = [json.loads(line) for line in stream._path.read_text().splitlines()]
+            assert [record["payload"]["n"] for record in records[:-1]] == [1, 2]
+        finally:
+            release.set()
+            await blocker
+            await asyncio.gather(first, return_exceptions=True)
+            await stream._on_delete()
+            executor.shutdown()
+
+    async def test_anyio_cancellation_preserves_persisted_event(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        stream = FileBackedReplayEventStream(path=tmp_path / "anyio.jsonl", cursor_fn=lambda e: e["n"])
+        loop = asyncio.get_running_loop()
+        started = asyncio.Event()
+        finished = asyncio.Event()
+        release = threading.Event()
+        scope = CancelScope()
+        original_fsync = os.fsync
+
+        def blocked_fsync(fd: int) -> None:
+            loop.call_soon_threadsafe(started.set)
+            assert release.wait(5), "test did not release disk worker"
+            original_fsync(fd)
+
+        async def publish() -> None:
+            with scope:
+                await stream.emit({"n": 1}, close=True)
+            finished.set()
+
+        monkeypatch.setattr(os, "fsync", blocked_fsync)
+        try:
+            async with create_task_group() as group:
+                group.start_soon(publish)
+                try:
+                    await asyncio.wait_for(started.wait(), 3)
+                    scope.cancel()
+                    await asyncio.sleep(0)
+                    assert not finished.is_set()
+                finally:
+                    release.set()
+                await asyncio.wait_for(finished.wait(), 3)
+            assert stream._state == stream._STATE_CLOSED
+            assert [event["n"] async for event in stream.subscribe()] == [1]
+        finally:
+            release.set()
+            await stream._on_delete()
+
+    async def test_concurrent_emits_and_close_preserve_disk_order(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        path = tmp_path / "order.jsonl"
+        stream = FileBackedReplayEventStream(path=path, cursor_fn=lambda e: e["n"])
+        original_write = stream._write_record
+        active = 0
+
+        def write(record: bytes, compacted_records: list[bytes] | None) -> None:
+            nonlocal active
+            active += 1
+            assert active == 1
+            try:
+                original_write(record, compacted_records)
+            finally:
+                active -= 1
+
+        monkeypatch.setattr(stream, "_write_record", write)
+        try:
+            await asyncio.gather(*(stream.emit({"n": n}) for n in range(10)), stream.close())
+            records = [json.loads(line) for line in path.read_text().splitlines()]
+            assert [record["payload"]["n"] for record in records[:-1]] == list(range(10))
+            assert records[-1] == {"__terminal__": True}
+            assert [event["n"] async for event in stream.subscribe()] == list(range(10))
+        finally:
+            await stream._on_delete()
+
+    @pytest.mark.parametrize("closing", [False, True])
+    async def test_disk_error_does_not_publish_or_close(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, closing: bool
+    ) -> None:
+        stream = FileBackedReplayEventStream(path=tmp_path / "failed.jsonl")
+
+        def fail_fsync(fd: int) -> None:
+            raise OSError("disk flush failed")
+
+        monkeypatch.setattr(os, "fsync", fail_fsync)
+        try:
+            with pytest.raises(OSError, match="disk flush failed"):
+                if closing:
+                    await stream.close()
+                else:
+                    await stream.emit({"n": 1})
+            assert stream._state == stream._STATE_ACTIVE
+            assert stream._buffer == []
+            assert not stream._lock.locked()
+        finally:
+            await stream._on_delete()
+
+    async def test_subscription_defers_compaction_to_ordered_worker(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        stream = FileBackedReplayEventStream(path=tmp_path / "compact-worker.jsonl", ttl_seconds=600)
+        await stream.emit({"n": 1})
+        stream._buffer[0].emit_time = 0
+        monkeypatch.setattr(_concrete, "_COMPACTION_INTERVAL", 1)
+        original_compact = stream._compact_on_disk
+        compact_threads = []
+
+        def compact(records: list[bytes] | None = None) -> None:
+            compact_threads.append(threading.get_ident())
+            original_compact(records)
+
+        monkeypatch.setattr(stream, "_compact_on_disk", compact)
+        try:
+            stream.subscribe()
+            assert compact_threads == []
+            await stream.emit({"n": 2})
+            assert len(compact_threads) == 1
+            assert compact_threads[0] != threading.get_ident()
+            assert '"n": 2' in stream._path.read_text()
+        finally:
+            await stream._on_delete()
 
 
 # ----------------------------------------------------------------
