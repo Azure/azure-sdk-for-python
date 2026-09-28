@@ -1,5 +1,41 @@
 # Release History
 
+## 2.8.0 (Unreleased)
+
+### Features Added
+
+* Agent optimization operations are now available on the `.agents` sub-client, and no longer require the `AgentsOptimization=V2Preview` preview feature header. The redesigned API models optimization jobs as a target (`AgentOptimizationFoundryAgentTargetConfiguration`), an optimizer model (`AgentOptimizationModelConfiguration`), and an optimization configuration (`AgentOptimizationConfiguration` or `PromptOptimizationConfiguration`), with target-completion and user-conversation-simulation evaluation sets.
+* New methods on `.agents` for optimization jobs and candidates: `begin_create_optimization_job`, `estimate_optimization_job`, `get_optimization_job`, `list_optimization_jobs`, `cancel_optimization_job`, `delete_optimization_job`, `list_optimization_candidates`, `get_optimization_candidate`, and `promote_optimization_candidate`.
+* New scenario-specific data generation job input classes `EvaluationDataGenerationJobInputs`, `SupervisedFineTuningDataGenerationJobInputs`, and `ReinforcementFineTuningDataGenerationJobInputs`, each with a matching `*OutputTarget` class. Fine-tuning output targets support `merge_file_id` when merging into an existing file.
+* New Agent tool `BrowserAutomationTool` and Toolbox tool `BrowserAutomationToolboxTool`.
+* New optional `async_property` (serialized as `async`) on `FunctionTool`, `FunctionToolParam`, and `CustomToolParam`.
+* New optional `misalignment` property on `ApiError`, with details in `MisalignmentErrorDetailsResource`.
+* New `ConnectionType` values `OPEN_API` and `REMOTE_A2_A`.
+* New `ImageGenTool.model` values `gpt-image-2` and `gpt-image-2-2026-04-21`.
+
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Methods `.beta.agents.begin_create_optimization_job`, `.beta.agents.get_optimization_job`, `.beta.agents.list_optimization_jobs`, `.beta.agents.cancel_optimization_job`, and `.beta.agents.delete_optimization_job` moved to `.agents`.
+* Argument `job` in method `begin_create_optimization_job()` renamed to `body`.
+* Argument `job` in method `.beta.evaluators.begin_create_generation_job()` renamed to `body`.
+* Method `.beta.datasets.begin_create_generation_job()` now takes `DataGenerationJobInputs` (use one of its scenario subclasses) instead of `DataGenerationJob`.
+
+Breaking changes in beta classes:
+* Class `AgentOptimizationJob` was redesigned. Properties `inputs` and `progress` were removed. New required properties are `optimization_configuration` and `optimization_model_configuration`, and new optional properties are `target_configuration` and `display_name`.
+* Class `AgentOptimizationJobResult` was redesigned. Properties `baseline`, `best`, and `candidates` were removed and replaced by `candidate_summary`, `latency_metrics`, `token_usage`, and `termination_reason`. Use `.agents.list_optimization_candidates` to get the candidates.
+* Class `AgentOptimizationCandidate` was redesigned. Properties `avg_score`, `avg_tokens`, `eval_id`, `eval_run_id`, and `mutations` were removed. Scores are now in `evaluation` (`AgentOptimizationCandidateEvaluation`) and mutations in `output`. New properties are `job_id`, `status`, `started_at`, `rationale`, and `agent_version`. `candidate_id` is now required.
+* Removed classes `AgentOptimizationDatasetCriterion`, `AgentOptimizationDatasetInput`, `AgentOptimizationDatasetInputType`, `AgentOptimizationDatasetItem`, `AgentOptimizationEvaluatorRef`, `AgentOptimizationInlineDatasetInput`, `AgentOptimizationJobInputs`, `AgentOptimizationJobListItem`, `AgentOptimizationJobProgress`, `AgentOptimizationOptions`, `AgentOptimizationReferenceDatasetInput`, and `OptimizedAgentIdentifier`.
+* Renamed class `PromotionInfo` to `AgentOptimizationCandidatePromotionInfo`.
+* In class `DataGenerationJobInputs`, property `options` renamed to `generation_configuration`, and property `output_options` moved to the scenario subclasses as `output_configuration`. Class `DataGenerationJobOutputOptions` was removed. Use `EvaluationDataGenerationJobOutputTarget`, `SupervisedFineTuningDataGenerationJobOutputTarget`, or `ReinforcementFineTuningDataGenerationJobOutputTarget` instead.
+* Class `DataGenerationJob` no longer has an `inputs` property. The job input properties (`name`, `scenario`, `sources`, `generation_configuration`) now appear directly on the job.
+
+### Sample updates
+
+* Updated the agent optimization samples under `samples/agents/optimization/` to use the redesigned `.agents` optimization API. Candidates are now listed with `list_optimization_candidates`.
+* Updated the dataset generation samples under `samples/datasets/` and `sample_synthetic_multiturn_evaluation.py` to use the scenario-specific data generation job input and output target classes.
+* Updated the rubric evaluator generation samples under `samples/evaluations/` to pass the job to `.beta.evaluators.begin_create_generation_job()` as `body`.
+
 ## 2.7.0 (2026-09-18)
 
 ### Features Added
