@@ -996,9 +996,9 @@ class BulkCreateCustomVmSizeProfile(_Model):  # pylint: disable=docstring-keywor
     operation-level base profile and beneath any per-VM override. Present only on the
     bulkCreateCustom endpoint; the uniform endpoint rejects a non-null override.
 
-    :ivar name: The name of the VM size, eg Standard_D2ads_v5. Required.
+    :ivar name: The virtual machine SKU, for example ``Standard_D2ads_v5``. Required.
     :vartype name: str
-    :ivar rank: The rank of this VM size in the priority order. Required.
+    :ivar rank: The customer-defined priority rank for this virtual machine size. Required.
     :vartype rank: int
     :ivar override: Optional per-VM-size profile override applied to every VM the service assigns
      to this size. A size maps to many VMs, so virtualMachineName is not part of this shape.
@@ -1008,9 +1008,9 @@ class BulkCreateCustomVmSizeProfile(_Model):  # pylint: disable=docstring-keywor
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the VM size, eg Standard_D2ads_v5. Required."""
+    """The virtual machine SKU, for example ``Standard_D2ads_v5``. Required."""
     rank: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rank of this VM size in the priority order. Required."""
+    """The customer-defined priority rank for this virtual machine size. Required."""
     override: Optional["_models.BulkCreateCustomOverrideBase"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1268,16 +1268,17 @@ class CancelOccurrenceRequest(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class CancelOperationsContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """This is the request to cancel running operations in scheduled actions using the operation ids.
+    """The eligible operations to cancel.
 
-    :ivar operation_ids: The list of operation ids to cancel operations on. Required.
+    :ivar operation_ids: The Bulk Action Operation Ids that identify the operations to cancel.
+     Required.
     :vartype operation_ids: list[str]
     """
 
     operation_ids: list[str] = rest_field(
         name="operationIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of operation ids to cancel operations on. Required."""
+    """The Bulk Action Operation Ids that identify the operations to cancel. Required."""
 
     @overload
     def __init__(
@@ -1298,14 +1299,14 @@ class CancelOperationsContent(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class CancelOperationsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """This is the response from a cancel operations request.
+    """The results of the cancellation requests.
 
-    :ivar results: An array of resource operations that were successfully cancelled. Required.
+    :ivar results: The current result for each operation submitted for cancellation. Required.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     results: list["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An array of resource operations that were successfully cancelled. Required."""
+    """The current result for each operation submitted for cancellation. Required."""
 
     @overload
     def __init__(
@@ -1799,28 +1800,28 @@ class DataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
 
 
 class DeallocateResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The response from a deallocate request.
+    """The result of a bulk deallocate action.
 
-    :ivar description: The description of the operation response. Required.
+    :ivar description: A description of the bulk action result. Required.
     :vartype description: str
-    :ivar type: The type of resources used in the deallocate request eg virtual machines. Required.
+    :ivar type: The type of resources targeted by the bulk action. Required.
     :vartype type: str
-    :ivar location: The location of the deallocate request eg westus. Required.
+    :ivar location: The Azure region where Bulk Actions processes the request. Required.
     :vartype location: str
-    :ivar results: The results from the deallocate request if no errors exist.
+    :ivar results: The result for each virtual machine.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the operation response. Required."""
+    """A description of the bulk action result. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources used in the deallocate request eg virtual machines. Required."""
+    """The type of resources targeted by the bulk action. Required."""
     location: str = rest_field(visibility=["read", "create"])
-    """The location of the deallocate request eg westus. Required."""
+    """The Azure region where Bulk Actions processes the request. Required."""
     results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The results from the deallocate request if no errors exist."""
+    """The result for each virtual machine."""
 
     @overload
     def __init__(
@@ -1878,28 +1879,28 @@ class DelayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-ke
 
 
 class DeleteResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The response from a delete request.
+    """The result of a bulk delete action.
 
-    :ivar description: The description of the operation response. Required.
+    :ivar description: A description of the bulk action result. Required.
     :vartype description: str
-    :ivar type: The type of resources used in the delete request eg virtual machines. Required.
+    :ivar type: The type of resources targeted by the bulk action. Required.
     :vartype type: str
-    :ivar location: The location of the delete request eg westus. Required.
+    :ivar location: The Azure region where Bulk Actions processes the request. Required.
     :vartype location: str
-    :ivar results: The results from the delete request if no errors exist.
+    :ivar results: The result for each virtual machine.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the operation response. Required."""
+    """A description of the bulk action result. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources used in the delete request eg virtual machines. Required."""
+    """The type of resources targeted by the bulk action. Required."""
     location: str = rest_field(visibility=["read", "create"])
-    """The location of the delete request eg westus. Required."""
+    """The Azure region where Bulk Actions processes the request. Required."""
     results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The results from the delete request if no errors exist."""
+    """The result for each virtual machine."""
 
     @overload
     def __init__(
@@ -2004,14 +2005,14 @@ class DiffDiskSettings(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes a reference to a sub-resource.
+    """A reference to an Azure resource.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the sub-resource."""
+    """The Azure resource ID."""
 
     @overload
     def __init__(
@@ -2037,7 +2038,7 @@ class DiskEncryptionSetParametersContent(SubResource):  # pylint: disable=docstr
     managed disk. Please refer `https://aka.ms/mdssewithcmkoverview
     <https://aka.ms/mdssewithcmkoverview>`_ for more details.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     """
 
@@ -2245,11 +2246,11 @@ class EventGridAndResourceGraph(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class ExecuteDeallocateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The ExecuteDeallocateRequest request for executeDeallocate operations.
+    """The virtual machines and execution settings for a bulk deallocate action.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
+    :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
     :ivar resources_with_context: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -2259,9 +2260,9 @@ class ExecuteDeallocateContent(_Model):  # pylint: disable=docstring-keyword-sho
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resources for the request."""
+    """The target virtual machines."""
     resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
         name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2289,25 +2290,26 @@ class ExecuteDeallocateContent(_Model):  # pylint: disable=docstring-keyword-sho
 
 
 class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The ExecuteDeleteRequest for delete VM operation.
+    """The virtual machines and execution settings for a bulk delete action.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
+    :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
     :ivar resources_with_context: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
     :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
-    :ivar force_deletion: Forced delete resource item.
+    :ivar force_deletion: Indicates whether Bulk Actions uses forced deletion for the target
+     virtual machines.
     :vartype force_deletion: bool
     """
 
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resources for the request."""
+    """The target virtual machines."""
     resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
         name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2316,7 +2318,7 @@ class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-
     force_deletion: Optional[bool] = rest_field(
         name="forceDeletion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Forced delete resource item."""
+    """Indicates whether Bulk Actions uses forced deletion for the target virtual machines."""
 
     @overload
     def __init__(
@@ -2340,11 +2342,11 @@ class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-
 
 
 class ExecuteHibernateContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The ExecuteHibernateRequest request for executeHibernate operations.
+    """The virtual machines and execution settings for a bulk hibernate action.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
+    :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
     :ivar resources_with_context: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -2354,9 +2356,9 @@ class ExecuteHibernateContent(_Model):  # pylint: disable=docstring-keyword-shou
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resources for the request."""
+    """The target virtual machines."""
     resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
         name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2384,25 +2386,25 @@ class ExecuteHibernateContent(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class ExecuteReimageRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The ExecuteReimageRequest request for reimage operations.
+    """The virtual machines and configuration for a bulk reimage action.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
+    :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
     :ivar resources_with_context: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
     :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
-    :ivar reimage_parameters: Reimage parameters including base profile and per-resource overrides.
+    :ivar reimage_parameters: The shared and per-virtual-machine reimage configuration.
     :vartype reimage_parameters: ~azure.mgmt.compute.bulkaction.models.ReimagePayload
     """
 
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resources for the request."""
+    """The target virtual machines."""
     resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
         name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2411,7 +2413,7 @@ class ExecuteReimageRequest(_Model):  # pylint: disable=docstring-keyword-should
     reimage_parameters: Optional["_models.ReimagePayload"] = rest_field(
         name="reimageParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Reimage parameters including base profile and per-resource overrides."""
+    """The shared and per-virtual-machine reimage configuration."""
 
     @overload
     def __init__(
@@ -2435,11 +2437,11 @@ class ExecuteReimageRequest(_Model):  # pylint: disable=docstring-keyword-should
 
 
 class ExecuteStartContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The ExecuteStartRequest request for executeStart operations.
+    """The virtual machines and execution settings for a bulk start action.
 
-    :ivar execution_parameters: The execution parameters for the request. Required.
+    :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The resources for the request.
+    :ivar resources: The target virtual machines.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
     :ivar resources_with_context: The resources for the request with resource context information.
      Cannot be provided together with ``resources`` - exactly one must be specified.
@@ -2449,9 +2451,9 @@ class ExecuteStartContent(_Model):  # pylint: disable=docstring-keyword-should-m
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The execution parameters for the request. Required."""
+    """The execution settings for the bulk action. Required."""
     resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resources for the request."""
+    """The target virtual machines."""
     resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
         name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2479,13 +2481,13 @@ class ExecuteStartContent(_Model):  # pylint: disable=docstring-keyword-should-m
 
 
 class ExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Extra details needed to run the user's request.
+    """The execution settings for a bulk action.
 
-    :ivar retry_policy: Retry policy the user can pass.
+    :ivar retry_policy: The retry settings for the bulk action.
     :vartype retry_policy: ~azure.mgmt.compute.bulkaction.models.RetryPolicy
-    :ivar verify_vm_agent_health: When true on an executeStart request, run a post-Start VM agent
-     health check and engage the fallback chain if the guest agent does not report Ready. Ignored
-     for non-Start operations.
+    :ivar verify_vm_agent_health: If true, Bulk Actions verifies the virtual machine guest agent
+     health after a start operation. Setting this property to true for any other operation causes
+     the request to fail.
     :vartype verify_vm_agent_health: bool
     :ivar capacity_recommendation_parameters: Capacity recommendation parameters for the request.
      When provided on an executeStart request, the service computes placement recommendations only
@@ -2498,12 +2500,12 @@ class ExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-m
     retry_policy: Optional["_models.RetryPolicy"] = rest_field(
         name="retryPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Retry policy the user can pass."""
+    """The retry settings for the bulk action."""
     verify_vm_agent_health: Optional[bool] = rest_field(
         name="verifyVmAgentHealth", visibility=["read", "create", "update", "delete", "query"]
     )
-    """When true on an executeStart request, run a post-Start VM agent health check and engage the
-     fallback chain if the guest agent does not report Ready. Ignored for non-Start operations."""
+    """If true, Bulk Actions verifies the virtual machine guest agent health after a start operation.
+     Setting this property to true for any other operation causes the request to fail."""
     capacity_recommendation_parameters: Optional["_models.CapacityRecommendationParameters"] = rest_field(
         name="capacityRecommendationParameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2578,28 +2580,29 @@ class ExtensionResource(Resource):
 
 
 class FallbackOperationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes the fallback operation that was performed.
+    """Information about the fallback operation attempted after the requested operation did not
+    succeed.
 
-    :ivar last_op_type: The last operation type that was performed as a fallback. Required. Known
-     values are: "Start", "Deallocate", "Hibernate", "Create", and "Delete".
+    :ivar last_op_type: The type of the additional operation. Required. Known values are: "Start",
+     "Deallocate", "Hibernate", "Create", and "Delete".
     :vartype last_op_type: str or ~azure.mgmt.compute.bulkaction.models.ResourceOperationType
-    :ivar status: The status of the fallback operation. Required.
+    :ivar status: The status of the additional operation. Required.
     :vartype status: str
-    :ivar error: The error code if the fallback operation failed.
+    :ivar error: The error returned when the additional operation did not succeed.
     :vartype error: ~azure.mgmt.compute.bulkaction.models.ResourceOperationError
     """
 
     last_op_type: Union[str, "_models.ResourceOperationType"] = rest_field(
         name="lastOpType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The last operation type that was performed as a fallback. Required. Known values are:
-     \"Start\", \"Deallocate\", \"Hibernate\", \"Create\", and \"Delete\"."""
+    """The type of the additional operation. Required. Known values are: \"Start\", \"Deallocate\",
+     \"Hibernate\", \"Create\", and \"Delete\"."""
     status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The status of the fallback operation. Required."""
+    """The status of the additional operation. Required."""
     error: Optional["_models.ResourceOperationError"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The error code if the fallback operation failed."""
+    """The error returned when the additional operation did not succeed."""
 
     @overload
     def __init__(
@@ -2622,16 +2625,18 @@ class FallbackOperationInfo(_Model):  # pylint: disable=docstring-keyword-should
 
 
 class GetOperationStatusContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """This is the request to get operation status using operationids.
+    """The operation for which current status should be returned.
 
-    :ivar operation_ids: The list of operation ids to get the status of. Required.
+    :ivar operation_ids: The Bulk Action Operation Ids that identify the operations for which
+     current status should be returned. Required.
     :vartype operation_ids: list[str]
     """
 
     operation_ids: list[str] = rest_field(
         name="operationIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of operation ids to get the status of. Required."""
+    """The Bulk Action Operation Ids that identify the operations for which current status should be
+     returned. Required."""
 
     @overload
     def __init__(
@@ -2652,14 +2657,14 @@ class GetOperationStatusContent(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class GetOperationStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """This is the response from a get operations status request.
+    """The current results for the requested operations.
 
-    :ivar results: An array of resource operations based on their operation ids. Required.
+    :ivar results: The current result for each requested operation. Required.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     results: list["_models.ResourceOperation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An array of resource operations based on their operation ids. Required."""
+    """The current result for each requested operation. Required."""
 
     @overload
     def __init__(
@@ -2742,28 +2747,28 @@ class HardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match
 
 
 class HibernateResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The response from a Hibernate request.
+    """The result of a bulk hibernate action.
 
-    :ivar description: The description of the operation response. Required.
+    :ivar description: A description of the bulk action result. Required.
     :vartype description: str
-    :ivar type: The type of resources used in the Hibernate request eg virtual machines. Required.
+    :ivar type: The type of resources targeted by the bulk action. Required.
     :vartype type: str
-    :ivar location: The location of the Hibernate request eg westus. Required.
+    :ivar location: The Azure region where Bulk Actions processes the request. Required.
     :vartype location: str
-    :ivar results: The results from the Hibernate request if no errors exist.
+    :ivar results: The result for each virtual machine.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the operation response. Required."""
+    """A description of the bulk action result. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources used in the Hibernate request eg virtual machines. Required."""
+    """The type of resources targeted by the bulk action. Required."""
     location: str = rest_field(visibility=["read", "create"])
-    """The location of the Hibernate request eg westus. Required."""
+    """The Azure region where Bulk Actions processes the request. Required."""
     results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The results from the Hibernate request if no errors exist."""
+    """The result for each virtual machine."""
 
     @overload
     def __init__(
@@ -2839,7 +2844,7 @@ class ImageReference(SubResource):  # pylint: disable=docstring-keyword-should-m
     creation operations. NOTE: Image reference publisher and offer can only be set when you create
     the scale set.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar publisher: The image publisher.
     :vartype publisher: str
@@ -2954,20 +2959,20 @@ class KeyVaultKeyReference(_Model):  # pylint: disable=docstring-keyword-should-
 
 
 class KeyVaultSecretReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes a reference to Key Vault Secret.
+    """A reference to a secret stored in Azure Key Vault.
 
-    :ivar secret_url: The URL referencing a secret in a Key Vault. Required.
+    :ivar secret_url: The URL of the secret in Azure Key Vault. Required.
     :vartype secret_url: str
-    :ivar source_vault: The relative URL of the Key Vault containing the secret. Required.
+    :ivar source_vault: The Azure resource ID of the Key Vault that contains the secret. Required.
     :vartype source_vault: ~azure.mgmt.compute.bulkaction.models.SubResource
     """
 
     secret_url: str = rest_field(name="secretUrl", visibility=["read", "create", "update", "delete", "query"])
-    """The URL referencing a secret in a Key Vault. Required."""
+    """The URL of the secret in Azure Key Vault. Required."""
     source_vault: "_models.SubResource" = rest_field(
         name="sourceVault", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The relative URL of the Key Vault containing the secret. Required."""
+    """The Azure resource ID of the Key Vault that contains the secret. Required."""
 
     @overload
     def __init__(
@@ -3309,7 +3314,7 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
 class ManagedDiskParametersContent(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters of a managed disk.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
      UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
@@ -3416,7 +3421,7 @@ class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-shoul
 class NetworkInterfaceReference(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface reference.
 
-    :ivar id: The ID of the sub-resource.
+    :ivar id: The Azure resource ID.
     :vartype id: str
     :ivar properties: Describes a network interface reference properties.
     :vartype properties: ~azure.mgmt.compute.bulkaction.models.NetworkInterfaceReferenceProperties
@@ -4364,60 +4369,37 @@ class OSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
 
 
 class OSProfileProvisioningData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
+    """Additional parameters for reimaging a virtual machine that does not use an ephemeral operating
+    system disk.
 
-    :ivar admin_password: Specifies the password of the administrator account. <br><br>
-     **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
-     <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72
-     characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be
-     fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a
-     special character (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123", "P@$$w0rd",
-     "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22",
-     "iloveyou!" <br><br> For resetting the password, see `How to reset the Remote Desktop service
-     or its login password in a Windows VM
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
-     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
-     using the VMAccess Extension
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
+    :ivar admin_password: The password for the virtual machine administrator account. The password
+     must be 8 to 123 characters long for Windows virtual machines or 6 to 72 characters long for
+     Linux virtual machines. It must contain characters from at least three of these categories:
+     lowercase letters, uppercase letters, digits, and special characters. The following values are
+     not allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
+     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
+     accepted only in the request and is not returned in responses.
     :vartype admin_password: str
-    :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
-     string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
-     length of the binary array is 65535 bytes. **Note: Do not pass any secrets or passwords in
-     customData property.** This property cannot be updated after the VM is created. The property
-     customData is passed to the VM to be saved as a file, for more information see `Custom Data on
-     Azure VMs <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If
-     using cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during
-     creation <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
+    :ivar custom_data: Base64-encoded custom data provided to the virtual machine. The decoded data
+     can contain up to 65,535 bytes. Do not include secrets or passwords.
     :vartype custom_data: str
     """
 
     admin_password: Optional[str] = rest_field(
         name="adminPassword", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8
-     characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):**
-     123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity
-     requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters
-     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\\W_])
-     <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\",
-     \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\"
-     <br><br> For resetting the password, see `How to reset the Remote Desktop service or its login
-     password in a Windows VM
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
-     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
-     using the VMAccess Extension
-     <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_."""
+    """The password for the virtual machine administrator account. The password must be 8 to 123
+     characters long for Windows virtual machines or 6 to 72 characters long for Linux virtual
+     machines. It must contain characters from at least three of these categories: lowercase
+     letters, uppercase letters, digits, and special characters. The following values are not
+     allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
+     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
+     accepted only in the request and is not returned in responses."""
     custom_data: Optional[str] = rest_field(
         name="customData", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a
-     binary array that is saved as a file on the Virtual Machine. The maximum length of the binary
-     array is 65535 bytes. **Note: Do not pass any secrets or passwords in customData property.**
-     This property cannot be updated after the VM is created. The property customData is passed to
-     the VM to be saved as a file, for more information see `Custom Data on Azure VMs
-     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_. If using
-     cloud-init for your Linux VM, see `Using cloud-init to customize a Linux VM during creation
-     <https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_."""
+    """Base64-encoded custom data provided to the virtual machine. The decoded data can contain up to
+     65,535 bytes. Do not include secrets or passwords."""
 
     @overload
     def __init__(
@@ -4635,38 +4617,38 @@ class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
 
 
 class PriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The priority profile for flex VM creation.
+    """The priority and allocation preferences for virtual machines.
 
-    :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
+    :ivar type: The priority type for virtual machine allocation. Known values are: "Regular" and
+     "Spot".
     :vartype type: str or ~azure.mgmt.compute.bulkaction.models.PriorityType
-    :ivar max_price_per_vm: Price per hour of each Spot VM will never exceed this. Available from
-     2026-04-06-preview.
+    :ivar max_price_per_vm: The maximum hourly price, in US dollars, for each Spot virtual machine.
     :vartype max_price_per_vm: float
-    :ivar eviction_policy: Eviction Policy to follow when evicting Spot VMs. Available from
-     2026-04-06-preview. Known values are: "Delete" and "Deallocate".
+    :ivar eviction_policy: The action applied to a Spot virtual machine when Azure evicts it. Known
+     values are: "Delete" and "Deallocate".
     :vartype eviction_policy: str or ~azure.mgmt.compute.bulkaction.models.EvictionPolicy
-    :ivar allocation_strategy: The allocation strategy for VM size selection. Known values are:
-     "LowestPrice", "Prioritized", and "CapacityOptimized".
+    :ivar allocation_strategy: The strategy used to select a virtual machine size. Known values
+     are: "LowestPrice", "Prioritized", and "CapacityOptimized".
     :vartype allocation_strategy: str or ~azure.mgmt.compute.bulkaction.models.AllocationStrategy
     """
 
     type: Optional[Union[str, "_models.PriorityType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The priority type for VM allocation. Known values are: \"Regular\" and \"Spot\"."""
+    """The priority type for virtual machine allocation. Known values are: \"Regular\" and \"Spot\"."""
     max_price_per_vm: Optional[float] = rest_field(
         name="maxPricePerVM", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Price per hour of each Spot VM will never exceed this. Available from 2026-04-06-preview."""
+    """The maximum hourly price, in US dollars, for each Spot virtual machine."""
     eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = rest_field(
         name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Eviction Policy to follow when evicting Spot VMs. Available from 2026-04-06-preview. Known
-     values are: \"Delete\" and \"Deallocate\"."""
+    """The action applied to a Spot virtual machine when Azure evicts it. Known values are: \"Delete\"
+     and \"Deallocate\"."""
     allocation_strategy: Optional[Union[str, "_models.AllocationStrategy"]] = rest_field(
         name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The allocation strategy for VM size selection. Known values are: \"LowestPrice\",
+    """The strategy used to select a virtual machine size. Known values are: \"LowestPrice\",
      \"Prioritized\", and \"CapacityOptimized\"."""
 
     @overload
@@ -4804,11 +4786,12 @@ class PublicIPAddressSku(_Model):  # pylint: disable=docstring-keyword-should-ma
 
 
 class ReimagePayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Reimage payload with common profile and per-resource overrides.
+    """The shared and per-virtual-machine configuration for a bulk reimage action.
 
-    :ivar base_profile: Common reimage profile applied to all resources unless overridden.
+    :ivar base_profile: The reimage configuration applied to every virtual machine unless a
+     per-virtual-machine override is provided.
     :vartype base_profile: ~azure.mgmt.compute.bulkaction.models.VirtualMachineReimageParameters
-    :ivar resource_overrides: Per-resource reimage overrides.
+    :ivar resource_overrides: The reimage configuration overrides for individual virtual machines.
     :vartype resource_overrides:
      list[~azure.mgmt.compute.bulkaction.models.ReimageResourceOverride]
     """
@@ -4816,11 +4799,12 @@ class ReimagePayload(_Model):  # pylint: disable=docstring-keyword-should-match-
     base_profile: Optional["_models.VirtualMachineReimageParameters"] = rest_field(
         name="baseProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Common reimage profile applied to all resources unless overridden."""
+    """The reimage configuration applied to every virtual machine unless a per-virtual-machine
+     override is provided."""
     resource_overrides: Optional[list["_models.ReimageResourceOverride"]] = rest_field(
         name="resourceOverrides", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Per-resource reimage overrides."""
+    """The reimage configuration overrides for individual virtual machines."""
 
     @overload
     def __init__(
@@ -4842,28 +4826,28 @@ class ReimagePayload(_Model):  # pylint: disable=docstring-keyword-should-match-
 
 
 class ReimageResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The response from a reimage request.
+    """The result of a bulk reimage action.
 
-    :ivar description: The description of the operation response. Required.
+    :ivar description: A description of the bulk action result. Required.
     :vartype description: str
-    :ivar type: The type of resources used in the reimage request eg virtual machines. Required.
+    :ivar type: The type of resources targeted by the bulk action. Required.
     :vartype type: str
-    :ivar location: The location of the reimage request eg westus. Required.
+    :ivar location: The Azure region where Bulk Actions processes the request. Required.
     :vartype location: str
-    :ivar results: The results from the reimage request if no errors exist.
+    :ivar results: The result for each virtual machine.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the operation response. Required."""
+    """A description of the bulk action result. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources used in the reimage request eg virtual machines. Required."""
+    """The type of resources targeted by the bulk action. Required."""
     location: str = rest_field(visibility=["read", "create"])
-    """The location of the reimage request eg westus. Required."""
+    """The Azure region where Bulk Actions processes the request. Required."""
     results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The results from the reimage request if no errors exist."""
+    """The result for each virtual machine."""
 
     @overload
     def __init__(
@@ -4887,20 +4871,21 @@ class ReimageResourceOperationResponse(_Model):  # pylint: disable=docstring-key
 
 
 class ReimageResourceOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Per-resource override entry for reimage requests.
+    """A reimage configuration override for one virtual machine.
 
-    :ivar resource_id: The Azure resource ID of the virtual machine for this override. Required.
+    :ivar resource_id: The Azure resource ID of the virtual machine to which the override applies.
+     Required.
     :vartype resource_id: str
-    :ivar profile: Per-resource reimage profile override. Required.
+    :ivar profile: The reimage configuration for this virtual machine. Required.
     :vartype profile: ~azure.mgmt.compute.bulkaction.models.VirtualMachineReimageParameters
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the virtual machine for this override. Required."""
+    """The Azure resource ID of the virtual machine to which the override applies. Required."""
     profile: "_models.VirtualMachineReimageParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Per-resource reimage profile override. Required."""
+    """The reimage configuration for this virtual machine. Required."""
 
     @overload
     def __init__(
@@ -4980,16 +4965,18 @@ class ResourceDetachRequest(_Model):  # pylint: disable=docstring-keyword-should
 
 
 class ResourceNotificationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resource notification details containing notification metadata like the resource context.
+    """Caller-provided context associated with a virtual machine operation.
 
-    :ivar resource_context: Resource context for notification tracking.
+    :ivar resource_context: Caller-provided context string returned with the virtual machine
+     operation result notification. Do not include secrets or personal data.
     :vartype resource_context: str
     """
 
     resource_context: Optional[str] = rest_field(
         name="resourceContext", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource context for notification tracking."""
+    """Caller-provided context string returned with the virtual machine operation result notification.
+     Do not include secrets or personal data."""
 
     @overload
     def __init__(
@@ -5010,39 +4997,38 @@ class ResourceNotificationDetails(_Model):  # pylint: disable=docstring-keyword-
 
 
 class ResourceOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """High level response from an operation on a resource.
+    """The result of a bulk action for one virtual machine.
 
-    :ivar resource_id: Unique identifier for the resource involved in the operation, for example
-     Azure resource ID.
+    :ivar resource_id: The virtual machine Azure resource ID.
     :vartype resource_id: str
-    :ivar error_code: Resource level error code if it exists.
+    :ivar error_code: A code that identifies the error for the virtual machine operation.
     :vartype error_code: str
-    :ivar error_details: Resource level error details if they exist.
+    :ivar error_details: A message that describes the error for the virtual machine operation.
     :vartype error_details: str
-    :ivar operation: Details of the operation performed on a resource.
+    :ivar operation: The virtual machine operation details.
     :vartype operation: ~azure.mgmt.compute.bulkaction.models.ResourceOperationDetails
-    :ivar virtual_machine_info: Information about the virtual machine.
+    :ivar virtual_machine_info: Details of the virtual machine on which the operation is performed.
     :vartype virtual_machine_info: ~azure.mgmt.compute.bulkaction.models.VirtualMachineInfo
     """
 
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Unique identifier for the resource involved in the operation, for example Azure resource ID."""
+    """The virtual machine Azure resource ID."""
     error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
-    """Resource level error code if it exists."""
+    """A code that identifies the error for the virtual machine operation."""
     error_details: Optional[str] = rest_field(
         name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource level error details if they exist."""
+    """A message that describes the error for the virtual machine operation."""
     operation: Optional["_models.ResourceOperationDetails"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Details of the operation performed on a resource."""
+    """The virtual machine operation details."""
     virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(
         name="virtualMachineInfo", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Information about the virtual machine."""
+    """Details of the virtual machine on which the operation is performed."""
 
     @overload
     def __init__(
@@ -5067,37 +5053,39 @@ class ResourceOperation(_Model):  # pylint: disable=docstring-keyword-should-mat
 
 
 class ResourceOperationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The details of a response from an operation on a resource.
+    """The status and settings for an operation on one virtual machine.
 
-    :ivar operation_id: Operation identifier for the unique operation. Required.
+    :ivar operation_id: The operation ID used to track the action for this virtual machine.
+     Required.
     :vartype operation_id: str
-    :ivar resource_id: Unique identifier for the resource involved in the operation, for example
-     Azure resource ID.
+    :ivar resource_id: The virtual machine's Azure resource ID.
     :vartype resource_id: str
-    :ivar op_type: Type of operation performed on the resources. Known values are: "Start",
-     "Deallocate", "Hibernate", "Create", and "Delete".
+    :ivar op_type: The type of operation performed on the virtual machine. Known values are:
+     "Start", "Deallocate", "Hibernate", "Create", and "Delete".
     :vartype op_type: str or ~azure.mgmt.compute.bulkaction.models.ResourceOperationType
-    :ivar subscription_id: Subscription id attached to the request.
+    :ivar subscription_id: The subscription ID associated with the bulk action.
     :vartype subscription_id: str
-    :ivar deadline: Deadline for the operation.
+    :ivar deadline: The requested deadline for the operation.
     :vartype deadline: ~datetime.datetime
-    :ivar deadline_type: Type of deadline of the operation. Known values are: "InitiateAt" and
-     "CompleteBy".
+    :ivar deadline_type: Specifies whether the deadline time indicates the time at which the
+     operation should start or should be complete. Known values are: "InitiateAt" and "CompleteBy".
     :vartype deadline_type: str or ~azure.mgmt.compute.bulkaction.models.DeadlineType
-    :ivar state: Current state of the operation. Known values are: "Scheduled", "Executing",
+    :ivar state: The current state of the operation. Known values are: "Scheduled", "Executing",
      "Succeeded", "Failed", "Cancelled", and "Blocked".
     :vartype state: str or ~azure.mgmt.compute.bulkaction.models.OperationState
-    :ivar timezone: Timezone for the operation.
+    :ivar timezone: The time zone used to interpret the operation deadline.
     :vartype timezone: str
-    :ivar resource_operation_error: Operation level errors if they exist.
+    :ivar resource_operation_error: Contains error details if the operation does not succeed.
     :vartype resource_operation_error: ~azure.mgmt.compute.bulkaction.models.ResourceOperationError
-    :ivar fallback_operation_info: Fallback operation details if a fallback was performed.
+    :ivar fallback_operation_info: Information about the fallback operation attempted after the
+     requested operation did not succeed.
     :vartype fallback_operation_info: ~azure.mgmt.compute.bulkaction.models.FallbackOperationInfo
-    :ivar completed_at: Time the operation was complete if errors are null.
+    :ivar completed_at: The date and time when the operation completed.
     :vartype completed_at: ~datetime.datetime
-    :ivar retry_policy: Retry policy the user can pass.
+    :ivar retry_policy: The retry settings for the bulk action.
     :vartype retry_policy: ~azure.mgmt.compute.bulkaction.models.RetryPolicy
-    :ivar resource_notification_details: Resource notification details.
+    :ivar resource_notification_details: Caller-provided context associated with the virtual
+     machine operation.
     :vartype resource_notification_details:
      ~azure.mgmt.compute.bulkaction.models.ResourceNotificationDetails
     :ivar capacity_recommendation: The capacity/placement recommendation computed for the
@@ -5106,55 +5094,57 @@ class ResourceOperationDetails(_Model):  # pylint: disable=docstring-keyword-sho
     """
 
     operation_id: str = rest_field(name="operationId", visibility=["read", "create", "update", "delete", "query"])
-    """Operation identifier for the unique operation. Required."""
+    """The operation ID used to track the action for this virtual machine. Required."""
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Unique identifier for the resource involved in the operation, for example Azure resource ID."""
+    """The virtual machine's Azure resource ID."""
     op_type: Optional[Union[str, "_models.ResourceOperationType"]] = rest_field(
         name="opType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of operation performed on the resources. Known values are: \"Start\", \"Deallocate\",
-     \"Hibernate\", \"Create\", and \"Delete\"."""
+    """The type of operation performed on the virtual machine. Known values are: \"Start\",
+     \"Deallocate\", \"Hibernate\", \"Create\", and \"Delete\"."""
     subscription_id: Optional[str] = rest_field(
         name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Subscription id attached to the request."""
+    """The subscription ID associated with the bulk action."""
     deadline: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Deadline for the operation."""
+    """The requested deadline for the operation."""
     deadline_type: Optional[Union[str, "_models.DeadlineType"]] = rest_field(
         name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of deadline of the operation. Known values are: \"InitiateAt\" and \"CompleteBy\"."""
+    """Specifies whether the deadline time indicates the time at which the operation should start or
+     should be complete. Known values are: \"InitiateAt\" and \"CompleteBy\"."""
     state: Optional[Union[str, "_models.OperationState"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Current state of the operation. Known values are: \"Scheduled\", \"Executing\", \"Succeeded\",
-     \"Failed\", \"Cancelled\", and \"Blocked\"."""
+    """The current state of the operation. Known values are: \"Scheduled\", \"Executing\",
+     \"Succeeded\", \"Failed\", \"Cancelled\", and \"Blocked\"."""
     timezone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Timezone for the operation."""
+    """The time zone used to interpret the operation deadline."""
     resource_operation_error: Optional["_models.ResourceOperationError"] = rest_field(
         name="resourceOperationError", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Operation level errors if they exist."""
+    """Contains error details if the operation does not succeed."""
     fallback_operation_info: Optional["_models.FallbackOperationInfo"] = rest_field(
         name="fallbackOperationInfo", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Fallback operation details if a fallback was performed."""
+    """Information about the fallback operation attempted after the requested operation did not
+     succeed."""
     completed_at: Optional[datetime.datetime] = rest_field(
         name="completedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Time the operation was complete if errors are null."""
+    """The date and time when the operation completed."""
     retry_policy: Optional["_models.RetryPolicy"] = rest_field(
         name="retryPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Retry policy the user can pass."""
+    """The retry settings for the bulk action."""
     resource_notification_details: Optional["_models.ResourceNotificationDetails"] = rest_field(
         name="resourceNotificationDetails", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource notification details."""
+    """Caller-provided context associated with the virtual machine operation."""
     capacity_recommendation: Optional["_models.CapacityRecommendation"] = rest_field(
         name="capacityRecommendation", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5192,18 +5182,18 @@ class ResourceOperationDetails(_Model):  # pylint: disable=docstring-keyword-sho
 
 
 class ResourceOperationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """These describe errors that occur at the resource level.
+    """An error that occurred while processing one virtual machine.
 
-    :ivar error_code: Code for the error eg 404, 500. Required.
+    :ivar error_code: A code that identifies the error. Required.
     :vartype error_code: str
-    :ivar error_details: Detailed message about the error. Required.
+    :ivar error_details: A message that describes the error. Required.
     :vartype error_details: str
     """
 
     error_code: str = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
-    """Code for the error eg 404, 500. Required."""
+    """A code that identifies the error. Required."""
     error_details: str = rest_field(name="errorDetails", visibility=["read", "create", "update", "delete", "query"])
-    """Detailed message about the error. Required."""
+    """A message that describes the error. Required."""
 
     @overload
     def __init__(
@@ -5333,14 +5323,14 @@ class ResourceResultSummary(_Model):  # pylint: disable=docstring-keyword-should
 
 
 class Resources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The resources needed for the user request.
+    """The virtual machines targeted by a bulk action.
 
-    :ivar ids: The resource ids used for the request. Required.
+    :ivar ids: The Azure resource IDs of the target virtual machines. Required.
     :vartype ids: list[str]
     """
 
     ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource ids used for the request. Required."""
+    """The Azure resource IDs of the target virtual machines. Required."""
 
     @overload
     def __init__(
@@ -5468,30 +5458,31 @@ class ResourceWithContext(_Model):  # pylint: disable=docstring-keyword-should-m
 
 
 class RetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The retry policy for the user request.
+    """The retry settings for a bulk action.
 
-    :ivar retry_count: Retry count for user request.
+    :ivar retry_count: The maximum number of retry attempts.
     :vartype retry_count: int
-    :ivar retry_window_in_minutes: Retry window in minutes for user request.
+    :ivar retry_window_in_minutes: The period, in minutes, during which Bulk Actions can retry the
+     operation.
     :vartype retry_window_in_minutes: int
-    :ivar on_failure_action: Action to take on failure. Known values are: "Start", "Deallocate",
-     "Hibernate", "Create", and "Delete".
+    :ivar on_failure_action: The operation that Bulk Actions attempts when the requested operation
+     fails. Known values are: "Start", "Deallocate", "Hibernate", "Create", and "Delete".
     :vartype on_failure_action: str or ~azure.mgmt.compute.bulkaction.models.ResourceOperationType
     """
 
     retry_count: Optional[int] = rest_field(
         name="retryCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Retry count for user request."""
+    """The maximum number of retry attempts."""
     retry_window_in_minutes: Optional[int] = rest_field(
         name="retryWindowInMinutes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Retry window in minutes for user request."""
+    """The period, in minutes, during which Bulk Actions can retry the operation."""
     on_failure_action: Optional[Union[str, "_models.ResourceOperationType"]] = rest_field(
         name="onFailureAction", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Action to take on failure. Known values are: \"Start\", \"Deallocate\", \"Hibernate\",
-     \"Create\", and \"Delete\"."""
+    """The operation that Bulk Actions attempts when the requested operation fails. Known values are:
+     \"Start\", \"Deallocate\", \"Hibernate\", \"Create\", and \"Delete\"."""
 
     @overload
     def __init__(
@@ -6541,28 +6532,28 @@ class SshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-ke
 
 
 class StartResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The response from a start request.
+    """The result of a bulk start action.
 
-    :ivar description: The description of the operation response. Required.
+    :ivar description: A description of the bulk action result. Required.
     :vartype description: str
-    :ivar type: The type of resources used in the start request eg virtual machines. Required.
+    :ivar type: The type of resources targeted by the bulk action. Required.
     :vartype type: str
-    :ivar location: The location of the start request eg westus. Required.
+    :ivar location: The Azure region where Bulk Actions processes the request. Required.
     :vartype location: str
-    :ivar results: The results from the start request if no errors exist.
+    :ivar results: The result for each virtual machine.
     :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
     """
 
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the operation response. Required."""
+    """A description of the bulk action result. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources used in the start request eg virtual machines. Required."""
+    """The type of resources targeted by the bulk action. Required."""
     location: str = rest_field(visibility=["read", "create"])
-    """The location of the start request eg westus. Required."""
+    """The Azure region where Bulk Actions processes the request. Required."""
     results: Optional[list["_models.ResourceOperation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The results from the start request if no errors exist."""
+    """The result for each virtual machine."""
 
     @overload
     def __init__(
@@ -7098,18 +7089,18 @@ class VirtualMachineIdentity(_Model):  # pylint: disable=docstring-keyword-shoul
 class VirtualMachineInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a virtual machine.
 
-    :ivar vm_size: The name of the VM size, eg Standard_D2ads_v5.
+    :ivar vm_size: The virtual machine SKU, for example ``Standard_D2ads_v5``.
     :vartype vm_size: str
-    :ivar zone: The zone identifier.
+    :ivar zone: The availability zone identifier.
     :vartype zone: str
     :ivar name: The resolved Azure virtual machine name. Required.
     :vartype name: str
     """
 
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the VM size, eg Standard_D2ads_v5."""
+    """The virtual machine SKU, for example ``Standard_D2ads_v5``."""
     zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zone identifier."""
+    """The availability zone identifier."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resolved Azure virtual machine name. Required."""
 
@@ -7678,32 +7669,33 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(
 
 
 class VirtualMachineReimageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
-    reimaged.
+    """The parameters for reimaging a virtual machine. The operating system disk is always reimaged.
 
-    :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
-     disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
+    :ivar temp_disk: Indicates whether to reimage the temporary disk. The default value is
+     ``false``. This option is supported only for virtual machines or virtual machine scale sets
+     that use an ephemeral operating system disk.
     :vartype temp_disk: bool
-    :ivar exact_version: Specifies in decimal number, the version the OS disk should be reimaged
-     to. If exact version is not provided, the OS disk is reimaged to the existing version of OS
-     Disk.
+    :ivar exact_version: The exact image version to use when reimaging the operating system disk.
+     When omitted, the disk is reimaged to its current image version.
     :vartype exact_version: str
-    :ivar os_profile: Specifies information required for reimaging the non-ephemeral OS disk.
+    :ivar os_profile: The operating system profile used when reimaging a non-ephemeral operating
+     system disk.
     :vartype os_profile: ~azure.mgmt.compute.bulkaction.models.OSProfileProvisioningData
     """
 
     temp_disk: Optional[bool] = rest_field(name="tempDisk", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies whether to reimage temp disk. Default value: false. Note: This temp disk reimage
-     parameter is only supported for VM/VMSS with Ephemeral OS disk."""
+    """Indicates whether to reimage the temporary disk. The default value is ``false``. This option is
+     supported only for virtual machines or virtual machine scale sets that use an ephemeral
+     operating system disk."""
     exact_version: Optional[str] = rest_field(
         name="exactVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies in decimal number, the version the OS disk should be reimaged to. If exact version is
-     not provided, the OS disk is reimaged to the existing version of OS Disk."""
+    """The exact image version to use when reimaging the operating system disk. When omitted, the disk
+     is reimaged to its current image version."""
     os_profile: Optional["_models.OSProfileProvisioningData"] = rest_field(
         name="osProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies information required for reimaging the non-ephemeral OS disk."""
+    """The operating system profile used when reimaging a non-ephemeral operating system disk."""
 
     @overload
     def __init__(
@@ -8116,25 +8108,26 @@ class WinRMListener(_Model):  # pylint: disable=docstring-keyword-should-match-k
 
 
 class ZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The zone allocation policy for distributing VMs across availability zones.
+    """The preferences for distributing virtual machines across availability zones.
 
-    :ivar distribution_strategy: The distribution strategy for zone allocation. Known values are:
-     "BestEffortSingleZone", "Prioritized", "BestEffortBalanced", and "StrictBalanced".
+    :ivar distribution_strategy: The strategy used to distribute virtual machines across
+     availability zones. Known values are: "BestEffortSingleZone", "Prioritized",
+     "BestEffortBalanced", and "StrictBalanced".
     :vartype distribution_strategy: str or
      ~azure.mgmt.compute.bulkaction.models.DistributionStrategy
-    :ivar zone_preferences: The zone preferences for allocation priority.
+    :ivar zone_preferences: The availability zones and their allocation priorities.
     :vartype zone_preferences: list[~azure.mgmt.compute.bulkaction.models.ZonePreference]
     """
 
     distribution_strategy: Optional[Union[str, "_models.DistributionStrategy"]] = rest_field(
         name="distributionStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The distribution strategy for zone allocation. Known values are: \"BestEffortSingleZone\",
-     \"Prioritized\", \"BestEffortBalanced\", and \"StrictBalanced\"."""
+    """The strategy used to distribute virtual machines across availability zones. Known values are:
+     \"BestEffortSingleZone\", \"Prioritized\", \"BestEffortBalanced\", and \"StrictBalanced\"."""
     zone_preferences: Optional[list["_models.ZonePreference"]] = rest_field(
         name="zonePreferences", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The zone preferences for allocation priority."""
+    """The availability zones and their allocation priorities."""
 
     @overload
     def __init__(
@@ -8156,11 +8149,11 @@ class ZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-
 
 
 class ZonePreference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A zone preference with a zone identifier and rank.
+    """An availability zone and its allocation priority.
 
-    :ivar zone: The zone identifier. Required.
+    :ivar zone: The availability zone identifier. Required.
     :vartype zone: str
-    :ivar rank: The rank of this zone in the priority order. Required.
+    :ivar rank: The customer-defined priority rank for this availability zone. Required.
     :vartype rank: int
     :ivar target_max_capacity: The maximum capacity to place in this zone. The sum across capped
      zones must not exceed the requested capacity, and when every zone preference is capped the sum
@@ -8169,9 +8162,9 @@ class ZonePreference(_Model):  # pylint: disable=docstring-keyword-should-match-
     """
 
     zone: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zone identifier. Required."""
+    """The availability zone identifier. Required."""
     rank: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rank of this zone in the priority order. Required."""
+    """The customer-defined priority rank for this availability zone. Required."""
     target_max_capacity: Optional[int] = rest_field(
         name="targetMaxCapacity", visibility=["read", "create", "update", "delete", "query"]
     )
