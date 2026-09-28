@@ -9,6 +9,8 @@
   deletion for the same stream ID within the registry.
 - Propagate replay-file deletion failures without installing a successful
   deletion tombstone, allowing cleanup to be retried.
+- Make Windows replay lock-file removal failures retryable without closing
+  an already-released file descriptor or reporting successful deletion.
 
 ## 2.2.0 (2026-09-23)
 

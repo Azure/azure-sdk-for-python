@@ -659,6 +659,100 @@ async def test_cold_file_replay_is_discovered_without_creating_absent_streams(tm
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("runtime_record", [False, True])
+@pytest.mark.parametrize("pause_at", ["stream", "provider"])
+@pytest.mark.parametrize("cancel_delete", [False, True])
+async def test_delete_blocks_same_user_recreation_until_cleanup_finishes(
+    monkeypatch, runtime_record, pause_at, cancel_delete
+):
+    from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
+    from azure.ai.agentserver.responses.hosting import _endpoint_handler
+    from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
+    from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+
+    provider = _PartitionedProvider()
+    host = ResponsesAgentServerHost(store=provider)
+    host.response_handler(_noop_handler)
+    client = _AsyncAsgiClient(host)
+    state = host._endpoint._runtime_state
+    response_id = IdGenerator.new_response_id()
+    headers = {"x-agent-user-id": "owner"}
+    await provider.create_response(
+        {"id": response_id, "status": "completed", "model": "old", "background": True, "output": []},
+        input_items=[],
+        history_item_ids=[],
+        context=PlatformContext(user_id_key="owner"),
+    )
+    if runtime_record:
+        await state.add(
+            ResponseExecution(
+                response_id=response_id,
+                mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+                status="completed",
+                user_id_key="owner",
+            )
+        )
+    registry = _StreamsRegistry()
+    registry.use_in_memory_replay()
+    monkeypatch.setattr(_endpoint_handler, "streams", registry)
+    old_stream = await registry.get_or_create(derive_lifecycle_id(response_id, "owner"))
+    await old_stream.emit({"old": True})
+    await old_stream.close()
+    reached = asyncio.Event()
+    release = asyncio.Event()
+    stream_delete = registry.delete
+    provider_delete = provider.delete_response
+
+    async def paused_stream_delete(identifier):
+        await stream_delete(identifier)
+        if runtime_record:
+            await state.try_evict(response_id, "owner")
+        if pause_at == "stream":
+            reached.set()
+            await release.wait()
+
+    async def paused_provider_delete(*args, **kwargs):
+        if pause_at == "provider":
+            reached.set()
+            await release.wait()
+        return await provider_delete(*args, **kwargs)
+
+    monkeypatch.setattr(registry, "delete", paused_stream_delete)
+    monkeypatch.setattr(provider, "delete_response", paused_provider_delete)
+    deleting = asyncio.create_task(client.request("DELETE", f"/responses/{response_id}", headers=headers))
+    try:
+        await asyncio.wait_for(reached.wait(), timeout=5)
+        assert await state.get(response_id, "owner") is None
+        collision = await client.post(
+            "/responses", json_body={"response_id": response_id, "model": "new", "store": False}, headers=headers
+        )
+        assert collision.status_code == 409, collision.body
+        competing_delete = await client.request("DELETE", f"/responses/{response_id}", headers=headers)
+        assert competing_delete.status_code == 404
+        other = await client.post(
+            "/responses",
+            json_body={"response_id": response_id, "model": "other", "store": False},
+            headers={"x-agent-user-id": "other"},
+        )
+        assert other.status_code == 200, other.body
+        if cancel_delete:
+            deleting.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await deleting
+        else:
+            release.set()
+            result = await asyncio.wait_for(deleting, timeout=5)
+            assert result.status_code == 200, result.body
+        assert await state.reserve(response_id, "owner")
+        await state.release_reservation(response_id, "owner")
+    finally:
+        release.set()
+        if not deleting.done():
+            deleting.cancel()
+        await asyncio.gather(deleting, return_exceptions=True)
+
+
+@pytest.mark.asyncio
 async def test_recovered_streaming_tasks_use_their_durable_user_partition(monkeypatch):
     from types import SimpleNamespace
     from azure.ai.agentserver.responses.hosting import _resilient_orchestrator
