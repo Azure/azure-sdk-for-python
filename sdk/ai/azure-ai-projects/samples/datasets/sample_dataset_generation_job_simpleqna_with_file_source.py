@@ -58,13 +58,11 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     FileDataGenerationJobSource,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
@@ -153,31 +151,28 @@ with (
     #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-    job = DataGenerationJob(
-        inputs=DataGenerationJobInputs(
-            name=f"simpleqna-multisource-{run_id}",
-            scenario=DataGenerationJobScenario.EVALUATION,
-            sources=[
-                FileDataGenerationJobSource(
-                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                    id=seed_file.id,
-                ),
-                PromptDataGenerationJobSource(
-                    description="Specifies the question difficulty for SimpleQnA generation.",
-                    prompt="Generate expert-level questions of high difficulty.",
-                ),
-            ],
-            options=SimpleQnADataGenerationJobOptions(
-                # Service requires max_samples to be between 15 and 1000.
-                max_samples=15,
-                # `simple_qna` REQUIRES model_options.
-                model_options=DataGenerationModelOptions(model=model_name),
+    job = EvaluationDataGenerationJobInputs(
+        name=f"simpleqna-multisource-{run_id}",
+        sources=[
+            FileDataGenerationJobSource(
+                description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                id=seed_file.id,
             ),
-            output_options=DataGenerationJobOutputOptions(
-                name=output_dataset_name,
-                description=EXPECTED_OUTPUT_DESCRIPTION,
-                tags=EXPECTED_OUTPUT_TAGS,
+            PromptDataGenerationJobSource(
+                description="Specifies the question difficulty for SimpleQnA generation.",
+                prompt="Generate expert-level questions of high difficulty.",
             ),
+        ],
+        generation_configuration=SimpleQnADataGenerationJobOptions(
+            # Service requires max_samples to be between 15 and 1000.
+            max_samples=15,
+            # `simple_qna` REQUIRES model_options.
+            model_options=DataGenerationModelOptions(model=model_name),
+        ),
+        output_configuration=EvaluationDataGenerationJobOutputTarget(
+            name=output_dataset_name,
+            description=EXPECTED_OUTPUT_DESCRIPTION,
+            tags=EXPECTED_OUTPUT_TAGS,
         ),
     )
 

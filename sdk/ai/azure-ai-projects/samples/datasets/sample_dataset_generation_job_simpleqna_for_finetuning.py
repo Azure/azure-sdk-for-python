@@ -54,15 +54,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
+    SupervisedFineTuningDataGenerationJobInputs,
+    SupervisedFineTuningDataGenerationJobOutputTarget,
 )
 
 load_dotenv()
@@ -142,31 +140,28 @@ with (
     # 2. Submit a fine-tuning data generation job that consumes the file.
     # ------------------------------------------------------------------
 
-    job = DataGenerationJob(
-        inputs=DataGenerationJobInputs(
-            name=f"simpleqna-finetuning-{run_id}",
-            scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-            sources=[
-                FileDataGenerationJobSource(
-                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                    id=seed_file.id,
-                ),
-            ],
-            options=SimpleQnADataGenerationJobOptions(
-                # Service requires max_samples to be between 15 and 1000.
-                max_samples=15,
-                # `simple_qna` REQUIRES model_options.
-                model_options=DataGenerationModelOptions(model=model_name),
-                # Split generated samples 80% training / 20% validation.
-                train_split=0.8,
-                # Ask for both short-answer and long-answer questions.
-                question_types=[
-                    SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
-                    SimpleQnAFineTuningQuestionType.LONG_ANSWER,
-                ],
+    job = SupervisedFineTuningDataGenerationJobInputs(
+        name=f"simpleqna-finetuning-{run_id}",
+        sources=[
+            FileDataGenerationJobSource(
+                description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                id=seed_file.id,
             ),
-            output_options=DataGenerationJobOutputOptions(name=output_name),
+        ],
+        generation_configuration=SimpleQnADataGenerationJobOptions(
+            # Service requires max_samples to be between 15 and 1000.
+            max_samples=15,
+            # `simple_qna` REQUIRES model_options.
+            model_options=DataGenerationModelOptions(model=model_name),
+            # Split generated samples 80% training / 20% validation.
+            train_split=0.8,
+            # Ask for both short-answer and long-answer questions.
+            question_types=[
+                SimpleQnAFineTuningQuestionType.SHORT_ANSWER,
+                SimpleQnAFineTuningQuestionType.LONG_ANSWER,
+            ],
         ),
+        output_configuration=SupervisedFineTuningDataGenerationJobOutputTarget(name=output_name),
     )
 
     print("Begin creating a dataset generation job.")

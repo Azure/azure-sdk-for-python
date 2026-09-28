@@ -53,12 +53,10 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentDataGenerationJobSource,
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputTarget,
     PromptAgentDefinition,
     SimulationSeedDataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
@@ -99,20 +97,17 @@ def main() -> None:
         )
         generation_options["max_samples"] = SEED_COUNT
         poller = project_client.beta.datasets.begin_create_generation_job(
-            job=DataGenerationJob(
-                inputs=DataGenerationJobInputs(
-                    name=f"{agent_name}-simulation-seeds",
-                    scenario=DataGenerationJobScenario.EVALUATION,
-                    sources=[
-                        AgentDataGenerationJobSource(
-                            description="Agent instructions and metadata used to generate simulation scenarios.",
-                            agent_name=agent.name,
-                            agent_version=agent.version,
-                        ),
-                    ],
-                    options=generation_options,
-                    output_options=DataGenerationJobOutputOptions(name=f"{agent_name}-simulation-seeds"),
-                ),
+            job=EvaluationDataGenerationJobInputs(
+                name=f"{agent_name}-simulation-seeds",
+                sources=[
+                    AgentDataGenerationJobSource(
+                        description="Agent instructions and metadata used to generate simulation scenarios.",
+                        agent_name=agent.name,
+                        agent_version=agent.version,
+                    ),
+                ],
+                generation_configuration=generation_options,
+                output_configuration=EvaluationDataGenerationJobOutputTarget(name=f"{agent_name}-simulation-seeds"),
             ),
             polling_interval=10,
         )

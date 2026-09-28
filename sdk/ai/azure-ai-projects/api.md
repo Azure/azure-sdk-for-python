@@ -949,7 +949,7 @@ namespace azure.ai.projects.aio.operations
         @overload
         async def begin_create_generation_job(
                 self, 
-                job: DataGenerationJob, 
+                job: DataGenerationJobInputs, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
@@ -18243,7 +18243,7 @@ namespace azure.ai.projects.operations
         @overload
         def begin_create_generation_job(
                 self, 
-                job: DataGenerationJob, 
+                job: DataGenerationJobInputs, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
