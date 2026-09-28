@@ -165,7 +165,6 @@ azpysdk mypy .
 #### Prohibited Operations
 ❌ Merging PRs without human review  
 ❌ Releasing packages to PyPI  
-❌ Modifying CI/CD pipeline definitions  
 ❌ Changing security or authentication logic without security review  
 ❌ Committing secrets or credentials  
 ❌ Force pushing to protected branches  
