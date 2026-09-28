@@ -7,7 +7,7 @@ import json
 import os
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.types import SemanticRerankingInferenceRequest
+from azure.data.ai.types import SemanticRerankingInferenceContent
 from azure.identity import DefaultAzureCredential
 
 
@@ -33,7 +33,7 @@ def main() -> None:
             "metadata": {"category": "database"},
         },
     ]
-    request: SemanticRerankingInferenceRequest = {
+    request: SemanticRerankingInferenceContent = {
         "query": "How does Azure Cosmos DB scale globally?",
         # Each document is a JSON-encoded string, not a dictionary.
         "documents": [json.dumps(document) for document in documents],

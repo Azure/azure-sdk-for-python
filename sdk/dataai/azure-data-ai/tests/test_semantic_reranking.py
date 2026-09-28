@@ -25,7 +25,12 @@ from azure.core.exceptions import (
 import azure.data.ai
 from azure.data.ai import InferenceClient
 from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
-from azure.data.ai.models import SemanticRerankingResult, SemanticRerankingScore, SentenceScore, TokenUsageResult
+from azure.data.ai.models import (
+    SemanticRerankingInferenceResult,
+    SemanticRerankingScore,
+    SentenceScore,
+    TokenUsageResult,
+)
 
 
 def test_public_api_exposes_generated_models_without_embeddings():
@@ -106,7 +111,7 @@ async def test_dictionary_round_trip(open_client, invoke, respond, transport, re
     assert sent.headers["Accept"] == "application/json"
     assert json.loads(sent.content) == original
     assert request_payload == original
-    assert isinstance(result, SemanticRerankingResult)
+    assert isinstance(result, SemanticRerankingInferenceResult)
     assert result == result_payload
     assert isinstance(result.scores[0], SemanticRerankingScore)
     assert isinstance(result.scores[0].sentence_scores[0], SentenceScore)
@@ -120,7 +125,7 @@ async def test_response_is_not_normalized(open_client, invoke, respond, request_
     respond((200, payload, {}))
     async with open_client() as client:
         result = await invoke(client, request_payload)
-    assert isinstance(result, SemanticRerankingResult)
+    assert isinstance(result, SemanticRerankingInferenceResult)
     assert result == payload
 
 

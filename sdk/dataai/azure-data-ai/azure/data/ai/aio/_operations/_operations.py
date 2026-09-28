@@ -44,47 +44,49 @@ class _InferenceClientOperationsMixin(
     @overload
     async def semantic_rerank(
         self,
-        request: _models.SemanticRerankingInferenceRequest,
+        request: _models.SemanticRerankingInferenceContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SemanticRerankingResult:
+    ) -> _models.SemanticRerankingInferenceResult:
         """Reranks documents by their relevance to a query.
 
         :param request: The semantic reranking request. Required.
-        :type request: ~azure.data.ai.models.SemanticRerankingInferenceRequest
+        :type request: ~azure.data.ai.models.SemanticRerankingInferenceContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SemanticRerankingResult. The SemanticRerankingResult is compatible with MutableMapping
-        :rtype: ~azure.data.ai.models.SemanticRerankingResult
+        :return: SemanticRerankingInferenceResult. The SemanticRerankingInferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.data.ai.models.SemanticRerankingInferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def semantic_rerank(
         self,
-        request: _types.SemanticRerankingInferenceRequest,
+        request: _types.SemanticRerankingInferenceContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SemanticRerankingResult:
+    ) -> _models.SemanticRerankingInferenceResult:
         """Reranks documents by their relevance to a query.
 
         :param request: The semantic reranking request. Required.
-        :type request: ~azure.data.ai.types.SemanticRerankingInferenceRequest
+        :type request: ~azure.data.ai.types.SemanticRerankingInferenceContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SemanticRerankingResult. The SemanticRerankingResult is compatible with MutableMapping
-        :rtype: ~azure.data.ai.models.SemanticRerankingResult
+        :return: SemanticRerankingInferenceResult. The SemanticRerankingInferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.data.ai.models.SemanticRerankingInferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def semantic_rerank(
         self, request: Union[bytes, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SemanticRerankingResult:
+    ) -> _models.SemanticRerankingInferenceResult:
         """Reranks documents by their relevance to a query.
 
         :param request: The semantic reranking request. Required.
@@ -92,8 +94,9 @@ class _InferenceClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: SemanticRerankingResult. The SemanticRerankingResult is compatible with MutableMapping
-        :rtype: ~azure.data.ai.models.SemanticRerankingResult
+        :return: SemanticRerankingInferenceResult. The SemanticRerankingInferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.data.ai.models.SemanticRerankingInferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -101,21 +104,22 @@ class _InferenceClientOperationsMixin(
     async def semantic_rerank(
         self,
         request: Union[
-            _models.SemanticRerankingInferenceRequest,
-            _types.SemanticRerankingInferenceRequest,
+            _models.SemanticRerankingInferenceContent,
+            _types.SemanticRerankingInferenceContent,
             bytes,
             IO[bytes],
         ],
         **kwargs: Any
-    ) -> _models.SemanticRerankingResult:
+    ) -> _models.SemanticRerankingInferenceResult:
         """Reranks documents by their relevance to a query.
 
-        :param request: The semantic reranking request. Is either a SemanticRerankingInferenceRequest
+        :param request: The semantic reranking request. Is either a SemanticRerankingInferenceContent
          type, bytes or an IO[bytes] type. Required.
-        :type request: ~azure.data.ai.models.SemanticRerankingInferenceRequest or
-         ~azure.data.ai.types.SemanticRerankingInferenceRequest or bytes or IO[bytes]
-        :return: SemanticRerankingResult. The SemanticRerankingResult is compatible with MutableMapping
-        :rtype: ~azure.data.ai.models.SemanticRerankingResult
+        :type request: ~azure.data.ai.models.SemanticRerankingInferenceContent or
+         ~azure.data.ai.types.SemanticRerankingInferenceContent or bytes or IO[bytes]
+        :return: SemanticRerankingInferenceResult. The SemanticRerankingInferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.data.ai.models.SemanticRerankingInferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -130,7 +134,7 @@ class _InferenceClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SemanticRerankingResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SemanticRerankingInferenceResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -168,10 +172,10 @@ class _InferenceClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = None
             if response.status_code == 429:
-                error = _failsafe_deserialize(_models.TooManyRequestsResponse, response)
+                error = _failsafe_deserialize(_models.TooManyRequestsResult, response)
             else:
                 error = _failsafe_deserialize(
-                    _models.InferenceErrorResponse,
+                    _models.InferenceErrorResult,
                     response,
                 )
             raise HttpResponseError(response=response, model=error)
@@ -182,7 +186,7 @@ class _InferenceClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.SemanticRerankingResult, response.json())
+            deserialized = _deserialize(_models.SemanticRerankingInferenceResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

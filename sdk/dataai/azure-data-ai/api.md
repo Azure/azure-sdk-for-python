@@ -17,20 +17,20 @@ namespace azure.data.ai
         @overload
         def semantic_rerank(
                 self, 
-                request: SemanticRerankingInferenceRequest, 
+                request: SemanticRerankingInferenceContent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         @overload
         def semantic_rerank(
                 self, 
-                request: SemanticRerankingInferenceRequest, 
+                request: SemanticRerankingInferenceContent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         @overload
         def semantic_rerank(
@@ -39,7 +39,7 @@ namespace azure.data.ai
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         def send_request(
                 self, 
@@ -68,20 +68,20 @@ namespace azure.data.ai.aio
         @overload
         async def semantic_rerank(
                 self, 
-                request: SemanticRerankingInferenceRequest, 
+                request: SemanticRerankingInferenceContent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         @overload
         async def semantic_rerank(
                 self, 
-                request: SemanticRerankingInferenceRequest, 
+                request: SemanticRerankingInferenceContent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         @overload
         async def semantic_rerank(
@@ -90,7 +90,7 @@ namespace azure.data.ai.aio
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> SemanticRerankingResult: ...
+            ) -> SemanticRerankingInferenceResult: ...
 
         def send_request(
                 self, 
@@ -103,7 +103,7 @@ namespace azure.data.ai.aio
 
 namespace azure.data.ai.models
 
-    class azure.data.ai.models.InferenceErrorResponse(_Model):
+    class azure.data.ai.models.InferenceErrorResult(_Model):
         error: ProblemDetails
 
         @overload
@@ -134,17 +134,17 @@ namespace azure.data.ai.models
 
 
     class azure.data.ai.models.LatencyResult(_Model):
-        data_preprocess_time: Optional[timedelta]
-        inference_time: Optional[timedelta]
-        post_process_time: Optional[timedelta]
+        data_preprocess_duration: Optional[timedelta]
+        inference_duration: Optional[timedelta]
+        post_process_duration: Optional[timedelta]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                data_preprocess_time: Optional[timedelta] = ..., 
-                inference_time: Optional[timedelta] = ..., 
-                post_process_time: Optional[timedelta] = ...
+                data_preprocess_duration: Optional[timedelta] = ..., 
+                inference_duration: Optional[timedelta] = ..., 
+                post_process_duration: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
@@ -186,7 +186,7 @@ namespace azure.data.ai.models
         TEXT = "text"
 
 
-    class azure.data.ai.models.SemanticRerankingInferenceRequest(_Model):
+    class azure.data.ai.models.SemanticRerankingInferenceContent(_Model):
         batch_size: Optional[int]
         document_type: Optional[Union[str, SemanticRerankingDocumentType]]
         documents: list[str]
@@ -218,6 +218,22 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.data.ai.models.SemanticRerankingInferenceResult(_Model):
+        meta: Optional[SemanticRerankingMetaResult]
+        scores: Optional[list[SemanticRerankingScore]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                meta: Optional[SemanticRerankingMetaResult] = ..., 
+                scores: Optional[list[SemanticRerankingScore]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.data.ai.models.SemanticRerankingMetaResult(_Model):
         latency: Optional[LatencyResult]
         model_name: Optional[str]
@@ -232,22 +248,6 @@ namespace azure.data.ai.models
                 model_name: Optional[str] = ..., 
                 model_version: Optional[str] = ..., 
                 token_usage: Optional[TokenUsageResult] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.data.ai.models.SemanticRerankingResult(_Model):
-        meta: Optional[SemanticRerankingMetaResult]
-        scores: Optional[list[SemanticRerankingScore]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                meta: Optional[SemanticRerankingMetaResult] = ..., 
-                scores: Optional[list[SemanticRerankingScore]] = ...
             ) -> None: ...
 
         @overload
@@ -304,7 +304,7 @@ namespace azure.data.ai.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.data.ai.models.TooManyRequestsResponse(_Model):
+    class azure.data.ai.models.TooManyRequestsResult(_Model):
         error: ProblemDetails
 
         @overload
@@ -320,7 +320,7 @@ namespace azure.data.ai.models
 
 namespace azure.data.ai.types
 
-    class azure.data.ai.types.SemanticRerankingInferenceRequest(TypedDict, total=False):
+    class azure.data.ai.types.SemanticRerankingInferenceContent(TypedDict, total=False):
         key "batchSize": int
         key "documentType": Union[str, SemanticRerankingDocumentType]
         key "documents": Required[list[str]]

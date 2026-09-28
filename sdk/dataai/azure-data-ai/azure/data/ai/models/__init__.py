@@ -14,17 +14,17 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    InferenceErrorResponse,
+    InferenceErrorResult,
     InnerError,
     LatencyResult,
     ProblemDetails,
-    SemanticRerankingInferenceRequest,
+    SemanticRerankingInferenceContent,
+    SemanticRerankingInferenceResult,
     SemanticRerankingMetaResult,
-    SemanticRerankingResult,
     SemanticRerankingScore,
     SentenceScore,
     TokenUsageResult,
-    TooManyRequestsResponse,
+    TooManyRequestsResult,
 )
 
 from ._enums import (  # type: ignore
@@ -35,17 +35,17 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "InferenceErrorResponse",
+    "InferenceErrorResult",
     "InnerError",
     "LatencyResult",
     "ProblemDetails",
-    "SemanticRerankingInferenceRequest",
+    "SemanticRerankingInferenceContent",
+    "SemanticRerankingInferenceResult",
     "SemanticRerankingMetaResult",
-    "SemanticRerankingResult",
     "SemanticRerankingScore",
     "SentenceScore",
     "TokenUsageResult",
-    "TooManyRequestsResponse",
+    "TooManyRequestsResult",
     "SemanticRerankingDocumentType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .models import SemanticRerankingDocumentType
 
 
-class SemanticRerankingInferenceRequest(TypedDict, total=False):
+class SemanticRerankingInferenceContent(TypedDict, total=False):
     """The input for a semantic reranking operation.
 
     :ivar query: The query used to rank the documents. Required.

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class InferenceErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class InferenceErrorResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An unexpected error response.
 
     :ivar error: The error object. Required.
@@ -84,30 +84,30 @@ class InnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the latency in the semantic reranking operation.
 
-    :ivar data_preprocess_time: The time spent on data preprocessing in the semantic reranking
+    :ivar data_preprocess_duration: The time spent on data preprocessing in the semantic reranking
      operation, in milliseconds.
-    :vartype data_preprocess_time: ~datetime.timedelta
-    :ivar inference_time: The time spent on inference in the semantic reranking operation, in
+    :vartype data_preprocess_duration: ~datetime.timedelta
+    :ivar inference_duration: The time spent on inference in the semantic reranking operation, in
      milliseconds.
-    :vartype inference_time: ~datetime.timedelta
-    :ivar post_process_time: The time spent on post-processing in the semantic reranking operation,
-     in milliseconds.
-    :vartype post_process_time: ~datetime.timedelta
+    :vartype inference_duration: ~datetime.timedelta
+    :ivar post_process_duration: The time spent on post-processing in the semantic reranking
+     operation, in milliseconds.
+    :vartype post_process_duration: ~datetime.timedelta
     """
 
-    data_preprocess_time: Optional[datetime.timedelta] = rest_field(
+    data_preprocess_duration: Optional[datetime.timedelta] = rest_field(
         name="dataPreprocessTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="duration-milliseconds-float",
     )
     """The time spent on data preprocessing in the semantic reranking operation, in milliseconds."""
-    inference_time: Optional[datetime.timedelta] = rest_field(
+    inference_duration: Optional[datetime.timedelta] = rest_field(
         name="inferenceTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="duration-milliseconds-float",
     )
     """The time spent on inference in the semantic reranking operation, in milliseconds."""
-    post_process_time: Optional[datetime.timedelta] = rest_field(
+    post_process_duration: Optional[datetime.timedelta] = rest_field(
         name="postProcessTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="duration-milliseconds-float",
@@ -118,9 +118,9 @@ class LatencyResult(_Model):  # pylint: disable=docstring-keyword-should-match-k
     def __init__(
         self,
         *,
-        data_preprocess_time: Optional[datetime.timedelta] = None,
-        inference_time: Optional[datetime.timedelta] = None,
-        post_process_time: Optional[datetime.timedelta] = None,
+        data_preprocess_duration: Optional[datetime.timedelta] = None,
+        inference_duration: Optional[datetime.timedelta] = None,
+        post_process_duration: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -213,7 +213,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class SemanticRerankingInferenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The input for a semantic reranking operation.
 
     :ivar query: The query used to rank the documents. Required.
@@ -300,6 +300,43 @@ class SemanticRerankingInferenceRequest(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
+class SemanticRerankingInferenceResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result of a semantic reranking operation.
+
+    :ivar scores: The relevance scores for the submitted documents.
+    :vartype scores: list[~azure.data.ai.models.SemanticRerankingScore]
+    :ivar meta: Additional metadata about the semantic reranking operation.
+    :vartype meta: ~azure.data.ai.models.SemanticRerankingMetaResult
+    """
+
+    scores: Optional[list["_models.SemanticRerankingScore"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The relevance scores for the submitted documents."""
+    meta: Optional["_models.SemanticRerankingMetaResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional metadata about the semantic reranking operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scores: Optional[list["_models.SemanticRerankingScore"]] = None,
+        meta: Optional["_models.SemanticRerankingMetaResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SemanticRerankingMetaResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional metadata about the semantic reranking operation.
 
@@ -334,43 +371,6 @@ class SemanticRerankingMetaResult(_Model):  # pylint: disable=docstring-keyword-
         latency: Optional["_models.LatencyResult"] = None,
         model_name: Optional[str] = None,
         model_version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SemanticRerankingResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The result of a semantic reranking operation.
-
-    :ivar scores: The relevance scores for the submitted documents.
-    :vartype scores: list[~azure.data.ai.models.SemanticRerankingScore]
-    :ivar meta: Additional metadata about the semantic reranking operation.
-    :vartype meta: ~azure.data.ai.models.SemanticRerankingMetaResult
-    """
-
-    scores: Optional[list["_models.SemanticRerankingScore"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The relevance scores for the submitted documents."""
-    meta: Optional["_models.SemanticRerankingMetaResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional metadata about the semantic reranking operation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scores: Optional[list["_models.SemanticRerankingScore"]] = None,
-        meta: Optional["_models.SemanticRerankingMetaResult"] = None,
     ) -> None: ...
 
     @overload
@@ -492,7 +492,7 @@ class TokenUsageResult(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class TooManyRequestsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TooManyRequestsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request was rejected because the service is receiving too many requests.
 
     :ivar error: The error object. Required.

@@ -11,7 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.models import SemanticRerankingInferenceRequest, SemanticRerankingResult
+from azure.data.ai.models import SemanticRerankingInferenceContent, SemanticRerankingInferenceResult
 
 
 @pytest.fixture
@@ -78,7 +78,7 @@ async def test_json_round_trip_all_clients_and_credentials(
     respond((200, response, {}))
 
     async with open_client(json_credential) as client:
-        request = SemanticRerankingInferenceRequest(payload) if request_kind == "model" else payload
+        request = SemanticRerankingInferenceContent(payload) if request_kind == "model" else payload
         result = await invoke(client, request)
 
     sent = transport.send.call_args.args[0]
@@ -95,7 +95,7 @@ async def test_json_round_trip_all_clients_and_credentials(
         assert sent.headers["Ocp-Apim-Subscription-Key"] == "json-test-key"
         assert "Authorization" not in sent.headers
     assert result == response
-    assert isinstance(result, SemanticRerankingResult)
+    assert isinstance(result, SemanticRerankingInferenceResult)
     assert [item["index"] for item in result["scores"]] == [1, 0]
     for item in result["scores"]:
         assert ("document" in item) is return_documents

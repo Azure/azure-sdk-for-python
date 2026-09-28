@@ -6,14 +6,14 @@
 import os
 
 from azure.data.ai import InferenceClient
-from azure.data.ai.types import SemanticRerankingInferenceRequest
+from azure.data.ai.types import SemanticRerankingInferenceContent
 from azure.identity import DefaultAzureCredential
 
 
 def main() -> None:
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
 
-    request: SemanticRerankingInferenceRequest = {
+    request: SemanticRerankingInferenceContent = {
         "query": "What is the capital of France?",
         "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],
         "topK": 2,

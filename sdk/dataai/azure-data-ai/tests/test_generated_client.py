@@ -18,15 +18,15 @@ from azure.core.rest import HttpRequest
 from azure.data.ai import InferenceClient
 from azure.data.ai.aio import InferenceClient as AsyncInferenceClient
 from azure.data.ai.models import (
-    InferenceErrorResponse,
+    InferenceErrorResult,
     InnerError,
     LatencyResult,
     ProblemDetails,
     SemanticRerankingDocumentType,
-    SemanticRerankingInferenceRequest,
+    SemanticRerankingInferenceContent,
+    SemanticRerankingInferenceResult,
     SemanticRerankingMetaResult,
-    SemanticRerankingResult,
-    TooManyRequestsResponse,
+    TooManyRequestsResult,
 )
 
 
@@ -34,7 +34,7 @@ from azure.data.ai.models import (
 async def test_renamed_document_type_and_metadata(
     open_client, invoke, respond, transport, request_payload, result_payload, document_type
 ):
-    request = SemanticRerankingInferenceRequest(request_payload)
+    request = SemanticRerankingInferenceContent(request_payload)
     request.document_type = SemanticRerankingDocumentType(document_type)
     respond((200, result_payload, {}))
     async with open_client() as client:
@@ -54,9 +54,9 @@ async def test_latency_deserializes_millisecond_durations(open_client, invoke, r
         result = await invoke(client, request_payload)
 
     assert isinstance(result.meta.latency, LatencyResult)
-    assert result.meta.latency.data_preprocess_time == timedelta(milliseconds=1.25)
-    assert result.meta.latency.inference_time == timedelta(milliseconds=0.125)
-    assert result.meta.latency.post_process_time == timedelta(milliseconds=1500.5)
+    assert result.meta.latency.data_preprocess_duration == timedelta(milliseconds=1.25)
+    assert result.meta.latency.inference_duration == timedelta(milliseconds=0.125)
+    assert result.meta.latency.post_process_duration == timedelta(milliseconds=1500.5)
     assert result.meta.latency.as_dict() == latency
     assert result["meta"]["latency"] == latency
 
@@ -64,7 +64,9 @@ async def test_latency_deserializes_millisecond_durations(open_client, invoke, r
 @pytest.mark.parametrize("milliseconds", [0, 0.001, 0.125, 1500.5])
 def test_latency_serializes_durations_as_numeric_milliseconds(milliseconds):
     duration = timedelta(milliseconds=milliseconds)
-    latency = LatencyResult(data_preprocess_time=duration, inference_time=duration, post_process_time=duration)
+    latency = LatencyResult(
+        data_preprocess_duration=duration, inference_duration=duration, post_process_duration=duration
+    )
 
     assert latency.as_dict() == pytest.approx(
         {
@@ -79,9 +81,9 @@ def test_latency_serializes_durations_as_numeric_milliseconds(milliseconds):
 @pytest.mark.parametrize(
     "status,error_code,response_type",
     [
-        (400, "InvalidRequestBody", InferenceErrorResponse),
-        (429, "TooManyRequests", TooManyRequestsResponse),
-        (500, "InternalServerError", InferenceErrorResponse),
+        (400, "InvalidRequestBody", InferenceErrorResult),
+        (429, "TooManyRequests", TooManyRequestsResult),
+        (500, "InternalServerError", InferenceErrorResult),
     ],
 )
 async def test_azure_error_envelope_preserves_details(
@@ -153,7 +155,7 @@ async def test_azure_error_envelope_preserves_details(
 def test_error_details_preserve_null_and_empty_fields(details):
     payload = {"code": "Error", "message": "Failed", "details": details}
     original = deepcopy(payload)
-    model = InferenceErrorResponse({"error": payload})
+    model = InferenceErrorResult({"error": payload})
 
     projected = model.error.details
     if projected:
@@ -232,14 +234,14 @@ def test_error_details_accept_core_objects_and_reassignment():
 @pytest.mark.parametrize("kind", ["model", "bytes", "stream"])
 async def test_generated_request_forms(open_client, invoke, respond, transport, request_payload, result_payload, kind):
     if kind == "model":
-        request = SemanticRerankingInferenceRequest(request_payload)
+        request = SemanticRerankingInferenceContent(request_payload)
     else:
         encoded = json.dumps(request_payload).encode()
         request = encoded if kind == "bytes" else BytesIO(encoded)
     respond((200, result_payload, {}))
     async with open_client() as client:
         result = await invoke(client, request)
-    assert isinstance(result, SemanticRerankingResult)
+    assert isinstance(result, SemanticRerankingInferenceResult)
     assert result.as_dict() == result_payload
     sent = transport.send.call_args.args[0].content
     assert json.loads(sent.getvalue() if isinstance(sent, BytesIO) else sent) == request_payload
@@ -286,7 +288,7 @@ async def test_response_callback(open_client, invoke, respond, request_payload, 
 
     async with open_client() as client:
         result = await invoke(client, request_payload, cls=capture)
-    assert isinstance(result, SemanticRerankingResult)
+    assert isinstance(result, SemanticRerankingInferenceResult)
     assert captured == [(200, {"X-Correlation-ID": "test-correlation-id"})]
 
 

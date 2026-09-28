@@ -1,8 +1,8 @@
 # Azure Data AI samples
 
 These samples use Azure Data AI, hosted by Azure Inference Service. The generated
-SDK accepts dictionary requests or `SemanticRerankingInferenceRequest` models and
-returns `SemanticRerankingResult`. Dictionary-style response access remains supported.
+SDK accepts dictionary requests or `SemanticRerankingInferenceContent` models and
+returns `SemanticRerankingInferenceResult`. Dictionary-style response access remains supported.
 The samples do not require a Cosmos DB account.
 
 The SDK takes its endpoint and credential directly from the application. Environment
@@ -44,7 +44,7 @@ endpoint rather than assuming that every endpoint exposes that model.
 
 The request dictionaries demonstrate `topK`, `batchSize`, `sort`, `returnDocuments`,
 `returnSentenceScore`, and `documentType`. They use the generated
-`azure.data.ai.types.SemanticRerankingInferenceRequest` TypedDict for type checking.
+`azure.data.ai.types.SemanticRerankingInferenceContent` TypedDict for type checking.
 These are service request-body fields, not method keyword arguments.
 
 For JSON documents, JSON-encode each document string and use `documentType: "json"`.

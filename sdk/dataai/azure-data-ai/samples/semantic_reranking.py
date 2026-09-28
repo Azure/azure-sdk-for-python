@@ -7,14 +7,14 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.data.ai import InferenceClient
-from azure.data.ai.types import SemanticRerankingInferenceRequest
+from azure.data.ai.types import SemanticRerankingInferenceContent
 
 
-def get_sample_inputs() -> tuple[str, AzureKeyCredential, SemanticRerankingInferenceRequest]:
+def get_sample_inputs() -> tuple[str, AzureKeyCredential, SemanticRerankingInferenceContent]:
     """Return the configured endpoint, key, and request without making a service call."""
     endpoint = os.environ["AZURE_DATA_AI_ENDPOINT"]
     credential = AzureKeyCredential(os.environ["AZURE_DATA_AI_KEY"])
-    request: SemanticRerankingInferenceRequest = {
+    request: SemanticRerankingInferenceContent = {
         "query": "What is the capital of France?",
         "documents": ["Paris is the capital of France.", "Berlin is the capital of Germany."],
         "topK": 2,

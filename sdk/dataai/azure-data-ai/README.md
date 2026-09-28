@@ -116,9 +116,9 @@ attributes use Python names, such as `top_k`. Both response access forms work:
 when an ordinary nested dictionary is needed.
 
 ```python
-from azure.data.ai.models import SemanticRerankingDocumentType, SemanticRerankingInferenceRequest
+from azure.data.ai.models import SemanticRerankingDocumentType, SemanticRerankingInferenceContent
 
-request = SemanticRerankingInferenceRequest(
+request = SemanticRerankingInferenceContent(
     query="capital of France",
     documents=["Paris is the capital of France.", "Berlin is the capital of Germany."],
     top_k=1,
@@ -156,8 +156,9 @@ on `SemanticRerankingMetaResult`.
 
 Latency fields `dataPreprocessTime`, `inferenceTime`, and `postProcessTime` contain
 numeric milliseconds in the JSON response. The corresponding `LatencyResult` model
-attributes are `datetime.timedelta` values; dictionary-style access and `as_dict()`
-retain the numeric millisecond representation.
+attributes, `data_preprocess_duration`, `inference_duration`, and
+`post_process_duration`, are `datetime.timedelta` values. Dictionary-style access
+and `as_dict()` retain the numeric millisecond representation.
 
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
 inclusive range 0–1. Sentence indices are not capped at 2.
@@ -310,7 +311,7 @@ scoring options to your application's documents and endpoint.
 ## Development
 
 `tsp-location.yaml` records the generation source and pins the TypeSpec contract to
-`7c220f70eb0d62ce37bd27679df5a71da53d3f9c`. Its service title is **Azure Data AI**
+`dafaf0e653d76726b8a480323908fee8395d4789`. Its service title is **Azure Data AI**
 and its namespace is `Azure.Data.AI`; the route, authentication header/token
 audience, request fields, and API version remain unchanged.
 This package adopts the default output of `@azure-tools/typespec-python` 0.63.8,
